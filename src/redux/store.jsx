@@ -1,10 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
-// import filtersSlice from "../components/Filters/FiltersSlice";
-// import todoListSlice from "../components/TodoList/TodoSlice";
+import LoginSlice from "../components/Auth/loginSlice";
 
 const store = configureStore({
     reducer: {
-        // filters: filtersSlice.reducer,
+        AuthData: LoginSlice.reducer,
         // todoList: todoListSlice.reducer,
     },
 });
