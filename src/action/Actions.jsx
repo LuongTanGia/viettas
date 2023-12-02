@@ -9,12 +9,10 @@ export const DANHSACHDULIEU = async (API, user, dispatch) => {
         } else {
             dispatch(loginSlice.actions.getDSDL([]));
         }
-        localStorage.setItem("userLogin", btoa(JSON.stringify(user)));
     } catch (error) {
         console.error("Error adding user:", error);
     }
 };
-
 export const LOGIN = async (API, TKN, RemoteDB, dispatch) => {
     try {
         const response = await axios.post(API, {
@@ -22,28 +20,29 @@ export const LOGIN = async (API, TKN, RemoteDB, dispatch) => {
             RemoteDB: RemoteDB,
         });
         if (response) {
-            dispatch(loginSlice.actions.login(response.data.DataResults));
+            dispatch(loginSlice.actions.login(response.data));
         } else {
             dispatch(loginSlice.actions.login([]));
         }
+        localStorage.setItem("TKN", response.data.TKN);
     } catch (error) {
         console.error("Error adding user:", error);
     }
 };
-
-export const GETDATA = (API, API2, dataPost, RemoteDB) => {
-    return async (dispatch) => {
-        try {
-            const DATADULIEU = await axios.post(API, dataPost);
-            const DATADANGNHAP = await axios.post(API2, {
-                TokenID: DATADULIEU.data.TKN,
-                RemoteDB: RemoteDB,
-            });
-            localStorage.setItem("TKN", DATADANGNHAP.data.TKN);
-
-            dispatch({ type: "GETDATA", payload: DATADANGNHAP.data });
-        } catch (error) {
-            console.error("Error adding user:", error);
-        }
-    };
+export const DANHSACHCHUCNANG = async (API, token, dispatch) => {
+    try {
+        const response = await axios.post(
+            API,
+            {},
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        dispatch(loginSlice.actions.login(response.data));
+    } catch (error) {
+        console.error("Error adding user:", error);
+    }
 };

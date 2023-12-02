@@ -12,7 +12,7 @@ export default createSlice({
             state.DSDL = action.payload;
         },
         login: (state, action) => {
-            state.data = [...action.payload];
+            state.data = action.payload;
         },
     },
 });
