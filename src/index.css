@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.components-table-demo-control-bar .ant-form-item {
+    margin-right: 16px !important;
+    margin-bottom: 8px !important;
+}

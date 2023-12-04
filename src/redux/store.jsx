@@ -1,10 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import LoginSlice from "../components/Auth/loginSlice";
+import MainSlice from "../components/MainPage/MainSlice";
 
 const store = configureStore({
     reducer: {
         AuthData: LoginSlice.reducer,
-        // todoList: todoListSlice.reducer,
+        mainData: MainSlice.reducer,
     },
 });
 

@@ -1,6 +1,6 @@
 import axios from "axios";
 import loginSlice from "../components/Auth/loginSlice";
-
+import MainSlice from "../components/MainPage/MainSlice";
 export const DANHSACHDULIEU = async (API, user, dispatch) => {
     try {
         const response = await axios.post(API, user);
@@ -42,6 +42,23 @@ export const DANHSACHCHUCNANG = async (API, token, dispatch) => {
             }
         );
         dispatch(loginSlice.actions.login(response.data));
+    } catch (error) {
+        console.error("Error adding user:", error);
+    }
+};
+export const DANHSACHHANGHOA = async (API, token, dispatch) => {
+    try {
+        const response = await axios.post(
+            API,
+            {},
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        dispatch(MainSlice.actions.getDSHH(response.data));
     } catch (error) {
         console.error("Error adding user:", error);
     }
