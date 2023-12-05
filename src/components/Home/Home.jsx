@@ -1,65 +1,41 @@
-import { Layout, Space } from "antd";
-const { Header, Footer, Content } = Layout;
 import SiderMenu from "../SiderMenu/SiderMenu";
 import MainPage from "../MainPage/MainPage";
-import { useState } from "react";
-
-const headerStyle = {
-    textAlign: "center",
-    color: "#fff",
-    height: 64,
-    paddingInline: 50,
-    lineHeight: "64px",
-    backgroundColor: "#7dbcea",
-};
-
-const footerStyle = {
-    textAlign: "center",
-    color: "#fff",
-    backgroundColor: "#7dbcea",
-};
-function Home() {
-    const [isNavi, setIsNavi] = useState(true);
+import Header from "../Header/Header";
+// eslint-disable-next-line react/prop-types
+function Home({ handleToggleSidebar, isSidebarVisible }) {
     return (
-        <>
-            <Space
-                direction="vertical"
-                style={{
-                    width: "100%",
-                }}
-                size={[0, 48]}
-            >
-                <Layout style={{ minHeight: "100vh" }}>
-                    <SiderMenu isNavi={isNavi} />
-
-                    <Layout
-                        style={
-                            isNavi
-                                ? {
-                                      marginLeft: "200px",
-                                      transition: "all 0.3s",
-                                  }
-                                : { marginLeft: "80px", transition: "all 0.3s" }
-                        }
+        <div>
+            <Header handleToggleSidebar={handleToggleSidebar} />
+            <div className={isSidebarVisible ? "toggle-sidebar" : ""}>
+                <SiderMenu />
+            </div>
+            <MainPage isSidebarVisible={isSidebarVisible} />
+            {/* {isCookie === "false" ? (
+                <div className="card cook_tag">
+                    <span
+                        aria-hidden="true"
+                        className="btn_cooks"
+                        onClick={() => {
+                            Cookies.set("isCookie", "true");
+                            setIsCookie(false);
+                        }}
                     >
-                        <Header style={headerStyle}>
-                            <span
-                                className="icon_show"
-                                onClick={() => {
-                                    setIsNavi(!isNavi);
-                                }}
-                            >
-                                onclick
-                            </span>
-                        </Header>
-                        <Content>
-                            <MainPage />
-                        </Content>
-                        <Footer style={footerStyle}>Footer</Footer>
-                    </Layout>
-                </Layout>
-            </Space>
-        </>
+                        &times;
+                    </span>
+                    <div className="card-body">
+                        <p className="card-text">
+                            Chúng tôi đang sử dụng cookie để cung cấp cho bạn
+                            những trải nghiệm tốt nhất trên trang web này. Bằng
+                            cách tiếp tục truy cập, bạn đồng ý với{" "}
+                            <Link to="/FAQ">
+                                Chính sách thu thập và sử dụng cookie của chúng
+                                tôi.
+                            </Link>
+                        </p>
+                    </div>
+                </div>
+            ) : null} */}
+        </div>
     );
 }
 export default Home;

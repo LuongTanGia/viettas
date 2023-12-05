@@ -7,6 +7,7 @@ const API = {
     TONGHOP: `${BASE_URL}/api/statistics/TongHop`,
     DANHSACHCHUCNANG: `${BASE_URL}/api/settings/GiaTriHeThong/DanhSachChucNang`,
     DANHSACHHANGHOA: `${BASE_URL}/api/lists/HangHoa/DanhSach`,
+    KHOANNGAY: `${BASE_URL}/api/settings/GiaTriHeThong/KhoanNgay`,
 };
 
 export default API;

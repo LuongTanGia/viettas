@@ -1,4 +1,3 @@
-import { Form, Modal, Radio } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import { authDataSelector } from "../../redux/selector";
 import { LOGIN } from "../../action/Actions";
@@ -6,14 +5,14 @@ import { useNavigate } from "react-router-dom";
 import API from "../../API/API";
 import { useState } from "react";
 // eslint-disable-next-line react/prop-types
-const CollectionCreateForm = ({ open, onCancel }) => {
-    const [form] = Form.useForm();
+const CollectionCreateForm = () => {
     const navigateTo = useNavigate();
-    const DSDL = useSelector(authDataSelector);
+    const data = useSelector(authDataSelector);
     const [RemoteDB, setRemoteDB] = useState();
     const dispatch = useDispatch();
     const handleLogin = async () => {
-        await LOGIN(API.DANGNHAP, DSDL.TKN, RemoteDB, dispatch);
+        await LOGIN(API.DANGNHAP, data.TKN, RemoteDB, dispatch);
+        window.localStorage.setItem("firstLogin", true);
         navigateTo("/");
     };
     const handleChangeRadio = (e) => {
@@ -21,43 +20,70 @@ const CollectionCreateForm = ({ open, onCancel }) => {
     };
 
     return (
-        <Modal
-            open={open}
-            title="Create a new collection"
-            okText="Create"
-            cancelText="Cancel"
-            onCancel={onCancel}
-            onOk={() => {
-                form.validateFields()
-                    .then(() => {
-                        handleLogin();
-                    })
-                    .catch((info) => {
-                        console.log("Validate Failed:", info);
-                    });
-            }}
+        <div
+            className="modal fade"
+            id="exampleModal"
+            // tabindex="-1"
+            aria-labelledby="exampleModalLabel"
+            aria-hidden="true"
         >
-            <Form
-                form={form}
-                layout="vertical"
-                name="form_in_modal"
-                initialValues={{
-                    modifier: "public",
-                }}
-            >
-                <Radio.Group>
-                    {DSDL.DataResults?.map((item, index) => (
-                        <Radio
-                            value={item.RemoteDB}
-                            key={index}
-                            onChange={handleChangeRadio}
+            <div className="modal-dialog">
+                <div className="modal-content">
+                    <div className="modal-header">
+                        <h1 className="modal-title fs-5" id="exampleModalLabel">
+                            {data.DataResults
+                                ? "DANH SÁCH DỮ LIỆU"
+                                : "ERROR LOGIN"}
+                        </h1>
+                        <button
+                            type="button"
+                            className="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                        ></button>
+                    </div>
+                    <div className="modal-body">
+                        {data.DataResults ? (
+                            data.DataResults.map((item, index) =>
+                                item.RemoteDB ? (
+                                    <div key={index}>
+                                        {item.RemoteDB}
+                                        <input
+                                            type="radio"
+                                            value={item.RemoteDB}
+                                            checked={RemoteDB === item.RemoteDB}
+                                            name="remoteDB"
+                                            onChange={handleChangeRadio}
+                                        />
+                                    </div>
+                                ) : null
+                            )
+                        ) : (
+                            <p className="error_login">
+                                {data.DataErrorDescription}
+                            </p>
+                        )}
+                    </div>
+                    <div className="modal-footer">
+                        <button
+                            type="button"
+                            className="btn btn-secondary"
+                            data-bs-dismiss="modal"
                         >
-                            {item.RemoteDB}
-                        </Radio>
-                    ))}
-                </Radio.Group>
-            </Form>
-        </Modal>
+                            Close
+                        </button>
+                        <button
+                            type="button"
+                            className="btn btn-primary"
+                            data-bs-dismiss="modal"
+                            onClick={handleLogin}
+                        >
+                            Save changes
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     );
 };
 

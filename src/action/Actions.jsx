@@ -63,3 +63,39 @@ export const DANHSACHHANGHOA = async (API, token, dispatch) => {
         console.error("Error adding user:", error);
     }
 };
+
+export const KHOANNGAY = async (API, token, dispatch) => {
+    try {
+        const response = await axios.post(
+            API,
+            {},
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        dispatch(MainSlice.actions.getKhoanNgay(response.data));
+    } catch (error) {
+        console.error("Error adding user:", error);
+    }
+};
+
+export const DATATONGHOP = async (API, token, dispatch) => {
+    try {
+        const response = await axios.post(
+            API,
+            {},
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        dispatch(MainSlice.actions.getDataTongHop(response.data));
+    } catch (error) {
+        console.error("Error adding user:", error);
+    }
+};
