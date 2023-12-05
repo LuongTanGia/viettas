@@ -1,8 +1,14 @@
 import SiderMenu from "../SiderMenu/SiderMenu";
 import MainPage from "../MainPage/MainPage";
 import Header from "../Header/Header";
+import Cookies from "js-cookie";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 // eslint-disable-next-line react/prop-types
 function Home({ handleToggleSidebar, isSidebarVisible }) {
+    const user = Cookies.get("user");
+    console.log(typeof user);
+    const [isCookie, setIsCookie] = useState(user);
     return (
         <div>
             <Header handleToggleSidebar={handleToggleSidebar} />
@@ -10,13 +16,13 @@ function Home({ handleToggleSidebar, isSidebarVisible }) {
                 <SiderMenu />
             </div>
             <MainPage isSidebarVisible={isSidebarVisible} />
-            {/* {isCookie === "false" ? (
+            {isCookie === "true" ? (
                 <div className="card cook_tag">
                     <span
                         aria-hidden="true"
                         className="btn_cooks"
                         onClick={() => {
-                            Cookies.set("isCookie", "true");
+                            Cookies.set("user", false);
                             setIsCookie(false);
                         }}
                     >
@@ -34,7 +40,7 @@ function Home({ handleToggleSidebar, isSidebarVisible }) {
                         </p>
                     </div>
                 </div>
-            ) : null} */}
+            ) : null}
         </div>
     );
 }

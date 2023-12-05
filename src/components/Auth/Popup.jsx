@@ -4,6 +4,7 @@ import { LOGIN } from "../../action/Actions";
 import { useNavigate } from "react-router-dom";
 import API from "../../API/API";
 import { useState } from "react";
+import Cookies from "js-cookie";
 // eslint-disable-next-line react/prop-types
 const CollectionCreateForm = () => {
     const navigateTo = useNavigate();
@@ -13,6 +14,7 @@ const CollectionCreateForm = () => {
     const handleLogin = async () => {
         await LOGIN(API.DANGNHAP, data.TKN, RemoteDB, dispatch);
         window.localStorage.setItem("firstLogin", true);
+        Cookies.set("user", true);
         navigateTo("/");
     };
     const handleChangeRadio = (e) => {

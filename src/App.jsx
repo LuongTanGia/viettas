@@ -1,6 +1,7 @@
 import "./index.css";
 import "./App.css";
-
+import { useEffect } from "react";
+import LoadingPage from "../src/components/util/Loading/LoadingPage";
 import {
     Route,
     Routes,
@@ -23,41 +24,34 @@ function App() {
     const token = localStorage.getItem("TKN");
     console.log(token);
     const dispatch = useDispatch();
-    // useEffect(() => {
-    //     console.log("LoadDataa");
-    //     const getDANHSACH = async () =>
-    //         await DANHSACHCHUCNANG(API.DANHSACHCHUCNANG, token, dispatch);
-    //     getDANHSACH();
+    const [dataLoaded, setDataLoaded] = useState(false);
 
-    //     const getDANHSACHHANGHOA = async () =>
-    //         await DANHSACHHANGHOA(API.DANHSACHHANGHOA, token, dispatch);
-    //     getDANHSACHHANGHOA();
+    useEffect(() => {
+        const loadData = async () => {
+            console.log("LoadDataa");
 
-    //     const getKHOANNGAY = async () =>
-    //         await KHOANNGAY(API.KHOANNGAY, token, dispatch);
-    //     getKHOANNGAY();
+            await DANHSACHCHUCNANG(API.DANHSACHCHUCNANG, token, dispatch);
+            await DANHSACHHANGHOA(API.DANHSACHHANGHOA, token, dispatch);
+            await KHOANNGAY(API.KHOANNGAY, token, dispatch);
+            await DATATONGHOP(API.TONGHOP, token, dispatch);
 
-    //     const getDataTongHop = async () =>
-    //         await DATATONGHOP(API.TONGHOP, token, dispatch);
-    //     getDataTongHop();
-    // }, []);
+            setDataLoaded(true);
+        };
 
-    (async function loadData() {
-        console.log("LoadDataa");
+        loadData();
+    }, [token, dispatch]);
 
-        await DANHSACHCHUCNANG(API.DANHSACHCHUCNANG, token, dispatch);
-        await DANHSACHHANGHOA(API.DANHSACHHANGHOA, token, dispatch);
-        await KHOANNGAY(API.KHOANNGAY, token, dispatch);
-        await DATATONGHOP(API.TONGHOP, token, dispatch);
-    })();
-
-    const [isSidebarVisible, setIsSidebarVisible] = useState(false);
+    const [isSidebarVisible, setIsSidebarVisible] = useState(true);
 
     const handleToggleSidebar = () => {
         setIsSidebarVisible(!isSidebarVisible);
     };
 
     const isLogged = localStorage.getItem("firstLogin");
+
+    if (!dataLoaded) {
+        return <LoadingPage />;
+    }
 
     return (
         <Router>

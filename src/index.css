@@ -115,3 +115,14 @@ i.blue {
 #main {
     padding-bottom: 0;
 }
+.cook_tag {
+    z-index: 10000;
+    position: absolute;
+    bottom: 0;
+    width: 400px;
+    right: 10px;
+}
+.btn_cooks {
+    padding-left: 15px;
+    cursor: pointer;
+}
