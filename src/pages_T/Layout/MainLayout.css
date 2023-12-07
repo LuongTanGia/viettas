@@ -1,0 +1,15 @@
+.main__sidebar {
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  z-index: 2;
+  transform: translateX(-100%);
+  background-color: transparent;
+  transition: background-color ease-in 0.3s, transform ease-in 0.1s 0.3s;
+}
+
+.main__sidebar.show {
+  transform: translateX(0%);
+  background-color: var(--overlay-color);
+  transition: transform ease-out 0.3s, background-color ease-out 0.1s 0.3s;
+}
