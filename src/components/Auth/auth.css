@@ -1,0 +1,7 @@
+.bg-color {
+    background-image: url("../../assets/img/backgroud.jfif");
+    background-repeat: no-repeat;
+    object-fit: cover;
+    background-size: cover;
+    backdrop-filter: inherit;
+}

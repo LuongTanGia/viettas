@@ -5,6 +5,10 @@ const API = {
     DANHSACHDULIEU: `${BASE_URL}/api/Auth/DanhSachDuLieu`,
     DANGNHAP: `${BASE_URL}/api/Auth/DangNhap`,
     TONGHOP: `${BASE_URL}/api/statistics/TongHop`,
+    DANHSACHCHUCNANG: `${BASE_URL}/api/settings/GiaTriHeThong/DanhSachChucNang`,
+    DANHSACHHANGHOA: `${BASE_URL}/api/lists/HangHoa/DanhSach`,
+    KHOANNGAY: `${BASE_URL}/api/settings/GiaTriHeThong/KhoanNgay`,
+    PHIEUMUAHANG: `${BASE_URL}/api/entries/DuLieuPMH/DanhSach`,
 };
 
 export default API;
