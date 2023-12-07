@@ -9,6 +9,11 @@ function Header({ handleToggleSidebar }) {
 
     console.log(data);
 
+    const logout = () => {
+        window.localStorage.clear();
+        window.location.href = "/login";
+    };
+
     return (
         <>
             <header
@@ -297,7 +302,7 @@ function Header({ handleToggleSidebar }) {
                                     <hr className="dropdown-divider" />
                                 </li>
 
-                                <li>
+                                <li onClick={logout}>
                                     <Link
                                         className="dropdown-item d-flex align-items-center"
                                         href="#"

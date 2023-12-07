@@ -41,7 +41,7 @@ function DashBoar() {
             <section className="section dashboard">
                 <div className="row">
                     <div className="col-lg-6">
-                        <div className="row grid">
+                        <div className="row gridMain">
                             {resultArrays.map((resultArray, arrayIndex) => (
                                 <Card
                                     resultArray={resultArray}

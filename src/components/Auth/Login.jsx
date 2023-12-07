@@ -1,22 +1,66 @@
-import { useState } from "react";
-import { DANHSACHDULIEU } from "../../action/Actions";
+import { useState, useEffect } from "react";
+import { DANHSACHDULIEU, LOGIN } from "../../action/Actions";
+import { GoogleLogin } from "@react-oauth/google";
 import API from "../../API/API";
 import { useDispatch } from "react-redux";
 import VietTas from "../../assets/img/viettas.jfif";
 import "./auth.css";
 import CollectionCreateForm from "./Popup";
+import { useSelector } from "react-redux";
+import { authDataSelector } from "../../redux/selector";
+import { toast } from "react-toastify";
+
 const App = () => {
     const dispatch = useDispatch();
+    const data = useSelector(authDataSelector);
     const [user, setUser] = useState({
         User: "",
         Pass: "",
     });
+
+    // const [isShow, setIsShow] = useState(false);
     const onChangeInput = (e) => {
         const { name, value } = e.target;
         setUser({ ...user, [name]: value });
     };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            await DANHSACHDULIEU(API.DANHSACHDULIEU, user, dispatch);
+        };
+        fetchData();
+    }, [dispatch, user, API]);
+
     const handleAddUser = async () => {
-        await DANHSACHDULIEU(API.DANHSACHDULIEU, user, dispatch);
+        console.log(data);
+        if (data?.DataResults.length === 1) {
+            const remoteDB = data.DataResults[0].RemoteDB;
+            console.log(remoteDB);
+
+            await LOGIN(API.DANGNHAP, data.TKN, remoteDB, dispatch);
+            window.location.href = "/";
+        } else if (data?.DataResults.length > 1) {
+            setIsLoggedIn(true);
+        }
+        if (data?.DataResults && data?.DataResults.length == 0) {
+            toast.error("Sai tài khoản hoặc mật khẩu");
+        }
+    };
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const handleGoogleLogin = async (TokenID) => {
+        try {
+            await DANHSACHDULIEU(
+                API.DANHSACHDULIEU,
+                { TokenId: TokenID.credential },
+                dispatch
+            );
+            setIsLoggedIn(true);
+        } catch (error) {
+            console.error("Đăng nhập thất bại", error);
+        }
+    };
+    const close = () => {
+        setIsLoggedIn(false);
     };
 
     return (
@@ -110,6 +154,18 @@ const App = () => {
                                                 </div>
                                             </div>
                                             <div className="col-12">
+                                                <div className="flex justify-center items-center w-full">
+                                                    <GoogleLogin
+                                                        onSuccess={
+                                                            handleGoogleLogin
+                                                        }
+                                                        onError={() => {
+                                                            console.log(
+                                                                "Login Failed"
+                                                            );
+                                                        }}
+                                                    />
+                                                </div>
                                                 <button
                                                     className="btn btn-primary w-100"
                                                     onClick={handleAddUser}
@@ -130,7 +186,13 @@ const App = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <CollectionCreateForm />
+                                {/* <CollectionCreateForm /> */}
+                                {isLoggedIn ? (
+                                    <CollectionCreateForm
+                                        isShow={isLoggedIn}
+                                        close={close}
+                                    />
+                                ) : null}
                                 <div className="credits">
                                     {"Designed by "}
                                     <a href="https://bootstrapmade.com/">

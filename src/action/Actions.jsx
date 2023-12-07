@@ -3,21 +3,18 @@ import loginSlice from "../components/Auth/loginSlice";
 import MainSlice from "../components/MainPage/MainSlice";
 import DuLieuSlice from "../components/DULIEU/DuLieuSlice";
 
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
 
-export const DANHSACHDULIEU = async (API, user, dispatch) => {
+export const DANHSACHDULIEU = async (API, data, dispatch) => {
     try {
-        const response = await axios.post(API, user);
+        const response = await axios.post(API, data);
         if (response.data.DataError === 0) {
-            toast.success("Lấy danh sách dữ liệu thành công");
             dispatch(loginSlice.actions.getDSDL(response.data));
         } else {
-            toast.error("Lấy danh sách dữ liệu thất bại");
             dispatch(loginSlice.actions.getDSDL([]));
         }
     } catch (error) {
         console.error("Error adding user:", error);
-        toast.error("Lấy danh sách dữ liệu thất bại");
     }
 };
 export const LOGIN = async (API, TKN, RemoteDB, dispatch) => {
@@ -28,14 +25,15 @@ export const LOGIN = async (API, TKN, RemoteDB, dispatch) => {
         });
         if (response) {
             dispatch(loginSlice.actions.login(response.data));
+            localStorage.setItem("TKN", response.data.TKN);
         } else {
             dispatch(loginSlice.actions.login([]));
         }
-        localStorage.setItem("TKN", response.data.TKN);
     } catch (error) {
         console.error("Error adding user:", error);
     }
 };
+
 export const DANHSACHCHUCNANG = async (API, token, dispatch) => {
     try {
         const response = await axios.post(
