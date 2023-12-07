@@ -41,6 +41,10 @@ const App = () => {
                                 style={{ color: "red" }}
                                 onClick={() => Delete(record)}
                             />
+                            <EditOutlined
+                                style={{ color: "green" }}
+                                onClick={() => View(record)}
+                            />
                         </div>
                     </>
                 );
@@ -67,6 +71,10 @@ const App = () => {
     const [SearchInput, setSearchInput] = useState("");
 
     const Edit = (e) => {
+        setVisible(true);
+        setEdit(e);
+    };
+    const View = (e) => {
         setVisible(true);
         setEdit(e);
     };
@@ -151,18 +159,18 @@ const App = () => {
                     }}
                 >
                     <Input
-                        value={edit?.name}
+                        value={edit?.Nhom}
                         onChange={(e) => {
                             setEdit((pre) => {
-                                return { ...pre, name: e.target.value };
+                                return { ...pre, Nhom: e.target.value };
                             });
                         }}
                     />
                     <Input
-                        value={edit?.age}
+                        value={edit?.TenNhom}
                         onChange={(e) => {
                             setEdit((pre) => {
-                                return { ...pre, age: e.target.value };
+                                return { ...pre, TenNhom: e.target.value };
                             });
                         }}
                     />

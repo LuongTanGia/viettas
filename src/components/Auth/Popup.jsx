@@ -1,13 +1,12 @@
 import { useSelector, useDispatch } from "react-redux";
 import { authDataSelector } from "../../redux/selector";
 import { LOGIN } from "../../action/Actions";
-import { useNavigate } from "react-router-dom";
+
 import API from "../../API/API";
 import { useState } from "react";
 import Cookies from "js-cookie";
 // eslint-disable-next-line react/prop-types
 const CollectionCreateForm = () => {
-    const navigateTo = useNavigate();
     const data = useSelector(authDataSelector);
     const [RemoteDB, setRemoteDB] = useState();
     const dispatch = useDispatch();
@@ -15,7 +14,7 @@ const CollectionCreateForm = () => {
         await LOGIN(API.DANGNHAP, data.TKN, RemoteDB, dispatch);
         window.localStorage.setItem("firstLogin", true);
         Cookies.set("user", true);
-        navigateTo("/");
+        window.location.href = "/";
     };
     const handleChangeRadio = (e) => {
         setRemoteDB(e.target.value);
@@ -39,10 +38,12 @@ const CollectionCreateForm = () => {
                         </h1>
                         <button
                             type="button"
-                            className="btn-close"
+                            className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center"
                             data-bs-dismiss="modal"
                             aria-label="Close"
-                        ></button>
+                        >
+                            X
+                        </button>
                     </div>
                     <div className="modal-body">
                         {data.DataResults ? (
@@ -69,14 +70,14 @@ const CollectionCreateForm = () => {
                     <div className="modal-footer">
                         <button
                             type="button"
-                            className="btn btn-secondary"
+                            className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center"
                             data-bs-dismiss="modal"
                         >
                             Close
                         </button>
                         <button
                             type="button"
-                            className="btn btn-primary"
+                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                             data-bs-dismiss="modal"
                             onClick={handleLogin}
                         >

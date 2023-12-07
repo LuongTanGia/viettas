@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Logo from "../../assets/img/logo.png";
 import { dataSelector } from "../../redux/selector";
+
 // eslint-disable-next-line react/prop-types
 function Header({ handleToggleSidebar }) {
     const data = useSelector(dataSelector);
@@ -28,23 +29,7 @@ function Header({ handleToggleSidebar }) {
                     ></i>
                 </div>
 
-                <div className="search-bar">
-                    <form
-                        className="search-form d-flex align-items-center"
-                        method="POST"
-                        action="#"
-                    >
-                        <input
-                            type="text"
-                            name="query"
-                            placeholder="Search"
-                            title="Enter search keyword"
-                        />
-                        <button type="submit" title="Search">
-                            <i className="bi bi-search"></i>
-                        </button>
-                    </form>
-                </div>
+                <div className="search-bar"></div>
 
                 <nav className="header-nav ms-auto">
                     <ul className="d-flex align-items-center">

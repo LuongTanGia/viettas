@@ -12,7 +12,7 @@ function Home({ handleToggleSidebar, isSidebarVisible }) {
     return (
         <div>
             <Header handleToggleSidebar={handleToggleSidebar} />
-            <div className={isSidebarVisible ? "toggle-sidebar" : ""}>
+            <div className={isSidebarVisible ? "toggle-sidebar" : "mainSider"}>
                 <SiderMenu />
             </div>
             <MainPage isSidebarVisible={isSidebarVisible} />

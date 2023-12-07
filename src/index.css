@@ -8,15 +8,15 @@
 @import url("../src/assets/vendor/remixicon/remixicon.css");
 @import url("../src/assets/vendor/simple-datatables/style.css");
 
-/* @tailwind base;
+@tailwind base;
 @tailwind components;
-@tailwind utilities; */
+@tailwind utilities;
 
 a {
     text-decoration: none;
 }
 .show_main {
-    margin-left: 300px;
+    margin-left: 200px;
 }
 .align-items-center {
     justify-content: space-between;
@@ -84,13 +84,20 @@ i.blue {
     border-radius: 4px;
     overflow: hidden;
 }
-
 .progress-bar-fill {
-    height: 100%;
-    background-color: #3498db; /* Màu của thanh rate */
-    transition: width 0.3s ease-in-out;
+    animation: animation 1s ease-in-out;
     border-radius: 4px;
+    transition: width 1.3s ease-in-out;
 }
+@keyframes animation {
+    from {
+        width: 0px;
+    }
+    to {
+        height: 100%;
+    }
+}
+
 .card-title,
 .textArray {
     margin: 0;
@@ -125,4 +132,42 @@ i.blue {
 .btn_cooks {
     padding-left: 15px;
     cursor: pointer;
+}
+.mainSider,
+.sidebar {
+    width: unset;
+}
+#sidebar,
+.mainSider {
+    /* transition: width 1.5s ease; */
+}
+.accordion-header,
+.accordion-button {
+    border-radius: 10px !important;
+}
+a.nav-link span {
+    color: #012970 !important;
+}
+.collapse {
+    visibility: unset !important;
+}
+.lastTitle {
+    margin-left: 20px;
+}
+
+.ant-table-body {
+    max-height: 400px !important;
+}
+
+.table_pmh .ant-table-body {
+    min-height: 418px;
+    max-height: 418px;
+}
+
+.table_modal .ant-table-body {
+    min-height: 220px;
+    max-height: 220px;
+}
+.zIndex {
+    z-index: 10000;
 }

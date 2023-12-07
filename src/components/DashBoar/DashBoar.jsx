@@ -3,6 +3,7 @@ import { dataTONGHOPSelector } from "../../redux/selector";
 import Card from "../util/CardTT/Card";
 import PieChart from "../util/Chart/PieChart";
 import RateBar from "../util/Chart/LoadingChart";
+
 function DashBoar() {
     const data = useSelector(dataTONGHOPSelector);
     console.log(data);
