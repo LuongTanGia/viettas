@@ -179,3 +179,28 @@ export const base64ToPDF = (Base64PMH) => {
         newWindow.print();
     };
 };
+
+export const keyDown = (e) => {
+    const validKeys = [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "/",
+        "Backspace",
+    ];
+    if (!validKeys.includes(e.key)) {
+        e.preventDefault();
+    }
+};
+
+export const roundNumber = (number) => {
+    const roundedNumber = Math.round(number * 10) / 10;
+    return roundedNumber.toFixed(1);
+};

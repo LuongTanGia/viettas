@@ -10,6 +10,7 @@ import * as apis from "../../../apis";
 import { NumericFormat } from "react-number-format";
 import { Modals } from "../../../components_K";
 import dayjs from "dayjs";
+import { keyDown, roundNumber } from "../../../action/Actions";
 
 const { IoAddCircleOutline, TiPrinter, FaRegEdit, MdDelete, FaRegEye } = icons;
 const PhieuMuaHang = ({}) => {
@@ -99,7 +100,6 @@ const PhieuMuaHang = ({}) => {
     }, [dataRecord, isShowModal]);
 
     useEffect(() => {
-        console.log("KoanNgay", formKhoanNgay);
         getKhoanNgay();
         checkTokenExpiration();
     }, []);
@@ -134,7 +134,7 @@ const PhieuMuaHang = ({}) => {
     const checkTokenExpiration = async () => {
         try {
             const tokenLogin = localStorage.getItem("TKN");
-            console.log("SENDdATE", formKhoanNgay);
+
             const response = await apis.DanhSachPMH(tokenLogin, formKhoanNgay);
             // eslint-disable-next-line no-debugger
 
@@ -187,26 +187,6 @@ const PhieuMuaHang = ({}) => {
         }
     };
 
-    const handleKeyDown = (e) => {
-        const validKeys = [
-            "0",
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "/",
-            "Backspace",
-        ];
-        if (!validKeys.includes(e.key)) {
-            e.preventDefault();
-        }
-    };
-
     const validateDate = (_, value) => {
         const isValid = moment(value, "DD/MM/YYYY", true).isValid();
         setIsValidDate(isValid);
@@ -225,14 +205,9 @@ const PhieuMuaHang = ({}) => {
         setIsValidDate(isValid);
     };
 
-    const roundNumber = (number) => {
-        const roundedNumber = Math.round(number * 10) / 10;
-        return roundedNumber.toFixed(1);
-    };
-
     const columns = [
         {
-            title: "- ",
+            title: "STT",
             dataIndex: "STT",
             key: "STT",
             width: 60,
@@ -360,7 +335,7 @@ const PhieuMuaHang = ({}) => {
             dataIndex: "NgayTao",
             key: "NgayTao",
             render: (text) => moment(text).format("DD/MM/YYYY hh:mm:ss"),
-            width: 200,
+            width: 300,
         },
         {
             title: "Người tạo",
@@ -374,13 +349,13 @@ const PhieuMuaHang = ({}) => {
             key: "NgaySuaCuoi",
             render: (text) =>
                 text ? moment(text).format("DD/MM/YYYY hh:mm:ss") : null,
-            width: 150,
+            width: 300,
         },
         {
             title: "Người sửa cuối",
             dataIndex: "NguoiSuaCuoi",
             key: "NguoiSuaCuoi",
-            width: 200,
+            width: 300,
         },
 
         {
@@ -513,7 +488,7 @@ const PhieuMuaHang = ({}) => {
                                     <RangePicker
                                         format="DD/MM/YYYY"
                                         // picker="date"
-                                        onKeyDown={handleKeyDown}
+                                        onKeyDown={keyDown}
                                         onCalendarChange={handleCalendarChange}
                                         defaultValue={[
                                             dayjs(
@@ -736,7 +711,6 @@ const PhieuMuaHang = ({}) => {
                             setIsLoadingPopup(!isLoadingPopup);
                     }}
                     actionType={actionType}
-                    roundNumber={roundNumber}
                     dataRecord={dataRecord}
                     dataThongTin={dataThongTin}
                     dataKhoHang={dataKhoHang}
