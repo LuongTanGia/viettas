@@ -3,7 +3,7 @@ import loginSlice from "../components/Auth/loginSlice";
 import MainSlice from "../components/MainPage/MainSlice";
 import DuLieuSlice from "../components/DULIEU/DuLieuSlice";
 
-// import { toast } from "react-toastify";
+import { toast } from "react-toastify";
 
 export const DANHSACHDULIEU = async (API, data, dispatch) => {
     try {
@@ -24,8 +24,11 @@ export const LOGIN = async (API, TKN, RemoteDB, dispatch) => {
             RemoteDB: RemoteDB,
         });
         if (response) {
+            window.localStorage.setItem("TKN", response.data.TKN);
+            window.localStorage.setItem("RTKN", response.data.RTKN);
             dispatch(loginSlice.actions.login(response.data));
-            localStorage.setItem("TKN", response.data.TKN);
+
+            console.log(response.data);
         } else {
             dispatch(loginSlice.actions.login([]));
         }
@@ -111,6 +114,25 @@ export const DATADULIEU = async (API, token, dispatch) => {
             }
         );
         dispatch(DuLieuSlice.actions.getDataDL(response.data));
+    } catch (error) {
+        console.error("Error adding user:", error);
+    }
+};
+
+export const REFTOKEN = async (API, data) => {
+    try {
+        const response = await axios.post(API, data);
+        if (response.data.DataError === 0) {
+            window.localStorage.setItem("TKN", response.data.TKN);
+        } else {
+            toast.error(
+                "Có người đang nhập ở nơi khác. Bạn sẽ bị chuyển đến trang đăng nhập."
+            );
+
+            window.localStorage.clear();
+            window.location.href = "/";
+            // offLogin;
+        }
     } catch (error) {
         console.error("Error adding user:", error);
     }

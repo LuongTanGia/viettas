@@ -9,6 +9,7 @@ const API = {
     DANHSACHHANGHOA: `${BASE_URL}/api/lists/HangHoa/DanhSach`,
     KHOANNGAY: `${BASE_URL}/api/settings/GiaTriHeThong/KhoanNgay`,
     PHIEUMUAHANG: `${BASE_URL}/api/entries/DuLieuPMH/DanhSach`,
+    REFTOKEN: `${BASE_URL}/api/Auth/RefreshToken`,
 };
 
 export default API;
