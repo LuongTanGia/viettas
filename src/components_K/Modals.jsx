@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import { DatePicker, Space } from "antd";
 import { CreateRow, EditRow } from ".";
 import { data } from "autoprefixer";
+import { base64ToPDF, roundNumber } from "../action/Actions";
 
 const { RangePicker } = DatePicker;
 
@@ -18,7 +19,6 @@ const { IoMdClose, MdDelete } = icons;
 const Modals = ({
   close,
   actionType,
-  roundNumber,
   dataThongTin,
   dataKhoHang,
   dataDoiTuong,
@@ -34,7 +34,8 @@ const Modals = ({
   const [selectedDoiTuong, setSelectedDoiTuong] = useState();
   const [selectedCheckbox, setSelectedCheckbox] = useState(1);
   const [doiTuongInfo, setDoiTuongInfo] = useState({ Ten: "", DiaChi: "" });
-  const [dataBase64, setDataBase64] = useState();
+  const [Base64PMH, setBase64PMH] = useState();
+  const [Base64PK, setBase64PK] = useState();
 
   const startDate = dayjs(controlDate.NgayBatDau).format("YYYY-MM-DDTHH:mm:ss");
   const endDate = dayjs(controlDate.NgayKetThuc).format("YYYY-MM-DDTHH:mm:ss");
@@ -398,7 +399,7 @@ const Modals = ({
       );
       // Kiểm tra call api thành công
       if (response.data && response.data.DataError === 0) {
-        setDataBase64(response.data.DataResults);
+        setBase64PMH(response.data.DataResults);
       } else if (response.data && response.data.DataError === -104) {
         toast.error(response.data.DataErrorDescription);
       } else if (response.data && response.data.DataError === -103) {
@@ -412,7 +413,40 @@ const Modals = ({
       } else {
         toast.error(response.data.DataErrorDescription);
       }
-      base64ToPDF();
+      base64ToPDF(Base64PMH);
+      close();
+    } catch (error) {
+      console.error("Error while saving data:", error);
+    }
+  };
+
+  const handlePrintWareHouse = async () => {
+    try {
+      const tokenLogin = localStorage.getItem("TKN");
+      const response = await apis.InPK(
+        tokenLogin,
+        formPrint,
+        selectedSctBD,
+        selectedSctKT,
+        selectedCheckbox
+      );
+      // Kiểm tra call api thành công
+      if (response.data && response.data.DataError === 0) {
+        setBase64PK(response.data.DataResults);
+      } else if (response.data && response.data.DataError === -104) {
+        toast.error(response.data.DataErrorDescription);
+      } else if (response.data && response.data.DataError === -103) {
+        toast.error(response.data.DataErrorDescription);
+      } else if (
+        (response.data && response.data.DataError === -1) ||
+        response.data.DataError === -2 ||
+        response.data.DataError === -3
+      ) {
+        toast.warning(response.data.DataErrorDescription);
+      } else {
+        toast.error(response.data.DataErrorDescription);
+      }
+      base64ToPDF(Base64PK);
       close();
     } catch (error) {
       console.error("Error while saving data:", error);
@@ -420,34 +454,12 @@ const Modals = ({
   };
 
   useEffect(() => {
-    if (dataBase64) base64ToPDF(dataBase64);
-  }, [dataBase64]);
+    if (Base64PMH) base64ToPDF(Base64PMH);
+  }, [Base64PMH]);
 
-  const base64ToPDF = (dataBase64) => {
-    // Decode base64 string
-    const decodedData = atob(dataBase64);
-
-    // Convert decoded data to array buffer
-    const arrayBuffer = new ArrayBuffer(decodedData.length);
-    const uint8Array = new Uint8Array(arrayBuffer);
-    for (let i = 0; i < decodedData.length; i++) {
-      uint8Array[i] = decodedData.charCodeAt(i);
-    }
-
-    // Create Blob from array buffer
-    const blob = new Blob([arrayBuffer], { type: "application/pdf" });
-
-    // Create a data URL from the Blob
-    const dataUrl = URL.createObjectURL(blob);
-
-    // Open a new window with the data URL
-    const newWindow = window.open(dataUrl, "_blank");
-
-    // Print the opened window
-    newWindow.onload = function () {
-      newWindow.print();
-    };
-  };
+  useEffect(() => {
+    if (Base64PK) base64ToPDF(Base64PK);
+  }, [Base64PK]);
 
   const handleCheckboxChange = (event) => {
     const checkboxValue = parseInt(event.target.value, 10);
@@ -566,6 +578,94 @@ const Modals = ({
                 />
                 <label htmlFor="lien3" className="px-2">
                   Liên 3
+                </label>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {actionType === "printWareHouse" && (
+          <div className="w-[50vw] h-[20vh] ">
+            <div>In phiếu kho</div>
+            <div className="flex justify-center items-center gap-4">
+              <label>Ngày</label>
+              <Space direction="vertical" size={12}>
+                <RangePicker
+                  format="DD/MM/YYYY"
+                  defaultValue={[
+                    dayjs(controlDate.NgayBatDau),
+                    dayjs(controlDate.NgayKetThuc),
+                  ]}
+                  onChange={(values) => {
+                    setFormPrint({
+                      ...formPrint,
+                      NgayBatDau: dayjs(values[0]).format(
+                        "YYYY-MM-DDTHH:mm:ss"
+                      ),
+                      NgayKetThuc: dayjs(values[1]).format(
+                        "YYYY-MM-DDTHH:mm:ss"
+                      ),
+                    });
+                  }}
+                />
+              </Space>
+            </div>
+            <div className="flex justify-center  gap-4 m-4">
+              <div className="flex ">
+                <label className="px-2">Số chứng từ</label>
+                <select
+                  className=" bg-white border outline-none border-gray-300  "
+                  value={selectedSctBD}
+                  onChange={(e) => setSelectedSctBD(e.target.value)}
+                >
+                  {dataPMH?.map((item) => (
+                    <option key={item.SoChungTu} value={item.SoChungTu}>
+                      {item.SoChungTu}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex ">
+                <label className="px-2">Đến</label>
+                <select
+                  className=" bg-white border outline-none border-gray-300  "
+                  value={selectedSctKT}
+                  onChange={(e) => setSelectedSctKT(e.target.value)}
+                >
+                  {dataPMH?.map((item) => (
+                    <option key={item.SoChungTu} value={item.SoChungTu}>
+                      {item.SoChungTu}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            {/* liên */}
+            <div className="flex justify-center items-center gap-6">
+              <div>
+                <input
+                  type="checkbox"
+                  id="lien1"
+                  name="lien1"
+                  value="1"
+                  checked={selectedCheckbox === 1}
+                  onChange={handleCheckboxChange}
+                />
+                <label htmlFor="lien1" className="px-2">
+                  Liên 1
+                </label>
+              </div>
+              <div>
+                <input
+                  type="checkbox"
+                  id="lien2"
+                  name="lien2"
+                  value="2"
+                  checked={selectedCheckbox === 2}
+                  onChange={handleCheckboxChange}
+                />
+                <label htmlFor="lien2" className="px-2">
+                  Liên 2
                 </label>
               </div>
             </div>
@@ -944,6 +1044,12 @@ const Modals = ({
               </div>
               <div>
                 <button
+                  onClick={handleAddInList}
+                  className="border border-blue-500 rounded-md px-4 py-2 hover:bg-blue-500 hover:text-white"
+                >
+                  chọn từ danh sách
+                </button>
+                <button
                   onClick={() => handleEdit(dataRecord)}
                   className="border border-blue-500 rounded-md px-4 py-2 hover:bg-blue-500 hover:text-white"
                 >
@@ -963,15 +1069,24 @@ const Modals = ({
                     </tr>
                   </thead>
                   <tbody>
-                    {dataThongTin?.DataDetails.map((item, index) => (
+                    {/* {dataThongTin?.DataDetails?.map((item, index) => (
                       <EditRow
                         key={item.SoChungTu}
                         index={index}
                         item={item}
-                        roundNumber={roundNumber}
                         dataHangHoa={dataHangHoa}
                         handleDeleteRow={handleDeleteRow}
                         setRowData={dataThongTin}
+                      />
+                    ))} */}
+                    {selectedRowData.map((item, index) => (
+                      <EditRow
+                        key={item.SoChungTu}
+                        index={index}
+                        item={item}
+                        dataHangHoa={dataHangHoa}
+                        handleDeleteRow={handleDeleteRow}
+                        setRowData={setSelectedRowData}
                       />
                     ))}
                   </tbody>
@@ -1136,7 +1251,6 @@ const Modals = ({
                         index={index}
                         item={item}
                         dataHangHoa={dataHangHoa}
-                        roundNumber={roundNumber}
                         handleDeleteRow={handleDeleteRow}
                         setRowData={setSelectedRowData}
                       />
@@ -1163,12 +1277,27 @@ const Modals = ({
               No
             </button>
           </div>
+        ) : actionType === "print" ? (
+          <div className="flex justify-end gap-4 p-4 ">
+            <button
+              className="text-blue-500  border border-blue-500 px-2 py-1 rounded-md hover:bg-blue-500 hover:text-white "
+              onClick={() => handlePrint(Base64PMH)}
+            >
+              In phiếu
+            </button>
+            <button
+              className=" text-red-500 border border-red-500   px-2 py-1 rounded-md hover:bg-red-500 hover:text-white "
+              onClick={() => close()}
+            >
+              Đóng
+            </button>
+          </div>
         ) : (
-          actionType === "print" && (
+          actionType === "printWareHouse" && (
             <div className="flex justify-end gap-4 p-4 ">
               <button
                 className="text-blue-500  border border-blue-500 px-2 py-1 rounded-md hover:bg-blue-500 hover:text-white "
-                onClick={() => handlePrint(dataBase64)}
+                onClick={() => handlePrintWareHouse(Base64PK)}
               >
                 In phiếu
               </button>

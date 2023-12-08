@@ -26,6 +26,8 @@ export const LOGIN = async (API, TKN, RemoteDB, dispatch) => {
         if (response) {
             window.localStorage.setItem("TKN", response.data.TKN);
             window.localStorage.setItem("RTKN", response.data.RTKN);
+            window.localStorage.setItem("User", response.data.MappingUser);
+
             dispatch(loginSlice.actions.login(response.data));
 
             console.log(response.data);
@@ -136,4 +138,69 @@ export const REFTOKEN = async (API, data) => {
     } catch (error) {
         console.error("Error adding user:", error);
     }
+};
+
+export const THAYDOIRMATKHAU = async (API, data, token) => {
+    try {
+        const response = await axios.post(API, data, {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        if (response.data.DataError === 0) {
+            toast(response.data.DataErrorDescription);
+        } else {
+            toast(response.data.DataErrorDescription);
+        }
+    } catch (error) {
+        console.error("Error adding user:", error);
+    }
+};
+
+// function Normal
+export const base64ToPDF = (Base64PMH) => {
+    // Decode base64 string
+    const decodedData = atob(Base64PMH);
+    // Convert decoded data to array buffer
+    const arrayBuffer = new ArrayBuffer(decodedData.length);
+    const uint8Array = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < decodedData.length; i++) {
+        uint8Array[i] = decodedData.charCodeAt(i);
+    }
+    // Create Blob from array buffer
+    const blob = new Blob([arrayBuffer], { type: "application/pdf" });
+    // Create a data URL from the Blob
+    const dataUrl = URL.createObjectURL(blob);
+    // Open a new window with the data URL
+    const newWindow = window.open(dataUrl, "_blank");
+    // Print the opened window
+    newWindow.onload = function () {
+        newWindow.print();
+    };
+};
+
+export const keyDown = (e) => {
+    const validKeys = [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "/",
+        "Backspace",
+    ];
+    if (!validKeys.includes(e.key)) {
+        e.preventDefault();
+    }
+};
+
+export const roundNumber = (number) => {
+    const roundedNumber = Math.round(number * 10) / 10;
+    return roundedNumber.toFixed(1);
 };

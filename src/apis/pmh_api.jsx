@@ -159,6 +159,7 @@ export const XoaPMH = (token, Sct) =>
       reject(error);
     }
   });
+
 export const InPMH = (token, formPrint, SctBD, SctKT, SoLien) =>
   new Promise(async (resolve, reject) => {
     try {
@@ -170,6 +171,34 @@ export const InPMH = (token, formPrint, SctBD, SctKT, SoLien) =>
       // });
       const response = await axios({
         url: "/entries/DuLieuPMH/InPhieu",
+        method: "post",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        data: {
+          ...formPrint,
+          SoChungTuBatDau: SctBD,
+          SoChungTuketThuc: SctKT,
+          SoLien: SoLien,
+        },
+      });
+      resolve(response);
+    } catch (error) {
+      reject(error);
+    }
+  });
+
+export const InPK = (token, formPrint, SctBD, SctKT, SoLien) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      // console.log("Data to be sent to API:", {
+      //   ...formPrint,
+      //   SoChungTuBatDau: SctBD,
+      //   SoChungTuketThuc: SctKT,
+      //   SoLien: SoLien,
+      // });
+      const response = await axios({
+        url: "/entries/DuLieuPMH/InPhieuKho",
         method: "post",
         headers: {
           Authorization: `Bearer ${token}`,

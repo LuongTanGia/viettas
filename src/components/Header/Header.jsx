@@ -1,24 +1,27 @@
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
-import Logo from "../../assets/img/logo.png";
-import { dataSelector } from "../../redux/selector";
 
+import Logo from "../../assets/img/logo.png";
+import ChangePass from "./ChangePass";
+import { useState } from "react";
 // eslint-disable-next-line react/prop-types
 function Header({ handleToggleSidebar }) {
-    const data = useSelector(dataSelector);
-
-    console.log(data);
-
+    const [isShow, setIsShow] = useState(false);
+    const user = localStorage.getItem("User");
     const logout = () => {
         window.localStorage.clear();
         window.location.href = "/login";
     };
-
+    const handeleChange = () => {
+        setIsShow(true);
+    };
+    const close = () => {
+        setIsShow(false);
+    };
     return (
         <>
             <header
                 id="header"
-                className="header fixed-top d-flex align-items-center"
+                className="header fixed-top d-flex align-items-center z-10"
             >
                 <div className="d-flex align-items-center justify-content-between">
                     <Link
@@ -218,7 +221,7 @@ function Header({ handleToggleSidebar }) {
                                             className="rounded-circle"
                                         />
                                         <div>
-                                            <h4>{data.MappingUser}</h4>
+                                            <h4>{user}</h4>
                                             <p>
                                                 Velit asperiores et ducimus
                                                 soluta repudiandae labore
@@ -250,13 +253,13 @@ function Header({ handleToggleSidebar }) {
                                     className="rounded-circle"
                                 />
                                 <span className="d-none d-md-block dropdown-toggle ps-2">
-                                    {data.MappingUser}
+                                    {user}
                                 </span>
                             </Link>
 
                             <ul className="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                                 <li className="dropdown-header">
-                                    <h6>{data.MappingUser}</h6>
+                                    <h6>{user}</h6>
                                     <span>Web Designer</span>
                                 </li>
                                 <li>
@@ -264,15 +267,6 @@ function Header({ handleToggleSidebar }) {
                                 </li>
 
                                 <li>
-                                    <Link
-                                        className="dropdown-item d-flex align-items-center"
-                                        href="users-profile.html"
-                                    >
-                                        <i className="bi bi-person"></i>
-                                        <span>My Profile</span>
-                                    </Link>
-                                </li>
-                                <li>
                                     <hr className="dropdown-divider" />
                                 </li>
 
@@ -280,9 +274,10 @@ function Header({ handleToggleSidebar }) {
                                     <Link
                                         className="dropdown-item d-flex align-items-center"
                                         href="users-profile.html"
+                                        onClick={handeleChange}
                                     >
                                         <i className="bi bi-gear"></i>
-                                        <span>Account Settings</span>
+                                        <span>Đổi mật khẩu </span>
                                     </Link>
                                 </li>
                                 <li>
@@ -308,13 +303,14 @@ function Header({ handleToggleSidebar }) {
                                         href="#"
                                     >
                                         <i className="bi bi-box-arrow-right"></i>
-                                        <span>Sign Out</span>
+                                        <span>Thoát</span>
                                     </Link>
                                 </li>
                             </ul>
                         </li>
                     </ul>
                 </nav>
+                <ChangePass isShow={isShow} close={close} />
             </header>
         </>
     );
