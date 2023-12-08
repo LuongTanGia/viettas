@@ -26,6 +26,8 @@ export const LOGIN = async (API, TKN, RemoteDB, dispatch) => {
         if (response) {
             window.localStorage.setItem("TKN", response.data.TKN);
             window.localStorage.setItem("RTKN", response.data.RTKN);
+            window.localStorage.setItem("User", response.data.MappingUser);
+
             dispatch(loginSlice.actions.login(response.data));
 
             console.log(response.data);
@@ -138,6 +140,24 @@ export const REFTOKEN = async (API, data) => {
     }
 };
 
+export const THAYDOIRMATKHAU = async (API, data, token) => {
+    try {
+        const response = await axios.post(API, data, {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        if (response.data.DataError === 0) {
+            toast(response.data.DataErrorDescription);
+        } else {
+            toast(response.data.DataErrorDescription);
+        }
+    } catch (error) {
+        console.error("Error adding user:", error);
+    }
+};
+
 // function Normal
 export const base64ToPDF = (Base64PMH) => {
     // Decode base64 string
@@ -158,4 +178,29 @@ export const base64ToPDF = (Base64PMH) => {
     newWindow.onload = function () {
         newWindow.print();
     };
+};
+
+export const keyDown = (e) => {
+    const validKeys = [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "/",
+        "Backspace",
+    ];
+    if (!validKeys.includes(e.key)) {
+        e.preventDefault();
+    }
+};
+
+export const roundNumber = (number) => {
+    const roundedNumber = Math.round(number * 10) / 10;
+    return roundedNumber.toFixed(1);
 };

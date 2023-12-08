@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 import { DatePicker, Space } from "antd";
 import { CreateRow, EditRow } from ".";
 import { data } from "autoprefixer";
-import { base64ToPDF } from "../action/Actions";
+import { base64ToPDF, roundNumber } from "../action/Actions";
 
 const { RangePicker } = DatePicker;
 
@@ -19,7 +19,6 @@ const { IoMdClose, MdDelete } = icons;
 const Modals = ({
   close,
   actionType,
-  roundNumber,
   dataThongTin,
   dataKhoHang,
   dataDoiTuong,
@@ -1045,6 +1044,12 @@ const Modals = ({
               </div>
               <div>
                 <button
+                  onClick={handleAddInList}
+                  className="border border-blue-500 rounded-md px-4 py-2 hover:bg-blue-500 hover:text-white"
+                >
+                  chọn từ danh sách
+                </button>
+                <button
                   onClick={() => handleEdit(dataRecord)}
                   className="border border-blue-500 rounded-md px-4 py-2 hover:bg-blue-500 hover:text-white"
                 >
@@ -1064,15 +1069,24 @@ const Modals = ({
                     </tr>
                   </thead>
                   <tbody>
-                    {dataThongTin?.DataDetails.map((item, index) => (
+                    {/* {dataThongTin?.DataDetails?.map((item, index) => (
                       <EditRow
                         key={item.SoChungTu}
                         index={index}
                         item={item}
-                        roundNumber={roundNumber}
                         dataHangHoa={dataHangHoa}
                         handleDeleteRow={handleDeleteRow}
                         setRowData={dataThongTin}
+                      />
+                    ))} */}
+                    {selectedRowData.map((item, index) => (
+                      <EditRow
+                        key={item.SoChungTu}
+                        index={index}
+                        item={item}
+                        dataHangHoa={dataHangHoa}
+                        handleDeleteRow={handleDeleteRow}
+                        setRowData={setSelectedRowData}
                       />
                     ))}
                   </tbody>
@@ -1237,7 +1251,6 @@ const Modals = ({
                         index={index}
                         item={item}
                         dataHangHoa={dataHangHoa}
-                        roundNumber={roundNumber}
                         handleDeleteRow={handleDeleteRow}
                         setRowData={setSelectedRowData}
                       />

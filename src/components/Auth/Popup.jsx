@@ -23,61 +23,44 @@ const CollectionCreateForm = ({ isShow, close }) => {
   return (
     <>
       {isShow ? (
-        <div
-          className="modal fade show"
-          id="exampleModal"
-          // tabindex="-1"
-          aria-labelledby="exampleModalLabel"
-          // aria-hidden="true"
-          aria-modal="true"
-          style={isShow ? { display: "block" } : { display: "none" }}
-        >
-          <div className="modal-dialog show">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h1 className="modal-title fs-5" id="exampleModalLabel">
-                  {data.DataResults ? "DANH SÁCH DỮ LIỆU" : "ERROR LOGIN"}
-                </h1>
-              </div>
-              <div className="modal-body">
-                {data.DataResults ? (
-                  data.DataResults.map((item, index) =>
-                    item.RemoteDB ? (
-                      <div key={index}>
-                        {item.RemoteDBDescription}
-                        <input
-                          type="radio"
-                          value={item.RemoteDB}
-                          checked={RemoteDB === item.RemoteDB}
-                          name="remoteDB"
-                          onChange={handleChangeRadio}
-                        />
-                      </div>
-                    ) : null
-                  )
-                ) : (
-                  <p className="error_login">{data.DataErrorDescription}</p>
-                )}
-              </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center"
-                  data-bs-dismiss="modal"
-                  onClick={() => close()}
-                >
-                  Close
-                </button>
-                <button
-                  type="button"
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                  data-bs-dismiss="modal"
-                  onClick={handleLogin}
-                >
-                  Save changes
-                </button>
-              </div>
+        <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center">
+          <div className="w-[600px] m-6 p-6 absolute   shadow-lg bg-white rounded-md flex flex-col">
+            <div className="flex justify-between items-center">
+              <label>Chọn cơ sở dữ liệu</label>
+              <button
+                onClick={() => close()}
+                className="text-gray-500 p-1 border hover:border-gray-300 hover:bg-red-600 hover:text-white rounded-full"
+              >
+                X{/* <IoMdClose /> */}
+              </button>
             </div>
+
+            <div className="p-6">
+              {data?.DataResults?.map((item, index) => (
+                <div className="flex items-center p-3 " key={index}>
+                  <input
+                    id={item.RemoteDB}
+                    type="radio"
+                    name="remoteDB"
+                    value={item.RemoteDB}
+                    onChange={handleChangeRadio}
+                  />
+                  <label
+                    htmlFor={item.RemoteDB}
+                    className="ml-2 text-base font-medium"
+                  >
+                    {item.RemoteDBDescription}
+                  </label>
+                </div>
+              ))}
+            </div>
+
+            <button
+              onClick={handleLogin}
+              className="active:scale-[.98] active:duration-75 text-white text-lg font-bold  bg-blue-500 rounded-md px-2 py-1"
+            >
+              Xác nhận
+            </button>
           </div>
         </div>
       ) : null}

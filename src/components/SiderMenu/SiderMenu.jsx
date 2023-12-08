@@ -8,7 +8,7 @@ const SiderMenu = () => {
     const [string] = useState([]);
     console.log(data);
     return (
-        <aside id="sidebar" className="sidebar">
+        <aside id="sidebar" className="sidebar z-10">
             <ul className="sidebar-nav" id="sidebar-nav">
                 <li className="nav-item">
                     <Link className="nav-link " to="/">

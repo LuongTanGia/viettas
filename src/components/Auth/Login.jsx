@@ -3,7 +3,7 @@ import { DANHSACHDULIEU, LOGIN } from "../../action/Actions";
 import { GoogleLogin } from "@react-oauth/google";
 import API from "../../API/API";
 import { useDispatch } from "react-redux";
-import VietTas from "../../assets/img/viettas.jfif";
+// import VietTas from "../../assets/img/viettas.jfif";
 import "./auth.css";
 import CollectionCreateForm from "./Popup";
 import { useSelector } from "react-redux";
@@ -65,8 +65,8 @@ const App = () => {
     };
 
     return (
-        <main className="bg-color">
-            <div className="container">
+        <div className="flex justify-center items-center h-screen bg-cover">
+            {/* <div className="container">
                 <div className="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
                     <div className="container">
                         <div className="row justify-content-center">
@@ -187,13 +187,8 @@ const App = () => {
                                         </div>
                                     </div>
                                 </div>
-                                {/* <CollectionCreateForm /> */}
-                                {isLoggedIn ? (
-                                    <CollectionCreateForm
-                                        isShow={isLoggedIn}
-                                        close={close}
-                                    />
-                                ) : null}
+                          
+                               
                                 <div className="credits">
                                     {"Designed by "}
                                     <a href="https://bootstrapmade.com/">
@@ -204,8 +199,83 @@ const App = () => {
                         </div>
                     </div>
                 </div>
+            </div> */}
+            <div className="relative w-[500px] p-6 shadow-lg bg-white rounded-md">
+                <h1 className="text-center font-semibold text-4xl">
+                    Đăng Nhập
+                </h1>
+                <div className="mt-8">
+                    <div className="mb-4">
+                        <label className="text-lg font-medium mb-2">
+                            Tài Khoản
+                        </label>
+                        <input
+                            type="text"
+                            name="User"
+                            required
+                            //   autoComplete="on"
+
+                            value={user.User}
+                            onChange={onChangeInput}
+                            className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1 text-base  focus:outline-none focus:ring-0 focus:border-blue-500 hover:border-blue-500 bg-blue-100"
+                            placeholder="Nhập tài khoản..."
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <label className="text-lg font-medium mb-2">
+                            Mật Khẩu
+                        </label>
+                        <input
+                            type="password"
+                            name="Pass"
+                            required
+                            // autoComplete="on"
+                            placeholder="Password *"
+                            value={user.Pass}
+                            onChange={onChangeInput}
+                            className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1 text-base  focus:outline-none focus:ring-0 focus:border-blue-500 hover:border-blue-500 bg-blue-100"
+                        />
+                    </div>
+                    <div className="flex justify-between items-center mb-4">
+                        <div>
+                            <input id="remember" type="checkbox" />
+                            <label
+                                htmlFor="remember"
+                                className="ml-2 text-base font-medium"
+                            >
+                                Nhớ mật khẩu
+                            </label>
+                        </div>
+                        <button className="ml-2 text-base font-medium text-blue-500 ">
+                            Quên mật khẩu ?
+                        </button>
+                    </div>
+                    <div className="flex flex-col gap-y-4 mt-14">
+                        <button
+                            onClick={handleAddUser}
+                            className="  active:scale-[.98] active:duration-75 text-white text-lg font-bold  bg-blue-500 rounded-md px-4 py-2 "
+                        >
+                            Đăng nhập
+                        </button>
+
+                        <div className="flex justify-center items-center w-full">
+                            <GoogleLogin
+                                onSuccess={handleGoogleLogin}
+                                onError={() => {
+                                    console.log("Login Failed");
+                                }}
+                            />
+                            {isLoggedIn ? (
+                                <CollectionCreateForm
+                                    isShow={isLoggedIn}
+                                    close={close}
+                                />
+                            ) : null}
+                        </div>
+                    </div>
+                </div>
             </div>
-        </main>
+        </div>
     );
 };
 export default App;

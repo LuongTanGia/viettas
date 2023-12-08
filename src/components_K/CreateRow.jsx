@@ -9,7 +9,7 @@ const CreateRow = ({
   index,
   item,
   dataHangHoa,
-  roundNumber,
+
   handleDeleteRow,
   setRowData,
 }) => {
