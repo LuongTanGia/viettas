@@ -477,7 +477,11 @@ const PhieuMuaHang = ({}) => {
         setDataRecord(record);
         setIsShowModal(true);
     };
-
+    const handlePrintWareHouse = (record) => {
+        setActionType("printWareHouse");
+        setDataRecord(record);
+        setIsShowModal(true);
+    };
     const handleFilterDS = () => {
         console.log("DATA");
         checkTokenExpiration();
@@ -489,7 +493,7 @@ const PhieuMuaHang = ({}) => {
     }
 
     return (
-        <div className="w-[85vw] ">
+        <div className="w-auto">
             <div className="text-lg font-bold mx-4 my-2 "> Phiếu mua hàng</div>
             <div className="flex justify-between items-center px-4">
                 {/* date rang */}
@@ -573,6 +577,15 @@ const PhieuMuaHang = ({}) => {
                             <TiPrinter size={20} />
                         </div>
                         <div>In phiếu</div>
+                    </button>
+                    <button
+                        onClick={handlePrintWareHouse}
+                        className="flex items-center  py-1 px-2  rounded-md border-dashed border border-gray-500  text-sm hover:text-sky-500  hover:border-sky-500 "
+                    >
+                        <div className="pr-1">
+                            <TiPrinter size={20} />
+                        </div>
+                        <div>In phiếu Kho</div>
                     </button>
                 </div>
             </div>

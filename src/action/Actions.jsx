@@ -137,3 +137,25 @@ export const REFTOKEN = async (API, data) => {
         console.error("Error adding user:", error);
     }
 };
+
+// function Normal
+export const base64ToPDF = (Base64PMH) => {
+    // Decode base64 string
+    const decodedData = atob(Base64PMH);
+    // Convert decoded data to array buffer
+    const arrayBuffer = new ArrayBuffer(decodedData.length);
+    const uint8Array = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < decodedData.length; i++) {
+        uint8Array[i] = decodedData.charCodeAt(i);
+    }
+    // Create Blob from array buffer
+    const blob = new Blob([arrayBuffer], { type: "application/pdf" });
+    // Create a data URL from the Blob
+    const dataUrl = URL.createObjectURL(blob);
+    // Open a new window with the data URL
+    const newWindow = window.open(dataUrl, "_blank");
+    // Print the opened window
+    newWindow.onload = function () {
+        newWindow.print();
+    };
+};
