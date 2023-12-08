@@ -26,6 +26,8 @@ export const LOGIN = async (API, TKN, RemoteDB, dispatch) => {
         if (response) {
             window.localStorage.setItem("TKN", response.data.TKN);
             window.localStorage.setItem("RTKN", response.data.RTKN);
+            window.localStorage.setItem("User", response.data.MappingUser);
+
             dispatch(loginSlice.actions.login(response.data));
 
             console.log(response.data);
@@ -132,6 +134,24 @@ export const REFTOKEN = async (API, data) => {
             window.localStorage.clear();
             window.location.href = "/";
             // offLogin;
+        }
+    } catch (error) {
+        console.error("Error adding user:", error);
+    }
+};
+
+export const THAYDOIRMATKHAU = async (API, data, token) => {
+    try {
+        const response = await axios.post(API, data, {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        if (response.data.DataError === 0) {
+            toast(response.data.DataErrorDescription);
+        } else {
+            toast(response.data.DataErrorDescription);
         }
     } catch (error) {
         console.error("Error adding user:", error);

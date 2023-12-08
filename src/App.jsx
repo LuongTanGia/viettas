@@ -20,7 +20,6 @@ import {
     KHOANNGAY,
     DATATONGHOP,
     DATADULIEU,
-    REFTOKEN,
 } from "./action/Actions";
 import API from "./API/API";
 import { useDispatch, useSelector } from "react-redux";
@@ -44,11 +43,11 @@ function App() {
             await DATATONGHOP(API.TONGHOP, token, KhoanNgay, dispatch);
             await DATADULIEU(API.PHIEUMUAHANG, token, dispatch);
 
-            if (tokenRF) {
-                setTimeout(async () => {
-                    await REFTOKEN(API.REFTOKEN, { TokenID: tokenRF });
-                }, 5000);
-            }
+            // if (tokenRF) {
+            //     setTimeout(async () => {
+            //         await REFTOKEN(API.REFTOKEN, { TokenID: tokenRF });
+            //     }, 10000);
+            // }
 
             setDataLoaded(true);
         };

@@ -266,13 +266,13 @@ const PhieuMuaHang = ({}) => {
             title: "Tên đối tượng",
             dataIndex: "TenDoiTuong",
             key: "TenDoiTuong",
-            width: 150,
+            width: 300,
         },
         {
             title: "Địa chỉ",
             dataIndex: "DiaChi",
             key: "DiaChi",
-            width: 150,
+            width: 300,
         },
         {
             title: "Mã số thuế",
@@ -360,13 +360,13 @@ const PhieuMuaHang = ({}) => {
             dataIndex: "NgayTao",
             key: "NgayTao",
             render: (text) => moment(text).format("DD/MM/YYYY hh:mm:ss"),
-            width: 150,
+            width: 200,
         },
         {
             title: "Người tạo",
             dataIndex: "NguoiTao",
             key: "NguoiTao",
-            width: 200,
+            width: 300,
         },
         {
             title: "Ngày sửa cuối",

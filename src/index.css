@@ -170,7 +170,7 @@ a.nav-link span {
     max-height: 220px;
 }
 .zIndex {
-    z-index: 1500;
+    z-index: 10;
 }
 /* Tan */
 .table_DMHangHoa .ant-table-body {
@@ -182,4 +182,7 @@ a.nav-link span {
     min-height: 420px;
     max-height: 420px;
     z-index: 0;
+}
+input[type="radio"] {
+    width: unset;
 }
