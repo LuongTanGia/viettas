@@ -333,7 +333,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
         }
     };
     return (
-        <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10">
+        <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 zIndex">
             <div
                 onClick={close}
                 className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"

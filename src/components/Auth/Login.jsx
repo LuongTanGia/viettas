@@ -36,8 +36,9 @@ const App = () => {
         if (data?.DataResults.length === 1) {
             const remoteDB = data.DataResults[0].RemoteDB;
             console.log(remoteDB);
-
             await LOGIN(API.DANGNHAP, data.TKN, remoteDB, dispatch);
+            window.localStorage.setItem("firstLogin", true);
+
             window.location.href = "/";
         } else if (data?.DataResults.length > 1) {
             setIsLoggedIn(true);
