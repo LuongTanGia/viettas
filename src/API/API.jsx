@@ -10,6 +10,10 @@ const API = {
     KHOANNGAY: `${BASE_URL}/api/settings/GiaTriHeThong/KhoanNgay`,
     PHIEUMUAHANG: `${BASE_URL}/api/entries/DuLieuPMH/DanhSach`,
     DOIMATKHAU: `${BASE_URL}/api/NguoiDung/DoiMatKhau`,
+
+    //Phiếu Bán Hàng ///api/entries/DuLieuPBS
+
+    DANHSACHPBS: `${BASE_URL}api/entries/DuLieuPBS/DanhSach`,
 };
 
 export default API;

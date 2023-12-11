@@ -189,5 +189,5 @@ a.nav-link span {
     z-index: 0;
 }
 input[type="radio"] {
-    width: unset;
+    width: 20px;
 }
