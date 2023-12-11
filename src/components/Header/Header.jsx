@@ -30,11 +30,11 @@ function Header({ handleToggleSidebar }) {
                     >
                         <img src="assets/img/logo.png" alt="" />
                         <span className="d-none d-lg-block">VietTas</span>
+                        <i
+                            className="bi bi-list toggle-sidebar-btn"
+                            onClick={handleToggleSidebar}
+                        ></i>
                     </Link>
-                    <i
-                        className="bi bi-list toggle-sidebar-btn"
-                        onClick={handleToggleSidebar}
-                    ></i>
                 </div>
 
                 <div className="search-bar"></div>

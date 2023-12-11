@@ -9,7 +9,7 @@ import CollectionCreateForm from "./Popup";
 import { useSelector } from "react-redux";
 import { authDataSelector } from "../../redux/selector";
 import { toast } from "react-toastify";
-
+import backgroundImg from "../../assets/img/backgroud.jfif";
 const App = () => {
     const dispatch = useDispatch();
     const data = useSelector(authDataSelector);
@@ -65,7 +65,10 @@ const App = () => {
     };
 
     return (
-        <div className="flex justify-center items-center h-screen bg-cover">
+        <div
+            className="flex justify-center items-center h-screen bg-cover"
+            style={{ backgroundImage: `url(${backgroundImg})` }}
+        >
             {/* <div className="container">
                 <div className="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
                     <div className="container">

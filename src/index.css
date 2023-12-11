@@ -19,9 +19,9 @@ a {
 .show_main {
     margin-left: 200px;
 }
-.align-items-center {
+/* .align-items-center {
     justify-content: space-between;
-}
+} */
 .gridMain {
     display: grid;
     grid-template-areas:
@@ -124,7 +124,7 @@ i.blue {
     padding-bottom: 0;
 }
 .cook_tag {
-    z-index: 10000;
+    z-index: 0;
     position: absolute;
     bottom: 0;
     width: 400px;
@@ -137,6 +137,7 @@ i.blue {
 .mainSider,
 .sidebar {
     width: unset;
+    z-index: 0;
 }
 #sidebar,
 .mainSider {

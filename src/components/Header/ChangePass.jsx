@@ -17,7 +17,7 @@ function ChangePass({ isShow, close }) {
     return (
         <>
             {isShow ? (
-                <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center">
+                <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-20">
                     <div className="w-[600px] m-6 p-6 absolute shadow-lg bg-white rounded-md flex flex-col">
                         <Title level={2}>Thay đổi mật khẩu </Title>
                         <Form
