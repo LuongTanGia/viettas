@@ -5,7 +5,7 @@ import DuLieuSlice from "../components/DULIEU/DuLieuSlice";
 
 import { toast } from "react-toastify";
 
-export const REFTOKEN = async () => {
+export const RETAKEN = async () => {
     const token = window.localStorage.getItem("RTKN");
     const login = window.localStorage.getItem("firstLogin");
 
@@ -82,7 +82,7 @@ export const DANHSACHCHUCNANG = async (API, token, dispatch) => {
         );
         if (response.data.DataError === -107) {
             toast.error(response.data.DataErrorDescription);
-            const newToken = await REFTOKEN();
+            const newToken = await RETAKEN();
             if (newToken) {
                 await DANHSACHCHUCNANG(API, newToken, dispatch);
             } else {
@@ -94,7 +94,7 @@ export const DANHSACHCHUCNANG = async (API, token, dispatch) => {
         }
         if (response.data.DataError === -107) {
             toast.error(response.data.DataErrorDescription);
-            const newToken = await REFTOKEN();
+            const newToken = await RETAKEN();
             if (newToken) {
                 await DANHSACHCHUCNANG(API, newToken, dispatch);
             } else {
@@ -152,7 +152,7 @@ export const DATATONGHOP = async (API, token, KhoanNgay, dispatch) => {
         });
         if (response.data.DataError === -107) {
             toast.error(response.data.DataErrorDescription);
-            const newToken = await REFTOKEN();
+            const newToken = await RETAKEN();
             if (newToken) {
                 await DATATONGHOP(API, newToken, KhoanNgay, dispatch);
             } else {
@@ -162,7 +162,7 @@ export const DATATONGHOP = async (API, token, KhoanNgay, dispatch) => {
         }
         if (response.data.DataError === -107) {
             toast.error(response.data.DataErrorDescription);
-            const newToken = await REFTOKEN();
+            const newToken = await RETAKEN();
             if (newToken) {
                 await DATATONGHOP(API, newToken, KhoanNgay, dispatch);
             } else {

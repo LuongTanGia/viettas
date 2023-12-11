@@ -32,15 +32,6 @@ const Modals = ({
     const [selectedKhoHang, setSelectedKhoHang] = useState();
     const [selectedRowData, setSelectedRowData] = useState([]);
     const [selectedDoiTuong, setSelectedDoiTuong] = useState();
-    const [selectedCheckbox, setSelectedCheckbox] = useState(1);
-    const [doiTuongInfo, setDoiTuongInfo] = useState({ Ten: "", DiaChi: "" });
-    const [Base64PMH, setBase64PMH] = useState();
-    const [Base64PK, setBase64PK] = useState();
-    const [isShowModalHH, setIsShowModalHH] = useState(false);
-    const [dataHangHoa, setDataHangHoa] = useState(null);
-    const [selectedKhoHang, setSelectedKhoHang] = useState();
-    const [selectedRowData, setSelectedRowData] = useState([]);
-    const [selectedDoiTuong, setSelectedDoiTuong] = useState();
     const [doiTuongInfo, setDoiTuongInfo] = useState({ Ten: "", DiaChi: "" });
 
     const startDate = dayjs(controlDate.NgayBatDau).format(
@@ -80,7 +71,6 @@ const Modals = ({
     });
 
     const [formPMHEdit, setFormPMHEdit] = useState();
-    const [formPMHEdit, setFormPMHEdit] = useState();
 
     const [checkboxValues, setCheckboxValues] = useState({
         checkbox1: true,
@@ -92,10 +82,6 @@ const Modals = ({
         handleAddInList();
     }, []);
 
-    useEffect(() => {
-        if (dataThongTin !== null) setFormPMHEdit(dataThongTin);
-        setSelectedRowData([]);
-    }, [dataThongTin]);
     useEffect(() => {
         if (dataThongTin !== null) setFormPMHEdit(dataThongTin);
     }, [dataThongTin, dataThongTin.DataDetails]);
@@ -264,8 +250,13 @@ const Modals = ({
     useEffect(() => {
         if (dataDoiTuong && actionType === "create")
             handleDoiTuongFocus(dataDoiTuong[0].Ma);
-        if (dataDoiTuong && dataThongTin && actionType === "edit")
+        if (dataDoiTuong && dataThongTin && actionType === "edit") {
             handleDoiTuongFocus(dataThongTin.MaDoiTuong);
+
+            if (dataThongTin?.DataDetails) {
+                setSelectedRowData([...dataThongTin.DataDetails]);
+            }
+        }
     }, [dataDoiTuong, dataThongTin]);
 
     useEffect(() => {
@@ -648,16 +639,12 @@ const Modals = ({
 
                             <div>
                                 <input
-                                    type="checkbox"
                                     id="lien3"
-                                    name="lien3"
-                                    value="4"
-                                    checked={selectedCheckbox === 4}
-                                    onChange={handleCheckboxChange}
+                                    type="checkbox"
+                                    checked={checkboxValues.checkbox3}
+                                    onChange={() => handleLien("checkbox3")}
                                 />
-                                <label htmlFor="lien3" className="px-2">
-                                    Liên 3
-                                </label>
+                                <label htmlFor="lien3">Liên 3</label>
                             </div>
                         </div>
                     </div>
