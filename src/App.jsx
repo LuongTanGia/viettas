@@ -35,24 +35,24 @@ function App() {
     const [dataLoaded, setDataLoaded] = useState(false);
 
     useEffect(() => {
-        const loadData = async () => {
-            console.log("LoadDataa");
-            await DANHSACHCHUCNANG(API.DANHSACHCHUCNANG, token, dispatch);
-            await DANHSACHHANGHOA(API.DANHSACHHANGHOA, token, dispatch);
-            await KHOANNGAY(API.KHOANNGAY, token, dispatch);
-            await DATATONGHOP(API.TONGHOP, token, KhoanNgay, dispatch);
-            await DATADULIEU(API.PHIEUMUAHANG, token, dispatch);
-
-            // if (tokenRF) {
-            //     setTimeout(async () => {
-            //         await REFTOKEN(API.REFTOKEN, { TokenID: tokenRF });
-            //     }, 10000);
-            // }
-
+        if (token === null) {
             setDataLoaded(true);
-        };
+        } else {
+            setDataLoaded(false);
+            const loadData = async () => {
+                console.log("LoadDataa");
+                console.log(token);
+                await DANHSACHCHUCNANG(API.DANHSACHCHUCNANG, token, dispatch);
+                await DANHSACHHANGHOA(API.DANHSACHHANGHOA, token, dispatch);
+                await KHOANNGAY(API.KHOANNGAY, token, dispatch);
+                await DATATONGHOP(API.TONGHOP, token, KhoanNgay, dispatch);
+                await DATADULIEU(API.PHIEUMUAHANG, token, dispatch);
 
-        loadData();
+                setDataLoaded(true);
+            };
+
+            loadData();
+        }
     }, [token, dispatch, tokenRF]);
 
     const [isSidebarVisible, setIsSidebarVisible] = useState(true);
