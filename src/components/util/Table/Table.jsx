@@ -1,216 +1,135 @@
-import { useState } from "react";
-import { Table, Modal, Input, Space, Select } from "antd";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { useSelector } from "react-redux";
-import { dataDSHHSelector } from "../../../redux/selector";
-
-const App = () => {
-    const datas = useSelector(dataDSHHSelector);
-    const dataHangHoa = datas.DataResults;
-    const newData = dataHangHoa.map((item, index) => {
-        return { ...item, key: index };
+import { Table, Typography } from "antd";
+import "./table.css";
+const { Text } = Typography;
+const columns = [
+    {
+        title: "Full Name",
+        width: 100,
+        dataIndex: "name",
+        key: "name",
+        fixed: "left",
+    },
+    {
+        title: "Age",
+        width: 100,
+        dataIndex: "age",
+        key: "age",
+        fixed: "left",
+    },
+    {
+        title: "Column 1",
+        dataIndex: "address",
+        key: "1",
+        width: 150,
+    },
+    {
+        title: "Column 2",
+        dataIndex: "address",
+        key: "2",
+        width: 150,
+    },
+    {
+        title: "Column 3",
+        dataIndex: "address",
+        key: "3",
+        width: 150,
+    },
+    {
+        title: "Column 4",
+        dataIndex: "address",
+        key: "4",
+        width: 150,
+    },
+    {
+        title: "Column 5",
+        dataIndex: "address",
+        key: "5",
+        width: 150,
+    },
+    {
+        title: "Số Đếm",
+        dataIndex: "SoDem",
+        key: "6",
+        width: 150,
+    },
+    {
+        title: "Tổng",
+        dataIndex: "Tong",
+        key: "7",
+        width: 150,
+    },
+    {
+        title: "Column 8",
+        dataIndex: "address",
+        key: "8",
+    },
+    {
+        title: "Action",
+        key: "operation",
+        fixed: "right",
+        width: 100,
+        render: () => <a>action</a>,
+    },
+];
+const data = [];
+for (let i = 0; i < 5; i++) {
+    const age = 32;
+    const soDem = Math.floor(Math.random() * 100);
+    data.push({
+        key: i,
+        name: `Edward ${i}`,
+        age: age,
+        SoDem: soDem,
+        address: `London Park no. ${i}`,
+        Tong: age + soDem,
     });
-    const data = [...newData];
-    const OneHangHoa = dataHangHoa[0];
+}
 
-    const columns_value = Object.keys(OneHangHoa);
-
-    const columns_hanghoa = columns_value.map((item) => ({
-        title: item,
-        dataIndex: item,
-        sorter: (a, b) => a[item].length - b[item].length,
-    }));
-    const onChange = (pagination, filters, sorter, extra) => {
-        console.log("params", pagination, filters, sorter, extra);
-    };
-
-    const columns = [
-        ...columns_hanghoa,
-        {
-            key: "action",
-            title: "Actions",
-            render: (record) => {
+const App = () => (
+    <>
+        <Table
+            columns={columns}
+            dataSource={data}
+            // pagination={false}
+            bordered
+            scroll={{
+                x: 1500,
+                y: 300,
+            }}
+            summary={(pageData) => {
                 return (
-                    <>
-                        <div className="flex">
-                            <EditOutlined
-                                style={{ color: "black" }}
-                                onClick={() => Edit(record)}
-                            />
-                            <DeleteOutlined
-                                style={{ color: "red" }}
-                                onClick={() => Delete(record)}
-                            />
-                            <EditOutlined
-                                style={{ color: "green" }}
-                                onClick={() => View(record)}
-                            />
-                        </div>
-                    </>
+                    <Table.Summary fixed>
+                        <Table.Summary.Row>
+                            {/* <Table.Summary.Cell key={columns.key == "age"}>
+                                <Text type="danger">{totalBorrow}</Text>
+                            </Table.Summary.Cell> */}
+                            {columns.map((column) => {
+                                const isNumericColumn =
+                                    typeof data[0][column.dataIndex] ===
+                                    "number";
+
+                                return (
+                                    <Table.Summary.Cell key={column.key}>
+                                        {isNumericColumn ? (
+                                            <Text strong>
+                                                {pageData.reduce(
+                                                    (total, item) =>
+                                                        total +
+                                                        item[column.dataIndex],
+                                                    0
+                                                )}
+                                            </Text>
+                                        ) : null}
+                                    </Table.Summary.Cell>
+                                );
+                            })}
+                        </Table.Summary.Row>
+                    </Table.Summary>
                 );
-            },
-        },
-    ];
-    const [checkStrictly] = useState(false);
-    const rowSelection = {
-        onChange: (selectedRowKeys, selectedRows) => {
-            console.log(
-                `selectedRowKeys: ${selectedRowKeys}`,
-                "selectedRows: ",
-                selectedRows
-            );
-        },
-        onSelect: (record, selected, selectedRows) => {
-            console.log(record, selected, selectedRows);
-        },
-        onSelectAll: (selected, selectedRows, changeRows) => {
-            console.log(selected, selectedRows, changeRows);
-        },
-    };
-    const [visible, setVisible] = useState(false);
-    const [SearchInput, setSearchInput] = useState("");
+            }}
+        />
 
-    const Edit = (e) => {
-        setVisible(true);
-        setEdit(e);
-    };
-    const View = (e) => {
-        setVisible(true);
-        setEdit(e);
-    };
-    const ResetEditing = () => {
-        setVisible(false);
-    };
-    const [edit, setEdit] = useState(null);
-    const [Data, setData] = useState(data);
-    const [filterData, setFilterData] = useState();
-
-    const Delete = (record) => {
-        Modal.confirm({
-            title: "Are you sure you want to delete this",
-            onOk: () => {
-                setData((pre) => {
-                    return pre.filter(
-                        (person) => person.MaVach != record.MaVach
-                    );
-                });
-            },
-        });
-    };
-    const handleChange = (value) => {
-        setFilterData(value);
-        console.log(`selected ${value}`);
-    };
-
-    const options = [];
-    for (let i = 0; i < columns_value.length; i++) {
-        options.push({
-            value: columns_value[i],
-            label: columns_value[i],
-        });
-    }
-    return (
-        <>
-            <div className="app">
-                <Select
-                    style={{ width: 120 }}
-                    onChange={handleChange}
-                    options={options}
-                />
-                <Space
-                    align="center"
-                    style={{
-                        marginBottom: 16,
-                    }}
-                >
-                    <Input
-                        value={SearchInput}
-                        onChange={(e) => {
-                            const inputValue = e.target.value;
-                            setSearchInput(inputValue);
-
-                            const filteredData = data.filter((person) =>
-                                person[filterData].includes(inputValue)
-                            );
-
-                            console.log(filteredData);
-                            setData(
-                                filteredData.length > 0 ? filteredData : data
-                            );
-                        }}
-                    />
-                </Space>
-                <Modal
-                    title="Edit Details"
-                    visible={visible}
-                    okText="Save"
-                    onCancel={() => /*setVisible(false)*/ ResetEditing()}
-                    onOk={() => /*setVisible(false)*/ {
-                        setData((pre) => {
-                            return pre.map((student) => {
-                                if (student.id === edit.id) {
-                                    return edit;
-                                } else {
-                                    return student;
-                                }
-                            });
-                        });
-                        ResetEditing();
-                    }}
-                >
-                    <Input
-                        value={edit?.Nhom}
-                        onChange={(e) => {
-                            setEdit((pre) => {
-                                return { ...pre, Nhom: e.target.value };
-                            });
-                        }}
-                    />
-                    <Input
-                        value={edit?.TenNhom}
-                        onChange={(e) => {
-                            setEdit((pre) => {
-                                return { ...pre, TenNhom: e.target.value };
-                            });
-                        }}
-                    />
-                    <Input
-                        value={edit?.address}
-                        onChange={(e) => {
-                            setEdit((pre) => {
-                                return { ...pre, address: e.target.value };
-                            });
-                        }}
-                    />
-                    <Input
-                        value={edit?.phone}
-                        onChange={(e) => {
-                            setEdit((pre) => {
-                                return { ...pre, phone: e.target.value };
-                            });
-                        }}
-                    />
-                    <Input
-                        value={edit?.website}
-                        onChange={(e) => {
-                            setEdit((pre) => {
-                                return { ...pre, website: e.target.value };
-                            });
-                        }}
-                    />
-                </Modal>
-                <div className="table">
-                    <Table
-                        dataSource={Data}
-                        columns={columns}
-                        pagination={true}
-                        rowSelection={{ ...rowSelection, checkStrictly }}
-                        onChange={onChange}
-                    />
-                </div>
-            </div>
-        </>
-    );
-};
-
+        <br />
+    </>
+);
 export default App;

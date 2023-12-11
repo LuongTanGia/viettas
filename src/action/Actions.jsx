@@ -7,7 +7,6 @@ import { toast } from "react-toastify";
 
 export const RETAKEN = async () => {
     const token = window.localStorage.getItem("RTKN");
-    const login = window.localStorage.getItem("firstLogin");
 
     try {
         const response = await axios.post(
@@ -16,9 +15,9 @@ export const RETAKEN = async () => {
                 TokenID: token,
             }
         );
-        if (response.data.DataError === 0 && login === "true") {
-            toast.error(response.data.DataErrorDescription);
+        if (response.data.DataError === 0) {
             window.localStorage.setItem("TKN", response.data.TKN);
+            toast.error(response.data.DataErrorDescription);
             return response.data.TKN;
         } else {
             toast.error(
@@ -83,6 +82,18 @@ export const DANHSACHCHUCNANG = async (API, token, dispatch) => {
         if (response.data.DataError === -107) {
             toast.error(response.data.DataErrorDescription);
             const newToken = await RETAKEN();
+            if (newToken) {
+                await DANHSACHCHUCNANG(API, newToken, dispatch);
+            } else {
+                toast.error("Failed to refresh token!");
+                window.location.href = "/login";
+            }
+        } else {
+            dispatch(loginSlice.actions.login(response.data));
+        }
+        if (response.data.DataError === -107) {
+            toast.error(response.data.DataErrorDescription);
+            const newToken = await REFTOKEN();
             if (newToken) {
                 await DANHSACHCHUCNANG(API, newToken, dispatch);
             } else {
@@ -168,6 +179,16 @@ export const DATATONGHOP = async (API, token, KhoanNgay, dispatch) => {
             } else {
                 console.error("Failed to refresh token!");
                 window.location.href = "/";
+            }
+        }
+        if (response.data.DataError === -107) {
+            toast.error(response.data.DataErrorDescription);
+            const newToken = await REFTOKEN();
+            if (newToken) {
+                await DATATONGHOP(API, newToken, KhoanNgay, dispatch);
+            } else {
+                console.error("Failed to refresh token!");
+                window.location.href = "/login";
             }
         }
         dispatch(MainSlice.actions.getDataTongHop(response.data));

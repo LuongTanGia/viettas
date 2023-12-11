@@ -1,0 +1,6 @@
+@media (min-width: 1299px) {
+    .ant-table-body {
+        max-height: 400px;
+        min-height: 400px;
+    }
+}
