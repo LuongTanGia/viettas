@@ -32,15 +32,13 @@ const Modals = ({
   const [selectedKhoHang, setSelectedKhoHang] = useState();
   const [selectedRowData, setSelectedRowData] = useState([]);
   const [selectedDoiTuong, setSelectedDoiTuong] = useState();
-  const [selectedCheckbox, setSelectedCheckbox] = useState(1);
   const [doiTuongInfo, setDoiTuongInfo] = useState({ Ten: "", DiaChi: "" });
-  const [Base64PMH, setBase64PMH] = useState();
-  const [Base64PK, setBase64PK] = useState();
 
   const startDate = dayjs(controlDate.NgayBatDau).format("YYYY-MM-DDTHH:mm:ss");
   const endDate = dayjs(controlDate.NgayKetThuc).format("YYYY-MM-DDTHH:mm:ss");
   const NgayCTu = dayjs().format("YYYY-MM-DDTHH:mm:ss");
   const DaoHan = dayjs().format("YYYY-MM-DDTHH:mm:ss");
+
   const [formPMH, setFormPMH] = useState({
     NgayCTu: NgayCTu,
     DaoHan: DaoHan,
@@ -70,9 +68,19 @@ const Modals = ({
 
   const [formPMHEdit, setFormPMHEdit] = useState();
 
+  const [checkboxValues, setCheckboxValues] = useState({
+    checkbox1: true,
+    checkbox2: false,
+    checkbox3: false,
+  });
+
+  useEffect(() => {
+    handleAddInList();
+  }, []);
+
   useEffect(() => {
     if (dataThongTin !== null) setFormPMHEdit(dataThongTin);
-  }, [dataThongTin]);
+  }, [dataThongTin, dataThongTin.DataDetails]);
 
   const [selectedSctBD, setSelectedSctBD] = useState();
   const [selectedSctKT, setSelectedSctKT] = useState();
@@ -235,8 +243,13 @@ const Modals = ({
   useEffect(() => {
     if (dataDoiTuong && actionType === "create")
       handleDoiTuongFocus(dataDoiTuong[0].Ma);
-    if (dataDoiTuong && dataThongTin && actionType === "edit")
+    if (dataDoiTuong && dataThongTin && actionType === "edit") {
       handleDoiTuongFocus(dataThongTin.MaDoiTuong);
+
+      if (dataThongTin?.DataDetails) {
+        setSelectedRowData([...dataThongTin.DataDetails]);
+      }
+    }
   }, [dataDoiTuong, dataThongTin]);
 
   useEffect(() => {
@@ -260,21 +273,36 @@ const Modals = ({
       if (response.data && response.data.DataError === 0) {
         setDataHangHoa(response.data.DataResults);
       }
-
-      setIsShowModalHH(true);
     } catch (error) {
       console.error("Error while saving data:", error);
     }
   };
 
   const handleRowCreate = (newRow) => {
-    setSelectedRowData((prevData) => [...prevData, newRow]);
+    let dataNewRow;
+    setSelectedRowData((prevData) => {
+      if (prevData.some((item) => item.MaHang === newRow.MaHang))
+        dataNewRow = prevData.map((item) => {
+          if (item.MaHang === newRow.MaHang) {
+            return {
+              ...item,
+              SoLuong: ++item.SoLuong,
+            };
+          }
+          return item;
+        });
+      else dataNewRow = [...prevData, newRow];
+
+      return dataNewRow;
+    });
+    setFormPMHEdit((prev) => ({ ...prev, DataDetails: dataNewRow }));
   };
 
   const handleDeleteRow = (index) => {
     const updatedRows = [...selectedRowData];
     updatedRows.splice(index, 1);
     setSelectedRowData(updatedRows);
+    setFormPMHEdit((prev) => ({ ...prev, DataDetails: updatedRows }));
   };
 
   const handleDoiTuongFocus = (selectedValue) => {
@@ -338,6 +366,7 @@ const Modals = ({
         selectedDoiTuong,
         selectedKhoHang
       );
+      console.log("apiSss");
       // Kiểm tra call api thành công
       if (response.data && response.data.DataError === 0) {
         toast.success(response.data.DataErrorDescription);
@@ -390,16 +419,17 @@ const Modals = ({
   const handlePrint = async () => {
     try {
       const tokenLogin = localStorage.getItem("TKN");
+      const lien = calculateTotal();
       const response = await apis.InPMH(
         tokenLogin,
         formPrint,
         selectedSctBD,
         selectedSctKT,
-        selectedCheckbox
+        lien
       );
       // Kiểm tra call api thành công
       if (response.data && response.data.DataError === 0) {
-        setBase64PMH(response.data.DataResults);
+        base64ToPDF(response.data.DataResults);
       } else if (response.data && response.data.DataError === -104) {
         toast.error(response.data.DataErrorDescription);
       } else if (response.data && response.data.DataError === -103) {
@@ -413,7 +443,7 @@ const Modals = ({
       } else {
         toast.error(response.data.DataErrorDescription);
       }
-      base64ToPDF(Base64PMH);
+
       close();
     } catch (error) {
       console.error("Error while saving data:", error);
@@ -423,16 +453,18 @@ const Modals = ({
   const handlePrintWareHouse = async () => {
     try {
       const tokenLogin = localStorage.getItem("TKN");
+      const lien = calculateTotal();
+
       const response = await apis.InPK(
         tokenLogin,
         formPrint,
         selectedSctBD,
         selectedSctKT,
-        selectedCheckbox
+        lien
       );
       // Kiểm tra call api thành công
       if (response.data && response.data.DataError === 0) {
-        setBase64PK(response.data.DataResults);
+        base64ToPDF(response.data.DataResults);
       } else if (response.data && response.data.DataError === -104) {
         toast.error(response.data.DataErrorDescription);
       } else if (response.data && response.data.DataError === -103) {
@@ -446,26 +478,30 @@ const Modals = ({
       } else {
         toast.error(response.data.DataErrorDescription);
       }
-      base64ToPDF(Base64PK);
+
       close();
     } catch (error) {
       console.error("Error while saving data:", error);
     }
   };
 
-  useEffect(() => {
-    if (Base64PMH) base64ToPDF(Base64PMH);
-  }, [Base64PMH]);
+  const calculateTotal = () => {
+    let total = 0;
+    if (checkboxValues.checkbox1) total += 1;
+    if (checkboxValues.checkbox2) total += 2;
+    if (checkboxValues.checkbox3) total += 4;
+    return total;
+  };
 
-  useEffect(() => {
-    if (Base64PK) base64ToPDF(Base64PK);
-  }, [Base64PK]);
+  const handleLien = (checkboxName) => {
+    setCheckboxValues((prevValues) => ({
+      ...prevValues,
+      [checkboxName]: !prevValues[checkboxName],
+    }));
+  };
 
-  const handleCheckboxChange = (event) => {
-    const checkboxValue = parseInt(event.target.value, 10);
-
-    // Chỉ cập nhật giá trị của selectedCheckbox nếu checkbox được chọn
-    setSelectedCheckbox(event.target.checked ? checkboxValue : null);
+  const handleTienMat = () => {
+    setFormPMH({ ...formPMH, TTTienMat: !formPMH.TTTienMat });
   };
 
   return (
@@ -483,7 +519,7 @@ const Modals = ({
         )}
 
         {actionType === "print" && (
-          <div className="   w-[50vw] h-[20vh] ">
+          <div className="   ">
             <div>In phiếu mua hàng</div>
             <div className="flex justify-center items-center gap-4">
               <label>Ngày</label>
@@ -542,43 +578,32 @@ const Modals = ({
             <div className="flex justify-center items-center gap-6">
               <div>
                 <input
-                  type="checkbox"
                   id="lien1"
-                  name="lien1"
-                  value="1"
-                  checked={selectedCheckbox === 1}
-                  onChange={handleCheckboxChange}
-                />
-                <label htmlFor="lien1" className="px-2">
-                  Liên 1
-                </label>
-              </div>
-              <div>
-                <input
                   type="checkbox"
-                  id="lien2"
-                  name="lien2"
-                  value="2"
-                  checked={selectedCheckbox === 2}
-                  onChange={handleCheckboxChange}
+                  checked={checkboxValues.checkbox1}
+                  onChange={() => handleLien("checkbox1")}
                 />
-                <label htmlFor="lien2" className="px-2">
-                  Liên 2
-                </label>
+                <label htmlFor="lien1">Liên 1</label>
               </div>
 
               <div>
                 <input
+                  id="lien2"
                   type="checkbox"
-                  id="lien3"
-                  name="lien3"
-                  value="4"
-                  checked={selectedCheckbox === 4}
-                  onChange={handleCheckboxChange}
+                  checked={checkboxValues.checkbox2}
+                  onChange={() => handleLien("checkbox2")}
                 />
-                <label htmlFor="lien3" className="px-2">
-                  Liên 3
-                </label>
+                <label htmlFor="lien2">Liên 2</label>
+              </div>
+
+              <div>
+                <input
+                  id="lien3"
+                  type="checkbox"
+                  checked={checkboxValues.checkbox3}
+                  onChange={() => handleLien("checkbox3")}
+                />
+                <label htmlFor="lien3">Liên 3</label>
               </div>
             </div>
           </div>
@@ -644,29 +669,22 @@ const Modals = ({
             <div className="flex justify-center items-center gap-6">
               <div>
                 <input
-                  type="checkbox"
                   id="lien1"
-                  name="lien1"
-                  value="1"
-                  checked={selectedCheckbox === 1}
-                  onChange={handleCheckboxChange}
+                  type="checkbox"
+                  checked={checkboxValues.checkbox1}
+                  onChange={() => handleLien("checkbox1")}
                 />
-                <label htmlFor="lien1" className="px-2">
-                  Liên 1
-                </label>
+                <label htmlFor="lien1">Liên 1</label>
               </div>
+
               <div>
                 <input
-                  type="checkbox"
                   id="lien2"
-                  name="lien2"
-                  value="2"
-                  checked={selectedCheckbox === 2}
-                  onChange={handleCheckboxChange}
+                  type="checkbox"
+                  checked={checkboxValues.checkbox2}
+                  onChange={() => handleLien("checkbox2")}
                 />
-                <label htmlFor="lien2" className="px-2">
-                  Liên 2
-                </label>
+                <label htmlFor="lien2">Liên 2</label>
               </div>
             </div>
           </div>
@@ -1044,7 +1062,7 @@ const Modals = ({
               </div>
               <div>
                 <button
-                  onClick={handleAddInList}
+                  onClick={() => setIsShowModalHH(true)}
                   className="border border-blue-500 rounded-md px-4 py-2 hover:bg-blue-500 hover:text-white"
                 >
                   chọn từ danh sách
@@ -1069,16 +1087,6 @@ const Modals = ({
                     </tr>
                   </thead>
                   <tbody>
-                    {/* {dataThongTin?.DataDetails?.map((item, index) => (
-                      <EditRow
-                        key={item.SoChungTu}
-                        index={index}
-                        item={item}
-                        dataHangHoa={dataHangHoa}
-                        handleDeleteRow={handleDeleteRow}
-                        setRowData={dataThongTin}
-                      />
-                    ))} */}
                     {selectedRowData.map((item, index) => (
                       <EditRow
                         key={item.SoChungTu}
@@ -1215,12 +1223,24 @@ const Modals = ({
                   </div>
                 </div>
               </div>
-              <div>
+              <div className="flex justify-end items-center ">
+                <div className="px-3">
+                  <input
+                    id="lapphieuchi"
+                    type="checkbox"
+                    className="border border-blue-500 rounded-md px-4 py-2
+                  hover:bg-blue-500 hover:text-white"
+                    checked={formPMH.TTTienMat}
+                    onChange={handleTienMat}
+                  />
+                  <label htmlFor="lapphieuchi">Lập phiếu chi</label>
+                </div>
+
                 <button className="border border-blue-500 rounded-md px-4 py-2 hover:bg-blue-500 hover:text-white">
                   Thêm hàng mới
                 </button>
                 <button
-                  onClick={handleAddInList}
+                  onClick={() => setIsShowModalHH(true)}
                   className="border border-blue-500 rounded-md px-4 py-2 hover:bg-blue-500 hover:text-white"
                 >
                   chọn từ danh sách
@@ -1281,7 +1301,7 @@ const Modals = ({
           <div className="flex justify-end gap-4 p-4 ">
             <button
               className="text-blue-500  border border-blue-500 px-2 py-1 rounded-md hover:bg-blue-500 hover:text-white "
-              onClick={() => handlePrint(Base64PMH)}
+              onClick={handlePrint}
             >
               In phiếu
             </button>
@@ -1297,7 +1317,7 @@ const Modals = ({
             <div className="flex justify-end gap-4 p-4 ">
               <button
                 className="text-blue-500  border border-blue-500 px-2 py-1 rounded-md hover:bg-blue-500 hover:text-white "
-                onClick={() => handlePrintWareHouse(Base64PK)}
+                onClick={handlePrintWareHouse}
               >
                 In phiếu
               </button>

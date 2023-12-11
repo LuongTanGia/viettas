@@ -10,50 +10,50 @@
 } */
 
 a {
-    color: inherit;
-    text-decoration: inherit;
+  color: inherit;
+  text-decoration: inherit;
 }
 
 ::-webkit-scrollbar {
-    width: 0.5rem;
-    height: 0.5rem;
+  width: 0.5rem;
+  height: 0.5rem;
 }
 
 ::-webkit-scrollbar-track {
-    background-color: var(--lightGray);
+  background-color: var(--lightGray);
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: var(--blue);
-    background-image: var(--scrollbarGradient);
+  background-color: var(--blue);
+  background-image: var(--scrollbarGradient);
 }
 
-input,
+/* input,
 select,
 textarea {
-    width: 100%;
-    resize: none;
-    padding: 1.5rem;
-    border-radius: var(--rounded);
-    border: var(--border);
-    outline: none;
-    background-color: var(--bg-folderCard);
-    color: var(--text-color);
-    font-size: 1rem;
-}
+  width: 100%;
+  resize: none;
+  padding: 1.5rem;
+  border-radius: var(--rounded);
+  border: var(--border);
+  outline: none;
+  background-color: var(--bg-folderCard);
+  color: var(--text-color);
+  font-size: 1rem;
+} */
 
 .required {
-    position: relative;
+  position: relative;
 }
 
 .required::after {
-    content: "*";
-    color: var(--red);
-    padding-left: 0.1rem;
+  content: "*";
+  color: var(--red);
+  padding-left: 0.1rem;
 }
 .functions {
-    max-width: 80rem;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
+  max-width: 80rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }

@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import icons from "../untils/icons";
 import { toast } from "react-toastify";
 import { NumericFormat } from "react-number-format";
@@ -7,6 +7,10 @@ const { MdDelete } = icons;
 
 const EditRow = ({ index, item, dataHangHoa, handleDeleteRow, setRowData }) => {
   const [x, setX] = useState(item.SoLuong);
+
+  useEffect(() => {
+    setX(item.SoLuong.toFixed(1));
+  }, [item.SoLuong]);
 
   const handleChangeData = (e) => {
     const mahang = e.target.value;
@@ -19,7 +23,6 @@ const EditRow = ({ index, item, dataHangHoa, handleDeleteRow, setRowData }) => {
             MaHang: selectedItem.MaHang,
             TenHang: selectedItem.TenHang,
             DVT: selectedItem.DVT,
-            SoLuong: 1,
           };
         }
         return i;
@@ -29,7 +32,7 @@ const EditRow = ({ index, item, dataHangHoa, handleDeleteRow, setRowData }) => {
   };
 
   const handleChangeQuantity = () => {
-    const newQuantity = Number(Math.round(x)).toFixed(1);
+    const newQuantity = Number(x).toFixed(1);
     setX(newQuantity);
     setRowData((prev) => {
       const newData = prev.map((i) => {
@@ -83,6 +86,7 @@ const EditRow = ({ index, item, dataHangHoa, handleDeleteRow, setRowData }) => {
   return (
     <tr key={index}>
       <td className="py-2 px-4 border text-center ">{index + 1}</td>
+
       <td className="border">
         <select
           className=" bg-white  w-[200px] h-full outline-none  "
@@ -106,7 +110,7 @@ const EditRow = ({ index, item, dataHangHoa, handleDeleteRow, setRowData }) => {
           onChange={(e) => {
             const value = e.target.value;
             if (value.includes(".") && value.split(".")[1].length > 2) return;
-            setX(e.target.value);
+            setX(e.target.value.replace(/[^0-9.]/g, ""));
           }}
           onKeyDown={(e) => {
             if (e.key === "Enter") handleChangeQuantity();
@@ -128,7 +132,8 @@ const EditRow = ({ index, item, dataHangHoa, handleDeleteRow, setRowData }) => {
         <NumericFormat
           value={
             item.DonGia
-              ? Number(item.DonGia.replace(/,/g, "")) * Number(item.SoLuong)
+              ? Number(item.DonGia.toString().replace(/,/g, "")) *
+                Number(item.SoLuong)
               : 0
           }
           displayType={"text"}
@@ -149,7 +154,7 @@ const EditRow = ({ index, item, dataHangHoa, handleDeleteRow, setRowData }) => {
         <NumericFormat
           value={
             item.DonGia
-              ? Number(item.DonGia.replace(/,/g, "")) *
+              ? Number(item.DonGia.toString().replace(/,/g, "")) *
                 Number(item.SoLuong) *
                 (Number(item.Thue) / 100)
               : 0
@@ -162,8 +167,9 @@ const EditRow = ({ index, item, dataHangHoa, handleDeleteRow, setRowData }) => {
         <NumericFormat
           value={
             item.DonGia
-              ? Number(item.DonGia.replace(/,/g, "")) * Number(item.SoLuong) +
-                Number(item.DonGia.replace(/,/g, "")) *
+              ? Number(item.DonGia.toString().replace(/,/g, "")) *
+                  Number(item.SoLuong) +
+                Number(item.DonGia.toString().replace(/,/g, "")) *
                   Number(item.SoLuong) *
                   (Number(item.Thue) / 100)
               : 0

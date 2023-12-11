@@ -1,5 +1,10 @@
 import { TfiSearch } from "react-icons/tfi";
-import { FaRegUserCircle, FaRegEye, FaRegEdit } from "react-icons/fa";
+import {
+  FaRegUserCircle,
+  FaRegEye,
+  FaRegEdit,
+  FaMoneyCheckAlt,
+} from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { IoMdClose, IoIosMenu } from "react-icons/io";
 import { BsDatabase } from "react-icons/bs";
@@ -37,5 +42,6 @@ const icons = {
   MdDelete,
   FaRegEdit,
   SlOptions,
+  FaMoneyCheckAlt,
 };
 export default icons;
