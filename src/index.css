@@ -137,8 +137,12 @@ i.blue {
 .mainSider,
 .sidebar {
     width: unset;
-    z-index: 0;
+    z-index: 10;
 }
+.mainSider {
+    margin-left: 100%;
+}
+
 #sidebar,
 .mainSider {
     /* transition: width 1.5s ease; */
