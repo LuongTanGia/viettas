@@ -5,6 +5,29 @@ import DuLieuSlice from "../components/DULIEU/DuLieuSlice";
 
 import { toast } from "react-toastify";
 
+export const REFTOKEN = async () => {
+    const token = window.localStorage.getItem("RTKN");
+    try {
+        const response = await axios.post(
+            "https://isalewebapi.viettassaigon.vn/api/Auth/RefreshToken",
+            {
+                TokenID: token,
+            }
+        );
+        if (response.data.DataError === 0) {
+            toast.error(response.data.DataErrorDescription);
+            window.localStorage.setItem("TKN", response.data.TKN);
+            return response.data.TKN;
+        } else {
+            toast.error(
+                "Có người đang nhập ở nơi khác. Bạn sẽ bị chuyển đến trang đăng nhập."
+            );
+        }
+    } catch (error) {
+        console.error("Error adding user:", error);
+    }
+};
+
 export const DANHSACHDULIEU = async (API, data, dispatch) => {
     try {
         const response = await axios.post(API, data);
@@ -40,6 +63,7 @@ export const LOGIN = async (API, TKN, RemoteDB, dispatch) => {
 };
 
 export const DANHSACHCHUCNANG = async (API, token, dispatch) => {
+    console.log("dataDANHSACHCHUCNANG");
     try {
         const response = await axios.post(
             API,
@@ -51,7 +75,18 @@ export const DANHSACHCHUCNANG = async (API, token, dispatch) => {
                 },
             }
         );
-        dispatch(loginSlice.actions.login(response.data));
+        if (response.data.DataError === -107) {
+            toast.error(response.data.DataErrorDescription);
+            const newToken = await REFTOKEN();
+            if (newToken) {
+                await DANHSACHCHUCNANG(API, newToken, dispatch);
+            } else {
+                toast.error("Failed to refresh token!");
+                window.location.href = "/";
+            }
+        } else {
+            dispatch(loginSlice.actions.login(response.data));
+        }
     } catch (error) {
         console.error("Error adding user:", error);
     }
@@ -98,6 +133,16 @@ export const DATATONGHOP = async (API, token, KhoanNgay, dispatch) => {
                 Authorization: `Bearer ${token}`,
             },
         });
+        if (response.data.DataError === -107) {
+            toast.error(response.data.DataErrorDescription);
+            const newToken = await REFTOKEN();
+            if (newToken) {
+                await DATATONGHOP(API, newToken, KhoanNgay, dispatch);
+            } else {
+                console.error("Failed to refresh token!");
+                window.location.href = "/";
+            }
+        }
         dispatch(MainSlice.actions.getDataTongHop(response.data));
     } catch (error) {
         console.error("Error adding user:", error);
@@ -116,25 +161,6 @@ export const DATADULIEU = async (API, token, dispatch) => {
             }
         );
         dispatch(DuLieuSlice.actions.getDataDL(response.data));
-    } catch (error) {
-        console.error("Error adding user:", error);
-    }
-};
-
-export const REFTOKEN = async (API, data) => {
-    try {
-        const response = await axios.post(API, data);
-        if (response.data.DataError === 0) {
-            window.localStorage.setItem("TKN", response.data.TKN);
-        } else {
-            toast.error(
-                "Có người đang nhập ở nơi khác. Bạn sẽ bị chuyển đến trang đăng nhập."
-            );
-
-            window.localStorage.clear();
-            window.location.href = "/";
-            // offLogin;
-        }
     } catch (error) {
         console.error("Error adding user:", error);
     }
