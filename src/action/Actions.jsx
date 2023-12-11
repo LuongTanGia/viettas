@@ -166,6 +166,25 @@ export const DATADULIEU = async (API, token, dispatch) => {
     }
 };
 
+export const REFTOKEN = async (API, data) => {
+    try {
+        const response = await axios.post(API, data);
+        if (response.data.DataError === 0) {
+            window.localStorage.setItem("TKN", response.data.TKN);
+        } else {
+            toast.error(
+                "Có người đang nhập ở nơi khác. Bạn sẽ bị chuyển đến trang đăng nhập."
+            );
+
+            window.localStorage.clear();
+            window.location.href = "/";
+            // offLogin;
+        }
+    } catch (error) {
+        console.error("Error adding user:", error);
+    }
+};
+
 export const THAYDOIRMATKHAU = async (API, data, token) => {
     try {
         const response = await axios.post(API, data, {

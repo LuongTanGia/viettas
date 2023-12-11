@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NumericFormat } from "react-number-format";
 import icons from "../untils/icons";
 import { toast } from "react-toastify";
@@ -9,11 +9,14 @@ const CreateRow = ({
   index,
   item,
   dataHangHoa,
-
   handleDeleteRow,
   setRowData,
 }) => {
   const [x, setX] = useState(item.SoLuong);
+
+  useEffect(() => {
+    setX(item.SoLuong.toFixed(1));
+  }, [item.SoLuong]);
 
   const handleChangeData = (e) => {
     const mahang = e.target.value;
@@ -26,7 +29,6 @@ const CreateRow = ({
             MaHang: selectedItem.MaHang,
             TenHang: selectedItem.TenHang,
             DVT: selectedItem.DVT,
-            SoLuong: 1,
           };
         }
         return i;
@@ -36,7 +38,7 @@ const CreateRow = ({
   };
 
   const handleChangeQuantity = () => {
-    const newQuantity = Number(Math.round(x)).toFixed(1);
+    const newQuantity = Number(x).toFixed(1);
     setX(newQuantity);
     setRowData((prev) => {
       const newData = prev.map((i) => {
@@ -95,6 +97,7 @@ const CreateRow = ({
           className=" bg-white  w-[200px] h-full outline-none  "
           value={item.MaHang}
           onChange={handleChangeData}
+          onClick={handleChangeData}
         >
           {dataHangHoa?.map((item) => (
             <option key={item.MaHang} value={item.MaHang}>

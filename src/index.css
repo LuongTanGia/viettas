@@ -9,6 +9,7 @@
 @import url("../src/assets/vendor/simple-datatables/style.css");
 @import "constants.css";
 @import "base.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -19,9 +20,9 @@ a {
 .show_main {
     margin-left: 200px;
 }
-/* .align-items-center {
+.align-items-center {
     justify-content: space-between;
-} */
+}
 .gridMain {
     display: grid;
     grid-template-areas:
@@ -124,7 +125,7 @@ i.blue {
     padding-bottom: 0;
 }
 .cook_tag {
-    z-index: 0;
+    z-index: 10000;
     position: absolute;
     bottom: 0;
     width: 400px;
@@ -191,3 +192,13 @@ a.nav-link span {
 input[type="radio"] {
     width: unset;
 }
+
+/* K custom antd */
+/* start */
+/* custom button   */
+.ant-btn.ant-btn-sm {
+    background-color: #1677ff;
+    color: #fff;
+}
+
+/* end */
