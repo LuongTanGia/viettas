@@ -216,7 +216,7 @@ const PhieuMuaHang = () => {
       key: "SoChungTu",
       width: 150,
       fixed: "left",
-      sorter: (a, b) => a.SoChungTu - b.SoChungTu,
+      sorter: (a, b) => a.SoChungTu.localeCompare(b.SoChungTu),
     },
     {
       title: "Ngày Chứng Từ",
@@ -224,6 +224,11 @@ const PhieuMuaHang = () => {
       key: "NgayCTu",
       render: (text) => moment(text).format("DD/MM/YYYY"),
       width: 150,
+      sorter: (a, b) => {
+        const dateA = new Date(a.NgayCTu);
+        const dateB = new Date(b.NgayCTu);
+        return dateA - dateB;
+      },
     },
     {
       title: "Mã Đối Tượng",
@@ -273,6 +278,7 @@ const PhieuMuaHang = () => {
       key: "TongMatHang",
       width: 150,
       align: "end",
+      sorter: (a, b) => a.TongMatHang - b.TongMatHang,
     },
     {
       title: "Tổng số lượng",
@@ -281,6 +287,7 @@ const PhieuMuaHang = () => {
       width: 150,
       align: "end",
       render: (text) => roundNumber(text),
+      sorter: (a, b) => a.TongSoLuong - b.TongSoLuong,
     },
     {
       title: "Tổng tiền hàng",
@@ -295,6 +302,7 @@ const PhieuMuaHang = () => {
           thousandSeparator={true}
         />
       ),
+      sorter: (a, b) => a.TongTienHang - b.TongTienHang,
     },
     {
       title: "Tổng tiền thuế",
@@ -302,6 +310,7 @@ const PhieuMuaHang = () => {
       key: "TongTienThue",
       width: 150,
       align: "end",
+      sorter: (a, b) => a.TongTienThue - b.TongTienThue,
     },
     {
       title: "Tổng thành tiền",
@@ -316,6 +325,7 @@ const PhieuMuaHang = () => {
           thousandSeparator={true}
         />
       ),
+      sorter: (a, b) => a.TongThanhTien - b.TongThanhTien,
     },
 
     {
@@ -330,6 +340,11 @@ const PhieuMuaHang = () => {
       key: "NgayTao",
       render: (text) => moment(text).format("DD/MM/YYYY hh:mm:ss"),
       width: 300,
+      sorter: (a, b) => {
+        const dateA = new Date(a.NgayTao);
+        const dateB = new Date(b.NgayTao);
+        return dateA - dateB;
+      },
     },
     {
       title: "Người tạo",
@@ -344,6 +359,11 @@ const PhieuMuaHang = () => {
       render: (text) =>
         text ? moment(text).format("DD/MM/YYYY hh:mm:ss") : null,
       width: 300,
+      sorter: (a, b) => {
+        const dateA = new Date(a.NgaySuaCuoi);
+        const dateB = new Date(b.NgaySuaCuoi);
+        return dateA - dateB;
+      },
     },
     {
       title: "Người sửa cuối",
