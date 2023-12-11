@@ -68,6 +68,7 @@ export const LOGIN = async (API, TKN, RemoteDB, dispatch) => {
 
 export const DANHSACHCHUCNANG = async (API, token, dispatch) => {
     console.log("dataDANHSACHCHUCNANG");
+    console.log("dataDANHSACHCHUCNANG");
     try {
         const response = await axios.post(
             API,
@@ -79,6 +80,18 @@ export const DANHSACHCHUCNANG = async (API, token, dispatch) => {
                 },
             }
         );
+        if (response.data.DataError === -107) {
+            toast.error(response.data.DataErrorDescription);
+            const newToken = await REFTOKEN();
+            if (newToken) {
+                await DANHSACHCHUCNANG(API, newToken, dispatch);
+            } else {
+                toast.error("Failed to refresh token!");
+                window.location.href = "/";
+            }
+        } else {
+            dispatch(loginSlice.actions.login(response.data));
+        }
         if (response.data.DataError === -107) {
             toast.error(response.data.DataErrorDescription);
             const newToken = await REFTOKEN();
@@ -137,6 +150,16 @@ export const DATATONGHOP = async (API, token, KhoanNgay, dispatch) => {
                 Authorization: `Bearer ${token}`,
             },
         });
+        if (response.data.DataError === -107) {
+            toast.error(response.data.DataErrorDescription);
+            const newToken = await REFTOKEN();
+            if (newToken) {
+                await DATATONGHOP(API, newToken, KhoanNgay, dispatch);
+            } else {
+                console.error("Failed to refresh token!");
+                window.location.href = "/";
+            }
+        }
         if (response.data.DataError === -107) {
             toast.error(response.data.DataErrorDescription);
             const newToken = await REFTOKEN();
