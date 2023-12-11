@@ -297,6 +297,21 @@ const Modals = ({
     });
     setFormPMHEdit((prev) => ({ ...prev, DataDetails: dataNewRow }));
   };
+  const handleAddEmptyRow = () => {
+    const emptyRow = {
+      SoChungTu: "",
+      MaHang: "",
+      TenHang: "",
+      DVT: "",
+      SoLuong: 1,
+      DonGia: 0,
+      Thue: 0,
+      TienThue: 0,
+      ThanhTien: 0,
+    };
+    setSelectedRowData((prevData) => [...prevData, emptyRow]);
+    setFormPMHEdit((prev) => ({ ...prev, DataDetails: emptyRow }));
+  };
 
   const handleDeleteRow = (index) => {
     const updatedRows = [...selectedRowData];
@@ -1062,6 +1077,12 @@ const Modals = ({
               </div>
               <div>
                 <button
+                  onClick={handleAddEmptyRow}
+                  className="border border-blue-500 rounded-md px-4 py-2 hover:bg-blue-500 hover:text-white"
+                >
+                  Thêm hàng mới
+                </button>
+                <button
                   onClick={() => setIsShowModalHH(true)}
                   className="border border-blue-500 rounded-md px-4 py-2 hover:bg-blue-500 hover:text-white"
                 >
@@ -1236,7 +1257,10 @@ const Modals = ({
                   <label htmlFor="lapphieuchi">Lập phiếu chi</label>
                 </div>
 
-                <button className="border border-blue-500 rounded-md px-4 py-2 hover:bg-blue-500 hover:text-white">
+                <button
+                  onClick={handleAddEmptyRow}
+                  className="border border-blue-500 rounded-md px-4 py-2 hover:bg-blue-500 hover:text-white"
+                >
                   Thêm hàng mới
                 </button>
                 <button

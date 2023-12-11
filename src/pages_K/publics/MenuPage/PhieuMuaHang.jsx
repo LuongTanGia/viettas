@@ -12,7 +12,14 @@ import { Modals } from "../../../components_K";
 import dayjs from "dayjs";
 import { keyDown, roundNumber } from "../../../action/Actions";
 
-const { IoAddCircleOutline, TiPrinter, FaRegEdit, MdDelete, FaRegEye } = icons;
+const {
+  IoAddCircleOutline,
+  TiPrinter,
+  FaRegEdit,
+  MdDelete,
+  FaRegEye,
+  FaMoneyCheckAlt,
+} = icons;
 const PhieuMuaHang = () => {
   const [form] = Form.useForm();
   const [isValidDate, setIsValidDate] = useState(true);
@@ -209,7 +216,7 @@ const PhieuMuaHang = () => {
       key: "SoChungTu",
       width: 150,
       fixed: "left",
-      sorter: true,
+      sorter: (a, b) => a.SoChungTu - b.SoChungTu,
     },
     {
       title: "Ngày Chứng Từ",
@@ -378,6 +385,14 @@ const PhieuMuaHang = () => {
               >
                 <FaRegEdit size={16} />
               </div>
+
+              {/* <div
+                onClick={() => handleMakeBallot(record)}
+                title="In phiếu"
+                className="p-[3px] text-blue-500 border  border-blue-500 rounded-md hover:text-white hover:bg-blue-500  "
+              >
+                <FaMoneyCheckAlt size={16} />
+              </div> */}
               <div
                 onClick={() => handleDelete(record)}
                 title="Xóa"
@@ -385,22 +400,7 @@ const PhieuMuaHang = () => {
               >
                 <MdDelete size={16} />
               </div>
-              <div
-                // onClick={() => handlePrint(record)}
-                title="In phiếu"
-                className="p-[3px] text-blue-500 border  border-blue-500 rounded-md hover:text-white hover:bg-blue-500  "
-              >
-                <TiPrinter size={16} />
-              </div>
-              {/* <div
-                onClick={() => setIsOption(!isOption)}
-                title="option"
-                className="p-[3px] border-2  rounded-md  hover:text-white hover:bg-gray-500  cursor-pointer"
-              >
-                <SlOptions size={16} />
-              </div> */}
             </div>
-            {/* {isOption && <Options />} */}
           </>
         );
       },
@@ -446,6 +446,11 @@ const PhieuMuaHang = () => {
   const handleFilterDS = () => {
     checkTokenExpiration();
     setTableLoad(false);
+  };
+  const handleMakeBallot = (record) => {
+    setActionType("makeballot");
+    setDataRecord(record);
+    setIsShowModal(true);
   };
 
   if (!isLoading) {

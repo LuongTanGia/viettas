@@ -92,6 +92,7 @@ const EditRow = ({ index, item, dataHangHoa, handleDeleteRow, setRowData }) => {
           className=" bg-white  w-[200px] h-full outline-none  "
           value={item.MaHang}
           onChange={handleChangeData}
+          onClick={handleChangeData}
         >
           {dataHangHoa?.map((item) => (
             <option key={item.MaHang} value={item.MaHang}>
