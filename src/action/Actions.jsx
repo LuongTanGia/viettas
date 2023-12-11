@@ -7,6 +7,8 @@ import { toast } from "react-toastify";
 
 export const REFTOKEN = async () => {
     const token = window.localStorage.getItem("RTKN");
+    const login = window.localStorage.getItem("firstLogin");
+
     try {
         const response = await axios.post(
             "https://isalewebapi.viettassaigon.vn/api/Auth/RefreshToken",
@@ -14,7 +16,7 @@ export const REFTOKEN = async () => {
                 TokenID: token,
             }
         );
-        if (response.data.DataError === 0) {
+        if (response.data.DataError === 0 && login === "true") {
             toast.error(response.data.DataErrorDescription);
             window.localStorage.setItem("TKN", response.data.TKN);
             return response.data.TKN;
@@ -22,8 +24,10 @@ export const REFTOKEN = async () => {
             toast.error(
                 "Có người đang nhập ở nơi khác. Bạn sẽ bị chuyển đến trang đăng nhập."
             );
+            window.location.href = "/login";
         }
     } catch (error) {
+        window.location.href = "/login";
         console.error("Error adding user:", error);
     }
 };
@@ -64,6 +68,7 @@ export const LOGIN = async (API, TKN, RemoteDB, dispatch) => {
 
 export const DANHSACHCHUCNANG = async (API, token, dispatch) => {
     console.log("dataDANHSACHCHUCNANG");
+    console.log("dataDANHSACHCHUCNANG");
     try {
         const response = await axios.post(
             API,
@@ -75,6 +80,18 @@ export const DANHSACHCHUCNANG = async (API, token, dispatch) => {
                 },
             }
         );
+        if (response.data.DataError === -107) {
+            toast.error(response.data.DataErrorDescription);
+            const newToken = await REFTOKEN();
+            if (newToken) {
+                await DANHSACHCHUCNANG(API, newToken, dispatch);
+            } else {
+                toast.error("Failed to refresh token!");
+                window.location.href = "/";
+            }
+        } else {
+            dispatch(loginSlice.actions.login(response.data));
+        }
         if (response.data.DataError === -107) {
             toast.error(response.data.DataErrorDescription);
             const newToken = await REFTOKEN();
@@ -133,6 +150,16 @@ export const DATATONGHOP = async (API, token, KhoanNgay, dispatch) => {
                 Authorization: `Bearer ${token}`,
             },
         });
+        if (response.data.DataError === -107) {
+            toast.error(response.data.DataErrorDescription);
+            const newToken = await REFTOKEN();
+            if (newToken) {
+                await DATATONGHOP(API, newToken, KhoanNgay, dispatch);
+            } else {
+                console.error("Failed to refresh token!");
+                window.location.href = "/";
+            }
+        }
         if (response.data.DataError === -107) {
             toast.error(response.data.DataErrorDescription);
             const newToken = await REFTOKEN();

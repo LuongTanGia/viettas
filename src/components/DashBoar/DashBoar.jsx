@@ -7,12 +7,12 @@ import RateBar from "../util/Chart/LoadingChart";
 function DashBoar() {
     const data = useSelector(dataTONGHOPSelector);
     console.log(data);
-    if (data.DataResults.length === 0) {
+    if (data?.DataResults?.length === 0) {
         return <p>Dữ liệu trống, vui lòng kiểm tra lại.</p>;
     }
     const groupedData = {};
 
-    data.DataResults.forEach((item) => {
+    data?.DataResults?.forEach((item) => {
         const key = item["DataCode"].split("_")[0];
         if (!groupedData[key]) {
             groupedData[key] = [];
@@ -24,7 +24,7 @@ function DashBoar() {
         currency: "VND",
     });
     const resultArrays = Object.values(groupedData);
-    resultArrays[0].map((item) => console.log(item.DataName, item.DataValue));
+
     return (
         <>
             <div className="pagetitle">
@@ -42,7 +42,7 @@ function DashBoar() {
                 <div className="row">
                     <div className="col-lg-6">
                         <div className="row gridMain">
-                            {resultArrays.map((resultArray, arrayIndex) => (
+                            {resultArrays?.map((resultArray, arrayIndex) => (
                                 <Card
                                     resultArray={resultArray}
                                     formatter={formatter}
