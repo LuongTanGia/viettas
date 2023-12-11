@@ -3,7 +3,7 @@ import categoryAPI from "../../API/linkAPI";
 import { useSearch } from "../../hooks_T/Search";
 import HangHoaModals from "../../components_T/Modal/HangHoaModals";
 import { useState, useEffect } from "react";
-import { Table, Tooltip } from "antd";
+import { Table, Tooltip, Divider, Radio } from "antd";
 import moment from "moment";
 import { FaSearch, FaCheckCircle } from "react-icons/fa";
 import { IoMdAddCircleOutline } from "react-icons/io";
@@ -81,6 +81,7 @@ const HangHoa = () => {
   const formatCurrency = (value) => {
     return Number(value).toLocaleString("vi-VN");
   };
+
   const titles = [
     {
       title: "STT",
@@ -318,7 +319,7 @@ const HangHoa = () => {
         if (text) {
           return moment(text).format("DD/MM/YYYY HH:mm:ss.SS");
         } else {
-          return ""; // hoặc giá trị mặc định khác nếu bạn muốn
+          return "";
         }
       },
     },
@@ -340,6 +341,13 @@ const HangHoa = () => {
                 <MdEdit />
               </div>
               <div
+                className="p-2 bg-purple-500 rounded-md text-slate-50 cursor-pointer  shadow-custom hover:bg-white hover:text-purple-500 "
+                title="In Mã Vạch"
+                onClick={() => handlePrintBar(record)}
+              >
+                <CiBarcode />
+              </div>
+              <div
                 className="p-2 bg-red-500 rounded-md text-slate-50 cursor-pointer  shadow-custom hover:bg-white hover:text-red-500 "
                 title="Xóa"
                 onClick={() => handleDelete(record)}
@@ -352,6 +360,8 @@ const HangHoa = () => {
       },
     },
   ];
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+
   return (
     <>
       {!isLoading ? (
@@ -375,7 +385,7 @@ const HangHoa = () => {
                 </div>
                 <div>
                   <div
-                    className="p-2 bg-gray-200 rounded-lg cursor-pointer shadow-custom"
+                    className="p-2 bg-gray-200 rounded-md cursor-pointer shadow-custom"
                     onClick={() => setIsShowOption(!isShowOption)}
                   >
                     <p>
@@ -431,6 +441,15 @@ const HangHoa = () => {
             </div>
             <div className="z-0">
               <Table
+                rowSelection={{
+                  type: "checkbox",
+                  selectedRowKeys,
+                  onChange: (selectedKeys) => {
+                    console.log(selectedKeys);
+                    setSelectedRowKeys(selectedKeys);
+                  },
+                }}
+                rowKey={(record) => record.MaHang}
                 className="table_DMHangHoa"
                 columns={titles}
                 dataSource={filteredHangHoa}

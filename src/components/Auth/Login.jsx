@@ -11,62 +11,62 @@ import { authDataSelector } from "../../redux/selector";
 import { toast } from "react-toastify";
 
 const App = () => {
-    const dispatch = useDispatch();
-    const data = useSelector(authDataSelector);
-    const [user, setUser] = useState({
-        User: "",
-        Pass: "",
-    });
+  const dispatch = useDispatch();
+  const data = useSelector(authDataSelector);
+  const [user, setUser] = useState({
+    User: "",
+    Pass: "",
+  });
 
-    // const [isShow, setIsShow] = useState(false);
-    const onChangeInput = (e) => {
-        const { name, value } = e.target;
-        setUser({ ...user, [name]: value });
+  // const [isShow, setIsShow] = useState(false);
+  const onChangeInput = (e) => {
+    const { name, value } = e.target;
+    setUser({ ...user, [name]: value });
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await DANHSACHDULIEU(API.DANHSACHDULIEU, user, dispatch);
     };
+    fetchData();
+  }, [dispatch, user, API]);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            await DANHSACHDULIEU(API.DANHSACHDULIEU, user, dispatch);
-        };
-        fetchData();
-    }, [dispatch, user, API]);
+  const handleAddUser = async () => {
+    if (data?.DataResults.length === 1) {
+      const remoteDB = data.DataResults[0].RemoteDB;
+      console.log(remoteDB);
+      await LOGIN(API.DANGNHAP, data.TKN, remoteDB, dispatch);
+      window.localStorage.setItem("firstLogin", true);
 
-    const handleAddUser = async () => {
-        console.log(data);
-        if (data?.DataResults.length === 1) {
-            const remoteDB = data.DataResults[0].RemoteDB;
-            console.log(remoteDB);
-            await LOGIN(API.DANGNHAP, data.TKN, remoteDB, dispatch);
-            window.localStorage.setItem("firstLogin", true);
+      window.location.href = "/";
+    } else if (data?.DataResults.length > 1) {
+      setIsLoggedIn(true);
+    }
+    if (data?.DataResults && data?.DataResults.length == 0) {
+      toast.error("Sai tài khoản hoặc mật khẩu");
+    }
+  };
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const handleGoogleLogin = async (TokenID) => {
+    try {
+      await DANHSACHDULIEU(
+        API.DANHSACHDULIEU,
+        { TokenId: TokenID.credential },
+        dispatch
+      );
+      setIsLoggedIn(true);
+      console.log(TokenID.credential);
+    } catch (error) {
+      console.error("Đăng nhập thất bại", error);
+    }
+  };
+  const close = () => {
+    setIsLoggedIn(false);
+  };
 
-            window.location.href = "/";
-        } else if (data?.DataResults.length > 1) {
-            setIsLoggedIn(true);
-        }
-        if (data?.DataResults && data?.DataResults.length == 0) {
-            toast.error("Sai tài khoản hoặc mật khẩu");
-        }
-    };
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const handleGoogleLogin = async (TokenID) => {
-        try {
-            await DANHSACHDULIEU(
-                API.DANHSACHDULIEU,
-                { TokenId: TokenID.credential },
-                dispatch
-            );
-            setIsLoggedIn(true);
-        } catch (error) {
-            console.error("Đăng nhập thất bại", error);
-        }
-    };
-    const close = () => {
-        setIsLoggedIn(false);
-    };
-
-    return (
-        <div className="flex justify-center items-center h-screen bg-cover">
-            {/* <div className="container">
+  return (
+    <div className="flex justify-center items-center h-screen bg-cover">
+      {/* <div className="container">
                 <div className="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
                     <div className="container">
                         <div className="row justify-content-center">
@@ -200,82 +200,70 @@ const App = () => {
                     </div>
                 </div>
             </div> */}
-            <div className="relative w-[500px] p-6 shadow-lg bg-white rounded-md">
-                <h1 className="text-center font-semibold text-4xl">
-                    Đăng Nhập
-                </h1>
-                <div className="mt-8">
-                    <div className="mb-4">
-                        <label className="text-lg font-medium mb-2">
-                            Tài Khoản
-                        </label>
-                        <input
-                            type="text"
-                            name="User"
-                            required
-                            //   autoComplete="on"
+      <div className="relative w-[500px] p-6 shadow-lg bg-white rounded-md">
+        <h1 className="text-center font-semibold text-4xl">Đăng Nhập</h1>
+        <div className="mt-8">
+          <div className="mb-4">
+            <label className="text-lg font-medium mb-2">Tài Khoản</label>
+            <input
+              type="text"
+              name="User"
+              required
+              //   autoComplete="on"
 
-                            value={user.User}
-                            onChange={onChangeInput}
-                            className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1 text-base  focus:outline-none focus:ring-0 focus:border-blue-500 hover:border-blue-500 bg-blue-100"
-                            placeholder="Nhập tài khoản..."
-                        />
-                    </div>
-                    <div className="mb-4">
-                        <label className="text-lg font-medium mb-2">
-                            Mật Khẩu
-                        </label>
-                        <input
-                            type="password"
-                            name="Pass"
-                            required
-                            // autoComplete="on"
-                            placeholder="Password *"
-                            value={user.Pass}
-                            onChange={onChangeInput}
-                            className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1 text-base  focus:outline-none focus:ring-0 focus:border-blue-500 hover:border-blue-500 bg-blue-100"
-                        />
-                    </div>
-                    <div className="flex justify-between items-center mb-4">
-                        <div>
-                            <input id="remember" type="checkbox" />
-                            <label
-                                htmlFor="remember"
-                                className="ml-2 text-base font-medium"
-                            >
-                                Nhớ mật khẩu
-                            </label>
-                        </div>
-                        <button className="ml-2 text-base font-medium text-blue-500 ">
-                            Quên mật khẩu ?
-                        </button>
-                    </div>
-                    <div className="flex flex-col gap-y-4 mt-14">
-                        <button
-                            onClick={handleAddUser}
-                            className="  active:scale-[.98] active:duration-75 text-white text-lg font-bold  bg-blue-500 rounded-md px-4 py-2 "
-                        >
-                            Đăng nhập
-                        </button>
-
-                        <div className="flex justify-center items-center w-full">
-                            <GoogleLogin
-                                onSuccess={handleGoogleLogin}
-                                onError={() => {
-                                    console.log("Login Failed");
-                                }}
-                            />
-                            {isLoggedIn ? (
-                                <CollectionCreateForm
-                                    isShow={isLoggedIn}
-                                    close={close}
-                                />
-                            ) : null}
-                        </div>
-                    </div>
-                </div>
+              value={user.User}
+              onChange={onChangeInput}
+              className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1 text-base  focus:outline-none focus:ring-0 focus:border-blue-500 hover:border-blue-500 bg-blue-100"
+              placeholder="Nhập tài khoản..."
+            />
+          </div>
+          <div className="mb-4">
+            <label className="text-lg font-medium mb-2">Mật Khẩu</label>
+            <input
+              type="password"
+              name="Pass"
+              required
+              // autoComplete="on"
+              placeholder="Password *"
+              value={user.Pass}
+              onChange={onChangeInput}
+              className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1 text-base  focus:outline-none focus:ring-0 focus:border-blue-500 hover:border-blue-500 bg-blue-100"
+            />
+          </div>
+          <div className="flex justify-between items-center mb-4">
+            <div>
+              <input id="remember" type="checkbox" />
+              <label htmlFor="remember" className="ml-2 text-base font-medium">
+                Nhớ mật khẩu
+              </label>
             </div>
+            <button className="ml-2 text-base font-medium text-blue-500 ">
+              Quên mật khẩu ?
+            </button>
+          </div>
+          <div className="flex flex-col gap-y-4 mt-14">
+            <button
+              onClick={handleAddUser}
+              className="  active:scale-[.98] active:duration-75 text-white text-lg font-bold  bg-blue-500 rounded-md px-4 py-2 "
+            >
+              Đăng nhập
+            </button>
+
+            <div className="flex justify-center items-center w-full">
+              <GoogleLogin
+                onSuccess={handleGoogleLogin}
+                onError={() => {
+                  console.log("Login Failed");
+                }}
+              />
+              {isLoggedIn ? (
+                <CollectionCreateForm isShow={isLoggedIn} close={close} />
+              ) : null}
+            </div>
+          </div>
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 export default App;
