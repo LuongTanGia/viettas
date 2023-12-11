@@ -1,0 +1,19 @@
+.testCp {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    align-items: center;
+}
+.testCp select {
+    all: unset;
+    width: 200px;
+    border: 1px solid;
+}
+.testCp input {
+    all: unset;
+    border: 1px solid;
+    width: 200px;
+}
+.mainTest {
+    margin-bottom: 20px;
+}
