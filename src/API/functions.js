@@ -1,7 +1,7 @@
 import axios from "axios";
 import queryString from "query-string";
 
-// const testAPI = "http://192.168.3.251:9001/api";
+// const testAPI = "http://192.168.3.251:9000/api";
 // const realAPI = "https://isalewebapi.viettassaigon.vn/api";
 
 const axiosClient = axios.create({
