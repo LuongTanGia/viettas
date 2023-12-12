@@ -20,6 +20,7 @@ import {
     KHOANNGAY,
     DATATONGHOP,
     DATADULIEU,
+    DANHSACHPHIEUBANHANG,
 } from "./action/Actions";
 import API from "./API/API";
 import { useDispatch, useSelector } from "react-redux";
@@ -46,7 +47,8 @@ function App() {
                 await DANHSACHHANGHOA(API.DANHSACHHANGHOA, token, dispatch);
                 await KHOANNGAY(API.KHOANNGAY, token, dispatch);
                 await DATATONGHOP(API.TONGHOP, token, KhoanNgay, dispatch);
-                await DATADULIEU(API.PHIEUMUAHANG, token, dispatch);
+                await DATADULIEU(API.DANHSACHHANGHOA, token, dispatch);
+                await DANHSACHPHIEUBANHANG(API.DANHSACHPBS, token, dispatch);
 
                 setDataLoaded(true);
             };

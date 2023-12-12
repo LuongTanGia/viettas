@@ -13,7 +13,7 @@ const API = {
 
     //Phiếu Bán Hàng ///api/entries/DuLieuPBS
 
-    DANHSACHPBS: `${BASE_URL}api/entries/DuLieuPBS/DanhSach`,
+    DANHSACHPBS: `${BASE_URL}/api/entries/DuLieuPBS/DanhSach`,
 };
 
 export default API;

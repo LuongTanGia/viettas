@@ -2,7 +2,7 @@ import axios from "axios";
 import loginSlice from "../components/Auth/loginSlice";
 import MainSlice from "../components/MainPage/MainSlice";
 import DuLieuSlice from "../components/DULIEU/DuLieuSlice";
-
+import PBSSlice from "../components/PhieuBanHang/PBSSlice";
 import { toast } from "react-toastify";
 
 export const RETAKEN = async () => {
@@ -64,7 +64,6 @@ export const LOGIN = async (API, TKN, RemoteDB, dispatch) => {
         console.error("Error adding user:", error);
     }
 };
-
 export const DANHSACHCHUCNANG = async (API, token, dispatch) => {
     console.log("dataDANHSACHCHUCNANG");
     console.log("dataDANHSACHCHUCNANG");
@@ -213,7 +212,6 @@ export const DATADULIEU = async (API, token, dispatch) => {
         console.error("Error adding user:", error);
     }
 };
-
 export const REFTOKEN = async (API, data) => {
     try {
         const response = await axios.post(API, data);
@@ -232,7 +230,6 @@ export const REFTOKEN = async (API, data) => {
         console.error("Error adding user:", error);
     }
 };
-
 export const THAYDOIRMATKHAU = async (API, data, token) => {
     try {
         const response = await axios.post(API, data, {
@@ -246,6 +243,26 @@ export const THAYDOIRMATKHAU = async (API, data, token) => {
         } else {
             toast(response.data.DataErrorDescription);
         }
+    } catch (error) {
+        console.error("Error adding user:", error);
+    }
+};
+
+////Phiếu mua hàng
+export const DANHSACHPHIEUBANHANG = async (API, token, dispatch) => {
+    try {
+        const response = await axios.post(
+            API,
+            {},
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        console.log(response.data);
+        dispatch(PBSSlice.actions.getDanhSach(response.data));
     } catch (error) {
         console.error("Error adding user:", error);
     }
