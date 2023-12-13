@@ -5,7 +5,7 @@ import DuLieuSlice from "../components/DULIEU/DuLieuSlice";
 import PBSSlice from "../components/PhieuBanHang/PBSSlice";
 import { toast } from "react-toastify";
 
-export const RETAKEN = async () => {
+export const RETOKEN = async () => {
     const token = window.localStorage.getItem("RTKN");
 
     try {
@@ -19,18 +19,19 @@ export const RETAKEN = async () => {
             window.localStorage.setItem("TKN", response.data.TKN);
             toast.error(response.data.DataErrorDescription);
             return response.data.TKN;
-        } else {
-            toast.error(
-                "Có người đang nhập ở nơi khác. Bạn sẽ bị chuyển đến trang đăng nhập."
-            );
+        } else if (
+            response.data.DataError === -107 ||
+            response.data.DataError === -111
+        ) {
             window.location.href = "/login";
+            // toast.error(response.data.DataErrorDescription);
+
+            return 0;
         }
     } catch (error) {
-        window.location.href = "/login";
         console.error("Error adding user:", error);
     }
 };
-
 export const DANHSACHDULIEU = async (API, data, dispatch) => {
     try {
         const response = await axios.post(API, data);
@@ -65,8 +66,6 @@ export const LOGIN = async (API, TKN, RemoteDB, dispatch) => {
     }
 };
 export const DANHSACHCHUCNANG = async (API, token, dispatch) => {
-    console.log("dataDANHSACHCHUCNANG");
-    console.log("dataDANHSACHCHUCNANG");
     try {
         const response = await axios.post(
             API,
@@ -78,42 +77,22 @@ export const DANHSACHCHUCNANG = async (API, token, dispatch) => {
                 },
             }
         );
-        if (response.data.DataError === -107) {
+
+        if (
+            response.data.DataError === -107 ||
+            response.data.DataError === -108
+        ) {
             toast.error(response.data.DataErrorDescription);
-            const newToken = await RETAKEN();
-            if (newToken) {
+            const newToken = await RETOKEN();
+            if (newToken !== "") {
                 await DANHSACHCHUCNANG(API, newToken, dispatch);
-            } else {
+            } else if (newToken === 0) {
                 toast.error("Failed to refresh token!");
+                window.localStorage.clear();
                 window.location.href = "/login";
             }
-        } else {
-            dispatch(loginSlice.actions.login(response.data));
         }
-        if (response.data.DataError === -107) {
-            toast.error(response.data.DataErrorDescription);
-            const newToken = await REFTOKEN();
-            if (newToken) {
-                await DANHSACHCHUCNANG(API, newToken, dispatch);
-            } else {
-                toast.error("Failed to refresh token!");
-                window.location.href = "/";
-            }
-        } else {
-            dispatch(loginSlice.actions.login(response.data));
-        }
-        if (response.data.DataError === -107) {
-            toast.error(response.data.DataErrorDescription);
-            const newToken = await RETAKEN();
-            if (newToken) {
-                await DANHSACHCHUCNANG(API, newToken, dispatch);
-            } else {
-                toast.error("Failed to refresh token!");
-                window.location.href = "/";
-            }
-        } else {
-            dispatch(loginSlice.actions.login(response.data));
-        }
+        dispatch(loginSlice.actions.login(response.data));
     } catch (error) {
         console.error("Error adding user:", error);
     }
@@ -130,8 +109,25 @@ export const DANHSACHHANGHOA = async (API, token, dispatch) => {
                 },
             }
         );
+        if (
+            response.data.DataError === -107 ||
+            response.data.DataError === -108
+        ) {
+            // toast.error(response.data.DataErrorDescription);
+            const newToken = await RETOKEN();
+            if (newToken !== 0) {
+                await DANHSACHHANGHOA(API, newToken, dispatch);
+            } else if (newToken === 0) {
+                toast.error("Failed to refresh token!");
+                window.location.href = "/login";
+            }
+        } else {
+            dispatch(MainSlice.actions.getDSHH(response.data));
+        }
         dispatch(MainSlice.actions.getDSHH(response.data));
     } catch (error) {
+        // window.location.href = "/login";
+
         console.error("Error adding user:", error);
     }
 };
@@ -160,34 +156,15 @@ export const DATATONGHOP = async (API, token, KhoanNgay, dispatch) => {
                 Authorization: `Bearer ${token}`,
             },
         });
+        console.log(response.data);
         if (response.data.DataError === -107) {
-            toast.error(response.data.DataErrorDescription);
-            const newToken = await RETAKEN();
-            if (newToken) {
+            // toast.error(response.data.DataErrorDescription);
+            const newToken = await RETOKEN();
+            if (newToken !== 0) {
                 await DATATONGHOP(API, newToken, KhoanNgay, dispatch);
             } else {
-                console.error("Failed to refresh token!");
-                window.location.href = "/";
-            }
-        }
-        if (response.data.DataError === -107) {
-            toast.error(response.data.DataErrorDescription);
-            const newToken = await RETAKEN();
-            if (newToken) {
-                await DATATONGHOP(API, newToken, KhoanNgay, dispatch);
-            } else {
-                console.error("Failed to refresh token!");
-                window.location.href = "/";
-            }
-        }
-        if (response.data.DataError === -107) {
-            toast.error(response.data.DataErrorDescription);
-            const newToken = await REFTOKEN();
-            if (newToken) {
-                await DATATONGHOP(API, newToken, KhoanNgay, dispatch);
-            } else {
-                console.error("Failed to refresh token!");
                 window.location.href = "/login";
+                toast.error("Failed to refresh token!");
             }
         }
         dispatch(MainSlice.actions.getDataTongHop(response.data));
@@ -208,24 +185,6 @@ export const DATADULIEU = async (API, token, dispatch) => {
             }
         );
         dispatch(DuLieuSlice.actions.getDataDL(response.data));
-    } catch (error) {
-        console.error("Error adding user:", error);
-    }
-};
-export const REFTOKEN = async (API, data) => {
-    try {
-        const response = await axios.post(API, data);
-        if (response.data.DataError === 0) {
-            window.localStorage.setItem("TKN", response.data.TKN);
-        } else {
-            toast.error(
-                "Có người đang nhập ở nơi khác. Bạn sẽ bị chuyển đến trang đăng nhập."
-            );
-
-            window.localStorage.clear();
-            window.location.href = "/";
-            // offLogin;
-        }
     } catch (error) {
         console.error("Error adding user:", error);
     }
@@ -261,8 +220,53 @@ export const DANHSACHPHIEUBANHANG = async (API, token, dispatch) => {
                 },
             }
         );
-        console.log(response.data);
+        if (
+            response.data.DataError === -107 ||
+            response.data.DataError === -108
+        ) {
+            // toast.error(response.data.DataErrorDescription);
+            const newToken = await RETOKEN();
+            if (newToken !== "") {
+                await DANHSACHPHIEUBANHANG(API, newToken, dispatch);
+            } else if (newToken === 0) {
+                toast.error("Failed to refresh token!");
+                window.localStorage.clear();
+                window.location.href = "/login";
+            }
+        }
         dispatch(PBSSlice.actions.getDanhSach(response.data));
+    } catch (error) {
+        console.error("Error adding user:", error);
+    }
+};
+
+export const THONGTINPHIEU = async (API, token, maphieu, dispatch) => {
+    try {
+        const response = await axios.post(
+            API,
+            { SoChungTu: maphieu },
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        if (
+            response.data.DataError === -107 ||
+            response.data.DataError === -108
+        ) {
+            // toast.error(response.data.DataErrorDescription);
+            const newToken = await RETOKEN();
+            if (newToken !== "") {
+                await THONGTINPHIEU(API, newToken, maphieu, dispatch);
+            } else if (newToken === 0) {
+                toast.error("Failed to refresh token!");
+                window.localStorage.clear();
+                window.location.href = "/login";
+            }
+        }
+        dispatch(PBSSlice.actions.data_chitiet(response.data));
     } catch (error) {
         console.error("Error adding user:", error);
     }

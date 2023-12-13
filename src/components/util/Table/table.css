@@ -1,6 +1,19 @@
 @media (min-width: 1299px) {
-    .ant-table-body {
+    .h400 .ant-table-container .ant-table-body {
         max-height: 400px;
         min-height: 400px;
+    }
+    .h250 .ant-table-container .ant-table-body {
+        max-height: 250px;
+        min-height: 250px;
+    }
+    .h200 .ant-table-container .ant-table-body {
+        max-height: 200px;
+        min-height: 200px;
+    }
+
+    .h150 .ant-table-container .ant-table-body {
+        max-height: 150px;
+        min-height: 150px;
     }
 }

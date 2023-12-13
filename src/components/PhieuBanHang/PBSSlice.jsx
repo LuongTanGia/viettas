@@ -5,10 +5,14 @@ export default createSlice({
     name: "phieuBanHang",
     initialState: {
         data: [],
+        data_chitiet: [],
     },
     reducers: {
         getDanhSach: (state, action) => {
             state.data = action.payload;
+        },
+        data_chitiet: (state, action) => {
+            state.data_chitiet = action.payload;
         },
     },
 });

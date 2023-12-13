@@ -14,6 +14,7 @@ const API = {
     //Phiếu Bán Hàng ///api/entries/DuLieuPBS
 
     DANHSACHPBS: `${BASE_URL}/api/entries/DuLieuPBS/DanhSach`,
+    CHITIETPBS: `${BASE_URL}/api/entries/DuLieuPBS/ThongTin`,
 };
 
 export default API;

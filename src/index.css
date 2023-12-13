@@ -162,10 +162,6 @@ a.nav-link span {
     margin-left: 20px;
 }
 
-.ant-table-body {
-    max-height: 400px !important;
-}
-
 .table_pmh .ant-table-body {
     min-height: 418px;
     max-height: 418px;
@@ -176,7 +172,7 @@ a.nav-link span {
     max-height: 220px;
 }
 .zIndex {
-    z-index: 10;
+    z-index: 1500;
 }
 /* Tan */
 .table_DMHangHoa .ant-table-body {
@@ -202,3 +198,7 @@ input[type="radio"] {
 }
 
 /* end */
+
+#main {
+    max-height: 60vh;
+}
