@@ -11,6 +11,7 @@ import { MdEdit, MdDelete, MdCancel, MdOutlineGroupAdd } from "react-icons/md";
 import { TfiMoreAlt } from "react-icons/tfi";
 import { GrStatusUnknown } from "react-icons/gr";
 import { CiBarcode } from "react-icons/ci";
+import SimpleBackdrop from "../../components/util/Loading/LoadingPage";
 
 const HangHoa = () => {
   const TokenAccess = localStorage.getItem("TKN");
@@ -365,7 +366,7 @@ const HangHoa = () => {
   return (
     <>
       {!isLoading ? (
-        <p>Loading...</p>
+        <SimpleBackdrop />
       ) : (
         <>
           <div className="flex flex-col py-2 px-4 gap-1 ">
