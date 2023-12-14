@@ -287,6 +287,10 @@ export const keyDown = (e) => {
     "9",
     "/",
     "Backspace",
+    "ArrowUp",
+    "ArrowDown",
+    "ArrowLeft",
+    "ArrowRight",
   ];
   if (!validKeys.includes(e.key)) {
     e.preventDefault();

@@ -35,7 +35,7 @@ const PhieuMuaHang = () => {
   const [dataDoiTuong, setDataDoiTuong] = useState(null);
   const [isShowModal, setIsShowModal] = useState(false);
   const [tableLoad, setTableLoad] = useState(false);
-
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [actionType, setActionType] = useState("");
   const [formKhoanNgay, setFormKhoanNgay] = useState([]);
 
@@ -320,9 +320,14 @@ const PhieuMuaHang = () => {
       key: "TTTienMat",
       dataIndex: "TTTienMat",
       fixed: "right",
-      width: 80,
+      width: 100,
       align: "center",
       render: (text) => <Checkbox disabled={!text} defaultChecked={text} />,
+      sorter: (a, b) => {
+        const valueA = a.TTTienMat ? 1 : 0;
+        const valueB = b.TTTienMat ? 1 : 0;
+        return valueA - valueB;
+      },
     },
     {
       title: "Chức năng",
@@ -334,17 +339,17 @@ const PhieuMuaHang = () => {
         return (
           <>
             <div className=" flex gap-1 items-center justify-center ">
-              <div
+              {/* <div
                 onClick={() => handleView(record)}
                 title="Xem"
                 className="p-[3px] border border-yellow-500 rounded-md  text-slate-50  bg-yellow-500 hover:bg-white hover:text-yellow-500   cursor-pointer"
               >
                 <FaRegEye size={16} />
-              </div>
+              </div> */}
               <div
                 onClick={() => handleEdit(record)}
                 title="Sửa"
-                className="p-[3px]  border  border-purple-500 rounded-md text-slate-50 bg-purple-500  hover:bg-white hover:text-purple-500 "
+                className="p-[3px]  border  border-purple-500 rounded-md text-slate-50 bg-purple-500  hover:bg-white hover:text-purple-500  cursor-pointer "
               >
                 <FaRegEdit size={16} />
               </div>
@@ -356,10 +361,17 @@ const PhieuMuaHang = () => {
               >
                 <FaMoneyCheckAlt size={16} />
               </div> */}
+              {/* <div
+                onClick={() => handleEdit(record)}
+                title="Sửa"
+                className="p-[3px]  border  border-red-500 rounded-md text-slate-50 bg-blue-500  hover:bg-white hover:text-blue-500  cursor-pointer  "
+              >
+                <TiPrinter size={16} />
+              </div> */}
               <div
                 onClick={() => handleDelete(record)}
                 title="Xóa"
-                className="p-[3px] text-red-500 border  border-red-500 rounded-md text-slate-50 bg-red-500  hover:bg-white hover:text-red-500 "
+                className="p-[3px]  border  border-red-500 rounded-md text-slate-50 bg-red-500  hover:bg-white hover:text-red-500  cursor-pointer "
               >
                 <MdDelete size={16} />
               </div>
@@ -423,6 +435,20 @@ const PhieuMuaHang = () => {
     return <SimpleBackdrop />;
   }
 
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: (selectedKeys) => {
+      setSelectedRowKeys(selectedKeys);
+    },
+  };
+
+  const handleRowClick = (record) => {
+    const isSelected = selectedRowKeys.includes(record.key);
+    const newSelectedRowKeys = isSelected
+      ? selectedRowKeys.filter((key) => key !== record.key)
+      : [...selectedRowKeys, record.key];
+    setSelectedRowKeys(newSelectedRowKeys);
+  };
   return (
     <div className="w-auto">
       <div className="text-lg font-bold mx-4 my-2 "> Phiếu mua hàng</div>
@@ -514,6 +540,7 @@ const PhieuMuaHang = () => {
         {tableLoad ? (
           <Table
             className="table_pmh"
+            // rowSelection={rowSelection}
             columns={columns}
             dataSource={data}
             size="small"
@@ -524,9 +551,22 @@ const PhieuMuaHang = () => {
             bordered
             pagination={false}
             rowKey={(record) => record.SoChungTu}
-            // onRow={(record) => ({
-            //   onClick: () => handleView(record),
-            // })}
+            onRow={(record) => ({
+              onClick: () => {
+                handleRowClick(record);
+                const selected = selectedRowKeys.includes(record.SoChungTu);
+                if (selected) {
+                  setSelectedRowKeys(
+                    selectedRowKeys.filter((key) => key !== record.SoChungTu)
+                  );
+                } else {
+                  setSelectedRowKeys([...selectedRowKeys, record.SoChungTu]);
+                }
+              },
+              onDoubleClick: () => {
+                handleView(record);
+              },
+            })}
             // Bảng Tổng
             summary={(pageData) => {
               let totalTongThanhTien = 0;

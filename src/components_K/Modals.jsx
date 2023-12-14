@@ -1,15 +1,8 @@
 /* eslint-disable react/prop-types */
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import icons from "../untils/icons";
 import * as apis from "../apis";
-import { Table, Form, Input } from "antd";
+import { Table, Form } from "antd";
 import moment from "moment";
 import dayjs from "dayjs";
 import { NumericFormat } from "react-number-format";
@@ -17,13 +10,13 @@ import ModalHH from "./ModalHH";
 import { toast } from "react-toastify";
 import { DatePicker, Space } from "antd";
 import { CreateRow, EditRow } from ".";
-import { data } from "autoprefixer";
-import { base64ToPDF, roundNumber } from "../action/Actions";
-import SimpleBackdrop from "../components/util/Loading/LoadingPage";
+import { base64ToPDF, keyDown, roundNumber } from "../action/Actions";
+import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
+import ModalOnlyPrint from "./ModalOnlyPrint";
 
 const { RangePicker } = DatePicker;
 
-const { IoMdClose, MdDelete } = icons;
+const { IoMdClose, MdDelete, TiPrinter } = icons;
 const Modals = ({
   close,
   actionType,
@@ -36,13 +29,18 @@ const Modals = ({
   isLoadingModel,
 }) => {
   const [isShowModalHH, setIsShowModalHH] = useState(false);
+  const [isShowModalOnlyPrint, setIsShowModalOnlyPrint] = useState(false);
+  const [form] = Form.useForm();
+  const [isValidDate, setIsValidDate] = useState(true);
   const [dataHangHoa, setDataHangHoa] = useState(null);
   const [selectedKhoHang, setSelectedKhoHang] = useState();
   const [selectedRowData, setSelectedRowData] = useState([]);
   const [selectedDoiTuong, setSelectedDoiTuong] = useState();
   const [doiTuongInfo, setDoiTuongInfo] = useState({ Ten: "", DiaChi: "" });
-
-  const miniRowData = useCallback(
+  const [selectedSctBD, setSelectedSctBD] = useState();
+  const [selectedSctKT, setSelectedSctKT] = useState();
+  const [newDataPMH, setNewDataPMH] = useState(dataPMH);
+  const currentRowData = useCallback(
     (mahang) => {
       return selectedRowData
         .map((item) => item.MaHang)
@@ -89,6 +87,10 @@ const Modals = ({
   });
 
   const [formPMHEdit, setFormPMHEdit] = useState();
+  const [formPrint, setFormPrint] = useState({
+    NgayBatDau: startDate,
+    NgayKetThuc: endDate,
+  });
 
   const [checkboxValues, setCheckboxValues] = useState({
     checkbox1: true,
@@ -103,14 +105,6 @@ const Modals = ({
   useEffect(() => {
     if (dataThongTin !== null) setFormPMHEdit(dataThongTin);
   }, [dataThongTin, dataThongTin.DataDetails]);
-
-  const [selectedSctBD, setSelectedSctBD] = useState();
-  const [selectedSctKT, setSelectedSctKT] = useState();
-
-  const [formPrint, setFormPrint] = useState({
-    NgayBatDau: startDate,
-    NgayKetThuc: endDate,
-  });
 
   const columns = [
     {
@@ -287,6 +281,24 @@ const Modals = ({
     if (dataPMH) setSelectedSctKT(dataPMH[0].SoChungTu);
   }, [dataPMH]);
 
+  const validateDate = (_, value) => {
+    const isValid = moment(value, "DD/MM/YYYY", true).isValid();
+    setIsValidDate(isValid);
+
+    return isValid
+      ? Promise.resolve()
+      : Promise.reject("Ngày tháng không hợp lệ");
+  };
+
+  const handleCalendarChange = (_, dateString) => {
+    form.setFieldsValue({ dateRange: dateString });
+    const isValid =
+      moment(dateString[0], "DD/MM/YYYY", true).isValid() &&
+      moment(dateString[1], "DD/MM/YYYY", true).isValid();
+
+    setIsValidDate(isValid);
+  };
+
   const handleAddInList = async () => {
     try {
       const tokenLogin = localStorage.getItem("TKN");
@@ -303,7 +315,6 @@ const Modals = ({
 
   const handleAddRow = (newRow) => {
     let dataNewRow;
-
     setSelectedRowData((prevData) => {
       if (prevData.some((item) => item.MaHang === newRow.MaHang))
         dataNewRow = prevData.map((item) => {
@@ -340,44 +351,6 @@ const Modals = ({
     setSelectedRowData((prevData) => [...prevData, emptyRow]);
     setFormPMHEdit((prev) => ({ ...prev, DataDetails: emptyRow }));
   };
-
-  // const handleAddEmptyRow = () => {
-  //   const emptyRow = {
-  //     SoChungTu: "",
-  //     MaHang: "",
-  //     TenHang: "",
-  //     DVT: "",
-  //     SoLuong: 1,
-  //     DonGia: 0,
-  //     TyLeThue: 0,
-  //     TienThue: 0,
-  //     ThanhTien: 0,
-  //   };
-
-  //   // Kiểm tra xem mã hàng đã tồn tại trong danh sách chưa
-  //   const existingIndex = selectedRowData.findIndex(
-  //     (row) => row.MaHang === emptyRow.MaHang
-  //   );
-
-  //   if (existingIndex !== -1) {
-  //     // Nếu tồn tại, tăng số lượng lên 1
-  //     const updatedData = [...selectedRowData];
-  //     updatedData[existingIndex].SoLuong += 1;
-  //     setSelectedRowData(updatedData);
-
-  //     // Cập nhật formPMHEdit với dữ liệu tương ứng
-  //     setFormPMHEdit((prev) => ({
-  //       ...prev,
-  //       DataDetails: updatedData[existingIndex],
-  //     }));
-  //   } else {
-  //     // Nếu không tồn tại, thêm một hàng mới
-  //     setSelectedRowData((prevData) => [...prevData, emptyRow]);
-
-  //     // Cập nhật formPMHEdit với dữ liệu mới thêm
-  //     setFormPMHEdit((prev) => ({ ...prev, DataDetails: emptyRow }));
-  //   }
-  // };
 
   const handleDeleteRow = (index) => {
     const updatedRows = [...selectedRowData];
@@ -586,7 +559,17 @@ const Modals = ({
   };
 
   const handleFilterPrint = () => {
-    console.log("ngày", formPrint);
+    const ngayBD = dayjs(formPrint.NgayBatDau);
+    const ngayKT = dayjs(formPrint.NgayKetThuc);
+    // Lọc hàng hóa dựa trên ngày bắt đầu và ngày kết thúc
+    const filteredData = dataPMH.filter((item) => {
+      const itemDate = dayjs(item.NgayCTu);
+
+      if (ngayBD.isValid() && ngayKT.isValid()) {
+        return itemDate >= ngayBD && itemDate <= ngayKT;
+      }
+    });
+    setNewDataPMH(filteredData);
   };
 
   return (
@@ -605,38 +588,56 @@ const Modals = ({
 
         {actionType === "print" && (
           <div className="   ">
-            <div>In phiếu mua hàng</div>
-            <div className="flex justify-center items-center gap-4">
-              <label>Ngày</label>
-              <Space direction="vertical" size={12}>
-                <RangePicker
-                  format="DD/MM/YYYY"
-                  defaultValue={[
-                    dayjs(controlDate.NgayBatDau),
-                    dayjs(controlDate.NgayKetThuc),
+            <div className="pb-2">In phiếu mua hàng</div>
+            <div className="flex justify-center items-center ">
+              <Form form={form}>
+                <Form.Item
+                  name="dateRange"
+                  label="Ngày Tháng"
+                  rules={[
+                    {
+                      validator: validateDate,
+                    },
                   ]}
-                  onChange={(values) => {
-                    setFormPrint({
-                      ...formPrint,
-                      NgayBatDau: dayjs(values[0]).format(
-                        "YYYY-MM-DDTHH:mm:ss"
-                      ),
-                      NgayKetThuc: dayjs(values[1]).format(
-                        "YYYY-MM-DDTHH:mm:ss"
-                      ),
-                    });
-                  }}
-                />
-              </Space>
+                >
+                  <Space>
+                    <RangePicker
+                      format="DD/MM/YYYY"
+                      // picker="date"
+                      onKeyDown={keyDown}
+                      onCalendarChange={handleCalendarChange}
+                      defaultValue={[
+                        dayjs(controlDate.NgayBatDau),
+                        dayjs(controlDate.NgayKetThuc),
+                      ]}
+                      onChange={(values) => {
+                        setFormPrint({
+                          ...formPrint,
+                          NgayBatDau: dayjs(values[0]).format(
+                            "YYYY-MM-DDTHH:mm:ss"
+                          ),
+                          NgayKetThuc: dayjs(values[1]).format(
+                            "YYYY-MM-DDTHH:mm:ss"
+                          ),
+                        });
+                      }}
+                    />
+                    {isValidDate ? (
+                      <CheckCircleOutlined style={{ color: "green" }} />
+                    ) : (
+                      <CloseCircleOutlined style={{ color: "red" }} />
+                    )}
+                  </Space>
+                </Form.Item>
+              </Form>
               <button
-                className="border border-blue-500 rounded-md px-2 py-1 hover:bg-blue-500 hover:text-white"
+                className="border border-blue-500 rounded-md mb-6  mx-2 px-2 py-1 hover:bg-blue-500 hover:text-white"
                 onClick={handleFilterPrint}
               >
                 Lọc
               </button>
             </div>
-
-            <div className="flex justify-center  gap-4 m-4">
+            <div className="flex justify-center  gap-x-4 m-2">
               <div className="flex ">
                 <label className="px-2">Số chứng từ</label>
                 <select
@@ -644,7 +645,7 @@ const Modals = ({
                   value={selectedSctBD}
                   onChange={(e) => setSelectedSctBD(e.target.value)}
                 >
-                  {dataPMH?.map((item) => (
+                  {newDataPMH?.map((item) => (
                     <option key={item.SoChungTu} value={item.SoChungTu}>
                       {item.SoChungTu}
                     </option>
@@ -658,7 +659,7 @@ const Modals = ({
                   value={selectedSctKT}
                   onChange={(e) => setSelectedSctKT(e.target.value)}
                 >
-                  {dataPMH?.map((item) => (
+                  {newDataPMH?.map((item) => (
                     <option key={item.SoChungTu} value={item.SoChungTu}>
                       {item.SoChungTu}
                     </option>
@@ -667,7 +668,7 @@ const Modals = ({
               </div>
             </div>
             {/* liên */}
-            <div className="flex justify-center items-center gap-6">
+            <div className="flex justify-center items-center gap-6 mt-4">
               <div>
                 <input
                   id="lien1"
@@ -702,32 +703,59 @@ const Modals = ({
         )}
 
         {actionType === "printWareHouse" && (
-          <div className="w-[50vw] h-[20vh] ">
+          <div className=" ">
             <div>In phiếu kho</div>
             <div className="flex justify-center items-center gap-4">
-              <label>Ngày</label>
-              <Space direction="vertical" size={12}>
-                <RangePicker
-                  format="DD/MM/YYYY"
-                  defaultValue={[
-                    dayjs(controlDate.NgayBatDau),
-                    dayjs(controlDate.NgayKetThuc),
-                  ]}
-                  onChange={(values) => {
-                    setFormPrint({
-                      ...formPrint,
-                      NgayBatDau: dayjs(values[0]).format(
-                        "YYYY-MM-DDTHH:mm:ss"
-                      ),
-                      NgayKetThuc: dayjs(values[1]).format(
-                        "YYYY-MM-DDTHH:mm:ss"
-                      ),
-                    });
-                  }}
-                />
-              </Space>
+              <div className="flex justify-center items-center ">
+                <Form form={form}>
+                  <Form.Item
+                    name="dateRange"
+                    label="Ngày Tháng"
+                    rules={[
+                      {
+                        validator: validateDate,
+                      },
+                    ]}
+                  >
+                    <Space>
+                      <RangePicker
+                        format="DD/MM/YYYY"
+                        // picker="date"
+                        onKeyDown={keyDown}
+                        onCalendarChange={handleCalendarChange}
+                        defaultValue={[
+                          dayjs(controlDate.NgayBatDau),
+                          dayjs(controlDate.NgayKetThuc),
+                        ]}
+                        onChange={(values) => {
+                          setFormPrint({
+                            ...formPrint,
+                            NgayBatDau: dayjs(values[0]).format(
+                              "YYYY-MM-DDTHH:mm:ss"
+                            ),
+                            NgayKetThuc: dayjs(values[1]).format(
+                              "YYYY-MM-DDTHH:mm:ss"
+                            ),
+                          });
+                        }}
+                      />
+                      {isValidDate ? (
+                        <CheckCircleOutlined style={{ color: "green" }} />
+                      ) : (
+                        <CloseCircleOutlined style={{ color: "red" }} />
+                      )}
+                    </Space>
+                  </Form.Item>
+                </Form>
+                <button
+                  className="border border-blue-500 rounded-md mb-6  mx-2 px-2 py-1 hover:bg-blue-500 hover:text-white"
+                  onClick={handleFilterPrint}
+                >
+                  Lọc
+                </button>
+              </div>
             </div>
-            <div className="flex justify-center  gap-4 m-4">
+            <div className="flex justify-center  gap-x-4 m-2">
               <div className="flex ">
                 <label className="px-2">Số chứng từ</label>
                 <select
@@ -735,7 +763,7 @@ const Modals = ({
                   value={selectedSctBD}
                   onChange={(e) => setSelectedSctBD(e.target.value)}
                 >
-                  {dataPMH?.map((item) => (
+                  {newDataPMH?.map((item) => (
                     <option key={item.SoChungTu} value={item.SoChungTu}>
                       {item.SoChungTu}
                     </option>
@@ -749,7 +777,7 @@ const Modals = ({
                   value={selectedSctKT}
                   onChange={(e) => setSelectedSctKT(e.target.value)}
                 >
-                  {dataPMH?.map((item) => (
+                  {newDataPMH?.map((item) => (
                     <option key={item.SoChungTu} value={item.SoChungTu}>
                       {item.SoChungTu}
                     </option>
@@ -795,7 +823,7 @@ const Modals = ({
                 <IoMdClose />
               </button>
             </div>
-            <div className="border w-full h-[96%] rounded-sm text-sm">
+            <div className="border w-full h-[90%] rounded-sm text-sm">
               <div className="flex">
                 {/* thong tin phieu */}
                 <div className="w-[60%]">
@@ -1018,6 +1046,27 @@ const Modals = ({
                 ></Table>
               </div>
             </div>
+            {/* button print */}
+            <div className="flex gap-x-3 p-2">
+              <button
+                onClick={() => setIsShowModalOnlyPrint(true)}
+                className="flex items-center  py-1 px-2  rounded-md border-dashed border border-gray-500  text-sm hover:text-sky-500  hover:border-sky-500 "
+              >
+                <div className="pr-1">
+                  <TiPrinter size={20} />
+                </div>
+                <div>In phiếu</div>
+              </button>
+              <button
+                onClick={() => setIsShowModalOnlyPrint(true)}
+                className="flex items-center  py-1 px-2  rounded-md border-dashed border border-gray-500  text-sm hover:text-sky-500  hover:border-sky-500 "
+              >
+                <div className="pr-1">
+                  <TiPrinter size={20} />
+                </div>
+                <div>In phiếu kho</div>
+              </button>
+            </div>
           </div>
         )}
 
@@ -1157,8 +1206,13 @@ const Modals = ({
               </div>
               <div className="flex justify-end">
                 <button
+                  disabled={isAdd}
                   onClick={handleAddEmptyRow}
-                  className="border border-blue-500 rounded-md px-4 py-2 hover:bg-blue-500 hover:text-white"
+                  className={`border border-blue-500 rounded-md px-4 py-2 ${
+                    isAdd
+                      ? "cursor-not-allowed text-slate-400"
+                      : "hover:bg-blue-500 hover:text-white"
+                  }`}
                 >
                   Thêm hàng mới
                 </button>
@@ -1196,6 +1250,7 @@ const Modals = ({
                         dataHangHoa={dataHangHoa}
                         handleDeleteRow={handleDeleteRow}
                         setRowData={setSelectedRowData}
+                        currentRowData={currentRowData(item.MaHang)}
                       />
                     ))}
                   </tbody>
@@ -1388,7 +1443,7 @@ const Modals = ({
                         dataHangHoa={dataHangHoa}
                         handleDeleteRow={handleDeleteRow}
                         setRowData={setSelectedRowData}
-                        miniRowData={miniRowData(item.MaHang)}
+                        currentRowData={currentRowData(item.MaHang)}
                       />
                     ))}
                   </tbody>
@@ -1454,6 +1509,10 @@ const Modals = ({
           data={dataHangHoa}
           onRowCreate={handleAddRow}
         />
+      )}
+
+      {isShowModalOnlyPrint && (
+        <ModalOnlyPrint close={() => setIsShowModalOnlyPrint(false)} />
       )}
     </div>
   );

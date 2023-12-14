@@ -5,7 +5,14 @@ import { toast } from "react-toastify";
 import { NumericFormat } from "react-number-format";
 const { MdDelete } = icons;
 
-const EditRow = ({ index, item, dataHangHoa, handleDeleteRow, setRowData }) => {
+const EditRow = ({
+  index,
+  item,
+  dataHangHoa,
+  handleDeleteRow,
+  setRowData,
+  currentRowData,
+}) => {
   const [x, setX] = useState(item.SoLuong);
   const [selectedDVT, setSelectedDVT] = useState(item.DVT);
 
@@ -26,10 +33,12 @@ const EditRow = ({ index, item, dataHangHoa, handleDeleteRow, setRowData }) => {
             DVT: selectedItem.DVT,
             DVTQuyDoi: selectedItem.DVTQuyDoi,
             DVTDefault: selectedItem.DVT,
+            // DonGia: selectedItem.DonGia,
           };
         }
         return i;
       });
+
       return newData;
     });
   };
@@ -105,7 +114,6 @@ const EditRow = ({ index, item, dataHangHoa, handleDeleteRow, setRowData }) => {
     });
   };
 
-  console.log("itemdata", item);
   return (
     <tr key={index}>
       <td className="py-2 px-4 border text-center ">{index + 1}</td>
@@ -116,22 +124,28 @@ const EditRow = ({ index, item, dataHangHoa, handleDeleteRow, setRowData }) => {
           value={item.MaHang}
           onChange={handleChangeData}
         >
-          {dataHangHoa?.map((item) => (
-            <option key={item.MaHang} value={item.MaHang}>
-              {item.MaHang} - {item.TenHang}
-            </option>
-          ))}
+          <option disabled value="">
+            Chọn mã hàng
+          </option>
+          {dataHangHoa
+            .filter((row) => !currentRowData.includes(row.MaHang))
+            .map((item) => (
+              <option key={item.MaHang} value={item.MaHang}>
+                {item.MaHang} - {item.TenHang}
+              </option>
+            ))}
         </select>
       </td>
       <td className="py-2 px-4 border">{item.TenHang}</td>
-      {item.DVT && !item.DVTDefault ? (
+      {/* DVT */}
+      {!item.DVTDefault ? (
         <td className="py-2 px-10 border">{item.DVT}</td>
       ) : item.DVTDefault === item.DVTQuyDoi ? (
         <td className="py-2 px-10 border">{item.DVTDefault}</td>
       ) : (
         <td className="py-2 px-4 border text-center">
           <select
-            className=" bg-white h-full outline-none  "
+            className=" bg-white h-full outline-none"
             value={selectedDVT}
             onChange={(e) => handleChangeUnit(e.target.value)}
           >
@@ -145,7 +159,7 @@ const EditRow = ({ index, item, dataHangHoa, handleDeleteRow, setRowData }) => {
       <td className="py-2  border ">
         <input
           className="text-end px-4 "
-          type="text"
+          type="number"
           value={x}
           onChange={(e) => {
             const value = e.target.value;
@@ -188,6 +202,7 @@ const EditRow = ({ index, item, dataHangHoa, handleDeleteRow, setRowData }) => {
           max={100}
           value={item.TyLeThue}
           onChange={handleChangeTax}
+          // onInput="validateInput(this)"
         />
       </td>
       <td className="py-2 px-4 border text-end">
