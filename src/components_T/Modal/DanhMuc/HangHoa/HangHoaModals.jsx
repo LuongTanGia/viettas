@@ -1,8 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import { FaCheckCircle } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
 import { IoCloseCircle } from "react-icons/io5";
-import categoryAPI from "../../API/linkAPI";
+import categoryAPI from "../../../../API/linkAPI";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import "./HangHoaModals.css";
@@ -15,24 +16,23 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
   const [dVTKho, setDVTKho] = useState();
   const [dVTQuyDoi, setDVTQuyDoi] = useState();
   const [HangHoaCT, setHangHoaCT] = useState();
-  //   const [DVT, setDVT] = useState("Rổng");
-  // const [SoLuong, setSoLuong] = useState("1.0");
-  // const [MaHangCT, setMaHangCT] = useState("");
-  // const [x, setX] = useState([]);
-
   const [selectedMaHang, setSelectedMaHang] = useState([]);
-  const [selectedStatus, setSelectedStatus] = useState("");
-  const [selectedGroup, setSelectedGroup] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState([]);
+  const [selectedGroup, setSelectedGroup] = useState([]);
   const [selectedBarCodeFrom, setSelectedBarCodeFrom] = useState("");
   const [selectedBarCodeTo, setSelectedBarCodeTo] = useState("");
   const [selectedBarCodeList, setSelectedBarCodeList] = useState([]);
   const [selectednhomFrom, setSelectednhomFrom] = useState("");
   const [selectednhomTo, setSelectednhomTo] = useState("");
   const [selectednhomList, setSelectednhomList] = useState([]);
+  const [lastNumber13, setLastNumber13] = useState("");
+  const [lastNumber13Main, setLastNumber13Main] = useState("");
   const [selectedTem, setSelectedTem] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [dataThongSo, setDataThongSo] = useState("");
   const initProduct = {
     Nhom: "",
+    MaHang: "",
     TenHang: "",
     DVTKho: "",
     DVTQuyDoi: "",
@@ -47,15 +47,26 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
     HangHoa_CTs: [{ MaHangChiTiet: "", SoLuong: "", DVT_CTs: "Rổng" }],
   };
   const [hangHoaForm, setHangHoaForm] = useState(() => {
-    return getMaHang ? getMaHang : initProduct;
+    return getMaHang
+      ? { ...getMaHang, MaVach: getMaHang?.MaVach?.slice(0, -1) }
+      : initProduct;
   });
-
   useEffect(() => {
     getNhomHang();
     getDVT();
     getHangHoaCT();
+    getThongSo();
     handleView();
-  }, [type, getMaHang, isLoading]);
+    getMaVach13();
+    getMaVach13Main();
+  }, [
+    type,
+    getMaHang,
+    isLoading,
+    hangHoaForm?.MaVach,
+    hangHoaForm?.Barcodes?.map((item) => item.MaVach),
+  ]);
+  // functions
   const getNhomHang = async () => {
     try {
       const dataNH = await categoryAPI.ListNhomHang(TokenAccess);
@@ -89,6 +100,59 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
       } else {
         console.log(dataHHCT.data);
       }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getMaVach13Main = async () => {
+    try {
+      const response = await categoryAPI.GetBarCode13(
+        {
+          Ma: hangHoaForm.MaVach,
+        },
+        TokenAccess
+      );
+      if (response.data.DataError == 0) {
+        setLastNumber13Main(response.data.DataResult);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getMaVach13 = async () => {
+    try {
+      const MaVachPhu = hangHoaForm?.Barcodes?.map((item) => item.MaVach);
+      const response = await categoryAPI.GetBarCode13(
+        {
+          Ma: JSON.stringify(parseInt(MaVachPhu)),
+        },
+        TokenAccess
+      );
+      if (response.data.DataError == 0) {
+        setLastNumber13(response.data.DataResult);
+      }
+      // if (type === "create") {
+      // } else {
+      //   const MaVachPhuEdit = dataView?.Barcodes?.map((item) => item.MaVach);
+      //   console.log(MaVachPhuEdit);
+      //   const response = await categoryAPI.GetBarCode13(
+      //     {
+      //       Ma: JSON.stringify(parseInt(MaVachPhuEdit)),
+      //     },
+      //     TokenAccess
+      //   );
+      //   if (response.data.DataError == 0) {
+      //     setLastNumber13(response.data.DataResult);
+      //   }
+      // }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getThongSo = async () => {
+    try {
+      const response = await categoryAPI.ThongSo(TokenAccess);
+      setDataThongSo(response.data.DataResult);
     } catch (error) {
       console.log(error);
     }
@@ -163,7 +227,6 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
       });
     }
   };
-
   // Table HHCT
   const handleChangeHHCT = (index, property, newValue) => {
     if (type == "create") {
@@ -192,7 +255,6 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
       setDataView({ ...dataView, HangHoa_CTs: newDataList });
     }
   };
-
   const addHangHoaCT = () => {
     if (type == "create") {
       const addHHCT = Array.isArray(hangHoaForm.HangHoa_CTs)
@@ -236,26 +298,6 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
     }
   };
   // Handle CRUD
-  const handleCreate = async (event) => {
-    event.preventDefault();
-    console.log(hangHoaForm);
-
-    try {
-      const response = await categoryAPI.ThemHangHoa(
-        { ...hangHoaForm },
-        TokenAccess
-      );
-      if (response.data.DataError === 0) {
-        console.log(response.data.DataResults);
-        toast.success("Thêm sản phẩm thành công");
-      } else {
-        console.log(response.data);
-        toast.error(response.data.DataErrorDescription);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
   const handleView = async () => {
     try {
       const infoHang = await categoryAPI.InfoHangHoa(
@@ -265,8 +307,35 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
       if (infoHang.data.DataError == 0) {
         setDataView(infoHang.data.DataResult);
         setIsLoading(true);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleCreate = async (e) => {
+    e.preventDefault();
+    try {
+      const isMaVachPhu = hangHoaForm?.Barcodes;
+      let modifiedHangHoaForm = {
+        ...hangHoaForm,
+        MaVach: `${hangHoaForm.MaVach}${lastNumber13Main}`,
+      };
+      if (isMaVachPhu && isMaVachPhu.length > 0) {
+        modifiedHangHoaForm.Barcodes = [
+          {
+            MaVach: `${isMaVachPhu.map((item) => item.MaVach)}${lastNumber13}`,
+          },
+        ];
+      }
+      const response = await categoryAPI.ThemHangHoa(
+        modifiedHangHoaForm,
+        TokenAccess
+      );
+      if (response.data.DataError === 0) {
+        toast.success("Thêm sản phẩm thành công");
       } else {
-        console.log(infoHang.data);
+        console.log(response.data);
+        toast.error(response.data.DataErrorDescription);
       }
     } catch (error) {
       console.log(error);
@@ -275,23 +344,34 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      console.log(dataView);
       const dataUpdate = await categoryAPI.SuaHangHoa(
         {
           Ma: hangHoaForm.MaHang,
           Data: {
-            ...hangHoaForm,
+            ...dataView,
             Barcodes: dataView.Barcodes,
             HangHoa_CTs: dataView.HangHoa_CTs,
+            MaVach: `${hangHoaForm.MaVach}${lastNumber13Main}`,
+            // Barcodes: [
+            //   {
+            //     MaVach: `${dataView?.Barcodes?.map(
+            //       (item) => item.MaVach
+            //     )}${lastNumber13}`,
+            //     NA: dataView?.Barcodes?.[0]?.NA,
+            //   },
+            // ],
           },
         },
         TokenAccess
       );
+      console.log("1", hangHoaForm);
+      console.log("2", dataView);
+      console.log({ MaVach: `${hangHoaForm.MaVach}-${lastNumber13Main}` });
       if (dataUpdate.data.DataError == 0) {
         toast.success("Sửa thành công");
-        console.log(dataUpdate.data);
+      } else {
+        toast.error(dataUpdate.data.DataErrorDescription);
       }
-      console.log(dataUpdate.data);
     } catch (error) {
       console.log(error);
     }
@@ -305,7 +385,6 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
       if (dataDel.data.DataError == 0) {
         toast.success("Xóa sản phẩm thành công");
       } else {
-        console.log(dataDel.data);
         toast.error(dataDel.data.DataErrorDescription);
       }
     } catch (error) {
@@ -315,21 +394,28 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
   const handleStatus = async (e) => {
     e.preventDefault();
     try {
-      const response = await categoryAPI.GanTrangThai(
-        {
-          DanhSachMa: selectedMaHang.map((item) => ({ Ma: item })),
-          GiaTriMoi: selectedStatus,
-        },
-        TokenAccess
-      );
-      if (response.data.DataError === 0) {
-        console.log({
-          DanhSachMa: selectedMaHang.map((item) => ({ Ma: item })),
-          GiaTriMoi: selectedStatus,
-        });
-        console.log(selectedStatus);
-        console.log(response.data);
-        toast.success(response.data.DataErrorDescription);
+      if (getMaHang) {
+        const response = await categoryAPI.GanTrangThai(
+          {
+            DanhSachMa: getMaHang?.map((item) => ({ Ma: item })),
+            GiaTriMoi: selectedStatus,
+          },
+          TokenAccess
+        );
+        if (response.data.DataError === 0) {
+          toast.success(response.data.DataErrorDescription);
+        }
+      } else {
+        const response = await categoryAPI.GanTrangThai(
+          {
+            DanhSachMa: selectedMaHang.map((item) => ({ Ma: item })),
+            GiaTriMoi: selectedStatus,
+          },
+          TokenAccess
+        );
+        if (response.data.DataError === 0) {
+          toast.success(response.data.DataErrorDescription);
+        }
       }
     } catch (error) {
       console.error("API call failed:", error);
@@ -338,18 +424,33 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
   const handleGroup = async (e) => {
     e.preventDefault();
     try {
-      const response = await categoryAPI.GanNhom(
-        {
-          DanhSachMa: selectedMaHang.map((item) => ({ Ma: item })),
-          GiaTriMoi: selectedGroup,
-        },
-        TokenAccess
-      );
-      if (response.data.DataError == 0) {
-        console.log(response.data);
-        toast.success("Thay đổi nhóm thành công");
+      if (getMaHang) {
+        const response = await categoryAPI.GanNhom(
+          {
+            DanhSachMa: getMaHang?.map((item) => ({ Ma: item })),
+            GiaTriMoi: selectedGroup,
+          },
+          TokenAccess
+        );
+        if (response.data.DataError == 0) {
+          toast.success("Thay đổi nhóm thành công");
+        } else {
+          console.log(response.data);
+        }
       } else {
-        console.log(response.data);
+        const response = await categoryAPI.GanNhom(
+          {
+            DanhSachMa: selectedMaHang.map((item) => ({ Ma: item })),
+            GiaTriMoi: selectedGroup,
+          },
+          TokenAccess
+        );
+        if (response.data.DataError == 0) {
+          console.log(response.data);
+          toast.success("Thay đổi nhóm thành công");
+        } else {
+          console.log(response.data);
+        }
       }
     } catch (error) {
       console.log(error);
@@ -362,15 +463,23 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
         {
           CodeValue1From: selectednhomFrom,
           CodeValue1To: selectednhomTo,
-          CodeValue1List: selectednhomList.join(", "),
+          CodeValue1List: selectednhomList
+            .map((key) => key.toString())
+            .join(","),
           CodeValue2From: selectedBarCodeFrom,
           CodeValue2To: selectedBarCodeTo,
-          CodeValue2List: selectedBarCodeList.join(", "),
+          CodeValue2List: selectedBarCodeList
+            .map((key) => key.toString())
+            .join(","),
           SoTem: selectedTem,
         },
         TokenAccess
       );
-      console.log(selectednhomList.join(", "));
+      console.log({
+        CodeValue2List: selectedBarCodeList
+          .map((key) => key.toString())
+          .join(","),
+      });
       if (response.data.DataError === 0) {
         const decodedData = atob(response.data.DataResults);
         const arrayBuffer = new ArrayBuffer(decodedData.length);
@@ -440,17 +549,17 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
               <div className="flex flex-col gap-4 p-4">
                 <div className="grid grid-cols-4 gap-2 items-center">
                   <div className="flex items-center gap-1 whitespace-nowrap col-span-2">
-                    <label className="font-semibold ">Mã hàng</label>
+                    <label className="required">Mã hàng</label>
                     <input
                       type="text"
                       value={dataView?.MaHang || ""}
-                      className="px-4 py-1 border border-red-700 outline-none"
+                      className="px-2 py-1  w-full resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem]"
                       readOnly
                     />
                   </div>
                   <div className="flex items-center gap-1 whitespace-nowrap ml-4">
                     <Checkbox
-                      className=" text-base font-semibold"
+                      className="text-base"
                       id="TonKho"
                       checked={dataView?.LapRap}
                     >
@@ -459,7 +568,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                   </div>
                   <div className="flex items-center gap-1 ">
                     <Checkbox
-                      className=" text-base font-semibold"
+                      className="text-base"
                       id="TonKho"
                       checked={dataView?.TonKho}
                     >
@@ -469,64 +578,64 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div className="flex items-center gap-1 whitespace-nowrap">
-                    <label className="font-semibold ">Mã vạch</label>
+                    <label className="required">Mã vạch</label>
                     <input
                       type="text"
                       value={dataView?.MaVach || ""}
-                      className="px-4 py-1"
+                      className="px-2 py-1 w-full resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem]"
                       readOnly
                     />
                   </div>
                   <div className="flex items-center gap-1 whitespace-nowrap  ">
-                    <label className="font-semibold ">Tên Nhóm</label>
+                    <label className="required">Tên Nhóm</label>
                     <input
                       type="text"
                       value={dataView?.TenNhom || ""}
-                      className="px-4 py-1"
+                      className="px-2 py-1 w-full resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem]"
                       readOnly
                     />
                   </div>
                 </div>
                 <div className="flex items-center gap-1 whitespace-nowrap">
-                  <label className="font-semibold ">Tên hàng</label>
+                  <label className="required">Tên hàng</label>
                   <input
                     type="text"
                     value={dataView?.TenHang || ""}
-                    className="px-4 py-1"
+                    className="px-2 py-1 w-full resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem]"
                     readOnly
                   />
                 </div>
                 <div className="grid grid-cols-5 gap-2">
                   <div className="flex items-center gap-1 whitespace-nowrap col-span-2">
-                    <label className="font-semibold ">Đơn vị tính</label>
+                    <label className="required">Đơn vị tính</label>
                     <input
                       type="text"
                       value={dataView?.DVTKho || ""}
-                      className="px-4 py-1"
+                      className="px-2 py-1 w-full resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] "
                       readOnly
                     />
                   </div>
                   <div className="flex items-center gap-1 whitespace-nowrap">
-                    <label className="font-semibold ">x</label>
+                    <label>x</label>
                     <input
                       type="text"
                       value={dataView?.TyLeQuyDoi || ""}
-                      className="px-4 py-1"
+                      className="px-2 py-1 w-full resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] flex text-end"
                       readOnly
                     />
                   </div>
                   <div className="flex items-center gap-1 whitespace-nowrap col-span-2">
-                    <label className="font-semibold ">Đơn vị quy đổi</label>
+                    <label className="required">Đơn vị quy đổi</label>
                     <input
                       type="text"
                       value={dataView?.DVTQuyDoi || ""}
-                      className="px-4 py-1"
+                      className="px-2 py-1 w-full resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem]"
                       readOnly
                     />
                   </div>
                 </div>
                 <div className="flex items-center gap-1 whitespace-nowrap">
-                  <label className="font-semibold ">Diễn giải hàng</label>
+                  <label>Diễn giải hàng</label>
                   <input
                     type="text"
                     value={
@@ -534,13 +643,12 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                         ? "Trống"
                         : dataView?.DienGiaiHangHoa || ""
                     }
-                    className="px-4 py-1"
+                    className="px-2 py-1 w-full resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem]"
                     readOnly
                   />
                 </div>
-
                 <div className="flex items-center gap-1 whitespace-nowrap">
-                  <label className="font-semibold ">Ghi chú</label>
+                  <label>Ghi chú</label>
                   <textarea
                     type="text"
                     value={
@@ -548,7 +656,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                         ? "Trống"
                         : dataView?.GhiChu || ""
                     }
-                    className="px-4 py-1"
+                    className="px-2 py-1 w-full resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem]"
                     readOnly
                   />
                 </div>
@@ -558,42 +666,42 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                   </p>
                   <div className="grid grid-cols-2 gap-2">
                     <div className="flex items-center gap-1 whitespace-nowrap">
-                      <label className="font-semibold ">Người tạo</label>
+                      <label>Người tạo</label>
                       <input
                         type="text"
                         value={dataView?.NguoiTao || ""}
-                        className="px-4 py-1 truncate"
+                        className="px-2 py-1 w-full resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] truncate"
                         readOnly
                       />
                     </div>
                     <div className="flex items-center gap-1 whitespace-nowrap">
-                      <label className="font-semibold ">Vào lúc</label>
+                      <label>Vào lúc</label>
                       <input
                         type="text"
                         value={formatDateTime(dataView?.NgayTao) || ""}
-                        className="px-4 py-1"
+                        className="px-2 py-1 w-full resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem]"
                         readOnly
                       />
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     <div className="flex items-center gap-1 whitespace-nowrap">
-                      <label className="font-semibold ">Người sửa</label>
+                      <label>Người sửa</label>
                       <input
                         type="text"
-                        value={dataView?.NguoiSuaCuoi || ""}
-                        className="px-4 py-1 truncate"
+                        value={dataView?.NguoiSuaCuoi || " "}
+                        className="px-2 py-1 w-full resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] truncate"
                         readOnly
                       />
                     </div>
                     <div className="flex items-center gap-1 whitespace-nowrap">
-                      <label className="font-semibold ">Vào lúc</label>
+                      <label>Vào lúc</label>
                       <input
                         type="text"
                         value={
                           formatDateTime(dataView?.NgaySuaCuoi, true) || ""
                         }
-                        className="px-4 py-1"
+                        className="px-2 py-1 w-full resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem]"
                         readOnly
                       />
                     </div>
@@ -614,7 +722,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                         {dataView?.Barcodes?.map((barcode, index) => (
                           <tr key={index}>
                             <td>
-                              <div className="max-w-[30rem]">
+                              <div className="max-w-[30rem] flex justify-start">
                                 <p className="block truncate">
                                   {barcode.MaVach}
                                 </p>
@@ -647,15 +755,20 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                           {dataView?.HangHoa_CTs.map((item) => (
                             <tr key={item.MaHangChiTiet}>
                               <td>
-                                <div title={item.TenHangChiTiet}>
-                                  <p className="block truncate w-[25rem]">
+                                <div
+                                  title={item.TenHangChiTiet}
+                                  className="flex justify-start"
+                                >
+                                  <p className="block truncate max-w-[25rem]">
                                     {item.TenHangChiTiet}
                                   </p>
                                 </div>
                               </td>
                               <td>{item.DVTChiTiet}</td>
                               <td>
-                                <div className="">{item.SoLuong}</div>
+                                <div className="flex justify-end px-4">
+                                  {roundNumber(item.SoLuong)}
+                                </div>
                               </td>
                             </tr>
                           ))}
@@ -688,14 +801,91 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                 <div className="flex flex-col gap-4 p-4">
                   <div className="grid grid-cols-5 gap-4 items-center justify-center">
                     <div className="col-span-2 flex items-center gap-1">
-                      <label className="font-semibold flex">
+                      <label className="flex">
+                        <p className="required whitespace-nowrap">Mã hàng</p>
+                      </label>
+                      <input
+                        type="text"
+                        className="px-2 py-1 w-full resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"
+                        name="MaHang"
+                        disabled={
+                          dataThongSo &&
+                          dataThongSo.SUDUNG_MAHANGHOATUDONG === true
+                        }
+                        value={hangHoaForm?.MaHang || ""}
+                        onChange={(e) =>
+                          setHangHoaForm({
+                            ...hangHoaForm,
+                            [e.target.name]: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                    <div>
+                      <Checkbox
+                        id="TonKho"
+                        checked={
+                          type == "create"
+                            ? !hangHoaForm?.TonKho
+                            : hangHoaForm?.TonKho
+                        }
+                        disabled={
+                          dataThongSo &&
+                          dataThongSo.SUDUNG_TONKHOHANGLAPRAP === false
+                        }
+                        onChange={(e) =>
+                          setHangHoaForm({
+                            ...hangHoaForm,
+                            TonKho: !e.target.checked,
+                          })
+                        }
+                      >
+                        Tồn kho
+                      </Checkbox>
+                    </div>
+                    <div>
+                      <Checkbox
+                        id="LapRap"
+                        checked={hangHoaForm?.LapRap}
+                        disabled={
+                          dataThongSo && dataThongSo.SUDUNG_HANGLAPRAP === false
+                        }
+                        onChange={(e) =>
+                          setHangHoaForm({
+                            ...hangHoaForm,
+                            TonKho: e.target.checked,
+                            [e.target.id]: e.target.checked,
+                          })
+                        }
+                      >
+                        Lắp ráp
+                      </Checkbox>
+                    </div>
+                    <div>
+                      <Checkbox
+                        id="NA"
+                        checked={hangHoaForm?.NA}
+                        onChange={(e) =>
+                          setHangHoaForm({
+                            ...hangHoaForm,
+                            [e.target.id]: e.target.checked,
+                          })
+                        }
+                      >
+                        Ngưng dùng
+                      </Checkbox>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-3 gap-1 items-center">
+                    <div className="flex gap-1 items-center col-span-2">
+                      <label className="flex">
                         <p className="required">Nhóm</p>
                       </label>
                       <select
                         type="text"
                         name="Nhom"
-                        value={hangHoaForm.Nhom || ""}
-                        className="py-1.5"
+                        value={hangHoaForm?.Nhom || ""}
+                        className="px-2 py-1 w-full resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"
                         onChange={(e) => {
                           setHangHoaForm({
                             ...hangHoaForm,
@@ -712,62 +902,16 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                         ))}
                       </select>
                     </div>
-                    <div>
-                      <Checkbox
-                        className="py-1.5 font-semibold"
-                        id="TonKho"
-                        checked={hangHoaForm.TonKho}
-                        onChange={(e) =>
-                          setHangHoaForm({
-                            ...hangHoaForm,
-                            TonKho: e.target.checked || !hangHoaForm.LapRap,
-                          })
-                        }
-                      >
-                        Tồn kho
-                      </Checkbox>
-                    </div>
-                    <div>
-                      <Checkbox
-                        className="py-1.5 font-semibold"
-                        id="LapRap"
-                        checked={hangHoaForm.LapRap}
-                        onChange={(e) =>
-                          setHangHoaForm({
-                            ...hangHoaForm,
-                            TonKho: !e.target.checked || !hangHoaForm.LapRap,
-                            [e.target.id]: e.target.checked,
-                          })
-                        }
-                      >
-                        Lắp ráp
-                      </Checkbox>
-                    </div>
-                    <div>
-                      <Checkbox
-                        className="py-1.5 font-semibold"
-                        id="NA"
-                        checked={hangHoaForm.NA}
-                        onChange={(e) =>
-                          setHangHoaForm({
-                            ...hangHoaForm,
-                            [e.target.id]: e.target.checked,
-                          })
-                        }
-                      >
-                        Ngưng dùng
-                      </Checkbox>
-                    </div>
                   </div>
                   <div className="flex gap-1 items-center">
-                    <label className="font-semibold flex">
-                      <p className="whitespace-nowrap  required">Tên hàng</p>{" "}
+                    <label>
+                      <p className="whitespace-nowrap required">Tên hàng</p>
                     </label>
                     <input
                       type="text"
-                      className="px-4 py-1"
+                      className="px-2 py-1 w-full resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"
                       name="TenHang"
-                      value={hangHoaForm.TenHang || ""}
+                      value={hangHoaForm?.TenHang || ""}
                       onChange={(e) =>
                         setHangHoaForm({
                           ...hangHoaForm,
@@ -778,15 +922,15 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                   </div>
                   <div className="grid grid-cols-5 gap-2 items-center">
                     <div className="flex col-span-2 gap-1 items-center">
-                      <label className="font-semibold flex">
+                      <label>
                         <p className="whitespace-nowrap required">
                           Đơn vị tính
                         </p>
                       </label>
                       <select
                         name="DVTKho"
-                        value={hangHoaForm.DVTKho || ""}
-                        className="py-1.5"
+                        value={hangHoaForm?.DVTKho || ""}
+                        className="px-2 py-1 w-full resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"
                         onChange={(e) =>
                           setHangHoaForm({
                             ...hangHoaForm,
@@ -803,14 +947,17 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                       </select>
                     </div>
                     <div className="flex items-center gap-1">
-                      <label className="font-semibold flex">
+                      <label className="font-semibold">
                         <p>x</p>
                       </label>
                       <input
                         type="text"
-                        className="px-4 py-1"
+                        className="px-2 py-1 w-full resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"
                         name="TyLeQuyDoi"
-                        value={hangHoaForm.TyLeQuyDoi || ""}
+                        disabled={
+                          dataThongSo && dataThongSo.SUDUNG_QUYDOIDVT === false
+                        }
+                        value={hangHoaForm?.TyLeQuyDoi || ""}
                         onChange={(e) => {
                           const tyLeQuyDoiValue = e.target.value;
                           if (!isNaN(tyLeQuyDoiValue)) {
@@ -829,15 +976,18 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                       />
                     </div>
                     <div className="flex col-span-2 items-center gap-1">
-                      <label className="font-semibold flex">
+                      <label>
                         <p className="whitespace-nowrap required">
                           Đơn vị quy đổi
                         </p>
                       </label>
                       <select
                         id="DVTQuyDoi"
-                        value={hangHoaForm.DVTQuyDoi || ""}
-                        className="py-1.5"
+                        value={hangHoaForm?.DVTQuyDoi || ""}
+                        disabled={
+                          dataThongSo && dataThongSo.SUDUNG_QUYDOIDVT === false
+                        }
+                        className="px-2 py-1 w-full resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"
                         onChange={(e) =>
                           setHangHoaForm({
                             ...hangHoaForm,
@@ -854,34 +1004,43 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                       </select>
                     </div>
                   </div>
-                  <div className="grid grid-cols-3 gap-2 ">
-                    <div className="flex col-span-2 gap-1 items-center">
-                      <label className="font-semibold flex">
-                        <p className="whitespace-nowrap required">Mã vạch</p>{" "}
+                  <div className="grid grid-cols-3 gap-2 items-center">
+                    <div className="flex col-span-2 gap-1 items-center justify-center">
+                      <label>
+                        <p className="whitespace-nowrap required">Mã vạch</p>
                       </label>
                       <input
                         type="text"
-                        className="px-4 py-1"
-                        name="MaVach"
-                        value={hangHoaForm.MaVach || ""}
-                        onChange={(e) =>
-                          setHangHoaForm({
-                            ...hangHoaForm,
-                            [e.target.name]: e.target.value,
-                          })
-                        }
+                        className="px-2 py-1 w-full resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"
+                        value={hangHoaForm?.MaVach || ""}
+                        maxLength={12}
+                        minLength={7}
+                        onChange={(e) => {
+                          const inputValue = e.target.value;
+                          const numericValue = inputValue.replace(
+                            /[^0-9]/g,
+                            ""
+                          );
+                          if (numericValue.length <= 12) {
+                            setHangHoaForm({
+                              ...hangHoaForm,
+                              MaVach: numericValue,
+                            });
+                          }
+                        }}
                       />
                     </div>
+                    <div className="text-xl font-bold">{lastNumber13Main}</div>
                   </div>
                   <div className="flex col-span-2 gap-1 items-center">
-                    <label className="font-semibold flex">
+                    <label>
                       <p className="whitespace-nowrap">Diễn giải hàng</p>{" "}
                     </label>
                     <input
                       type="text"
-                      className="px-4 py-1"
+                      className="px-2 py-1 w-full resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"
                       name="DienGiaiHangHoa"
-                      value={hangHoaForm.DienGiaiHangHoa || ""}
+                      value={hangHoaForm?.DienGiaiHangHoa || ""}
                       onChange={(e) =>
                         setHangHoaForm({
                           ...hangHoaForm,
@@ -891,14 +1050,14 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                     />
                   </div>
                   <div className="flex col-span-2 gap-1 items-center">
-                    <label className="font-semibold flex">
-                      <p className="whitespace-nowrap">Ghi chú</p>{" "}
+                    <label>
+                      <p className="whitespace-nowrap">Ghi chú</p>
                     </label>
                     <textarea
                       type="text"
-                      className="px-4 py-1"
+                      className="px-2 py-1 w-full resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsispx-4  "
                       name="GhiChu"
-                      value={hangHoaForm.GhiChu || ""}
+                      value={hangHoaForm?.GhiChu || ""}
                       onChange={(e) =>
                         setHangHoaForm({
                           ...hangHoaForm,
@@ -922,17 +1081,32 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                         {hangHoaForm?.Barcodes?.map((barcode, index) => (
                           <tr key={index}>
                             <td>
-                              <input
-                                type="text"
-                                value={barcode.MaVach}
-                                onChange={(e) =>
-                                  handleBarcodeChange(
-                                    index,
-                                    "MaVach",
-                                    e.target.value
-                                  )
-                                }
-                              />
+                              <div className="px-4 items-center gap-2">
+                                <input
+                                  className="w-full resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"
+                                  type="text"
+                                  value={barcode.MaVach}
+                                  maxLength={12}
+                                  minLength={7}
+                                  onChange={(e) => {
+                                    const inputValue = e.target.value;
+                                    const numericValue = inputValue.replace(
+                                      /[^0-9]/g,
+                                      ""
+                                    );
+                                    if (numericValue.length <= 12) {
+                                      handleBarcodeChange(
+                                        index,
+                                        "MaVach",
+                                        numericValue
+                                      );
+                                    }
+                                  }}
+                                />
+                                <div className="text-xl font-bold">
+                                  {lastNumber13}
+                                </div>
+                              </div>
                             </td>
                             <td>
                               <Checkbox
@@ -947,8 +1121,11 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                               ></Checkbox>
                             </td>
                             <td>
-                              <div onClick={() => removeBarcode(index)}>
-                                <IoMdClose className="w-6 h-6 hover:text-red-500" />
+                              <div
+                                onClick={() => removeBarcode(index)}
+                                className="flex justify-center"
+                              >
+                                <IoMdClose className="w-6 h-6 flex justify-center hover:text-red-500" />
                               </div>
                             </td>
                           </tr>
@@ -965,7 +1142,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                       </button>
                     </div>
                   </div>
-                  {hangHoaForm.LapRap == true && (
+                  {hangHoaForm?.LapRap == true && (
                     <div className="shadow-custom p-2 rounded-lg m-1 flex flex-col gap-2">
                       <table className="barcodeList">
                         <thead>
@@ -982,6 +1159,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                               <td>
                                 <div className="px-4">
                                   <select
+                                    className="px-2 py-0.5 w-full resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"
                                     value={item.MaHangChiTiet}
                                     onChange={(e) =>
                                       handleChangeHHCT(
@@ -1011,6 +1189,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                               <td>{item.DVT_CTs}</td>
                               <td>
                                 <input
+                                  className="px-2 py-0.5 w-full resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis flex justify-end"
                                   type="number"
                                   value={roundNumber(item.SoLuong)}
                                   min={1}
@@ -1026,9 +1205,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                               <td>
                                 <div
                                   className="cursor-pointer hover:text-red-500"
-                                  onClick={() =>
-                                    removeHangHoaCT(x.MaHangChiTiet)
-                                  }
+                                  onClick={() => removeHangHoaCT()}
                                 >
                                   X
                                 </div>
@@ -1078,16 +1255,90 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
             <form onSubmit={handleUpdate} className="flex flex-col gap-2">
               <div className="grid grid-cols-2">
                 <div className="flex flex-col gap-4 p-4">
-                  <div className="grid grid-cols-5 gap-4 items-center justify-center">
-                    <div className="col-span-2 flex items-center gap-1">
-                      <label className="font-semibold flex">
-                        <p>Nhóm</p> <p className="text-red-500">*</p>
+                  <div className="grid grid-cols-6 gap-4 items-center justify-center">
+                    <div className="col-span-3 flex items-center gap-1">
+                      <label className="flex">
+                        <p className="required whitespace-nowrap">Mã hàng</p>
                       </label>
+                      <input
+                        type="text"
+                        className="px-2 py-1 w-full resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"
+                        name="MaHang"
+                        disabled={
+                          dataThongSo &&
+                          dataThongSo.SUDUNG_MAHANGHOATUDONG === true
+                        }
+                        value={hangHoaForm.MaHang || ""}
+                        onChange={(e) =>
+                          setHangHoaForm({
+                            ...hangHoaForm,
+                            [e.target.name]: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                    <div>
+                      <Checkbox
+                        className="py-1.5 "
+                        id="TonKho"
+                        checked={hangHoaForm.TonKho}
+                        disabled={
+                          dataThongSo &&
+                          dataThongSo.SUDUNG_TONKHOHANGLAPRAP === false
+                        }
+                        onChange={(e) =>
+                          setHangHoaForm({
+                            ...hangHoaForm,
+                            TonKho: e.target.checked || !hangHoaForm.LapRap,
+                          })
+                        }
+                      >
+                        Tồn kho
+                      </Checkbox>
+                    </div>
+                    <div>
+                      <Checkbox
+                        className="py-1.5"
+                        id="LapRap"
+                        checked={hangHoaForm.LapRap}
+                        disabled={
+                          dataThongSo && dataThongSo.SUDUNG_HANGLAPRAP === false
+                        }
+                        onChange={(e) =>
+                          setHangHoaForm({
+                            ...hangHoaForm,
+                            TonKho: !e.target.checked || !hangHoaForm.LapRap,
+                            [e.target.id]: e.target.checked,
+                          })
+                        }
+                      >
+                        Lắp ráp
+                      </Checkbox>
+                    </div>
+                    <div>
+                      <Checkbox
+                        className="py-1.5 whitespace-nowrap "
+                        id="NA"
+                        checked={hangHoaForm.NA}
+                        onChange={(e) =>
+                          setHangHoaForm({
+                            ...hangHoaForm,
+                            [e.target.id]: e.target.checked,
+                          })
+                        }
+                      >
+                        Ngưng dùng
+                      </Checkbox>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-3">
+                    <div className="col-span-2 flex items-center gap-1">
+                      <label className="required">Nhóm</label>
                       <select
                         type="text"
                         name="Nhom"
                         value={hangHoaForm.Nhom}
-                        className="py-1.5"
+                        className="px-2 py-1 w-full resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"
                         onChange={(e) => {
                           setHangHoaForm({
                             ...hangHoaForm,
@@ -1104,61 +1355,14 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                         ))}
                       </select>
                     </div>
-                    <div>
-                      <Checkbox
-                        className="py-1.5 font-semibold"
-                        id="TonKho"
-                        checked={hangHoaForm.TonKho}
-                        onChange={(e) =>
-                          setHangHoaForm({
-                            ...hangHoaForm,
-                            TonKho: e.target.checked || !hangHoaForm.LapRap,
-                          })
-                        }
-                      >
-                        Tồn kho
-                      </Checkbox>
-                    </div>
-                    <div>
-                      <Checkbox
-                        className="py-1.5 font-semibold"
-                        id="LapRap"
-                        checked={hangHoaForm.LapRap}
-                        onChange={(e) =>
-                          setHangHoaForm({
-                            ...hangHoaForm,
-                            TonKho: !e.target.checked || !hangHoaForm.LapRap,
-                            [e.target.id]: e.target.checked,
-                          })
-                        }
-                      >
-                        Lắp ráp
-                      </Checkbox>
-                    </div>
-                    <div>
-                      <Checkbox
-                        className="py-1.5 font-semibold"
-                        id="NA"
-                        checked={hangHoaForm.NA}
-                        onChange={(e) =>
-                          setHangHoaForm({
-                            ...hangHoaForm,
-                            [e.target.id]: e.target.checked,
-                          })
-                        }
-                      >
-                        Ngưng dùng
-                      </Checkbox>
-                    </div>
                   </div>
                   <div className="flex gap-1 items-center">
-                    <label className="font-semibold flex">
-                      <p className="whitespace-nowrap">Tên hàng</p>{" "}
-                      <p className="text-red-500">*</p>
+                    <label className="required whitespace-nowrap">
+                      Tên hàng
                     </label>
                     <input
                       type="text"
-                      className="px-4 py-1"
+                      className="px-2 py-1 w-full resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"
                       name="TenHang"
                       value={hangHoaForm.TenHang || ""}
                       onChange={(e) =>
@@ -1171,14 +1375,13 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                   </div>
                   <div className="grid grid-cols-5 gap-2 items-center">
                     <div className="flex col-span-2 gap-1 items-center">
-                      <label className="font-semibold flex">
-                        <p className="whitespace-nowrap">Đơn vị tính</p>
-                        <p className="text-red-500">*</p>
+                      <label className="required whitespace-nowrap">
+                        Đơn vị tính
                       </label>
                       <select
                         name="DVTKho"
                         value={hangHoaForm.DVTKho || ""}
-                        className="py-1.5"
+                        className="px-2 py-1 w-full resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"
                         onChange={(e) =>
                           setHangHoaForm({
                             ...hangHoaForm,
@@ -1195,14 +1398,15 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                       </select>
                     </div>
                     <div className="flex items-center gap-1">
-                      <label className="font-semibold flex">
-                        <p>x</p>
-                      </label>
+                      <label className="font-semibold  ">x</label>
                       <input
                         type="text"
-                        className="px-4 py-1"
+                        className="px-2 py-1 w-full resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis text-end"
                         name="TyLeQuyDoi"
                         value={hangHoaForm.TyLeQuyDoi || ""}
+                        disabled={
+                          dataThongSo && dataThongSo.SUDUNG_QUYDOIDVT === false
+                        }
                         onChange={(e) => {
                           const tyLeQuyDoiValue = e.target.value;
                           if (!isNaN(tyLeQuyDoiValue)) {
@@ -1210,10 +1414,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                               ...hangHoaForm,
                               [e.target.name]: tyLeQuyDoiValue,
                             });
-
-                            // Check if TyLeQuyDoi is less than 10
                             if (tyLeQuyDoiValue < 10) {
-                              // Update DVTKho value to match DVTQuyDoi
                               setHangHoaForm((prev) => ({
                                 ...prev,
                                 DVTQuyDoi: prev.DVTKho,
@@ -1224,14 +1425,16 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                       />
                     </div>
                     <div className="flex col-span-2 items-center gap-1">
-                      <label className="font-semibold flex">
-                        <p className="whitespace-nowrap">Đơn vị quy đổi</p>
-                        <p className="text-red-500">*</p>
+                      <label className=" whitespace-nowrap required">
+                        Đơn vị quy đổi
                       </label>
                       <select
                         id="DVTQuyDoi"
                         value={hangHoaForm.DVTQuyDoi || ""}
-                        className="py-1.5"
+                        disabled={
+                          dataThongSo && dataThongSo.SUDUNG_QUYDOIDVT === false
+                        }
+                        className="px-2 py-1 w-full resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"
                         onChange={(e) =>
                           setHangHoaForm({
                             ...hangHoaForm,
@@ -1248,33 +1451,40 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                       </select>
                     </div>
                   </div>
-                  <div className="grid grid-cols-3 gap-2 ">
+                  <div className="grid grid-cols-3 gap-2 items-center">
                     <div className="flex col-span-2 gap-1 items-center">
-                      <label className="font-semibold flex">
-                        <p className="whitespace-nowrap">Mã vạch</p>{" "}
-                        <p className="text-red-500">*</p>
-                      </label>{" "}
+                      <label className="required whitespace-nowrap">
+                        Mã vạch
+                      </label>
                       <input
                         type="text"
-                        className="px-4 py-1"
+                        className="px-2 py-1 w-full resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"
                         name="MaVach"
                         value={hangHoaForm.MaVach || ""}
-                        onChange={(e) =>
-                          setHangHoaForm({
-                            ...hangHoaForm,
-                            [e.target.name]: e.target.value,
-                          })
-                        }
+                        maxLength={12}
+                        minLength={7}
+                        onChange={(e) => {
+                          const inputValue = e.target.value;
+                          const numericValue = inputValue.replace(
+                            /[^0-9]/g,
+                            ""
+                          );
+                          if (numericValue.length <= 12) {
+                            setHangHoaForm({
+                              ...hangHoaForm,
+                              [e.target.name]: numericValue,
+                            });
+                          }
+                        }}
                       />
                     </div>
+                    <div className="text-xl font-bold">{lastNumber13Main}</div>
                   </div>
                   <div className="flex col-span-2 gap-1 items-center">
-                    <label className="font-semibold flex">
-                      <p className="whitespace-nowrap">Diễn giải hàng</p>{" "}
-                    </label>
+                    <label className="whitespace-nowrap">Diễn giải hàng</label>
                     <input
                       type="text"
-                      className="px-4 py-1"
+                      className="px-2 py-1 w-full resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"
                       name="DienGiaiHangHoa"
                       value={hangHoaForm.DienGiaiHangHoa || ""}
                       onChange={(e) =>
@@ -1286,12 +1496,10 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                     />
                   </div>
                   <div className="flex col-span-2 gap-1 items-center">
-                    <label className="font-semibold flex">
-                      <p className="whitespace-nowrap">Ghi chú</p>{" "}
-                    </label>
+                    <label className="whitespace-nowrap">Ghi chú</label>
                     <textarea
                       type="text"
-                      className="px-4 py-1"
+                      className="px-2 py-1 w-full resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"
                       name="GhiChu"
                       value={hangHoaForm.GhiChu || ""}
                       onChange={(e) =>
@@ -1318,17 +1526,32 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                           <tr key={index}>
                             <>
                               <td>
-                                <input
-                                  type="text"
-                                  value={item.MaVach}
-                                  onChange={(e) =>
-                                    handleBarcodeChange(
-                                      index,
-                                      "MaVach",
-                                      e.target.value
-                                    )
-                                  }
-                                />
+                                <div className="flex items-center">
+                                  <input
+                                    className="px-2 w-full resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"
+                                    type="text"
+                                    value={item.MaVach}
+                                    maxLength={12}
+                                    minLength={7}
+                                    onChange={(e) => {
+                                      const inputValue = e.target.value;
+                                      const numericValue = inputValue.replace(
+                                        /[^0-9]/g,
+                                        ""
+                                      );
+                                      if (numericValue.length <= 12) {
+                                        handleBarcodeChange(
+                                          index,
+                                          "MaVach",
+                                          numericValue
+                                        );
+                                      }
+                                    }}
+                                  />
+                                  <div className="text-xl font-bold">
+                                    {lastNumber13}
+                                  </div>
+                                </div>
                               </td>
                               <td>
                                 <Checkbox
@@ -1379,6 +1602,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                               <td>
                                 <div className="px-4">
                                   <select
+                                    className="px-2 w-full resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"
                                     value={item.MaHangChiTiet}
                                     onChange={(e) =>
                                       handleChangeHHCT(
@@ -1408,6 +1632,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                               <td>{item.DVTChiTiet}</td>
                               <td>
                                 <input
+                                  className="px-2 w-full resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] text-end outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"
                                   type="number"
                                   value={roundNumber(item.SoLuong)}
                                   min={1}
@@ -1502,19 +1727,21 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
               </div>
             </div>
             <form className="flex flex-col gap-4" onSubmit={handleStatus}>
-              <div className="flex justify-center items-center gap-4">
-                <div className="col-span-2">
-                  <div className="required">Chọn mã hàng</div>
+              <div className="grid grid-cols-1 justify-center items-center gap-4 px-4">
+                <div className="col-span-2 flex items-center gap-2">
+                  <div className="required whitespace-nowrap">
+                    Chọn tên hàng
+                  </div>
                   <Select
                     mode="multiple"
                     maxTagCount={2}
                     allowClear
                     filterOption
-                    placeholder="Chọn mã hàng"
+                    placeholder="Chọn tên hàng muốn đổi"
                     value={selectedMaHang}
                     onChange={(value) => setSelectedMaHang(value)}
                     style={{
-                      width: "350px",
+                      width: "600px",
                     }}
                   >
                     {getDataHangHoa?.map((item, index) => {
@@ -1522,22 +1749,22 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                         <Select.Option
                           key={index}
                           value={item.MaHang}
-                          title={item.TenHang}
+                          title={item.MaHang}
                         >
-                          <p> {item.MaHang}</p>
+                          <p> {item.TenHang}</p>
                         </Select.Option>
                       );
                     })}
                   </Select>
                 </div>
-                <div>
-                  <div className="required">Trạng thái</div>
+                <div className="flex items-center gap-2 px-8">
+                  <div className="required ">Trạng thái</div>
                   <Space wrap>
                     <Select
                       placeholder="Chọn trạng thái"
                       required
                       style={{
-                        width: 170,
+                        width: 200,
                       }}
                       value={selectedStatus}
                       onChange={(value) => setSelectedStatus(value)}
@@ -1567,6 +1794,57 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
             </form>
           </div>
         )}
+        {type == "statusMany" && (
+          <div className="flex flex-col gap-2 ">
+            <div>
+              <div className="flex justify-end ">
+                <IoMdClose
+                  className="w-6 h-6 rounded-full border-current hover:bg-slate-200 hover:text-red-500"
+                  onClick={close}
+                />
+              </div>
+              <div className="flex gap-2 justify-center items-center font-semibold text-lg">
+                <p className="text-blue-700">Đổi Trạng Thái</p>
+              </div>
+            </div>
+            <form className="flex flex-col gap-4" onSubmit={handleStatus}>
+              <div className="flex items-center justify-center gap-2">
+                <div className="required ">Trạng thái</div>
+                <Space wrap>
+                  <Select
+                    placeholder="Chọn trạng thái"
+                    required
+                    style={{
+                      width: 500,
+                    }}
+                    value={selectedStatus}
+                    onChange={(value) => setSelectedStatus(value)}
+                    options={[
+                      {
+                        value: "1",
+                        label: "Sử dụng",
+                      },
+                      {
+                        value: "0",
+                        label: "Ngưng sử dụng",
+                      },
+                      {
+                        value: "2",
+                        label: "Ngược trạng thái",
+                      },
+                    ]}
+                  />
+                </Space>
+              </div>
+
+              <div className="flex justify-end " type="submit">
+                <button className="bg-blue-600 px-2 py-2 font-medium rounded-lg text-white shadow-custom   z-50">
+                  Xác nhận
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
         {type == "group" && (
           <div className="flex flex-col gap-2">
             <div>
@@ -1581,19 +1859,21 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
               </div>
             </div>
             <form className="flex flex-col gap-4" onSubmit={handleGroup}>
-              <div className="flex justify-center items-center gap-2">
-                <div className="col-span-2">
-                  <div className="required">Chọn mã hàng</div>
+              <div className="grid grid-cols-1 justify-center items-center gap-4 px-4">
+                <div className="  flex gap-2 items-center">
+                  <div className="required whitespace-nowrap">
+                    Chọn tên hàng
+                  </div>
                   <Select
                     mode="multiple"
                     maxTagCount={2}
                     allowClear
                     filterOption
-                    placeholder="Chọn mã hàng"
+                    placeholder="Chọn tên hàng muốn đổi nhóm"
                     value={selectedMaHang}
                     onChange={(value) => setSelectedMaHang(value)}
                     style={{
-                      width: "350px",
+                      width: "600px",
                     }}
                   >
                     {getDataHangHoa?.map((item, index) => {
@@ -1601,22 +1881,24 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                         <Select.Option
                           key={index}
                           value={item.MaHang}
-                          title={item.TenHang}
+                          title={item.MaHang}
                         >
-                          <p> {item.MaHang}</p>
+                          <p>
+                            {item.MaHang} - {item.TenHang}
+                          </p>
                         </Select.Option>
                       );
                     })}
                   </Select>
                 </div>
-                <div>
-                  <div className="required">Chọn Nhóm</div>
+                <div className="flex gap-2 items-center px-4">
+                  <div className="required whitespace-nowrap">Chọn nhóm</div>
                   <Select
                     placeholder="Chọn Nhóm"
                     filterOption
                     required
                     style={{
-                      width: 250,
+                      width: "400px",
                     }}
                     value={selectedGroup}
                     onChange={(value) => setSelectedGroup(value)}
@@ -1634,6 +1916,53 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                     })}
                   </Select>
                 </div>
+              </div>
+              <div className="flex justify-end " type="submit">
+                <button className="bg-blue-600 px-2 py-2 font-medium rounded-lg text-white shadow-custom   z-50">
+                  Xác nhận
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+        {type == "groupMany" && (
+          <div className="flex flex-col gap-2">
+            <div>
+              <div className="flex justify-end ">
+                <IoMdClose
+                  className="w-6 h-6 rounded-full border-current hover:bg-slate-200 hover:text-red-500"
+                  onClick={close}
+                />
+              </div>
+              <div className="flex gap-2 justify-center items-center font-semibold text-lg">
+                <p className="text-blue-700">Đổi Nhóm</p>
+              </div>
+            </div>
+            <form className="flex flex-col gap-4" onSubmit={handleGroup}>
+              <div className="flex gap-2 items-center px-4">
+                <div className="required whitespace-nowrap">Chọn nhóm</div>
+                <Select
+                  placeholder="Chọn Nhóm"
+                  filterOption
+                  required
+                  style={{
+                    width: "400px",
+                  }}
+                  value={selectedGroup}
+                  onChange={(value) => setSelectedGroup(value)}
+                >
+                  {nhomHang?.map((item, index) => {
+                    return (
+                      <Select.Option
+                        key={index}
+                        value={item.Ma}
+                        title={item.Ten}
+                      >
+                        <p className="truncate"> {item.ThongTinNhomHang}</p>
+                      </Select.Option>
+                    );
+                  })}
+                </Select>
               </div>
               <div className="flex justify-end " type="submit">
                 <button className="bg-blue-600 px-2 py-2 font-medium rounded-lg text-white shadow-custom   z-50">
@@ -1823,13 +2152,13 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                 </div>
               </div>
               <div className="gap-1 flex items-center">
-                <label className="required">Số tem</label>
+                <label className="required whitespace-nowrap">Số tem</label>
                 <input
                   type="number"
                   min={1}
                   value={selectedTem || ""}
                   onChange={(e) => setSelectedTem(e.target.value)}
-                  className="border-slate-200 py-1 px-2 w-24"
+                  className="border-slate-200    px-2 py-1 w-full resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"
                   required
                 />
               </div>

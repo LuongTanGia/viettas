@@ -8,7 +8,7 @@ import { Form, DatePicker, Space, Table, Select, Tooltip } from "antd";
 import moment from "moment";
 import { MdCheckCircle } from "react-icons/md";
 import { IoMdCloseCircle } from "react-icons/io";
-import { FaFilter } from "react-icons/fa";
+import { TfiMoreAlt } from "react-icons/tfi";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
 
@@ -91,11 +91,9 @@ const NhapXuatTonKho = () => {
         );
         if (response.data.DataError == 0) {
           setDataNXT(response.data.DataResults);
-          console.log(response);
           setIsLoading(true);
         } else {
           toast.error(response.data.DataErrorDescription);
-          console.log(response.data);
         }
       }
     } catch (error) {
@@ -118,14 +116,12 @@ const NhapXuatTonKho = () => {
         },
         TokenAccess
       );
-      console.log(response.data);
       if (response.data.DataError == 0) {
         toast.success(response.data.DataErrorDescription);
         setDataNXT(response.data.DataResults);
         setIsLoading(true);
       } else {
         toast.error(response.data.DataErrorDescription);
-        console.log(response.data);
         setIsLoading(true);
       }
     } catch (error) {
@@ -572,388 +568,569 @@ const NhapXuatTonKho = () => {
       {!isLoading ? (
         <p className=" ">Loading</p>
       ) : (
-        <div className="flex flex-col py-2 px-4 gap-2">
-          <div className="flex flex-col gap-4">
-            <div className="relative">
-              <div className="flex items-center gap-2">
-                <h1 className="text-lg font-bold text-black-600 uppercase">
-                  Nhập Xuất Tồn - Theo Kho
-                </h1>
-                <FaSearch
-                  className="hover:text-red-400 cursor-pointer"
-                  onClick={() => setIsShowSearch(!isShowSearch)}
-                />
-              </div>
-              <div className="flex relative ">
-                {isShowSearch && (
-                  <div
-                    className={`flex absolute left-[18.5rem] -top-8 transition-all linear duration-700 ${
-                      isShowSearch ? "w-[20rem]" : "w-0"
-                    } overflow-hidden`}
-                  >
-                    <input
-                      type="text"
-                      placeholder="Nhập tên bạn cần tìm"
-                      onChange={handleSearch}
-                      className={"px-2 py-1 w-[20rem] border-slate-200  "}
-                    />
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="flex justify-between relative">
-              <div form={form} className="-mb-4">
-                <Form.Item
-                  name="dateRange"
-                  label={
-                    <span style={{ fontWeight: "bold" }}>Thông tin từ</span>
-                  }
-                  rules={[
-                    {
-                      validator: validateDate,
-                    },
-                  ]}
-                >
-                  <Space>
-                    <RangePicker
-                      disabled
-                      format="DD/MM/YYYY"
-                      picker="date"
-                      onKeyDown={handleKeyDown}
-                      value={[
-                        khoanNgayFrom ? dayjs(khoanNgayFrom) : null,
-                        khoanNgayTo ? dayjs(khoanNgayTo) : null,
-                      ]}
-                      onCalendarChange={handleCalendarChange}
-                      defaultValue={[
-                        dayjs(khoanNgayFrom, "YYYY-MM-DD"),
-                        dayjs(khoanNgayTo, "YYYY-MM-DD"),
-                      ]}
-                    />
-                  </Space>
-                </Form.Item>
-              </div>
-              <div className="flex items-center gap-2">
-                <Select
-                  allowClear
-                  placeholder="Lọc Kho"
-                  value={selectedMaKho}
-                  onChange={(value) => setSelectedMaKho(value)}
-                  style={{
-                    width: "150px",
-                    color: "red",
-                  }}
-                >
-                  {khoHangNXT?.map((item, index) => {
-                    return (
-                      <Select.Option
-                        key={index}
-                        value={item.MaKho}
-                        title={item.TenKho}
-                        className="py-8"
-                      >
-                        <p> {item.TenKho}</p>
-                      </Select.Option>
-                    );
-                  })}
-                </Select>
-                <div>
-                  <div
-                    className="flex items-center gap-2 px-2 py-1 bg-blue-600 text-slate-50 rounded-lg cursor-pointer shadow-custom hover:bg-white hover:text-blue-600"
-                    onClick={() => setIsShowModal(!isShowModal)}
-                  >
-                    <p className="text-lg font-medium ">Lọc Hàng</p>
-                    <p>
-                      <FaFilter
-                        className={`duration-300 rotate-${
-                          isShowModal ? "90" : "0"
-                        }`}
+        <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2">
+            <div className="flex justify-between">
+              <div>
+                <div className="flex items-center gap-2">
+                  <h1 className="text-lg font-bold text-black-600 uppercase">
+                    Nhập Xuất Tồn - Theo Kho
+                  </h1>
+                  <FaSearch
+                    className="hover:text-red-400 cursor-pointer"
+                    onClick={() => setIsShowSearch(!isShowSearch)}
+                  />
+                </div>
+                <div className="flex relative ">
+                  {isShowSearch && (
+                    <div
+                      className={`flex absolute left-[18.5rem] -top-8 transition-all linear duration-700 ${
+                        isShowSearch ? "w-[20rem]" : "w-0"
+                      } overflow-hidden`}
+                    >
+                      <input
+                        type="text"
+                        placeholder="Nhập tên bạn cần tìm"
+                        onChange={handleSearch}
+                        className={
+                          "px-2 py-1 w-[20rem] border-slate-200 resize-none rounded-[0.5rem] border-[0.125rem] outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis "
+                        }
                       />
-                    </p>
-                  </div>
-                  {isShowModal && (
-                    <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10 ">
-                      <div
-                        onClick={() => setIsShowModal(false)}
-                        className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"
-                      ></div>
-                      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2  min-w-[40rem] min-h-[8rem] bg-white  p-2 rounded-xl shadow-custom overflow-hidden ">
-                        <form
-                          className="flex flex-col gap-4"
-                          onSubmit={getDataNXT}
-                        >
-                          <div>
-                            <div className="flex justify-end  ">
-                              <IoMdClose
-                                onClick={() => setIsShowModal(false)}
-                                className="w-6 h-6 rounded-full border-current hover:bg-slate-200 hover:text-red-500"
-                              />
-                            </div>
-                            <div className="flex gap-2 justify-center items-center font-semibold text-lg">
-                              <p className="text-blue-700 uppercase">
-                                Lọc Thông Tin Hàng
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex flex-col gap-4 justify-center items-center ">
-                            <div className="DaySet -mb-4">
-                              <div form={form}>
-                                <Form.Item
-                                  name="dateRange"
-                                  label="Ngày Tháng"
-                                  rules={[
-                                    {
-                                      validator: validateDate,
-                                    },
-                                  ]}
-                                >
-                                  <Space>
-                                    <RangePicker
-                                      format="DD/MM/YYYY"
-                                      picker="date"
-                                      onKeyDown={handleKeyDown}
-                                      onCalendarChange={handleCalendarChange}
-                                      defaultValue={[
-                                        dayjs(khoanNgayFrom, "YYYY-MM-DD"),
-                                        dayjs(khoanNgayTo, "YYYY-MM-DD"),
-                                      ]}
-                                      onChange={(values) => {
-                                        setKhoanNgayFrom(
-                                          values[0]
-                                            ? dayjs(values[0]).format(
-                                                "YYYY-MM-DDTHH:mm:ss"
-                                              )
-                                            : ""
-                                        );
-                                        setKhoanNgayTo(
-                                          values[1]
-                                            ? dayjs(values[1]).format(
-                                                "YYYY-MM-DDTHH:mm:ss"
-                                              )
-                                            : ""
-                                        );
-                                        const isValid =
-                                          moment(
-                                            values[0],
-                                            "DD/MM/YYYY",
-                                            true
-                                          ).isValid() &&
-                                          moment(
-                                            values[1],
-                                            "DD/MM/YYYY",
-                                            true
-                                          ).isValid();
-                                        setIsValidDate(isValid);
-                                      }}
-                                    />
-                                    {isValidDate ? (
-                                      <MdCheckCircle
-                                        style={{
-                                          color: "green",
-                                        }}
-                                      />
-                                    ) : (
-                                      <IoMdCloseCircle
-                                        style={{
-                                          color: "red",
-                                        }}
-                                      />
-                                    )}
-                                  </Space>
-                                </Form.Item>
-                              </div>
-                            </div>
-                            <div className="grid grid-cols-2 gap-4 px-4 border-2 py-4 border-black-200 rounded-lg relative">
-                              <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">
-                                Theo Nhóm
-                              </p>
-                              <div className="flex gap-1 items-center">
-                                <div>Từ</div>
-                                <Select
-                                  allowClear
-                                  filterOption
-                                  placeholder="Chọn nhóm"
-                                  value={selectedNhomFrom}
-                                  onChange={(value) =>
-                                    setSelectedNhomFrom(value)
-                                  }
-                                  style={{
-                                    width: "200px",
-                                  }}
-                                >
-                                  {nhomHangNXT?.map((item, index) => {
-                                    return (
-                                      <Select.Option
-                                        key={index}
-                                        value={item.Ma}
-                                        title={item.ThongTinNhomHang}
-                                      >
-                                        <p className="truncate">{item.Ma}</p>
-                                      </Select.Option>
-                                    );
-                                  })}
-                                </Select>
-                              </div>
-                              <div className="flex gap-1 items-center">
-                                <div> Tới</div>
-                                <Select
-                                  allowClear
-                                  filterOption
-                                  placeholder="Chọn nhóm"
-                                  value={selectedNhomTo}
-                                  onChange={(value) => setSelectedNhomTo(value)}
-                                  style={{
-                                    width: "200px",
-                                  }}
-                                >
-                                  {nhomHangNXT?.map((item, index) => {
-                                    return (
-                                      <Select.Option
-                                        key={index}
-                                        value={item.Ma}
-                                        title={item.ThongTinNhomHang}
-                                      >
-                                        <p className="truncate">{item.Ma}</p>
-                                      </Select.Option>
-                                    );
-                                  })}
-                                </Select>
-                              </div>
-                              <div className="col-span-2 flex gap-1 items-center">
-                                <div>Gộp Nhóm</div>
-                                <Select
-                                  mode="multiple"
-                                  maxTagCount={2}
-                                  filterOption
-                                  placeholder="Danh sách nhóm"
-                                  value={selectedNhomList}
-                                  onChange={(value) =>
-                                    setSelectedNhomList(value)
-                                  }
-                                  style={{
-                                    width: "390px",
-                                  }}
-                                >
-                                  {nhomHangNXT?.map((item) => {
-                                    return (
-                                      <Select.Option
-                                        key={item.Ma}
-                                        value={item.Ma}
-                                        title={item.ThongTinNhomHang}
-                                      >
-                                        <p className="truncate">{item.Ma}</p>
-                                      </Select.Option>
-                                    );
-                                  })}
-                                </Select>
-                              </div>
-                            </div>
-                            <div className="grid grid-cols-2 gap-4 px-4 border-2 py-4 border-black-200 rounded-lg relative">
-                              <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">
-                                Theo Mã
-                              </p>
-                              <div className="flex gap-1 items-center">
-                                <div> Từ</div>
-                                <Select
-                                  allowClear
-                                  filterOption
-                                  placeholder="Chọn mã hàng"
-                                  value={selectedMaFrom}
-                                  onChange={(value) => setSelectedMaFrom(value)}
-                                  style={{
-                                    width: "200px",
-                                  }}
-                                >
-                                  {hangHoaNXT?.map((item, index) => {
-                                    return (
-                                      <Select.Option
-                                        key={index}
-                                        value={item.MaHang}
-                                        title={item.TenHang}
-                                      >
-                                        <p className="truncate">
-                                          {item.MaHang}
-                                        </p>
-                                      </Select.Option>
-                                    );
-                                  })}
-                                </Select>
-                              </div>
-                              <div className="flex gap-1 items-center">
-                                <div> Tới</div>
-                                <Select
-                                  allowClear
-                                  filterOption
-                                  placeholder="Chọn mã hàng"
-                                  value={selectedMaTo}
-                                  onChange={(value) => setSelectedMaTo(value)}
-                                  style={{
-                                    width: "200px",
-                                  }}
-                                >
-                                  {hangHoaNXT?.map((item, index) => {
-                                    return (
-                                      <Select.Option
-                                        key={index}
-                                        value={item.MaHang}
-                                        title={item.TenHang}
-                                      >
-                                        <p className="truncate">
-                                          {item.MaHang}
-                                        </p>
-                                      </Select.Option>
-                                    );
-                                  })}
-                                </Select>
-                              </div>
-                              <div className="flex items-center gap-1 col-span-2">
-                                <div>Gộp Mã</div>
-                                <Select
-                                  mode="multiple"
-                                  maxTagCount={2}
-                                  allowClear
-                                  filterOption
-                                  value={selectedMaList}
-                                  onChange={(value) => setSelectedMaList(value)}
-                                  placeholder="Chọn mã hàng"
-                                  style={{
-                                    width: "370px",
-                                  }}
-                                >
-                                  {hangHoaNXT?.map((item, index) => {
-                                    return (
-                                      <Select.Option
-                                        key={index}
-                                        value={item.MaHang}
-                                        title={item.TenHang}
-                                      >
-                                        <p className="truncate">
-                                          {item.MaHang}
-                                        </p>
-                                      </Select.Option>
-                                    );
-                                  })}
-                                </Select>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="flex justify-end px-2">
-                            <button
-                              className="bg-blue-600 p-2 font-medium rounded-lg text-white shadow-custom z-50"
-                              type="submit"
-                            >
-                              Xác nhận
-                            </button>
-                          </div>
-                        </form>
-                      </div>
                     </div>
                   )}
                 </div>
               </div>
+              <div>
+                <div
+                  className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5  "
+                  onClick={() => setIsShowModal(!isShowModal)}
+                  title="Chức năng khác"
+                >
+                  <TfiMoreAlt
+                    className={`duration-300 rotate-${
+                      isShowModal ? "0" : "90"
+                    }`}
+                  />
+                </div>
+                {isShowModal && (
+                  <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10 ">
+                    <div
+                      onClick={() => setIsShowModal(false)}
+                      className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"
+                    ></div>
+                    <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2  min-w-[40rem] min-h-[8rem] bg-white  p-2 rounded-xl shadow-custom overflow-hidden ">
+                      <form
+                        className="flex flex-col gap-4"
+                        onSubmit={getDataNXT}
+                      >
+                        <div>
+                          <div className="flex justify-end  ">
+                            <IoMdClose
+                              onClick={() => setIsShowModal(false)}
+                              className="w-6 h-6 rounded-full border-current hover:bg-slate-200 hover:text-red-500"
+                            />
+                          </div>
+                          <div className="flex gap-2 justify-center items-center font-semibold text-lg">
+                            <p className="text-blue-700 uppercase">
+                              Lọc Thông Tin Hàng
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex flex-col gap-4 justify-center items-center ">
+                          <div className="DaySet -mb-4">
+                            <div form={form}>
+                              <Form.Item
+                                name="dateRange"
+                                label="Ngày Tháng"
+                                rules={[
+                                  {
+                                    validator: validateDate,
+                                  },
+                                ]}
+                              >
+                                <Space>
+                                  <RangePicker
+                                    format="DD/MM/YYYY"
+                                    picker="date"
+                                    onKeyDown={handleKeyDown}
+                                    onCalendarChange={handleCalendarChange}
+                                    defaultValue={[
+                                      dayjs(khoanNgayFrom, "YYYY-MM-DD"),
+                                      dayjs(khoanNgayTo, "YYYY-MM-DD"),
+                                    ]}
+                                    onChange={(values) => {
+                                      setKhoanNgayFrom(
+                                        values[0]
+                                          ? dayjs(values[0]).format(
+                                              "YYYY-MM-DDTHH:mm:ss"
+                                            )
+                                          : ""
+                                      );
+                                      setKhoanNgayTo(
+                                        values[1]
+                                          ? dayjs(values[1]).format(
+                                              "YYYY-MM-DDTHH:mm:ss"
+                                            )
+                                          : ""
+                                      );
+                                      const isValid =
+                                        moment(
+                                          values[0],
+                                          "DD/MM/YYYY",
+                                          true
+                                        ).isValid() &&
+                                        moment(
+                                          values[1],
+                                          "DD/MM/YYYY",
+                                          true
+                                        ).isValid();
+                                      setIsValidDate(isValid);
+                                    }}
+                                  />
+                                  {isValidDate ? (
+                                    <MdCheckCircle
+                                      style={{
+                                        color: "green",
+                                      }}
+                                    />
+                                  ) : (
+                                    <IoMdCloseCircle
+                                      style={{
+                                        color: "red",
+                                      }}
+                                    />
+                                  )}
+                                </Space>
+                              </Form.Item>
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-4 px-4 border-2 py-4 border-black-200 rounded-lg relative">
+                            <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">
+                              Theo Nhóm
+                            </p>
+                            <div className="flex gap-1 items-center">
+                              <div>Từ</div>
+                              <Select
+                                allowClear
+                                filterOption
+                                placeholder="Chọn nhóm"
+                                value={selectedNhomFrom}
+                                onChange={(value) => setSelectedNhomFrom(value)}
+                                style={{
+                                  width: "200px",
+                                }}
+                              >
+                                {nhomHangNXT?.map((item, index) => {
+                                  return (
+                                    <Select.Option
+                                      key={index}
+                                      value={item.Ma}
+                                      title={item.ThongTinNhomHang}
+                                    >
+                                      <p className="truncate">{item.Ma}</p>
+                                    </Select.Option>
+                                  );
+                                })}
+                              </Select>
+                            </div>
+                            <div className="flex gap-1 items-center">
+                              <div> Tới</div>
+                              <Select
+                                allowClear
+                                filterOption
+                                placeholder="Chọn nhóm"
+                                value={selectedNhomTo}
+                                onChange={(value) => setSelectedNhomTo(value)}
+                                style={{
+                                  width: "200px",
+                                }}
+                              >
+                                {nhomHangNXT?.map((item, index) => {
+                                  return (
+                                    <Select.Option
+                                      key={index}
+                                      value={item.Ma}
+                                      title={item.ThongTinNhomHang}
+                                    >
+                                      <p className="truncate">{item.Ma}</p>
+                                    </Select.Option>
+                                  );
+                                })}
+                              </Select>
+                            </div>
+                            <div className="col-span-2 flex gap-1 items-center">
+                              <div>Gộp Nhóm</div>
+                              <Select
+                                mode="multiple"
+                                maxTagCount={2}
+                                filterOption
+                                placeholder="Danh sách nhóm"
+                                value={selectedNhomList}
+                                onChange={(value) => setSelectedNhomList(value)}
+                                style={{
+                                  width: "390px",
+                                }}
+                              >
+                                {nhomHangNXT?.map((item) => {
+                                  return (
+                                    <Select.Option
+                                      key={item.Ma}
+                                      value={item.Ma}
+                                      title={item.ThongTinNhomHang}
+                                    >
+                                      <p className="truncate">{item.Ma}</p>
+                                    </Select.Option>
+                                  );
+                                })}
+                              </Select>
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-4 px-4 border-2 py-4 border-black-200 rounded-lg relative">
+                            <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">
+                              Theo Mã
+                            </p>
+                            <div className="flex gap-1 items-center">
+                              <div> Từ</div>
+                              <Select
+                                allowClear
+                                filterOption
+                                placeholder="Chọn mã hàng"
+                                value={selectedMaFrom}
+                                onChange={(value) => setSelectedMaFrom(value)}
+                                style={{
+                                  width: "200px",
+                                }}
+                              >
+                                {hangHoaNXT?.map((item, index) => {
+                                  return (
+                                    <Select.Option
+                                      key={index}
+                                      value={item.MaHang}
+                                      title={item.TenHang}
+                                    >
+                                      <p className="truncate">{item.MaHang}</p>
+                                    </Select.Option>
+                                  );
+                                })}
+                              </Select>
+                            </div>
+                            <div className="flex gap-1 items-center">
+                              <div> Tới</div>
+                              <Select
+                                allowClear
+                                filterOption
+                                placeholder="Chọn mã hàng"
+                                value={selectedMaTo}
+                                onChange={(value) => setSelectedMaTo(value)}
+                                style={{
+                                  width: "200px",
+                                }}
+                              >
+                                {hangHoaNXT?.map((item, index) => {
+                                  return (
+                                    <Select.Option
+                                      key={index}
+                                      value={item.MaHang}
+                                      title={item.TenHang}
+                                    >
+                                      <p className="truncate">{item.MaHang}</p>
+                                    </Select.Option>
+                                  );
+                                })}
+                              </Select>
+                            </div>
+                            <div className="flex items-center gap-1 col-span-2">
+                              <div>Gộp Mã</div>
+                              <Select
+                                mode="multiple"
+                                maxTagCount={2}
+                                allowClear
+                                filterOption
+                                value={selectedMaList}
+                                onChange={(value) => setSelectedMaList(value)}
+                                placeholder="Chọn mã hàng"
+                                style={{
+                                  width: "370px",
+                                }}
+                              >
+                                {hangHoaNXT?.map((item, index) => {
+                                  return (
+                                    <Select.Option
+                                      key={index}
+                                      value={item.MaHang}
+                                      title={item.TenHang}
+                                    >
+                                      <p className="truncate">{item.MaHang}</p>
+                                    </Select.Option>
+                                  );
+                                })}
+                              </Select>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex justify-end px-2">
+                          <button
+                            className="bg-blue-600 p-2 font-medium rounded-lg text-white shadow-custom z-50"
+                            type="submit"
+                          >
+                            Xác nhận
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="flex justify-between">
+              <form
+                className="grid grid-cols-3 gap-4 justify-center items-center"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") getDataNXT(e);
+                }}
+              >
+                <div className="flex gap-2 justify-end content-end">
+                  <div className="flex items-center gap-2">
+                    <Select
+                      allowClear
+                      placeholder="Lọc Kho"
+                      value={selectedMaKho}
+                      onChange={(value) => setSelectedMaKho(value)}
+                      style={{
+                        width: "150px",
+                        color: "red",
+                      }}
+                    >
+                      {khoHangNXT?.map((item, index) => {
+                        return (
+                          <Select.Option
+                            key={index}
+                            value={item.MaKho}
+                            title={item.TenKho}
+                            className="py-8"
+                          >
+                            <p> {item.TenKho}</p>
+                          </Select.Option>
+                        );
+                      })}
+                    </Select>
+                  </div>
+                  <div form={form} className="-mb-6">
+                    <Form.Item
+                      name="dateRange"
+                      rules={[
+                        {
+                          validator: validateDate,
+                        },
+                      ]}
+                    >
+                      <Space>
+                        <RangePicker
+                          format="DD/MM/YYYY"
+                          picker="date"
+                          onKeyDown={handleKeyDown}
+                          onCalendarChange={handleCalendarChange}
+                          defaultValue={[
+                            dayjs(khoanNgayFrom, "YYYY-MM-DD"),
+                            dayjs(khoanNgayTo, "YYYY-MM-DD"),
+                          ]}
+                          onChange={(values) => {
+                            setKhoanNgayFrom(
+                              values[0]
+                                ? dayjs(values[0]).format("YYYY-MM-DDTHH:mm:ss")
+                                : ""
+                            );
+                            setKhoanNgayTo(
+                              values[1]
+                                ? dayjs(values[1]).format("YYYY-MM-DDTHH:mm:ss")
+                                : ""
+                            );
+                            const isValid =
+                              moment(values[0], "DD/MM/YYYY", true).isValid() &&
+                              moment(values[1], "DD/MM/YYYY", true).isValid();
+                            setIsValidDate(isValid);
+                          }}
+                        />
+                        {isValidDate ? (
+                          <MdCheckCircle
+                            style={{
+                              color: "green",
+                            }}
+                          />
+                        ) : (
+                          <IoMdCloseCircle
+                            style={{
+                              color: "red",
+                            }}
+                          />
+                        )}
+                      </Space>
+                    </Form.Item>
+                  </div>
+                </div>
+                <div className="col-span-2 flex flex-col gap-2">
+                  <div className="flex gap-2">
+                    <div className="flex gap-2 items-center">
+                      <div>Từ</div>
+                      <Select
+                        allowClear
+                        filterOption
+                        placeholder="Chọn nhóm"
+                        value={selectedNhomFrom}
+                        onChange={(value) => setSelectedNhomFrom(value)}
+                        style={{
+                          width: "200px",
+                        }}
+                      >
+                        {nhomHangNXT?.map((item, index) => {
+                          return (
+                            <Select.Option
+                              key={index}
+                              value={item.Ma}
+                              title={item.ThongTinNhomHang}
+                            >
+                              <p className="truncate">{item.Ma}</p>
+                            </Select.Option>
+                          );
+                        })}
+                      </Select>
+                    </div>
+                    <div className="flex gap-2 items-center">
+                      <div> Tới</div>
+                      <Select
+                        allowClear
+                        filterOption
+                        placeholder="Chọn nhóm"
+                        value={selectedNhomTo}
+                        onChange={(value) => setSelectedNhomTo(value)}
+                        style={{
+                          width: "200px",
+                        }}
+                      >
+                        {nhomHangNXT?.map((item, index) => {
+                          return (
+                            <Select.Option
+                              key={index}
+                              value={item.Ma}
+                              title={item.ThongTinNhomHang}
+                            >
+                              <p className="truncate">{item.Ma}</p>
+                            </Select.Option>
+                          );
+                        })}
+                      </Select>
+                    </div>
+                    <div className="flex gap-2 items-center">
+                      <div>Gộp</div>
+                      <Select
+                        mode="multiple"
+                        maxTagCount={2}
+                        filterOption
+                        placeholder="Danh sách nhóm"
+                        value={selectedNhomList}
+                        onChange={(value) => setSelectedNhomList(value)}
+                        style={{
+                          width: "390px",
+                        }}
+                      >
+                        {nhomHangNXT?.map((item) => {
+                          return (
+                            <Select.Option
+                              key={item.Ma}
+                              value={item.Ma}
+                              title={item.ThongTinNhomHang}
+                            >
+                              <p className="truncate">{item.Ma}</p>
+                            </Select.Option>
+                          );
+                        })}
+                      </Select>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <div className="flex gap-2 items-center">
+                      <div>Từ</div>
+                      <Select
+                        allowClear
+                        filterOption
+                        placeholder="Chọn mã hàng"
+                        value={selectedMaFrom}
+                        onChange={(value) => setSelectedMaFrom(value)}
+                        style={{
+                          width: "200px",
+                        }}
+                      >
+                        {hangHoaNXT?.map((item, index) => {
+                          return (
+                            <Select.Option
+                              key={index}
+                              value={item.MaHang}
+                              title={item.TenHang}
+                            >
+                              <p className="truncate">{item.MaHang}</p>
+                            </Select.Option>
+                          );
+                        })}
+                      </Select>
+                    </div>
+                    <div className="flex gap-2 items-center">
+                      <div>Tới</div>
+                      <Select
+                        allowClear
+                        filterOption
+                        placeholder="Chọn mã hàng"
+                        value={selectedMaTo}
+                        onChange={(value) => setSelectedMaTo(value)}
+                        style={{
+                          width: "200px",
+                        }}
+                      >
+                        {hangHoaNXT?.map((item, index) => {
+                          return (
+                            <Select.Option
+                              key={index}
+                              value={item.MaHang}
+                              title={item.TenHang}
+                            >
+                              <p className="truncate">{item.MaHang}</p>
+                            </Select.Option>
+                          );
+                        })}
+                      </Select>
+                    </div>
+                    <div className="flex items-center gap-2 col-span-2">
+                      <div>Gộp</div>
+                      <Select
+                        mode="multiple"
+                        maxTagCount={2}
+                        allowClear
+                        filterOption
+                        value={selectedMaList}
+                        onChange={(value) => setSelectedMaList(value)}
+                        placeholder="Chọn mã hàng"
+                        style={{
+                          width: "370px",
+                        }}
+                      >
+                        {hangHoaNXT?.map((item, index) => {
+                          return (
+                            <Select.Option
+                              key={index}
+                              value={item.MaHang}
+                              title={item.TenHang}
+                            >
+                              <p className="truncate">{item.MaHang}</p>
+                            </Select.Option>
+                          );
+                        })}
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+              </form>
             </div>
           </div>
-          <div className="z-0">
+          <div>
             <Table
               className="table_TXNhapXuatTonKho"
               columns={titles}
