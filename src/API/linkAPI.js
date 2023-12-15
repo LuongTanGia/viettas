@@ -121,6 +121,20 @@ const categoryAPI = {
     };
     return axiosClient.post(url, {}, { headers });
   },
+  GetBarCode13(Ma, accessToken) {
+    const url = "/lists/HangHoa/NhanMaBarcodeEAN13";
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    };
+    return axiosClient.post(url, Ma, { headers });
+  },
+  GetBarCode8(Ma, accessToken) {
+    const url = "/lists/HangHoa/NhanMaBarcodeEAN8";
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    };
+    return axiosClient.post(url, Ma, { headers });
+  },
 
   // TruyVan/NhapXuatTonKho
   InfoNXTTheoKho(body, accessToken) {
@@ -158,6 +172,13 @@ const categoryAPI = {
   // Hethong/KhoanNgay
   KhoanNgay(accessToken) {
     const url = "/settings/GiaTriHeThong/KhoanNgay";
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    };
+    return axiosClient.post(url, {}, { headers });
+  },
+  ThongSo(accessToken) {
+    const url = "/settings/GiaTriHeThong/ThongSo";
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     };
