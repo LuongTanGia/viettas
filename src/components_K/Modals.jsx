@@ -13,6 +13,7 @@ import { CreateRow, EditRow } from ".";
 import { base64ToPDF, keyDown, roundNumber } from "../action/Actions";
 import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import ModalOnlyPrint from "./ModalOnlyPrint";
+import ModalOnlyPrintWareHouse from "./ModalOnlyPrintWareHouse";
 
 const { RangePicker } = DatePicker;
 
@@ -30,6 +31,8 @@ const Modals = ({
 }) => {
   const [isShowModalHH, setIsShowModalHH] = useState(false);
   const [isShowModalOnlyPrint, setIsShowModalOnlyPrint] = useState(false);
+  const [isShowModalOnlyPrintWareHouse, setIsShowModalOnlyPrintWareHouse] =
+    useState(false);
   const [form] = Form.useForm();
   const [isValidDate, setIsValidDate] = useState(true);
   const [dataHangHoa, setDataHangHoa] = useState(null);
@@ -963,9 +966,10 @@ const Modals = ({
                   </div>
                 </div>
               </div>
+              {/* table */}
               <div className="p-4">
                 <Table
-                  className="table_modal"
+                  className="table_view"
                   dataSource={dataThongTin?.DataDetails}
                   columns={columns}
                   size="small"
@@ -1058,7 +1062,7 @@ const Modals = ({
                 <div>In phiếu</div>
               </button>
               <button
-                onClick={() => setIsShowModalOnlyPrint(true)}
+                onClick={() => setIsShowModalOnlyPrintWareHouse(true)}
                 className="flex items-center  py-1 px-2  rounded-md border-dashed border border-gray-500  text-sm hover:text-sky-500  hover:border-sky-500 "
               >
                 <div className="pr-1">
@@ -1512,7 +1516,18 @@ const Modals = ({
       )}
 
       {isShowModalOnlyPrint && (
-        <ModalOnlyPrint close={() => setIsShowModalOnlyPrint(false)} />
+        <ModalOnlyPrint
+          close={() => setIsShowModalOnlyPrint(false)}
+          dataThongTin={dataThongTin}
+          dataPMH={dataPMH}
+        />
+      )}
+      {isShowModalOnlyPrintWareHouse && (
+        <ModalOnlyPrintWareHouse
+          close={() => setIsShowModalOnlyPrintWareHouse(false)}
+          dataThongTin={dataThongTin}
+          dataPMH={dataPMH}
+        />
       )}
     </div>
   );

@@ -12,7 +12,7 @@ import * as apis from "../apis";
 const { RangePicker } = DatePicker;
 const { IoMdClose } = icons;
 
-const ModalOnlyPrint = ({ close, dataThongTin, dataPMH }) => {
+const ModalOnlyPrintWareHouse = ({ close, dataThongTin, dataPMH }) => {
   const [isValidDate, setIsValidDate] = useState(true);
   const [form] = Form.useForm();
   const [selectedSctBD, setSelectedSctBD] = useState();
@@ -99,11 +99,11 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH }) => {
     }));
   };
 
-  const handleOnlyPrint = async () => {
+  const handleOnlyPrintWareHouse = async () => {
     try {
       const tokenLogin = localStorage.getItem("TKN");
       const lien = calculateTotal();
-      const response = await apis.InPMH(
+      const response = await apis.InPK(
         tokenLogin,
         formPrint,
         selectedSctBD,
@@ -133,13 +133,11 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH }) => {
     }
   };
 
-  const handleOnlyPrintWareHouse = () => {};
-
   return (
     <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
       <div className="p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
         <div className="   ">
-          <div className=" pb-2 ">In phiếu mua hàng</div>
+          <div className=" pb-2 ">In phiếu kho hàng</div>
           <div className="flex justify-center items-center ">
             <Form form={form}>
               <Form.Item
@@ -239,20 +237,10 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH }) => {
               />
               <label htmlFor="lien2">Liên 2</label>
             </div>
-
-            <div>
-              <input
-                id="lien3"
-                type="checkbox"
-                checked={checkboxValues.checkbox3}
-                onChange={() => handleLien("checkbox3")}
-              />
-              <label htmlFor="lien3">Liên 3</label>
-            </div>
           </div>
           <div className="flex justify-end p-2 gap-x-2 ">
             <button
-              onClick={handleOnlyPrint}
+              onClick={handleOnlyPrintWareHouse}
               className="text-blue-500  border border-blue-500 px-2 py-1 rounded-md hover:bg-blue-500 hover:text-white "
             >
               In phiếu
@@ -270,4 +258,4 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH }) => {
   );
 };
 
-export default ModalOnlyPrint;
+export default ModalOnlyPrintWareHouse;

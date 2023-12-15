@@ -173,12 +173,12 @@ export const XoaPMH = (token, Sct) =>
 export const InPMH = (token, formPrint, SctBD, SctKT, SoLien) =>
   new Promise(async (resolve, reject) => {
     try {
-      // console.log("Data to be sent to API:", {
-      //   ...formPrint,
-      //   SoChungTuBatDau: SctBD,
-      //   SoChungTuketThuc: SctKT,
-      //   SoLien: SoLien,
-      // });
+      console.log("Data to be sent to API:", {
+        ...formPrint,
+        SoChungTuBatDau: SctBD,
+        SoChungTuketThuc: SctKT,
+        SoLien: SoLien,
+      });
       const response = await axios({
         url: "/entries/DuLieuPMH/InPhieu",
         method: "post",
