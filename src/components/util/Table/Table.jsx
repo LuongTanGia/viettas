@@ -14,7 +14,9 @@ const getInputNode = (inputType, record, dataIndex, text, typeTable, form, onCha
     case 'number':
       return <InputNumber value={text} onChange={(value) => onChange && onChange(dataIndex, value)} />
     case 'checkbox':
-      return <Checkbox checked={text} onChange={(e) => onChange && onChange(dataIndex, e.target.checked)} />
+      const checked = text // Giữ giá trị hiện tại
+      const inputNode = <Checkbox checked={checked} onChange={(e) => onChange && onChange(dataIndex, e.target.checked)} />
+      return inputNode
     case 'select':
       const options = getSelectOptions(dataIndex)
       return (
@@ -99,7 +101,11 @@ function Tables({ param, columName, height, handleView, handleEdit, typeTable, h
   }
   const [hiden, setHiden] = useState([])
   const DataColumns = param ? param[0] : []
-  const keysOnly = Object.keys(DataColumns || [])
+
+  const keysOnly =
+    typeTable !== 'edit'
+      ? Object.keys(DataColumns || [])
+      : ['STT', 'MaHang', 'TenHang', 'DVT', 'SoLuong', 'DonGia', 'TienHang', 'TyLeThue', 'TienThue', 'ThanhTien', 'TyLeCKTT', 'TienCKTT', 'TongCong']
   const listColumns = keysOnly?.filter((value) => !hiden.includes(value))
   const newColumns = listColumns.map((item, index) => ({
     title: columName[item] || item,
@@ -224,8 +230,8 @@ function Tables({ param, columName, height, handleView, handleEdit, typeTable, h
   })
 
   const originData = param?.map((record, index) => ({
-    ...record,
     index,
+    ...record,
   }))
   const [form] = Form.useForm()
   const [data, setData] = useState(originData)
