@@ -16,7 +16,6 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
   const [dVTKho, setDVTKho] = useState();
   const [dVTQuyDoi, setDVTQuyDoi] = useState();
   const [HangHoaCT, setHangHoaCT] = useState();
-  const [selectedMaHang, setSelectedMaHang] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState([]);
   const [selectedGroup, setSelectedGroup] = useState([]);
   const [selectedBarCodeFrom, setSelectedBarCodeFrom] = useState("");
@@ -160,15 +159,14 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
   function formatDateTime(inputDate, includeTime = false) {
     const date = new Date(inputDate);
     const day = date.getDate().toString().padStart(2, "0");
-    const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Tháng bắt đầu từ 0
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
     const year = date.getFullYear();
     let formattedDateTime = `${day}/${month}/${year}`;
     if (includeTime) {
       const hours = date.getHours().toString().padStart(2, "0");
       const minutes = date.getMinutes().toString().padStart(2, "0");
       const seconds = date.getSeconds().toString().padStart(2, "0");
-      const milliseconds = date.getMilliseconds().toString().padStart(3, "0");
-      formattedDateTime += ` ${hours}:${minutes}:${seconds}.${milliseconds}`;
+      formattedDateTime += ` ${hours}:${minutes}:${seconds} `;
     }
     return formattedDateTime;
   }
@@ -307,6 +305,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
       if (infoHang.data.DataError == 0) {
         setDataView(infoHang.data.DataResult);
         setIsLoading(true);
+        console.log(infoHang.data);
       }
     } catch (error) {
       console.log(error);
@@ -394,28 +393,15 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
   const handleStatus = async (e) => {
     e.preventDefault();
     try {
-      if (getMaHang) {
-        const response = await categoryAPI.GanTrangThai(
-          {
-            DanhSachMa: getMaHang?.map((item) => ({ Ma: item })),
-            GiaTriMoi: selectedStatus,
-          },
-          TokenAccess
-        );
-        if (response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription);
-        }
-      } else {
-        const response = await categoryAPI.GanTrangThai(
-          {
-            DanhSachMa: selectedMaHang.map((item) => ({ Ma: item })),
-            GiaTriMoi: selectedStatus,
-          },
-          TokenAccess
-        );
-        if (response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription);
-        }
+      const response = await categoryAPI.GanTrangThai(
+        {
+          DanhSachMa: getMaHang?.map((item) => ({ Ma: item })),
+          GiaTriMoi: selectedStatus,
+        },
+        TokenAccess
+      );
+      if (response.data.DataError === 0) {
+        toast.success(response.data.DataErrorDescription);
       }
     } catch (error) {
       console.error("API call failed:", error);
@@ -424,33 +410,17 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
   const handleGroup = async (e) => {
     e.preventDefault();
     try {
-      if (getMaHang) {
-        const response = await categoryAPI.GanNhom(
-          {
-            DanhSachMa: getMaHang?.map((item) => ({ Ma: item })),
-            GiaTriMoi: selectedGroup,
-          },
-          TokenAccess
-        );
-        if (response.data.DataError == 0) {
-          toast.success("Thay đổi nhóm thành công");
-        } else {
-          console.log(response.data);
-        }
+      const response = await categoryAPI.GanNhom(
+        {
+          DanhSachMa: getMaHang?.map((item) => ({ Ma: item })),
+          GiaTriMoi: selectedGroup,
+        },
+        TokenAccess
+      );
+      if (response.data.DataError == 0) {
+        toast.success("Thay đổi nhóm thành công");
       } else {
-        const response = await categoryAPI.GanNhom(
-          {
-            DanhSachMa: selectedMaHang.map((item) => ({ Ma: item })),
-            GiaTriMoi: selectedGroup,
-          },
-          TokenAccess
-        );
-        if (response.data.DataError == 0) {
-          console.log(response.data);
-          toast.success("Thay đổi nhóm thành công");
-        } else {
-          console.log(response.data);
-        }
+        console.log(response.data);
       }
     } catch (error) {
       console.log(error);
@@ -1283,8 +1253,9 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                         id="TonKho"
                         checked={hangHoaForm.TonKho}
                         disabled={
-                          dataThongSo &&
-                          dataThongSo.SUDUNG_TONKHOHANGLAPRAP === false
+                          (dataThongSo &&
+                            dataThongSo.SUDUNG_TONKHOHANGLAPRAP === false) ||
+                          dataView.DangSuDung === true
                         }
                         onChange={(e) =>
                           setHangHoaForm({
@@ -1302,7 +1273,9 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                         id="LapRap"
                         checked={hangHoaForm.LapRap}
                         disabled={
-                          dataThongSo && dataThongSo.SUDUNG_HANGLAPRAP === false
+                          (dataThongSo &&
+                            dataThongSo.SUDUNG_HANGLAPRAP === false) ||
+                          dataView.DangSuDung === true
                         }
                         onChange={(e) =>
                           setHangHoaForm({
@@ -1405,7 +1378,9 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                         name="TyLeQuyDoi"
                         value={hangHoaForm.TyLeQuyDoi || ""}
                         disabled={
-                          dataThongSo && dataThongSo.SUDUNG_QUYDOIDVT === false
+                          (dataThongSo &&
+                            dataThongSo.SUDUNG_QUYDOIDVT === false) ||
+                          dataView.DangSuDung === true
                         }
                         onChange={(e) => {
                           const tyLeQuyDoiValue = e.target.value;
@@ -1432,7 +1407,9 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                         id="DVTQuyDoi"
                         value={hangHoaForm.DVTQuyDoi || ""}
                         disabled={
-                          dataThongSo && dataThongSo.SUDUNG_QUYDOIDVT === false
+                          (dataThongSo &&
+                            dataThongSo.SUDUNG_QUYDOIDVT === false) ||
+                          dataView.DangSuDung === true
                         }
                         className="px-2 py-1 w-full resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"
                         onChange={(e) =>
@@ -1713,87 +1690,6 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
             </div>
           </div>
         )}
-        {type == "status" && (
-          <div className="flex flex-col gap-2 ">
-            <div>
-              <div className="flex justify-end ">
-                <IoMdClose
-                  className="w-6 h-6 rounded-full border-current hover:bg-slate-200 hover:text-red-500"
-                  onClick={close}
-                />
-              </div>
-              <div className="flex gap-2 justify-center items-center font-semibold text-lg">
-                <p className="text-blue-700">Đổi Trạng Thái</p>
-              </div>
-            </div>
-            <form className="flex flex-col gap-4" onSubmit={handleStatus}>
-              <div className="grid grid-cols-1 justify-center items-center gap-4 px-4">
-                <div className="col-span-2 flex items-center gap-2">
-                  <div className="required whitespace-nowrap">
-                    Chọn tên hàng
-                  </div>
-                  <Select
-                    mode="multiple"
-                    maxTagCount={2}
-                    allowClear
-                    filterOption
-                    placeholder="Chọn tên hàng muốn đổi"
-                    value={selectedMaHang}
-                    onChange={(value) => setSelectedMaHang(value)}
-                    style={{
-                      width: "600px",
-                    }}
-                  >
-                    {getDataHangHoa?.map((item, index) => {
-                      return (
-                        <Select.Option
-                          key={index}
-                          value={item.MaHang}
-                          title={item.MaHang}
-                        >
-                          <p> {item.TenHang}</p>
-                        </Select.Option>
-                      );
-                    })}
-                  </Select>
-                </div>
-                <div className="flex items-center gap-2 px-8">
-                  <div className="required ">Trạng thái</div>
-                  <Space wrap>
-                    <Select
-                      placeholder="Chọn trạng thái"
-                      required
-                      style={{
-                        width: 200,
-                      }}
-                      value={selectedStatus}
-                      onChange={(value) => setSelectedStatus(value)}
-                      options={[
-                        {
-                          value: "1",
-                          label: "Sử dụng",
-                        },
-                        {
-                          value: "0",
-                          label: "Ngưng sử dụng",
-                        },
-                        {
-                          value: "2",
-                          label: "Ngược trạng thái",
-                        },
-                      ]}
-                    />
-                  </Space>
-                </div>
-              </div>
-              <div className="flex justify-end " type="submit">
-                <button className="bg-blue-600 px-2 py-2 font-medium rounded-lg text-white shadow-custom   z-50">
-                  Xác nhận
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
         {type == "statusMany" && (
           <div className="flex flex-col gap-2 ">
             <div>
@@ -1837,86 +1733,6 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                 </Space>
               </div>
 
-              <div className="flex justify-end " type="submit">
-                <button className="bg-blue-600 px-2 py-2 font-medium rounded-lg text-white shadow-custom   z-50">
-                  Xác nhận
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
-        {type == "group" && (
-          <div className="flex flex-col gap-2">
-            <div>
-              <div className="flex justify-end ">
-                <IoMdClose
-                  className="w-6 h-6 rounded-full border-current hover:bg-slate-200 hover:text-red-500"
-                  onClick={close}
-                />
-              </div>
-              <div className="flex gap-2 justify-center items-center font-semibold text-lg">
-                <p className="text-blue-700">Đổi Nhóm</p>
-              </div>
-            </div>
-            <form className="flex flex-col gap-4" onSubmit={handleGroup}>
-              <div className="grid grid-cols-1 justify-center items-center gap-4 px-4">
-                <div className="  flex gap-2 items-center">
-                  <div className="required whitespace-nowrap">
-                    Chọn tên hàng
-                  </div>
-                  <Select
-                    mode="multiple"
-                    maxTagCount={2}
-                    allowClear
-                    filterOption
-                    placeholder="Chọn tên hàng muốn đổi nhóm"
-                    value={selectedMaHang}
-                    onChange={(value) => setSelectedMaHang(value)}
-                    style={{
-                      width: "600px",
-                    }}
-                  >
-                    {getDataHangHoa?.map((item, index) => {
-                      return (
-                        <Select.Option
-                          key={index}
-                          value={item.MaHang}
-                          title={item.MaHang}
-                        >
-                          <p>
-                            {item.MaHang} - {item.TenHang}
-                          </p>
-                        </Select.Option>
-                      );
-                    })}
-                  </Select>
-                </div>
-                <div className="flex gap-2 items-center px-4">
-                  <div className="required whitespace-nowrap">Chọn nhóm</div>
-                  <Select
-                    placeholder="Chọn Nhóm"
-                    filterOption
-                    required
-                    style={{
-                      width: "400px",
-                    }}
-                    value={selectedGroup}
-                    onChange={(value) => setSelectedGroup(value)}
-                  >
-                    {nhomHang?.map((item, index) => {
-                      return (
-                        <Select.Option
-                          key={index}
-                          value={item.Ma}
-                          title={item.Ten}
-                        >
-                          <p className="truncate"> {item.ThongTinNhomHang}</p>
-                        </Select.Option>
-                      );
-                    })}
-                  </Select>
-                </div>
-              </div>
               <div className="flex justify-end " type="submit">
                 <button className="bg-blue-600 px-2 py-2 font-medium rounded-lg text-white shadow-custom   z-50">
                   Xác nhận
