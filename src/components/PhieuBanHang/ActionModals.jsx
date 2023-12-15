@@ -231,7 +231,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction }) {
                           </div>
                           <div className="flex items-center p-1 w-1/2">
                             <label className="">Lúc</label>
-                            <input readOnly type="text" className="w-full   outline-none px-2 " value={form?.NguoiSuaCuoi} />
+                            <input readOnly type="text" className="w-full   outline-none px-2 " value={form?.NgaySuaCuoi} />
                           </div>
                         </div>
                       </div>
