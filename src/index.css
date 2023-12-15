@@ -201,4 +201,10 @@ input[type="radio"] {
   color: #fff;
 }
 
+/* custom table */
+
+.table_view .ant-table-body {
+  min-height: 320px;
+  max-height: 320px;
+}
 /* end */
