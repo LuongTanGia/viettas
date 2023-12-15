@@ -1,13 +1,66 @@
+/* eslint-disable no-undef */
+/* eslint-disable no-case-declarations */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { Table, Typography, Select, Form, Input, InputNumber, Popconfirm } from 'antd'
+import { Table, Typography, Select, Form, Input, InputNumber, Popconfirm, Checkbox } from 'antd'
 import './table.css'
 import BtnAction from './BtnAction'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+
 const { Text } = Typography
 
-const EditableCell = ({ editing, dataIndex, title, inputType, record, index, children, ...restProps }) => {
-  const inputNode = inputType === 'number' ? <InputNumber /> : <Input />
+const getInputNode = (inputType, record, dataIndex, text, typeTable, form, onChange) => {
+  switch (inputType) {
+    case 'number':
+      return <InputNumber value={text} onChange={(value) => onChange && onChange(dataIndex, value)} />
+    case 'checkbox':
+      return <Checkbox checked={text} onChange={(e) => onChange && onChange(dataIndex, e.target.checked)} />
+    case 'select':
+      const options = getSelectOptions(dataIndex)
+      return (
+        <Select value={text} onChange={(value) => onChange && onChange(dataIndex, value)}>
+          {options.map((option) => (
+            <Select.Option key={option.value} value={option.value}>
+              {option.label}
+            </Select.Option>
+          ))}
+        </Select>
+      )
+    default:
+      // For any other input type, return a default Input with the provided text
+      return <Input value={text} onChange={(e) => onChange && onChange(dataIndex, e.target.value)} />
+  }
+}
+
+const getSelectOptions = (dataIndex) => {
+  if (dataIndex === 'MaHang') {
+    return [
+      { value: 'option1', label: 'Option 1' },
+      { value: 'option2', label: 'Option 2' },
+    ]
+  } else if (dataIndex === 'DVT') {
+    return [
+      { value: 'kg', label: 'Kilogram' },
+      { value: 'g', label: 'Gram' },
+    ]
+  }
+  return []
+}
+const handleInputChange = (dataIndex, value, record) => {
+  const newData = [...data]
+  const index = newData.findIndex((item) => record.key === item.key)
+  if (index > -1) {
+    newData[index][dataIndex] = value
+    setData(newData)
+    form.setFieldsValue({
+      [dataIndex]: value,
+    })
+  }
+}
+const EditableCell = ({ editing, dataIndex, title, inputType, record, index, children, form, ...restProps }) => {
+  const inputValue = record ? record[dataIndex] : undefined
+  const inputNode = getInputNode(inputType, record, dataIndex, inputValue, 'edit', form)
+
   return (
     <td {...restProps}>
       {editing ? (
@@ -32,10 +85,19 @@ const EditableCell = ({ editing, dataIndex, title, inputType, record, index, chi
   )
 }
 
-// eslint-disable-next-line react/prop-types
 function Tables({ param, columName, height, handleView, handleEdit, typeTable, handleAddData }) {
+  const getInputType = (cellValue, dataIndex) => {
+    if (dataIndex === 'MaHang' || dataIndex === 'DVT') {
+      return 'select'
+    } else if (typeof cellValue === 'number') {
+      return 'number'
+    } else if (typeof cellValue === 'boolean') {
+      return 'checkbox'
+    } else {
+      return 'text'
+    }
+  }
   const [hiden, setHiden] = useState([])
-  // eslint-disable-next-line react/prop-types
   const DataColumns = param ? param[0] : []
   const keysOnly = Object.keys(DataColumns || [])
   const listColumns = keysOnly?.filter((value) => !hiden.includes(value))
@@ -43,8 +105,47 @@ function Tables({ param, columName, height, handleView, handleEdit, typeTable, h
     title: columName[item] || item,
     width: 200,
     dataIndex: item,
-    key: index.toString(),
     editable: true,
+    sorter: (a, b) => {
+      const keywords = ['Tong', 'Gia', 'Tien', 'TLCK', 'So', 'Thue']
+      const includesKeyword = keywords.some((keyword) => item.includes(keyword))
+
+      if (includesKeyword && a[item] !== undefined && b[item] !== undefined) {
+        return Number(a[item]) - Number(b[item])
+      } else if (includesKeyword && a[item] !== undefined) {
+        return -1
+      } else if (includesKeyword && b[item] !== undefined) {
+        return 1
+      } else {
+        return a[item]?.toString().localeCompare(b[item]?.toString()) || 0
+      }
+    },
+
+    render:
+      typeTable === 'edit'
+        ? (text, record) => {
+            const inputType = getInputType(text, item)
+            const inputNode = getInputNode(inputType, record, item, text, typeTable, form, (dataIndex, value) => handleInputChange(dataIndex, value, record))
+            return typeTable === 'edit' && (item === 'TTTienMat' || item === 'LapRap' || item === 'TonKho') ? (
+              <Form.Item
+                name={item}
+                style={{
+                  margin: 0,
+                }}
+              >
+                {inputNode}
+              </Form.Item>
+            ) : (
+              inputNode
+            )
+          }
+        : item === 'TTTienMat' || item === 'LapRap' || item === 'TonKho'
+          ? (text, record) => {
+              const inputType = getInputType(text, item)
+              const inputNode = getInputNode(inputType, record, item, text, typeTable)
+              return inputNode
+            }
+          : null,
   }))
   const columns = [
     ...newColumns,
@@ -57,61 +158,82 @@ function Tables({ param, columName, height, handleView, handleEdit, typeTable, h
           render: (record) => <BtnAction handleView={handleView} record={record} handleEdit={handleEdit} />,
         }
       : {},
-    {
-      title: 'operation',
-      dataIndex: 'operation',
-      width: 100,
-      fixed: 'right',
-      render: (_, record) => {
-        console.log(record, 'editRows')
-        const editable = isEditing(record)
-        return editable ? (
-          <span>
-            <Typography.Link
-              onClick={() => save(record.key)}
-              style={{
-                marginRight: 8,
-              }}
-            >
-              Save
-            </Typography.Link>
-            <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-              <a>Cancel</a>
-            </Popconfirm>
-          </span>
-        ) : (
-          <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
-            Edit
-          </Typography.Link>
-        )
-      },
-    },
+    typeTable !== 'listHelper'
+      ? {
+          title: 'operation',
+          dataIndex: 'operation',
+          width: 100,
+          fixed: 'right',
+          render: (_, record, index) => {
+            const editable = isEditing(record)
+            return editable ? (
+              <span>
+                <Typography.Link
+                  onClick={() => save(index)}
+                  style={{
+                    marginRight: 8,
+                  }}
+                >
+                  Save
+                </Typography.Link>
+                <Popconfirm title="Sure to cancel?" onConfirm={() => cancel(index)}>
+                  <a>Cancel</a>
+                </Popconfirm>
+              </span>
+            ) : (
+              <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
+                Edit
+              </Typography.Link>
+            )
+          },
+        }
+      : {},
   ]
+
   const mergedColumns = columns.map((col) => {
     if (!col.editable) {
       return col
     }
+
     return {
       ...col,
-      onCell: (record) => ({
-        record,
-        inputType: col.dataIndex === 'age' ? 'number' : 'text',
-        dataIndex: col.dataIndex,
-        title: col.title,
-        editing: isEditing(record),
-      }),
+      onCell: (record) => {
+        const cellValue = record[col.dataIndex]
+        let inputType
+
+        // Determine the input type based on the data type
+        if (typeof cellValue === 'number') {
+          inputType = 'number'
+        } else if (typeof cellValue === 'boolean') {
+          inputType = 'checkbox'
+        } else if (col.dataIndex === 'MaHang' || col.dataIndex === 'DVT') {
+          inputType = 'select'
+        } else {
+          inputType = 'text'
+        }
+
+        return {
+          record,
+          inputType,
+          dataIndex: col.dataIndex,
+          title: col.title,
+          editing: isEditing(record),
+        }
+      },
     }
   })
-  // eslint-disable-next-line react/prop-types
+
   const originData = param?.map((record, index) => ({
     ...record,
-    STT: index + 1,
-    key: index.toString(),
+    index,
   }))
   const [form] = Form.useForm()
   const [data, setData] = useState(originData)
+  useEffect(() => {
+    setData(originData)
+  }, [param])
   const [editingKey, setEditingKey] = useState('')
-  const isEditing = (record) => record.key === editingKey
+  const isEditing = (record) => record.index === editingKey
   const edit = (record) => {
     form.setFieldsValue({
       SoChungTu: '',
@@ -119,29 +241,22 @@ function Tables({ param, columName, height, handleView, handleEdit, typeTable, h
       DiaChi: '',
       ...record,
     })
-    setEditingKey(record.key)
+    setEditingKey(record.index)
   }
   const cancel = () => {
     setEditingKey('')
   }
-  const save = async (key) => {
+  const save = async (index) => {
     try {
       const row = await form.validateFields()
       const newData = [...data]
-      const index = newData.findIndex((item) => key === item.key)
-      if (index > -1) {
-        const item = newData[index]
-        newData.splice(index, 1, {
-          ...item,
-          ...row,
-        })
-        setData(newData)
-        setEditingKey('')
-      } else {
-        newData.push(row)
-        setData(newData)
-        setEditingKey('')
-      }
+      const item = newData[index]
+      newData.splice(index, 1, {
+        ...item,
+        ...row,
+      })
+      setData(newData)
+      setEditingKey('')
       console.log(newData)
     } catch (errInfo) {
       console.log('Validate Failed:', errInfo)
@@ -150,7 +265,7 @@ function Tables({ param, columName, height, handleView, handleEdit, typeTable, h
   const onRowClick = (record) => {
     return {
       onDoubleClick: () => {
-        typeTable === 'listHelper' ? handleAddData(record) : handleView(record)
+        handleAddData(record)
       },
     }
   }
@@ -184,14 +299,12 @@ function Tables({ param, columName, height, handleView, handleEdit, typeTable, h
             },
           }}
           className={height}
-          // loading={true}
           columns={mergedColumns}
           dataSource={data}
           rowClassName="editable-row"
           pagination={{
             onChange: cancel,
           }}
-          // pagination={typeTable !== 'listHelper' ? true : false}
           defaultCurrent={10}
           bordered
           onRow={(record) => ({
@@ -208,11 +321,11 @@ function Tables({ param, columName, height, handleView, handleEdit, typeTable, h
                 <Table.Summary.Row>
                   {columns.length > 2
                     ? columns.map((column) => {
-                        const isNumericColumn = typeof data[0][column.dataIndex] === 'number'
+                        const isNumericColumn = typeof data[0]?.[column.dataIndex] === 'number'
 
                         return (
                           <Table.Summary.Cell key={column.key}>
-                            {isNumericColumn ? <Text strong>{pageData.reduce((total, item) => total + item[column.dataIndex], 0)}</Text> : null}
+                            {isNumericColumn ? <Text strong>{pageData.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)}</Text> : null}
                           </Table.Summary.Cell>
                         )
                       })

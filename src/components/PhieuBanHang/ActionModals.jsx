@@ -12,6 +12,7 @@ import { DatePicker, Space } from 'antd'
 import { DANHSACHDOITUONG, DANHSACHKHOHANG } from '../../action/Actions'
 import API from '../../API/API'
 import ListHelper_HangHoa from './ListHelper_HangHoa'
+import { toast } from 'react-toastify'
 
 const { IoMdClose } = icons
 const { RangePicker } = DatePicker
@@ -89,9 +90,14 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction }) {
     setDate({ ...Date, NgayCTu: timeString[0], DaoHan: timeString[1] })
   }
   const handleAddData = (record) => {
-    console.log(record)
-    setForm({ ...form, DataDetails: [...form.DataDetails, record] })
-    console.log(form.DataDetails)
+    const isMaHangExists = form.DataDetails.some((item) => item.MaHang === record.MaHang)
+
+    if (isMaHangExists) {
+      toast.warn('Đã tồn tại mã hàng trong chi tiết !!')
+    } else {
+      setForm({ ...form, DataDetails: [...form.DataDetails, record] })
+      toast.success('Thêm thành công !')
+    }
   }
   return (
     <>
@@ -237,7 +243,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction }) {
                       </div>
                     </div>
                   </div>
-                  <div className="p-4 pb-0">{data_chitiet ? <Tables param={form?.DataDetails} columName={''} height={'h150'} /> : null}</div>
+                  <div className="p-4 pb-0">{data_chitiet ? <Tables param={form?.DataDetails} columName={''} height={'h150'} typeTable={'edit'} /> : null}</div>
                   <div className="pr-4 w-full flex justify-end mt-2">
                     <button
                       className=" hover:bg-rose-400 border-1 border-rose-500 p-2  rounded-md text-rose-700 hover:text-white font-medium float-right flex justify-center items-center
