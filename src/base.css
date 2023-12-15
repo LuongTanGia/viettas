@@ -28,20 +28,6 @@ a {
   background-image: var(--scrollbarGradient);
 }
 
-/* input,
-select,
-textarea {
-  width: 100%;
-  resize: none;
-  padding: 1.5rem;
-  border-radius: var(--rounded);
-  border: var(--border);
-  outline: none;
-  background-color: var(--bg-folderCard);
-  color: var(--text-color);
-  font-size: 1rem;
-} */
-
 .required {
   position: relative;
 }

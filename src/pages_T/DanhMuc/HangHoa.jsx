@@ -1,14 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
 import { useSearch } from "../../hooks_T/Search";
-import { Table, Tooltip } from "antd";
+import { Checkbox, Table, Tooltip } from "antd";
 import HangHoaModals from "../../components_T/Modal/DanhMuc/HangHoa/HangHoaModals";
 import categoryAPI from "../../API/linkAPI";
 import moment from "moment";
 import { toast } from "react-toastify";
-import { FaSearch, FaCheckCircle } from "react-icons/fa";
+import { FaSearch } from "react-icons/fa";
 import { IoMdAddCircleOutline } from "react-icons/io";
-import { MdEdit, MdDelete, MdCancel, MdOutlineGroupAdd } from "react-icons/md";
+import { MdEdit, MdDelete, MdOutlineGroupAdd } from "react-icons/md";
 import { TfiMoreAlt } from "react-icons/tfi";
 import { GrStatusUnknown } from "react-icons/gr";
 import { CiBarcode } from "react-icons/ci";
@@ -65,22 +65,14 @@ const HangHoa = () => {
     setIsMaHang(record);
     setIsShowModal(true);
   };
-  const handleStatus = () => {
-    setActionType("status");
-    setIsShowModal(true);
-  };
   const handleStatusMany = () => {
     if (selectedRowKeys.length > 0) {
       setActionType("statusMany");
       setIsShowModal(true);
       setIsMaHang(selectedRowKeys);
     } else {
-      toast.error("Vui Lòng Chọn Mã Hàng Muốn Đổi");
+      toast.warning("Vui Lòng Chọn Mã Hàng Muốn Đổi");
     }
-  };
-  const handleGroup = () => {
-    setActionType("group");
-    setIsShowModal(true);
   };
   const handleGroupMany = () => {
     if (selectedRowKeys.length > 0) {
@@ -88,7 +80,7 @@ const HangHoa = () => {
       setIsShowModal(true);
       setIsMaHang(selectedRowKeys);
     } else {
-      toast.error("Vui Lòng Chọn Mã Hàng Muốn Đổi");
+      toast.warning("Vui Lòng Chọn Mã Hàng Muốn Đổi");
     }
   };
   const handlePrintBar = () => {
@@ -174,7 +166,6 @@ const HangHoa = () => {
     {
       title: "STT",
       render: (text, record, index) => index + 1,
-      with: 10,
       fixed: "left",
       width: 50,
       align: "center",
@@ -186,6 +177,7 @@ const HangHoa = () => {
       fixed: "left",
       width: 150,
       align: "center",
+      sorter: (a, b) => a.MaHang.localeCompare(b.MaHang),
     },
     {
       title: "Tên hàng",
@@ -194,6 +186,7 @@ const HangHoa = () => {
       fixed: "left",
       width: 200,
       align: "center",
+      sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       render: (text) => (
         <Tooltip title={text}>
           <div
@@ -216,6 +209,7 @@ const HangHoa = () => {
       key: "TenNhom",
       width: 200,
       align: "center",
+      sorter: (a, b) => a.TenNhom.localeCompare(b.TenNhom),
       render: (text) => (
         <Tooltip title={text}>
           <div
@@ -237,6 +231,7 @@ const HangHoa = () => {
       key: "DVTKho",
       align: "center",
       width: 100,
+      sorter: (a, b) => a.DVTKho.localeCompare(b.DVTKho),
     },
     {
       title: "Quy đổi",
@@ -244,6 +239,7 @@ const HangHoa = () => {
       key: "TyLeQuyDoi",
       align: "center",
       width: 100,
+      sorter: (a, b) => a.TyLeQuyDoi - b.TyLeQuyDoi,
       render: (text) => (
         <span className="flex justify-end">{formatCurrency(text)}</span>
       ),
@@ -253,6 +249,7 @@ const HangHoa = () => {
       dataIndex: "DienGiaiDVTQuyDoi",
       key: "DienGiaiDVTQuyDoi",
       align: "center",
+      sorter: (a, b) => a.DienGiaiDVTQuyDoi - b.DienGiaiDVTQuyDoi,
       render: (text) => <span className="flex text-start">{text}</span>,
     },
     {
@@ -261,6 +258,7 @@ const HangHoa = () => {
       key: "MaVach",
       align: "center",
       width: 150,
+      sorter: (a, b) => a.MaVach - b.MaVach,
     },
     {
       title: "Lắp ráp",
@@ -268,14 +266,17 @@ const HangHoa = () => {
       key: "LapRap",
       align: "center",
       width: 100,
-      render: (text) => (
-        <span className="flex justify-center">
-          {text == true ? (
-            <FaCheckCircle style={{ color: "green" }} />
-          ) : (
-            <MdCancel style={{ color: "red" }} />
-          )}
-        </span>
+      sorter: (a, b) => {
+        const valueA = a.LapRap ? 1 : 0;
+        const valueB = b.LapRap ? 1 : 0;
+        return valueA - valueB;
+      },
+      render: (text, record) => (
+        <Checkbox
+          className="text-base"
+          id={`LapRap_${record.key}`}
+          checked={text}
+        />
       ),
     },
     {
@@ -284,14 +285,17 @@ const HangHoa = () => {
       key: "TonKho",
       align: "center",
       width: 100,
-      render: (text) => (
-        <span className="flex justify-center">
-          {text == true ? (
-            <FaCheckCircle style={{ color: "green", width: "100%" }} />
-          ) : (
-            <MdCancel style={{ color: "red", width: "100%" }} />
-          )}
-        </span>
+      sorter: (a, b) => {
+        const valueA = a.TonKho ? 1 : 0;
+        const valueB = b.TonKho ? 1 : 0;
+        return valueA - valueB;
+      },
+      render: (text, record) => (
+        <Checkbox
+          className="text-base"
+          id={`TonKho_${record.key}`}
+          checked={text}
+        />
       ),
     },
     {
@@ -300,6 +304,7 @@ const HangHoa = () => {
       key: "GiaBanLe",
       align: "center",
       width: 120,
+      sorter: (a, b) => a.GiaBanLe - b.GiaBanLe,
       render: (text) => (
         <span className="flex justify-end">{formatCurrency(text)}</span>
       ),
@@ -309,6 +314,7 @@ const HangHoa = () => {
       dataIndex: "BangGiaSi",
       key: "BangGiaSi",
       width: 120,
+      sorter: (a, b) => a.BangGiaSi - b.BangGiaSi,
       align: "center",
       render: (text) => (
         <span className="flex justify-end">{formatCurrency(text)}</span>
@@ -319,7 +325,7 @@ const HangHoa = () => {
       dataIndex: "BangGiaSi_Min",
       key: "BangGiaSi_Min",
       width: 150,
-
+      sorter: (a, b) => a.BangGiaSi_Min - b.BangGiaSi_Min,
       align: "center",
       render: (text) => (
         <span className="flex justify-end">{formatCurrency(text)}</span>
@@ -330,7 +336,7 @@ const HangHoa = () => {
       dataIndex: "BangGiaSi_Max",
       key: "BangGiaSi_Max",
       width: 150,
-
+      sorter: (a, b) => a.BangGiaSi_Max - b.BangGiaSi_Max,
       align: "center",
       render: (text) => (
         <span className="flex justify-end">{formatCurrency(text)}</span>
@@ -342,6 +348,7 @@ const HangHoa = () => {
       key: "NguoiTao",
       align: "center",
       width: 200,
+      sorter: (a, b) => a.NguoiTao.localeCompare(b.NguoiTao),
       render: (text) => (
         <Tooltip title={text}>
           <div
@@ -361,6 +368,11 @@ const HangHoa = () => {
       dataIndex: "NgayTao",
       key: "NgayTao",
       align: "center",
+      sorter: (a, b) => {
+        const dateA = new Date(a.NgayTao);
+        const dateB = new Date(b.NgayTao);
+        return dateA - dateB;
+      },
       render: (text) => moment(text).format("DD/MM/YYYY HH:mm:ss.SS"),
     },
     {
@@ -369,6 +381,7 @@ const HangHoa = () => {
       key: "NguoiSuaCuoi",
       align: "center",
       width: 200,
+      sorter: (a, b) => a.NguoiSuaCuoi.localeCompare(b.NguoiSuaCuoi),
       render: (text) => (
         <Tooltip title={text}>
           <div
@@ -388,6 +401,11 @@ const HangHoa = () => {
       dataIndex: "NgaySuaCuoi",
       key: "NgaySuaCuoi",
       align: "center",
+      sorter: (a, b) => {
+        const dateA = new Date(a.NgaySuaCuoi);
+        const dateB = new Date(b.NgaySuaCuoi);
+        return dateA - dateB;
+      },
       render: (text) => {
         if (text) {
           return moment(text).format("DD/MM/YYYY HH:mm:ss.SS");
@@ -402,14 +420,17 @@ const HangHoa = () => {
       key: "NA",
       width: 100,
       align: "center",
-      render: (text) => (
-        <span className="flex justify-center items-center gap-2">
-          {text == true ? (
-            <FaCheckCircle style={{ color: "green" }} title="Ngưng sử dụng" />
-          ) : (
-            <MdCancel style={{ color: "red" }} title="Còn sử dụng" />
-          )}
-        </span>
+      sorter: (a, b) => {
+        const valueA = a.NA ? 1 : 0;
+        const valueB = b.NA ? 1 : 0;
+        return valueA - valueB;
+      },
+      render: (text, record) => (
+        <Checkbox
+          className="text-base"
+          id={`NA_${record.key}`}
+          checked={text}
+        />
       ),
     },
     {
@@ -423,21 +444,21 @@ const HangHoa = () => {
           <>
             <div className="flex gap-2 items-center justify-center">
               <div
-                className="p-1.5 border-2 border-yellow-400 bg-yellow-400 rounded-md text-slate-50 cursor-pointer hover:bg-white hover:text-yellow-400"
+                className="p-1.5 border-2 rounded-md  cursor-pointer  bg-slate-50 text-yellow-400 hover:border-yellow-400 hover:bg-yellow-400  hover:text-slate-50 "
                 title="Sửa"
                 onClick={() => handleUpdate(record)}
               >
                 <MdEdit />
               </div>
               <div
-                className="p-1.5 border-2 border-purple-500 bg-purple-500 rounded-md text-slate-50 cursor-pointer hover:bg-white hover:text-purple-500 "
+                className="p-1.5 border-2 rounded-md cursor-pointer  bg-slate-50 text-purple-500 hover:border-purple-500 hover:bg-purple-500  hover:text-slate-50 "
                 title="In Mã Vạch"
                 onClick={() => handlePrintABarcode(record)}
               >
                 <CiBarcode />
               </div>
               <div
-                className="p-1.5 border-2 border-red-500 bg-red-500 rounded-md text-slate-50 cursor-pointer hover:bg-white hover:text-red-500 "
+                className="p-1.5 border-2 rounded-md cursor-pointer  bg-slate-50 text-red-500 hover:border-red-500 hover:bg-red-500  hover:text-slate-50 "
                 title="Xóa"
                 onClick={() => handleDelete(record)}
               >
@@ -455,11 +476,11 @@ const HangHoa = () => {
         <p>Loading...</p>
       ) : (
         <>
-          <div className="flex flex-col   gap-2 ">
+          <div className="flex flex-col gap-2 ">
             <div className="flex justify-between gap-2 relative">
               <div>
                 <div className="flex items-center gap-2">
-                  <h1 className="text-xl font-bold uppercase">Hàng Hóa</h1>
+                  <h1 className="text-xl font-black uppercase">Hàng Hóa</h1>
                   <FaSearch
                     className="hover:text-red-400 cursor-pointer"
                     onClick={() => setIsShowSearch(!isShowSearch)}
@@ -497,34 +518,7 @@ const HangHoa = () => {
                   />
                 </div>
                 {isShowOption && (
-                  <div className="flex flex-col gap-4 bg-slate-100 p-4 absolute top-0 right-[2%] rounded-lg z-10 duration-500 shadow-custom ">
-                    <div
-                      className="px-3 py-2 bg-blue-600 rounded-lg font-semibold text-slate-50 shadow-custom flex gap-1 items-center cursor-pointer hover:bg-white hover:text-blue-600"
-                      onClick={() => handleCreate()}
-                    >
-                      <div> Thêm Sản Phẩm</div>
-                      <div>
-                        <IoMdAddCircleOutline className="w-6 h-6" />
-                      </div>
-                    </div>
-                    <div
-                      className="justify-center px-3 py-2 bg-green-600 rounded-lg font-semibold text-slate-50 shadow-custom flex gap-1 items-center cursor-pointer hover:bg-white hover:text-green-600"
-                      onClick={() => handleStatus()}
-                    >
-                      <div> Đổi Trạng Thái </div>
-                      <div>
-                        <GrStatusUnknown className="w-6 h-6" />
-                      </div>
-                    </div>
-                    <div
-                      className="justify-center px-3 py-2 bg-orange-600 rounded-lg font-semibold text-slate-50 shadow-custom flex gap-2 items-center cursor-pointer hover:bg-white hover:text-orange-600"
-                      onClick={() => handleGroup()}
-                    >
-                      <div> Đổi Nhóm Hàng</div>
-                      <div>
-                        <MdOutlineGroupAdd className="w-6 h-6" />
-                      </div>
-                    </div>
+                  <div className="flex flex-col gap-4 bg-slate-100 p-3 absolute top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom ">
                     <div
                       className="justify-center px-3 py-2 bg-purple-600 rounded-lg font-semibold text-slate-50 shadow-custom flex gap-1 items-center cursor-pointer hover:bg-white hover:text-purple-600"
                       onClick={() => handlePrintBar()}
@@ -540,6 +534,15 @@ const HangHoa = () => {
             </div>
             <div className="flex justify-end ">
               <div className="flex gap-2">
+                <div
+                  className="px-2 py-1 bg-blue-600 rounded-lg font-semibold text-slate-50 shadow-custom flex gap-1 items-center cursor-pointer hover:bg-white hover:text-blue-600"
+                  onClick={() => handleCreate()}
+                >
+                  <div> Thêm Sản Phẩm</div>
+                  <div>
+                    <IoMdAddCircleOutline className="w-6 h-6" />
+                  </div>
+                </div>
                 <div
                   className="justify-center px-2 py-1  rounded-lg font-semibold  shadow-custom flex gap-1 items-center cursor-pointer text-slate-50 bg-green-600 hover:bg-slate-50 hover:text-green-600"
                   onClick={() => handleStatusMany()}
@@ -599,7 +602,7 @@ const HangHoa = () => {
                 dataSource={filteredHangHoa}
                 size="small"
                 scroll={{
-                  x: 3000,
+                  x: 3100,
                   y: 400,
                 }}
                 style={{
