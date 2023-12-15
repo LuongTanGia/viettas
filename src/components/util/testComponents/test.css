@@ -1,19 +1,14 @@
-.testCp {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    align-items: center;
+.editable-cell {
+    position: relative;
 }
-.testCp select {
-    all: unset;
-    width: 200px;
-    border: 1px solid;
+
+.editable-cell-value-wrap {
+    /* padding: 5px 12px; */
+    cursor: pointer;
 }
-.testCp input {
-    all: unset;
-    border: 1px solid;
-    width: 200px;
-}
-.mainTest {
-    margin-bottom: 20px;
+
+.editable-row:hover .editable-cell-value-wrap {
+    padding: 4px 11px;
+    border: 1px solid #d9d9d9;
+    border-radius: 2px;
 }

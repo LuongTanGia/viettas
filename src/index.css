@@ -1,14 +1,14 @@
-@import url("./assets/css/style.css");
+@import url('./assets/css/style.css');
 
-@import url("../src/assets/vendor/bootstrap/css/bootstrap.min.css");
-@import url("../src/assets/vendor/bootstrap-icons/bootstrap-icons.css");
-@import url("../src/assets/vendor/boxicons/css/boxicons.min.css");
-@import url("../src/assets/vendor/quill/quill.snow.css");
-@import url("../src/assets/vendor/quill/quill.bubble.css");
-@import url("../src/assets/vendor/remixicon/remixicon.css");
-@import url("../src/assets/vendor/simple-datatables/style.css");
-@import "constants.css";
-@import "base.css";
+@import url('../src/assets/vendor/bootstrap/css/bootstrap.min.css');
+@import url('../src/assets/vendor/bootstrap-icons/bootstrap-icons.css');
+@import url('../src/assets/vendor/boxicons/css/boxicons.min.css');
+@import url('../src/assets/vendor/quill/quill.snow.css');
+@import url('../src/assets/vendor/quill/quill.bubble.css');
+@import url('../src/assets/vendor/remixicon/remixicon.css');
+@import url('../src/assets/vendor/simple-datatables/style.css');
+@import 'constants.css';
+@import 'base.css';
 
 @tailwind base;
 @tailwind components;
@@ -26,11 +26,11 @@ a {
 .gridMain {
   display: grid;
   grid-template-areas:
-    "DOANHSO  TONKHO"
-    "PHAITHU PHAITRA"
-    "MUAHANG XUATTRA "
-    "BANHANG NHAPTRA"
-    "THU CHI";
+    'DOANHSO  TONKHO'
+    'PHAITHU PHAITRA'
+    'MUAHANG XUATTRA '
+    'BANHANG NHAPTRA'
+    'THU CHI';
 }
 .DOANHSO {
   grid-area: DOANHSO;
@@ -162,10 +162,6 @@ a.nav-link span {
   margin-left: 20px;
 }
 
-.ant-table-body {
-  max-height: 400px !important;
-}
-
 .table_pmh .ant-table-body {
   min-height: 418px;
   max-height: 418px;
@@ -176,7 +172,7 @@ a.nav-link span {
   max-height: 220px;
 }
 .zIndex {
-  z-index: 10;
+  z-index: 1500;
 }
 /* Tan */
 .table_DMHangHoa .ant-table-body {
@@ -189,7 +185,7 @@ a.nav-link span {
   max-height: 420px;
   z-index: 0;
 }
-input[type="radio"] {
+input[type='radio'] {
   width: 20px;
 }
 
@@ -208,3 +204,7 @@ input[type="radio"] {
   max-height: 320px;
 }
 /* end */
+
+#main {
+  max-height: 60vh;
+}

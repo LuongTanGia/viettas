@@ -1,56 +1,348 @@
-import { useState } from "react";
-
+import { Table, Input } from "antd";
 import "./test.css";
+const columns = [
+    {
+        title: "Mã",
+        dataIndex: "ma",
+        key: "ma",
+        width: 100,
+        fixed: "left",
+        editable: true,
+    },
+    {
+        title: "Name",
+        dataIndex: "name",
+        key: "name",
+        width: 100,
+        fixed: "left",
+        editable: true,
+    },
 
-const MyComponent = () => {
-    // State chứa mảng dữ liệu đối tượng
-    const [dataList, setDataList] = useState([]);
+    {
+        title: "Tuần 1",
+        width: 100,
+        editable: true,
 
-    const handleItemChange = (index, property, newValue) => {
-        const newDataList = [...dataList];
-        newDataList[index][property] = newValue;
-        setDataList(newDataList);
-    };
+        children: [
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => (
+                    <Input
+                        placeholder="date"
+                        value={"10/10"}
+                        style={{ all: "unset" }}
+                        type=""
+                    />
+                ),
+                width: 100,
+            },
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+        ],
+    },
+    {
+        title: "Tuần 2",
+        width: 100,
+        editable: true,
 
-    return (
-        <div>
-            <div className="mainTest">
-                {dataList.map((item, index) => (
-                    <div key={index} className="testCp">
-                        <select
-                            value={item.Ma}
-                            onChange={(e) =>
-                                handleItemChange(index, "Ma", e.target.value)
-                            }
-                        >
-                            <option value="Item 1">Item 1</option>
-                            <option value="Item 2">Item 2</option>
-                            <option value="Item 3">Item 3</option>
-                        </select>
-                        <input
-                            type="number"
-                            value={item.SoLuong}
-                            onChange={(e) =>
-                                handleItemChange(
-                                    index,
-                                    "SoLuong",
-                                    parseInt(e.target.value, 10)
-                                )
-                            }
-                        />
-                    </div>
-                ))}
-            </div>
-            <button
-                onClick={() =>
-                    setDataList([...dataList, { Ma: "", SoLuong: 1 }])
-                }
-            >
-                Thêm
-            </button>
-            <p>DataList: {JSON.stringify(dataList)}</p>
-        </div>
-    );
-};
+        children: [
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+        ],
+    },
+    {
+        title: "Tuần 3",
+        width: 100,
+        editable: true,
 
-export default MyComponent;
+        children: [
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+        ],
+    },
+    {
+        title: "Tuền 4",
+        width: 100,
+        editable: true,
+
+        children: [
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+        ],
+    },
+    {
+        title: "Tuần 5",
+        width: 100,
+        editable: true,
+
+        children: [
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+        ],
+    },
+    {
+        title: "Tuần 6",
+        width: 100,
+        editable: true,
+
+        children: [
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+            {
+                title: "10/10",
+                dataIndex: "date",
+                render: () => <Input placeholder="date" />,
+                width: 100,
+            },
+        ],
+    },
+];
+
+const data = [
+    { name: "Tấn Gia", date: "01/10", ma: "Gia" },
+    { name: "Duy Tân", date: "11/10", ma: "Tan" },
+    { name: "Hữu Khánh", date: "12/12", ma: "Khanh" },
+];
+
+const App = () => (
+    <Table
+        columns={columns}
+        dataSource={data}
+        bordered
+        scroll={{
+            x: 1500,
+            y: 300,
+        }}
+        rowClassName="editable-row"
+    />
+);
+export default App;
