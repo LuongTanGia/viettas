@@ -11,14 +11,15 @@ import { NumericFormat } from "react-number-format";
 import { Modals } from "../../../components_K";
 import dayjs from "dayjs";
 import { keyDown, roundNumber } from "../../../action/Actions";
+import SimpleBackdrop from "../../../components/util/Loading/LoadingPage";
 
 const {
   IoAddCircleOutline,
   TiPrinter,
   FaRegEdit,
   MdDelete,
-  FaRegEye,
-  FaMoneyCheckAlt,
+  GiPayMoney,
+  FcSearch,
 } = icons;
 const PhieuMuaHang = () => {
   const [form] = Form.useForm();
@@ -33,24 +34,12 @@ const PhieuMuaHang = () => {
   const [dataKhoHang, setDataKhoHang] = useState(null);
   const [dataDoiTuong, setDataDoiTuong] = useState(null);
   const [isShowModal, setIsShowModal] = useState(false);
+  const [isShowSearch, setIsShowSearch] = useState(false);
+
   const [tableLoad, setTableLoad] = useState(false);
 
   const [actionType, setActionType] = useState("");
   const [formKhoanNgay, setFormKhoanNgay] = useState([]);
-
-  // useEffect(() => {
-  //   const getData = async () => {
-  //     try {
-  //       await getKhoanNgay();
-  //       await checkTokenExpiration();
-  //       setIsLoading(true);
-  //     } catch (error) {
-  //       console.error("lấy data thất bại", error);
-  //       toast.error("lấy data thất bại. Vui lòng thử lại sau.");
-  //     }
-  //   };
-  //   getData();
-  // }, [isLoading]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -85,6 +74,7 @@ const PhieuMuaHang = () => {
       } catch (error) {
         console.error("Lấy data thất bại", error);
         toast.error("Lấy data thất bại. Vui lòng thử lại sau.");
+        setIsLoadingPopup(true);
       }
     };
 
@@ -95,7 +85,7 @@ const PhieuMuaHang = () => {
 
   useEffect(() => {
     getKhoanNgay();
-    checkTokenExpiration();
+    getDSPMH();
   }, []);
 
   const getKhoanNgay = async () => {
@@ -106,78 +96,30 @@ const PhieuMuaHang = () => {
       if (response.data && response.data.DataError === 0) {
         setFormKhoanNgay(response.data);
         setIsLoading(true);
-      } else if (response.data && response.data.DataError === -107) {
-        // Thực hiện lấy lại token
-        await refreshToken();
-      } else {
-        toast.error(
-          "Có người đang nhập ở nơi khác. Bạn sẽ bị chuyển đến trang đăng nhập."
-        );
-
-        window.localStorage.clear();
-        window.location.href = "/";
-        // offLogin;
       }
     } catch (error) {
       console.error("Kiểm tra token thất bại", error);
+      setIsLoading(true);
     }
   };
 
-  // Hàm kiểm tra token hết hạn
-
-  const checkTokenExpiration = async () => {
+  const getDSPMH = async () => {
     try {
       const tokenLogin = localStorage.getItem("TKN");
 
       const response = await apis.DanhSachPMH(tokenLogin, formKhoanNgay);
-      // eslint-disable-next-line no-debugger
 
-      // Kiểm tra call api thành công
       if (response.data && response.data.DataError === 0) {
-        console.log("data", response.data.DataResults);
         setData(response.data.DataResults);
         setTableLoad(true);
-      } else if (response.data && response.data.DataError === -107) {
-        // Thực hiện lấy lại token
-        await refreshToken();
       } else if (response.data && response.data.DataError === -104) {
         toast.error(response.data.DataErrorDescription);
         setData(response.data.DataResults);
         setTableLoad(true);
-      } else {
-        toast.error(
-          "Có người đang nhập ở nơi khác. Bạn sẽ bị chuyển đến trang đăng nhập."
-        );
-        window.localStorage.clear();
-        window.location.href = "/";
-        // offLogin;
       }
     } catch (error) {
       console.error("Kiểm tra token thất bại", error);
-    }
-  };
-
-  // Hàm lấy lại token
-  const refreshToken = async () => {
-    try {
-      const refreshToken = localStorage.getItem("rtkn");
-      const response = await apis.RefreshToken(refreshToken);
-
-      if (response.data && response.data.DataError === 0) {
-        const newToken = response.data.TKN;
-        localStorage.setItem("TKN", newToken);
-
-        const token = localStorage.getItem("TKN");
-        const response2 = await apis.TongHop(token);
-        if (response2.data && response2.data.DataError === 0) {
-          setData(response2.data.DataResults);
-        }
-      } else {
-        // Xử lý khi reFreshToken het han
-        toast.error("FreshToken het han. Vui lòng đăng nhập lại.");
-      }
-    } catch (error) {
-      console.error("Lấy lại token thất bại", error);
+      setTableLoad(true);
     }
   };
 
@@ -222,6 +164,7 @@ const PhieuMuaHang = () => {
       title: "Ngày Chứng Từ",
       dataIndex: "NgayCTu",
       key: "NgayCTu",
+      align: "center",
       render: (text) => moment(text).format("DD/MM/YYYY"),
       width: 150,
       sorter: (a, b) => {
@@ -338,6 +281,7 @@ const PhieuMuaHang = () => {
       title: "Ngày tạo",
       dataIndex: "NgayTao",
       key: "NgayTao",
+      align: "center",
       render: (text) => moment(text).format("DD/MM/YYYY hh:mm:ss"),
       width: 300,
       sorter: (a, b) => {
@@ -356,6 +300,7 @@ const PhieuMuaHang = () => {
       title: "Ngày sửa cuối",
       dataIndex: "NgaySuaCuoi",
       key: "NgaySuaCuoi",
+      align: "center",
       render: (text) =>
         text ? moment(text).format("DD/MM/YYYY hh:mm:ss") : null,
       width: 300,
@@ -377,9 +322,14 @@ const PhieuMuaHang = () => {
       key: "TTTienMat",
       dataIndex: "TTTienMat",
       fixed: "right",
-      width: 80,
+      width: 100,
       align: "center",
       render: (text) => <Checkbox disabled={!text} defaultChecked={text} />,
+      sorter: (a, b) => {
+        const valueA = a.TTTienMat ? 1 : 0;
+        const valueB = b.TTTienMat ? 1 : 0;
+        return valueA - valueB;
+      },
     },
     {
       title: "Chức năng",
@@ -391,32 +341,44 @@ const PhieuMuaHang = () => {
         return (
           <>
             <div className=" flex gap-1 items-center justify-center ">
-              <div
+              {/* <div
                 onClick={() => handleView(record)}
                 title="Xem"
-                className="p-[3px] border border-yellow-500 rounded-md text-yellow-500 hover:text-white hover:bg-yellow-500 cursor-pointer"
+                className="p-[3px] border border-yellow-500 rounded-md  text-slate-50  bg-yellow-500 hover:bg-white hover:text-yellow-500   cursor-pointer"
               >
                 <FaRegEye size={16} />
+              </div> */}
+              <div
+                disabled="true"
+                onClick={() => handlePay(record)}
+                title="Lập phiếu chi"
+                className={`p-[3px] border rounded-md text-slate-50 ${
+                  record.TTTienMat
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "border-blue-500 bg-blue-500 hover:bg-white hover:text-blue-500 cursor-pointer"
+                }`}
+              >
+                <GiPayMoney size={16} />
               </div>
               <div
                 onClick={() => handleEdit(record)}
                 title="Sửa"
-                className="p-[3px] text-purple-500 border  border-purple-500 rounded-md hover:text-white hover:bg-purple-500  "
+                className="p-[3px] border rounded-md text-slate-50 border-purple-500 bg-purple-500 hover:bg-white hover:text-purple-500 cursor-pointer"
               >
                 <FaRegEdit size={16} />
               </div>
 
               {/* <div
-                onClick={() => handleMakeBallot(record)}
-                title="In phiếu"
-                className="p-[3px] text-blue-500 border  border-blue-500 rounded-md hover:text-white hover:bg-blue-500  "
+                onClick={() => handleEdit(record)}
+                title="Sửa"
+                className="p-[3px]  border  border-red-500 rounded-md text-slate-50 bg-blue-500  hover:bg-white hover:text-blue-500  cursor-pointer  "
               >
-                <FaMoneyCheckAlt size={16} />
+                <TiPrinter size={16} />
               </div> */}
               <div
                 onClick={() => handleDelete(record)}
                 title="Xóa"
-                className="p-[3px] text-red-500 border  border-red-500 rounded-md hover:text-white hover:bg-red-500  "
+                className="p-[3px]  border  border-red-500 rounded-md text-slate-50 bg-red-500  hover:bg-white hover:text-red-500  cursor-pointer "
               >
                 <MdDelete size={16} />
               </div>
@@ -441,11 +403,16 @@ const PhieuMuaHang = () => {
   };
 
   const handleEdit = (record) => {
-    console.log("record:", record);
-    setActionType("edit");
-    setDataRecord(record);
-    setDataThongTin(record);
-    setIsShowModal(true);
+    if (record.TTTienMat === true) {
+      toast.error("Phiếu mua hàng đã được lập phiếu chi! Không thể sửa.", {
+        autoClose: 1500,
+      });
+    } else {
+      setActionType("edit");
+      setDataRecord(record);
+      setDataThongTin(record);
+      setIsShowModal(true);
+    }
   };
 
   const handleCreate = (record) => {
@@ -464,22 +431,66 @@ const PhieuMuaHang = () => {
     setIsShowModal(true);
   };
   const handleFilterDS = () => {
-    checkTokenExpiration();
+    getDSPMH();
     setTableLoad(false);
   };
-  const handleMakeBallot = (record) => {
-    setActionType("makeballot");
+  const handlePay = (record) => {
+    if (record.TTTienMat) return;
+    setActionType("pay");
     setDataRecord(record);
     setIsShowModal(true);
   };
 
   if (!isLoading) {
-    return <p>loading</p>;
+    return <SimpleBackdrop />;
   }
 
+  // const rowSelection = {
+  //   selectedRowKeys,
+  //   onChange: (selectedKeys) => {
+  //     setSelectedRowKeys(selectedKeys);
+  //   },
+  // };
+
+  // const handleRowClick = (record) => {
+  //   const isSelected = selectedRowKeys.includes(record.key);
+  //   const newSelectedRowKeys = isSelected
+  //     ? selectedRowKeys.filter((key) => key !== record.key)
+  //     : [...selectedRowKeys, record.key];
+  //   setSelectedRowKeys(newSelectedRowKeys);
+  // };
   return (
     <div className="w-auto">
-      <div className="text-lg font-bold mx-4 my-2 "> Phiếu mua hàng</div>
+      <div className="text-lg  mx-4 my-2 ">
+        <div className="flex items-center gap-x-4 font-bold">
+          <label>Phiếu mua hàng </label>
+          <div>
+            <FcSearch
+              size={20}
+              className="hover:text-red-400 cursor-pointer"
+              onClick={() => setIsShowSearch(!isShowSearch)}
+            />
+          </div>
+        </div>
+        <div className="flex relative ">
+          {isShowSearch && (
+            <div
+              className={`flex absolute left-[11rem] -top-8 transition-all linear duration-700 ${
+                isShowSearch ? "w-[20rem]" : "w-0"
+              } overflow-hidden`}
+            >
+              <input
+                type="text"
+                placeholder="Nhập ký tự bạn cần tìm"
+                // onChange={handleSearch}
+                className={
+                  "px-2 py-1 w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] "
+                }
+              />
+            </div>
+          )}
+        </div>
+      </div>
       <div className="flex justify-between items-center px-4">
         {/* date rang */}
         <div className="flex ">
@@ -530,7 +541,7 @@ const PhieuMuaHang = () => {
               onClick={handleFilterDS}
               className="flex items-center   py-1 px-2 bg-bg-main rounded-md  text-white text-sm hover:opacity-80"
             >
-              Tìm kiếm
+              Lọc
             </button>
           </div>
         </div>
@@ -568,6 +579,7 @@ const PhieuMuaHang = () => {
         {tableLoad ? (
           <Table
             className="table_pmh"
+            // rowSelection={rowSelection}
             columns={columns}
             dataSource={data}
             size="small"
@@ -578,9 +590,22 @@ const PhieuMuaHang = () => {
             bordered
             pagination={false}
             rowKey={(record) => record.SoChungTu}
-            // onRow={(record) => ({
-            //   onClick: () => handleView(record),
-            // })}
+            onRow={(record) => ({
+              // onClick: () => {
+              //   handleRowClick(record);
+              //   const selected = selectedRowKeys.includes(record.SoChungTu);
+              //   if (selected) {
+              //     setSelectedRowKeys(
+              //       selectedRowKeys.filter((key) => key !== record.SoChungTu)
+              //     );
+              //   } else {
+              //     setSelectedRowKeys([...selectedRowKeys, record.SoChungTu]);
+              //   }
+              // },
+              onDoubleClick: () => {
+                handleView(record);
+              },
+            })}
             // Bảng Tổng
             summary={(pageData) => {
               let totalTongThanhTien = 0;
@@ -662,7 +687,7 @@ const PhieuMuaHang = () => {
             }}
           ></Table>
         ) : (
-          <p>Loading....</p>
+          <SimpleBackdrop />
         )}
       </div>
 

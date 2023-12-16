@@ -32,7 +32,6 @@ const App = () => {
     }, [dispatch, user, API]);
 
     const handleAddUser = async () => {
-        console.log(data);
         if (data?.DataResults.length === 1) {
             const remoteDB = data.DataResults[0].RemoteDB;
             console.log(remoteDB);
@@ -56,6 +55,7 @@ const App = () => {
                 dispatch
             );
             setIsLoggedIn(true);
+            console.log(TokenID.credential);
         } catch (error) {
             console.error("Đăng nhập thất bại", error);
         }

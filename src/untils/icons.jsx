@@ -5,8 +5,8 @@ import {
   FaRegEdit,
   FaMoneyCheckAlt,
 } from "react-icons/fa";
-import { FcGoogle } from "react-icons/fc";
-import { IoMdClose, IoIosMenu } from "react-icons/io";
+import { FcGoogle, FcSearch } from "react-icons/fc";
+import { IoMdClose, IoIosMenu, IoIosSearch } from "react-icons/io";
 import { BsDatabase } from "react-icons/bs";
 import { LuLoader2, LuBoxes, LuLogOut } from "react-icons/lu";
 import { GoInbox } from "react-icons/go";
@@ -18,6 +18,7 @@ import { AiOutlineMenuFold, AiOutlineMenuUnfold } from "react-icons/ai";
 import { IoAddCircleOutline } from "react-icons/io5";
 import { TiPrinter } from "react-icons/ti";
 import { SlOptions } from "react-icons/sl";
+import { GiPayMoney } from "react-icons/gi";
 
 const icons = {
   TfiSearch,
@@ -43,5 +44,8 @@ const icons = {
   FaRegEdit,
   SlOptions,
   FaMoneyCheckAlt,
+  GiPayMoney,
+  IoIosSearch,
+  FcSearch,
 };
 export default icons;

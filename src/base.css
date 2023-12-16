@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 /* *,
 *::before,
@@ -15,8 +15,8 @@ a {
 }
 
 ::-webkit-scrollbar {
-  width: 0.5rem;
-  height: 0.5rem;
+  width: 0.75rem;
+  height: 0.75rem;
 }
 
 ::-webkit-scrollbar-track {
@@ -28,26 +28,12 @@ a {
   background-image: var(--scrollbarGradient);
 }
 
-/* input,
-select,
-textarea {
-  width: 100%;
-  resize: none;
-  padding: 1.5rem;
-  border-radius: var(--rounded);
-  border: var(--border);
-  outline: none;
-  background-color: var(--bg-folderCard);
-  color: var(--text-color);
-  font-size: 1rem;
-} */
-
 .required {
   position: relative;
 }
 
 .required::after {
-  content: "*";
+  content: '*';
   color: var(--red);
   padding-left: 0.1rem;
 }

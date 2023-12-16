@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { NumericFormat } from "react-number-format";
 import icons from "../untils/icons";
 import { toast } from "react-toastify";
+import { InputNumber } from "antd";
 const { MdDelete } = icons;
 
 const CreateRow = ({
@@ -11,11 +12,13 @@ const CreateRow = ({
   dataHangHoa,
   handleDeleteRow,
   setRowData,
+  currentRowData,
 }) => {
-  const [x, setX] = useState(item.SoLuong);
+  const [SoLuong, setSoLuong] = useState(item.SoLuong);
+  const [selectedDVT, setSelectedDVT] = useState(item.DVT);
 
   useEffect(() => {
-    setX(item.SoLuong.toFixed(1));
+    setSoLuong(item.SoLuong.toFixed(1));
   }, [item.SoLuong]);
 
   const handleChangeData = (e) => {
@@ -29,17 +32,40 @@ const CreateRow = ({
             MaHang: selectedItem.MaHang,
             TenHang: selectedItem.TenHang,
             DVT: selectedItem.DVT,
+            DVTQuyDoi: selectedItem.DVTQuyDoi,
+            DVTDefault: selectedItem.DVT,
+            // DonGia: selectedItem.DonGia,
           };
         }
         return i;
       });
+
+      return newData;
+    });
+  };
+
+  const handleChangeUnit = (e) => {
+    const newUnit = e;
+
+    setSelectedDVT(newUnit);
+    setRowData((prev) => {
+      const newData = prev.map((i) => {
+        if (i.MaHang === item.MaHang) {
+          return {
+            ...i,
+            DVT: newUnit,
+          };
+        }
+        return i;
+      });
+
       return newData;
     });
   };
 
   const handleChangeQuantity = () => {
-    const newQuantity = Number(x).toFixed(1);
-    setX(newQuantity);
+    const newQuantity = Number(SoLuong).toFixed(1);
+    setSoLuong(newQuantity);
     setRowData((prev) => {
       const newData = prev.map((i) => {
         if (i.MaHang === item.MaHang) {
@@ -72,15 +98,14 @@ const CreateRow = ({
     });
   };
 
-  const handleChangeTax = (e) => {
-    const newTax = e.target.value;
-    console.log(newTax);
+  const handleChangeTax = (value) => {
+    const newTax = value;
     setRowData((prev) => {
       const newData = prev.map((i) => {
         if (i.MaHang === item.MaHang) {
           return {
             ...i,
-            Thue: Number(newTax),
+            TyLeThue: Number(newTax),
           };
         }
         return i;
@@ -94,29 +119,47 @@ const CreateRow = ({
       <td className="py-2 px-4 border text-center ">{index + 1}</td>
       <td className="border">
         <select
-          className=" bg-white  w-[200px] h-full outline-none  "
+          className=" bg-white  w-[112px] h-full outline-none  "
           value={item.MaHang}
           onChange={handleChangeData}
-          onClick={handleChangeData}
         >
-          {dataHangHoa?.map((item) => (
-            <option key={item.MaHang} value={item.MaHang}>
-              {item.MaHang} - {item.TenHang}
-            </option>
-          ))}
+          <option disabled value="">
+            Chọn mã hàng
+          </option>
+          {dataHangHoa
+            .filter((row) => !currentRowData.includes(row.MaHang))
+            .map((item) => (
+              <option key={item.MaHang} value={item.MaHang}>
+                {item.MaHang} - {item.TenHang}
+              </option>
+            ))}
         </select>
       </td>
-      <td className="py-2 px-4 border">{item.TenHang}</td>
-      <td className="py-2 px-4 border text-center">{item.DVT}</td>
+      <td className="py-2 px-4 border  w-[200px]">{item.TenHang}</td>
+      {item.DVTDefault === item.DVTQuyDoi ? (
+        <td className="py-2 px-10 border ">{item.DVTDefault}</td>
+      ) : (
+        <td className="py-2 px-4 border text-center">
+          <select
+            className=" bg-white  h-full outline-none  "
+            value={selectedDVT}
+            onChange={(e) => handleChangeUnit(e.target.value)}
+          >
+            <option value={item.DVTDefault}>{item.DVTDefault}</option>
+
+            <option value={item.DVTQuyDoi}>{item.DVTQuyDoi}</option>
+          </select>
+        </td>
+      )}
       <td className="py-2  border ">
         <input
-          className="text-end px-4 "
-          type="text"
-          value={x}
+          className="text-end border border-gray-400 rounded-[4px]  "
+          type="number"
+          value={SoLuong}
           onChange={(e) => {
             const value = e.target.value;
             if (value.includes(".") && value.split(".")[1].length > 2) return;
-            setX(e.target.value);
+            setSoLuong(e.target.value);
           }}
           onKeyDown={(e) => {
             if (e.key === "Enter") handleChangeQuantity();
@@ -126,7 +169,7 @@ const CreateRow = ({
       </td>
       <td className="py-2 border ">
         <input
-          className=" px-4 text-end"
+          className=" px-2 text-end border border-gray-400 rounded-[4px]  "
           type="text"
           pattern="[0-9]+"
           title="Please enter a numeric value"
@@ -138,7 +181,8 @@ const CreateRow = ({
         <NumericFormat
           value={
             item.DonGia
-              ? Number(item.DonGia.replace(/,/g, "")) * Number(item.SoLuong)
+              ? Number(item.DonGia.toString().replace(/,/g, "")) *
+                Number(item.SoLuong)
               : 0
           }
           displayType={"text"}
@@ -146,22 +190,30 @@ const CreateRow = ({
         />
       </td>
       <td className="py-2 border">
-        <input
-          className=" text-end"
+        <InputNumber
+          className="text-end"
+          min={0}
+          max={100}
+          size="small"
+          defaultValue={item.TyLeThue}
+          onChange={handleChangeTax}
+        />
+        {/* <input
+          className=" text-end w-full"
           type="number"
           min={0}
           max={100}
-          value={item.Thue}
+          value={item.TyLeThue}
           onChange={handleChangeTax}
-        />
+        /> */}
       </td>
       <td className="py-2 px-4 border text-end">
         <NumericFormat
           value={
             item.DonGia
-              ? Number(item.DonGia.replace(/,/g, "")) *
+              ? Number(item.DonGia.toString().replace(/,/g, "")) *
                 Number(item.SoLuong) *
-                (Number(item.Thue) / 100)
+                (Number(item.TyLeThue) / 100)
               : 0
           }
           displayType={"text"}
@@ -172,10 +224,11 @@ const CreateRow = ({
         <NumericFormat
           value={
             item.DonGia
-              ? Number(item.DonGia.replace(/,/g, "")) * Number(item.SoLuong) +
-                Number(item.DonGia.replace(/,/g, "")) *
+              ? Number(item.DonGia.toString().replace(/,/g, "")) *
+                  Number(item.SoLuong) +
+                Number(item.DonGia.toString().replace(/,/g, "")) *
                   Number(item.SoLuong) *
-                  (Number(item.Thue) / 100)
+                  (Number(item.TyLeThue) / 100)
               : 0
           }
           displayType={"text"}

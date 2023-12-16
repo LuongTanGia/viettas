@@ -6,49 +6,26 @@ import { toast } from "react-toastify";
 const { IoMdClose } = icons;
 const ModalHH = ({ close, data, onRowCreate }) => {
   const [selectedRow, setSelectedRow] = useState(null);
-  const [selectionCount, setSelectionCount] = useState(0);
 
   const handleRowClick = (dataRow) => {
     setSelectedRow(dataRow.MaHang);
   };
 
   const handleChoose = (dataRow) => {
-    if (selectedRow && selectedRow.MaHang === dataRow.MaHang) {
-      setSelectionCount(selectionCount + 1);
+    const defaultValues = {
+      SoLuong: 1,
+      DonGia: 0,
+      TienHang: 0,
+      TyLeThue: 0,
+      TienThue: 0,
+      ThanhTien: 0,
+    };
+    const newRow = { ...dataRow, ...defaultValues };
+    onRowCreate(newRow);
 
-      const defaultValues = {
-        SoLuong: 1,
-        DonGia: 0,
-        TienHang: 0,
-        Thue: 0,
-        TienThue: 0,
-        ThanhTien: 0,
-      };
-      const newRow = { ...dataRow, ...defaultValues };
-      onRowCreate(newRow);
-
-      toast.success("Chọn hàng hóa thành công", {
-        autoClose: 1000,
-      });
-    } else {
-      setSelectedRow(dataRow);
-      setSelectionCount(1);
-
-      const defaultValues = {
-        SoLuong: 1,
-        DonGia: 0,
-        TienHang: 0,
-        Thue: 0,
-        TienThue: 0,
-        ThanhTien: 0,
-      };
-      const newRow = { ...dataRow, ...defaultValues };
-      onRowCreate(newRow);
-
-      toast.success("Chọn hàng hóa thành công", {
-        autoClose: 1000,
-      });
-    }
+    toast.success("Chọn hàng hóa thành công", {
+      autoClose: 1000,
+    });
   };
 
   const title = [
@@ -67,7 +44,7 @@ const ModalHH = ({ close, data, onRowCreate }) => {
       <div className="  m-6  p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
         <div className=" w-[90vw] h-[600px] ">
           <div className="flex justify-between items-start pb-1">
-            <label className="font-bold ">Danh sách hàng hóa</label>
+            <label className="font-bold ">Danh sách hàng hóa </label>
             <button
               onClick={() => close()}
               className="text-gray-500 p-1 border hover:border-gray-300 hover:bg-red-600 hover:text-white rounded-full"

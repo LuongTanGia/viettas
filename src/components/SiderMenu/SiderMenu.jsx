@@ -6,7 +6,6 @@ import { dataSelector } from '../../redux/selector'
 const SiderMenu = () => {
   const data = useSelector(dataSelector)
   const [string] = useState([])
-
   return (
     <aside id="sidebar" className="sidebar">
       <ul className="sidebar-nav" id="sidebar-nav">

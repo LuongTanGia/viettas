@@ -11,6 +11,7 @@
   border: 1px solid #c0c0c0;
   text-transform: uppercase;
   padding: 0.25rem;
+  text-align: center;
 }
 
 .barcodeList tr:hover {
@@ -32,6 +33,16 @@
 .barcodeList td > div {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 0.25rem;
 }
+/* input,
+select,
+textarea {
+  width: 100%;
+  resize: none;
+  border-radius: var(--rounded);
+  border: var(--border);
+  outline: none;
+   color: var(--text-color);
+  font-size: 1rem;
+} */

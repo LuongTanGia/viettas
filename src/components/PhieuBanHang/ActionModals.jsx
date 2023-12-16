@@ -103,7 +103,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction }) {
     <>
       {isModalOpen ? (
         <div>
-          <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
+          <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center zIndex">
             <div className="m-6 p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
               <div className=" w-[90vw] h-[600px] ">
                 <div className="flex justify-between  items-start pb-1">

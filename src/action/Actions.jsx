@@ -69,19 +69,18 @@ export const DANHSACHCHUCNANG = async (API, token, dispatch) => {
         },
       },
     )
-
-    if (response.data.DataError === -107 || response.data.DataError === -108) {
+    if (response.data.DataError === -107) {
       toast.error(response.data.DataErrorDescription)
       const newToken = await RETOKEN()
-      if (newToken !== '') {
+      if (newToken) {
         await DANHSACHCHUCNANG(API, newToken, dispatch)
-      } else if (newToken === 0) {
+      } else {
         toast.error('Failed to refresh token!')
-        window.localStorage.clear()
         window.location.href = '/login'
       }
+    } else {
+      dispatch(loginSlice.actions.login(response.data))
     }
-    dispatch(loginSlice.actions.login(response.data))
   } catch (error) {
     console.error('Error adding user:', error)
   }
@@ -366,7 +365,7 @@ export const base64ToPDF = (Base64PMH) => {
 }
 
 export const keyDown = (e) => {
-  const validKeys = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '/', 'Backspace']
+  const validKeys = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '/', 'Backspace', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight']
   if (!validKeys.includes(e.key)) {
     e.preventDefault()
   }
