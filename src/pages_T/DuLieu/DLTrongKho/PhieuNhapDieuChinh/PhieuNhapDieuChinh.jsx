@@ -1,46 +1,62 @@
-import { Table, Tooltip } from "antd";
+import { Form, DatePicker, Space, Table, Tooltip } from "antd";
 import { FaSearch } from "react-icons/fa";
-import { TfiMoreAlt } from "react-icons/tfi";
 import { useState, useEffect } from "react";
-import { IoMdAddCircleOutline } from "react-icons/io";
+import { IoMdAddCircleOutline, IoMdCloseCircle } from "react-icons/io";
 import categoryAPI from "../../../../API/linkAPI";
 import { useSearch } from "../../../../hooks_T/Search";
-import { MdEdit, MdDelete, MdPrint } from "react-icons/md";
-import NCKXem from "../../../../components_T/Modal/DuLieu/DuLieuTrongKho/PhieuNCK/NCKXem";
+import { MdEdit, MdDelete, MdPrint, MdCheckCircle } from "react-icons/md";
+import dayjs from "dayjs";
+import moment from "moment";
+import { toast } from "react-toastify";
+import NDCXem from "../../../../components_T/Modal/DuLieu/DuLieuTrongKho/PhieuNDC/NDCXem";
+import NDCXoa from "../../../../components_T/Modal/DuLieu/DuLieuTrongKho/PhieuNDC/NDCXoa";
 
 const PhieuNhapDieuChinh = () => {
   const TokenAccess = localStorage.getItem("TKN");
   const [dataNDC, setDataNDC] = useState("");
   const [setSearchHangHoa, filteredHangHoa] = useSearch(dataNDC);
   const [isShowSearch, setIsShowSearch] = useState(false);
-  const [isShowOption, setIsShowOption] = useState(false);
   const [isShowModal, setIsShowModal] = useState(false);
   const [isDataKhoDC, setIsDataKhoDC] = useState("");
-
-  useEffect(() => {
-    getDataNDC();
-  }, []);
-  const getDataNDC = async () => {
-    try {
-      const response = await categoryAPI.GetDataNDC({}, TokenAccess);
-      if (response.data.DataError == 0) {
-        console.log(response.data.DataResults);
-
-        setDataNDC(response.data.DataResults);
-      }
-    } catch (error) {
-      console.log(error);
+  const [isValidDate, setIsValidDate] = useState(true);
+  const [khoanNgayFrom, setKhoanNgayFrom] = useState("");
+  const [khoanNgayTo, setKhoanNgayTo] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [actionType, setActionType] = useState("");
+  const { RangePicker } = DatePicker;
+  const [form] = Form.useForm();
+  const handleKeyDown = (e) => {
+    const validKeys = [
+      "0",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "/",
+      "Backspace",
+    ];
+    if (!validKeys.includes(e.key)) {
+      e.preventDefault();
     }
   };
-  const handleSearch = (event) => {
-    setSearchHangHoa(event.target.value);
+  const validateDate = (_, value) => {
+    const isValid = moment(value, "DD/MM/YYYY", true).isValid();
+    setIsValidDate(isValid);
+    return isValid
+      ? Promise.resolve()
+      : Promise.reject("Ngày tháng không hợp lệ");
   };
-  const formatCurrency = (value) => {
-    return Number(value).toLocaleString("vi-VN");
-  };
-  const handleView = (record) => {
-    setIsShowModal(true);
-    setIsDataKhoDC(record);
+  const handleCalendarChange = (_, dateString) => {
+    form.setFieldsValue({ dateRange: dateString });
+    const isValid =
+      moment(dateString[0], "DD/MM/YYYY", true).isValid() &&
+      moment(dateString[1], "DD/MM/YYYY", true).isValid();
+    setIsValidDate(isValid);
   };
   function formatDateTime(inputDate, includeTime = false) {
     const date = new Date(inputDate);
@@ -60,6 +76,75 @@ const PhieuNhapDieuChinh = () => {
     const roundedNumber = Math.round(number * 10) / 10;
     return roundedNumber.toFixed(1);
   };
+  const getDataNDCFirst = async () => {
+    try {
+      if (isLoading == true) {
+        const response = await categoryAPI.GetDataNDC({}, TokenAccess);
+        if (response.data.DataError == 0) {
+          setDataNDC(response.data.DataResults);
+          setIsLoading(true);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    getDataNDCFirst();
+    getTimeSetting();
+  }, [getDataNDCFirst, isLoading]);
+
+  const getDataNDC = async (e) => {
+    e.preventDefault();
+    try {
+      console.log(khoanNgayFrom, khoanNgayTo);
+      const response = await categoryAPI.GetDataNDC(
+        {
+          NgayBatDau: khoanNgayFrom,
+          NgayKetThuc: khoanNgayTo,
+        },
+        TokenAccess
+      );
+      if (response.data.DataError == 0) {
+        console.log(response.data);
+        toast.success(response.data.DataErrorDescription);
+        setDataNDC(response.data.DataResults);
+        setIsLoading(true);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getTimeSetting = async () => {
+    try {
+      const response = await categoryAPI.KhoanNgay(TokenAccess);
+      if (response.data.DataError == 0) {
+        setKhoanNgayFrom(response.data.NgayBatDau);
+        setKhoanNgayTo(response.data.NgayKetThuc);
+        setIsLoading(true);
+      } else {
+        console.log(response.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleSearch = (event) => {
+    setSearchHangHoa(event.target.value);
+  };
+  const formatCurrency = (value) => {
+    return Number(value).toLocaleString("vi-VN");
+  };
+  const handleView = (record) => {
+    setIsShowModal(true);
+    setIsDataKhoDC(record);
+    setActionType("view");
+  };
+  const handleDelete = (record) => {
+    setIsShowModal(true);
+    setIsDataKhoDC(record);
+    setActionType("delete");
+  };
   const titles = [
     {
       title: "STT",
@@ -76,6 +161,7 @@ const PhieuNhapDieuChinh = () => {
       width: 150,
       align: "center",
       fixed: "left",
+      sorter: (a, b) => a.SoChungTu.localeCompare(b.SoChungTu),
       render: (text) => <span className="flex ">{text}</span>,
     },
     {
@@ -84,6 +170,11 @@ const PhieuNhapDieuChinh = () => {
       key: "NgayCTu",
       width: 120,
       align: "center",
+      sorter: (a, b) => {
+        const dateA = new Date(a.NgayCTu);
+        const dateB = new Date(b.NgayCTu);
+        return dateA - dateB;
+      },
       render: (text) => (
         <span className="flex justify-center">{formatDateTime(text)}</span>
       ),
@@ -94,6 +185,7 @@ const PhieuNhapDieuChinh = () => {
       key: "ThongTinKho",
       width: 180,
       align: "center",
+      sorter: (a, b) => a.ThongTinKho.localeCompare(b.ThongTinKho),
       render: (text) => (
         <Tooltip title={text}>
           <div
@@ -116,7 +208,7 @@ const PhieuNhapDieuChinh = () => {
       key: "SoMatHang",
       align: "center",
       width: 120,
-
+      sorter: (a, b) => a.SoMatHang - b.SoMatHang,
       render: (text) => (
         <span className="flex justify-end">{formatCurrency(text)}</span>
       ),
@@ -127,6 +219,7 @@ const PhieuNhapDieuChinh = () => {
       key: "TongSoLuong",
       align: "center",
       width: 120,
+      sorter: (a, b) => a.TongSoLuong - b.TongSoLuong,
       render: (text) => (
         <span className="flex justify-end">{roundNumber(text)}</span>
       ),
@@ -136,13 +229,28 @@ const PhieuNhapDieuChinh = () => {
       dataIndex: "GhiChu",
       key: "GhiChu",
       align: "center",
-      render: (text) => <span className="flex justify-start">{text}</span>,
+      render: (text) => (
+        <Tooltip title={text}>
+          <div
+            style={{
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+              cursor: "pointer",
+              justifyContent: "start",
+            }}
+          >
+            {text}
+          </div>
+        </Tooltip>
+      ),
     },
     {
       title: "Người tạo",
       dataIndex: "NguoiTao",
       key: "NguoiTao",
       align: "center",
+      sorter: (a, b) => a.NguoiTao.localeCompare(b.NguoiTao),
       render: (text) => (
         <Tooltip title={text}>
           <div
@@ -163,6 +271,11 @@ const PhieuNhapDieuChinh = () => {
       dataIndex: "NgayTao",
       key: "NgayTao",
       align: "center",
+      sorter: (a, b) => {
+        const dateA = new Date(a.NgayTao);
+        const dateB = new Date(b.NgayTao);
+        return dateA - dateB;
+      },
       render: (text) => (
         <span className="flex justify-center">
           {formatDateTime(text, true)}
@@ -174,6 +287,7 @@ const PhieuNhapDieuChinh = () => {
       dataIndex: "NguoiSuaCuoi",
       key: "NgaySuaCuoi",
       align: "center",
+      sorter: (a, b) => a.NgaySuaCuoi.localeCompare(b.NgaySuaCuoi),
       render: (text) => (
         <Tooltip title={text}>
           <div
@@ -194,6 +308,11 @@ const PhieuNhapDieuChinh = () => {
       dataIndex: "NgaySuaCuoi",
       key: "NgaySuaCuoi",
       align: "center",
+      sorter: (a, b) => {
+        const dateA = new Date(a.NgaySuaCuoi);
+        const dateB = new Date(b.NgaySuaCuoi);
+        return dateA - dateB;
+      },
       render: (text) => (
         <span className="flex justify-center">
           {formatDateTime(text, true)}
@@ -211,20 +330,21 @@ const PhieuNhapDieuChinh = () => {
           <>
             <div className="flex gap-2 items-center justify-center">
               <div
-                className="p-1.5 border-2 rounded-md  cursor-pointer  bg-slate-50 text-yellow-400 hover:border-yellow-400 hover:bg-yellow-400  hover:text-slate-50 "
+                className="p-1.5 border-2 rounded-md  cursor-pointer  hover:bg-slate-50 hover:text-yellow-400  border-yellow-400 bg-yellow-400 text-slate-50 "
                 title="Sửa"
               >
                 <MdEdit />
               </div>
               <div
-                className="p-1.5 border-2 rounded-md cursor-pointer  bg-slate-50 text-purple-500 hover:border-purple-500 hover:bg-purple-500  hover:text-slate-50 "
-                title="In Mã Vạch"
+                className="p-1.5 border-2 rounded-md cursor-pointer  hover:bg-slate-50 hover:text-purple-500  border-purple-500  bg-purple-500 text-slate-50 "
+                title="In Phiếu"
               >
                 <MdPrint />
               </div>
               <div
-                className="p-1.5 border-2 rounded-md cursor-pointer  bg-slate-50 text-red-500 hover:border-red-500 hover:bg-red-500  hover:text-slate-50 "
+                className="p-1.5 border-2 rounded-md cursor-pointer  hover:bg-slate-50 hover:text-red-500 hover:border-red-500  bg-red-500 text-slate-50 "
                 title="Xóa"
+                onClick={() => handleDelete(record)}
               >
                 <MdDelete />
               </div>
@@ -234,90 +354,161 @@ const PhieuNhapDieuChinh = () => {
       },
     },
   ];
-
   return (
     <>
-      <div className="flex flex-col gap-2 ">
-        <div className="flex justify-between gap-2 relative">
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-lg font-bold uppercase">
-                Phiếu Nhập Kho Điều Chỉnh
-              </h1>
-              <FaSearch
-                className="hover:text-red-400 cursor-pointer"
-                onClick={() => setIsShowSearch(!isShowSearch)}
-              />
-            </div>
-            <div className="flex relative ">
-              {isShowSearch && (
-                <div
-                  className={`flex absolute left-[19rem] -top-8 transition-all linear duration-700 ${
-                    isShowSearch ? "w-[20rem]" : "w-0"
-                  } overflow-hidden`}
-                >
-                  <input
-                    type="text"
-                    placeholder="Nhập ký tự bạn cần tìm"
-                    onChange={handleSearch}
-                    className={
-                      "px-2 py-1 w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] "
-                    }
+      {!isLoading ? (
+        <p>Loading</p>
+      ) : (
+        <>
+          <div className="flex flex-col gap-2 ">
+            <div className="flex justify-between gap-2 relative">
+              <div>
+                <div className="flex items-center gap-2">
+                  <h1 className="text-lg font-bold uppercase">
+                    Phiếu Nhập Kho Điều Chỉnh
+                  </h1>
+                  <FaSearch
+                    className="hover:text-red-400 cursor-pointer"
+                    onClick={() => setIsShowSearch(!isShowSearch)}
                   />
                 </div>
-              )}
+                <div className="flex relative ">
+                  {isShowSearch && (
+                    <div
+                      className={`flex absolute left-[19rem] -top-8 transition-all linear duration-700 ${
+                        isShowSearch ? "w-[20rem]" : "w-0"
+                      } overflow-hidden`}
+                    >
+                      <input
+                        type="text"
+                        placeholder="Nhập ký tự bạn cần tìm"
+                        onChange={handleSearch}
+                        className={
+                          "px-2 py-1 w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] "
+                        }
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="flex justify-between ">
-            <div
-              className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5 "
-              onClick={() => setIsShowOption(!isShowOption)}
-              title="Chức năng khác"
-            >
-              <TfiMoreAlt
-                className={`duration-300 rotate-${isShowOption ? "0" : "90"}`}
-              />
-            </div>
-            {isShowOption && (
-              <div className="flex flex-col gap-4 bg-slate-100 p-4 absolute top-0 right-[2%] rounded-lg z-10 duration-500 shadow-custom ">
-                <div className="px-3 py-2 bg-blue-600 rounded-lg font-semibold text-slate-50 shadow-custom flex gap-1 items-center cursor-pointer hover:bg-white hover:text-blue-600">
+            <div className="flex justify-between">
+              <form
+                form={form}
+                className="-mb-6"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") getDataNDC(e);
+                }}
+              >
+                <Form.Item
+                  name="dateRange"
+                  rules={[
+                    {
+                      validator: validateDate,
+                    },
+                  ]}
+                >
+                  <Space>
+                    <RangePicker
+                      format="DD/MM/YYYY"
+                      picker="date"
+                      onKeyDown={handleKeyDown}
+                      onCalendarChange={handleCalendarChange}
+                      defaultValue={[
+                        dayjs(khoanNgayFrom, "YYYY-MM-DD"),
+                        dayjs(khoanNgayTo, "YYYY-MM-DD"),
+                      ]}
+                      onChange={(values) => {
+                        setKhoanNgayFrom(
+                          values[0]
+                            ? dayjs(values[0]).format("YYYY-MM-DDTHH:mm:ss")
+                            : ""
+                        );
+                        setKhoanNgayTo(
+                          values[1]
+                            ? dayjs(values[1]).format("YYYY-MM-DDTHH:mm:ss")
+                            : ""
+                        );
+                        // const isValid =
+                        //   moment(values[0], "DD/MM/YYYY", true).isValid() &&
+                        //   moment(values[1], "DD/MM/YYYY", true).isValid();
+                        // setIsValidDate(isValid);
+                        console.log(
+                          "Selected Date Range:",
+                          khoanNgayFrom,
+                          khoanNgayTo
+                        );
+                      }}
+                    />
+                    {isValidDate ? (
+                      <MdCheckCircle
+                        style={{
+                          color: "green",
+                        }}
+                      />
+                    ) : (
+                      <IoMdCloseCircle
+                        style={{
+                          color: "red",
+                        }}
+                      />
+                    )}
+                  </Space>
+                </Form.Item>
+              </form>
+              <div className="flex items-center gap-2">
+                <div className="px-2 py-1.5 bg-blue-600 rounded-lg font-semibold text-slate-50 shadow-custom flex gap-1 items-center cursor-pointer hover:bg-white hover:text-blue-600">
                   <div> Thêm Sản Phẩm</div>
                   <div>
                     <IoMdAddCircleOutline className="w-6 h-6" />
                   </div>
                 </div>
+                <div className="px-2 py-1.5 bg-purple-600 rounded-lg font-semibold text-slate-50 shadow-custom flex gap-1 items-center cursor-pointer hover:bg-white hover:text-purple-600">
+                  <div>In Phiếu</div>
+                  <div>
+                    <MdPrint className="w-6 h-6" />
+                  </div>
+                </div>
               </div>
-            )}
+            </div>
+            <div>
+              <Table
+                className="table_DMHangHoa"
+                columns={titles}
+                dataSource={filteredHangHoa}
+                onRow={(record) => ({
+                  onDoubleClick: () => {
+                    handleView(record);
+                  },
+                })}
+                size="small"
+                scroll={{
+                  x: 1800,
+                  y: 400,
+                }}
+                style={{
+                  whiteSpace: "nowrap",
+                  fontSize: "24px",
+                }}
+              />
+            </div>
           </div>
-        </div>
-
-        <div>
-          <Table
-            className="table_DMHangHoa"
-            columns={titles}
-            dataSource={filteredHangHoa}
-            onRow={(record) => ({
-              onDoubleClick: () => {
-                handleView(record);
-              },
-            })}
-            size="small"
-            scroll={{
-              x: 1800,
-              y: 400,
-            }}
-            style={{
-              whiteSpace: "nowrap",
-              fontSize: "24px",
-            }}
-          />
-        </div>
-      </div>
-      <div>
-        {isShowModal && (
-          <NCKXem close={() => setIsShowModal(false)} data={isDataKhoDC} />
-        )}
-      </div>
+          <div>
+            {isShowModal &&
+              (actionType == "view" ? (
+                <NDCXem
+                  close={() => setIsShowModal(false)}
+                  dataNDC={isDataKhoDC}
+                />
+              ) : actionType == "delete" ? (
+                <NDCXoa
+                  close={() => setIsShowModal(false)}
+                  dataNDC={isDataKhoDC}
+                />
+              ) : null)}
+          </div>
+        </>
+      )}
     </>
   );
 };

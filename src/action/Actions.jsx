@@ -66,8 +66,6 @@ export const LOGIN = async (API, TKN, RemoteDB, dispatch) => {
 };
 
 export const DANHSACHCHUCNANG = async (API, token, dispatch) => {
-  console.log("dataDANHSACHCHUCNANG");
-  console.log("dataDANHSACHCHUCNANG");
   try {
     const response = await axios.post(
       API,

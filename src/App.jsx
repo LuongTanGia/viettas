@@ -40,8 +40,6 @@ function App() {
     } else {
       setDataLoaded(false);
       const loadData = async () => {
-        console.log("LoadDataa");
-        console.log(token);
         await DANHSACHCHUCNANG(API.DANHSACHCHUCNANG, token, dispatch);
         await DANHSACHHANGHOA(API.DANHSACHHANGHOA, token, dispatch);
         await KHOANNGAY(API.KHOANNGAY, token, dispatch);

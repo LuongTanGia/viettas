@@ -305,7 +305,6 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
       if (infoHang.data.DataError == 0) {
         setDataView(infoHang.data.DataResult);
         setIsLoading(true);
-        console.log(infoHang.data);
       }
     } catch (error) {
       console.log(error);
@@ -333,7 +332,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
       if (response.data.DataError === 0) {
         toast.success("Thêm sản phẩm thành công");
       } else {
-        console.log(response.data);
+        console.log(hangHoaForm);
         toast.error(response.data.DataErrorDescription);
       }
     } catch (error) {
@@ -419,8 +418,6 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
       );
       if (response.data.DataError == 0) {
         toast.success("Thay đổi nhóm thành công");
-      } else {
-        console.log(response.data);
       }
     } catch (error) {
       console.log(error);
@@ -1674,10 +1671,9 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                     <p className="text-blue-700 uppercase">?</p>
                   </div>
                   <p className="text-slate-500 text-lg font-light">
-                    Thông tin sản phẩm sẽ mất đi nếu bạn xóa !
+                    Thông tin sản phẩm không thể hoàn tác nếu bạn xóa !
                   </p>
                 </div>
-                <div></div>
               </div>
             </div>
             <div className="flex justify-end px-8">
