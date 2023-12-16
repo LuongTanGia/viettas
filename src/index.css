@@ -171,9 +171,9 @@ a.nav-link span {
   min-height: 220px;
   max-height: 220px;
 }
-/* .zIndex {
+.zIndex {
   z-index: 1500;
-} */
+}
 /* Tan */
 .table_DMHangHoa .ant-table-body {
   min-height: 477px;
@@ -215,4 +215,13 @@ input[type='radio'] {
 #main {
   /* max-height: 100vh; */
   margin-bottom: 60px;
+}
+
+.sider-menu {
+  opacity: 0;
+  transition: opacity 0.5s ease; /* Adjust the duration and timing function as needed */
+}
+
+.sider-menu.visible {
+  opacity: 1;
 }
