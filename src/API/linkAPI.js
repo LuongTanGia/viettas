@@ -158,6 +158,20 @@ const categoryAPI = {
     };
     return axiosClient.post(url, body, { headers });
   },
+  NDCView(SoChungTu, accessToken) {
+    const url = "/DuLieuNDC/ThongTin";
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    };
+    return axiosClient.post(url, { SoChungTu }, { headers });
+  },
+  NDCDelete(SoChungTu, accessToken) {
+    const url = "/DuLieuNDC/Xoa";
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    };
+    return axiosClient.post(url, { SoChungTu }, { headers });
+  },
   // Hethong/KhoanNgay
   KhoanNgay(accessToken) {
     const url = "/settings/GiaTriHeThong/KhoanNgay";

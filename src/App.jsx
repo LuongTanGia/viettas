@@ -9,6 +9,33 @@ import Test from './components/util/testComponents/Test'
 import { useState } from 'react'
 
 function App() {
+  const token = localStorage.getItem('TKN')
+  const tokenRF = localStorage.getItem('RTKN')
+
+  const KhoanNgay = useSelector(khoanNgaySelect)
+
+  const dispatch = useDispatch()
+  const [dataLoaded, setDataLoaded] = useState(false)
+
+  useEffect(() => {
+    if (token === null) {
+      setDataLoaded(true)
+    } else {
+      setDataLoaded(false)
+      const loadData = async () => {
+        await DANHSACHCHUCNANG(API.DANHSACHCHUCNANG, token, dispatch)
+        await DANHSACHHANGHOA(API.DANHSACHHANGHOA, token, dispatch)
+        await KHOANNGAY(API.KHOANNGAY, token, dispatch)
+        await DATATONGHOP(API.TONGHOP, token, KhoanNgay, dispatch)
+        await DATADULIEU(API.PHIEUMUAHANG, token, dispatch)
+
+        setDataLoaded(true)
+      }
+
+      loadData()
+    }
+  }, [token, dispatch, tokenRF])
+
   const [isSidebarVisible, setIsSidebarVisible] = useState(true)
 
   const handleToggleSidebar = () => {

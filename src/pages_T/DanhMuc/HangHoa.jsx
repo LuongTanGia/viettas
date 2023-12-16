@@ -185,7 +185,7 @@ const HangHoa = () => {
       dataIndex: "TenHang",
       key: "TenHang",
       fixed: "left",
-      width: 200,
+      width: 220,
       align: "center",
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       render: (text) => (
@@ -208,7 +208,7 @@ const HangHoa = () => {
       title: "Tên nhóm",
       dataIndex: "TenNhom",
       key: "TenNhom",
-      width: 200,
+      width: 150,
       align: "center",
       sorter: (a, b) => a.TenNhom.localeCompare(b.TenNhom),
       render: (text) => (
@@ -231,7 +231,7 @@ const HangHoa = () => {
       dataIndex: "DVTKho",
       key: "DVTKho",
       align: "center",
-      width: 100,
+      width: 120,
       sorter: (a, b) => a.DVTKho.localeCompare(b.DVTKho),
     },
     {
@@ -239,7 +239,7 @@ const HangHoa = () => {
       dataIndex: "TyLeQuyDoi",
       key: "TyLeQuyDoi",
       align: "center",
-      width: 100,
+      width: 120,
       sorter: (a, b) => a.TyLeQuyDoi - b.TyLeQuyDoi,
       render: (text) => (
         <span className="flex justify-end">{formatCurrency(text)}</span>
@@ -419,7 +419,7 @@ const HangHoa = () => {
       title: "Ngưng dùng",
       dataIndex: "NA",
       key: "NA",
-      width: 100,
+      width: 120,
       align: "center",
       sorter: (a, b) => {
         const valueA = a.NA ? 1 : 0;
@@ -445,21 +445,21 @@ const HangHoa = () => {
           <>
             <div className="flex gap-2 items-center justify-center">
               <div
-                className="p-1.5 border-2 rounded-md  cursor-pointer  bg-slate-50 text-yellow-400 hover:border-yellow-400 hover:bg-yellow-400  hover:text-slate-50 "
+                className="p-1.5 rounded-md border-2 cursor-pointer  hover:bg-slate-50 hover:text-yellow-400 border-yellow-400  bg-yellow-400  text-slate-50 "
                 title="Sửa"
                 onClick={() => handleUpdate(record)}
               >
                 <MdEdit />
               </div>
               <div
-                className="p-1.5 border-2 rounded-md cursor-pointer  bg-slate-50 text-purple-500 hover:border-purple-500 hover:bg-purple-500  hover:text-slate-50 "
+                className="p-1.5 border-2 rounded-md cursor-pointer  hover:bg-slate-50 hover:text-purple-500  border-purple-500  bg-purple-500  text-slate-50 "
                 title="In Mã Vạch"
                 onClick={() => handlePrintABarcode(record)}
               >
                 <CiBarcode />
               </div>
               <div
-                className="p-1.5 border-2 rounded-md cursor-pointer  bg-slate-50 text-red-500 hover:border-red-500 hover:bg-red-500  hover:text-slate-50 "
+                className="p-1.5 border-2 rounded-md cursor-pointer  hover:bg-slate-50 hover:text-red-500  border-red-500  bg-red-500   text-slate-50 "
                 title="Xóa"
                 onClick={() => handleDelete(record)}
               >
@@ -603,7 +603,7 @@ const HangHoa = () => {
                 dataSource={filteredHangHoa}
                 size="small"
                 scroll={{
-                  x: 3100,
+                  x: 3000,
                   y: 400,
                 }}
                 style={{

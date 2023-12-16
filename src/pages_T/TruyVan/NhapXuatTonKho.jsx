@@ -100,6 +100,7 @@ const NhapXuatTonKho = () => {
   const getDataNXT = async (e) => {
     e.preventDefault();
     try {
+      console.log(khoanNgayFrom, khoanNgayTo);
       const response = await categoryAPI.InfoNXTTheoKho(
         {
           NgayBatDau: khoanNgayFrom,
@@ -567,7 +568,7 @@ const NhapXuatTonKho = () => {
       ) : (
         <div className="flex flex-col gap-2">
           <div className="flex flex-col gap-2">
-            <div className="flex justify-between">
+            <div className="flex justify-between relative">
               <div className="flex items-center gap-2">
                 <h1 className="text-lg font-bold text-black-600 uppercase">
                   Nhập Xuất Tồn - Theo Kho
@@ -577,10 +578,10 @@ const NhapXuatTonKho = () => {
                   onClick={() => setIsShowSearch(!isShowSearch)}
                 />
               </div>
-              <div className="flex relative ">
+              <div className="flex ">
                 {isShowSearch && (
                   <div
-                    className={`flex absolute left-[18.5rem] -top-8 transition-all linear duration-700 ${
+                    className={`flex absolute left-[18.5rem]  -top-1.5 transition-all linear duration-700 ${
                       isShowSearch ? "w-[20rem]" : "w-0"
                     } overflow-hidden`}
                   >
@@ -603,32 +604,7 @@ const NhapXuatTonKho = () => {
                   if (e.key === "Enter") getDataNXT(e);
                 }}
               >
-                <div className="flex gap-2 justify-end content-end">
-                  <div className="flex items-center gap-2">
-                    <Select
-                      allowClear
-                      placeholder="Lọc Kho"
-                      value={selectedMaKho}
-                      onChange={(value) => setSelectedMaKho(value)}
-                      style={{
-                        width: "150px",
-                        color: "red",
-                      }}
-                    >
-                      {khoHangNXT?.map((item, index) => {
-                        return (
-                          <Select.Option
-                            key={index}
-                            value={item.MaKho}
-                            title={item.TenKho}
-                            className="py-8"
-                          >
-                            <p> {item.TenKho}</p>
-                          </Select.Option>
-                        );
-                      })}
-                    </Select>
-                  </div>
+                <div className="flex flex-col gap-2 justify-end content-end">
                   <div form={form} className="-mb-6">
                     <Form.Item
                       name="dateRange"
@@ -650,12 +626,12 @@ const NhapXuatTonKho = () => {
                           ]}
                           onChange={(values) => {
                             setKhoanNgayFrom(
-                              values[0]
+                              khoanNgayFrom
                                 ? dayjs(values[0]).format("YYYY-MM-DDTHH:mm:ss")
                                 : ""
                             );
                             setKhoanNgayTo(
-                              values[1]
+                              khoanNgayTo
                                 ? dayjs(values[1]).format("YYYY-MM-DDTHH:mm:ss")
                                 : ""
                             );
@@ -680,6 +656,31 @@ const NhapXuatTonKho = () => {
                         )}
                       </Space>
                     </Form.Item>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Select
+                      allowClear
+                      placeholder="Lọc Kho"
+                      value={selectedMaKho}
+                      onChange={(value) => setSelectedMaKho(value)}
+                      style={{
+                        width: "150px",
+                        color: "red",
+                      }}
+                    >
+                      {khoHangNXT?.map((item, index) => {
+                        return (
+                          <Select.Option
+                            key={index}
+                            value={item.MaKho}
+                            title={item.TenKho}
+                            className="py-8"
+                          >
+                            <p> {item.TenKho}</p>
+                          </Select.Option>
+                        );
+                      })}
+                    </Select>
                   </div>
                 </div>
                 <div className=" flex flex-col gap-2">
