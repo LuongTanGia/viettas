@@ -3,22 +3,30 @@
 import { useDispatch } from 'react-redux'
 import { LOGIN } from '../../action/Actions'
 import API from '../../API/API'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Cookies from 'js-cookie'
 
-const CollectionCreateForm = ({ isShow, close, data }) => {
+const CollectionCreateForm = ({ isShow, close, data, dataUser }) => {
   console.log(Cookies.get('remoteDb'))
   const [RemoteDB, setRemoteDB] = useState(Cookies.get('remoteDb'))
   const [isRemoteChanged, setIsRemoteChanged] = useState(Cookies.get('remoteDb') !== undefined ? true : false || false)
-
+  const token = window.localStorage.getItem('tokenDuLieu')
   const dispatch = useDispatch()
 
-  const handleLogin = async () => {
+  useEffect(() => {
     Cookies.set('remoteDb', RemoteDB)
-    await LOGIN(API.DANGNHAP, data.TKN, RemoteDB, dispatch)
+  }, [token])
+  const handleLogin = async () => {
+    const response = await LOGIN(API.DANGNHAP, API.DANHSACHDULIEU, token, RemoteDB, dataUser, dispatch)
+    console.log(response)
     window.localStorage.setItem('firstLogin', true)
     Cookies.set('firstLogin', true)
-    window.location.href = '/'
+    if (response === 1) {
+      Cookies.set('remoteDb', RemoteDB)
+      window.location.href = '/'
+    } else {
+      setRemoteDB('')
+    }
   }
 
   const handleChangeRadio = (e) => {
@@ -48,7 +56,7 @@ const CollectionCreateForm = ({ isShow, close, data }) => {
             </div>
             <div className="flex justify-end">
               <button onClick={() => close()} className="active:scale-[.98] active:duration-75 text-white text-lg font-bold bg-rose-500 rounded-md px-2 py-1 w-[100px]">
-                Hủy
+                Đóng
               </button>
               <button
                 onClick={handleLogin}

@@ -4,7 +4,7 @@ import { GoogleLogin } from '@react-oauth/google'
 import API from '../../API/API'
 import { useDispatch } from 'react-redux'
 import Cookies from 'js-cookie'
-import { toast } from 'react-toastify'
+
 import backgroundImg from '../../assets/img/backgroud.jfif'
 import CollectionCreateForm from './Popup'
 import FAQ from '../FAQ/FAQ'
@@ -13,6 +13,7 @@ import './auth.css'
 const App = () => {
   const [rememberMe, setRememberMe] = useState(Cookies.get('useCookies') === 'true')
   const [isShow, setIsShow] = useState(false)
+  const token = window.localStorage.getItem('tokenDuLieu')
 
   const loginTrue = Cookies.get('firstLogin') === 'true' ? true : false
   const dispatch = useDispatch()
@@ -27,7 +28,7 @@ const App = () => {
   })
   useEffect(() => {
     Cookies.set('useCookies', rememberMe)
-  }, [rememberMe])
+  }, [rememberMe, token])
   const onChangeInput = (e) => {
     const { name, value } = e.target
     setUser({ ...user, [name]: value })
@@ -47,16 +48,20 @@ const App = () => {
     try {
       const response = await DANHSACHDULIEU(API.DANHSACHDULIEU, user, dispatch)
       setData(response)
-      if (response?.DataResults.length === 1) {
+
+      if (response.DataResults.length === 1) {
+        console.log('hi1d')
         const remoteDB = response.DataResults[0].RemoteDB
-        await LOGIN(API.DANGNHAP, response.TKN, remoteDB, dispatch)
+        await LOGIN(API.DANGNHAP, API.DANHSACHDULIEU, response.TKN, remoteDB, {}, dispatch)
         window.localStorage.setItem('firstLogin', true)
         window.location.href = '/'
+        console.log(response)
       } else if (response?.DataResults.length > 1) {
+        console.log(response)
         setIsLoggedIn(true)
       }
     } catch (error) {
-      toast.error('Sai tài khoản hoặc mật khẩu')
+      console.log('')
     }
 
     console.log(data)
@@ -68,9 +73,9 @@ const App = () => {
     try {
       const response = await DANHSACHDULIEU(API.DANHSACHDULIEU, { TokenId: TokenID.credential }, dispatch)
       setData(response)
-      if (response?.DataResults.length === 1) {
+      if (response.DataResults.length === 1) {
         const remoteDB = response.DataResults[0].RemoteDB
-        await LOGIN(API.DANGNHAP, response.TKN, remoteDB, dispatch)
+        await LOGIN(API.DANGNHAP, API.DANHSACHDULIEU, response.TKN, remoteDB, {}, dispatch)
         window.localStorage.setItem('firstLogin', true)
         window.location.href = '/'
       } else if (response?.DataResults.length > 1) {
@@ -169,7 +174,7 @@ const App = () => {
                   console.log('Login Failed')
                 }}
               />
-              {isLoggedIn ? <CollectionCreateForm isShow={isLoggedIn} close={close} data={data} /> : null}
+              {isLoggedIn ? <CollectionCreateForm isShow={isLoggedIn} close={close} data={data} dataUser={user} /> : null}
             </div>
           </div>
 
@@ -182,7 +187,7 @@ const App = () => {
                     onClick={() => setIsShow(false)}
                     className="active:scale-[.98] active:duration-75 text-white text-lg font-bold bg-rose-500 rounded-md px-2 py-1 w-[100px]"
                   >
-                    Hủy
+                    Đóng
                   </button>
                   <button
                     onClick={() => {

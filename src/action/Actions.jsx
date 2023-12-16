@@ -29,8 +29,10 @@ export const RETOKEN = async () => {
 export const DANHSACHDULIEU = async (API, data) => {
   try {
     const response = await axios.post(API, data)
-
+    window.localStorage.setItem('tokenDuLieu', response.data.TKN)
     if (response.data.DataError === 0) {
+      toast.success(response.data.DataErrorDescription)
+
       return response.data
     } else {
       toast.error(response.data.DataErrorDescription)
@@ -39,20 +41,27 @@ export const DANHSACHDULIEU = async (API, data) => {
     console.error('Error adding user:', error)
   }
 }
-export const LOGIN = async (API, TKN, RemoteDB, dispatch) => {
+export const LOGIN = async (API1, API2, TKN, RemoteDB, data, dispatch) => {
   try {
-    const response = await axios.post(API, {
+    const response = await axios.post(API1, {
       TokenID: TKN,
       RemoteDB: RemoteDB,
     })
-    if (response) {
+    if (response.data.DataError === 0) {
       window.localStorage.setItem('TKN', response.data.TKN)
       window.localStorage.setItem('RTKN', response.data.RTKN)
       window.localStorage.setItem('User', response.data.MappingUser)
 
       dispatch(loginSlice.actions.login(response.data))
+      toast.error(response.data.DataErrorDescription)
+
+      return 1
     } else {
       dispatch(loginSlice.actions.login([]))
+    }
+    if (response.data.DataError !== 0) {
+      toast.error(response.data.DataErrorDescription)
+      await DANHSACHDULIEU(API2, data)
     }
   } catch (error) {
     console.error('Error adding user:', error)
