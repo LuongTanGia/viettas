@@ -1,71 +1,70 @@
-import { useSelector, useDispatch } from "react-redux";
-import { authDataSelector } from "../../redux/selector";
-import { LOGIN } from "../../action/Actions";
+/* eslint-disable react/prop-types */
 
-import API from "../../API/API";
-import { useState } from "react";
-import Cookies from "js-cookie";
-// eslint-disable-next-line react/prop-types
-const CollectionCreateForm = ({ isShow, close }) => {
-  const data = useSelector(authDataSelector);
-  const [RemoteDB, setRemoteDB] = useState();
-  const dispatch = useDispatch();
+import { useDispatch } from 'react-redux'
+import { LOGIN } from '../../action/Actions'
+import API from '../../API/API'
+import { useState } from 'react'
+import Cookies from 'js-cookie'
+
+const CollectionCreateForm = ({ isShow, close, data }) => {
+  console.log(Cookies.get('remoteDb'))
+  const [RemoteDB, setRemoteDB] = useState(Cookies.get('remoteDb'))
+  const [isRemoteChanged, setIsRemoteChanged] = useState(Cookies.get('remoteDb') !== undefined ? true : false || false)
+
+  const dispatch = useDispatch()
+
   const handleLogin = async () => {
-    await LOGIN(API.DANGNHAP, data.TKN, RemoteDB, dispatch);
-    window.localStorage.setItem("firstLogin", true);
-    Cookies.set("user", true);
-    window.location.href = "/";
-  };
+    Cookies.set('remoteDb', RemoteDB)
+    await LOGIN(API.DANGNHAP, data.TKN, RemoteDB, dispatch)
+    window.localStorage.setItem('firstLogin', true)
+    Cookies.set('firstLogin', true)
+    window.location.href = '/'
+  }
+
   const handleChangeRadio = (e) => {
-    setRemoteDB(e.target.value);
-  };
-  console.log(isShow);
+    const newRemoteDB = e.target.value
+    setRemoteDB(newRemoteDB)
+    setIsRemoteChanged(true)
+  }
+
   return (
     <>
       {isShow ? (
         <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center">
           <div className="w-[600px] m-6 p-6 absolute   shadow-lg bg-white rounded-md flex flex-col">
             <div className="flex justify-between items-center">
-              <label>Chọn cơ sở dữ liệu</label>
-              <button
-                onClick={() => close()}
-                className="text-gray-500 p-1 border hover:border-gray-300 hover:bg-red-600 hover:text-white rounded-full"
-              >
-                X{/* <IoMdClose /> */}
-              </button>
+              <label className="text-lg font-bold">Chọn cơ sở dữ liệu</label>
             </div>
 
             <div className="p-6">
               {data?.DataResults?.map((item, index) => (
-                <div className="flex items-center p-3 " key={index}>
-                  <input
-                    id={item.RemoteDB}
-                    type="radio"
-                    name="remoteDB"
-                    value={item.RemoteDB}
-                    onChange={handleChangeRadio}
-                  />
-                  <label
-                    htmlFor={item.RemoteDB}
-                    className="ml-2 text-base font-medium"
-                  >
+                <div className="flex items-center p-3" key={index}>
+                  <input id={item.RemoteDB} type="radio" name="remoteDB" value={item.RemoteDB} onChange={handleChangeRadio} checked={item.RemoteDB === RemoteDB} />
+                  <label htmlFor={item.RemoteDB} className={`ml-2 text-base ${item.RemoteDB === RemoteDB ? 'underline decoration-black-700/[.73]' : ''} font-medium `}>
                     {item.RemoteDBDescription}
                   </label>
                 </div>
               ))}
             </div>
-
-            <button
-              onClick={handleLogin}
-              className="active:scale-[.98] active:duration-75 text-white text-lg font-bold  bg-blue-500 rounded-md px-2 py-1"
-            >
-              Xác nhận
-            </button>
+            <div className="flex justify-end">
+              <button onClick={() => close()} className="active:scale-[.98] active:duration-75 text-white text-lg font-bold bg-rose-500 rounded-md px-2 py-1 w-[100px]">
+                Hủy
+              </button>
+              <button
+                onClick={handleLogin}
+                disabled={!isRemoteChanged}
+                className={`active:scale-[.98] active:duration-75 text-white text-lg font-bold bg-blue-500 rounded-md px-2 py-1 w-[100px] ml-4 ${
+                  !isRemoteChanged ? 'cursor-not-allowed bg-gray-500' : ''
+                }`}
+              >
+                Xác nhận
+              </button>
+            </div>
           </div>
         </div>
       ) : null}
     </>
-  );
-};
+  )
+}
 
-export default CollectionCreateForm;
+export default CollectionCreateForm

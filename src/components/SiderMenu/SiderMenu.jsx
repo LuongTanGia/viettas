@@ -2,15 +2,17 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { dataSelector } from '../../redux/selector'
+import './SiderMenu.css' // Import the CSS file for styling
 
 const SiderMenu = () => {
   const data = useSelector(dataSelector)
   const [string] = useState([])
+
   return (
     <aside id="sidebar" className="sidebar">
       <ul className="sidebar-nav" id="sidebar-nav">
         <li className="nav-item">
-          <Link className="nav-link " to="/">
+          <Link className="nav-link" to="/">
             <i className="bi bi-grid"></i>
             <span>Dashboard</span>
           </Link>
@@ -21,7 +23,7 @@ const SiderMenu = () => {
             <span>F.A.Q</span>
             <i className="bi bi-chevron-down ms-auto"></i>
           </Link>
-          <ul id="icons-nav" className="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <ul id="icons-nav" className="nav-content collapse" data-bs-parent="#sidebar-nav">
             <li>
               <Link to="/FAQ">
                 <i className="bi bi-circle"></i>
@@ -36,7 +38,7 @@ const SiderMenu = () => {
             </li>
           </ul>
         </li>
-        {/* sidebar dataa */}
+        {/* sidebar data */}
         {data.DataResults
           ? data.DataResults.map(
               (item, index) =>
@@ -51,11 +53,33 @@ const SiderMenu = () => {
                       {data.DataResults.map((chir_data) =>
                         chir_data.NhomChucNang === item.MaChucNang ? (
                           <li key={chir_data.MaChucNang} className="submenu-item">
-                            <Link to={`/${string.includes(chir_data.MaChucNang) ? '#!' : chir_data.MaChucNang}`}>
-                              <i className="bi bi-circle"></i>
-                              {chir_data.TenChucNang}
-                            </Link>
-                            <ul className="submenu_2">
+                            {!string.includes(chir_data.MaChucNang) ? (
+                              <>
+                                <Link
+                                  to={`/${string.includes(chir_data.MaChucNang) ? '' : chir_data.MaChucNang}`}
+                                  // className="nav-link collapsed"
+                                  // data-bs-target={`#${chir_data.MaChucNang}-nav`}
+                                  // data-bs-toggle="collapse"
+                                >
+                                  <i className="bi bi-circle"></i>
+                                  {chir_data.TenChucNang}
+                                </Link>
+                              </>
+                            ) : (
+                              <>
+                                <Link
+                                  to={`/${string.includes(chir_data.MaChucNang) ? '' : chir_data.MaChucNang}`}
+                                  className="nav-link collapsed"
+                                  data-bs-target={`#${chir_data.MaChucNang}-nav`}
+                                  data-bs-toggle="collapse"
+                                >
+                                  <i className="bi bi-circle"></i>
+                                  {chir_data.TenChucNang}
+                                </Link>
+                              </>
+                            )}
+
+                            <ul id={`${chir_data.MaChucNang}-nav`} className="nav-content collapse submenu_2">
                               {data.DataResults.map((chir_data_2) =>
                                 chir_data_2.NhomChucNang === chir_data.MaChucNang
                                   ? string.push(chir_data.MaChucNang) && (
@@ -81,4 +105,5 @@ const SiderMenu = () => {
     </aside>
   )
 }
+
 export default SiderMenu

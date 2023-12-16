@@ -26,13 +26,14 @@ export const RETOKEN = async () => {
     console.error('Error adding user:', error)
   }
 }
-export const DANHSACHDULIEU = async (API, data, dispatch) => {
+export const DANHSACHDULIEU = async (API, data) => {
   try {
     const response = await axios.post(API, data)
+
     if (response.data.DataError === 0) {
-      dispatch(loginSlice.actions.getDSDL(response.data))
+      return response.data
     } else {
-      dispatch(loginSlice.actions.getDSDL([]))
+      toast.error(response.data.DataErrorDescription)
     }
   } catch (error) {
     console.error('Error adding user:', error)
