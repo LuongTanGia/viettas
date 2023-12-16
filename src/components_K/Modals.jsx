@@ -8,22 +8,19 @@ import dayjs from 'dayjs'
 import { NumericFormat } from 'react-number-format'
 import ModalHH from './ModalHH'
 import { toast } from 'react-toastify'
-import { DatePicker, Space } from 'antd'
+
 import { CreateRow, EditRow } from '.'
-import { base64ToPDF, keyDown, roundNumber } from '../action/Actions'
-import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons'
+import { RETOKEN, base64ToPDF, roundNumber } from '../action/Actions'
+
 import ModalOnlyPrint from './ModalOnlyPrint'
 import ModalOnlyPrintWareHouse from './ModalOnlyPrintWareHouse'
-
-const { RangePicker } = DatePicker
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 
 const { IoMdClose, MdDelete, TiPrinter } = icons
 const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, dataRecord, dataPMH, controlDate, isLoadingModel }) => {
   const [isShowModalHH, setIsShowModalHH] = useState(false)
   const [isShowModalOnlyPrint, setIsShowModalOnlyPrint] = useState(false)
   const [isShowModalOnlyPrintWareHouse, setIsShowModalOnlyPrintWareHouse] = useState(false)
-  const [form] = Form.useForm()
-  const [isValidDate, setIsValidDate] = useState(true)
   const [dataHangHoa, setDataHangHoa] = useState(null)
   const [selectedKhoHang, setSelectedKhoHang] = useState()
   const [selectedRowData, setSelectedRowData] = useState([])
@@ -245,20 +242,6 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
     if (dataPMH) setSelectedSctKT(dataPMH[0].SoChungTu)
   }, [dataPMH])
 
-  const validateDate = (_, value) => {
-    const isValid = moment(value, 'DD/MM/YYYY', true).isValid()
-    setIsValidDate(isValid)
-
-    return isValid ? Promise.resolve() : Promise.reject('Ngày tháng không hợp lệ')
-  }
-
-  const handleCalendarChange = (_, dateString) => {
-    form.setFieldsValue({ dateRange: dateString })
-    const isValid = moment(dateString[0], 'DD/MM/YYYY', true).isValid() && moment(dateString[1], 'DD/MM/YYYY', true).isValid()
-
-    setIsValidDate(isValid)
-  }
-
   const handleAddInList = async () => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
@@ -349,6 +332,9 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
         toast.error(response.data.DataErrorDescription)
       } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
         toast.warning(response.data.DataErrorDescription)
+      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        await RETOKEN()
+        handleCreate()
       } else {
         toast.error(response.data.DataErrorDescription)
       }
@@ -372,6 +358,9 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
         toast.error(response.data.DataErrorDescription)
       } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
         toast.warning(response.data.DataErrorDescription)
+      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        await RETOKEN()
+        handleEdit()
       } else {
         toast.error(response.data.DataErrorDescription)
       }
@@ -396,6 +385,9 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
         toast.error(response.data.DataErrorDescription)
       } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
         toast.warning(response.data.DataErrorDescription)
+      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        await RETOKEN()
+        handleDelete()
       } else {
         toast.error(response.data.DataErrorDescription)
       }
@@ -419,6 +411,9 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
         toast.error(response.data.DataErrorDescription)
       } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
         toast.warning(response.data.DataErrorDescription)
+      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        await RETOKEN()
+        handlePrint()
       } else {
         toast.error(response.data.DataErrorDescription)
       }
@@ -444,6 +439,9 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
         toast.error(response.data.DataErrorDescription)
       } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
         toast.warning(response.data.DataErrorDescription)
+      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        await RETOKEN()
+        handlePrintWareHouse()
       } else {
         toast.error(response.data.DataErrorDescription)
       }
@@ -468,6 +466,9 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
         toast.error(response.data.DataErrorDescription)
       } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
         toast.warning(response.data.DataErrorDescription)
+      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        await RETOKEN()
+        handlePay()
       } else {
         toast.error(response.data.DataErrorDescription)
       }
@@ -511,7 +512,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
-      <div className="  m-6 p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
+      <div className="  m-4 p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
         {actionType === 'delete' && (
           <div className=" flex justify-between items-center ">
             <label>
@@ -535,45 +536,46 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
         )}
 
         {actionType === 'print' && (
-          <div className="   ">
-            <div className="pb-2">In phiếu mua hàng</div>
-            <div className="flex justify-center items-center ">
-              <Form form={form}>
-                <Form.Item
-                  name="dateRange"
-                  label="Ngày Tháng"
-                  rules={[
-                    {
-                      validator: validateDate,
-                    },
-                  ]}
-                >
-                  <Space>
-                    <RangePicker
-                      format="DD/MM/YYYY"
-                      // picker="date"
-                      onKeyDown={keyDown}
-                      onCalendarChange={handleCalendarChange}
-                      defaultValue={[dayjs(controlDate.NgayBatDau), dayjs(controlDate.NgayKetThuc)]}
-                      onChange={(values) => {
-                        setFormPrint({
-                          ...formPrint,
-                          NgayBatDau: dayjs(values[0]).format('YYYY-MM-DDTHH:mm:ss'),
-                          NgayKetThuc: dayjs(values[1]).format('YYYY-MM-DDTHH:mm:ss'),
-                        })
-                      }}
-                    />
-                    {isValidDate ? <CheckCircleOutlined style={{ color: 'green' }} /> : <CloseCircleOutlined style={{ color: 'red' }} />}
-                  </Space>
-                </Form.Item>
-              </Form>
-              <button className="border border-blue-500 rounded-md mb-6  mx-2 px-2 py-1 hover:bg-blue-500 hover:text-white" onClick={handleFilterPrint}>
+          <div className="">
+            <div className="pb-2 text-text-title font-bold">In phiếu mua hàng</div>
+            <div className="flex justify-center items-center  gap-3 pl-[74px]">
+              {/* DatePicker */}
+              <div className="flex gap-x-5 items-center">
+                <label htmlFor="">Ngày</label>
+                <DatePicker
+                  className="DatePicker_PMH"
+                  format="DD/MM/YYYY"
+                  defaultValue={dayjs(controlDate.NgayBatDau)}
+                  onChange={(newDate) => {
+                    setFormPrint({
+                      ...formPrint,
+                      NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                    })
+                  }}
+                />
+              </div>
+              <div className="flex gap-x-5 items-center ">
+                <label htmlFor="">Đến</label>
+                <DatePicker
+                  className="DatePicker_PMH"
+                  format="DD/MM/YYYY"
+                  defaultValue={dayjs(controlDate.NgayKetThuc)}
+                  onChange={(newDate) => {
+                    setFormPrint({
+                      ...formPrint,
+                      NgayKetThuc: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                    })
+                  }}
+                />
+              </div>
+
+              <button className="flex items-center mx-2 py-1 px-2 bg-bg-main rounded-md  text-white text-sm hover:opacity-80" onClick={handleFilterPrint}>
                 Lọc
               </button>
             </div>
-            <div className="flex justify-center  gap-x-4 m-2">
+            <div className="flex  mt-4 ">
               <div className="flex ">
-                <label className="px-2">Số chứng từ</label>
+                <label className="px-4">Số chứng từ</label>
                 <select className=" bg-white border outline-none border-gray-300  " value={selectedSctBD} onChange={(e) => setSelectedSctBD(e.target.value)}>
                   {newDataPMH?.map((item) => (
                     <option key={item.SoChungTu} value={item.SoChungTu}>
@@ -583,7 +585,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                 </select>
               </div>
               <div className="flex ">
-                <label className="px-2">Đến</label>
+                <label className="px-4">Đến</label>
                 <select className=" bg-white border outline-none border-gray-300  " value={selectedSctKT} onChange={(e) => setSelectedSctKT(e.target.value)}>
                   {newDataPMH?.map((item) => (
                     <option key={item.SoChungTu} value={item.SoChungTu}>
@@ -615,46 +617,45 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
 
         {actionType === 'printWareHouse' && (
           <div className=" ">
-            <div>In phiếu kho</div>
-            <div className="flex justify-center items-center gap-4">
-              <div className="flex justify-center items-center ">
-                <Form form={form}>
-                  <Form.Item
-                    name="dateRange"
-                    label="Ngày Tháng"
-                    rules={[
-                      {
-                        validator: validateDate,
-                      },
-                    ]}
-                  >
-                    <Space>
-                      <RangePicker
-                        format="DD/MM/YYYY"
-                        // picker="date"
-                        onKeyDown={keyDown}
-                        onCalendarChange={handleCalendarChange}
-                        defaultValue={[dayjs(controlDate.NgayBatDau), dayjs(controlDate.NgayKetThuc)]}
-                        onChange={(values) => {
-                          setFormPrint({
-                            ...formPrint,
-                            NgayBatDau: dayjs(values[0]).format('YYYY-MM-DDTHH:mm:ss'),
-                            NgayKetThuc: dayjs(values[1]).format('YYYY-MM-DDTHH:mm:ss'),
-                          })
-                        }}
-                      />
-                      {isValidDate ? <CheckCircleOutlined style={{ color: 'green' }} /> : <CloseCircleOutlined style={{ color: 'red' }} />}
-                    </Space>
-                  </Form.Item>
-                </Form>
-                <button className="border border-blue-500 rounded-md mb-6  mx-2 px-2 py-1 hover:bg-blue-500 hover:text-white" onClick={handleFilterPrint}>
-                  Lọc
-                </button>
+            <div className="pb-2 text-text-title font-bold">In phiếu kho</div>
+            <div className="flex justify-center items-center  gap-3 pl-[74px]">
+              {/* DatePicker */}
+              <div className="flex gap-x-5 items-center">
+                <label htmlFor="">Ngày</label>
+                <DatePicker
+                  className="DatePicker_PMH"
+                  format="DD/MM/YYYY"
+                  defaultValue={dayjs(controlDate.NgayBatDau)}
+                  onChange={(newDate) => {
+                    setFormPrint({
+                      ...formPrint,
+                      NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                    })
+                  }}
+                />
               </div>
+              <div className="flex gap-x-5 items-center ">
+                <label htmlFor="">Đến</label>
+                <DatePicker
+                  className="DatePicker_PMH"
+                  format="DD/MM/YYYY"
+                  defaultValue={dayjs(controlDate.NgayKetThuc)}
+                  onChange={(newDate) => {
+                    setFormPrint({
+                      ...formPrint,
+                      NgayKetThuc: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                    })
+                  }}
+                />
+              </div>
+
+              <button className="flex items-center mx-2 py-1 px-2 bg-bg-main rounded-md  text-white text-sm hover:opacity-80" onClick={handleFilterPrint}>
+                Lọc
+              </button>
             </div>
-            <div className="flex justify-center  gap-x-4 m-2">
+            <div className="flex  mt-4 ">
               <div className="flex ">
-                <label className="px-2">Số chứng từ</label>
+                <label className="px-4">Số chứng từ</label>
                 <select className=" bg-white border outline-none border-gray-300  " value={selectedSctBD} onChange={(e) => setSelectedSctBD(e.target.value)}>
                   {newDataPMH?.map((item) => (
                     <option key={item.SoChungTu} value={item.SoChungTu}>
@@ -664,7 +665,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                 </select>
               </div>
               <div className="flex ">
-                <label className="px-2">Đến</label>
+                <label className="px-4">Đến</label>
                 <select className=" bg-white border outline-none border-gray-300  " value={selectedSctKT} onChange={(e) => setSelectedSctKT(e.target.value)}>
                   {newDataPMH?.map((item) => (
                     <option key={item.SoChungTu} value={item.SoChungTu}>
@@ -691,12 +692,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
 
         {actionType === 'view' && (
           <div className=" w-[90vw] h-[600px] ">
-            <div className="flex justify-between  items-start pb-1">
-              <label className="font-bold ">Xem thông tin - phiếu mua hàng</label>
-              <button onClick={() => close()} className="text-gray-500 p-1 border hover:border-gray-300 hover:bg-red-600 hover:text-white rounded-full">
-                <IoMdClose />
-              </button>
-            </div>
+            <label className="font-bold pb-1">Xem thông tin - phiếu mua hàng</label>
             <div className="border w-full h-[90%] rounded-sm text-sm">
               <div className="flex">
                 {/* thong tin phieu */}
@@ -870,24 +866,32 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
               </div>
             </div>
             {/* button print */}
-            <div className="flex gap-x-3 p-2">
+            <div className="flex justify-between items-center">
+              <div className="flex gap-x-3 p-2">
+                <button
+                  onClick={() => setIsShowModalOnlyPrint(true)}
+                  className="flex items-center  py-1 px-2  rounded-md border-dashed border border-gray-500  text-sm hover:text-sky-500  hover:border-sky-500 "
+                >
+                  <div className="pr-1">
+                    <TiPrinter size={20} />
+                  </div>
+                  <div>In phiếu</div>
+                </button>
+                <button
+                  onClick={() => setIsShowModalOnlyPrintWareHouse(true)}
+                  className="flex items-center  py-1 px-2  rounded-md border-dashed border border-gray-500  text-sm hover:text-sky-500  hover:border-sky-500 "
+                >
+                  <div className="pr-1">
+                    <TiPrinter size={20} />
+                  </div>
+                  <div>In phiếu kho</div>
+                </button>
+              </div>
               <button
-                onClick={() => setIsShowModalOnlyPrint(true)}
-                className="flex items-center  py-1 px-2  rounded-md border-dashed border border-gray-500  text-sm hover:text-sky-500  hover:border-sky-500 "
+                onClick={() => close()}
+                className="active:scale-[.98] active:duration-75 text-white text-text-main font-bold  bg-rose-500 rounded-md px-2 py-1 w-[80px] hover:opacity-80"
               >
-                <div className="pr-1">
-                  <TiPrinter size={20} />
-                </div>
-                <div>In phiếu</div>
-              </button>
-              <button
-                onClick={() => setIsShowModalOnlyPrintWareHouse(true)}
-                className="flex items-center  py-1 px-2  rounded-md border-dashed border border-gray-500  text-sm hover:text-sky-500  hover:border-sky-500 "
-              >
-                <div className="pr-1">
-                  <TiPrinter size={20} />
-                </div>
-                <div>In phiếu kho</div>
+                Đóng
               </button>
             </div>
           </div>
@@ -895,13 +899,8 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
 
         {actionType === 'edit' && isLoadingModel ? (
           <div className=" w-[90vw] h-[600px] ">
-            <div className="flex justify-between  items-start pb-1">
-              <label className="font-bold ">Sửa thông tin - phiếu mua hàng</label>
-              <button onClick={() => close()} className="text-gray-500 p-1 border hover:border-gray-300 hover:bg-red-600 hover:text-white rounded-full">
-                <IoMdClose />
-              </button>
-            </div>
-            <div className="border w-full h-[96%] rounded-sm text-sm">
+            <label className="font-bold ">Sửa thông tin - phiếu mua hàng</label>
+            <div className="border w-full h-[90%] rounded-sm text-sm">
               <div className="flex">
                 {/* thong tin phieu */}
                 <div className="">
@@ -922,19 +921,35 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                       />
                     </div>
 
-                    <Space direction="vertical" size={12}>
-                      <RangePicker
+                    {/* DatePicker */}
+                    <div className="flex gap-x-2 items-center">
+                      <label htmlFor="">Ngày</label>
+                      <DatePicker
+                        className="DatePicker_PMH"
                         format="DD/MM/YYYY"
-                        defaultValue={[dayjs(dataThongTin.NgayCTu, 'YYYY-MM-DD'), dayjs(dataThongTin.DaoHan, 'YYYY-MM-DD')]}
-                        onChange={(values) => {
+                        defaultValue={dayjs(dataThongTin?.NgayCTu, 'YYYY-MM-DD')}
+                        onChange={(newDate) => {
                           setFormPMHEdit({
                             ...formPMHEdit,
-                            NgayCTu: dayjs(values[0]).format('YYYY-MM-DDTHH:mm:ss'),
-                            DaoHan: dayjs(values[1]).format('YYYY-MM-DDTHH:mm:ss'),
+                            NgayCTu: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
                           })
                         }}
                       />
-                    </Space>
+                    </div>
+                    <div className="flex gap-x-2 items-center">
+                      <label htmlFor="">Đáo Hạn</label>
+                      <DatePicker
+                        className="DatePicker_PMH"
+                        format="DD/MM/YYYY"
+                        defaultValue={dayjs(dataThongTin?.DaoHan, 'YYYY-MM-DD')}
+                        onChange={(newDate) => {
+                          setFormPMHEdit({
+                            ...formPMHEdit,
+                            DaoHan: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                          })
+                        }}
+                      />
+                    </div>
                   </div>
                   <div className="p-1 flex ">
                     <label form="doituong" className="w-[86px]">
@@ -1022,9 +1037,6 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                 <button onClick={() => setIsShowModalHH(true)} className="border border-blue-500 rounded-md px-4 py-2 hover:bg-blue-500 hover:text-white">
                   chọn từ danh sách
                 </button>
-                <button onClick={() => handleEdit(dataRecord)} className="border border-blue-500 rounded-md px-4 py-2 hover:bg-blue-500 hover:text-white">
-                  Lưu thay đổi
-                </button>
               </div>
               {/* table */}
               <div className="max-w-[98%]  max-h-[50%] mx-auto bg-white  rounded-md my-3 overflow-y-auto ">
@@ -1054,6 +1066,21 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                 </table>
               </div>
             </div>
+            {/* button print */}
+            <div className="flex justify-end items-center gap-3  pt-3">
+              <button
+                onClick={() => close()}
+                className="active:scale-[.98] active:duration-75 text-white text-text-main font-bold  bg-rose-500 rounded-md px-2 py-1 w-[80px] hover:opacity-80"
+              >
+                Đóng
+              </button>
+              <button
+                onClick={() => handleEdit(dataRecord)}
+                className="active:scale-[.98] active:duration-75 text-white text-text-main font-bold  bg-blue-500 rounded-md px-2 py-1  w-[80px] hover:opacity-80"
+              >
+                Xác nhận
+              </button>
+            </div>
           </div>
         ) : (
           <div></div>
@@ -1061,13 +1088,8 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
 
         {actionType === 'create' && (
           <div className=" w-[90vw] h-[600px] ">
-            <div className="flex justify-between  items-start pb-1">
-              <label className="font-bold ">Thêm thông tin - phiếu mua hàng</label>
-              <button onClick={() => close()} className="text-gray-500 p-1 border hover:border-gray-300 hover:bg-red-600 hover:text-white rounded-full">
-                <IoMdClose />
-              </button>
-            </div>
-            <div className="border w-full h-[96%] rounded-sm text-sm">
+            <label className="font-bold ">Thêm thông tin - phiếu mua hàng</label>
+            <div className="border w-full h-[90%] rounded-sm text-sm">
               <div className="flex ">
                 {/* thong tin phieu */}
                 <div className="">
@@ -1076,24 +1098,35 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                       <label className="">Số chứng từ</label>
                       <input readOnly type="text" className=" border border-gray-300 outline-none  px-2 cursor-not-allowed  bg-gray-200" />
                     </div>
-
-                    {/* <Space direction="vertical" size={12}>
-                      <RangePicker
+                    {/* DatePicker */}
+                    <div className="flex gap-x-2 items-center">
+                      <label htmlFor="">Ngày</label>
+                      <DatePicker
+                        className="DatePicker_PMH"
                         format="DD/MM/YYYY"
-                        defaultValue={[dayjs(), dayjs()]}
-                        onChange={(values) => {
+                        defaultValue={dayjs()}
+                        onChange={(newDate) => {
                           setFormPMH({
                             ...formPMH,
-                            NgayCTu: dayjs(values[0]).format(
-                              "YYYY-MM-DDTHH:mm:ss"
-                            ),
-                            DaoHan: dayjs(values[1]).format(
-                              "YYYY-MM-DDTHH:mm:ss"
-                            ),
-                          });
+                            NgayCTu: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                          })
                         }}
                       />
-                    </Space> */}
+                    </div>
+                    <div className="flex gap-x-2 items-center">
+                      <label htmlFor="">Đáo Hạn</label>
+                      <DatePicker
+                        className="DatePicker_PMH"
+                        format="DD/MM/YYYY"
+                        defaultValue={dayjs()}
+                        onChange={(newDate) => {
+                          setFormPMH({
+                            ...formPMH,
+                            DaoHan: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                          })
+                        }}
+                      />
+                    </div>
                   </div>
                   <div className="p-1 flex  ">
                     <label form="doituong" className="w-[86px]">
@@ -1192,9 +1225,6 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                 <button onClick={() => setIsShowModalHH(true)} className="border border-blue-500 rounded-md px-4 py-2 hover:bg-blue-500 hover:text-white">
                   chọn từ danh sách
                 </button>
-                <button onClick={handleCreate} className="border border-blue-500 rounded-md px-4 py-2 hover:bg-blue-500 hover:text-white">
-                  tạo
-                </button>
               </div>
               {/* table */}
               <div className="max-w-[98%]  max-h-[50%] mx-auto bg-white  rounded-md my-3 overflow-y-auto ">
@@ -1224,44 +1254,83 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                 </table>
               </div>
             </div>
+            {/* button  */}
+            <div className="flex justify-end items-center gap-3  pt-3">
+              <button
+                onClick={() => close()}
+                className="active:scale-[.98] active:duration-75 text-white text-text-main font-bold  bg-rose-500 rounded-md px-2 py-1 w-[80px] hover:opacity-80"
+              >
+                Đóng
+              </button>
+              <button
+                onClick={handleCreate}
+                className="active:scale-[.98] active:duration-75 text-white text-text-main font-bold  bg-blue-500 rounded-md px-2 py-1  w-[80px] hover:opacity-80"
+              >
+                Xác nhận
+              </button>
+            </div>
           </div>
         )}
 
         {actionType === 'delete' ? (
-          <div className="flex justify-end gap-4 p-4">
-            <button className="border border-blue-500 px-3 py-1 rounded-md hover:bg-blue-500 hover:text-white " onClick={() => handleDelete(dataRecord)}>
-              Ok
+          <div className="flex justify-end mt-4 gap-2">
+            <button
+              onClick={() => close()}
+              className="active:scale-[.98] active:duration-75 text-white text-text-main font-bold  bg-rose-500 rounded-md px-2 py-1 w-[80px] hover:opacity-80"
+            >
+              Đóng
             </button>
-            <button className="border  px-2 py-1 rounded-md hover:bg-red-500 hover:text-white " onClick={() => close()}>
-              No
+            <button
+              onClick={() => handleDelete(dataRecord)}
+              className="active:scale-[.98] active:duration-75 text-white text-text-main font-bold  bg-blue-500 rounded-md px-2 py-1  w-[80px] hover:opacity-80"
+            >
+              Xác nhận
             </button>
           </div>
         ) : actionType === 'print' ? (
-          <div className="flex justify-end gap-4 p-4 ">
-            <button className="text-blue-500  border border-blue-500 px-2 py-1 rounded-md hover:bg-blue-500 hover:text-white " onClick={handlePrint}>
-              In phiếu
-            </button>
-            <button className=" text-red-500 border border-red-500   px-2 py-1 rounded-md hover:bg-red-500 hover:text-white " onClick={() => close()}>
+          <div className="flex justify-end mt-4 gap-2">
+            <button
+              onClick={() => close()}
+              className="active:scale-[.98] active:duration-75 text-white text-text-main font-bold  bg-rose-500 rounded-md px-2 py-1 w-[80px] hover:opacity-80"
+            >
               Đóng
+            </button>
+            <button
+              onClick={handlePrint}
+              className="active:scale-[.98] active:duration-75 text-white text-text-main font-bold  bg-blue-500 rounded-md px-2 py-1  w-[80px] hover:opacity-80"
+            >
+              Xác nhận
             </button>
           </div>
         ) : actionType === 'printWareHouse' ? (
-          <div className="flex justify-end gap-4 p-4 ">
-            <button className="text-blue-500  border border-blue-500 px-2 py-1 rounded-md hover:bg-blue-500 hover:text-white " onClick={handlePrintWareHouse}>
-              In phiếu
-            </button>
-            <button className=" text-red-500 border border-red-500   px-2 py-1 rounded-md hover:bg-red-500 hover:text-white " onClick={() => close()}>
+          <div className="flex justify-end mt-4 gap-2">
+            <button
+              onClick={() => close()}
+              className="active:scale-[.98] active:duration-75 text-white text-text-main font-bold  bg-rose-500 rounded-md px-2 py-1 w-[80px] hover:opacity-80"
+            >
               Đóng
+            </button>
+            <button
+              onClick={handlePrintWareHouse}
+              className="active:scale-[.98] active:duration-75 text-white text-text-main font-bold  bg-blue-500 rounded-md px-2 py-1  w-[80px] hover:opacity-80"
+            >
+              Xác nhận
             </button>
           </div>
         ) : (
           actionType === 'pay' && (
-            <div className="flex justify-end gap-4 p-4">
-              <button className="border border-blue-500 px-3 py-1 rounded-md hover:bg-blue-500 hover:text-white " onClick={() => handlePay(dataRecord)}>
-                Ok
+            <div className="flex justify-end mt-4 gap-2">
+              <button
+                onClick={() => close()}
+                className="active:scale-[.98] active:duration-75 text-white text-text-main font-bold  bg-rose-500 rounded-md px-2 py-1 w-[80px] hover:opacity-80"
+              >
+                Đóng
               </button>
-              <button className="border  px-2 py-1 rounded-md hover:bg-red-500 hover:text-white " onClick={() => close()}>
-                No
+              <button
+                onClick={() => handlePay(dataRecord)}
+                className="active:scale-[.98] active:duration-75 text-white text-text-main font-bold  bg-blue-500 rounded-md px-2 py-1  w-[80px] hover:opacity-80"
+              >
+                Xác nhận
               </button>
             </div>
           )

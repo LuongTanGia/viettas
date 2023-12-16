@@ -1,342 +1,330 @@
-import { useEffect, useState } from "react";
-import { Form, DatePicker, Space, Table, Checkbox, Typography } from "antd";
-const { Text } = Typography;
-import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
-import moment from "moment";
-const { RangePicker } = DatePicker;
-import icons from "../../../untils/icons";
-import { toast } from "react-toastify";
-import * as apis from "../../../apis";
-import { NumericFormat } from "react-number-format";
-import { Modals } from "../../../components_K";
-import dayjs from "dayjs";
-import { keyDown, roundNumber } from "../../../action/Actions";
-import SimpleBackdrop from "../../../components/util/Loading/LoadingPage";
+import { useEffect, useState } from 'react'
+import { Table, Checkbox, Typography } from 'antd'
+const { Text } = Typography
 
-const {
-  IoAddCircleOutline,
-  TiPrinter,
-  FaRegEdit,
-  MdDelete,
-  GiPayMoney,
-  FcSearch,
-} = icons;
+import moment from 'moment'
+
+import icons from '../../../untils/icons'
+import { toast } from 'react-toastify'
+import * as apis from '../../../apis'
+import { NumericFormat } from 'react-number-format'
+import { Modals } from '../../../components_K'
+import dayjs from 'dayjs'
+import { RETOKEN, roundNumber } from '../../../action/Actions'
+import SimpleBackdrop from '../../../components/util/Loading/LoadingPage'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+
+const { IoAddCircleOutline, TiPrinter, FaRegEdit, MdDelete, GiPayMoney, FcSearch } = icons
 const PhieuMuaHang = () => {
-  const [form] = Form.useForm();
-  const [isValidDate, setIsValidDate] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isLoadingPopup, setIsLoadingPopup] = useState(false);
+  const [isLoading, setIsLoading] = useState(false)
+  const [isLoadingPopup, setIsLoadingPopup] = useState(false)
 
-  const [data, setData] = useState(null);
-  const [dataThongTin, setDataThongTin] = useState([]);
-  const [dataRecord, setDataRecord] = useState(null);
+  const [data, setData] = useState(null)
+  const [dataThongTin, setDataThongTin] = useState([])
+  const [dataRecord, setDataRecord] = useState(null)
 
-  const [dataKhoHang, setDataKhoHang] = useState(null);
-  const [dataDoiTuong, setDataDoiTuong] = useState(null);
-  const [isShowModal, setIsShowModal] = useState(false);
-  const [isShowSearch, setIsShowSearch] = useState(false);
+  const [dataKhoHang, setDataKhoHang] = useState(null)
+  const [dataDoiTuong, setDataDoiTuong] = useState(null)
+  const [isShowModal, setIsShowModal] = useState(false)
+  const [isShowSearch, setIsShowSearch] = useState(false)
 
-  const [tableLoad, setTableLoad] = useState(false);
+  const [tableLoad, setTableLoad] = useState(false)
 
-  const [actionType, setActionType] = useState("");
-  const [formKhoanNgay, setFormKhoanNgay] = useState([]);
+  const [actionType, setActionType] = useState('')
+  const [formKhoanNgay, setFormKhoanNgay] = useState([])
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const tokenLogin = localStorage.getItem("TKN");
+        const tokenLogin = localStorage.getItem('TKN')
 
-        const responseKH = await apis.ListHelperKhoHang(tokenLogin);
+        const responseKH = await apis.ListHelperKhoHang(tokenLogin)
         if (responseKH.data && responseKH.data.DataError === 0) {
-          setDataKhoHang(responseKH.data.DataResults);
-          if (actionType === "create") {
-            const responseDT = await apis.ListHelperDoiTuong(tokenLogin);
+          setDataKhoHang(responseKH.data.DataResults)
+          if (actionType === 'create') {
+            const responseDT = await apis.ListHelperDoiTuong(tokenLogin)
             if (responseDT.data && responseDT.data.DataError === 0) {
-              setDataDoiTuong(responseDT.data.DataResults);
+              setDataDoiTuong(responseDT.data.DataResults)
             }
-          } else if (actionType === "view" || actionType === "edit") {
-            const responseTT = await apis.ThongTinPMH(
-              tokenLogin,
-              dataRecord.SoChungTu
-            );
+          } else if (actionType === 'view' || actionType === 'edit') {
+            const responseTT = await apis.ThongTinPMH(tokenLogin, dataRecord.SoChungTu)
             if (responseTT.data && responseTT.data.DataError === 0) {
-              setDataThongTin(responseTT.data.DataResult);
-              setIsLoadingPopup(true);
+              setDataThongTin(responseTT.data.DataResult)
+              setIsLoadingPopup(true)
             }
-            if (actionType === "edit") {
-              const responseDT = await apis.ListHelperDoiTuong(tokenLogin);
+            if (actionType === 'edit') {
+              const responseDT = await apis.ListHelperDoiTuong(tokenLogin)
               if (responseDT.data && responseDT.data.DataError === 0) {
-                setDataDoiTuong(responseDT.data.DataResults);
+                setDataDoiTuong(responseDT.data.DataResults)
               }
             }
           }
         }
       } catch (error) {
-        console.error("Lấy data thất bại", error);
-        toast.error("Lấy data thất bại. Vui lòng thử lại sau.");
-        setIsLoadingPopup(true);
+        console.error('Lấy data thất bại', error)
+        toast.error('Lấy data thất bại. Vui lòng thử lại sau.')
+        setIsLoadingPopup(true)
       }
-    };
+    }
 
     if (dataRecord && isShowModal) {
-      fetchData();
+      fetchData()
     }
-  }, [dataRecord, isShowModal]);
+  }, [dataRecord, isShowModal])
 
   useEffect(() => {
-    getKhoanNgay();
-    getDSPMH();
-  }, []);
+    getKhoanNgay()
+    getDSPMH()
+  }, [])
 
   const getKhoanNgay = async () => {
     try {
-      const tokenLogin = localStorage.getItem("TKN");
-      const response = await apis.KhoanNgay(tokenLogin);
+      const tokenLogin = localStorage.getItem('TKN')
+      const response = await apis.KhoanNgay(tokenLogin)
 
       if (response.data && response.data.DataError === 0) {
-        setFormKhoanNgay(response.data);
-        setIsLoading(true);
+        setFormKhoanNgay(response.data)
+        setIsLoading(true)
+      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        await RETOKEN()
+        getKhoanNgay()
       }
     } catch (error) {
-      console.error("Kiểm tra token thất bại", error);
-      setIsLoading(true);
+      console.error('Kiểm tra token thất bại', error)
+      setIsLoading(true)
     }
-  };
+  }
 
   const getDSPMH = async () => {
     try {
-      const tokenLogin = localStorage.getItem("TKN");
+      const tokenLogin = localStorage.getItem('TKN')
 
-      const response = await apis.DanhSachPMH(tokenLogin, formKhoanNgay);
+      const response = await apis.DanhSachPMH(tokenLogin, formKhoanNgay)
 
       if (response.data && response.data.DataError === 0) {
-        setData(response.data.DataResults);
-        setTableLoad(true);
+        setData(response.data.DataResults)
+        setTableLoad(true)
       } else if (response.data && response.data.DataError === -104) {
-        toast.error(response.data.DataErrorDescription);
-        setData(response.data.DataResults);
-        setTableLoad(true);
+        toast.error(response.data.DataErrorDescription)
+        setData(response.data.DataResults)
+        setTableLoad(true)
+      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        await RETOKEN()
+        getDSPMH()
       }
     } catch (error) {
-      console.error("Kiểm tra token thất bại", error);
-      setTableLoad(true);
+      console.error('Kiểm tra token thất bại', error)
+      setTableLoad(true)
     }
-  };
-
-  const validateDate = (_, value) => {
-    const isValid = moment(value, "DD/MM/YYYY", true).isValid();
-    setIsValidDate(isValid);
-
-    return isValid
-      ? Promise.resolve()
-      : Promise.reject("Ngày tháng không hợp lệ");
-  };
-
-  const handleCalendarChange = (_, dateString) => {
-    form.setFieldsValue({ dateRange: dateString });
-    const isValid =
-      moment(dateString[0], "DD/MM/YYYY", true).isValid() &&
-      moment(dateString[1], "DD/MM/YYYY", true).isValid();
-
-    setIsValidDate(isValid);
-  };
+  }
 
   const columns = [
     {
-      title: "STT",
-      dataIndex: "STT",
-      key: "STT",
+      title: 'STT',
+      dataIndex: 'STT',
+      key: 'STT',
       width: 60,
       hight: 10,
-      fixed: "left",
-      align: "center",
+      fixed: 'left',
+      align: 'center',
       render: (text, record, index) => index + 1,
     },
     {
-      title: "Số Chứng Từ",
-      dataIndex: "SoChungTu",
-      key: "SoChungTu",
+      title: 'Số Chứng Từ',
+      dataIndex: 'SoChungTu',
+      key: 'SoChungTu',
       width: 150,
-      fixed: "left",
+      fixed: 'left',
       sorter: (a, b) => a.SoChungTu.localeCompare(b.SoChungTu),
     },
     {
-      title: "Ngày Chứng Từ",
-      dataIndex: "NgayCTu",
-      key: "NgayCTu",
-      align: "center",
-      render: (text) => moment(text).format("DD/MM/YYYY"),
+      title: 'Ngày Chứng Từ',
+      dataIndex: 'NgayCTu',
+      key: 'NgayCTu',
+      align: 'center',
+      render: (text) => moment(text).format('DD/MM/YYYY'),
       width: 150,
       sorter: (a, b) => {
-        const dateA = new Date(a.NgayCTu);
-        const dateB = new Date(b.NgayCTu);
-        return dateA - dateB;
+        const dateA = new Date(a.NgayCTu)
+        const dateB = new Date(b.NgayCTu)
+        return dateA - dateB
       },
     },
     {
-      title: "Mã Đối Tượng",
-      dataIndex: "MaDoiTuong",
-      key: "MaDoiTuong",
+      title: 'Mã Đối Tượng',
+      dataIndex: 'MaDoiTuong',
+      key: 'MaDoiTuong',
       width: 150,
     },
     {
-      title: "Tên đối tượng",
-      dataIndex: "TenDoiTuong",
-      key: "TenDoiTuong",
+      title: 'Tên đối tượng',
+      dataIndex: 'TenDoiTuong',
+      key: 'TenDoiTuong',
       width: 300,
     },
     {
-      title: "Địa chỉ",
-      dataIndex: "DiaChi",
-      key: "DiaChi",
+      title: 'Địa chỉ',
+      dataIndex: 'DiaChi',
+      key: 'DiaChi',
       width: 300,
     },
     {
-      title: "Mã số thuế",
-      dataIndex: "MaSoThue",
-      key: "MaSoThue",
+      title: 'Mã số thuế',
+      dataIndex: 'MaSoThue',
+      key: 'MaSoThue',
       width: 150,
     },
     {
-      title: "Mã kho",
-      dataIndex: "MaKho",
-      key: "MaKho",
+      title: 'Mã kho',
+      dataIndex: 'MaKho',
+      key: 'MaKho',
       width: 150,
     },
     {
-      title: "Thông tin kho",
-      dataIndex: "ThongTinKho",
-      key: "ThongTinKho",
+      title: 'Thông tin kho',
+      dataIndex: 'ThongTinKho',
+      key: 'ThongTinKho',
       width: 150,
     },
     {
-      title: "Ghi chú",
-      dataIndex: "GhiChu",
-      key: "GhiChu",
+      title: 'Ghi chú',
+      dataIndex: 'GhiChu',
+      key: 'GhiChu',
       width: 150,
     },
     {
-      title: "Tổng mặt hàng",
-      dataIndex: "TongMatHang",
-      key: "TongMatHang",
+      title: 'Tổng mặt hàng',
+      dataIndex: 'TongMatHang',
+      key: 'TongMatHang',
       width: 150,
-      align: "end",
+      align: 'end',
       sorter: (a, b) => a.TongMatHang - b.TongMatHang,
     },
     {
-      title: "Tổng số lượng",
-      dataIndex: "TongSoLuong",
-      key: "TongSoLuong",
+      title: 'Tổng số lượng',
+      dataIndex: 'TongSoLuong',
+      key: 'TongSoLuong',
       width: 150,
-      align: "end",
-      render: (text) => roundNumber(text),
+      align: 'end',
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full    ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{roundNumber(text)}</div>
+      ),
       sorter: (a, b) => a.TongSoLuong - b.TongSoLuong,
     },
     {
-      title: "Tổng tiền hàng",
-      dataIndex: "TongTienHang",
-      key: "TongTienHang",
+      title: 'Tổng tiền hàng',
+      dataIndex: 'TongTienHang',
+      key: 'TongTienHang',
       width: 150,
-      align: "end",
+      align: 'end',
       render: (text) => (
         <NumericFormat
           value={text}
-          displayType={"text"}
+          displayType={'text'}
           thousandSeparator={true}
+          className={`flex justify-end w-full h-full ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}
         />
       ),
       sorter: (a, b) => a.TongTienHang - b.TongTienHang,
     },
     {
-      title: "Tổng tiền thuế",
-      dataIndex: "TongTienThue",
-      key: "TongTienThue",
+      title: 'Tổng tiền thuế',
+      dataIndex: 'TongTienThue',
+      key: 'TongTienThue',
       width: 150,
-      align: "end",
-      sorter: (a, b) => a.TongTienThue - b.TongTienThue,
-    },
-    {
-      title: "Tổng thành tiền",
-      dataIndex: "TongThanhTien",
-      key: "TongThanhTien",
-      width: 150,
-      align: "end",
+      align: 'end',
       render: (text) => (
         <NumericFormat
           value={text}
-          displayType={"text"}
+          displayType={'text'}
           thousandSeparator={true}
+          className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}
+        />
+      ),
+      sorter: (a, b) => a.TongTienThue - b.TongTienThue,
+    },
+    {
+      title: 'Tổng thành tiền',
+      dataIndex: 'TongThanhTien',
+      key: 'TongThanhTien',
+      width: 150,
+      align: 'end',
+      render: (text) => (
+        <NumericFormat
+          value={text}
+          displayType={'text'}
+          thousandSeparator={true}
+          className={`flex justify-end w-full h-full  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}
         />
       ),
       sorter: (a, b) => a.TongThanhTien - b.TongThanhTien,
     },
 
     {
-      title: "Phiếu chi",
-      dataIndex: "PhieuChi",
-      key: "PhieuChi",
+      title: 'Phiếu chi',
+      dataIndex: 'PhieuChi',
+      key: 'PhieuChi',
       width: 150,
     },
     {
-      title: "Ngày tạo",
-      dataIndex: "NgayTao",
-      key: "NgayTao",
-      align: "center",
-      render: (text) => moment(text).format("DD/MM/YYYY hh:mm:ss"),
+      title: 'Ngày tạo',
+      dataIndex: 'NgayTao',
+      key: 'NgayTao',
+      align: 'center',
+      render: (text) => moment(text).format('DD/MM/YYYY hh:mm:ss'),
       width: 300,
       sorter: (a, b) => {
-        const dateA = new Date(a.NgayTao);
-        const dateB = new Date(b.NgayTao);
-        return dateA - dateB;
+        const dateA = new Date(a.NgayTao)
+        const dateB = new Date(b.NgayTao)
+        return dateA - dateB
       },
     },
     {
-      title: "Người tạo",
-      dataIndex: "NguoiTao",
-      key: "NguoiTao",
+      title: 'Người tạo',
+      dataIndex: 'NguoiTao',
+      key: 'NguoiTao',
       width: 300,
     },
     {
-      title: "Ngày sửa cuối",
-      dataIndex: "NgaySuaCuoi",
-      key: "NgaySuaCuoi",
-      align: "center",
-      render: (text) =>
-        text ? moment(text).format("DD/MM/YYYY hh:mm:ss") : null,
+      title: 'Ngày sửa cuối',
+      dataIndex: 'NgaySuaCuoi',
+      key: 'NgaySuaCuoi',
+      align: 'center',
+      render: (text) => (text ? moment(text).format('DD/MM/YYYY hh:mm:ss') : null),
       width: 300,
       sorter: (a, b) => {
-        const dateA = new Date(a.NgaySuaCuoi);
-        const dateB = new Date(b.NgaySuaCuoi);
-        return dateA - dateB;
+        const dateA = new Date(a.NgaySuaCuoi)
+        const dateB = new Date(b.NgaySuaCuoi)
+        return dateA - dateB
       },
     },
     {
-      title: "Người sửa cuối",
-      dataIndex: "NguoiSuaCuoi",
-      key: "NguoiSuaCuoi",
+      title: 'Người sửa cuối',
+      dataIndex: 'NguoiSuaCuoi',
+      key: 'NguoiSuaCuoi',
       width: 300,
     },
 
     {
-      title: "Tiền mặt",
-      key: "TTTienMat",
-      dataIndex: "TTTienMat",
-      fixed: "right",
+      title: 'Tiền mặt',
+      key: 'TTTienMat',
+      dataIndex: 'TTTienMat',
+      fixed: 'right',
       width: 100,
-      align: "center",
-      render: (text) => <Checkbox disabled={!text} defaultChecked={text} />,
+      align: 'center',
+      render: (text) => <Checkbox value={text} disabled={!text} checked={text} />,
       sorter: (a, b) => {
-        const valueA = a.TTTienMat ? 1 : 0;
-        const valueB = b.TTTienMat ? 1 : 0;
-        return valueA - valueB;
+        const valueA = a.TTTienMat ? 1 : 0
+        const valueB = b.TTTienMat ? 1 : 0
+        return valueA - valueB
       },
     },
     {
-      title: "Chức năng",
-      key: "operation",
-      fixed: "right",
+      title: 'Chức năng',
+      key: 'operation',
+      fixed: 'right',
       width: 120,
-      align: "center",
+      align: 'center',
       render: (record) => {
         return (
           <>
@@ -353,9 +341,7 @@ const PhieuMuaHang = () => {
                 onClick={() => handlePay(record)}
                 title="Lập phiếu chi"
                 className={`p-[3px] border rounded-md text-slate-50 ${
-                  record.TTTienMat
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "border-blue-500 bg-blue-500 hover:bg-white hover:text-blue-500 cursor-pointer"
+                  record.TTTienMat ? 'bg-gray-400 cursor-not-allowed' : 'border-blue-500 bg-blue-500 hover:bg-white hover:text-blue-500 cursor-pointer'
                 }`}
               >
                 <GiPayMoney size={16} />
@@ -384,68 +370,67 @@ const PhieuMuaHang = () => {
               </div>
             </div>
           </>
-        );
+        )
       },
     },
-  ];
+  ]
 
   const handleDelete = (record) => {
-    setActionType("delete");
-    setDataRecord(record);
-    setIsShowModal(true);
-  };
+    setActionType('delete')
+    setDataRecord(record)
+    setIsShowModal(true)
+  }
 
   const handleView = (record) => {
-    setActionType("view");
+    setActionType('view')
 
-    setDataRecord(record);
-    setIsShowModal(true);
-  };
+    setDataRecord(record)
+    setIsShowModal(true)
+  }
 
   const handleEdit = (record) => {
     if (record.TTTienMat === true) {
-      toast.error("Phiếu mua hàng đã được lập phiếu chi! Không thể sửa.", {
+      toast.error('Phiếu mua hàng đã được lập phiếu chi! Không thể sửa.', {
         autoClose: 1500,
-      });
+      })
     } else {
-      setActionType("edit");
-      setDataRecord(record);
-      setDataThongTin(record);
-      setIsShowModal(true);
+      setActionType('edit')
+      setDataRecord(record)
+      setDataThongTin(record)
+      setIsShowModal(true)
     }
-  };
-
-  const handleCreate = (record) => {
-    setActionType("create");
-    setDataRecord(record);
-    setIsShowModal(true);
-  };
-  const handlePrint = (record) => {
-    setActionType("print");
-    setDataRecord(record);
-    setIsShowModal(true);
-  };
-  const handlePrintWareHouse = (record) => {
-    setActionType("printWareHouse");
-    setDataRecord(record);
-    setIsShowModal(true);
-  };
-  const handleFilterDS = () => {
-    getDSPMH();
-    setTableLoad(false);
-  };
-  const handlePay = (record) => {
-    if (record.TTTienMat) return;
-    setActionType("pay");
-    setDataRecord(record);
-    setIsShowModal(true);
-  };
-
-  if (!isLoading) {
-    return <SimpleBackdrop />;
   }
 
-  // const rowSelection = {
+  const handleCreate = (record) => {
+    setActionType('create')
+    setDataRecord(record)
+    setIsShowModal(true)
+  }
+  const handlePrint = (record) => {
+    setActionType('print')
+    setDataRecord(record)
+    setIsShowModal(true)
+  }
+  const handlePrintWareHouse = (record) => {
+    setActionType('printWareHouse')
+    setDataRecord(record)
+    setIsShowModal(true)
+  }
+  const handleFilterDS = () => {
+    getDSPMH()
+    setTableLoad(false)
+  }
+  const handlePay = (record) => {
+    if (record.TTTienMat) return
+    setActionType('pay')
+    setDataRecord(record)
+    setIsShowModal(true)
+  }
+
+  if (!isLoading) {
+    return <SimpleBackdrop />
+  }
+
   //   selectedRowKeys,
   //   onChange: (selectedKeys) => {
   //     setSelectedRowKeys(selectedKeys);
@@ -465,91 +450,61 @@ const PhieuMuaHang = () => {
         <div className="flex items-center gap-x-4 font-bold">
           <label>Phiếu mua hàng </label>
           <div>
-            <FcSearch
-              size={20}
-              className="hover:text-red-400 cursor-pointer"
-              onClick={() => setIsShowSearch(!isShowSearch)}
-            />
+            <FcSearch size={20} className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
           </div>
         </div>
         <div className="flex relative ">
           {isShowSearch && (
-            <div
-              className={`flex absolute left-[11rem] -top-8 transition-all linear duration-700 ${
-                isShowSearch ? "w-[20rem]" : "w-0"
-              } overflow-hidden`}
-            >
+            <div className={`flex absolute left-[11rem] -top-8 transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
               <input
                 type="text"
                 placeholder="Nhập ký tự bạn cần tìm"
                 // onChange={handleSearch}
-                className={
-                  "px-2 py-1 w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] "
-                }
+                className={'px-2 py-1 w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] '}
               />
             </div>
           )}
         </div>
       </div>
-      <div className="flex justify-between items-center px-4">
-        {/* date rang */}
-        <div className="flex ">
-          <div className="">
-            <Form form={form}>
-              <Form.Item
-                name="dateRange"
-                label="Ngày Tháng"
-                rules={[
-                  {
-                    validator: validateDate,
-                  },
-                ]}
-              >
-                <Space>
-                  <RangePicker
-                    format="DD/MM/YYYY"
-                    // picker="date"
-                    onKeyDown={keyDown}
-                    onCalendarChange={handleCalendarChange}
-                    defaultValue={[
-                      dayjs(formKhoanNgay.NgayBatDau, "YYYY-MM-DD"),
-                      dayjs(formKhoanNgay.NgayKetThuc, "YYYY-MM-DD"),
-                    ]}
-                    onChange={(values) => {
-                      setFormKhoanNgay({
-                        ...formKhoanNgay,
-                        NgayBatDau: dayjs(values[0]).format(
-                          "YYYY-MM-DDTHH:mm:ss"
-                        ),
-                        NgayKetThuc: dayjs(values[1]).format(
-                          "YYYY-MM-DDTHH:mm:ss"
-                        ),
-                      });
-                    }}
-                  />
-                  {isValidDate ? (
-                    <CheckCircleOutlined style={{ color: "green" }} />
-                  ) : (
-                    <CloseCircleOutlined style={{ color: "red" }} />
-                  )}
-                </Space>
-              </Form.Item>
-            </Form>
+      <div className="flex justify-between items-center px-4 mb-2">
+        <div className="flex gap-3">
+          {/* DatePicker */}
+          <div className="flex gap-x-2 items-center">
+            <label htmlFor="">Ngày</label>
+            <DatePicker
+              className="DatePicker_PMH"
+              format="DD/MM/YYYY"
+              defaultValue={dayjs(formKhoanNgay.NgayBatDau, 'YYYY-MM-DD')}
+              onChange={(newDate) => {
+                setFormKhoanNgay({
+                  ...formKhoanNgay,
+                  NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                })
+              }}
+            />
           </div>
-          <div className=" px-4 py-1">
-            <button
-              onClick={handleFilterDS}
-              className="flex items-center   py-1 px-2 bg-bg-main rounded-md  text-white text-sm hover:opacity-80"
-            >
+          <div className="flex gap-x-2 items-center">
+            <label htmlFor="">Đến</label>
+            <DatePicker
+              className="DatePicker_PMH"
+              format="DD/MM/YYYY"
+              defaultValue={dayjs(formKhoanNgay.NgayKetThuc, 'YYYY-MM-DD')}
+              onChange={(newDate) => {
+                setFormKhoanNgay({
+                  ...formKhoanNgay,
+                  NgayKetThuc: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                })
+              }}
+            />
+          </div>
+          <div className=" ">
+            <button onClick={handleFilterDS} className="flex items-center py-1 px-2 bg-bg-main rounded-md  text-white text-sm hover:opacity-80">
               Lọc
             </button>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <button
-            onClick={handleCreate}
-            className="flex items-center   py-1 px-2 bg-bg-main rounded-md  text-white text-sm hover:opacity-80"
-          >
+          <button onClick={handleCreate} className="flex items-center   py-1 px-2 bg-bg-main rounded-md  text-white text-sm hover:opacity-80">
             <div className="pr-1">
               <IoAddCircleOutline size={20} />
             </div>
@@ -603,32 +558,24 @@ const PhieuMuaHang = () => {
               //   }
               // },
               onDoubleClick: () => {
-                handleView(record);
+                handleView(record)
               },
             })}
             // Bảng Tổng
             summary={(pageData) => {
-              let totalTongThanhTien = 0;
-              let totalTongTienThue = 0;
-              let totalTongTienHang = 0;
-              let totalTongSoLuong = 0;
-              let totalTongMatHang = 0;
+              let totalTongThanhTien = 0
+              let totalTongTienThue = 0
+              let totalTongTienHang = 0
+              let totalTongSoLuong = 0
+              let totalTongMatHang = 0
 
-              pageData.forEach(
-                ({
-                  TongThanhTien,
-                  TongTienThue,
-                  TongTienHang,
-                  TongSoLuong,
-                  TongMatHang,
-                }) => {
-                  totalTongThanhTien += TongThanhTien;
-                  totalTongTienThue += TongTienThue;
-                  totalTongTienHang += TongTienHang;
-                  totalTongSoLuong += TongSoLuong;
-                  totalTongMatHang += TongMatHang;
-                }
-              );
+              pageData.forEach(({ TongThanhTien, TongTienThue, TongTienHang, TongSoLuong, TongMatHang }) => {
+                totalTongThanhTien += TongThanhTien
+                totalTongTienThue += TongTienThue
+                totalTongTienHang += TongTienHang
+                totalTongSoLuong += TongSoLuong
+                totalTongMatHang += TongMatHang
+              })
               return (
                 <Table.Summary fixed="bottom">
                   <Table.Summary.Row className="text-end font-bold">
@@ -644,46 +591,31 @@ const PhieuMuaHang = () => {
                     <Table.Summary.Cell index={7}></Table.Summary.Cell>
                     <Table.Summary.Cell index={8}></Table.Summary.Cell>
                     <Table.Summary.Cell index={9}></Table.Summary.Cell>
-                    <Table.Summary.Cell index={10}>
-                      {totalTongMatHang}
-                    </Table.Summary.Cell>
-                    <Table.Summary.Cell index={11}>
-                      {roundNumber(totalTongSoLuong)}
-                    </Table.Summary.Cell>
+                    <Table.Summary.Cell index={10}>{totalTongMatHang}</Table.Summary.Cell>
+                    <Table.Summary.Cell index={11}>{roundNumber(totalTongSoLuong)}</Table.Summary.Cell>
                     <Table.Summary.Cell index={12}>
                       <NumericFormat
                         value={totalTongTienHang}
-                        displayType={"text"}
+                        displayType={'text'}
                         thousandSeparator={true}
                         // suffix={" ₫"}
                       />
                     </Table.Summary.Cell>
-                    <Table.Summary.Cell index={13}>
-                      {totalTongTienThue}
-                    </Table.Summary.Cell>
+                    <Table.Summary.Cell index={13}>{totalTongTienThue}</Table.Summary.Cell>
                     <Table.Summary.Cell index={14}>
-                      <NumericFormat
-                        value={totalTongThanhTien}
-                        displayType={"text"}
-                        thousandSeparator={true}
-                      />
+                      <NumericFormat value={totalTongThanhTien} displayType={'text'} thousandSeparator={true} />
                     </Table.Summary.Cell>
                     <Table.Summary.Cell index={15}></Table.Summary.Cell>
                     <Table.Summary.Cell index={16}></Table.Summary.Cell>
                     <Table.Summary.Cell index={17}></Table.Summary.Cell>
                     <Table.Summary.Cell index={18}></Table.Summary.Cell>
                     <Table.Summary.Cell index={19} className="text-center ">
-                      {data
-                        ? data.reduce(
-                            (count, item) => count + (item.TTTienMat ? 1 : 0),
-                            0
-                          )
-                        : null}
+                      {data ? data.reduce((count, item) => count + (item.TTTienMat ? 1 : 0), 0) : null}
                     </Table.Summary.Cell>
                     <Table.Summary.Cell index={20}></Table.Summary.Cell>
                   </Table.Summary.Row>
                 </Table.Summary>
-              );
+              )
             }}
           ></Table>
         ) : (
@@ -694,7 +626,7 @@ const PhieuMuaHang = () => {
       {isShowModal && (
         <Modals
           close={() => {
-            setIsShowModal(false), setIsLoadingPopup(!isLoadingPopup);
+            setIsShowModal(false), setIsLoadingPopup(!isLoadingPopup)
           }}
           actionType={actionType}
           dataRecord={dataRecord}
@@ -707,7 +639,7 @@ const PhieuMuaHang = () => {
         />
       )}
     </div>
-  );
-};
+  )
+}
 
-export default PhieuMuaHang;
+export default PhieuMuaHang
