@@ -81,30 +81,6 @@ export const DANHSACHCHUCNANG = async (API, token, dispatch) => {
     } else {
       dispatch(loginSlice.actions.login(response.data))
     }
-    if (response.data.DataError === -107) {
-      toast.error(response.data.DataErrorDescription)
-      const newToken = await RETOKEN()
-      if (newToken) {
-        await DANHSACHCHUCNANG(API, newToken, dispatch)
-      } else {
-        toast.error('Failed to refresh token!')
-        window.location.href = '/'
-      }
-    } else {
-      dispatch(loginSlice.actions.login(response.data))
-    }
-    if (response.data.DataError === -107) {
-      toast.error(response.data.DataErrorDescription)
-      const newToken = await RETOKEN()
-      if (newToken) {
-        await DANHSACHCHUCNANG(API, newToken, dispatch)
-      } else {
-        toast.error('Failed to refresh token!')
-        window.location.href = '/'
-      }
-    } else {
-      dispatch(loginSlice.actions.login(response.data))
-    }
   } catch (error) {
     console.error('Error adding user:', error)
   }

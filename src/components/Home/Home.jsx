@@ -28,10 +28,8 @@ function Home({ handleToggleSidebar, isSidebarVisible }) {
       await DATATONGHOP(API.TONGHOP, token, KhoanNgay, dispatch)
       await DATADULIEU(API.DANHSACHHANGHOA, token, dispatch)
       await DANHSACHPHIEUBANHANG(API.DANHSACHPBS, token, dispatch)
-
       setDataLoaded(true)
     }
-
     loadData()
   }, [token, tokenRF])
   if (!dataLoaded) {
