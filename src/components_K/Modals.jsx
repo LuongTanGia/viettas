@@ -268,6 +268,15 @@ const Modals = ({
       if (dataThongTin?.DataDetails) {
         setSelectedRowData([...dataThongTin.DataDetails]);
       }
+      // if (dataThongTin?.DataDetails) {
+      //   setSelectedRowData([
+      //     {
+      //       ...dataThongTin.DataDetails,
+      //       DVTDefault: dataHangHoa?.DVT,
+      //       DVTQuyDoi: dataHangHoa?.DVTQuyDoi,
+      //     },
+      //   ]);
+      // }
     }
   }, [dataDoiTuong, dataThongTin]);
 
@@ -542,6 +551,32 @@ const Modals = ({
     }
   };
 
+  const handlePay = async (dataRecord) => {
+    try {
+      const tokenLogin = localStorage.getItem("TKN");
+      const response = await apis.LapPhieuChi(tokenLogin, dataRecord.SoChungTu);
+      // Kiểm tra call api thành công
+      if (response.data && response.data.DataError === 0) {
+        toast.success(response.data.DataErrorDescription);
+        window.location.reload();
+      } else if (response.data && response.data.DataError === -104) {
+        toast.error(response.data.DataErrorDescription);
+      } else if (response.data && response.data.DataError === -103) {
+        toast.error(response.data.DataErrorDescription);
+      } else if (
+        (response.data && response.data.DataError === -1) ||
+        response.data.DataError === -2 ||
+        response.data.DataError === -3
+      ) {
+        toast.warning(response.data.DataErrorDescription);
+      } else {
+        toast.error(response.data.DataErrorDescription);
+      }
+      close();
+    } catch (error) {
+      console.error("Error while saving data:", error);
+    }
+  };
   const calculateTotal = () => {
     let total = 0;
     if (checkboxValues.checkbox1) total += 1;
@@ -582,6 +617,17 @@ const Modals = ({
           <div className=" flex justify-between items-center ">
             <label>
               Bạn có chắc muốn xóa phiếu
+              <span className="font-bold mx-1"> {dataRecord.SoChungTu}</span>
+              không ?
+            </label>
+            <div></div>
+          </div>
+        )}
+
+        {actionType === "pay" && (
+          <div className=" flex justify-between items-center ">
+            <label>
+              Bạn có chắc muốn lập phiếu chi
               <span className="font-bold mx-1"> {dataRecord.SoChungTu}</span>
               không ?
             </label>
@@ -1293,7 +1339,7 @@ const Modals = ({
                       />
                     </div>
 
-                    <Space direction="vertical" size={12}>
+                    {/* <Space direction="vertical" size={12}>
                       <RangePicker
                         format="DD/MM/YYYY"
                         defaultValue={[dayjs(), dayjs()]}
@@ -1309,7 +1355,7 @@ const Modals = ({
                           });
                         }}
                       />
-                    </Space>
+                    </Space> */}
                   </div>
                   <div className="p-1 flex  ">
                     <label form="doituong" className="w-[86px]">
@@ -1487,20 +1533,35 @@ const Modals = ({
               Đóng
             </button>
           </div>
+        ) : actionType === "printWareHouse" ? (
+          <div className="flex justify-end gap-4 p-4 ">
+            <button
+              className="text-blue-500  border border-blue-500 px-2 py-1 rounded-md hover:bg-blue-500 hover:text-white "
+              onClick={handlePrintWareHouse}
+            >
+              In phiếu
+            </button>
+            <button
+              className=" text-red-500 border border-red-500   px-2 py-1 rounded-md hover:bg-red-500 hover:text-white "
+              onClick={() => close()}
+            >
+              Đóng
+            </button>
+          </div>
         ) : (
-          actionType === "printWareHouse" && (
-            <div className="flex justify-end gap-4 p-4 ">
+          actionType === "pay" && (
+            <div className="flex justify-end gap-4 p-4">
               <button
-                className="text-blue-500  border border-blue-500 px-2 py-1 rounded-md hover:bg-blue-500 hover:text-white "
-                onClick={handlePrintWareHouse}
+                className="border border-blue-500 px-3 py-1 rounded-md hover:bg-blue-500 hover:text-white "
+                onClick={() => handlePay(dataRecord)}
               >
-                In phiếu
+                Ok
               </button>
               <button
-                className=" text-red-500 border border-red-500   px-2 py-1 rounded-md hover:bg-red-500 hover:text-white "
+                className="border  px-2 py-1 rounded-md hover:bg-red-500 hover:text-white "
                 onClick={() => close()}
               >
-                Đóng
+                No
               </button>
             </div>
           )
@@ -1522,6 +1583,7 @@ const Modals = ({
           dataPMH={dataPMH}
         />
       )}
+
       {isShowModalOnlyPrintWareHouse && (
         <ModalOnlyPrintWareHouse
           close={() => setIsShowModalOnlyPrintWareHouse(false)}

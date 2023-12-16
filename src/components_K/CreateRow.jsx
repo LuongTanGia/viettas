@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { NumericFormat } from "react-number-format";
 import icons from "../untils/icons";
 import { toast } from "react-toastify";
+import { InputNumber } from "antd";
 const { MdDelete } = icons;
 
 const CreateRow = ({
@@ -13,11 +14,11 @@ const CreateRow = ({
   setRowData,
   currentRowData,
 }) => {
-  const [x, setX] = useState(item.SoLuong);
+  const [SoLuong, setSoLuong] = useState(item.SoLuong);
   const [selectedDVT, setSelectedDVT] = useState(item.DVT);
 
   useEffect(() => {
-    setX(item.SoLuong.toFixed(1));
+    setSoLuong(item.SoLuong.toFixed(1));
   }, [item.SoLuong]);
 
   const handleChangeData = (e) => {
@@ -63,8 +64,8 @@ const CreateRow = ({
   };
 
   const handleChangeQuantity = () => {
-    const newQuantity = Number(x).toFixed(1);
-    setX(newQuantity);
+    const newQuantity = Number(SoLuong).toFixed(1);
+    setSoLuong(newQuantity);
     setRowData((prev) => {
       const newData = prev.map((i) => {
         if (i.MaHang === item.MaHang) {
@@ -97,9 +98,8 @@ const CreateRow = ({
     });
   };
 
-  const handleChangeTax = (e) => {
-    const newTax = e.target.value;
-
+  const handleChangeTax = (value) => {
+    const newTax = value;
     setRowData((prev) => {
       const newData = prev.map((i) => {
         if (i.MaHang === item.MaHang) {
@@ -153,13 +153,13 @@ const CreateRow = ({
       )}
       <td className="py-2  border ">
         <input
-          className="text-end px-4 "
+          className="text-end border border-gray-400 rounded-[4px]  "
           type="number"
-          value={x}
+          value={SoLuong}
           onChange={(e) => {
             const value = e.target.value;
             if (value.includes(".") && value.split(".")[1].length > 2) return;
-            setX(e.target.value);
+            setSoLuong(e.target.value);
           }}
           onKeyDown={(e) => {
             if (e.key === "Enter") handleChangeQuantity();
@@ -169,7 +169,7 @@ const CreateRow = ({
       </td>
       <td className="py-2 border ">
         <input
-          className=" px-4 text-end"
+          className=" px-2 text-end border border-gray-400 rounded-[4px]  "
           type="text"
           pattern="[0-9]+"
           title="Please enter a numeric value"
@@ -190,14 +190,22 @@ const CreateRow = ({
         />
       </td>
       <td className="py-2 border">
-        <input
-          className=" text-end"
+        <InputNumber
+          className="text-end"
+          min={0}
+          max={100}
+          size="small"
+          defaultValue={item.TyLeThue}
+          onChange={handleChangeTax}
+        />
+        {/* <input
+          className=" text-end w-full"
           type="number"
           min={0}
           max={100}
           value={item.TyLeThue}
           onChange={handleChangeTax}
-        />
+        /> */}
       </td>
       <td className="py-2 px-4 border text-end">
         <NumericFormat
