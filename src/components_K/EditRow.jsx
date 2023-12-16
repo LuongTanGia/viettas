@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import icons from "../untils/icons";
 import { toast } from "react-toastify";
 import { NumericFormat } from "react-number-format";
+import { InputNumber } from "antd";
 const { MdDelete } = icons;
 
 const EditRow = ({
@@ -13,11 +14,11 @@ const EditRow = ({
   setRowData,
   currentRowData,
 }) => {
-  const [x, setX] = useState(item.SoLuong);
+  const [SoLuong, setSoLuong] = useState(item.SoLuong);
   const [selectedDVT, setSelectedDVT] = useState(item.DVT);
 
   useEffect(() => {
-    setX(item.SoLuong.toFixed(1));
+    setSoLuong(item.SoLuong.toFixed(1));
   }, [item.SoLuong]);
 
   const handleChangeData = (e) => {
@@ -63,8 +64,8 @@ const EditRow = ({
   };
 
   const handleChangeQuantity = () => {
-    const newQuantity = Number(x).toFixed(1);
-    setX(newQuantity);
+    const newQuantity = Number(SoLuong).toFixed(1);
+    setSoLuong(newQuantity);
     setRowData((prev) => {
       const newData = prev.map((i) => {
         if (i.MaHang === item.MaHang) {
@@ -97,8 +98,9 @@ const EditRow = ({
     });
   };
 
-  const handleChangeTax = (e) => {
-    const newTax = e.target.value;
+  const handleChangeTax = (value) => {
+    // const newTax = e.target.value;
+    const newTax = value;
 
     setRowData((prev) => {
       const newData = prev.map((i) => {
@@ -113,7 +115,7 @@ const EditRow = ({
       return newData;
     });
   };
-
+  console.log(item);
   return (
     <tr key={index}>
       <td className="py-2 px-4 border text-center ">{index + 1}</td>
@@ -158,13 +160,13 @@ const EditRow = ({
 
       <td className="py-2  border ">
         <input
-          className="text-end px-4 "
+          className="text-end border border-gray-400 rounded-[4px]  "
           type="number"
-          value={x}
+          value={SoLuong}
           onChange={(e) => {
             const value = e.target.value;
             if (value.includes(".") && value.split(".")[1].length > 2) return;
-            setX(e.target.value.replace(/[^0-9.]/g, ""));
+            setSoLuong(e.target.value.replace(/[^0-9.]/g, ""));
           }}
           onKeyDown={(e) => {
             if (e.key === "Enter") handleChangeQuantity();
@@ -174,11 +176,11 @@ const EditRow = ({
       </td>
       <td className="py-2 border ">
         <input
-          className=" px-4 text-end"
+          className=" px-2 text-end border border-gray-400 rounded-[4px] "
           type="text"
           pattern="[0-9]+"
           title="Please enter a numeric value"
-          value={item.DonGia}
+          value={item.DonGia.toLocaleString()}
           onChange={handleChangePrice}
         />
       </td>
@@ -195,15 +197,28 @@ const EditRow = ({
         />
       </td>
       <td className="py-2 border">
-        <input
+        <InputNumber
+          className="text-end"
+          min={0}
+          max={100}
+          size="small"
+          defaultValue={item.TyLeThue}
+          formatter={(value) => `${value}`.slice(0, 3)} // Hiển thị tối đa 3 chữ số
+          parser={(value) => {
+            const newValue = value.replace(/\D/g, "").slice(0, 3);
+            return newValue === "" ? null : Number(newValue);
+          }}
+          onChange={handleChangeTax}
+        />
+        {/* <input
           className=" text-end"
           type="number"
           min={0}
           max={100}
           value={item.TyLeThue}
           onChange={handleChangeTax}
-          // onInput="validateInput(this)"
-        />
+          
+        /> */}
       </td>
       <td className="py-2 px-4 border text-end">
         <NumericFormat

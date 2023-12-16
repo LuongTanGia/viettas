@@ -203,6 +203,13 @@ input[type='radio'] {
   min-height: 320px;
   max-height: 320px;
 }
+
+/* custom input */
+.ant-input-number .ant-input-number-input {
+  color: black;
+  text-align: center;
+}
+
 /* end */
 
 #main {
