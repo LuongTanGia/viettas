@@ -676,7 +676,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
               </div>
             </div>
             {/* liên */}
-            <div className="flex justify-center items-center gap-6">
+            <div className="flex justify-center items-center gap-6 mt-4">
               <div>
                 <input id="lien1" type="checkbox" checked={checkboxValues.checkbox1} onChange={() => handleLien('checkbox1')} />
                 <label htmlFor="lien1">Liên 1</label>
