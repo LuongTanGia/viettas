@@ -71,7 +71,7 @@ export const DANHSACHCHUCNANG = async (API, token, dispatch) => {
     )
     if (response.data.DataError === -107) {
       toast.error(response.data.DataErrorDescription)
-      const newToken = await RETAKEN()
+      const newToken = await RETOKEN()
       if (newToken) {
         await DANHSACHCHUCNANG(API, newToken, dispatch)
       } else {
@@ -83,7 +83,7 @@ export const DANHSACHCHUCNANG = async (API, token, dispatch) => {
     }
     if (response.data.DataError === -107) {
       toast.error(response.data.DataErrorDescription)
-      const newToken = await REFTOKEN()
+      const newToken = await RETOKEN()
       if (newToken) {
         await DANHSACHCHUCNANG(API, newToken, dispatch)
       } else {
@@ -95,7 +95,7 @@ export const DANHSACHCHUCNANG = async (API, token, dispatch) => {
     }
     if (response.data.DataError === -107) {
       toast.error(response.data.DataErrorDescription)
-      const newToken = await RETAKEN()
+      const newToken = await RETOKEN()
       if (newToken) {
         await DANHSACHCHUCNANG(API, newToken, dispatch)
       } else {
