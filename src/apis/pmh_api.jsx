@@ -94,20 +94,20 @@ export const ListHelperHH = (token, MK) =>
 export const ThemPMH = (token, formPMH, MaDoiTuong, MaKho) =>
   new Promise(async (resolve, reject) => {
     try {
-      console.log("Data to be sent to API:", {
-        ...formPMH,
-        MaDoiTuong: MaDoiTuong,
-        MaKho: MaKho,
-      });
-      // const response = await axios({
-      //   url: "/entries/DuLieuPMH/Them",
-      //   method: "post",
-      //   headers: {
-      //     Authorization: `Bearer ${token}`,
-      //   },
-      //   data: { ...formPMH, MaDoiTuong: MaDoiTuong, MaKho: MaKho },
+      // console.log("Data to be sent to API:", {
+      //   ...formPMH,
+      //   MaDoiTuong: MaDoiTuong,
+      //   MaKho: MaKho,
       // });
-      // resolve(response);
+      const response = await axios({
+        url: "/entries/DuLieuPMH/Them",
+        method: "post",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        data: { ...formPMH, MaDoiTuong: MaDoiTuong, MaKho: MaKho },
+      });
+      resolve(response);
     } catch (error) {
       reject(error);
     }
@@ -116,18 +116,18 @@ export const ThemPMH = (token, formPMH, MaDoiTuong, MaKho) =>
 export const SuaPMH = (token, Sct, formPMHEdit, MaDoiTuong, MaKho) =>
   new Promise(async (resolve, reject) => {
     try {
-      // console.log("Data to be sent to API:", {
-      //   SoChungTu: Sct,
-      //   Data: {
-      //     ...formPMHEdit,
-      //     DataDetails: formPMHEdit.DataDetails.map((item, index) => ({
-      //       ...item,
-      //       STT: index + 1,
-      //     })),
-      //     MaDoiTuong: MaDoiTuong,
-      //     MaKho: MaKho,
-      //   },
-      // });
+      console.log("Data to be sent to API:", {
+        SoChungTu: Sct,
+        Data: {
+          ...formPMHEdit,
+          DataDetails: formPMHEdit?.DataDetails?.map((item, index) => ({
+            ...item,
+            STT: index + 1,
+          })),
+          MaDoiTuong: MaDoiTuong,
+          MaKho: MaKho,
+        },
+      });
       const response = await axios({
         url: "/entries/DuLieuPMH/Sua",
         method: "post",
@@ -219,6 +219,23 @@ export const InPK = (token, formPrint, SctBD, SctKT, SoLien) =>
           SoChungTuketThuc: SctKT,
           SoLien: SoLien,
         },
+      });
+      resolve(response);
+    } catch (error) {
+      reject(error);
+    }
+  });
+
+export const LapPhieuChi = (token, Sct) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const response = await axios({
+        url: "/entries/DuLieuPMH/LapPhieuChi",
+        method: "post",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        data: { SoChungTu: Sct },
       });
       resolve(response);
     } catch (error) {

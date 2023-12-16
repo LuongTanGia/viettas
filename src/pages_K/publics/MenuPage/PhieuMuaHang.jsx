@@ -18,8 +18,8 @@ const {
   TiPrinter,
   FaRegEdit,
   MdDelete,
-  FaRegEye,
-  FaMoneyCheckAlt,
+  GiPayMoney,
+  FcSearch,
 } = icons;
 const PhieuMuaHang = () => {
   const [form] = Form.useForm();
@@ -34,8 +34,10 @@ const PhieuMuaHang = () => {
   const [dataKhoHang, setDataKhoHang] = useState(null);
   const [dataDoiTuong, setDataDoiTuong] = useState(null);
   const [isShowModal, setIsShowModal] = useState(false);
+  const [isShowSearch, setIsShowSearch] = useState(false);
+
   const [tableLoad, setTableLoad] = useState(false);
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+
   const [actionType, setActionType] = useState("");
   const [formKhoanNgay, setFormKhoanNgay] = useState([]);
 
@@ -347,20 +349,25 @@ const PhieuMuaHang = () => {
                 <FaRegEye size={16} />
               </div> */}
               <div
+                disabled="true"
+                onClick={() => handlePay(record)}
+                title="Lập phiếu chi"
+                className={`p-[3px] border rounded-md text-slate-50 ${
+                  record.TTTienMat
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "border-blue-500 bg-blue-500 hover:bg-white hover:text-blue-500 cursor-pointer"
+                }`}
+              >
+                <GiPayMoney size={16} />
+              </div>
+              <div
                 onClick={() => handleEdit(record)}
                 title="Sửa"
-                className="p-[3px]  border  border-purple-500 rounded-md text-slate-50 bg-purple-500  hover:bg-white hover:text-purple-500  cursor-pointer "
+                className="p-[3px] border rounded-md text-slate-50 border-purple-500 bg-purple-500 hover:bg-white hover:text-purple-500 cursor-pointer"
               >
                 <FaRegEdit size={16} />
               </div>
 
-              {/* <div
-                onClick={() => handleMakeBallot(record)}
-                title="In phiếu"
-                className="p-[3px] text-blue-500 border  border-blue-500 rounded-md hover:text-white hover:bg-blue-500  "
-              >
-                <FaMoneyCheckAlt size={16} />
-              </div> */}
               {/* <div
                 onClick={() => handleEdit(record)}
                 title="Sửa"
@@ -397,7 +404,9 @@ const PhieuMuaHang = () => {
 
   const handleEdit = (record) => {
     if (record.TTTienMat === true) {
-      toast.error("Phiếu mua hàng đã được lập phiếu chi! Không thể sửa.");
+      toast.error("Phiếu mua hàng đã được lập phiếu chi! Không thể sửa.", {
+        autoClose: 1500,
+      });
     } else {
       setActionType("edit");
       setDataRecord(record);
@@ -425,8 +434,9 @@ const PhieuMuaHang = () => {
     getDSPMH();
     setTableLoad(false);
   };
-  const handleMakeBallot = (record) => {
-    setActionType("makeballot");
+  const handlePay = (record) => {
+    if (record.TTTienMat) return;
+    setActionType("pay");
     setDataRecord(record);
     setIsShowModal(true);
   };
@@ -435,23 +445,52 @@ const PhieuMuaHang = () => {
     return <SimpleBackdrop />;
   }
 
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: (selectedKeys) => {
-      setSelectedRowKeys(selectedKeys);
-    },
-  };
+  // const rowSelection = {
+  //   selectedRowKeys,
+  //   onChange: (selectedKeys) => {
+  //     setSelectedRowKeys(selectedKeys);
+  //   },
+  // };
 
-  const handleRowClick = (record) => {
-    const isSelected = selectedRowKeys.includes(record.key);
-    const newSelectedRowKeys = isSelected
-      ? selectedRowKeys.filter((key) => key !== record.key)
-      : [...selectedRowKeys, record.key];
-    setSelectedRowKeys(newSelectedRowKeys);
-  };
+  // const handleRowClick = (record) => {
+  //   const isSelected = selectedRowKeys.includes(record.key);
+  //   const newSelectedRowKeys = isSelected
+  //     ? selectedRowKeys.filter((key) => key !== record.key)
+  //     : [...selectedRowKeys, record.key];
+  //   setSelectedRowKeys(newSelectedRowKeys);
+  // };
   return (
     <div className="w-auto">
-      <div className="text-lg font-bold mx-4 my-2 "> Phiếu mua hàng</div>
+      <div className="text-lg  mx-4 my-2 ">
+        <div className="flex items-center gap-x-4 font-bold">
+          <label>Phiếu mua hàng </label>
+          <div>
+            <FcSearch
+              size={20}
+              className="hover:text-red-400 cursor-pointer"
+              onClick={() => setIsShowSearch(!isShowSearch)}
+            />
+          </div>
+        </div>
+        <div className="flex relative ">
+          {isShowSearch && (
+            <div
+              className={`flex absolute left-[11rem] -top-8 transition-all linear duration-700 ${
+                isShowSearch ? "w-[20rem]" : "w-0"
+              } overflow-hidden`}
+            >
+              <input
+                type="text"
+                placeholder="Nhập ký tự bạn cần tìm"
+                // onChange={handleSearch}
+                className={
+                  "px-2 py-1 w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] "
+                }
+              />
+            </div>
+          )}
+        </div>
+      </div>
       <div className="flex justify-between items-center px-4">
         {/* date rang */}
         <div className="flex ">
@@ -552,17 +591,17 @@ const PhieuMuaHang = () => {
             pagination={false}
             rowKey={(record) => record.SoChungTu}
             onRow={(record) => ({
-              onClick: () => {
-                handleRowClick(record);
-                const selected = selectedRowKeys.includes(record.SoChungTu);
-                if (selected) {
-                  setSelectedRowKeys(
-                    selectedRowKeys.filter((key) => key !== record.SoChungTu)
-                  );
-                } else {
-                  setSelectedRowKeys([...selectedRowKeys, record.SoChungTu]);
-                }
-              },
+              // onClick: () => {
+              //   handleRowClick(record);
+              //   const selected = selectedRowKeys.includes(record.SoChungTu);
+              //   if (selected) {
+              //     setSelectedRowKeys(
+              //       selectedRowKeys.filter((key) => key !== record.SoChungTu)
+              //     );
+              //   } else {
+              //     setSelectedRowKeys([...selectedRowKeys, record.SoChungTu]);
+              //   }
+              // },
               onDoubleClick: () => {
                 handleView(record);
               },

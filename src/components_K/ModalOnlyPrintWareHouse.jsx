@@ -44,7 +44,6 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, dataPMH }) => {
   const [checkboxValues, setCheckboxValues] = useState({
     checkbox1: true,
     checkbox2: false,
-    checkbox3: false,
   });
 
   useEffect(() => {
@@ -56,7 +55,7 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, dataPMH }) => {
     let total = 0;
     if (checkboxValues.checkbox1) total += 1;
     if (checkboxValues.checkbox2) total += 2;
-    if (checkboxValues.checkbox3) total += 4;
+
     return total;
   };
 
@@ -137,7 +136,7 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, dataPMH }) => {
     <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
       <div className="p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
         <div className="   ">
-          <div className=" pb-2 ">In phiếu kho hàng</div>
+          <div className=" pb-2 ">In phiếu kho</div>
           <div className="flex justify-center items-center ">
             <Form form={form}>
               <Form.Item
