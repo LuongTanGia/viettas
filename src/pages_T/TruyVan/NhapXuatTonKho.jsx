@@ -1,80 +1,45 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import categoryAPI from "../../API/linkAPI";
-import { useSearch } from "../../hooks_T/Search";
-import { FaSearch } from "react-icons/fa";
-import { useEffect, useState } from "react";
-import { Form, DatePicker, Space, Table, Select, Tooltip } from "antd";
-import moment from "moment";
-import { MdCheckCircle } from "react-icons/md";
-import { IoMdCloseCircle } from "react-icons/io";
-import { toast } from "react-toastify";
-import dayjs from "dayjs";
+import categoryAPI from '../../API/linkAPI'
+import { useSearch } from '../../hooks_T/Search'
+import { FaSearch } from 'react-icons/fa'
+import { useEffect, useState } from 'react'
+import { Table, Select, Tooltip } from 'antd'
+import { toast } from 'react-toastify'
+import dayjs from 'dayjs'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import { MdFilterListAlt } from 'react-icons/md'
+import { RETOKEN } from '../../action/Actions'
 
 const NhapXuatTonKho = () => {
-  const TokenAccess = localStorage.getItem("TKN");
-  const [dataNXT, setDataNXT] = useState("");
-  const [setSearchHangHoa, filteredHangHoa] = useSearch(dataNXT);
-  const [isShowSearch, setIsShowSearch] = useState(false);
-  const [nhomHangNXT, setNhomHangNXT] = useState([]);
-  const [hangHoaNXT, setHangHoaNXT] = useState([]);
-  const [khoHangNXT, setKhoHangNXT] = useState([]);
-  const [khoanNgayFrom, setKhoanNgayFrom] = useState("");
-  const [khoanNgayTo, setKhoanNgayTo] = useState("");
-  const [selectedMaFrom, setSelectedMaFrom] = useState("");
-  const [selectedMaTo, setSelectedMaTo] = useState("");
-  const [selectedMaList, setSelectedMaList] = useState([]);
-  const [selectedNhomFrom, setSelectedNhomFrom] = useState("");
-  const [selectedNhomTo, setSelectedNhomTo] = useState("");
-  const [selectedNhomList, setSelectedNhomList] = useState([]);
-  const [selectedMaKho, setSelectedMaKho] = useState(null);
-  const [isValidDate, setIsValidDate] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
-  const { RangePicker } = DatePicker;
-  const [form] = Form.useForm();
-  const handleKeyDown = (e) => {
-    const validKeys = [
-      "0",
-      "1",
-      "2",
-      "3",
-      "4",
-      "5",
-      "6",
-      "7",
-      "8",
-      "9",
-      "/",
-      "Backspace",
-    ];
-    if (!validKeys.includes(e.key)) {
-      e.preventDefault();
-    }
-  };
-  const validateDate = (_, value) => {
-    const isValid = moment(value, "DD/MM/YYYY", true).isValid();
-    setIsValidDate(isValid);
-    return isValid
-      ? Promise.resolve()
-      : Promise.reject("Ngày tháng không hợp lệ");
-  };
-  const handleCalendarChange = (_, dateString) => {
-    form.setFieldsValue({ dateRange: dateString });
-    const isValid =
-      moment(dateString[0], "DD/MM/YYYY", true).isValid() &&
-      moment(dateString[1], "DD/MM/YYYY", true).isValid();
-    setIsValidDate(isValid);
-  };
-  const roundNumber = (number) => {
-    const roundedNumber = Math.round(number * 10) / 10;
-    return roundedNumber.toFixed(1);
-  };
+  const TokenAccess = localStorage.getItem('TKN')
+  const [dataNXT, setDataNXT] = useState('')
+  const [setSearchHangHoa, filteredHangHoa] = useSearch(dataNXT)
+  const [isShowSearch, setIsShowSearch] = useState(false)
+  const [nhomHangNXT, setNhomHangNXT] = useState([])
+  const [hangHoaNXT, setHangHoaNXT] = useState([])
+  const [khoHangNXT, setKhoHangNXT] = useState([])
+  const [khoanNgayFrom, setKhoanNgayFrom] = useState('')
+  const [khoanNgayTo, setKhoanNgayTo] = useState('')
+  const [selectedMaFrom, setSelectedMaFrom] = useState('')
+  const [selectedMaTo, setSelectedMaTo] = useState('')
+  const [selectedMaList, setSelectedMaList] = useState([])
+  const [selectedNhomFrom, setSelectedNhomFrom] = useState('')
+  const [selectedNhomTo, setSelectedNhomTo] = useState('')
+  const [selectedNhomList, setSelectedNhomList] = useState([])
+  const [selectedMaKho, setSelectedMaKho] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [pageSize, setPageSize] = useState('100')
+  const [page, setPage] = useState('1')
+  const [dataThongSo, setDataThongSo] = useState('')
+
   useEffect(() => {
-    getListNhomHangNXT();
-    getListHangHoaNXT();
-    getListKhoNXT();
-    getTimeSetting();
-    getDataNXTFirst();
-  }, [isLoading]);
+    getListNhomHangNXT()
+    getListHangHoaNXT()
+    getListKhoNXT()
+    getTimeSetting()
+    getDataNXTFirst()
+    getThongSo()
+  }, [isLoading])
 
   const getDataNXTFirst = async () => {
     try {
@@ -84,131 +49,147 @@ const NhapXuatTonKho = () => {
             NgayBatDau: khoanNgayFrom,
             NgayKetThuc: khoanNgayTo,
           },
-          TokenAccess
-        );
+          TokenAccess,
+        )
         if (response.data.DataError == 0) {
-          setDataNXT(response.data.DataResults);
-          setIsLoading(true);
+          setDataNXT(response.data.DataResults)
+          setIsLoading(true)
         } else {
-          toast.error(response.data.DataErrorDescription);
+          toast.error(response.data.DataErrorDescription)
         }
       }
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
-  };
+  }
   const getDataNXT = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
     try {
-      console.log(khoanNgayFrom, khoanNgayTo);
       const response = await categoryAPI.InfoNXTTheoKho(
         {
           NgayBatDau: khoanNgayFrom,
           NgayKetThuc: khoanNgayTo,
           CodeValue1From: selectedNhomFrom,
           CodeValue1To: selectedNhomTo,
-          CodeValue1List: selectedNhomList.join(", "),
+          CodeValue1List: selectedNhomList.join(', '),
           CodeValue2From: selectedMaFrom,
           CodeValue2To: selectedMaTo,
-          CodeValue2List: selectedMaList.join(", "),
+          CodeValue2List: selectedMaList.join(', '),
         },
-        TokenAccess
-      );
+        TokenAccess,
+      )
       if (response.data.DataError == 0) {
-        toast.success(response.data.DataErrorDescription);
-        setDataNXT(response.data.DataResults);
-        setIsLoading(true);
+        toast.success(response.data.DataErrorDescription)
+        setDataNXT(response.data.DataResults)
+        setIsLoading(true)
       } else {
-        toast.error(response.data.DataErrorDescription);
-        setIsLoading(true);
+        toast.error(response.data.DataErrorDescription)
+        setIsLoading(true)
       }
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
-  };
+  }
   const getListNhomHangNXT = async () => {
     try {
-      const response = await categoryAPI.ListNhomHangNXT(TokenAccess);
+      const response = await categoryAPI.ListNhomHangNXT(TokenAccess)
       if (response.data.DataError == 0) {
-        setNhomHangNXT(response.data.DataResults);
+        setNhomHangNXT(response.data.DataResults)
       } else {
-        console.log(response.data);
+        console.log(response.data)
       }
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
-  };
+  }
   const getListHangHoaNXT = async () => {
     try {
-      const response = await categoryAPI.ListHangHoaNXT(TokenAccess);
+      const response = await categoryAPI.ListHangHoaNXT(TokenAccess)
       if (response.data.DataError == 0) {
-        setHangHoaNXT(response.data.DataResults);
+        setHangHoaNXT(response.data.DataResults)
       } else {
-        console.log(response.data);
+        console.log(response.data)
       }
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
-  };
+  }
   const getListKhoNXT = async () => {
     try {
-      const response = await categoryAPI.ListKhoHangNXT(TokenAccess);
+      const response = await categoryAPI.ListKhoHangNXT(TokenAccess)
       if (response.data.DataError == 0) {
-        setKhoHangNXT(response.data.DataResults);
+        setKhoHangNXT(response.data.DataResults)
       } else {
-        console.log(response.data);
+        console.log(response.data)
       }
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
-  };
+  }
   const getTimeSetting = async () => {
     try {
-      const response = await categoryAPI.KhoanNgay(TokenAccess);
+      const response = await categoryAPI.KhoanNgay(TokenAccess)
       if (response.data.DataError == 0) {
-        setKhoanNgayFrom(response.data.NgayBatDau);
-        setKhoanNgayTo(response.data.NgayKetThuc);
-        setIsLoading(true);
+        setKhoanNgayFrom(response.data.NgayBatDau)
+        setKhoanNgayTo(response.data.NgayKetThuc)
+        setIsLoading(true)
       } else {
-        console.log(response.data);
+        console.log(response.data)
       }
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
-  };
+  }
+  const getThongSo = async () => {
+    try {
+      const response = await categoryAPI.ThongSo(TokenAccess)
+      if (response.data.DataError == 0) {
+        setDataThongSo(response.data.DataResult)
+      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        await RETOKEN()
+        getThongSo()
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
   const handleSearch = (event) => {
-    setSearchHangHoa(event.target.value);
-  };
+    setSearchHangHoa(event.target.value)
+  }
+  const formatSLSL = (number) => {
+    return number.toFixed(Math.max(1, dataThongSo.SOLESOLUONG)).replace(/,/g, '.')
+  }
+
   const titles = [
     {
-      title: "STT",
+      title: 'STT',
       render: (text, record, index) => index + 1,
       with: 10,
-      fixed: "left",
+      fixed: 'left',
       width: 50,
-      align: "center",
+      align: 'center',
     },
     {
-      title: "Mã hàng",
-      dataIndex: "MaHang",
-      key: "MaHang",
-      fixed: "left",
+      title: 'Mã hàng',
+      dataIndex: 'MaHang',
+      key: 'MaHang',
+      fixed: 'left',
       width: 150,
-      align: "center",
+      align: 'center',
     },
     {
-      title: "Tên hàng",
-      dataIndex: "TenHang",
-      key: "TenHang",
-      fixed: "left",
+      title: 'Tên hàng',
+      dataIndex: 'TenHang',
+      key: 'TenHang',
+      fixed: 'left',
       render: (text) => (
         <Tooltip title={text}>
           <div
             style={{
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-              cursor: "pointer",
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              cursor: 'pointer',
             }}
           >
             {text}
@@ -217,18 +198,18 @@ const NhapXuatTonKho = () => {
       ),
     },
     {
-      title: "Nhóm",
-      dataIndex: "TenNhomHang",
-      key: "TenNhomHang",
+      title: 'Nhóm',
+      dataIndex: 'TenNhomHang',
+      key: 'TenNhomHang',
       width: 150,
       render: (text) => (
         <Tooltip title={text}>
           <div
             style={{
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-              cursor: "pointer",
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              cursor: 'pointer',
             }}
           >
             {text}
@@ -237,329 +218,179 @@ const NhapXuatTonKho = () => {
       ),
     },
     {
-      title: "Tên Kho",
-      dataIndex: "TenKho",
-      key: "TenKho",
+      title: 'Tên Kho',
+      dataIndex: 'TenKho',
+      key: 'TenKho',
     },
     {
-      title: "Đơn vị tính",
-      dataIndex: "DVT",
-      key: "DVT",
+      title: 'Đơn vị tính',
+      dataIndex: 'DVT',
+      key: 'DVT',
       width: 150,
-      align: "center",
+      align: 'center',
     },
     {
-      title: "Tồn đầu",
-      dataIndex: "SoLuongTonDK",
-      key: "SoLuongTonDK",
+      title: 'Tồn đầu',
+      dataIndex: 'SoLuongTonDK',
+      key: 'SoLuongTonDK',
       width: 150,
-      align: "center",
+      align: 'center',
       render: (text) => (
-        <div
-          className={`flex justify-end w-full h-full  px-2  ${
-            text < 0
-              ? "text-red-600 text-base font-bold"
-              : text === 0
-              ? "text-gray-300"
-              : ""
-          } `}
-        >
-          {roundNumber(text)}
-        </div>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
       ),
     },
     {
-      title: "Nhập",
+      title: 'Nhập',
       children: [
         {
-          title: "Mua hàng",
-          dataIndex: "SoLuongNhap_PMH",
-          key: "SoLuongNhap_PMH",
+          title: 'Mua hàng',
+          dataIndex: 'SoLuongNhap_PMH',
+          key: 'SoLuongNhap_PMH',
           width: 150,
-          align: "center",
+          align: 'center',
           render: (text) => (
-            <div
-              className={`flex justify-end w-full h-full  px-2  ${
-                text < 0
-                  ? "text-red-600 text-base font-bold"
-                  : text === 0
-                  ? "text-gray-300"
-                  : ""
-              } `}
-            >
-              {roundNumber(text)}
-            </div>
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
           ),
         },
         {
-          title: "Trả hàng",
-          dataIndex: "SoLuongNhap_NTR",
-          key: "SoLuongNhap_NTR",
+          title: 'Trả hàng',
+          dataIndex: 'SoLuongNhap_NTR',
+          key: 'SoLuongNhap_NTR',
           width: 150,
-          align: "center",
+          align: 'center',
           render: (text) => (
-            <div
-              className={`flex justify-end w-full h-full  px-2  ${
-                text < 0
-                  ? "text-red-600 text-base font-bold"
-                  : text === 0
-                  ? "text-gray-300"
-                  : ""
-              } `}
-            >
-              {roundNumber(text)}
-            </div>
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
           ),
         },
         {
-          title: "Điều chỉnh",
-          dataIndex: "SoLuongNhap_NDC",
-          key: "SoLuongNhap_NDC",
+          title: 'Điều chỉnh',
+          dataIndex: 'SoLuongNhap_NDC',
+          key: 'SoLuongNhap_NDC',
           width: 150,
-          align: "center",
+          align: 'center',
           render: (text) => (
-            <div
-              className={`flex justify-end w-full h-full  px-2  ${
-                text < 0
-                  ? "text-red-600 text-base font-bold"
-                  : text === 0
-                  ? "text-gray-300"
-                  : ""
-              } `}
-            >
-              {roundNumber(text)}
-            </div>
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
           ),
         },
         {
-          title: "Tổng nhập",
-          dataIndex: "SoLuongNhap",
-          key: "SoLuongNhap",
+          title: 'Tổng nhập',
+          dataIndex: 'SoLuongNhap',
+          key: 'SoLuongNhap',
           width: 150,
-          align: "center",
+          align: 'center',
           render: (text) => (
-            <div
-              className={`flex justify-end w-full h-full  px-2  ${
-                text < 0
-                  ? "text-red-600 text-base font-bold"
-                  : text === 0
-                  ? "text-gray-300"
-                  : ""
-              } `}
-            >
-              {roundNumber(text)}
-            </div>
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
           ),
         },
       ],
     },
     {
-      title: "Xuất",
+      title: 'Xuất',
       children: [
         {
-          title: "Bán sỉ",
-          dataIndex: "SoLuongXuat_PBS",
-          key: "SoLuongXuat_PBS",
+          title: 'Bán sỉ',
+          dataIndex: 'SoLuongXuat_PBS',
+          key: 'SoLuongXuat_PBS',
           width: 150,
-          align: "center",
+          align: 'center',
           render: (text) => (
-            <div
-              className={`flex justify-end w-full h-full  px-2  ${
-                text < 0
-                  ? "text-red-600 text-base font-bold"
-                  : text === 0
-                  ? "text-gray-300"
-                  : ""
-              } `}
-            >
-              {roundNumber(text)}
-            </div>
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
           ),
         },
         {
-          title: "Bán lẻ",
-          dataIndex: "SoLuongXuat_PBL",
-          key: "SoLuongXuat_PBL",
+          title: 'Bán lẻ',
+          dataIndex: 'SoLuongXuat_PBL',
+          key: 'SoLuongXuat_PBL',
           width: 150,
-          align: "center",
+          align: 'center',
           render: (text) => (
-            <div
-              className={`flex justify-end w-full h-full  px-2  ${
-                text < 0
-                  ? "text-red-600 text-base font-bold"
-                  : text === 0
-                  ? "text-gray-300"
-                  : ""
-              } `}
-            >
-              {roundNumber(text)}
-            </div>
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
           ),
         },
         {
-          title: "Bán lẻ (Quầy)",
-          dataIndex: "SoLuongXuat_PBQ",
-          key: "SoLuongXuat_PBQ",
+          title: 'Bán lẻ (Quầy)',
+          dataIndex: 'SoLuongXuat_PBQ',
+          key: 'SoLuongXuat_PBQ',
           width: 150,
-          align: "center",
+          align: 'center',
           render: (text) => (
-            <div
-              className={`flex justify-end w-full h-full  px-2  ${
-                text < 0
-                  ? "text-red-600 text-base font-bold"
-                  : text === 0
-                  ? "text-gray-300"
-                  : ""
-              } `}
-            >
-              {roundNumber(text)}
-            </div>
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
           ),
         },
         {
-          title: "Trả hàng",
-          dataIndex: "SoLuongXuat_XTR",
-          key: "SoLuongXuat_XTR",
+          title: 'Trả hàng',
+          dataIndex: 'SoLuongXuat_XTR',
+          key: 'SoLuongXuat_XTR',
           width: 150,
-          align: "center",
+          align: 'center',
           render: (text) => (
-            <div
-              className={`flex justify-end w-full h-full  px-2  ${
-                text < 0
-                  ? "text-red-600 text-base font-bold"
-                  : text === 0
-                  ? "text-gray-300"
-                  : ""
-              } `}
-            >
-              {roundNumber(text)}
-            </div>
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
           ),
         },
         {
-          title: "Sử dụng",
-          dataIndex: "SoLuongXuat_XSD",
-          key: "SoLuongXuat_XSD",
+          title: 'Sử dụng',
+          dataIndex: 'SoLuongXuat_XSD',
+          key: 'SoLuongXuat_XSD',
           width: 150,
-          align: "center",
+          align: 'center',
           render: (text) => (
-            <div
-              className={`flex justify-end w-full h-full  px-2  ${
-                text < 0
-                  ? "text-red-600 text-base font-bold"
-                  : text === 0
-                  ? "text-gray-300"
-                  : ""
-              } `}
-            >
-              {roundNumber(text)}
-            </div>
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
           ),
         },
         {
-          title: "Hủy",
-          dataIndex: "SoLuongXuat_HUY",
-          key: "SoLuongXuat_HUY",
+          title: 'Hủy',
+          dataIndex: 'SoLuongXuat_HUY',
+          key: 'SoLuongXuat_HUY',
           width: 150,
-          align: "center",
+          align: 'center',
           render: (text) => (
-            <div
-              className={`flex justify-end w-full h-full  px-2  ${
-                text < 0
-                  ? "text-red-600 text-base font-bold"
-                  : text === 0
-                  ? "text-gray-300"
-                  : ""
-              } `}
-            >
-              {roundNumber(text)}
-            </div>
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
           ),
         },
         {
-          title: "Điều chỉnh",
-          dataIndex: "SoLuongXuat_XDC",
-          key: "SoLuongXuat_XDC",
+          title: 'Điều chỉnh',
+          dataIndex: 'SoLuongXuat_XDC',
+          key: 'SoLuongXuat_XDC',
           width: 150,
-          align: "center",
+          align: 'center',
           render: (text) => (
-            <div
-              className={`flex justify-end w-full h-full  px-2  ${
-                text < 0
-                  ? "text-red-600 text-base font-bold"
-                  : text === 0
-                  ? "text-gray-300"
-                  : ""
-              } `}
-            >
-              {roundNumber(text)}
-            </div>
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
           ),
         },
         {
-          title: "Chuyển kho",
-          dataIndex: "SoLuongTonCK",
-          key: "SoLuongTonCK",
+          title: 'Chuyển kho',
+          dataIndex: 'SoLuongTonCK',
+          key: 'SoLuongTonCK',
           width: 150,
-          align: "center",
+          align: 'center',
           render: (text) => (
-            <div
-              className={`flex justify-end w-full h-full  px-2  ${
-                text < 0
-                  ? "text-red-600 text-base font-bold"
-                  : text === 0
-                  ? "text-gray-300"
-                  : ""
-              } `}
-            >
-              {roundNumber(text)}
-            </div>
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
           ),
         },
         {
-          title: "Tổng xuất",
-          dataIndex: "SoLuongXuat",
-          key: "SoLuongXuat",
+          title: 'Tổng xuất',
+          dataIndex: 'SoLuongXuat',
+          key: 'SoLuongXuat',
           width: 150,
-          align: "center",
+          align: 'center',
           render: (text) => (
-            <div
-              className={`flex justify-end w-full h-full  px-2  ${
-                text < 0
-                  ? "text-red-600 text-base font-bold"
-                  : text === 0
-                  ? "text-gray-300"
-                  : ""
-              } `}
-            >
-              {roundNumber(text)}
-            </div>
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
           ),
         },
       ],
     },
     {
-      title: "Tồn Cuối",
-      dataIndex: "SoLuongTonCK",
-      fixed: "right",
-      key: "SoLuongTonCK",
+      title: 'Tồn Cuối',
+      dataIndex: 'SoLuongTonCK',
+      fixed: 'right',
+      key: 'SoLuongTonCK',
       width: 150,
-      align: "center",
+      align: 'center',
       render: (text) => (
-        <div
-          className={`flex justify-end w-full h-full  px-2  ${
-            text < 0
-              ? "text-red-600 text-base font-bold"
-              : text === 0
-              ? "text-gray-300"
-              : ""
-          } `}
-        >
-          {roundNumber(text)}
-        </div>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
       ),
     },
-  ];
+  ]
 
   return (
     <>
@@ -570,27 +401,18 @@ const NhapXuatTonKho = () => {
           <div className="flex flex-col gap-2">
             <div className="flex justify-between relative">
               <div className="flex items-center gap-2">
-                <h1 className="text-lg font-bold text-black-600 uppercase">
-                  Nhập Xuất Tồn - Theo Kho
-                </h1>
-                <FaSearch
-                  className="hover:text-red-400 cursor-pointer"
-                  onClick={() => setIsShowSearch(!isShowSearch)}
-                />
+                <h1 className="text-lg font-bold text-black-600 uppercase">Nhập Xuất Tồn - Theo Kho</h1>
+                <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
               </div>
               <div className="flex ">
                 {isShowSearch && (
-                  <div
-                    className={`flex absolute left-[18.5rem]  -top-1.5 transition-all linear duration-700 ${
-                      isShowSearch ? "w-[20rem]" : "w-0"
-                    } overflow-hidden`}
-                  >
+                  <div className={`flex absolute left-[18.5rem]  -top-1.5 transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
                     <input
                       type="text"
                       placeholder="Nhập tên bạn cần tìm"
                       onChange={handleSearch}
                       className={
-                        "px-2 py-1 w-[20rem] border-slate-200 resize-none rounded-[0.5rem] border-[0.125rem] outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis "
+                        'px-2 py-1 w-[20rem] border-slate-200 resize-none rounded-[0.5rem] border-[0.125rem] outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis '
                       }
                     />
                   </div>
@@ -598,65 +420,35 @@ const NhapXuatTonKho = () => {
               </div>
             </div>
             <div className="flex justify-between">
-              <form
-                className="flex gap-4 justify-center items-center"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") getDataNXT(e);
-                }}
-              >
+              <form className="flex gap-4 justify-center items-center" onSubmit={getDataNXT}>
                 <div className="flex flex-col gap-2 justify-end content-end">
-                  <div form={form} className="-mb-6">
-                    <Form.Item
-                      name="dateRange"
-                      rules={[
-                        {
-                          validator: validateDate,
-                        },
-                      ]}
-                    >
-                      <Space>
-                        <RangePicker
-                          format="DD/MM/YYYY"
-                          picker="date"
-                          onKeyDown={handleKeyDown}
-                          onCalendarChange={handleCalendarChange}
-                          defaultValue={[
-                            dayjs(khoanNgayFrom, "YYYY-MM-DD"),
-                            dayjs(khoanNgayTo, "YYYY-MM-DD"),
-                          ]}
-                          onChange={(values) => {
-                            setKhoanNgayFrom(
-                              khoanNgayFrom
-                                ? dayjs(values[0]).format("YYYY-MM-DDTHH:mm:ss")
-                                : ""
-                            );
-                            setKhoanNgayTo(
-                              khoanNgayTo
-                                ? dayjs(values[1]).format("YYYY-MM-DDTHH:mm:ss")
-                                : ""
-                            );
-                            const isValid =
-                              moment(values[0], "DD/MM/YYYY", true).isValid() &&
-                              moment(values[1], "DD/MM/YYYY", true).isValid();
-                            setIsValidDate(isValid);
-                          }}
-                        />
-                        {isValidDate ? (
-                          <MdCheckCircle
-                            style={{
-                              color: "green",
-                            }}
-                          />
-                        ) : (
-                          <IoMdCloseCircle
-                            style={{
-                              color: "red",
-                            }}
-                          />
-                        )}
-                      </Space>
-                    </Form.Item>
+                  <div className="flex gap-1">
+                    <div className="flex items-center gap-1">
+                      <label>Từ</label>
+                      <DatePicker
+                        className="DatePicker_NXTKho"
+                        format="DD/MM/YYYY"
+                        maxDate={dayjs(khoanNgayTo)}
+                        defaultValue={dayjs(khoanNgayFrom, 'YYYY-MM-DD')}
+                        onChange={(values) => {
+                          setKhoanNgayFrom(values ? dayjs(values).format('YYYY-MM-DDTHH:mm:ss') : '')
+                        }}
+                      />
+                    </div>
+                    <div className=" flex items-center gap-1 ">
+                      <label>-</label>
+                      <DatePicker
+                        className="DatePicker_NXTKho"
+                        format="DD/MM/YYYY"
+                        minDate={dayjs(khoanNgayFrom)}
+                        defaultValue={dayjs(khoanNgayTo, 'YYYY-MM-DD')}
+                        onChange={(values) => {
+                          setKhoanNgayTo(values ? dayjs(values).format('YYYY-MM-DDTHH:mm:ss') : '')
+                        }}
+                      />
+                    </div>
                   </div>
+
                   <div className="flex items-center gap-2">
                     <Select
                       allowClear
@@ -664,21 +456,16 @@ const NhapXuatTonKho = () => {
                       value={selectedMaKho}
                       onChange={(value) => setSelectedMaKho(value)}
                       style={{
-                        width: "150px",
-                        color: "red",
+                        width: '150px',
+                        color: 'red',
                       }}
                     >
                       {khoHangNXT?.map((item, index) => {
                         return (
-                          <Select.Option
-                            key={index}
-                            value={item.MaKho}
-                            title={item.TenKho}
-                            className="py-8"
-                          >
+                          <Select.Option key={index} value={item.MaKho} title={item.TenKho} className="py-8">
                             <p> {item.TenKho}</p>
                           </Select.Option>
-                        );
+                        )
                       })}
                     </Select>
                   </div>
@@ -694,19 +481,15 @@ const NhapXuatTonKho = () => {
                         value={selectedNhomFrom}
                         onChange={(value) => setSelectedNhomFrom(value)}
                         style={{
-                          width: "200px",
+                          width: '200px',
                         }}
                       >
                         {nhomHangNXT?.map((item, index) => {
                           return (
-                            <Select.Option
-                              key={index}
-                              value={item.Ma}
-                              title={item.ThongTinNhomHang}
-                            >
+                            <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomHang}>
                               <p className="truncate">{item.Ma}</p>
                             </Select.Option>
-                          );
+                          )
                         })}
                       </Select>
                     </div>
@@ -719,19 +502,15 @@ const NhapXuatTonKho = () => {
                         value={selectedNhomTo}
                         onChange={(value) => setSelectedNhomTo(value)}
                         style={{
-                          width: "200px",
+                          width: '200px',
                         }}
                       >
                         {nhomHangNXT?.map((item, index) => {
                           return (
-                            <Select.Option
-                              key={index}
-                              value={item.Ma}
-                              title={item.ThongTinNhomHang}
-                            >
+                            <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomHang}>
                               <p className="truncate">{item.Ma}</p>
                             </Select.Option>
-                          );
+                          )
                         })}
                       </Select>
                     </div>
@@ -745,19 +524,15 @@ const NhapXuatTonKho = () => {
                         value={selectedNhomList}
                         onChange={(value) => setSelectedNhomList(value)}
                         style={{
-                          width: "380px",
+                          width: '380px',
                         }}
                       >
                         {nhomHangNXT?.map((item) => {
                           return (
-                            <Select.Option
-                              key={item.Ma}
-                              value={item.Ma}
-                              title={item.ThongTinNhomHang}
-                            >
+                            <Select.Option key={item.Ma} value={item.Ma} title={item.ThongTinNhomHang}>
                               <p className="truncate">{item.Ma}</p>
                             </Select.Option>
-                          );
+                          )
                         })}
                       </Select>
                     </div>
@@ -772,19 +547,15 @@ const NhapXuatTonKho = () => {
                         value={selectedMaFrom}
                         onChange={(value) => setSelectedMaFrom(value)}
                         style={{
-                          width: "200px",
+                          width: '200px',
                         }}
                       >
                         {hangHoaNXT?.map((item, index) => {
                           return (
-                            <Select.Option
-                              key={index}
-                              value={item.MaHang}
-                              title={item.TenHang}
-                            >
+                            <Select.Option key={index} value={item.MaHang} title={item.TenHang}>
                               <p className="truncate">{item.MaHang}</p>
                             </Select.Option>
-                          );
+                          )
                         })}
                       </Select>
                     </div>
@@ -797,19 +568,15 @@ const NhapXuatTonKho = () => {
                         value={selectedMaTo}
                         onChange={(value) => setSelectedMaTo(value)}
                         style={{
-                          width: "200px",
+                          width: '200px',
                         }}
                       >
                         {hangHoaNXT?.map((item, index) => {
                           return (
-                            <Select.Option
-                              key={index}
-                              value={item.MaHang}
-                              title={item.TenHang}
-                            >
+                            <Select.Option key={index} value={item.MaHang} title={item.TenHang}>
                               <p className="truncate">{item.MaHang}</p>
                             </Select.Option>
-                          );
+                          )
                         })}
                       </Select>
                     </div>
@@ -824,24 +591,23 @@ const NhapXuatTonKho = () => {
                         onChange={(value) => setSelectedMaList(value)}
                         placeholder="Chọn mã hàng"
                         style={{
-                          width: "380px",
+                          width: '380px',
                         }}
                       >
                         {hangHoaNXT?.map((item, index) => {
                           return (
-                            <Select.Option
-                              key={index}
-                              value={item.MaHang}
-                              title={item.TenHang}
-                            >
+                            <Select.Option key={index} value={item.MaHang} title={item.TenHang}>
                               <p className="truncate">{item.MaHang}</p>
                             </Select.Option>
-                          );
+                          )
                         })}
                       </Select>
                     </div>
                   </div>
                 </div>
+                <button type="submit" className="flex items-center gap-1 bg-blue-600 rounded px-2 py-1.5 text-white font-bold hover:bg-blue-500 whitespace-nowrap">
+                  Lọc hàng <MdFilterListAlt />
+                </button>
               </form>
             </div>
           </div>
@@ -849,25 +615,32 @@ const NhapXuatTonKho = () => {
             <Table
               className="table_TXNhapXuatTonKho"
               columns={titles}
-              dataSource={filteredHangHoa.filter((item) =>
-                selectedMaKho ? item.MaKho === selectedMaKho : true
-              )}
+              dataSource={filteredHangHoa.filter((item) => (selectedMaKho ? item.MaKho === selectedMaKho : true))}
               size="small"
               scroll={{
                 x: 3100,
                 y: 300,
               }}
+              pagination={{
+                current: page,
+                pageSize: pageSize,
+                showSizeChanger: true,
+                onChange: (page, pageSize) => {
+                  setPage(page), setPageSize(pageSize)
+                },
+              }}
+              bordered
               style={{
-                whiteSpace: "nowrap",
-                fontSize: "24px",
-                borderRadius: "10px",
+                whiteSpace: 'nowrap',
+                fontSize: '24px',
+                borderRadius: '10px',
               }}
             />
           </div>
         </div>
       )}
     </>
-  );
-};
+  )
+}
 
-export default NhapXuatTonKho;
+export default NhapXuatTonKho

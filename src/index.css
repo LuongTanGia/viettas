@@ -185,6 +185,14 @@ a.nav-link span {
   max-height: 420px;
   z-index: 0;
 }
+.DatePicker_NXTKho .css-o9k5xi-MuiInputBase-root-MuiOutlinedInput-root {
+  height: 30px;
+  width: 150px;
+}
+.DatePicker_NDCKho .css-o9k5xi-MuiInputBase-root-MuiOutlinedInput-root {
+  height: 30px;
+  width: 200px;
+}
 input[type='radio'] {
   width: 20px;
 }
@@ -214,5 +222,5 @@ input[type='radio'] {
 
 #main {
   /* max-height: 100vh; */
-  margin-bottom: 60px;
+  margin-bottom: 50px;
 }
