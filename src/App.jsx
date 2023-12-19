@@ -10,17 +10,14 @@ import { useState } from 'react'
 
 function App() {
   const [isSidebarVisible, setIsSidebarVisible] = useState(true)
-
   const handleToggleSidebar = () => {
     setIsSidebarVisible(!isSidebarVisible)
   }
-
   const isLogged = localStorage.getItem('firstLogin')
 
   // if (!dataLoaded) {
   //     return <LoadingPage />;
   // }
-
   return (
     <Router>
       <Routes>

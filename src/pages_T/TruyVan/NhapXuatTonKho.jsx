@@ -3,12 +3,12 @@ import categoryAPI from '../../API/linkAPI'
 import { useSearch } from '../../hooks_T/Search'
 import { FaSearch } from 'react-icons/fa'
 import { useEffect, useState } from 'react'
-import { Form, DatePicker, Space, Table, Select, Tooltip } from 'antd'
-import moment from 'moment'
-import { MdCheckCircle } from 'react-icons/md'
-import { IoMdCloseCircle } from 'react-icons/io'
+import { Table, Select, Tooltip } from 'antd'
 import { toast } from 'react-toastify'
 import dayjs from 'dayjs'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import { MdFilterListAlt } from 'react-icons/md'
+import { RETOKEN } from '../../action/Actions'
 
 const NhapXuatTonKho = () => {
   const TokenAccess = localStorage.getItem('TKN')
@@ -27,36 +27,18 @@ const NhapXuatTonKho = () => {
   const [selectedNhomTo, setSelectedNhomTo] = useState('')
   const [selectedNhomList, setSelectedNhomList] = useState([])
   const [selectedMaKho, setSelectedMaKho] = useState(null)
-  const [isValidDate, setIsValidDate] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
-  const { RangePicker } = DatePicker
-  const [form] = Form.useForm()
-  const handleKeyDown = (e) => {
-    const validKeys = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '/', 'Backspace']
-    if (!validKeys.includes(e.key)) {
-      e.preventDefault()
-    }
-  }
-  const validateDate = (_, value) => {
-    const isValid = moment(value, 'DD/MM/YYYY', true).isValid()
-    setIsValidDate(isValid)
-    return isValid ? Promise.resolve() : Promise.reject('Ngày tháng không hợp lệ')
-  }
-  const handleCalendarChange = (_, dateString) => {
-    form.setFieldsValue({ dateRange: dateString })
-    const isValid = moment(dateString[0], 'DD/MM/YYYY', true).isValid() && moment(dateString[1], 'DD/MM/YYYY', true).isValid()
-    setIsValidDate(isValid)
-  }
-  const roundNumber = (number) => {
-    const roundedNumber = Math.round(number * 10) / 10
-    return roundedNumber.toFixed(1)
-  }
+  const [pageSize, setPageSize] = useState('100')
+  const [page, setPage] = useState('1')
+  const [dataThongSo, setDataThongSo] = useState('')
+
   useEffect(() => {
     getListNhomHangNXT()
     getListHangHoaNXT()
     getListKhoNXT()
     getTimeSetting()
     getDataNXTFirst()
+    getThongSo()
   }, [isLoading])
 
   const getDataNXTFirst = async () => {
@@ -83,7 +65,6 @@ const NhapXuatTonKho = () => {
   const getDataNXT = async (e) => {
     e.preventDefault()
     try {
-      console.log(khoanNgayFrom, khoanNgayTo)
       const response = await categoryAPI.InfoNXTTheoKho(
         {
           NgayBatDau: khoanNgayFrom,
@@ -159,9 +140,26 @@ const NhapXuatTonKho = () => {
       console.log(error)
     }
   }
+  const getThongSo = async () => {
+    try {
+      const response = await categoryAPI.ThongSo(TokenAccess)
+      if (response.data.DataError == 0) {
+        setDataThongSo(response.data.DataResult)
+      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        await RETOKEN()
+        getThongSo()
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
   const handleSearch = (event) => {
     setSearchHangHoa(event.target.value)
   }
+  const formatSLSL = (number) => {
+    return number.toFixed(Math.max(1, dataThongSo.SOLESOLUONG)).replace(/,/g, '.')
+  }
+
   const titles = [
     {
       title: 'STT',
@@ -238,7 +236,7 @@ const NhapXuatTonKho = () => {
       width: 150,
       align: 'center',
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{roundNumber(text)}</div>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
       ),
     },
     {
@@ -251,7 +249,7 @@ const NhapXuatTonKho = () => {
           width: 150,
           align: 'center',
           render: (text) => (
-            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{roundNumber(text)}</div>
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
           ),
         },
         {
@@ -261,7 +259,7 @@ const NhapXuatTonKho = () => {
           width: 150,
           align: 'center',
           render: (text) => (
-            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{roundNumber(text)}</div>
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
           ),
         },
         {
@@ -271,7 +269,7 @@ const NhapXuatTonKho = () => {
           width: 150,
           align: 'center',
           render: (text) => (
-            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{roundNumber(text)}</div>
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
           ),
         },
         {
@@ -281,7 +279,7 @@ const NhapXuatTonKho = () => {
           width: 150,
           align: 'center',
           render: (text) => (
-            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{roundNumber(text)}</div>
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
           ),
         },
       ],
@@ -296,7 +294,7 @@ const NhapXuatTonKho = () => {
           width: 150,
           align: 'center',
           render: (text) => (
-            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{roundNumber(text)}</div>
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
           ),
         },
         {
@@ -306,7 +304,7 @@ const NhapXuatTonKho = () => {
           width: 150,
           align: 'center',
           render: (text) => (
-            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{roundNumber(text)}</div>
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
           ),
         },
         {
@@ -316,7 +314,7 @@ const NhapXuatTonKho = () => {
           width: 150,
           align: 'center',
           render: (text) => (
-            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{roundNumber(text)}</div>
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
           ),
         },
         {
@@ -326,7 +324,7 @@ const NhapXuatTonKho = () => {
           width: 150,
           align: 'center',
           render: (text) => (
-            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{roundNumber(text)}</div>
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
           ),
         },
         {
@@ -336,17 +334,17 @@ const NhapXuatTonKho = () => {
           width: 150,
           align: 'center',
           render: (text) => (
-            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{roundNumber(text)}</div>
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
           ),
         },
         {
-          title: 'Đóng',
+          title: 'Hủy',
           dataIndex: 'SoLuongXuat_HUY',
           key: 'SoLuongXuat_HUY',
           width: 150,
           align: 'center',
           render: (text) => (
-            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{roundNumber(text)}</div>
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
           ),
         },
         {
@@ -356,7 +354,7 @@ const NhapXuatTonKho = () => {
           width: 150,
           align: 'center',
           render: (text) => (
-            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{roundNumber(text)}</div>
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
           ),
         },
         {
@@ -366,7 +364,7 @@ const NhapXuatTonKho = () => {
           width: 150,
           align: 'center',
           render: (text) => (
-            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{roundNumber(text)}</div>
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
           ),
         },
         {
@@ -376,7 +374,7 @@ const NhapXuatTonKho = () => {
           width: 150,
           align: 'center',
           render: (text) => (
-            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{roundNumber(text)}</div>
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
           ),
         },
       ],
@@ -389,7 +387,7 @@ const NhapXuatTonKho = () => {
       width: 150,
       align: 'center',
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{roundNumber(text)}</div>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
       ),
     },
   ]
@@ -422,52 +420,35 @@ const NhapXuatTonKho = () => {
               </div>
             </div>
             <div className="flex justify-between">
-              <form
-                className="flex gap-4 justify-center items-center"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') getDataNXT(e)
-                }}
-              >
+              <form className="flex gap-4 justify-center items-center" onSubmit={getDataNXT}>
                 <div className="flex flex-col gap-2 justify-end content-end">
-                  <div form={form} className="-mb-6">
-                    <Form.Item
-                      name="dateRange"
-                      rules={[
-                        {
-                          validator: validateDate,
-                        },
-                      ]}
-                    >
-                      <Space>
-                        <RangePicker
-                          format="DD/MM/YYYY"
-                          picker="date"
-                          onKeyDown={handleKeyDown}
-                          onCalendarChange={handleCalendarChange}
-                          defaultValue={[dayjs(khoanNgayFrom, 'YYYY-MM-DD'), dayjs(khoanNgayTo, 'YYYY-MM-DD')]}
-                          onChange={(values) => {
-                            setKhoanNgayFrom(khoanNgayFrom ? dayjs(values[0]).format('YYYY-MM-DDTHH:mm:ss') : '')
-                            setKhoanNgayTo(khoanNgayTo ? dayjs(values[1]).format('YYYY-MM-DDTHH:mm:ss') : '')
-                            const isValid = moment(values[0], 'DD/MM/YYYY', true).isValid() && moment(values[1], 'DD/MM/YYYY', true).isValid()
-                            setIsValidDate(isValid)
-                          }}
-                        />
-                        {isValidDate ? (
-                          <MdCheckCircle
-                            style={{
-                              color: 'green',
-                            }}
-                          />
-                        ) : (
-                          <IoMdCloseCircle
-                            style={{
-                              color: 'red',
-                            }}
-                          />
-                        )}
-                      </Space>
-                    </Form.Item>
+                  <div className="flex gap-1">
+                    <div className="flex items-center gap-1">
+                      <label>Từ</label>
+                      <DatePicker
+                        className="DatePicker_NXTKho"
+                        format="DD/MM/YYYY"
+                        maxDate={dayjs(khoanNgayTo)}
+                        defaultValue={dayjs(khoanNgayFrom, 'YYYY-MM-DD')}
+                        onChange={(values) => {
+                          setKhoanNgayFrom(values ? dayjs(values).format('YYYY-MM-DDTHH:mm:ss') : '')
+                        }}
+                      />
+                    </div>
+                    <div className=" flex items-center gap-1 ">
+                      <label>-</label>
+                      <DatePicker
+                        className="DatePicker_NXTKho"
+                        format="DD/MM/YYYY"
+                        minDate={dayjs(khoanNgayFrom)}
+                        defaultValue={dayjs(khoanNgayTo, 'YYYY-MM-DD')}
+                        onChange={(values) => {
+                          setKhoanNgayTo(values ? dayjs(values).format('YYYY-MM-DDTHH:mm:ss') : '')
+                        }}
+                      />
+                    </div>
                   </div>
+
                   <div className="flex items-center gap-2">
                     <Select
                       allowClear
@@ -624,6 +605,9 @@ const NhapXuatTonKho = () => {
                     </div>
                   </div>
                 </div>
+                <button type="submit" className="flex items-center gap-1 bg-blue-600 rounded px-2 py-1.5 text-white font-bold hover:bg-blue-500 whitespace-nowrap">
+                  Lọc hàng <MdFilterListAlt />
+                </button>
               </form>
             </div>
           </div>
@@ -637,6 +621,15 @@ const NhapXuatTonKho = () => {
                 x: 3100,
                 y: 300,
               }}
+              pagination={{
+                current: page,
+                pageSize: pageSize,
+                showSizeChanger: true,
+                onChange: (page, pageSize) => {
+                  setPage(page), setPageSize(pageSize)
+                },
+              }}
+              bordered
               style={{
                 whiteSpace: 'nowrap',
                 fontSize: '24px',

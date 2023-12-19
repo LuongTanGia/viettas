@@ -13,6 +13,7 @@ import { TfiMoreAlt } from 'react-icons/tfi'
 import { GrStatusUnknown } from 'react-icons/gr'
 import { CiBarcode } from 'react-icons/ci'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
+import { RETOKEN } from '../../action/Actions'
 
 const HangHoa = () => {
   const TokenAccess = localStorage.getItem('TKN')
@@ -25,6 +26,8 @@ const HangHoa = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [selectedRowKeys, setSelectedRowKeys] = useState([])
   const [isShowSearch, setIsShowSearch] = useState(false)
+  const [pageSize, setPageSize] = useState('10')
+  const [page, setPage] = useState('1')
 
   const getListHangHoa = async () => {
     try {
@@ -32,8 +35,10 @@ const HangHoa = () => {
       if (response.data.DataError === 0) {
         setDataHangHoa(response.data.DataResults)
         setIsLoading(true)
+      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        await RETOKEN()
+        getListHangHoa()
       } else {
-        console.log(response)
         setIsLoading(true)
       }
     } catch (error) {
@@ -114,6 +119,9 @@ const HangHoa = () => {
           newWindow.onload = function () {
             newWindow.print()
           }
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handlePrintABarcode()
         } else {
           toast.error(response.data.DataErrorDescription)
         }
@@ -140,6 +148,9 @@ const HangHoa = () => {
           newWindow.onload = function () {
             newWindow.print()
           }
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handlePrintABarcode()
         } else {
           toast.error(response.data.DataErrorDescription)
         }
@@ -231,15 +242,6 @@ const HangHoa = () => {
       sorter: (a, b) => a.DVTKho.localeCompare(b.DVTKho),
     },
     {
-      title: 'Quy đổi',
-      dataIndex: 'TyLeQuyDoi',
-      key: 'TyLeQuyDoi',
-      align: 'center',
-      width: 120,
-      sorter: (a, b) => a.TyLeQuyDoi - b.TyLeQuyDoi,
-      render: (text) => <span className="flex justify-end">{formatCurrency(text)}</span>,
-    },
-    {
       title: 'Quy đổi Đơn vị tính',
       dataIndex: 'DienGiaiDVTQuyDoi',
       key: 'DienGiaiDVTQuyDoi',
@@ -266,7 +268,7 @@ const HangHoa = () => {
         const valueB = b.LapRap ? 1 : 0
         return valueA - valueB
       },
-      render: (text, record) => <Checkbox className="text-base" id={`LapRap_${record.key}`} checked={text} />,
+      render: (text, record) => <Checkbox className="justify-center" id={`LapRap_${record.key}`} checked={text} />,
     },
     {
       title: 'Tồn kho',
@@ -279,7 +281,7 @@ const HangHoa = () => {
         const valueB = b.TonKho ? 1 : 0
         return valueA - valueB
       },
-      render: (text, record) => <Checkbox className="text-base" id={`TonKho_${record.key}`} checked={text} />,
+      render: (text, record) => <Checkbox className=" justify-center" id={`TonKho_${record.key}`} checked={text} />,
     },
     {
       title: 'Giá bán lẻ',
@@ -288,7 +290,7 @@ const HangHoa = () => {
       align: 'center',
       width: 120,
       sorter: (a, b) => a.GiaBanLe - b.GiaBanLe,
-      render: (text) => <span className="flex justify-end">{formatCurrency(text)}</span>,
+      render: (text) => <span className={`flex justify-end  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''}`}>{formatCurrency(text)}</span>,
     },
     {
       title: 'Bảng số giá',
@@ -297,32 +299,37 @@ const HangHoa = () => {
       width: 120,
       sorter: (a, b) => a.BangGiaSi - b.BangGiaSi,
       align: 'center',
-      render: (text) => <span className="flex justify-end">{formatCurrency(text)}</span>,
+      render: (text) => (
+        <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 || text === null ? 'text-gray-300' : ''}`}>{formatCurrency(text)}</span>
+      ),
     },
     {
       title: 'Giá sỉ thấp',
       dataIndex: 'BangGiaSi_Min',
       key: 'BangGiaSi_Min',
       width: 150,
-      sorter: (a, b) => a.BangGiaSi_Min - b.BangGiaSi_Min,
       align: 'center',
-      render: (text) => <span className="flex justify-end">{formatCurrency(text)}</span>,
+      sorter: (a, b) => a.BangGiaSi_Min - b.BangGiaSi_Min,
+      render: (text) => (
+        <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 || text === null ? 'text-gray-300' : ''}`}>{formatCurrency(text)}</span>
+      ),
     },
     {
       title: 'Giá sỉ cao',
       dataIndex: 'BangGiaSi_Max',
       key: 'BangGiaSi_Max',
       width: 150,
-      sorter: (a, b) => a.BangGiaSi_Max - b.BangGiaSi_Max,
       align: 'center',
-      render: (text) => <span className="flex justify-end">{formatCurrency(text)}</span>,
+      sorter: (a, b) => a.BangGiaSi_Max - b.BangGiaSi_Max,
+      render: (text) => (
+        <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 || text === null ? 'text-gray-300' : ''}`}>{formatCurrency(text)}</span>
+      ),
     },
     {
       title: 'Người tạo',
       dataIndex: 'NguoiTao',
       key: 'NguoiTao',
       align: 'center',
-      width: 200,
       sorter: (a, b) => a.NguoiTao.localeCompare(b.NguoiTao),
       render: (text) => (
         <Tooltip title={text}>
@@ -355,7 +362,6 @@ const HangHoa = () => {
       dataIndex: 'NguoiSuaCuoi',
       key: 'NguoiSuaCuoi',
       align: 'center',
-      width: 200,
       sorter: (a, b) => a.NguoiSuaCuoi.localeCompare(b.NguoiSuaCuoi),
       render: (text) => (
         <Tooltip title={text}>
@@ -400,7 +406,7 @@ const HangHoa = () => {
         const valueB = b.NA ? 1 : 0
         return valueA - valueB
       },
-      render: (text, record) => <Checkbox className="text-base" id={`NA_${record.key}`} checked={text} />,
+      render: (text, record) => <Checkbox className="justify-center" id={`NA_${record.key}`} checked={text} />,
     },
     {
       title: 'Action',
@@ -487,7 +493,7 @@ const HangHoa = () => {
             <div className="flex justify-end ">
               <div className="flex gap-2">
                 <div
-                  className="px-2 py-1 bg-blue-600 rounded-lg font-semibold text-slate-50 shadow-custom flex gap-1 items-center cursor-pointer hover:bg-white hover:text-blue-600"
+                  className="px-2 py-1 rounded font-bold flex gap-1 items-center cursor-pointer border-2 hover:text-slate-50 hover:bg-blue-600 bg-slate-50 text-blue-600"
                   onClick={() => handleCreate()}
                 >
                   <div> Thêm Sản Phẩm</div>
@@ -496,7 +502,7 @@ const HangHoa = () => {
                   </div>
                 </div>
                 <div
-                  className="justify-center px-2 py-1  rounded-lg font-semibold  shadow-custom flex gap-1 items-center cursor-pointer text-slate-50 bg-green-600 hover:bg-slate-50 hover:text-green-600"
+                  className="px-2 py-1 rounded font-bold flex gap-1 items-center cursor-pointer border-2 hover:text-slate-50 hover:bg-green-600 bg-slate-50 text-green-600"
                   onClick={() => handleStatusMany()}
                 >
                   <div> Đổi Trạng Thái </div>
@@ -505,7 +511,7 @@ const HangHoa = () => {
                   </div>
                 </div>
                 <div
-                  className="justify-center px-2 py-1.5px-2 py-1 rounded-lg font-semibold  shadow-custom flex gap-1 items-center cursor-pointer text-slate-50 bg-orange-600 hover:bg-slate-50 hover:text-orange-600"
+                  className="px-2 py-1 rounded font-bold flex gap-1 items-center border-2 cursor-pointer hover:text-slate-50 hover:bg-orange-600 bg-slate-50 text-orange-600"
                   onClick={() => handleGroupMany()}
                 >
                   <div> Đổi Nhóm Hàng </div>
@@ -514,7 +520,7 @@ const HangHoa = () => {
                   </div>
                 </div>
                 <div
-                  className="justify-center px-2 py-1.5  rounded-lg font-semibold shadow-custom flex gap-1 items-center cursor-pointer  hover:bg-slate-50 hover:text-purple-600  bg-purple-600  text-slate-50"
+                  className="px-2 py-1  rounded font-bold flex gap-1 items-center cursor-pointer border-2 bg-slate-50 text-purple-600  hover:bg-purple-600 hover:text-slate-50"
                   onClick={() => handlePrintABarcode()}
                 >
                   <div> In Mã Vạch </div>
@@ -528,6 +534,7 @@ const HangHoa = () => {
               <Table
                 rowSelection={{
                   selectedRowKeys,
+                  showSizeChanger: true,
                   onChange: (selectedKeys) => {
                     setSelectedRowKeys(selectedKeys)
                   },
@@ -554,6 +561,13 @@ const HangHoa = () => {
                 scroll={{
                   x: 3000,
                   y: 400,
+                }}
+                pagination={{
+                  current: page,
+                  pageSize: pageSize,
+                  onChange: (page, pageSize) => {
+                    setPage(page), setPageSize(pageSize)
+                  },
                 }}
                 style={{
                   whiteSpace: 'nowrap',
