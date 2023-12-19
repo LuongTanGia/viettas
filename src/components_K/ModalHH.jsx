@@ -62,10 +62,10 @@ const ModalHH = ({ close, data, onRowCreate }) => {
                     <td className="py-2 px-4 border">{item.TenHang}</td>
                     <td className="py-2 px-4 border">{item.DVT}</td>
                     <td className="py-2 px-4 border text-center">
-                      <input type="checkbox" defaultChecked={item.LapRap} />
+                      <input type="checkbox" checked={item.LapRap} />
                     </td>
                     <td className="py-2 px-4 border text-center">
-                      <input type="checkbox" defaultChecked={item.TonKho} />
+                      <input type="checkbox" checked={item.TonKho} />
                     </td>
                     <td className={`py-2 px-4 border text-end ${item.SoLuongTon < 0 ? 'text-red-600 font-bold' : ''}`}>{item.SoLuongTon}.0</td>
                     <td className="py-2 px-4 border">{item.NhomHang}</td>

@@ -10,11 +10,11 @@ import * as apis from '../../../apis'
 import { NumericFormat } from 'react-number-format'
 import { Modals } from '../../../components_K'
 import dayjs from 'dayjs'
-import { RETOKEN, roundNumber } from '../../../action/Actions'
+import { RETOKEN, formatPrice, formatQuantity, roundNumber } from '../../../action/Actions'
 import SimpleBackdrop from '../../../components/util/Loading/LoadingPage'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 
-const { IoAddCircleOutline, TiPrinter, FaRegEdit, MdDelete, GiPayMoney, FcSearch } = icons
+const { IoAddCircleOutline, TiPrinter, FaRegEdit, MdDelete, GiPayMoney, BsSearch } = icons
 const PhieuMuaHang = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [isLoadingPopup, setIsLoadingPopup] = useState(false)
@@ -32,6 +32,7 @@ const PhieuMuaHang = () => {
 
   const [actionType, setActionType] = useState('')
   const [formKhoanNgay, setFormKhoanNgay] = useState([])
+  const [dataThongSo, setDataThongSo] = useState()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -74,6 +75,7 @@ const PhieuMuaHang = () => {
 
   useEffect(() => {
     getKhoanNgay()
+    getThongSo()
     getDSPMH()
   }, [])
 
@@ -88,6 +90,26 @@ const PhieuMuaHang = () => {
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         getKhoanNgay()
+      }
+    } catch (error) {
+      console.error('Kiểm tra token thất bại', error)
+      setIsLoading(true)
+    }
+  }
+
+  const getThongSo = async () => {
+    try {
+      const tokenLogin = localStorage.getItem('TKN')
+      const response = await apis.ThongSo(tokenLogin)
+
+      if (response.data && response.data.DataError === 0) {
+        setDataThongSo(response.data.DataResult)
+        setIsLoading(true)
+      } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
+        toast.warning(response.data.DataErrorDescription)
+      } else {
+        await RETOKEN()
+        getThongSo()
       }
     } catch (error) {
       console.error('Kiểm tra token thất bại', error)
@@ -207,7 +229,9 @@ const PhieuMuaHang = () => {
       width: 150,
       align: 'end',
       render: (text) => (
-        <div className={`flex justify-end w-full h-full    ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{roundNumber(text)}</div>
+        <div className={`flex justify-end w-full h-full    ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          {formatQuantity(text, dataThongSo?.SOLESOLUONG)}
+        </div>
       ),
       sorter: (a, b) => a.TongSoLuong - b.TongSoLuong,
     },
@@ -218,12 +242,9 @@ const PhieuMuaHang = () => {
       width: 150,
       align: 'end',
       render: (text) => (
-        <NumericFormat
-          value={text}
-          displayType={'text'}
-          thousandSeparator={true}
-          className={`flex justify-end w-full h-full ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}
-        />
+        <div className={`flex justify-end w-full h-full ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          {formatPrice(text, dataThongSo?.SOLESOTIEN)}
+        </div>
       ),
       sorter: (a, b) => a.TongTienHang - b.TongTienHang,
     },
@@ -234,12 +255,9 @@ const PhieuMuaHang = () => {
       width: 150,
       align: 'end',
       render: (text) => (
-        <NumericFormat
-          value={text}
-          displayType={'text'}
-          thousandSeparator={true}
-          className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}
-        />
+        <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          {formatPrice(text, dataThongSo?.SOLESOTIEN)}
+        </div>
       ),
       sorter: (a, b) => a.TongTienThue - b.TongTienThue,
     },
@@ -250,12 +268,9 @@ const PhieuMuaHang = () => {
       width: 150,
       align: 'end',
       render: (text) => (
-        <NumericFormat
-          value={text}
-          displayType={'text'}
-          thousandSeparator={true}
-          className={`flex justify-end w-full h-full  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}
-        />
+        <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          {formatPrice(text, dataThongSo?.SOLESOTIEN)}
+        </div>
       ),
       sorter: (a, b) => a.TongThanhTien - b.TongThanhTien,
     },
@@ -450,7 +465,7 @@ const PhieuMuaHang = () => {
         <div className="flex items-center gap-x-4 font-bold">
           <label>Phiếu mua hàng </label>
           <div>
-            <FcSearch size={20} className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
+            <BsSearch size={18} className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
           </div>
         </div>
         <div className="flex relative ">
@@ -592,27 +607,18 @@ const PhieuMuaHang = () => {
                     <Table.Summary.Cell index={8}></Table.Summary.Cell>
                     <Table.Summary.Cell index={9}></Table.Summary.Cell>
                     <Table.Summary.Cell index={10}>{totalTongMatHang}</Table.Summary.Cell>
-                    <Table.Summary.Cell index={11}>{roundNumber(totalTongSoLuong)}</Table.Summary.Cell>
-                    <Table.Summary.Cell index={12}>
-                      <NumericFormat
-                        value={totalTongTienHang}
-                        displayType={'text'}
-                        thousandSeparator={true}
-                        // suffix={" ₫"}
-                      />
-                    </Table.Summary.Cell>
-                    <Table.Summary.Cell index={13}>{totalTongTienThue}</Table.Summary.Cell>
-                    <Table.Summary.Cell index={14}>
-                      <NumericFormat value={totalTongThanhTien} displayType={'text'} thousandSeparator={true} />
-                    </Table.Summary.Cell>
+                    <Table.Summary.Cell index={11}>{formatQuantity(totalTongSoLuong, dataThongSo?.SOLESOLUONG)}</Table.Summary.Cell>
+                    <Table.Summary.Cell index={12}>{formatPrice(totalTongTienHang, dataThongSo?.SOLESOTIEN)}</Table.Summary.Cell>
+                    <Table.Summary.Cell index={13}> {formatPrice(totalTongTienThue, dataThongSo?.SOLESOTIEN)}</Table.Summary.Cell>
+                    <Table.Summary.Cell index={14}>{formatPrice(totalTongThanhTien, dataThongSo?.SOLESOTIEN)}</Table.Summary.Cell>
                     <Table.Summary.Cell index={15}></Table.Summary.Cell>
                     <Table.Summary.Cell index={16}></Table.Summary.Cell>
                     <Table.Summary.Cell index={17}></Table.Summary.Cell>
                     <Table.Summary.Cell index={18}></Table.Summary.Cell>
-                    <Table.Summary.Cell index={19} className="text-center ">
+                    <Table.Summary.Cell index={19}></Table.Summary.Cell>
+                    <Table.Summary.Cell index={20} className="text-center ">
                       {data ? data.reduce((count, item) => count + (item.TTTienMat ? 1 : 0), 0) : null}
                     </Table.Summary.Cell>
-                    <Table.Summary.Cell index={20}></Table.Summary.Cell>
                   </Table.Summary.Row>
                 </Table.Summary>
               )
@@ -636,6 +642,7 @@ const PhieuMuaHang = () => {
           dataPMH={data}
           controlDate={formKhoanNgay}
           isLoadingModel={isLoadingPopup}
+          dataThongSo={dataThongSo}
         />
       )}
     </div>

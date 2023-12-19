@@ -138,7 +138,7 @@ export const SuaPMH = (token, Sct, formPMHEdit, MaDoiTuong, MaKho) =>
           SoChungTu: Sct,
           Data: {
             ...formPMHEdit,
-            DataDetails: formPMHEdit.DataDetails.map((item, index) => ({
+            DataDetails: formPMHEdit?.DataDetails?.map((item, index) => ({
               ...item,
               STT: index + 1,
             })),
@@ -237,6 +237,23 @@ export const LapPhieuChi = (token, Sct) =>
           Authorization: `Bearer ${token}`,
         },
         data: { SoChungTu: Sct },
+      })
+      resolve(response)
+    } catch (error) {
+      reject(error)
+    }
+  })
+
+export const ThongSo = (token) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const response = await axios({
+        url: '/settings/GiaTriHeThong/ThongSo',
+        method: 'post',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        data: {},
       })
       resolve(response)
     } catch (error) {

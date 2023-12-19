@@ -375,3 +375,36 @@ export const roundNumber = (number) => {
   const roundedNumber = Math.round(number * 10) / 10
   return roundedNumber.toFixed(1)
 }
+
+export const formatQuantity = (number, odd) => {
+  return number.toFixed(Math.max(odd)).replace(/,/g, '.')
+}
+
+export const formatPrice = (price, odd) => {
+  const numberOfDecimals = odd || 0
+
+  // Làm tròn số thập phân
+  const roundedAmount = price.toFixed(numberOfDecimals)
+
+  // Tách phần nguyên và phần thập phân
+  const parts = roundedAmount.split('.')
+  let integerPart = parts[0]
+  let decimalPart = parts[1] || ''
+
+  // Định dạng hàng nghìn với dấu phẩy
+  integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+
+  // Kiểm tra để xem có cần thêm số chữ số thập phân không
+  if (numberOfDecimals > 0) {
+    // Bổ sung số chữ số thập phân bằng cách sử dụng `padEnd`
+    decimalPart = decimalPart.padEnd(numberOfDecimals, '0')
+    decimalPart = `.${decimalPart}`
+  } else {
+    decimalPart = ''
+  }
+
+  // Kết hợp lại và thêm số chữ số thập phân nếu cần
+  const formattedAmount = `${integerPart}${decimalPart}`
+
+  return formattedAmount
+}

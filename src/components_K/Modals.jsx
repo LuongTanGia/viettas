@@ -1,8 +1,9 @@
+/* eslint-disable react/jsx-no-undef */
 /* eslint-disable react/prop-types */
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import icons from '../untils/icons'
 import * as apis from '../apis'
-import { Table, Form } from 'antd'
+import { Table } from 'antd'
 import moment from 'moment'
 import dayjs from 'dayjs'
 import { NumericFormat } from 'react-number-format'
@@ -15,9 +16,15 @@ import { RETOKEN, base64ToPDF, roundNumber } from '../action/Actions'
 import ModalOnlyPrint from './ModalOnlyPrint'
 import ModalOnlyPrintWareHouse from './ModalOnlyPrintWareHouse'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+// import TextField from '@mui/material/TextField'
+// import Autocomplete from '@mui/material/Autocomplete'
+import { Select } from 'antd'
+// import { create } from '@mui/material/styles/createTransitions'
+const { Option } = Select
 
 const { IoMdClose, MdDelete, TiPrinter } = icons
-const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, dataRecord, dataPMH, controlDate, isLoadingModel }) => {
+
+const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, dataRecord, dataPMH, controlDate, isLoadingModel, dataThongSo }) => {
   const [isShowModalHH, setIsShowModalHH] = useState(false)
   const [isShowModalOnlyPrint, setIsShowModalOnlyPrint] = useState(false)
   const [isShowModalOnlyPrintWareHouse, setIsShowModalOnlyPrintWareHouse] = useState(false)
@@ -308,16 +315,20 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
     // Tìm thông tin đối tượng tương ứng và cập nhật state
     const selectedDoiTuongInfo = dataDoiTuong.find((item) => item.Ma === selectedValue)
     setDoiTuongInfo(selectedDoiTuongInfo || { Ten: '', DiaChi: '' })
-    setFormPMH({
-      ...formPMH,
-      TenDoiTuong: selectedDoiTuongInfo.Ten,
-      DiaChi: selectedDoiTuongInfo.DiaChi,
-    })
-    setFormPMHEdit({
-      ...formPMHEdit,
-      TenDoiTuong: selectedDoiTuongInfo.Ten,
-      DiaChi: selectedDoiTuongInfo.DiaChi,
-    })
+    if (actionType === 'create') {
+      setFormPMH({
+        ...formPMH,
+        TenDoiTuong: selectedDoiTuongInfo.Ten,
+        DiaChi: selectedDoiTuongInfo.DiaChi,
+      })
+    }
+    if (actionType === 'edit') {
+      setFormPMHEdit({
+        ...formPMHEdit,
+        TenDoiTuong: selectedDoiTuongInfo.Ten,
+        DiaChi: selectedDoiTuongInfo.DiaChi,
+      })
+    }
   }
 
   const handleCreate = async () => {
@@ -510,6 +521,15 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
     setNewDataPMH(filteredData)
   }
 
+  // const onChange = (value) => {
+  //   setSelectedKhoHang(value)
+  //   console.log(`selected ${value}`)
+  // }
+  // const onSearch = (value) => {
+  //   setSelectedKhoHang(value)
+  //   console.log(`selected ${value}`)
+  // }
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
       <div className="  m-4 p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
@@ -545,7 +565,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                 <DatePicker
                   className="DatePicker_PMH"
                   format="DD/MM/YYYY"
-                  defaultValue={dayjs(controlDate.NgayBatDau)}
+                  value={dayjs(controlDate.NgayBatDau)}
                   onChange={(newDate) => {
                     setFormPrint({
                       ...formPrint,
@@ -559,7 +579,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                 <DatePicker
                   className="DatePicker_PMH"
                   format="DD/MM/YYYY"
-                  defaultValue={dayjs(controlDate.NgayKetThuc)}
+                  value={dayjs(controlDate.NgayKetThuc)}
                   onChange={(newDate) => {
                     setFormPrint({
                       ...formPrint,
@@ -576,7 +596,13 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
             <div className="flex  mt-4 ">
               <div className="flex ">
                 <label className="px-4">Số chứng từ</label>
-                <select className=" bg-white border outline-none border-gray-300  " value={selectedSctBD} onChange={(e) => setSelectedSctBD(e.target.value)}>
+
+                <select
+                  className=" bg-white border outline-none border-gray-300  "
+                  value={selectedSctBD}
+                  onChange={(e) => setSelectedSctBD(e.target.value)}
+                  onClick={(e) => setSelectedSctBD(e.target.value)}
+                >
                   {newDataPMH?.map((item) => (
                     <option key={item.SoChungTu} value={item.SoChungTu}>
                       {item.SoChungTu}
@@ -586,7 +612,13 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
               </div>
               <div className="flex ">
                 <label className="px-4">Đến</label>
-                <select className=" bg-white border outline-none border-gray-300  " value={selectedSctKT} onChange={(e) => setSelectedSctKT(e.target.value)}>
+
+                <select
+                  className=" bg-white border outline-none border-gray-300 "
+                  value={selectedSctKT}
+                  onChange={(e) => setSelectedSctKT(e.target.value)}
+                  onClick={(e) => setSelectedSctKT(e.target.value)}
+                >
                   {newDataPMH?.map((item) => (
                     <option key={item.SoChungTu} value={item.SoChungTu}>
                       {item.SoChungTu}
@@ -656,7 +688,12 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
             <div className="flex  mt-4 ">
               <div className="flex ">
                 <label className="px-4">Số chứng từ</label>
-                <select className=" bg-white border outline-none border-gray-300  " value={selectedSctBD} onChange={(e) => setSelectedSctBD(e.target.value)}>
+                <select
+                  className=" bg-white border outline-none border-gray-300  "
+                  value={selectedSctBD}
+                  onChange={(e) => setSelectedSctBD(e.target.value)}
+                  onClick={(e) => setSelectedSctBD(e.target.value)}
+                >
                   {newDataPMH?.map((item) => (
                     <option key={item.SoChungTu} value={item.SoChungTu}>
                       {item.SoChungTu}
@@ -666,7 +703,12 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
               </div>
               <div className="flex ">
                 <label className="px-4">Đến</label>
-                <select className=" bg-white border outline-none border-gray-300  " value={selectedSctKT} onChange={(e) => setSelectedSctKT(e.target.value)}>
+                <select
+                  className=" bg-white border outline-none border-gray-300  "
+                  value={selectedSctKT}
+                  onChange={(e) => setSelectedSctKT(e.target.value)}
+                  onClick={(e) => setSelectedSctKT(e.target.value)}
+                >
                   {newDataPMH?.map((item) => (
                     <option key={item.SoChungTu} value={item.SoChungTu}>
                       {item.SoChungTu}
@@ -867,7 +909,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
             </div>
             {/* button print */}
             <div className="flex justify-between items-center">
-              <div className="flex gap-x-3 p-2">
+              <div className="flex gap-x-3 py-2">
                 <button
                   onClick={() => setIsShowModalOnlyPrint(true)}
                   className="flex items-center  py-1 px-2  rounded-md border-dashed border border-gray-500  text-sm hover:text-sky-500  hover:border-sky-500 "
@@ -955,14 +997,20 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                     <label form="doituong" className="w-[86px]">
                       Đối tượng
                     </label>
-
-                    <select className=" bg-white border w-full  outline-none border-gray-300  " value={selectedDoiTuong} onChange={(e) => handleDoiTuongFocus(e.target.value)}>
+                    <Select showSearch size="small" optionFilterProp="children" onChange={(value) => handleDoiTuongFocus(value)} style={{ width: '100%' }} value={selectedDoiTuong}>
+                      {dataDoiTuong?.map((item) => (
+                        <Option key={item.Ma} value={item.Ma}>
+                          {item.Ma} - {item.Ten}
+                        </Option>
+                      ))}
+                    </Select>
+                    {/* <select className=" bg-white border w-full  outline-none border-gray-300  " value={selectedDoiTuong} onChange={(e) => handleDoiTuongFocus(e.target.value)}>
                       {dataDoiTuong?.map((item) => (
                         <option key={item.Ma} value={item.Ma}>
                           {item.Ma} - {item.Ten}
                         </option>
                       ))}
-                    </select>
+                    </select> */}
                   </div>
                   <div className="flex items-center   p-1">
                     <label className="w-[86px]">Tên</label>
@@ -997,7 +1045,15 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                       <label form="khohang" className="w-[94px]">
                         Kho hàng
                       </label>
-                      <select
+
+                      <Select showSearch size="small" optionFilterProp="children" onChange={(value) => setSelectedKhoHang(value)} style={{ width: '100%' }} value={selectedKhoHang}>
+                        {dataKhoHang?.map((item) => (
+                          <Option key={item.MaKho} value={item.MaKho}>
+                            {item.ThongTinKho}
+                          </Option>
+                        ))}
+                      </Select>
+                      {/* <select
                         className=" bg-white border  w-full border-gray-300 hover:border-gray-500 "
                         onChange={(e) => setSelectedKhoHang(e.target.value)}
                         value={selectedKhoHang}
@@ -1007,14 +1063,14 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                             {item.MaKho} - {item.TenKho}
                           </option>
                         ))}
-                      </select>
+                      </select> */}
                     </div>
                     <div className="flex items-center p-1  w-1/2">
                       <label className="w-[86px]">Ghi chú</label>
                       <input
                         type="text"
                         className="w-full border border-gray-300 outline-none px-2 "
-                        value={dataThongTin?.GhiChu}
+                        defaultValue={dataThongTin.GhiChu}
                         onChange={(e) =>
                           setFormPMHEdit({
                             ...formPMHEdit,
@@ -1095,7 +1151,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                 <div className="">
                   <div className="flex p-1 gap-x-2">
                     <div className="flex items-center ">
-                      <label className="">Số chứng từ</label>
+                      <label className="pr-3">Số chứng từ</label>
                       <input readOnly type="text" className=" border border-gray-300 outline-none  px-2 cursor-not-allowed  bg-gray-200" />
                     </div>
                     {/* DatePicker */}
@@ -1132,13 +1188,42 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                     <label form="doituong" className="w-[86px]">
                       Đối tượng
                     </label>
-                    <select className=" bg-white border w-full outline-none border-gray-300  " value={selectedDoiTuong} onChange={(e) => handleDoiTuongFocus(e.target.value)}>
+                    {/* <Autocomplete
+                      className="autocomplete_PMH"
+                      size="small"
+                      value={selectedDoiTuong}
+                      onChange={(event, newValue) => {
+                        handleDoiTuongFocus(newValue.Ma)
+                      }}
+                      options={dataDoiTuong}
+                      getOptionLabel={(item) => `${item.Ma} - ${item.Ten}`}
+                      sx={{ width: 600 }}
+                      renderInput={(params) => <TextField {...params} />}
+                    /> */}
+
+                    <Select
+                      showSearch
+                      size="small"
+                      optionFilterProp="children"
+                      onChange={(value) => handleDoiTuongFocus(value)}
+                      // onSearch={onSearch}
+                      // filterOption={(input, option) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                      style={{ width: '100%' }}
+                      value={selectedDoiTuong}
+                    >
+                      {dataDoiTuong?.map((item) => (
+                        <Option key={item.Ma} value={item.Ma}>
+                          {item.Ma} - {item.Ten}
+                        </Option>
+                      ))}
+                    </Select>
+                    {/* <select className=" bg-white border w-full outline-none border-gray-300  " value={selectedDoiTuong} onChange={(e) => handleDoiTuongFocus(e.target.value)}>
                       {dataDoiTuong?.map((item) => (
                         <option key={item.Ma} value={item.Ma}>
                           {item.Ma} - {item.Ten}
                         </option>
                       ))}
-                    </select>
+                    </select> */}
                   </div>
                   <div className="flex items-center  p-1">
                     <label className="w-[86px]">Tên</label>
@@ -1173,7 +1258,37 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                       <label form="khohang" className="w-[94px]">
                         Kho hàng
                       </label>
-                      <select
+
+                      {/* <Autocomplete
+                        className="autocomplete_PMH"
+                        size="small"
+                        value={selectedKhoHang}
+                        onChange={(event, newValue) => {
+                          setSelectedKhoHang(newValue.MaKho)
+                        }}
+                        options={dataKhoHang}
+                        getOptionLabel={(item) => `${item.MaKho} - ${item.TenKho}`}
+                        sx={{ width: 300 }}
+                        renderInput={(params) => <TextField {...params} />}
+                      /> */}
+
+                      <Select
+                        showSearch
+                        size="small"
+                        optionFilterProp="children"
+                        onChange={(value) => setSelectedKhoHang(value)}
+                        // onSearch={onSearch}
+                        // filterOption={(input, option) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                        style={{ width: '100%' }}
+                        value={selectedKhoHang}
+                      >
+                        {dataKhoHang?.map((item) => (
+                          <Option key={item.MaKho} value={item.MaKho}>
+                            {item.ThongTinKho}
+                          </Option>
+                        ))}
+                      </Select>
+                      {/* <select
                         className=" bg-white border w-full  border-gray-300 hover:border-gray-500 "
                         onChange={(e) => setSelectedKhoHang(e.target.value)}
                         value={selectedKhoHang}
@@ -1183,7 +1298,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                             {item.ThongTinKho}
                           </option>
                         ))}
-                      </select>
+                      </select> */}
                     </div>
                     <div className="flex items-center p-1 w-1/2 ">
                       <label className="w-[86px]">Ghi chú</label>
@@ -1202,19 +1317,18 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                   </div>
                 </div>
               </div>
-              <div className="flex justify-end items-center ">
-                <div className="px-3">
-                  <input
-                    id="lapphieuchi"
-                    type="checkbox"
-                    className="border border-blue-500 rounded-md px-4 py-2
+              <div className="py-2">
+                <input
+                  id="lapphieuchi"
+                  type="checkbox"
+                  className="border border-blue-500 rounded-md px-4 py-2
                   hover:bg-blue-500 hover:text-white"
-                    checked={formPMH.TTTienMat}
-                    onChange={handleTienMat}
-                  />
-                  <label htmlFor="lapphieuchi">Lập phiếu chi</label>
-                </div>
-
+                  checked={formPMH.TTTienMat}
+                  onChange={handleTienMat}
+                />
+                <label htmlFor="lapphieuchi">Lập phiếu chi</label>
+              </div>
+              <div className="flex justify-end items-center ">
                 <button
                   disabled={isAdd}
                   onClick={handleAddEmptyRow}
@@ -1248,6 +1362,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                         handleDeleteRow={handleDeleteRow}
                         setRowData={setSelectedRowData}
                         currentRowData={currentRowData(item.MaHang)}
+                        dataThongSo={dataThongSo}
                       />
                     ))}
                   </tbody>
@@ -1288,7 +1403,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
             </button>
           </div>
         ) : actionType === 'print' ? (
-          <div className="flex justify-end mt-4 gap-2">
+          <div className="flex justify-end mt-5 gap-2">
             <button
               onClick={() => close()}
               className="active:scale-[.98] active:duration-75 text-white text-text-main font-bold  bg-rose-500 rounded-md px-2 py-1 w-[80px] hover:opacity-80"

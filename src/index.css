@@ -212,11 +212,22 @@ input[type='radio'] {
 
 /* custom DatePicker MUI*/
 
-.DatePicker_PMH .css-o9k5xi-MuiInputBase-root-MuiOutlinedInput-root {
+.css-o9k5xi-MuiInputBase-root-MuiOutlinedInput-root {
   height: 30px;
   width: 150px;
 }
 
+.css-9yxuw4-MuiAutocomplete-root .MuiOutlinedInput-root.MuiInputBase-sizeSmall {
+  padding-top: 0px;
+  padding-bottom: 0px;
+  height: 24px;
+  border-radius: 0px;
+}
+
+.css-9yxuw4-MuiAutocomplete-root .MuiAutocomplete-inputRoot .MuiAutocomplete-input {
+  height: 13px;
+  font-size: 14px;
+}
 /* end */
 
 #main {
