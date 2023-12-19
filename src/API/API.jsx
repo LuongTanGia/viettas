@@ -18,6 +18,7 @@ const API = {
   DANHSACHDOITUONG_PBS: `${BASE_URL}/api/entries/DuLieuPBS/ListHelper_DoiTuong`,
   DANHSACHKHOHANG_PBS: `${BASE_URL}/api/entries/DuLieuPBS/ListHelper_KhoHang`,
   DANHSACHHANGHOA_PBS: `${BASE_URL}/api/entries/DuLieuPBS/ListHelper_HangHoa`,
+  THEMPHIEUBANHANG: `${BASE_URL}/api/entries/DuLieuPBS/Them`,
 }
 
 export default API

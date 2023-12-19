@@ -2,11 +2,11 @@
 /* eslint-disable no-case-declarations */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { Table, Typography, Select, Form, Input, InputNumber, Popconfirm, Checkbox } from 'antd'
+import { Table, Typography, Select, Form, Input, InputNumber, Popconfirm, Checkbox, Space, Button } from 'antd'
 import './table.css'
 import BtnAction from './BtnAction'
 import { useEffect, useState } from 'react'
-
+import { FcServices } from 'react-icons/fc'
 const { Text } = Typography
 
 const getInputNode = (inputType, record, dataIndex, text, typeTable, form, onChange) => {
@@ -87,7 +87,7 @@ const EditableCell = ({ editing, dataIndex, title, inputType, record, index, chi
   )
 }
 
-function Tables({ param, columName, height, handleView, handleEdit, typeTable, handleAddData }) {
+function Tables({ param, columName, height, handleView, handleEdit, typeTable, handleAddData, handleDelete }) {
   const getInputType = (cellValue, dataIndex) => {
     if (dataIndex === 'MaHang' || dataIndex === 'DVT') {
       return 'select'
@@ -153,6 +153,7 @@ function Tables({ param, columName, height, handleView, handleEdit, typeTable, h
             }
           : null,
   }))
+
   const columns = [
     ...newColumns,
     typeTable !== 'listHelper'
@@ -161,7 +162,7 @@ function Tables({ param, columName, height, handleView, handleEdit, typeTable, h
           key: 'operation',
           fixed: 'right',
           width: 100,
-          render: (record) => <BtnAction handleView={handleView} record={record} handleEdit={handleEdit} />,
+          render: (record) => <BtnAction handleView={handleView} record={record} handleEdit={handleEdit} handleDelete={handleDelete} />,
         }
       : {},
     typeTable !== 'listHelper'
@@ -271,10 +272,11 @@ function Tables({ param, columName, height, handleView, handleEdit, typeTable, h
   const onRowClick = (record) => {
     return {
       onDoubleClick: () => {
-        handleAddData(record)
+        handleAddData({ ...record, SoLuong: 1, DonGia: record.GiaBan, ThanhTien: 171000 })
       },
     }
   }
+  const [selectVisible, setSelectVisible] = useState(false)
   const options = []
   for (let i = 0; i < keysOnly.length; i++) {
     options.push({
@@ -286,17 +288,26 @@ function Tables({ param, columName, height, handleView, handleEdit, typeTable, h
     console.log(`selected ${value}`)
     setHiden(value)
   }
+  const handleToggleSelect = () => {
+    setSelectVisible(!selectVisible)
+  }
   return (
     <>
-      <Select
-        mode="tags"
-        style={{
-          width: '100%',
-        }}
-        placeholder="Chọn Cột Muốn Ẩn"
-        onChange={handleChange}
-        options={options}
-      />
+      <Button onClick={handleToggleSelect} className="mr-4 ">
+        Ẩn/hiện cột
+      </Button>
+      {selectVisible && (
+        <Select
+          mode="tags"
+          style={{ width: 500 }}
+          placeholder="Chọn Cột Muốn Ẩn"
+          onChange={handleChange}
+          options={options}
+          optionRender={(option) => <Space>{option.data.label}</Space>}
+          value={hiden}
+        />
+      )}
+
       <Form form={form} component={false}>
         <Table
           components={{
@@ -323,7 +334,7 @@ function Tables({ param, columName, height, handleView, handleEdit, typeTable, h
           size="small"
           summary={(pageData) => {
             return (
-              <Table.Summary fixed>
+              <Table.Summary fixed={'bottom'}>
                 <Table.Summary.Row>
                   {columns.length > 2
                     ? columns.map((column) => {

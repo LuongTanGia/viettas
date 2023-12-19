@@ -20,7 +20,7 @@ const CollectionCreateForm = ({ isShow, close, data, dataUser }) => {
     const response = await LOGIN(API.DANGNHAP, API.DANHSACHDULIEU, token, RemoteDB, dataUser, dispatch)
     console.log(response)
     window.localStorage.setItem('firstLogin', true)
-    Cookies.set('firstLogin', true)
+
     if (response === 1) {
       Cookies.set('remoteDb', RemoteDB)
       window.location.href = '/'

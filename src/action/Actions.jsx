@@ -19,7 +19,6 @@ export const RETOKEN = async () => {
     } else if (response.data.DataError === -107 || response.data.DataError === -111) {
       window.location.href = '/login'
       // toast.error(response.data.DataErrorDescription);
-
       return 0
     }
   } catch (error) {
@@ -316,7 +315,6 @@ export const DANHSACHKHOHANG = async (API, token, dispatch) => {
   }
 }
 export const DANHSACHHANGHOA_PBS = async (API, token, data) => {
-  console.log(data, 'dataAPI')
   try {
     const response = await axios.post(API, data, {
       headers: {
@@ -349,6 +347,41 @@ export const DANHSACHHANGHOA_PBS = async (API, token, data) => {
     }
   } catch (error) {
     console.error('Error adding user:', error)
+  }
+}
+
+export const THEMPHIEUBANHANG = async (API, token, data) => {
+  try {
+    const response = await axios.post(API, data, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    if (response && response.data) {
+      if (response.data.DataError === -107 || response.data.DataError === -108) {
+        // toast.error(response.data.DataErrorDescription);
+        const newToken = await RETOKEN()
+        if (newToken !== '') {
+          await THEMPHIEUBANHANG(API, newToken, data)
+        } else if (newToken === 0) {
+          toast.error('Failed to refresh token!')
+          window.localStorage.clear()
+          window.location.href = '/login'
+        }
+      }
+
+      if (response.data) {
+        toast.success(response.data.DataErrorDescription)
+      } else {
+        toast.error('DataResults is undefined or null.')
+      }
+    } else {
+      toast.error('Response or response.data is undefined or null.')
+    }
+  } catch (error) {
+    toast.error('Error adding user:', error)
   }
 }
 

@@ -39,7 +39,6 @@ function PhieuBanHang() {
   }
   return (
     <>
-      <div>Phiếu Bán Hàng List</div>
       <button
         onClick={handleCreate}
         className=" hover:bg-sky-500 border border-sky-500 p-2  rounded-md text-blue-400 hover:text-white font-medium float-right flex justify-center items-center

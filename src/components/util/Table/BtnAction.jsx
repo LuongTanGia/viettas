@@ -21,7 +21,11 @@ function BtnAction({ handleEdit, handleDelete, record }) {
           >
             <FaRegEdit size={16} />
           </div>
-          <div onClick={() => handleDelete()} title="Xóa" className="p-[3px] text-red-500 border  border-red-500 rounded-md hover:text-white hover:bg-red-500 cursor-pointer  ">
+          <div
+            onClick={() => handleDelete(record)}
+            title="Xóa"
+            className="p-[3px] text-red-500 border  border-red-500 rounded-md hover:text-white hover:bg-red-500 cursor-pointer  "
+          >
             <MdDelete size={16} />
           </div>
         </div>

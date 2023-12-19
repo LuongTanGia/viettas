@@ -9,11 +9,13 @@ import dayjs from 'dayjs'
 import { useSelector } from 'react-redux'
 import Tables from '../util/Table/Table'
 import { DatePicker, Space } from 'antd'
-import { DANHSACHDOITUONG, DANHSACHKHOHANG } from '../../action/Actions'
+import { DANHSACHDOITUONG, DANHSACHKHOHANG, THEMPHIEUBANHANG } from '../../action/Actions'
 import API from '../../API/API'
 import ListHelper_HangHoa from './ListHelper_HangHoa'
 import { toast } from 'react-toastify'
+import { Select } from 'antd'
 
+const { Option } = Select
 const { IoMdClose } = icons
 const { RangePicker } = DatePicker
 
@@ -70,17 +72,21 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction }) {
     }
   }, [isShow, dataRecord, token])
 
-  const dateFormat = 'YYYY/MM/DD'
+  const dateFormat = 'YYYY-MM-DDTHH:mm:ss.SSS[Z]'
 
   const handleClosePopup = () => {
     setShowPopup(false)
     console.log('he')
   }
   // Action Sửa
-  const handleChangeInput = (e) => {
-    const { name, value } = e.target
+  // const handleChangeInput = (e) => {
+  //   const { name, value } = e.target
+  //   const [MaDoiTuong, TenDoiTuong, DiaChi] = value.split(' - ')
+  //   setForm({ ...form, [name]: value, MaDoiTuong, TenDoiTuong, DiaChi })
+  // }
+  const handleChangeInput = (value) => {
     const [MaDoiTuong, TenDoiTuong, DiaChi] = value.split(' - ')
-    setForm({ ...form, [name]: value, MaDoiTuong, TenDoiTuong, DiaChi })
+    setForm({ ...form, MaDoiTuong, TenDoiTuong, DiaChi })
   }
   const handleChangeInput_kho = (e) => {
     const { name, value } = e.target
@@ -99,11 +105,33 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction }) {
       toast.success('Thêm thành công !')
     }
   }
+
+  const handleSubmit = async () => {
+    console.log('submit')
+    const updatedDataDetails = form.DataDetails.map((item) => {
+      const TienHang = item.DonGia * item.SoLuong
+      const TongCong = TienHang * (1 + item.TyLeThue / 100)
+
+      return {
+        ...item,
+        TienHang,
+        TongCong,
+      }
+    })
+    const data = { ...form, ...Date, DataDetails: updatedDataDetails }
+    await THEMPHIEUBANHANG(API.THEMPHIEUBANHANG, token, data)
+    console.log(data)
+  }
+
+  const handleDelete = (key) => {
+    const newData = form.DataDetails.filter((item) => item.key !== key)
+    setForm({ ...form, DataDetails: newData })
+  }
   return (
     <>
       {isModalOpen ? (
         <div>
-          <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center zIndex">
+          <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
             <div className="m-6 p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
               <div className=" w-[90vw] h-[600px] ">
                 <div className="flex justify-between  items-start pb-1">
@@ -133,7 +161,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction }) {
                             }
                             disabled={typeAction === 'view' ? true : false}
                             size="large"
-                            format="DD/MM/YYYY"
+                            format="YYYY-MM-DDTHH:mm:ss.SSS[Z]"
                             defaultValue={data_chitiet ? [dayjs(form?.NgayCTu, dateFormat), dayjs(form?.DaoHan, dateFormat)] : []}
                             onChange={onChange}
                           />
@@ -143,18 +171,19 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction }) {
                         <label form="doituong" className="w-[86px]">
                           Đối tượng
                         </label>
-                        <select
+                        <Select
                           className="w-[90%] outline-none"
                           value={`${form?.MaDoiTuong} - ${form?.TenDoiTuong} - ${form?.DiaChi}`}
                           disabled={typeAction === 'view' || typeAction === 'edit'}
                           onChange={handleChangeInput}
+                          showSearch
                         >
                           {listDoiTuong?.map((item, index) => (
-                            <option value={`${item.Ma} - ${item.Ten} - ${item.DiaChi}`} key={index}>
+                            <Option value={`${item.Ma} - ${item.Ten} - ${item.DiaChi}`} key={index}>
                               {item?.Ma} {item?.Ten}
-                            </option>
+                            </Option>
                           ))}
-                        </select>
+                        </Select>
                       </div>
                       <div className="flex items-center justify-start p-1">
                         <label className="w-[86px]">Tên</label>
@@ -219,31 +248,33 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction }) {
                     {/* thong tin cap nhat */}
                     <div className="w-[40%] py-1 box_content">
                       <div className="text-center p-1 font-medium text_capnhat">Thông tin cập nhật</div>
-                      <div className="-2 rounded-md w-[98%] h-[80%] box_capnhat">
-                        <div className="flex justify-between items-center ">
-                          <div className="flex items-center p-1  ">
+                      <div className="-2 rounded-md w-[98%] h-[80%] box_capnhat overflow-hidden ">
+                        <div className="flex justify-between items-center flex-wrap mt-3 ">
+                          <div className="flex items-center p-1  justify-between">
                             <label className="">Người tạo</label>
-                            <input type="text" className="   outline-none px-2" value={form?.NguoiTao} readOnly />
+                            <input type="text" className="w-[170px]    outline-none px-2" value={form?.NguoiTao} readOnly />
                           </div>
-                          <div className="flex items-center p-1 w-1/2">
+                          <div className="flex items-center p-1 w-1/2 flex-wrapjustify-between">
                             <label className="">Lúc</label>
-                            <input readOnly type="text" className="w-full   outline-none px-2 " value={form?.NgayTao} />
+                            <input readOnly type="text" className="w-[170px]   outline-none px-2 " value={form?.NgayTao} />
                           </div>
                         </div>
-                        <div className="flex justify-between items-center ">
-                          <div className="flex items-center p-1  ">
+                        <div className="flex justify-between items-center flex-wrap">
+                          <div className="flex items-center p-1  flex-wrap justify-between">
                             <label className="">Sửa cuối</label>
-                            <input readOnly type="text" className="   outline-none px-2 " value={form?.NguoiSuaCuoi} />
+                            <input readOnly type="text" className="w-[170px]    outline-none px-2 " value={form?.NguoiSuaCuoi} />
                           </div>
-                          <div className="flex items-center p-1 w-1/2">
+                          <div className="flex items-center p-1 w-1/2 justify-between">
                             <label className="">Lúc</label>
-                            <input readOnly type="text" className="w-full   outline-none px-2 " value={form?.NgaySuaCuoi} />
+                            <input readOnly type="text" className="w-[170px] outline-none px-2 " value={form?.NgaySuaCuoi} />
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                  <div className="p-4 pb-0">{data_chitiet ? <Tables param={form?.DataDetails} columName={''} height={'h150'} typeTable={'edit'} /> : null}</div>
+                  <div className="p-4 pb-0">
+                    {data_chitiet ? <Tables param={form?.DataDetails} columName={''} height={'h150'} typeTable={'edit'} handleDelete={handleDelete} /> : null}
+                  </div>
                   <div className="pr-4 w-full flex justify-end mt-2">
                     <button
                       className=" hover:bg-rose-400 border-1 border-rose-500 p-2  rounded-md text-rose-700 hover:text-white font-medium float-right flex justify-center items-center
@@ -256,6 +287,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction }) {
                     <button
                       className=" hover:bg-green-400 border-1 border-green-500  p-2  rounded-md text-green-400 hover:text-white font-medium float-right flex justify-center items-center
             mb-2 ml-4"
+                      onClick={handleSubmit}
                     >
                       <FcOk />
                       <p className="ml-2">Xác Nhận</p>
