@@ -251,7 +251,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction }) {
                       onClick={() => handleClose()}
                     >
                       <FcCancel className="mt-1" />
-                      <p className="ml-2">Hủy</p>
+                      <p className="ml-2">Đóng</p>
                     </button>
                     <button
                       className=" hover:bg-green-400 border-1 border-green-500  p-2  rounded-md text-green-400 hover:text-white font-medium float-right flex justify-center items-center

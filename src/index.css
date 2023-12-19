@@ -189,27 +189,45 @@ input[type='radio'] {
   width: 20px;
 }
 
-/* K custom antd */
+/* K custom antd and MUI */
 /* start */
-/* custom button   */
+/* custom button  antd */
 .ant-btn.ant-btn-sm {
   background-color: #1677ff;
   color: #fff;
 }
 
-/* custom table */
+/* custom table antd */
 
 .table_view .ant-table-body {
   min-height: 320px;
   max-height: 320px;
 }
 
-/* custom input */
+/* custom input antd */
 .ant-input-number .ant-input-number-input {
   color: black;
   text-align: center;
 }
 
+/* custom DatePicker MUI*/
+
+.css-o9k5xi-MuiInputBase-root-MuiOutlinedInput-root {
+  height: 30px;
+  width: 150px;
+}
+
+.css-9yxuw4-MuiAutocomplete-root .MuiOutlinedInput-root.MuiInputBase-sizeSmall {
+  padding-top: 0px;
+  padding-bottom: 0px;
+  height: 24px;
+  border-radius: 0px;
+}
+
+.css-9yxuw4-MuiAutocomplete-root .MuiAutocomplete-inputRoot .MuiAutocomplete-input {
+  height: 13px;
+  font-size: 14px;
+}
 /* end */
 
 #main {
