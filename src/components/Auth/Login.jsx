@@ -14,7 +14,6 @@ const App = () => {
   const [rememberMe, setRememberMe] = useState(Cookies.get('useCookies') === 'true')
   const [isShow, setIsShow] = useState(false)
 
-  const loginTrue = Cookies.get('firstLogin') === 'true' ? true : false
   const dispatch = useDispatch()
   const [data, setData] = useState()
   const [user, setUser] = useState({
@@ -121,35 +120,26 @@ const App = () => {
           </div>
           <div className="flex justify-between items-center mb-4">
             <div className="mb-4">
-              {!loginTrue ? (
-                <>
-                  <input type="checkbox" id="rememberMe" checked={rememberMe} onChange={() => setRememberMe(!rememberMe)} className="mr-2" />
-                  <label htmlFor="rememberMe" className="text-base font-medium">
-                    Sử dụng cookie
-                  </label>
+              <>
+                <input type="checkbox" id="rememberMe" checked={rememberMe} onChange={() => setRememberMe(!rememberMe)} className="mr-2" />
+                <label htmlFor="rememberMe" className="text-base font-medium">
+                  Sử dụng cookie
+                </label>
 
-                  <p>
-                    Chúng tôi đang sử dụng <strong className="underline decoration-sky-500">cookie</strong> để cung cấp cho bạn những trải nghiệm tốt nhất trên trang web này. Bằng
-                    cách tiếp tục truy cập, bạn đồng ý với
-                    <a
-                      className="underline decoration-sky-500 font-bold"
-                      onClick={() => {
-                        setIsShow(true)
-                      }}
-                    >
-                      {' '}
-                      Chính sách thu thập và sử dụng cookie của chúng tôi.
-                    </a>
-                  </p>
-                </>
-              ) : (
-                <>
-                  <input type="checkbox" id="rememberMe" checked={rememberMe} className="mr-2" />
-                  <label htmlFor="rememberMe" className="text-base font-medium">
-                    Sử dụng cookie
-                  </label>
-                </>
-              )}
+                <p>
+                  Chúng tôi đang sử dụng <strong className="underline decoration-sky-500">cookie</strong> để cung cấp cho bạn những trải nghiệm tốt nhất trên trang web này. Bằng
+                  cách tiếp tục truy cập, bạn đồng ý với
+                  <a
+                    className="underline decoration-sky-500 font-bold"
+                    onClick={() => {
+                      setIsShow(true)
+                    }}
+                  >
+                    {' '}
+                    Chính sách thu thập và sử dụng cookie của chúng tôi.
+                  </a>
+                </p>
+              </>
             </div>
           </div>
           <div className="flex flex-col gap-y-4 mt-14">
