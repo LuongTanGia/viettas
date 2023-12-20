@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import icons from '../../../untils/icons'
 const { FaRegEdit, MdDelete } = icons
 
@@ -22,7 +23,7 @@ function BtnAction({ handleEdit, handleDelete, record }) {
             <FaRegEdit size={16} />
           </div>
           <div
-            onClick={() => handleDelete(record)}
+            onClick={() => handleDelete(record.MaHang)}
             title="Xóa"
             className="p-[3px] text-red-500 border  border-red-500 rounded-md hover:text-white hover:bg-red-500 cursor-pointer  "
           >

@@ -225,7 +225,9 @@ export const DANHSACHPHIEUBANHANG = async (API, token, dispatch) => {
         window.location.href = '/login'
       }
     }
-    dispatch(PBSSlice.actions.getDanhSach(response.data))
+    console.log(response.data)
+
+    return response.data
   } catch (error) {
     console.error('Error adding user:', error)
   }
@@ -374,6 +376,7 @@ export const THEMPHIEUBANHANG = async (API, token, data) => {
 
       if (response.data) {
         toast.success(response.data.DataErrorDescription)
+        console.log(response.data.DataErrorDescription)
       } else {
         toast.error('DataResults is undefined or null.')
       }

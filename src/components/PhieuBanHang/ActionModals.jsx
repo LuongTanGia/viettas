@@ -7,7 +7,7 @@ import { chiTietPBS } from '../../redux/selector'
 import './phieumuahang.css'
 import dayjs from 'dayjs'
 import { useSelector } from 'react-redux'
-import Tables from '../util/Table/Table'
+import TableEdit from '../util/Table/EditTable'
 import { DatePicker, Space } from 'antd'
 import { DANHSACHDOITUONG, DANHSACHKHOHANG, THEMPHIEUBANHANG } from '../../action/Actions'
 import API from '../../API/API'
@@ -42,18 +42,19 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction }) {
   const [listDoiTuong, setListDoiTuong] = useState([])
   const [listKhoHang, setListKhoHang] = useState([])
   const [showPopup, setShowPopup] = useState(false)
+  const [dataChitiet, setDataChitiet] = useState([])
   const data_chitiet = useSelector(chiTietPBS)
-  console.log(data_chitiet.DataResult)
+
   useEffect(() => {
     typeAction === 'edit' || typeAction === 'view' ? setForm(data_chitiet.DataResult) : setForm(initState)
-    setIsModalOpen(isShow)
-
+    setDataChitiet(form?.DataDetails)
     const loadData = async () => {
       try {
         const result_doituong = await DANHSACHDOITUONG(API.DANHSACHDOITUONG_PBS, token)
         const result_khohang = await DANHSACHKHOHANG(API.DANHSACHKHOHANG_PBS, token)
         setListDoiTuong(result_doituong)
         setListKhoHang(result_khohang)
+        setIsModalOpen(isShow)
       } catch (error) {
         console.error('Error fetching data:', error)
       }
@@ -70,13 +71,12 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction }) {
     return () => {
       // window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [isShow, dataRecord, token])
+  }, [isShow, dataRecord, token, form?.DataDetails])
 
   const dateFormat = 'YYYY-MM-DDTHH:mm:ss.SSS[Z]'
 
   const handleClosePopup = () => {
     setShowPopup(false)
-    console.log('he')
   }
   // Action Sửa
   // const handleChangeInput = (e) => {
@@ -96,37 +96,26 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction }) {
     setDate({ ...Date, NgayCTu: timeString[0], DaoHan: timeString[1] })
   }
   const handleAddData = (record) => {
-    const isMaHangExists = form.DataDetails.some((item) => item.MaHang === record.MaHang)
+    const isMaHangExists = dataChitiet.some((item) => item.MaHang === record.MaHang)
 
     if (isMaHangExists) {
       toast.warn('Đã tồn tại mã hàng trong chi tiết !!')
     } else {
-      setForm({ ...form, DataDetails: [...form.DataDetails, record] })
+      setDataChitiet([...dataChitiet, record])
       toast.success('Thêm thành công !')
     }
   }
-
+  const handleEditData = (data) => {
+    setDataChitiet(data)
+  }
   const handleSubmit = async () => {
-    console.log('submit')
-    const updatedDataDetails = form.DataDetails.map((item) => {
-      const TienHang = item.DonGia * item.SoLuong
-      const TongCong = TienHang * (1 + item.TyLeThue / 100)
+    console.log('submit', dataChitiet)
 
-      return {
-        ...item,
-        TienHang,
-        TongCong,
-      }
-    })
-    const data = { ...form, ...Date, DataDetails: updatedDataDetails }
+    const data = { ...form, ...Date, DataDetails: dataChitiet }
     await THEMPHIEUBANHANG(API.THEMPHIEUBANHANG, token, data)
     console.log(data)
   }
 
-  const handleDelete = (key) => {
-    const newData = form.DataDetails.filter((item) => item.key !== key)
-    setForm({ ...form, DataDetails: newData })
-  }
   return (
     <>
       {isModalOpen ? (
@@ -272,9 +261,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction }) {
                       </div>
                     </div>
                   </div>
-                  <div className="p-4 pb-0">
-                    {data_chitiet ? <Tables param={form?.DataDetails} columName={''} height={'h150'} typeTable={'edit'} handleDelete={handleDelete} /> : null}
-                  </div>
+                  <div className="p-4 pb-0">{data_chitiet ? <TableEdit param={dataChitiet} handleEditData={handleEditData} /> : null}</div>
                   <div className="pr-4 w-full flex justify-end mt-2">
                     <button
                       className=" hover:bg-rose-400 border-1 border-rose-500 p-2  rounded-md text-rose-700 hover:text-white font-medium float-right flex justify-center items-center

@@ -88,6 +88,9 @@ const EditableCell = ({ editing, dataIndex, title, inputType, record, index, chi
 }
 
 function Tables({ param, columName, height, handleView, handleEdit, typeTable, handleAddData, handleDelete }) {
+  const [pageSize, setPageSize] = useState('10')
+  const [page, setPage] = useState('1')
+
   const getInputType = (cellValue, dataIndex) => {
     if (dataIndex === 'MaHang' || dataIndex === 'DVT') {
       return 'select'
@@ -165,36 +168,6 @@ function Tables({ param, columName, height, handleView, handleEdit, typeTable, h
           render: (record) => <BtnAction handleView={handleView} record={record} handleEdit={handleEdit} handleDelete={handleDelete} />,
         }
       : {},
-    typeTable !== 'listHelper'
-      ? {
-          title: 'operation',
-          dataIndex: 'operation',
-          width: 100,
-          fixed: 'right',
-          render: (_, record, index) => {
-            const editable = isEditing(record)
-            return editable ? (
-              <span>
-                <Typography.Link
-                  onClick={() => save(index)}
-                  style={{
-                    marginRight: 8,
-                  }}
-                >
-                  Save
-                </Typography.Link>
-                <Popconfirm title="Sure to cancel?" onConfirm={() => cancel(index)}>
-                  <a>Cancel</a>
-                </Popconfirm>
-              </span>
-            ) : (
-              <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
-                Edit
-              </Typography.Link>
-            )
-          },
-        }
-      : {},
   ]
 
   const mergedColumns = columns.map((col) => {
@@ -253,26 +226,11 @@ function Tables({ param, columName, height, handleView, handleEdit, typeTable, h
   const cancel = () => {
     setEditingKey('')
   }
-  const save = async (index) => {
-    try {
-      const row = await form.validateFields()
-      const newData = [...data]
-      const item = newData[index]
-      newData.splice(index, 1, {
-        ...item,
-        ...row,
-      })
-      setData(newData)
-      setEditingKey('')
-      console.log(newData)
-    } catch (errInfo) {
-      console.log('Validate Failed:', errInfo)
-    }
-  }
+
   const onRowClick = (record) => {
     return {
       onDoubleClick: () => {
-        handleAddData({ ...record, SoLuong: 1, DonGia: record.GiaBan, ThanhTien: 171000 })
+        typeTable === 'listHelper' ? handleAddData({ ...record, SoLuong: 1, DonGia: record.GiaBan }) : handleView(record)
       },
     }
   }
@@ -320,9 +278,12 @@ function Tables({ param, columName, height, handleView, handleEdit, typeTable, h
           dataSource={data}
           rowClassName="editable-row"
           pagination={{
-            onChange: cancel,
+            current: page,
+            pageSize: pageSize,
+            onChange: (page, pageSize) => {
+              setPage(page), setPageSize(pageSize)
+            },
           }}
-          defaultCurrent={10}
           bordered
           onRow={(record) => ({
             ...onRowClick(record),
@@ -334,7 +295,7 @@ function Tables({ param, columName, height, handleView, handleEdit, typeTable, h
           size="small"
           summary={(pageData) => {
             return (
-              <Table.Summary fixed={'bottom'}>
+              <Table.Summary fixed="bottom">
                 <Table.Summary.Row>
                   {columns.length > 2
                     ? columns.map((column) => {

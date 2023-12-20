@@ -1,21 +1,36 @@
 import Table from '../util/Table/Table'
-import { useSelector } from 'react-redux'
-import { danhSachPBS } from '../../redux/selector'
+import LoadingPage from '../util/Loading/LoadingPage'
+
 import { nameColumsPhieuBanHang } from '../util/Table/ColumnName'
 import ActionModals from './ActionModals'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { THONGTINPHIEU } from '../../action/Actions'
+import { THONGTINPHIEU, DANHSACHPHIEUBANHANG } from '../../action/Actions'
 import API from '../../API/API'
 import { FcAddDatabase } from 'react-icons/fc'
+
 function PhieuBanHang() {
   const dispatch = useDispatch()
   const token = localStorage.getItem('TKN')
-  const data = useSelector(danhSachPBS)
+  const [dataLoaded, setDataLoaded] = useState(false)
+
+  const [data, setData] = useState()
   const [isShow, setIsShow] = useState(false)
   const [type, setType] = useState()
-
   const [dataRecord, setDataRecord] = useState([])
+
+  useEffect(() => {
+    const getListData = async () => {
+      const dataRes = await DANHSACHPHIEUBANHANG(API.DANHSACHPBS, token, dispatch)
+      setData(dataRes)
+      setDataLoaded(true)
+    }
+
+    getListData()
+  }, [dataRecord, token, dispatch, dataLoaded])
+
+  console.log(data)
+
   const handleView = async (record) => {
     await THONGTINPHIEU(API.CHITIETPBS, token, record?.SoChungTu, dispatch)
     setIsShow(true)
@@ -35,7 +50,12 @@ function PhieuBanHang() {
   }
   const handleClose = () => {
     setIsShow(false)
-    console.log('he')
+    // setDataRecord([])
+    setDataLoaded(false)
+  }
+
+  if (!dataLoaded) {
+    return <LoadingPage />
   }
   return (
     <>
@@ -46,7 +66,7 @@ function PhieuBanHang() {
       >
         <FcAddDatabase /> <p className="ml-2">Thêm Phiếu</p>
       </button>
-      <Table param={data.DataResults} columName={nameColumsPhieuBanHang} handleView={handleView} handleEdit={handleEdit} height={'h400'} handleCreate={handleCreate} />
+      <Table param={data?.DataResults} columName={nameColumsPhieuBanHang} handleView={handleView} handleEdit={handleEdit} height={'h400'} handleCreate={handleCreate} />
       <ActionModals isShow={isShow} handleClose={handleClose} dataRecord={dataRecord} typeAction={type} />
     </>
   )
