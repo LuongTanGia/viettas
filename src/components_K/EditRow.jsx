@@ -6,12 +6,12 @@ import { NumericFormat } from 'react-number-format'
 import { InputNumber } from 'antd'
 const { MdDelete } = icons
 
-const EditRow = ({ index, item, dataHangHoa, handleDeleteRow, setRowData, currentRowData }) => {
+const EditRow = ({ index, item, dataHangHoa, handleDeleteRow, setRowData, currentRowData, handleEditDetail }) => {
   const [SoLuong, setSoLuong] = useState(item.SoLuong)
   const [selectedDVT, setSelectedDVT] = useState(item.DVT)
 
   useEffect(() => {
-    setSoLuong(item.SoLuong.toFixed(1))
+    setSoLuong(item?.SoLuong?.toFixed(1))
   }, [item.SoLuong])
 
   const handleChangeData = (e) => {
@@ -27,7 +27,6 @@ const EditRow = ({ index, item, dataHangHoa, handleDeleteRow, setRowData, curren
             DVT: selectedItem.DVT,
             DVTQuyDoi: selectedItem.DVTQuyDoi,
             DVTDefault: selectedItem.DVT,
-            // DonGia: selectedItem.DonGia,
           }
         }
         return i
@@ -113,7 +112,7 @@ const EditRow = ({ index, item, dataHangHoa, handleDeleteRow, setRowData, curren
     <tr key={index}>
       <td className="py-2 px-4 border text-center ">{index + 1}</td>
 
-      <td className="border">
+      <td className="border items-center w-[114px]">
         <select className=" bg-white  w-[110px] h-full outline-none  " value={item.MaHang} onChange={handleChangeData}>
           <option disabled value="">
             Chọn mã hàng
@@ -143,15 +142,17 @@ const EditRow = ({ index, item, dataHangHoa, handleDeleteRow, setRowData, curren
         </td>
       )}
 
-      <td className="py-2  border ">
+      <td className="py-2  border w-20 ">
         <input
-          className="text-end border border-gray-400 rounded-[4px]  "
+          className="text-end rounded-[4px]  "
           type="number"
           value={SoLuong}
           onChange={(e) => {
             const value = e.target.value
             if (value.includes('.') && value.split('.')[1].length > 2) return
             setSoLuong(e.target.value.replace(/[^0-9.]/g, ''))
+
+            // handleEditDetail(index, 'SoLuong', e.target.value)
           }}
           onKeyDown={(e) => {
             if (e.key === 'Enter') handleChangeQuantity()
@@ -159,9 +160,9 @@ const EditRow = ({ index, item, dataHangHoa, handleDeleteRow, setRowData, curren
           onBlur={handleChangeQuantity}
         />
       </td>
-      <td className="py-2 border ">
+      <td className="py-2 border w-[150px] ">
         <input
-          className=" px-2 text-end border border-gray-400 rounded-[4px] "
+          className=" px-2 text-end  rounded-[4px] "
           type="text"
           pattern="[0-9]+"
           title="Please enter a numeric value"
@@ -169,15 +170,16 @@ const EditRow = ({ index, item, dataHangHoa, handleDeleteRow, setRowData, curren
           onChange={handleChangePrice}
         />
       </td>
-      <td className="py-2 px-4 border text-end">
+      <td className="py-2 px-4 border text-end w-[150px]">
         <NumericFormat value={item.DonGia ? Number(item.DonGia.toString().replace(/,/g, '')) * Number(item.SoLuong) : 0} displayType={'text'} thousandSeparator={true} />
       </td>
-      <td className="py-2 border">
+      <td className="py-2 border w-[100px]">
         <InputNumber
-          className="text-end"
+          className="text-end w-full"
           min={0}
           max={100}
           size="small"
+          bordered={false}
           defaultValue={item.TyLeThue}
           formatter={(value) => `${value}`.slice(0, 3)} // Hiển thị tối đa 3 chữ số
           parser={(value) => {
@@ -187,14 +189,14 @@ const EditRow = ({ index, item, dataHangHoa, handleDeleteRow, setRowData, curren
           onChange={handleChangeTax}
         />
         {/* <input
-          className=" text-end"
-          type="number"
-          min={0}
-          max={100}
-          value={item.TyLeThue}
-          onChange={handleChangeTax}
-          
-        /> */}
+            className=" text-end"
+            type="number"
+            min={0}
+            max={100}
+            value={item.TyLeThue}
+            onChange={handleChangeTax}
+            
+          /> */}
       </td>
       <td className="py-2 px-4 border text-end">
         <NumericFormat
@@ -215,8 +217,8 @@ const EditRow = ({ index, item, dataHangHoa, handleDeleteRow, setRowData, curren
           thousandSeparator={true}
         />
       </td>
-      <td className="py-2 flex justify-center ">
-        <span onClick={() => handleDeleteRow(index)} className="p-[3px] text-red-500 border  border-red-500 rounded-md hover:text-white hover:bg-red-500  cursor-pointer ">
+      <td className="py-2 flex justify-center  border ">
+        <span onClick={() => handleDeleteRow(index)} className="p-[3px] text-red-500  rounded-md hover:text-white hover:bg-red-500  cursor-pointer ">
           <MdDelete size={20} />
         </span>
       </td>

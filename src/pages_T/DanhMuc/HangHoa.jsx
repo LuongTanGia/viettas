@@ -476,7 +476,7 @@ const HangHoa = () => {
                   <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
                 </div>
                 {isShowOption && (
-                  <div className="flex flex-col gap-4 bg-slate-100 p-3 absolute top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom ">
+                  <div className="absolute flex flex-col gap-4 bg-slate-100 p-3  top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom ">
                     <div
                       className="justify-center px-3 py-2 bg-purple-600 rounded-lg font-semibold text-slate-50 shadow-custom flex gap-1 items-center cursor-pointer hover:bg-white hover:text-purple-600"
                       onClick={() => handlePrintBar()}

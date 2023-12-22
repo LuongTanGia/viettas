@@ -7,32 +7,30 @@ import moment from 'moment'
 import icons from '../../../untils/icons'
 import { toast } from 'react-toastify'
 import * as apis from '../../../apis'
-import { NumericFormat } from 'react-number-format'
 import { Modals } from '../../../components_K'
 import dayjs from 'dayjs'
-import { RETOKEN, formatPrice, formatQuantity, roundNumber } from '../../../action/Actions'
+import { RETOKEN, formatPrice, formatQuantity } from '../../../action/Actions'
 import SimpleBackdrop from '../../../components/util/Loading/LoadingPage'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import { useSearch } from '../../../components_K/myComponents/useSearch'
 
-const { IoAddCircleOutline, TiPrinter, FaRegEdit, MdDelete, GiPayMoney, BsSearch } = icons
+const { IoAddCircleOutline, TiPrinter, FaRegEdit, MdDelete, GiPayMoney, BsSearch, TfiMoreAlt } = icons
 const PhieuMuaHang = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [isLoadingPopup, setIsLoadingPopup] = useState(false)
-
+  const [isShowModal, setIsShowModal] = useState(false)
+  const [isShowSearch, setIsShowSearch] = useState(false)
+  const [isShowOption, setIsShowOption] = useState(false)
   const [data, setData] = useState(null)
   const [dataThongTin, setDataThongTin] = useState([])
   const [dataRecord, setDataRecord] = useState(null)
-
   const [dataKhoHang, setDataKhoHang] = useState(null)
   const [dataDoiTuong, setDataDoiTuong] = useState(null)
-  const [isShowModal, setIsShowModal] = useState(false)
-  const [isShowSearch, setIsShowSearch] = useState(false)
-
   const [tableLoad, setTableLoad] = useState(false)
-
   const [actionType, setActionType] = useState('')
   const [formKhoanNgay, setFormKhoanNgay] = useState([])
   const [dataThongSo, setDataThongSo] = useState()
+  const [setSearchPMH, filteredPMH] = useSearch(data)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,29 +40,24 @@ const PhieuMuaHang = () => {
         const responseKH = await apis.ListHelperKhoHang(tokenLogin)
         if (responseKH.data && responseKH.data.DataError === 0) {
           setDataKhoHang(responseKH.data.DataResults)
-          if (actionType === 'create') {
-            const responseDT = await apis.ListHelperDoiTuong(tokenLogin)
-            if (responseDT.data && responseDT.data.DataError === 0) {
-              setDataDoiTuong(responseDT.data.DataResults)
-            }
-          } else if (actionType === 'view' || actionType === 'edit') {
-            const responseTT = await apis.ThongTinPMH(tokenLogin, dataRecord.SoChungTu)
-            if (responseTT.data && responseTT.data.DataError === 0) {
-              setDataThongTin(responseTT.data.DataResult)
-              setIsLoadingPopup(true)
-            }
-            if (actionType === 'edit') {
-              const responseDT = await apis.ListHelperDoiTuong(tokenLogin)
-              if (responseDT.data && responseDT.data.DataError === 0) {
-                setDataDoiTuong(responseDT.data.DataResults)
-              }
-            }
+
+          const responseDT = await apis.ListHelperDoiTuong(tokenLogin)
+          if (responseDT.data && responseDT.data.DataError === 0) {
+            setDataDoiTuong(responseDT.data.DataResults)
+          }
+
+          const responseTT = await apis.ThongTinPMH(tokenLogin, dataRecord.SoChungTu)
+          if (responseTT.data && responseTT.data.DataError === 0) {
+            setDataThongTin(responseTT.data.DataResult)
+
+            setIsLoadingPopup(true)
+          } else {
+            setIsLoadingPopup(true)
           }
         }
       } catch (error) {
         console.error('Lấy data thất bại', error)
         toast.error('Lấy data thất bại. Vui lòng thử lại sau.')
-        setIsLoadingPopup(true)
       }
     }
 
@@ -177,42 +170,49 @@ const PhieuMuaHang = () => {
       dataIndex: 'MaDoiTuong',
       key: 'MaDoiTuong',
       width: 150,
+      sorter: (a, b) => a.MaDoiTuong.localeCompare(b.MaDoiTuong),
     },
     {
       title: 'Tên đối tượng',
       dataIndex: 'TenDoiTuong',
       key: 'TenDoiTuong',
       width: 300,
+      sorter: (a, b) => a.TenDoiTuong.localeCompare(b.TenDoiTuong),
     },
     {
       title: 'Địa chỉ',
       dataIndex: 'DiaChi',
       key: 'DiaChi',
       width: 300,
+      sorter: (a, b) => a.DiaChi.localeCompare(b.DiaChi),
     },
     {
       title: 'Mã số thuế',
       dataIndex: 'MaSoThue',
       key: 'MaSoThue',
       width: 150,
+      sorter: (a, b) => a.MaSoThue - b.MaSoThue,
     },
     {
       title: 'Mã kho',
       dataIndex: 'MaKho',
       key: 'MaKho',
       width: 150,
+      sorter: (a, b) => a.MaKho.localeCompare(b.MaKho),
     },
     {
       title: 'Thông tin kho',
       dataIndex: 'ThongTinKho',
       key: 'ThongTinKho',
       width: 150,
+      sorter: (a, b) => a.ThongTinKho.localeCompare(b.ThongTinKho),
     },
     {
       title: 'Ghi chú',
       dataIndex: 'GhiChu',
       key: 'GhiChu',
       width: 150,
+      sorter: (a, b) => a.GhiChu.localeCompare(b.GhiChu),
     },
     {
       title: 'Tổng mặt hàng',
@@ -280,6 +280,7 @@ const PhieuMuaHang = () => {
       dataIndex: 'PhieuChi',
       key: 'PhieuChi',
       width: 150,
+      sorter: (a, b) => a.PhieuChi.localeCompare(b.PhieuChi),
     },
     {
       title: 'Ngày tạo',
@@ -299,6 +300,7 @@ const PhieuMuaHang = () => {
       dataIndex: 'NguoiTao',
       key: 'NguoiTao',
       width: 300,
+      sorter: (a, b) => a.NguoiTao.localeCompare(b.NguoiTao),
     },
     {
       title: 'Ngày sửa cuối',
@@ -318,6 +320,7 @@ const PhieuMuaHang = () => {
       dataIndex: 'NguoiSuaCuoi',
       key: 'NguoiSuaCuoi',
       width: 300,
+      sorter: (a, b) => a.NguoiSuaCuoi.localeCompare(b.NguoiSuaCuoi),
     },
 
     {
@@ -344,13 +347,6 @@ const PhieuMuaHang = () => {
         return (
           <>
             <div className=" flex gap-1 items-center justify-center ">
-              {/* <div
-                onClick={() => handleView(record)}
-                title="Xem"
-                className="p-[3px] border border-yellow-500 rounded-md  text-slate-50  bg-yellow-500 hover:bg-white hover:text-yellow-500   cursor-pointer"
-              >
-                <FaRegEye size={16} />
-              </div> */}
               <div
                 disabled="true"
                 onClick={() => handlePay(record)}
@@ -369,13 +365,6 @@ const PhieuMuaHang = () => {
                 <FaRegEdit size={16} />
               </div>
 
-              {/* <div
-                onClick={() => handleEdit(record)}
-                title="Sửa"
-                className="p-[3px]  border  border-red-500 rounded-md text-slate-50 bg-blue-500  hover:bg-white hover:text-blue-500  cursor-pointer  "
-              >
-                <TiPrinter size={16} />
-              </div> */}
               <div
                 onClick={() => handleDelete(record)}
                 title="Xóa"
@@ -398,7 +387,6 @@ const PhieuMuaHang = () => {
 
   const handleView = (record) => {
     setActionType('view')
-
     setDataRecord(record)
     setIsShowModal(true)
   }
@@ -411,6 +399,7 @@ const PhieuMuaHang = () => {
     } else {
       setActionType('edit')
       setDataRecord(record)
+
       setDataThongTin(record)
       setIsShowModal(true)
     }
@@ -459,9 +448,14 @@ const PhieuMuaHang = () => {
   //     : [...selectedRowKeys, record.key];
   //   setSelectedRowKeys(newSelectedRowKeys);
   // };
+
+  const handleSearch = (event) => {
+    setSearchPMH(event.target.value)
+  }
+
   return (
     <div className="w-auto">
-      <div className="text-lg  mx-4 my-2 ">
+      <div className="relative text-lg  mx-4 my-2 flex justify-between items-center  ">
         <div className="flex items-center gap-x-4 font-bold">
           <label>Phiếu mua hàng </label>
           <div>
@@ -474,9 +468,37 @@ const PhieuMuaHang = () => {
               <input
                 type="text"
                 placeholder="Nhập ký tự bạn cần tìm"
-                // onChange={handleSearch}
-                className={'px-2 py-1 w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] '}
+                onChange={handleSearch}
+                className={'px-2  w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] '}
               />
+            </div>
+          )}
+        </div>
+
+        <div>
+          <div className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5  " onClick={() => setIsShowOption(!isShowOption)} title="Chức năng khác">
+            <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
+          </div>
+          {isShowOption && (
+            <div className=" absolute flex flex-col gap-2 bg-slate-100 p-3  top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom ">
+              <button
+                onClick={handlePrint}
+                className="flex items-center  py-1 px-2  rounded-md border-dashed border border-gray-500  text-sm hover:text-sky-500  hover:border-sky-500 "
+              >
+                <div className="pr-1">
+                  <TiPrinter size={20} />
+                </div>
+                <div>In phiếu</div>
+              </button>
+              <button
+                onClick={handlePrintWareHouse}
+                className="flex items-center  py-1 px-2  rounded-md border-dashed border border-gray-500  text-sm hover:text-sky-500  hover:border-sky-500 "
+              >
+                <div className="pr-1">
+                  <TiPrinter size={20} />
+                </div>
+                <div>In phiếu Kho</div>
+              </button>
             </div>
           )}
         </div>
@@ -525,24 +547,6 @@ const PhieuMuaHang = () => {
             </div>
             <div>Thêm phiếu</div>
           </button>
-          <button
-            onClick={handlePrint}
-            className="flex items-center  py-1 px-2  rounded-md border-dashed border border-gray-500  text-sm hover:text-sky-500  hover:border-sky-500 "
-          >
-            <div className="pr-1">
-              <TiPrinter size={20} />
-            </div>
-            <div>In phiếu</div>
-          </button>
-          <button
-            onClick={handlePrintWareHouse}
-            className="flex items-center  py-1 px-2  rounded-md border-dashed border border-gray-500  text-sm hover:text-sky-500  hover:border-sky-500 "
-          >
-            <div className="pr-1">
-              <TiPrinter size={20} />
-            </div>
-            <div>In phiếu Kho</div>
-          </button>
         </div>
       </div>
       <div className="relative px-2 py-1 ">
@@ -551,14 +555,14 @@ const PhieuMuaHang = () => {
             className="table_pmh"
             // rowSelection={rowSelection}
             columns={columns}
-            dataSource={data}
+            dataSource={filteredPMH}
             size="small"
             scroll={{
               x: 1500,
               y: 410,
             }}
             bordered
-            pagination={false}
+            // pagination={false}
             rowKey={(record) => record.SoChungTu}
             onRow={(record) => ({
               // onClick: () => {
