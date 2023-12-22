@@ -4,8 +4,7 @@ import { NumericFormat } from 'react-number-format'
 import icons from '../untils/icons'
 import { toast } from 'react-toastify'
 import { InputNumber } from 'antd'
-import { RETOKEN, formatPrice } from '../action/Actions'
-import * as apis from '../../src/apis'
+import { formatPrice } from '../action/Actions'
 
 const { MdDelete } = icons
 
@@ -113,8 +112,8 @@ const CreateRow = ({ index, item, dataHangHoa, handleDeleteRow, setRowData, curr
   return (
     <tr key={index}>
       <td className="py-2 px-4 border text-center ">{index + 1}</td>
-      <td className="border">
-        <select className=" bg-white  w-[112px] h-full outline-none  " value={item.MaHang} onChange={handleChangeData}>
+      <td className="border items-center w-[114px]">
+        <select className=" bg-white w-full  h-full outline-none    " value={item.MaHang} onChange={handleChangeData}>
           <option disabled value="">
             Chọn mã hàng
           </option>
@@ -129,19 +128,19 @@ const CreateRow = ({ index, item, dataHangHoa, handleDeleteRow, setRowData, curr
       </td>
       <td className="py-2 px-4 border whitespace-nowrap ">{item.TenHang}</td>
       {item.DVTDefault === item.DVTQuyDoi ? (
-        <td className="py-2 px-10 border ">{item.DVTDefault}</td>
+        <td className="py-2 px-10 border  ">{item.DVTDefault}</td>
       ) : (
-        <td className="py-2 px-4 border text-center">
-          <select className=" bg-white  h-full outline-none  " value={selectedDVT} onChange={(e) => handleChangeUnit(e.target.value)}>
+        <td className="py-2 px-4 border text-center w-[120px] ">
+          <select className=" bg-white  w-full h-full outline-none  " value={selectedDVT} onChange={(e) => handleChangeUnit(e.target.value)}>
             <option value={item.DVTDefault}>{item.DVTDefault}</option>
 
             <option value={item.DVTQuyDoi}>{item.DVTQuyDoi}</option>
           </select>
         </td>
       )}
-      <td className="py-2  border ">
+      <td className="py-2  border w-20">
         <input
-          className="text-end border border-gray-400 rounded-[4px]  "
+          className="text-end  rounded-[4px]   "
           type="number"
           value={SoLuong}
           onChange={(e) => {
@@ -155,23 +154,16 @@ const CreateRow = ({ index, item, dataHangHoa, handleDeleteRow, setRowData, curr
           onBlur={handleChangeQuantity}
         />
       </td>
-      <td className="py-2 border ">
-        <input
-          className=" px-2 text-end border border-gray-400 rounded-[4px]  "
-          type="text"
-          pattern="[0-9]+"
-          title="Please enter a numeric value"
-          value={item.DonGia}
-          onChange={handleChangePrice}
-        />
+      <td className="py-2 border  w-[150px]">
+        <input className=" px-2 text-end  rounded-[4px]  " type="text" pattern="[0-9]+" title="Please enter a numeric value" value={item.DonGia} onChange={handleChangePrice} />
       </td>
-      <td className="py-2 px-4 border text-end">
+      <td className="py-2 px-4 border text-end w-[150px] ">
         {/* <input value={formatPrice(item.DonGia ? Number(item.DonGia.toString().replace(/,/g, '')) * Number(item.SoLuong) : 0, dataThongSo?.SOLESOTIEN)} /> */}
 
         <NumericFormat value={item.DonGia ? Number(item.DonGia.toString().replace(/,/g, '')) * Number(item.SoLuong) : 0} displayType={'text'} thousandSeparator={true} />
       </td>
       <td className="py-2 border">
-        <InputNumber className="text-end" min={0} max={100} size="small" defaultValue={item.TyLeThue} onChange={handleChangeTax} />
+        <InputNumber className="text-end" min={0} max={100} size="small" bordered={false} defaultValue={item.TyLeThue} onChange={handleChangeTax} />
       </td>
       <td className="py-2 px-4 border text-end">
         {/* <input

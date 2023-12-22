@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useMemo, useState } from 'react'
 
-import icons from '../untils/icons'
+// import icons from '../untils/icons'
 import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
 import { base64ToPDF } from '../action/Actions'
@@ -9,7 +9,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 
 import * as apis from '../apis'
 
-const { IoMdClose } = icons
+// const { IoMdClose } = icons
 
 const ModalOnlyPrint = ({ close, dataThongTin, dataPMH }) => {
   const [selectedSctBD, setSelectedSctBD] = useState()
@@ -45,9 +45,9 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH }) => {
   })
 
   useEffect(() => {
-    if (dataPMHByDate) setSelectedSctBD(dataPMHByDate[0].SoChungTu)
-    if (dataPMHByDate) setSelectedSctKT(dataPMHByDate[0].SoChungTu)
-  }, [dataPMH, dataPMHByDate])
+    if (dataThongTin) setSelectedSctBD(dataThongTin.SoChungTu)
+    if (dataThongTin) setSelectedSctKT(dataThongTin.SoChungTu)
+  }, [dataThongTin])
 
   const calculateTotal = () => {
     let total = 0

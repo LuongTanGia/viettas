@@ -22,7 +22,7 @@ import { Select } from 'antd'
 // import { create } from '@mui/material/styles/createTransitions'
 const { Option } = Select
 
-const { IoMdClose, MdDelete, TiPrinter } = icons
+const { TiPrinter } = icons
 
 const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, dataRecord, dataPMH, controlDate, isLoadingModel, dataThongSo }) => {
   const [isShowModalHH, setIsShowModalHH] = useState(false)
@@ -47,37 +47,22 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
 
   const startDate = dayjs(controlDate.NgayBatDau).format('YYYY-MM-DDTHH:mm:ss')
   const endDate = dayjs(controlDate.NgayKetThuc).format('YYYY-MM-DDTHH:mm:ss')
-  const NgayCTu = dayjs().format('YYYY-MM-DDTHH:mm:ss')
-  const DaoHan = dayjs().format('YYYY-MM-DDTHH:mm:ss')
+  const ngayChungTu = dayjs().format('YYYY-MM-DDTHH:mm:ss')
+  const daoHan = dayjs().format('YYYY-MM-DDTHH:mm:ss')
 
   const [formPMH, setFormPMH] = useState({
-    NgayCTu: NgayCTu,
-    DaoHan: DaoHan,
+    NgayCTu: ngayChungTu,
+    DaoHan: daoHan,
     TenDoiTuong: '',
     DiaChi: '',
     MaSoThue: '',
     TTTienMat: false,
     GhiChu: null,
-    DataDetails: [
-      // {
-      //   STT: 1,
-      //   MaHang: "",
-      //   TenHang: "",
-      //   DVT: "",
-      //   SoLuong: 0,
-      //   DonGia: 0,
-      //   TienHang: 0,
-      //   TyLeThue: 0,
-      //   TienThue: 0,
-      //   ThanhTien: 0,
-      //   TyLeCKTT: 0,
-      //   TienCKTT: 0,
-      //   TongCong: 0,
-      // },
-    ],
+    DataDetails: [],
   })
 
   const [formPMHEdit, setFormPMHEdit] = useState()
+
   const [formPrint, setFormPrint] = useState({
     NgayBatDau: startDate,
     NgayKetThuc: endDate,
@@ -96,7 +81,11 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   useEffect(() => {
     if (dataThongTin !== null) setFormPMHEdit(dataThongTin)
   }, [dataThongTin, dataThongTin.DataDetails])
+  console.log('dataThongTin', dataThongTin)
 
+  useEffect(() => {
+    console.log('edit', formPMHEdit)
+  }, [formPMHEdit])
   const columns = [
     {
       title: 'STT',
@@ -115,6 +104,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       fixed: 'left',
       sorter: true,
       editable: true,
+      align: 'center',
     },
     {
       title: 'Tên Hàng',
@@ -214,25 +204,48 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
         }
       }),
     }))
+
+    setFormPMHEdit((prevFormPMHEdit) => ({
+      ...prevFormPMHEdit,
+      DataDetails: selectedRowData.map((item, index) => {
+        // Đảm bảo rằng item.DonGia là một chuỗi hợp lệ
+        const donGiaString = item.DonGia && typeof item.DonGia === 'string' ? item.DonGia : '0'
+
+        // Loại bỏ dấu phẩy và chuyển đổi thành số
+        const donGiaNumber = parseFloat(donGiaString.replace(/,/g, '')) || 0
+
+        const tienHang = Number(item.SoLuong) * Number(donGiaNumber)
+        const tienThue = Number(tienHang) * (Number(item.TyLeThue) / 100)
+        const thanhTien = Number(tienHang) + Number(tienThue)
+        const tongCong = Number(thanhTien)
+
+        return {
+          ...item,
+          STT: index + 1,
+          MaHang: item.MaHang,
+          TenHang: item.TenHang,
+          DVT: item.DVT,
+          SoLuong: item.SoLuong,
+          DonGia: donGiaNumber,
+          TienHang: tienHang,
+          TyLeThue: Number(item.TyLeThue),
+          TienThue: tienThue,
+          ThanhTien: thanhTien,
+          TongCong: tongCong,
+        }
+      }),
+    }))
+    // console.log('edit2', formPMHEdit)
   }, [selectedRowData])
 
   useEffect(() => {
     if (dataDoiTuong && actionType === 'create') handleDoiTuongFocus(dataDoiTuong[0].Ma)
-    if (dataDoiTuong && dataThongTin && actionType === 'edit') {
+    if ((dataDoiTuong && dataThongTin && actionType === 'edit') || (dataDoiTuong && dataThongTin && actionType === 'view')) {
       handleDoiTuongFocus(dataThongTin.MaDoiTuong)
 
       if (dataThongTin?.DataDetails) {
         setSelectedRowData([...dataThongTin.DataDetails])
       }
-      // if (dataThongTin?.DataDetails) {
-      //   setSelectedRowData([
-      //     {
-      //       ...dataThongTin.DataDetails,
-      //       DVTDefault: dataHangHoa?.DVT,
-      //       DVTQuyDoi: dataHangHoa?.DVTQuyDoi,
-      //     },
-      //   ]);
-      // }
     }
   }, [dataDoiTuong, dataThongTin])
 
@@ -329,6 +342,20 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
         DiaChi: selectedDoiTuongInfo.DiaChi,
       })
     }
+
+    // if (actionType === 'edit' && selectedValue !== 'NCVL') {
+    //   setFormPMHEdit({
+    //     ...formPMHEdit,
+    //     TenDoiTuong: selectedDoiTuongInfo.Ten,
+    //     DiaChi: selectedDoiTuongInfo.DiaChi,
+    //   })
+    //   // console.log('first1', formPMHEdit)
+    // } else if (actionType === 'edit' && selectedValue === 'NCVL') {
+    //   setFormPMHEdit({
+    //     ...formPMHEdit,
+    //   })
+    //   // console.log('first2', formPMHEdit)
+    // }
   }
 
   const handleCreate = async () => {
@@ -342,12 +369,13 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       } else if (response.data && response.data.DataError === -103) {
         toast.error(response.data.DataErrorDescription)
       } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-        toast.warning(response.data.DataErrorDescription)
+        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         handleCreate()
       } else {
-        toast.error(response.data.DataErrorDescription)
+        // toast.error(response.data.DataErrorDescription)
+        console.log(response.data.DataErrorDescription)
       }
 
       close()
@@ -368,15 +396,17 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       } else if (response.data && response.data.DataError === -103) {
         toast.error(response.data.DataErrorDescription)
       } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-        toast.warning(response.data.DataErrorDescription)
+        // toast.warning(response.data.DataErrorDescription)
+        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         handleEdit()
       } else {
         toast.error(response.data.DataErrorDescription)
+        // console.log(response.data.DataErrorDescription)
       }
 
-      close()
+      // close()
     } catch (error) {
       console.error('Error while saving data:', error)
     }
@@ -400,7 +430,8 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
         await RETOKEN()
         handleDelete()
       } else {
-        toast.error(response.data.DataErrorDescription)
+        // toast.error(response.data.DataErrorDescription)
+        console.log(response.data.DataErrorDescription)
       }
       close()
     } catch (error) {
@@ -426,7 +457,8 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
         await RETOKEN()
         handlePrint()
       } else {
-        toast.error(response.data.DataErrorDescription)
+        // toast.error(response.data.DataErrorDescription)
+        console.log(response.data.DataErrorDescription)
       }
 
       close()
@@ -454,7 +486,8 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
         await RETOKEN()
         handlePrintWareHouse()
       } else {
-        toast.error(response.data.DataErrorDescription)
+        // toast.error(response.data.DataErrorDescription)
+        console.log(response.data.DataErrorDescription)
       }
 
       close()
@@ -481,7 +514,8 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
         await RETOKEN()
         handlePay()
       } else {
-        toast.error(response.data.DataErrorDescription)
+        // toast.error(response.data.DataErrorDescription)
+        console.log(response.data.DataErrorDescription)
       }
       close()
     } catch (error) {
@@ -521,15 +555,15 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
     setNewDataPMH(filteredData)
   }
 
-  // const onChange = (value) => {
-  //   setSelectedKhoHang(value)
-  //   console.log(`selected ${value}`)
-  // }
-  // const onSearch = (value) => {
-  //   setSelectedKhoHang(value)
-  //   console.log(`selected ${value}`)
-  // }
-
+  const summaryTable = (columnName) => {
+    return selectedRowData.reduce((total, item) => total + item[columnName], 0)
+  }
+  const tongSoLuong = summaryTable('SoLuong')
+  const tongDonGia = summaryTable('DonGia')
+  const tongTienHang = summaryTable('TienHang')
+  const tongTyLeThue = summaryTable('TyLeThue')
+  const tongTienThue = summaryTable('TienThue')
+  const tongThanhTien = summaryTable('ThanhTien')
   return (
     <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
       <div className="  m-4 p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
@@ -736,32 +770,35 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
           <div className=" w-[90vw] h-[600px] ">
             <label className="font-bold pb-1">Xem thông tin - phiếu mua hàng</label>
             <div className="border w-full h-[90%] rounded-sm text-sm">
-              <div className="flex">
+              <div className="flex gap-3">
                 {/* thong tin phieu */}
                 <div className="w-[60%]">
-                  <div className="flex p-1 gap-12 w-full ">
+                  <div className="flex p-1 justify-between ">
                     <div className=" flex items-center gap-2">
                       <label className="">Số chứng từ</label>
                       <input type="text" className=" border border-gray-300 outline-none  px-2" value={dataThongTin?.SoChungTu} />
                     </div>
-                    <div className="flex items-center gap-1">
-                      <label className="">Ngày</label>
-                      <input type="text" className="border border-gray-300 outline-none px-2 " value={moment(dataThongTin?.NgayCTu).format('DD/MM/YYYY')} />
+                    {/* DatePicker */}
+                    <div className="flex gap-x-2 items-center">
+                      <label className="pr-3">Ngày</label>
+                      <DatePicker className="DatePicker_PMH" format="DD/MM/YYYY" value={dayjs(dataThongTin?.NgayCTu)} />
                     </div>
-                    <div className="flex items-center gap-1">
-                      <label className="">Đáo hạn</label>
-                      <input type="text" className="border border-gray-300 outline-none px-2 " value={moment(dataThongTin?.DaoHan).format('DD/MM/YYYY')} />
+                    <div className="flex gap-x-2 items-center">
+                      <label className="pr-3">Đáo Hạn</label>
+                      <DatePicker className="DatePicker_PMH" format="DD/MM/YYYY" value={dayjs(dataThongTin?.DaoHan)} />
                     </div>
                   </div>
                   <div className="p-1 flex justify-between items-center">
                     <label form="doituong" className="w-[86px]">
                       Đối tượng
                     </label>
-                    <select className=" bg-white border w-full outline-none border-gray-300  ">
-                      <option value="MaDoiTuong_TenDoiTuong">
-                        {dataThongTin?.MaDoiTuong} - {dataThongTin?.TenDoiTuong}
-                      </option>
-                    </select>
+                    <Select showSearch size="small" optionFilterProp="children" style={{ width: '100%' }} value={selectedDoiTuong} disabled>
+                      {dataDoiTuong?.map((item) => (
+                        <Option key={item.Ma} value={item.Ma}>
+                          {item.Ma} - {item.Ten}
+                        </Option>
+                      ))}
+                    </Select>
                   </div>
                   <div className="flex items-center justify-between p-1">
                     <label className="w-[86px]">Tên</label>
@@ -907,7 +944,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                 ></Table>
               </div>
             </div>
-            {/* button print */}
+            {/* button */}
             <div className="flex justify-between items-center">
               <div className="flex gap-x-3 py-2">
                 <button
@@ -939,224 +976,21 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
           </div>
         )}
 
-        {actionType === 'edit' && isLoadingModel ? (
-          <div className=" w-[90vw] h-[600px] ">
-            <label className="font-bold ">Sửa thông tin - phiếu mua hàng</label>
-            <div className="border w-full h-[90%] rounded-sm text-sm">
-              <div className="flex">
-                {/* thong tin phieu */}
-                <div className="">
-                  <div className="flex p-1  gap-x-2">
-                    <div className=" flex items-center ">
-                      <label className="">Số chứng từ</label>
-                      <input
-                        readOnly
-                        type="text"
-                        className=" border border-gray-300 outline-none  px-2  bg-gray-200"
-                        value={dataThongTin?.SoChungTu}
-                        onChange={(e) =>
-                          setFormPMHEdit({
-                            ...formPMHEdit,
-                            SoChungTu: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-
-                    {/* DatePicker */}
-                    <div className="flex gap-x-2 items-center">
-                      <label htmlFor="">Ngày</label>
-                      <DatePicker
-                        className="DatePicker_PMH"
-                        format="DD/MM/YYYY"
-                        defaultValue={dayjs(dataThongTin?.NgayCTu, 'YYYY-MM-DD')}
-                        onChange={(newDate) => {
-                          setFormPMHEdit({
-                            ...formPMHEdit,
-                            NgayCTu: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
-                          })
-                        }}
-                      />
-                    </div>
-                    <div className="flex gap-x-2 items-center">
-                      <label htmlFor="">Đáo Hạn</label>
-                      <DatePicker
-                        className="DatePicker_PMH"
-                        format="DD/MM/YYYY"
-                        defaultValue={dayjs(dataThongTin?.DaoHan, 'YYYY-MM-DD')}
-                        onChange={(newDate) => {
-                          setFormPMHEdit({
-                            ...formPMHEdit,
-                            DaoHan: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
-                          })
-                        }}
-                      />
-                    </div>
-                  </div>
-                  <div className="p-1 flex ">
-                    <label form="doituong" className="w-[86px]">
-                      Đối tượng
-                    </label>
-                    <Select showSearch size="small" optionFilterProp="children" onChange={(value) => handleDoiTuongFocus(value)} style={{ width: '100%' }} value={selectedDoiTuong}>
-                      {dataDoiTuong?.map((item) => (
-                        <Option key={item.Ma} value={item.Ma}>
-                          {item.Ma} - {item.Ten}
-                        </Option>
-                      ))}
-                    </Select>
-                    {/* <select className=" bg-white border w-full  outline-none border-gray-300  " value={selectedDoiTuong} onChange={(e) => handleDoiTuongFocus(e.target.value)}>
-                      {dataDoiTuong?.map((item) => (
-                        <option key={item.Ma} value={item.Ma}>
-                          {item.Ma} - {item.Ten}
-                        </option>
-                      ))}
-                    </select> */}
-                  </div>
-                  <div className="flex items-center   p-1">
-                    <label className="w-[86px]">Tên</label>
-                    <input
-                      type="text"
-                      className="w-full border border-gray-300 outline-none px-2 "
-                      value={doiTuongInfo.Ten}
-                      onChange={(e) =>
-                        setFormPMHEdit({
-                          ...formPMHEdit,
-                          Ten: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                  <div className="flex items-center  p-1">
-                    <label className="w-[86px]">Địa chỉ</label>
-                    <input
-                      type="text"
-                      className=" w-full border border-gray-300 outline-none px-2 "
-                      value={doiTuongInfo.DiaChi}
-                      onChange={(e) =>
-                        setFormPMHEdit({
-                          ...formPMHEdit,
-                          DiaChi: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                  <div className="flex items-center w-full  ">
-                    <div className="p-1 flex  items-center ">
-                      <label form="khohang" className="w-[94px]">
-                        Kho hàng
-                      </label>
-
-                      <Select showSearch size="small" optionFilterProp="children" onChange={(value) => setSelectedKhoHang(value)} style={{ width: '100%' }} value={selectedKhoHang}>
-                        {dataKhoHang?.map((item) => (
-                          <Option key={item.MaKho} value={item.MaKho}>
-                            {item.ThongTinKho}
-                          </Option>
-                        ))}
-                      </Select>
-                      {/* <select
-                        className=" bg-white border  w-full border-gray-300 hover:border-gray-500 "
-                        onChange={(e) => setSelectedKhoHang(e.target.value)}
-                        value={selectedKhoHang}
-                      >
-                        {dataKhoHang?.map((item) => (
-                          <option key={item.MaKho} value={item.MaKho}>
-                            {item.MaKho} - {item.TenKho}
-                          </option>
-                        ))}
-                      </select> */}
-                    </div>
-                    <div className="flex items-center p-1  w-1/2">
-                      <label className="w-[86px]">Ghi chú</label>
-                      <input
-                        type="text"
-                        className="w-full border border-gray-300 outline-none px-2 "
-                        defaultValue={dataThongTin.GhiChu}
-                        onChange={(e) =>
-                          setFormPMHEdit({
-                            ...formPMHEdit,
-                            GhiChu: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="flex justify-end">
-                <button
-                  disabled={isAdd}
-                  onClick={handleAddEmptyRow}
-                  className={`border border-blue-500 rounded-md px-4 py-2 ${isAdd ? 'cursor-not-allowed text-slate-400' : 'hover:bg-blue-500 hover:text-white'}`}
-                >
-                  Thêm hàng mới
-                </button>
-                <button onClick={() => setIsShowModalHH(true)} className="border border-blue-500 rounded-md px-4 py-2 hover:bg-blue-500 hover:text-white">
-                  chọn từ danh sách
-                </button>
-              </div>
-              {/* table */}
-              <div className="max-w-[98%]  max-h-[50%] mx-auto bg-white  rounded-md my-3 overflow-y-auto ">
-                <table className="min-w-full min-h-full bg-white border border-gray-300 text-text-main">
-                  <thead>
-                    <tr>
-                      {title.map((item) => (
-                        <th key={item} className="py-1 px-2 border">
-                          {item}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {selectedRowData.map((item, index) => (
-                      <EditRow
-                        key={item.SoChungTu}
-                        index={index}
-                        item={item}
-                        dataHangHoa={dataHangHoa}
-                        handleDeleteRow={handleDeleteRow}
-                        setRowData={setSelectedRowData}
-                        currentRowData={currentRowData(item.MaHang)}
-                      />
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            {/* button print */}
-            <div className="flex justify-end items-center gap-3  pt-3">
-              <button
-                onClick={() => close()}
-                className="active:scale-[.98] active:duration-75 text-white text-text-main font-bold  bg-rose-500 rounded-md px-2 py-1 w-[80px] hover:opacity-80"
-              >
-                Đóng
-              </button>
-              <button
-                onClick={() => handleEdit(dataRecord)}
-                className="active:scale-[.98] active:duration-75 text-white text-text-main font-bold  bg-blue-500 rounded-md px-2 py-1  w-[80px] hover:opacity-80"
-              >
-                Xác nhận
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div></div>
-        )}
-
         {actionType === 'create' && (
           <div className=" w-[90vw] h-[600px] ">
             <label className="font-bold ">Thêm thông tin - phiếu mua hàng</label>
             <div className="border w-full h-[90%] rounded-sm text-sm">
-              <div className="flex ">
+              <div className="flex gap-4  ">
                 {/* thong tin phieu */}
-                <div className="">
-                  <div className="flex p-1 gap-x-2">
+                <div className="w-[60%]">
+                  <div className="flex p-1 justify-between">
                     <div className="flex items-center ">
-                      <label className="pr-3">Số chứng từ</label>
+                      <label className="pr-2">Số chứng từ</label>
                       <input readOnly type="text" className=" border border-gray-300 outline-none  px-2 cursor-not-allowed  bg-gray-200" />
                     </div>
                     {/* DatePicker */}
                     <div className="flex gap-x-2 items-center">
-                      <label htmlFor="">Ngày</label>
+                      <label className="pr-3">Ngày</label>
                       <DatePicker
                         className="DatePicker_PMH"
                         format="DD/MM/YYYY"
@@ -1170,7 +1004,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                       />
                     </div>
                     <div className="flex gap-x-2 items-center">
-                      <label htmlFor="">Đáo Hạn</label>
+                      <label className="pr-3">Đáo Hạn</label>
                       <DatePicker
                         className="DatePicker_PMH"
                         format="DD/MM/YYYY"
@@ -1178,7 +1012,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                         onChange={(newDate) => {
                           setFormPMH({
                             ...formPMH,
-                            DaoHan: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                            DaoHan: newDate ? dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss') : null,
                           })
                         }}
                       />
@@ -1230,27 +1064,40 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                     <input
                       type="text"
                       className="w-full border border-gray-300 outline-none px-2 "
-                      value={doiTuongInfo.Ten}
+                      value={selectedDoiTuong === 'NCVL' ? formPMH.TenDoiTuong : doiTuongInfo.Ten}
                       onChange={(e) =>
                         setFormPMH({
                           ...formPMH,
-                          Ten: e.target.value,
+                          TenDoiTuong: e.target.value,
                         })
                       }
+                      disabled={selectedDoiTuong !== 'NCVL'}
                     />
                   </div>
-                  <div className="flex items-center p-1">
-                    <label className="w-[86px]">Địa chỉ</label>
+                  <div className="flex gap-3 items-center p-1">
+                    <label className="w-[86px]">Địa chỉ {formPMH.MaDoiTuong}</label>
                     <input
                       type="text"
                       className="w-full border border-gray-300 outline-none px-2 "
-                      value={doiTuongInfo.DiaChi}
+                      value={selectedDoiTuong === 'NCVL' ? formPMH.DiaChi : doiTuongInfo.DiaChi}
                       onChange={(e) =>
                         setFormPMH({
                           ...formPMH,
                           DiaChi: e.target.value,
                         })
                       }
+                      disabled={selectedDoiTuong !== 'NCVL'}
+                    />
+                    <label htmlFor="lapphieuchi" className="w-[116px]">
+                      Lập phiếu chi
+                    </label>
+                    <input
+                      id="lapphieuchi"
+                      type="checkbox"
+                      className="border border-blue-500 rounded-md px-4 py-2
+                  hover:bg-blue-500 hover:text-white"
+                      checked={formPMH.TTTienMat}
+                      onChange={handleTienMat}
                     />
                   </div>
                   <div className="flex items-center  w-full">
@@ -1316,27 +1163,43 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                     </div>
                   </div>
                 </div>
+                {/* thong tin cap nhat */}
+                <div className="w-[40%] py-1 box_content">
+                  <div className="text-center p-1 font-medium text_capnhat">Thông tin cập nhật</div>
+                  <div className="-2 rounded-md w-[98%] h-[80%] box_capnhat">
+                    <div className="flex justify-between items-center ">
+                      <div className="flex items-center p-1  ">
+                        <label className="">Người tạo</label>
+                        <input type="text" className="   outline-none px-2" readOnly />
+                      </div>
+                      <div className="flex items-center p-1 w-1/2">
+                        <label className="">Lúc</label>
+                        <input readOnly type="text" className="w-full   outline-none px-2 " />
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center ">
+                      <div className="flex items-center p-1  ">
+                        <label className="">Sửa cuối</label>
+                        <input readOnly type="text" className="   outline-none px-2 " />
+                      </div>
+                      <div className="flex items-center p-1 w-1/2">
+                        <label className="">Lúc</label>
+                        <input readOnly type="text" className="w-full   outline-none px-2 " />
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="py-2">
-                <input
-                  id="lapphieuchi"
-                  type="checkbox"
-                  className="border border-blue-500 rounded-md px-4 py-2
-                  hover:bg-blue-500 hover:text-white"
-                  checked={formPMH.TTTienMat}
-                  onChange={handleTienMat}
-                />
-                <label htmlFor="lapphieuchi">Lập phiếu chi</label>
-              </div>
-              <div className="flex justify-end items-center ">
+
+              <div className="flex justify-end items-center gap-3  pr-3">
                 <button
                   disabled={isAdd}
                   onClick={handleAddEmptyRow}
-                  className={`border border-blue-500 rounded-md px-4 py-2 ${isAdd ? 'cursor-not-allowed text-slate-400' : 'hover:bg-blue-500 hover:text-white'}`}
+                  className={`border border-blue-500 rounded-md px-2 py-1 ${isAdd ? 'cursor-not-allowed text-slate-400' : 'hover:bg-blue-500 hover:text-white'}`}
                 >
                   Thêm hàng mới
                 </button>
-                <button onClick={() => setIsShowModalHH(true)} className="border border-blue-500 rounded-md px-4 py-2 hover:bg-blue-500 hover:text-white">
+                <button onClick={() => setIsShowModalHH(true)} className="border border-blue-500 rounded-md px-2 py-1 hover:bg-blue-500 hover:text-white">
                   chọn từ danh sách
                 </button>
               </div>
@@ -1346,7 +1209,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                   <thead>
                     <tr>
                       {title.map((item) => (
-                        <th key={item} className="py-1 px-2 border">
+                        <th key={item} className="py-1 px-2 border text-center">
                           {item}
                         </th>
                       ))}
@@ -1370,21 +1233,314 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
               </div>
             </div>
             {/* button  */}
-            <div className="flex justify-end items-center gap-3  pt-3">
-              <button
-                onClick={() => close()}
-                className="active:scale-[.98] active:duration-75 text-white text-text-main font-bold  bg-rose-500 rounded-md px-2 py-1 w-[80px] hover:opacity-80"
-              >
-                Đóng
-              </button>
-              <button
-                onClick={handleCreate}
-                className="active:scale-[.98] active:duration-75 text-white text-text-main font-bold  bg-blue-500 rounded-md px-2 py-1  w-[80px] hover:opacity-80"
-              >
-                Xác nhận
-              </button>
+            <div className="flex justify-between items-center">
+              <div className="flex gap-x-3 py-2">
+                {/* <button
+                  onClick={() => setIsShowModalOnlyPrint(true)}
+                  className="flex items-center  py-1 px-2  rounded-md border-dashed border border-gray-500  text-sm hover:text-sky-500  hover:border-sky-500 "
+                >
+                  <div className="pr-1">
+                    <TiPrinter size={20} />
+                  </div>
+                  <div>In phiếu</div>
+                  
+                </button>
+                <button
+                  onClick={() => setIsShowModalOnlyPrintWareHouse(true)}
+                  className="flex items-center  py-1 px-2  rounded-md border-dashed border border-gray-500  text-sm hover:text-sky-500  hover:border-sky-500 "
+                >
+                  <div className="pr-1">
+                    <TiPrinter size={20} />
+                  </div>
+                  <div>In phiếu kho</div>
+                </button> */}
+              </div>
+              <div className="flex justify-end items-center gap-3  pt-3">
+                <button
+                  onClick={() => close()}
+                  className="active:scale-[.98] active:duration-75 text-white text-text-main font-bold  bg-rose-500 rounded-md px-2 py-1 w-[80px] hover:opacity-80"
+                >
+                  Đóng
+                </button>
+                <button
+                  onClick={handleCreate}
+                  className="active:scale-[.98] active:duration-75 text-white text-text-main font-bold  bg-blue-500 rounded-md px-2 py-1  w-[80px] hover:opacity-80"
+                >
+                  Xác nhận
+                </button>
+              </div>
             </div>
           </div>
+        )}
+
+        {actionType === 'edit' && isLoadingModel ? (
+          <div className=" w-[90vw] h-[600px] ">
+            <label className="font-bold ">Sửa thông tin - phiếu mua hàng</label>
+            <div className=" border w-full h-[90%] rounded-sm text-sm">
+              <div className="flex gap-4">
+                {/* thong tin phieu */}
+                <div className="w-[60%] ">
+                  <div className="flex p-1  justify-between">
+                    <div className=" flex items-center ">
+                      <label className="pr-2">Số chứng từ</label>
+                      <input
+                        readOnly
+                        type="text"
+                        className=" border border-gray-300 outline-none  px-2  bg-gray-200"
+                        value={dataThongTin?.SoChungTu}
+                        onChange={(e) =>
+                          setFormPMHEdit({
+                            ...formPMHEdit,
+                            SoChungTu: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+
+                    {/* DatePicker */}
+                    <div className="flex gap-x-2 items-center ">
+                      <label className="pr-3">Ngày</label>
+                      <DatePicker
+                        className="DatePicker_PMH"
+                        format="DD/MM/YYYY"
+                        defaultValue={dayjs(dataThongTin?.NgayCTu)}
+                        onChange={(newDate) => {
+                          setFormPMHEdit({
+                            ...formPMHEdit,
+                            NgayCTu: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                          })
+                        }}
+                      />
+                    </div>
+                    <div className="flex gap-x-2 items-center">
+                      <label className="pr-3">Đáo Hạn</label>
+                      <DatePicker
+                        className="DatePicker_PMH"
+                        format="DD/MM/YYYY"
+                        defaultValue={dayjs(dataThongTin?.DaoHan)}
+                        onChange={(newDate) => {
+                          setFormPMHEdit({
+                            ...formPMHEdit,
+                            DaoHan: newDate ? dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss') : null,
+                          })
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <div className="p-1 flex ">
+                    <label form="doituong" className="w-[86px]">
+                      Đối tượng
+                    </label>
+                    <Select showSearch size="small" optionFilterProp="children" onChange={(value) => handleDoiTuongFocus(value)} style={{ width: '100%' }} value={selectedDoiTuong}>
+                      {dataDoiTuong?.map((item) => (
+                        <Option key={item.Ma} value={item.Ma}>
+                          {item.Ma} - {item.Ten}
+                        </Option>
+                      ))}
+                    </Select>
+                    {/* <select className=" bg-white border w-full  outline-none border-gray-300  " value={selectedDoiTuong} onChange={(e) => handleDoiTuongFocus(e.target.value)}>
+                      {dataDoiTuong?.map((item) => (
+                        <option key={item.Ma} value={item.Ma}>
+                          {item.Ma} - {item.Ten}
+                        </option>
+                      ))}
+                    </select> */}
+                  </div>
+                  <div className="flex items-center   p-1">
+                    <label className="w-[86px]">Tên</label>
+                    <input
+                      type="text"
+                      className="w-full border border-gray-300 outline-none px-2 "
+                      value={selectedDoiTuong === 'NCVL' ? formPMHEdit.TenDoiTuong : doiTuongInfo.Ten}
+                      onChange={(e) =>
+                        setFormPMHEdit({
+                          ...formPMHEdit,
+                          TenDoiTuong: e.target.value,
+                        })
+                      }
+                      disabled={selectedDoiTuong !== 'NCVL'}
+                    />
+                  </div>
+                  <div className="flex items-center  p-1">
+                    <label className="w-[86px]">Địa chỉ</label>
+                    <input
+                      type="text"
+                      className=" w-full border border-gray-300 outline-none px-2 "
+                      value={selectedDoiTuong === 'NCVL' ? formPMHEdit.DiaChi : doiTuongInfo.DiaChi}
+                      onChange={(e) =>
+                        setFormPMHEdit({
+                          ...formPMHEdit,
+                          DiaChi: e.target.value,
+                        })
+                      }
+                      disabled={selectedDoiTuong !== 'NCVL'}
+                    />
+                  </div>
+                  <div className="flex items-center w-full  ">
+                    <div className="p-1 flex  items-center w-1/2 ">
+                      <label form="khohang" className="w-[94px]">
+                        Kho hàng
+                      </label>
+
+                      <Select showSearch size="small" optionFilterProp="children" onChange={(value) => setSelectedKhoHang(value)} style={{ width: '100%' }} value={selectedKhoHang}>
+                        {dataKhoHang?.map((item) => (
+                          <Option key={item.MaKho} value={item.MaKho}>
+                            {item.ThongTinKho}
+                          </Option>
+                        ))}
+                      </Select>
+                      {/* <select
+                        className=" bg-white border  w-full border-gray-300 hover:border-gray-500 "
+                        onChange={(e) => setSelectedKhoHang(e.target.value)}
+                        value={selectedKhoHang}
+                      >
+                        {dataKhoHang?.map((item) => (
+                          <option key={item.MaKho} value={item.MaKho}>
+                            {item.MaKho} - {item.TenKho}
+                          </option>
+                        ))}
+                      </select> */}
+                    </div>
+                    <div className="flex items-center p-1  w-1/2">
+                      <label className="w-[86px]">Ghi chú</label>
+                      <input
+                        type="text"
+                        className="w-full border border-gray-300 outline-none px-2 "
+                        defaultValue={dataThongTin.GhiChu}
+                        onChange={(e) =>
+                          setFormPMHEdit({
+                            ...formPMHEdit,
+                            GhiChu: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                  </div>
+                </div>
+                {/* thong tin cap nhat */}
+                <div className="w-[40%] py-1 box_content">
+                  <div className="text-center p-1 font-medium text_capnhat">Thông tin cập nhật</div>
+                  <div className="-2 rounded-md w-[98%] h-[80%] box_capnhat">
+                    <div className="flex justify-between items-center ">
+                      <div className="flex items-center p-1  ">
+                        <label className="">Người tạo</label>
+                        <input type="text" className="   outline-none px-2" readOnly />
+                      </div>
+                      <div className="flex items-center p-1 w-1/2">
+                        <label className="">Lúc</label>
+                        <input readOnly type="text" className="w-full   outline-none px-2 " />
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center ">
+                      <div className="flex items-center p-1  ">
+                        <label className="">Sửa cuối</label>
+                        <input readOnly type="text" className="   outline-none px-2 " />
+                      </div>
+                      <div className="flex items-center p-1 w-1/2">
+                        <label className="">Lúc</label>
+                        <input readOnly type="text" className="w-full   outline-none px-2 " />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="flex justify-end items-center gap-3 pr-3">
+                <button
+                  disabled={isAdd}
+                  onClick={handleAddEmptyRow}
+                  className={`border border-blue-500 rounded-md px-2 py-1 ${isAdd ? 'cursor-not-allowed text-slate-400' : 'hover:bg-blue-500 hover:text-white'}`}
+                >
+                  Thêm hàng mới
+                </button>
+                <button onClick={() => setIsShowModalHH(true)} className="border border-blue-500 rounded-md px-2 py-1 hover:bg-blue-500 hover:text-white">
+                  chọn từ danh sách
+                </button>
+              </div>
+              {/* table */}
+              <div className="  max-w-[98%]  max-h-[50%] mx-auto bg-white  rounded-md my-3 overflow-y-auto ">
+                <table className=" min-w-full min-h-full bg-white border border-gray-300 text-text-main">
+                  <thead>
+                    <tr>
+                      {title.map((item, index) => (
+                        <th key={index} className="py-1 px-2 border text-center">
+                          {item}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="">
+                    {selectedRowData.map((item, index) => (
+                      <EditRow
+                        key={item.MaHang}
+                        index={index}
+                        item={item}
+                        dataHangHoa={dataHangHoa}
+                        handleDeleteRow={handleDeleteRow}
+                        setRowData={setSelectedRowData}
+                        currentRowData={currentRowData(item.MaHang)}
+                      />
+                    ))}
+                  </tbody>
+                  {/* <tfoot className="">
+                    <tr>
+                      <th className="py-2 px-4 border text-center"></th>
+                      <th className="py-2 px-4 border text-center"></th>
+                      <th className="py-2 px-4 border text-center"></th>
+                      <th className="py-2 px-4 border text-center"></th>
+                      <th className="py-1 px-3 border text-end">{tongSoLuong.toFixed(1)}</th>
+                      <th className="py-1 px-2 border text-end">{tongDonGia.toLocaleString()}</th>
+                      <th className="py-2 px-4 border text-end">{tongTienHang.toLocaleString()}</th>
+                      <th className="py-2 px-4 border text-center">{tongTyLeThue}</th>
+                      <th className="py-2 px-4 border text-end">{tongTienThue.toLocaleString()}</th>
+                      <th className="py-2 px-4 border text-end">{tongThanhTien.toLocaleString()}</th>
+                      <th className="py-2 px-4 border text-center"></th>
+                    </tr>
+                  </tfoot> */}
+                </table>
+              </div>
+              {/* <Table dataSource={selectedRowData} columns={columns} />; */}
+            </div>
+
+            {/* button  */}
+            <div className="flex justify-between items-center">
+              <div className="flex gap-x-3 py-2">
+                <button
+                  onClick={() => setIsShowModalOnlyPrint(true)}
+                  className="flex items-center  py-1 px-2  rounded-md border-dashed border border-gray-500  text-sm hover:text-sky-500  hover:border-sky-500 "
+                >
+                  <div className="pr-1">
+                    <TiPrinter size={20} />
+                  </div>
+                  <div>In phiếu</div>
+                </button>
+                <button
+                  onClick={() => setIsShowModalOnlyPrintWareHouse(true)}
+                  className="flex items-center  py-1 px-2  rounded-md border-dashed border border-gray-500  text-sm hover:text-sky-500  hover:border-sky-500 "
+                >
+                  <div className="pr-1">
+                    <TiPrinter size={20} />
+                  </div>
+                  <div>In phiếu kho</div>
+                </button>
+              </div>
+              <div className="flex justify-end items-center gap-3  pt-3">
+                <button
+                  onClick={() => close()}
+                  className="active:scale-[.98] active:duration-75 text-white text-text-main font-bold  bg-rose-500 rounded-md px-2 py-1 w-[80px] hover:opacity-80"
+                >
+                  Đóng
+                </button>
+                <button
+                  onClick={() => handleEdit(dataRecord)}
+                  className="active:scale-[.98] active:duration-75 text-white text-text-main font-bold  bg-blue-500 rounded-md px-2 py-1  w-[80px] hover:opacity-80"
+                >
+                  Xác nhận
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div></div>
         )}
 
         {actionType === 'delete' ? (
