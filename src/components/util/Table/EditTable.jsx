@@ -1,10 +1,12 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { Button, Form, Input, Popconfirm, Table, InputNumber } from 'antd'
+import { Button, Form, Input, Table, Select } from 'antd'
 import BtnAction from './BtnAction'
 
-const EditTable = ({ param, handleEditData }) => {
+const { Option } = Select
+
+const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOptions }) => {
   const EditableContext = React.createContext(null)
 
   const EditableRow = ({ index, ...props }) => {
@@ -21,45 +23,40 @@ const EditTable = ({ param, handleEditData }) => {
   const handleSave = (row) => {
     setDataSource((prevDataSource) => {
       const newData = [...prevDataSource]
-      const index = newData.findIndex((item) => item.MaHang === row.MaHang)
-      const item = newData[index]
+      const index = newData.findIndex((item) => item.STT === row.STT)
 
-      newData.splice(index, 1, {
-        ...item,
-        ...row,
-        STT: index + 1,
-      })
+      if (index !== -1) {
+        const item = newData[index]
 
-      const updatedRow = newData[index]
-      updatedRow.TienHang = updatedRow.SoLuong * updatedRow.DonGia
+        newData.splice(index, 1, {
+          ...item,
+          ...row,
+          STT: index + 1,
+        })
 
-      updatedRow.TienThue = (updatedRow.TienHang * updatedRow.TyLeThue) / 100
-      updatedRow.ThanhTien = updatedRow.TienHang + updatedRow.TienThue
+        const updatedRow = newData[index]
 
-      updatedRow.TienCKTT = updatedRow.ThanhTien + updatedRow.TyLeCKTT || 0
-      updatedRow.TongCong = updatedRow.ThanhTien
+        if (updatedRow && updatedRow.SoLuong !== undefined && updatedRow.DonGia !== undefined) {
+          updatedRow.TienHang = updatedRow.SoLuong * updatedRow.DonGia
+          updatedRow.TienThue = (updatedRow.TienHang * updatedRow.TyLeThue) / 100
+          updatedRow.ThanhTien = updatedRow.TienHang + ((updatedRow.TienHang || 0) * (updatedRow.TyLeThue || 0)) / 100
+          updatedRow.TienCKTT = (updatedRow.ThanhTien * updatedRow.TyLeCKTT) / 100
+          updatedRow.TongCong = updatedRow.TienCKTT + updatedRow.ThanhTien
 
-      console.log('handleSave - newData:', newData)
-      handleEditData(newData)
-      return newData
-    })
-  }
-  const handleInputNumberChange = (value, MaHang, dataIndex) => {
-    setDataSource((prevDataSource) => {
-      const newData = prevDataSource.map((item) => {
-        if (item.MaHang === MaHang) {
-          return {
-            ...item,
-            [dataIndex]: value,
-          }
+          console.log('handleSave - newData:', newData)
+          handleEditData(newData)
+          return newData
+        } else {
+          console.error('SoLuong or DonGia is undefined in updatedRow:', updatedRow)
         }
-        return item
-      })
+      } else {
+        console.error('Row not found in data.')
+      }
 
-      handleEditData(newData)
-      return newData
+      return prevDataSource // Trả về dữ liệu không thay đổi nếu không tìm thấy hàng.
     })
   }
+
   const EditableCell = ({ title, editable, children, dataIndex, record, handleSave, ...restProps }) => {
     const [editing, setEditing] = useState(false)
     const inputRef = useRef(null)
@@ -83,10 +80,37 @@ const EditTable = ({ param, handleEditData }) => {
         const values = await form.validateFields()
         toggleEdit()
 
-        handleSave({
-          ...record,
-          ...values,
-        })
+        if (dataIndex === 'MaHang' || dataIndex === 'TenHang') {
+          const optionsArray = dataIndex === 'MaHang' ? yourMaHangOptions : yourTenHangOptions
+
+          const selectedOption = optionsArray.find((option) => option[dataIndex] === values[dataIndex]) || {}
+          const GiaBan = selectedOption.GiaBan
+          const updatedRow = {
+            ...record,
+            ...values,
+            TenHang: selectedOption.TenHang || '',
+            MaHang: selectedOption.MaHang || '',
+            DonGia: GiaBan,
+            SoLuong: record.SoLuong || values.SoLuong || 1,
+            // TyLeCKTT: 0,
+            // TonKho: selectedOption.TonKho || true,
+            // TienThue: selectedOption.TienThue || undefined,
+            DVT: selectedOption.DVT || undefined,
+            // TienHang: selectedOption.DonGia || undefined,
+            // TyLeThue: 0,
+            // ThanhTien: selectedOption.DonGia || undefined,
+            // TienCKTT: 0,
+            // TongCong: selectedOption.DonGia || undefined,
+          }
+          console.log(updatedRow)
+          handleSave(updatedRow)
+        } else {
+          handleSave({
+            ...record,
+            ...values,
+          })
+        }
+        console.log(dataSource)
       } catch (errInfo) {
         console.log('Save failed:', errInfo)
       }
@@ -94,6 +118,8 @@ const EditTable = ({ param, handleEditData }) => {
 
     let childNode = children
     if (editable) {
+      const isSelect = dataIndex === 'MaHang' || dataIndex === 'TenHang'
+
       childNode = editing ? (
         <Form.Item
           style={{
@@ -106,13 +132,31 @@ const EditTable = ({ param, handleEditData }) => {
               message: `${title} is required.`,
             },
           ]}
+          initialValue={record[dataIndex]}
         >
-          <Input ref={inputRef} onPressEnter={save} onBlur={save} />
+          {isSelect ? (
+            <Select ref={inputRef} onPressEnter={save} onBlur={save} style={{ width: '100%' }} showSearch>
+              {dataIndex === 'MaHang'
+                ? yourMaHangOptions?.map((option) => (
+                    <Option key={option.MaHang} value={option.MaHang}>
+                      {`${option.MaHang} - ${option.TenHang}`}
+                    </Option>
+                  ))
+                : yourTenHangOptions?.map((option) => (
+                    <Option key={option.TenHang} value={option.TenHang}>
+                      {`${option.MaHang} - ${option.TenHang}`}
+                    </Option>
+                  ))}
+            </Select>
+          ) : (
+            <Input ref={inputRef} onPressEnter={save} onBlur={save} />
+          )}
         </Form.Item>
       ) : (
         <div
           style={{
             paddingRight: 24,
+            color: record[dataIndex] === 0 ? 'rgba(0, 0, 0, 0.25)' : 'inherit',
           }}
           onClick={toggleEdit}
         >
@@ -120,6 +164,7 @@ const EditTable = ({ param, handleEditData }) => {
         </div>
       )
     }
+
     return <td {...restProps}>{childNode}</td>
   }
 
@@ -139,20 +184,9 @@ const EditTable = ({ param, handleEditData }) => {
     })
   }
 
-  // const handleSave = (row) => {
-  //   setDataSource((prevDataSource) => {
-  //     const newData = [...prevDataSource]
-  //     const index = newData.findIndex((item) => item.MaHang === row.MaHang)
-  //     const item = newData[index]
-  //     newData.splice(index, 1, {
-  //       ...item,
-  //       ...row,
-  //     })
-  //     console.log('handleSave - newData:', newData)
-  //     handleEditData(newData)
-  //     return newData
-  //   })
-  // }
+  const formatVND = (value) => {
+    return value?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })
+  }
 
   const listColumns = ['STT', 'MaHang', 'TenHang', 'DVT', 'SoLuong', 'DonGia', 'TienHang', 'TyLeThue', 'TienThue', 'ThanhTien', 'TyLeCKTT', 'TienCKTT', 'TongCong']
 
@@ -166,31 +200,34 @@ const EditTable = ({ param, handleEditData }) => {
         render: (text, record, index) => index + 1,
       }
     }
-    if (item === 'TienHang') {
+    if (item === 'TenHang') {
       return {
         title: item,
-        width: 200,
+        width: 300,
         dataIndex: item,
+        editable: true,
         key: item,
       }
     }
-
-    if (item === 'ThanhTien') {
+    if (item === 'TienHang' || item === 'TienThue' || item === 'ThanhTien' || item === 'TienCKTT' || item === 'TongCong' || item === 'DonGia') {
       return {
         title: item,
         width: 200,
         dataIndex: item,
         key: item,
-      }
-    }
-    if (item === 'SoLuong') {
-      return {
-        title: item,
-        width: 200,
-        dataIndex: item,
-        key: item,
-        sorter: (a, b) => a.SoLuong - b.SoLuong,
-        render: (text, record) => <InputNumber value={parseInt(text)} onChange={(value) => handleInputNumberChange(value, record.MaHang, item)} />,
+        render: (text) =>
+          text !== 0 ? (
+            formatVND(text)
+          ) : (
+            <div
+              style={{
+                color: 'rgba(0, 0, 0, 0.25)',
+              }}
+            >
+              {text}
+            </div>
+          ),
+        sorter: (a, b) => a[item] - b[item],
       }
     }
     return {
@@ -215,6 +252,7 @@ const EditTable = ({ param, handleEditData }) => {
       },
     }
   })
+
   const defcolumns = [
     ...newColumns,
     {
@@ -248,7 +286,6 @@ const EditTable = ({ param, handleEditData }) => {
       }),
     }
   })
-
   return (
     <div>
       <Table

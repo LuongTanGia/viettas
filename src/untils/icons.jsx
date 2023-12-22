@@ -19,6 +19,7 @@ import { IoAddCircleOutline } from "react-icons/io5";
 import { TiPrinter } from "react-icons/ti";
 import { SlOptions } from "react-icons/sl";
 import { GiPayMoney } from "react-icons/gi";
+import { GiReceiveMoney } from "react-icons/gi";
 
 const icons = {
   TfiSearch,
@@ -47,5 +48,6 @@ const icons = {
   GiPayMoney,
   IoIosSearch,
   FcSearch,
+  GiReceiveMoney
 };
 export default icons;
