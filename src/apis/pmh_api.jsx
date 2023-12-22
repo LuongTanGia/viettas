@@ -129,26 +129,26 @@ export const SuaPMH = (token, Sct, formPMHEdit, MaDoiTuong, MaKho) =>
           MaKho: MaKho,
         },
       })
-      // const response = await axios({
-      //   url: '/entries/DuLieuPMH/Sua',
-      //   method: 'post',
-      //   headers: {
-      //     Authorization: `Bearer ${token}`,
-      //   },
-      //   data: {
-      //     SoChungTu: Sct,
-      //     Data: {
-      //       ...formPMHEdit,
-      //       DataDetails: formPMHEdit?.DataDetails?.map((item, index) => ({
-      //         ...item,
-      //         STT: index + 1,
-      //       })),
-      //       MaDoiTuong: MaDoiTuong,
-      //       MaKho: MaKho,
-      //     },
-      //   },
-      // })
-      // resolve(response)
+      const response = await axios({
+        url: '/entries/DuLieuPMH/Sua',
+        method: 'post',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        data: {
+          SoChungTu: Sct,
+          Data: {
+            ...formPMHEdit,
+            DataDetails: formPMHEdit?.DataDetails?.map((item, index) => ({
+              ...item,
+              STT: index + 1,
+            })),
+            MaDoiTuong: MaDoiTuong,
+            MaKho: MaKho,
+          },
+        },
+      })
+      resolve(response)
     } catch (error) {
       reject(error)
     }
