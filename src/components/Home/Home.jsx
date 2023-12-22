@@ -5,7 +5,7 @@ import Cookies from 'js-cookie'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Footer from '../Footer/Footer'
-import { DANHSACHCHUCNANG, DANHSACHHANGHOA, KHOANNGAY, DATATONGHOP, DATADULIEU, DANHSACHPHIEUBANHANG } from '../../action/Actions'
+import { DANHSACHCHUCNANG, DANHSACHHANGHOA, KHOANNGAY, DATATONGHOP, DATADULIEU } from '../../action/Actions'
 import API from '../../API/API'
 import { useDispatch, useSelector } from 'react-redux'
 import { khoanNgaySelect } from '../../redux/selector'
@@ -27,7 +27,7 @@ function Home({ handleToggleSidebar, isSidebarVisible }) {
       await KHOANNGAY(API.KHOANNGAY, token, dispatch)
       await DATATONGHOP(API.TONGHOP, token, KhoanNgay, dispatch)
       await DATADULIEU(API.DANHSACHHANGHOA, token, dispatch)
-      await DANHSACHPHIEUBANHANG(API.DANHSACHPBS, token, dispatch)
+
       setDataLoaded(true)
     }
     loadData()

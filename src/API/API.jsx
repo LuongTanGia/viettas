@@ -18,6 +18,10 @@ const API = {
   DANHSACHDOITUONG_PBS: `${BASE_URL}/api/entries/DuLieuPBS/ListHelper_DoiTuong`,
   DANHSACHKHOHANG_PBS: `${BASE_URL}/api/entries/DuLieuPBS/ListHelper_KhoHang`,
   DANHSACHHANGHOA_PBS: `${BASE_URL}/api/entries/DuLieuPBS/ListHelper_HangHoa`,
+  THEMPHIEUBANHANG: `${BASE_URL}/api/entries/DuLieuPBS/Them`,
+  SUAPHIEUBANHANG: `${BASE_URL}/api/entries/DuLieuPBS/Sua`,
+  XOAPHIEUBANHANG: `${BASE_URL}/api/entries/DuLieuPBS/Xoa`,
+  LAPPHIEUTHU: `${BASE_URL}/api/entries/DuLieuPBS/LapPhieuThu`,
 }
 
 export default API

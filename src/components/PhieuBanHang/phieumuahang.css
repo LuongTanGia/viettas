@@ -62,3 +62,19 @@
   overflow: hidden;
   margin-right: 5px;
 }
+/* .box_thongtin .ant-select-selection-search {
+  background-color: #fff;
+} */
+
+.box_thongtin.edit div[name='MaKho'] * {
+  background-color: white;
+}
+.box_thongtin input {
+  padding: 0 11px;
+  height: 30px;
+  /* border: 1px solid #ccc; */
+  border-radius: 6px;
+}
+.box_thongtin input:hover {
+  border: 1px solid #4897e6;
+}

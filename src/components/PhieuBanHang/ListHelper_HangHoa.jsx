@@ -7,7 +7,7 @@ import { nameColumsHangHoa } from '../util/Table/ColumnName'
 const { IoMdClose } = icons
 
 // eslint-disable-next-line react/prop-types
-function ListHelper_HangHoa({ data, isShowList, close, handleAddData }) {
+function ListHelper_HangHoa({ data, isShowList, close, handleAddData, setSelectDataOption }) {
   const token = window.localStorage.getItem('TKN')
 
   const [listHangHoa, setListHangHoa] = useState([])
@@ -18,11 +18,13 @@ function ListHelper_HangHoa({ data, isShowList, close, handleAddData }) {
       try {
         const result = await DANHSACHHANGHOA_PBS(API.DANHSACHHANGHOA_PBS, token, data)
         setListHangHoa(result)
+        setSelectDataOption(result)
         setIsLoad(true)
       } catch (error) {
         console.error('Error fetching data:', error)
       }
     }
+
     loadData()
   }, [isShowList, token])
 
