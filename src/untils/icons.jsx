@@ -15,6 +15,8 @@ import { TiPrinter } from 'react-icons/ti'
 import { SlOptions } from 'react-icons/sl'
 import { GiPayMoney } from 'react-icons/gi'
 import { GiReceiveMoney } from 'react-icons/gi'
+import { BsSearch } from 'react-icons/bs'
+import { TfiMoreAlt } from 'react-icons/tfi'
 
 const icons = {
   TfiSearch,
@@ -44,5 +46,7 @@ const icons = {
   IoIosSearch,
   FcSearch,
   GiReceiveMoney,
+  BsSearch,
+  TfiMoreAlt,
 }
 export default icons
