@@ -4,7 +4,7 @@ import { FcOk } from 'react-icons/fc'
 import { useEffect, useState } from 'react'
 import icons from '../../untils/icons'
 import { chiTietPBS } from '../../redux/selector'
-import './phieumuahang.css'
+import './phieubanhang.css'
 import dayjs from 'dayjs'
 import { useSelector } from 'react-redux'
 import TableEdit from '../util/Table/EditTable'
@@ -20,8 +20,8 @@ const { IoMdClose } = icons
 const { RangePicker } = DatePicker
 
 const initState = {
-  NgayCTu: dayjs(new Date()).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
-  DaoHan: dayjs(new Date()).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+  NgayCTu: '',
+  DaoHan: '',
   MaDoiTuong: '',
   TenDoiTuong: '',
   DiaChi: '',
@@ -41,7 +41,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction }) {
 
   const token = window.localStorage.getItem('TKN')
   const [isModalOpen, setIsModalOpen] = useState(isShow)
-  const [Date, setDate] = useState({ NgayCTu: '', DaoHan: '' })
+  const [Dates, setDates] = useState({ NgayCTu: dayjs(new Date()), DaoHan: dayjs(new Date()) })
   const [form, setForm] = useState()
   const [listDoiTuong, setListDoiTuong] = useState([])
   const [listKhoHang, setListKhoHang] = useState([])
@@ -49,8 +49,9 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction }) {
   const [dataChitiet, setDataChitiet] = useState([])
   const data_chitiet = useSelector(chiTietPBS)
 
+  console.log(Dates)
   useEffect(() => {
-    typeAction === 'edit' || typeAction === 'view' ? setForm(data_chitiet.DataResult) : setForm(initState)
+    typeAction === 'edit' || typeAction === 'view' ? setForm(data_chitiet.DataResult) : setForm({ ...initState, ...Dates })
     setDataChitiet(form?.DataDetails)
     const loadData = async () => {
       try {
@@ -78,7 +79,6 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction }) {
     }
   }, [isShow, dataRecord, token, form?.DataDetails])
   console.log(form, 'Action Form')
-  const dateFormat = 'YYYY-MM-DD'
   const setSelectDataOption = (data) => {
     setYourMaHangOptions(data)
     setYourTenHangOptions(data)
@@ -100,7 +100,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction }) {
     setForm({ ...form, MaKho: value })
   }
   const onChange = (time, timeString) => {
-    setDate({ ...Date, NgayCTu: timeString[0], DaoHan: timeString[1] })
+    setDates({ ...Dates, NgayCTu: timeString[0], DaoHan: timeString[1] })
   }
   const handleAddData = (record) => {
     const isMaHangExists = dataChitiet.some((item) => item.MaHang === record.MaHang)
@@ -118,7 +118,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction }) {
   const handleSubmit = async () => {
     if (typeAction === 'create') {
       console.log('create', dataChitiet)
-      const data = { ...form, ...Date, DataDetails: dataChitiet }
+      const data = { ...form, ...Dates, DataDetails: dataChitiet }
       await THEMPHIEUBANHANG(API.THEMPHIEUBANHANG, token, data)
       console.log(data)
     } else if (typeAction === 'edit') {
@@ -164,7 +164,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction }) {
                             disabled={typeAction === 'view' ? true : false}
                             size="large"
                             format="YYYY-MM-DDTHH:mm:ss.SSS[Z]"
-                            defaultValue={data_chitiet ? [dayjs(form?.NgayCTu, dateFormat), dayjs(form?.DaoHan, dateFormat)] : []}
+                            defaultValue={data_chitiet ? [dayjs(form?.NgayCTu), dayjs(form?.DaoHan)] : []}
                             onChange={onChange}
                           />
                         </Space>
