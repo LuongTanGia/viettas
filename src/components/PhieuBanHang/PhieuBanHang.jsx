@@ -11,6 +11,7 @@ import { FcAddDatabase } from 'react-icons/fc'
 import { DatePicker } from 'antd'
 import { toast } from 'react-toastify'
 import ModelPrint from './PrintModel'
+import ActionButton from '../util/Button/ActionButton'
 
 // import 'antd/dist/antd.css'
 // import dayjs from 'dayjs'
@@ -20,7 +21,7 @@ function PhieuBanHang() {
   const token = localStorage.getItem('TKN')
   const [dataLoaded, setDataLoaded] = useState(false)
 
-  const [date, setDate] = useState()
+  // const [date, setDate] = useState()
 
   const [data, setData] = useState()
   const [isShow, setIsShow] = useState(false)
@@ -77,10 +78,10 @@ function PhieuBanHang() {
   if (!dataLoaded) {
     return <LoadingPage />
   }
-  const onChange = (date, dateString) => {
-    console.log(date, dateString)
-    setDate(date)
-  }
+  // const onChange = (date, dateString) => {
+  //   console.log(date, dateString)
+  //   setDate(date)
+  // }
 
   const handleChangePhieuThu = async (record) => {
     await LAPPHIEUTHU(API.LAPPHIEUTHU, token, { SoChungTu: record?.SoChungTu }, dispatch)
@@ -91,8 +92,27 @@ function PhieuBanHang() {
   }
   return (
     <>
-      <DatePicker value={date} onChange={onChange} inputReadOnly />
-      <button
+      <div>
+        <div className="flex items-center gap-x-4">
+          <h1 className="text-xl font-black uppercase">Phiếu Bán Hàng</h1>
+        </div>
+      </div>
+      <div className="flex gap-3 mb-2">
+        {/* DatePicker */}
+        <div className="flex gap-x-2 items-center">
+          <label htmlFor="">Ngày</label>
+          <DatePicker className="DatePicker_PMH" format="DD/MM/YYYY" />
+        </div>
+        <div className="flex gap-x-2 items-center">
+          <label htmlFor="">Đến</label>
+          <DatePicker className="DatePicker_PMH" format="DD/MM/YYYY" />
+        </div>
+        <div className=" ">
+          <button className="flex items-center py-1 px-2 bg-bg-main rounded-md  text-white text-sm hover:opacity-80">Lọc</button>
+        </div>
+      </div>
+      {/* <DatePicker value={date} onChange={onChange} inputReadOnly /> */}
+      {/* <button
         onClick={handleCreate}
         className=" hover:bg-sky-500 border border-sky-500 p-2  rounded-md text-blue-400 hover:text-white font-medium float-right flex justify-center items-center
             mb-2"
@@ -105,7 +125,20 @@ function PhieuBanHang() {
             mb-2"
       >
         <FcAddDatabase /> <p className="ml-2">In phiéu</p>
-      </button>
+      </button> */}
+      <div className="flex justify-end gap-2">
+        <ActionButton color={'slate-50'} title={'Bản In'} background={'blue-500'} icon={''} bg_hover={'white'} color_hover={'blue-500'} handleAction={handleShowPrint} />
+        <ActionButton
+          color={'slate-50'}
+          title={'Thêm Phiếu'}
+          background={'blue-500'}
+          icon={<FcAddDatabase />}
+          bg_hover={'white'}
+          color_hover={'blue-500'}
+          handleAction={handleCreate}
+        />
+      </div>
+
       <Table
         param={data?.DataResults}
         columName={nameColumsPhieuBanHang}

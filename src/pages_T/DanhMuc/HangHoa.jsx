@@ -422,7 +422,7 @@ const HangHoa = () => {
       render: (record) => {
         return (
           <>
-            <div className="flex gap-2 items-center justify-center">
+            {/* <div className="flex gap-2 items-center justify-center">
               <div
                 className="p-1.5 rounded-md border-2 cursor-pointer  hover:bg-slate-50 hover:text-yellow-400 border-yellow-400  bg-yellow-400  text-slate-50 "
                 title="Sửa"
@@ -443,6 +443,33 @@ const HangHoa = () => {
                 onClick={() => handleDelete(record)}
               >
                 <MdDelete />
+              </div>
+            </div> */}
+            <div className=" flex gap-1 items-center justify-center ">
+              <div
+                disabled="true"
+                onClick={() => handleUpdate(record)}
+                title="Sửa"
+                className={`p-[3px] border rounded-md text-slate-50 ${
+                  record.TTTienMat ? 'bg-gray-400 cursor-not-allowed' : 'border-blue-500 bg-blue-500 hover:bg-white hover:text-blue-500 cursor-pointer'
+                }`}
+              >
+                <MdEdit size={16} />
+              </div>
+              <div
+                onClick={() => handlePrintABarcode(record)}
+                title="Sửa"
+                className="p-[3px] border rounded-md text-slate-50 border-purple-500 bg-purple-500 hover:bg-white hover:text-purple-500 cursor-pointer"
+              >
+                <CiBarcode size={16} />
+              </div>
+
+              <div
+                onClick={() => handleDelete(record)}
+                title="Xóa"
+                className="p-[3px]  border  border-red-500 rounded-md text-slate-50 bg-red-500  hover:bg-white hover:text-red-500  cursor-pointer "
+              >
+                <MdDelete size={16} />
               </div>
             </div>
           </>
