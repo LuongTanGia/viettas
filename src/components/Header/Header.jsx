@@ -6,7 +6,6 @@ import { useState } from 'react'
 // eslint-disable-next-line react/prop-types
 function Header({ handleToggleSidebar }) {
   const userLogin = window.localStorage.getItem('userName')
-  console.log(userLogin)
   const [isShow, setIsShow] = useState(false)
   const user = localStorage.getItem('User')
   const logout = () => {

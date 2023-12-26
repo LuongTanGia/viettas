@@ -601,7 +601,6 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
             <div></div>
           </div>
         )}
-
         {actionType === 'pay' && (
           <div className=" flex justify-between items-center ">
             <label>
@@ -612,7 +611,6 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
             <div></div>
           </div>
         )}
-
         {actionType === 'print' && (
           <div className="">
             <div className="pb-2 text-text-title font-bold">In phiếu mua hàng</div>
@@ -704,7 +702,6 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
             </div>
           </div>
         )}
-
         {actionType === 'printWareHouse' && (
           <div className=" ">
             <div className="pb-2 text-text-title font-bold">In phiếu kho</div>
@@ -789,7 +786,6 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
             </div>
           </div>
         )}
-
         {actionType === 'view' && (
           <div className=" w-[90vw] h-[600px] ">
             <label className="font-bold pb-1">Xem thông tin - phiếu mua hàng</label>
@@ -1536,7 +1532,6 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
         ) : (
           <div></div>
         )}
-
         {actionType === 'delete' ? (
           <div className="flex justify-end mt-4 gap-2">
             <button

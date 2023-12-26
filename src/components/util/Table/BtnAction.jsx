@@ -1,27 +1,38 @@
+/* eslint-disable react/prop-types */
+import { toast } from 'react-toastify'
 import icons from '../../../untils/icons'
-const { FaRegEdit, MdDelete } = icons
+import { MdEdit } from 'react-icons/md'
+const { MdDelete, GiReceiveMoney } = icons
 
 // eslint-disable-next-line react/prop-types
-function BtnAction({ handleEdit, handleDelete, record }) {
+function BtnAction({ handleEdit, handleDelete, record, handleChangePhieuThu }) {
   return (
     <div>
       <>
         <div className=" flex gap-1 items-center justify-center ">
-          {/* <div
-            onClick={() => handleView(record)}
-            title="Xem"
-            className="p-[3px] border border-yellow-500 rounded-md text-yellow-500 hover:text-white hover:bg-yellow-500 cursor-pointer"
-          >
-            <FaRegEye size={16} />
-          </div> */}
           <div
-            onClick={() => handleEdit(record)}
-            title="Sửa"
-            className="p-[3px] text-purple-500 border  border-purple-500 rounded-md hover:text-white hover:bg-purple-500 cursor-pointer  "
+            disabled="true"
+            onClick={() => handleChangePhieuThu(record)}
+            title="Lập phiếu chi"
+            className={`p-[3px] border rounded-md text-slate-50 ${
+              record.TTTienMat ? 'bg-gray-400 cursor-not-allowed' : 'border-blue-500 bg-blue-500 hover:bg-white hover:text-blue-500 cursor-pointer'
+            }`}
           >
-            <FaRegEdit size={16} />
+            <GiReceiveMoney size={16} />
           </div>
-          <div onClick={() => handleDelete()} title="Xóa" className="p-[3px] text-red-500 border  border-red-500 rounded-md hover:text-white hover:bg-red-500 cursor-pointer  ">
+          <div
+            onClick={() => (record.TTTienMat ? toast.info('Dữ liệu đã được lập phiếu thu tiền!. Không thể sủa.') : handleEdit(record))}
+            title="Sửa"
+            className="p-[3px] border rounded-md text-slate-50 border-yellow-500 bg-yellow-400 hover:bg-white hover:text-yellow-500 cursor-pointer"
+          >
+            <MdEdit size={16} />
+          </div>
+
+          <div
+            onClick={() => handleDelete(record)}
+            title="Xóa"
+            className="p-[3px]  border  border-red-500 rounded-md text-slate-50 bg-red-500  hover:bg-white hover:text-red-500  cursor-pointer "
+          >
             <MdDelete size={16} />
           </div>
         </div>

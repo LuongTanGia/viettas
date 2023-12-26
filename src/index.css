@@ -185,13 +185,18 @@ a.nav-link span {
   max-height: 420px;
   z-index: 0;
 }
+.table_DLPhieuNDC .ant-table-body {
+  min-height: 400px;
+  max-height: 400px;
+  z-index: 0;
+}
 .DatePicker_NXTKho .css-o9k5xi-MuiInputBase-root-MuiOutlinedInput-root {
   height: 30px;
   width: 150px;
 }
 .DatePicker_NDCKho .css-o9k5xi-MuiInputBase-root-MuiOutlinedInput-root {
   height: 30px;
-  width: 200px;
+  width: 167px;
 }
 input[type='radio'] {
   width: 20px;
@@ -250,4 +255,12 @@ input[type='radio'] {
 
 .sider-menu.visible {
   opacity: 1;
+}
+
+.css-1bn53lx {
+  height: 30px !important;
+  width: 150px !important;
+}
+.css-p0rm37 {
+  transform: translate(14px, 15px) scale(1) !important;
 }

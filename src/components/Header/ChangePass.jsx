@@ -6,7 +6,6 @@ import API from '../../API/API'
 function ChangePass({ isShow, close }) {
   const onFinish = async (values) => {
     const token = localStorage.getItem('TKN')
-    console.log('Success:', values)
     await THAYDOIRMATKHAU(API.DOIMATKHAU, values, token)
     close()
   }
@@ -100,7 +99,7 @@ function ChangePass({ isShow, close }) {
                       close()
                     }}
                   >
-                    Hủy
+                    Đóng
                   </button>
                   <button type="primary" className="active:scale-[.98] active:duration-75 text-white text-lg font-bold bg-blue-500 rounded-md px-2 py-1 w-[100px] ml-4">
                     Thay đổi

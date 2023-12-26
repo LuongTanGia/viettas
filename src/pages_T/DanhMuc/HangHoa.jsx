@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from 'react'
-import { useSearch } from '../../hooks_T/Search'
+import { useSearch } from '../../components_T/hooks/Search'
 import { Checkbox, Table, Tooltip } from 'antd'
 import HangHoaModals from '../../components_T/Modal/DanhMuc/HangHoa/HangHoaModals'
 import categoryAPI from '../../API/linkAPI'
@@ -362,7 +362,12 @@ const HangHoa = () => {
       dataIndex: 'NguoiSuaCuoi',
       key: 'NguoiSuaCuoi',
       align: 'center',
-      sorter: (a, b) => a.NguoiSuaCuoi.localeCompare(b.NguoiSuaCuoi),
+      sorter: (a, b) => {
+        if (!a.NguoiSuaCuoi || !b.NguoiSuaCuoi) {
+          return null
+        }
+        return a.NguoiSuaCuoi.localeCompare(b.NguoiSuaCuoi)
+      },
       render: (text) => (
         <Tooltip title={text}>
           <div
@@ -417,7 +422,7 @@ const HangHoa = () => {
       render: (record) => {
         return (
           <>
-            <div className="flex gap-2 items-center justify-center">
+            {/* <div className="flex gap-2 items-center justify-center">
               <div
                 className="p-1.5 rounded-md border-2 cursor-pointer  hover:bg-slate-50 hover:text-yellow-400 border-yellow-400  bg-yellow-400  text-slate-50 "
                 title="Sửa"
@@ -438,6 +443,33 @@ const HangHoa = () => {
                 onClick={() => handleDelete(record)}
               >
                 <MdDelete />
+              </div>
+            </div> */}
+            <div className=" flex gap-1 items-center justify-center ">
+              <div
+                disabled="true"
+                onClick={() => handleUpdate(record)}
+                title="Sửa"
+                className={`p-[3px] border rounded-md text-slate-50 ${
+                  record.TTTienMat ? 'bg-gray-400 cursor-not-allowed' : 'border-blue-500 bg-blue-500 hover:bg-white hover:text-blue-500 cursor-pointer'
+                }`}
+              >
+                <MdEdit size={16} />
+              </div>
+              <div
+                onClick={() => handlePrintABarcode(record)}
+                title="Sửa"
+                className="p-[3px] border rounded-md text-slate-50 border-purple-500 bg-purple-500 hover:bg-white hover:text-purple-500 cursor-pointer"
+              >
+                <CiBarcode size={16} />
+              </div>
+
+              <div
+                onClick={() => handleDelete(record)}
+                title="Xóa"
+                className="p-[3px]  border  border-red-500 rounded-md text-slate-50 bg-red-500  hover:bg-white hover:text-red-500  cursor-pointer "
+              >
+                <MdDelete size={16} />
               </div>
             </div>
           </>
@@ -465,7 +497,7 @@ const HangHoa = () => {
                         type="text"
                         placeholder="Nhập ký tự bạn cần tìm"
                         onChange={handleSearch}
-                        className={'px-2 py-1 w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] '}
+                        className={'px-2 py-1 w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[0.125rem] outline-none text-[1rem] '}
                       />
                     </div>
                   )}
@@ -478,13 +510,13 @@ const HangHoa = () => {
                 {isShowOption && (
                   <div className="absolute flex flex-col gap-4 bg-slate-100 p-3  top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom ">
                     <div
-                      className="justify-center px-3 py-2 bg-purple-600 rounded-lg font-semibold text-slate-50 shadow-custom flex gap-1 items-center cursor-pointer hover:bg-white hover:text-purple-600"
+                      className="justify-center px-3 py-2 bg-purple-600 rounded-lg font-semibold text-slate-50 border-purple-600 border-2 flex gap-1 items-center cursor-pointer hover:bg-white hover:text-purple-600"
                       onClick={() => handlePrintBar()}
                     >
-                      <div> In Mã Vạch</div>
                       <div>
                         <CiBarcode className="w-6 h-6" />
                       </div>
+                      <div> In Mã Vạch</div>
                     </div>
                   </div>
                 )}
@@ -493,40 +525,40 @@ const HangHoa = () => {
             <div className="flex justify-end ">
               <div className="flex gap-2">
                 <div
-                  className="px-2 py-1 rounded font-bold flex gap-1 items-center cursor-pointer border-2 hover:text-slate-50 hover:bg-blue-600 bg-slate-50 text-blue-600"
+                  className="px-2 py-1 rounded font-medium flex gap-1 items-center cursor-pointer border-2 border-blue-500 text-slate-50 bg-blue-500 hover:bg-white hover:text-blue-600"
                   onClick={() => handleCreate()}
                 >
-                  <div> Thêm Sản Phẩm</div>
                   <div>
                     <IoMdAddCircleOutline className="w-6 h-6" />
                   </div>
+                  <div> Thêm Sản Phẩm</div>
                 </div>
                 <div
-                  className="px-2 py-1 rounded font-bold flex gap-1 items-center cursor-pointer border-2 hover:text-slate-50 hover:bg-green-600 bg-slate-50 text-green-600"
+                  className="px-2 py-1 rounded font-medium flex gap-1 items-center cursor-pointer border-2 border-blue-500 text-slate-50 bg-blue-500 hover:bg-white hover:text-blue-600"
                   onClick={() => handleStatusMany()}
                 >
-                  <div> Đổi Trạng Thái </div>
                   <div>
                     <GrStatusUnknown className="w-6 h-6" />
                   </div>
+                  <div> Đổi Trạng Thái </div>
                 </div>
                 <div
-                  className="px-2 py-1 rounded font-bold flex gap-1 items-center border-2 cursor-pointer hover:text-slate-50 hover:bg-orange-600 bg-slate-50 text-orange-600"
+                  className="px-2 py-1 rounded font-medium flex gap-1 items-center border-2 cursor-pointer border-blue-500 text-slate-50 bg-blue-500 hover:bg-white hover:text-blue-600"
                   onClick={() => handleGroupMany()}
                 >
-                  <div> Đổi Nhóm Hàng </div>
                   <div>
                     <MdOutlineGroupAdd className="w-6 h-6" />
                   </div>
+                  <div> Đổi Nhóm Hàng </div>
                 </div>
                 <div
-                  className="px-2 py-1  rounded font-bold flex gap-1 items-center cursor-pointer border-2 bg-slate-50 text-purple-600  hover:bg-purple-600 hover:text-slate-50"
+                  className="px-2 py-1 rounded font-medium flex gap-1 items-center cursor-pointer border-2 border-purple-600 text-slate-50 bg-purple-600 hover:bg-white hover:text-purple-600"
                   onClick={() => handlePrintABarcode()}
                 >
-                  <div> In Mã Vạch </div>
                   <div>
                     <CiBarcode className="w-6 h-6" />
                   </div>
+                  <div> In Mã Vạch </div>
                 </div>
               </div>
             </div>

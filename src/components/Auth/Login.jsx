@@ -4,7 +4,7 @@ import { GoogleLogin } from '@react-oauth/google'
 import API from '../../API/API'
 import { useDispatch } from 'react-redux'
 import Cookies from 'js-cookie'
-import { toast } from 'react-toastify'
+
 import backgroundImg from '../../assets/img/backgroud.jfif'
 import CollectionCreateForm from './Popup'
 import FAQ from '../FAQ/FAQ'
@@ -13,6 +13,7 @@ import './auth.css'
 const App = () => {
   const [rememberMe, setRememberMe] = useState(Cookies.get('useCookies') === 'true')
   const [isShow, setIsShow] = useState(false)
+  const token = window.localStorage.getItem('tokenDuLieu')
 
   const dispatch = useDispatch()
   const [data, setData] = useState()
@@ -26,7 +27,7 @@ const App = () => {
   })
   useEffect(() => {
     Cookies.set('useCookies', rememberMe)
-  }, [rememberMe])
+  }, [rememberMe, token])
   const onChangeInput = (e) => {
     const { name, value } = e.target
     setUser({ ...user, [name]: value })
@@ -46,16 +47,20 @@ const App = () => {
     try {
       const response = await DANHSACHDULIEU(API.DANHSACHDULIEU, user, dispatch)
       setData(response)
-      if (response?.DataResults.length === 1) {
+
+      if (response.DataResults.length === 1) {
+        console.log('hi1d')
         const remoteDB = response.DataResults[0].RemoteDB
-        await LOGIN(API.DANGNHAP, response.TKN, remoteDB, dispatch)
+        await LOGIN(API.DANGNHAP, API.DANHSACHDULIEU, response.TKN, remoteDB, {}, dispatch)
         window.localStorage.setItem('firstLogin', true)
         window.location.href = '/'
+        console.log(response)
       } else if (response?.DataResults.length > 1) {
+        console.log(response)
         setIsLoggedIn(true)
       }
     } catch (error) {
-      toast.error('Sai tài khoản hoặc mật khẩu')
+      console.log('')
     }
 
     console.log(data)
@@ -67,9 +72,9 @@ const App = () => {
     try {
       const response = await DANHSACHDULIEU(API.DANHSACHDULIEU, { TokenId: TokenID.credential }, dispatch)
       setData(response)
-      if (response?.DataResults.length === 1) {
+      if (response.DataResults.length === 1) {
         const remoteDB = response.DataResults[0].RemoteDB
-        await LOGIN(API.DANGNHAP, response.TKN, remoteDB, dispatch)
+        await LOGIN(API.DANGNHAP, API.DANHSACHDULIEU, response.TKN, remoteDB, {}, dispatch)
         window.localStorage.setItem('firstLogin', true)
         window.location.href = '/'
       } else if (response?.DataResults.length > 1) {
@@ -120,26 +125,24 @@ const App = () => {
           </div>
           <div className="flex justify-between items-center mb-4">
             <div className="mb-4">
-              <>
-                <input type="checkbox" id="rememberMe" checked={rememberMe} onChange={() => setRememberMe(!rememberMe)} className="mr-2" />
-                <label htmlFor="rememberMe" className="text-base font-medium">
-                  Sử dụng cookie
-                </label>
+              <input type="checkbox" id="rememberMe" checked={rememberMe} onChange={() => setRememberMe(!rememberMe)} className="mr-2" />
+              <label htmlFor="rememberMe" className="text-base font-medium">
+                Sử dụng cookie
+              </label>
 
-                <p>
-                  Chúng tôi đang sử dụng <strong className="underline decoration-sky-500">cookie</strong> để cung cấp cho bạn những trải nghiệm tốt nhất trên trang web này. Bằng
-                  cách tiếp tục truy cập, bạn đồng ý với
-                  <a
-                    className="underline decoration-sky-500 font-bold"
-                    onClick={() => {
-                      setIsShow(true)
-                    }}
-                  >
-                    {' '}
-                    Chính sách thu thập và sử dụng cookie của chúng tôi.
-                  </a>
-                </p>
-              </>
+              <p>
+                Chúng tôi đang sử dụng <strong className="underline decoration-sky-500">cookie</strong> để cung cấp cho bạn những trải nghiệm tốt nhất trên trang web này. Bằng cách
+                tiếp tục truy cập, bạn đồng ý với
+                <a
+                  className="underline decoration-sky-500 font-bold"
+                  onClick={() => {
+                    setIsShow(true)
+                  }}
+                >
+                  {' '}
+                  Chính sách thu thập và sử dụng cookie của chúng tôi.
+                </a>
+              </p>
             </div>
           </div>
           <div className="flex flex-col gap-y-4 mt-14">
@@ -153,13 +156,16 @@ const App = () => {
               Đăng nhập
             </button>
             <div className="flex justify-center items-center w-full">
-              <GoogleLogin
-                onSuccess={handleGoogleLogin}
-                onError={() => {
-                  console.log('Login Failed')
-                }}
-              />
-              {isLoggedIn ? <CollectionCreateForm isShow={isLoggedIn} close={close} data={data} /> : null}
+              {rememberMe ? (
+                <GoogleLogin
+                  onSuccess={handleGoogleLogin}
+                  onError={() => {
+                    console.log('Login Failed')
+                  }}
+                />
+              ) : null}
+
+              {isLoggedIn ? <CollectionCreateForm isShow={isLoggedIn} close={close} data={data} dataUser={user} /> : null}
             </div>
           </div>
 
@@ -172,7 +178,7 @@ const App = () => {
                     onClick={() => setIsShow(false)}
                     className="active:scale-[.98] active:duration-75 text-white text-lg font-bold bg-rose-500 rounded-md px-2 py-1 w-[100px]"
                   >
-                    Hủy
+                    Đóng
                   </button>
                   <button
                     onClick={() => {
