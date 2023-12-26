@@ -6,7 +6,6 @@ import RateBar from '../util/Chart/LoadingChart'
 
 function DashBoar() {
   const data = useSelector(dataTONGHOPSelector)
-  console.log(data)
   if (data?.DataResults?.length === 0) {
     return <p>Dữ liệu trống, vui lòng kiểm tra lại.</p>
   }

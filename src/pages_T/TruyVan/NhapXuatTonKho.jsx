@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import categoryAPI from '../../API/linkAPI'
-import { useSearch } from '../../hooks_T/Search'
+import { useSearch } from '../../components_T/hooks/Search'
 import { FaSearch } from 'react-icons/fa'
 import { useEffect, useState } from 'react'
 import { Table, Select, Tooltip } from 'antd'
@@ -448,7 +448,6 @@ const NhapXuatTonKho = () => {
                       />
                     </div>
                   </div>
-
                   <div className="flex items-center gap-2">
                     <Select
                       allowClear

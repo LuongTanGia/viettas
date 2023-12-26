@@ -153,12 +153,15 @@ const App = () => {
               Đăng nhập
             </button>
             <div className="flex justify-center items-center w-full">
-              <GoogleLogin
-                onSuccess={handleGoogleLogin}
-                onError={() => {
-                  console.log('Login Failed')
-                }}
-              />
+              {rememberMe && (
+                <GoogleLogin
+                  onSuccess={handleGoogleLogin}
+                  onError={() => {
+                    console.log('Login Failed')
+                  }}
+                />
+              )}
+
               {isLoggedIn ? <CollectionCreateForm isShow={isLoggedIn} close={close} data={data} /> : null}
             </div>
           </div>

@@ -475,7 +475,7 @@ const PhieuMuaHang = () => {
                 type="text"
                 placeholder="Nhập ký tự bạn cần tìm"
                 // onChange={handleSearch}
-                className={'px-2 py-1 w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] '}
+                className={'px-2 py-1 w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[0.125rem] outline-none text-[1rem] '}
               />
             </div>
           )}
