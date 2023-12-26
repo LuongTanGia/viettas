@@ -7,7 +7,7 @@ import { LuLoader2, LuBoxes, LuLogOut } from 'react-icons/lu'
 import { GoInbox } from 'react-icons/go'
 import { PiDogLight } from 'react-icons/pi'
 import { BiCategory } from 'react-icons/bi'
-import { MdQueryStats, MdDelete } from 'react-icons/md'
+import { MdQueryStats, MdDelete, MdEdit } from 'react-icons/md'
 import { SiGithubactions } from 'react-icons/si'
 import { AiOutlineMenuFold, AiOutlineMenuUnfold } from 'react-icons/ai'
 import { IoAddCircleOutline } from 'react-icons/io5'
@@ -48,5 +48,6 @@ const icons = {
   GiReceiveMoney,
   BsSearch,
   TfiMoreAlt,
+  MdEdit,
 }
 export default icons

@@ -11,7 +11,7 @@ import ModalHH from './ModalHH'
 import { toast } from 'react-toastify'
 
 import { CreateRow, EditRow } from '.'
-import { RETOKEN, base64ToPDF, roundNumber } from '../action/Actions'
+import { RETOKEN, base64ToPDF, formatPrice, formatQuantity, roundNumber } from '../action/Actions'
 
 import ModalOnlyPrint from './ModalOnlyPrint'
 import ModalOnlyPrintWareHouse from './ModalOnlyPrintWareHouse'
@@ -19,6 +19,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 // import TextField from '@mui/material/TextField'
 // import Autocomplete from '@mui/material/Autocomplete'
 import { Select } from 'antd'
+import { number } from 'prop-types'
 // import { create } from '@mui/material/styles/createTransitions'
 const { Option } = Select
 
@@ -80,12 +81,9 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
 
   useEffect(() => {
     if (dataThongTin !== null) setFormPMHEdit(dataThongTin)
+    console.log('dataThongTin1', dataThongTin)
   }, [dataThongTin, dataThongTin.DataDetails])
-  console.log('dataThongTin', dataThongTin)
 
-  useEffect(() => {
-    console.log('edit', formPMHEdit)
-  }, [formPMHEdit])
   const columns = [
     {
       title: 'STT',
@@ -111,6 +109,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       dataIndex: 'TenHang',
       key: 'TenHang',
       width: 150,
+      sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
     },
     {
       title: 'Đơn vị tính',
@@ -118,14 +117,20 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       key: 'DVT',
       width: 150,
       align: 'center',
+      sorter: (a, b) => a.DVT.localeCompare(b.DVT),
     },
     {
       title: 'Số lượng',
       dataIndex: 'SoLuong',
       key: 'SoLuong',
       width: 150,
-      render: (text) => roundNumber(text),
       align: 'end',
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full    ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          {formatQuantity(text, dataThongSo?.SOLESOLUONG)}
+        </div>
+      ),
+      sorter: (a, b) => a.SoLuong - b.SoLuong,
     },
     {
       title: 'Đơn giá',
@@ -133,7 +138,13 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       key: 'DonGia',
       width: 150,
       align: 'end',
-      render: (text) => <NumericFormat value={text} displayType={'text'} thousandSeparator={true} />,
+
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          {formatPrice(text, dataThongSo?.SOLESOTIEN)}
+        </div>
+      ),
+      sorter: (a, b) => a.DonGia - b.DonGia,
     },
     {
       title: 'Tiền hàng',
@@ -141,7 +152,12 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       key: 'TienHang',
       width: 150,
       align: 'end',
-      render: (text) => <NumericFormat value={text} displayType={'text'} thousandSeparator={true} />,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          {formatPrice(text, dataThongSo?.SOLESOTIEN)}
+        </div>
+      ),
+      sorter: (a, b) => a.TienHang - b.TienHang,
     },
     {
       title: '% thuế',
@@ -149,6 +165,8 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       key: 'TyLeThue',
       width: 150,
       align: 'center',
+      sorter: (a, b) => a.TyLeThue - b.TyLeThue,
+      render: (text) => <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{text}</div>,
     },
     {
       title: 'Tiền thuế',
@@ -156,6 +174,12 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       key: 'TienThue',
       width: 150,
       align: 'center',
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          {formatPrice(text, dataThongSo?.SOLESOTIEN)}
+        </div>
+      ),
+      sorter: (a, b) => a.TienThue - b.TienThue,
     },
     {
       title: 'Thành tiền',
@@ -164,11 +188,40 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       width: 150,
       align: 'end',
       fixed: 'right',
-      render: (text) => <NumericFormat value={text} displayType={'text'} thousandSeparator={true} />,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          {formatPrice(text, dataThongSo?.SOLESOTIEN)}
+        </div>
+      ),
+      sorter: (a, b) => a.ThanhTien - b.ThanhTien,
     },
   ]
 
   const title = ['STT', 'Mã hàng', 'Tên hàng', 'DVT', 'Số lượng', 'Đơn giá', 'Tiền hàng', '% Thuế', 'Tiền thuế', 'Thành tiền', '']
+
+  useEffect(() => {
+    if (dataDoiTuong && actionType === 'create') handleDoiTuongFocus(dataDoiTuong[0].Ma)
+    if ((dataDoiTuong && dataThongTin && actionType === 'edit') || (dataDoiTuong && dataThongTin && actionType === 'view')) {
+      handleDoiTuongFocus(dataThongTin.MaDoiTuong)
+
+      if (dataThongTin?.DataDetails) {
+        setSelectedRowData([...dataThongTin.DataDetails])
+      }
+    }
+  }, [dataDoiTuong, dataThongTin])
+
+  useEffect(() => {
+    if (dataKhoHang && dataThongTin && actionType === 'edit') {
+      setSelectedKhoHang(dataThongTin.MaKho)
+    } else if (dataKhoHang && dataThongTin && actionType !== 'edit') {
+      setSelectedKhoHang(dataKhoHang[0].MaKho)
+    }
+  }, [dataKhoHang, dataThongTin])
+
+  useEffect(() => {
+    if (dataPMH) setSelectedSctBD(dataPMH[0].SoChungTu)
+    if (dataPMH) setSelectedSctKT(dataPMH[0].SoChungTu)
+  }, [dataPMH])
 
   useEffect(() => {
     setFormPMH((prevFormPMH) => ({
@@ -176,11 +229,9 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       DataDetails: selectedRowData.map((item, index) => {
         // Đảm bảo rằng item.DonGia là một chuỗi hợp lệ
         const donGiaString = item.DonGia && typeof item.DonGia === 'string' ? item.DonGia : '0'
-        // const TyLeThueString =
-        //   item.DonGia && typeof item.TyLeThue === "string" ? item.TyLeThue : "0";
+
         // Loại bỏ dấu phẩy và chuyển đổi thành số
         const donGiaNumber = parseFloat(donGiaString.replace(/,/g, '')) || 0
-        // const ThueNumber = parseFloat(TyLeThueString.replace(/,/g, "")) || 0;
 
         const tienHang = Number(item.SoLuong) * Number(donGiaNumber)
         const tienThue = Number(tienHang) * (Number(item.TyLeThue) / 100)
@@ -209,8 +260,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       ...prevFormPMHEdit,
       DataDetails: selectedRowData.map((item, index) => {
         // Đảm bảo rằng item.DonGia là một chuỗi hợp lệ
-        const donGiaString = item.DonGia && typeof item.DonGia === 'string' ? item.DonGia : '0'
-
+        const donGiaString = item.DonGia && typeof item.DonGia === 'string' ? item.DonGia : String(item.DonGia)
         // Loại bỏ dấu phẩy và chuyển đổi thành số
         const donGiaNumber = parseFloat(donGiaString.replace(/,/g, '')) || 0
 
@@ -218,7 +268,6 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
         const tienThue = Number(tienHang) * (Number(item.TyLeThue) / 100)
         const thanhTien = Number(tienHang) + Number(tienThue)
         const tongCong = Number(thanhTien)
-
         return {
           ...item,
           STT: index + 1,
@@ -235,32 +284,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
         }
       }),
     }))
-    // console.log('edit2', formPMHEdit)
-  }, [selectedRowData])
-
-  useEffect(() => {
-    if (dataDoiTuong && actionType === 'create') handleDoiTuongFocus(dataDoiTuong[0].Ma)
-    if ((dataDoiTuong && dataThongTin && actionType === 'edit') || (dataDoiTuong && dataThongTin && actionType === 'view')) {
-      handleDoiTuongFocus(dataThongTin.MaDoiTuong)
-
-      if (dataThongTin?.DataDetails) {
-        setSelectedRowData([...dataThongTin.DataDetails])
-      }
-    }
-  }, [dataDoiTuong, dataThongTin])
-
-  useEffect(() => {
-    if (dataKhoHang && dataThongTin && actionType === 'edit') {
-      setSelectedKhoHang(dataThongTin.MaKho)
-    } else if (dataKhoHang && dataThongTin && actionType !== 'edit') {
-      setSelectedKhoHang(dataKhoHang[0].MaKho)
-    }
-  }, [dataKhoHang, dataThongTin])
-
-  useEffect(() => {
-    if (dataPMH) setSelectedSctBD(dataPMH[0].SoChungTu)
-    if (dataPMH) setSelectedSctKT(dataPMH[0].SoChungTu)
-  }, [dataPMH])
+  }, [selectedRowData, dataThongTin])
 
   const handleAddInList = async () => {
     try {
@@ -555,15 +579,15 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
     setNewDataPMH(filteredData)
   }
 
-  const summaryTable = (columnName) => {
-    return selectedRowData.reduce((total, item) => total + item[columnName], 0)
-  }
-  const tongSoLuong = summaryTable('SoLuong')
-  const tongDonGia = summaryTable('DonGia')
-  const tongTienHang = summaryTable('TienHang')
-  const tongTyLeThue = summaryTable('TyLeThue')
-  const tongTienThue = summaryTable('TienThue')
-  const tongThanhTien = summaryTable('ThanhTien')
+  // const summaryTable = (columnName) => {
+  //   return selectedRowData.reduce((total, item) => total + item[columnName], 0)
+  // }
+  // const tongSoLuong = summaryTable('SoLuong')
+  // const tongDonGia = summaryTable('DonGia')
+  // const tongTienHang = summaryTable('TienHang')
+  // const tongTyLeThue = summaryTable('TyLeThue')
+  // const tongTienThue = summaryTable('TienThue')
+  // const tongThanhTien = summaryTable('ThanhTien')
   return (
     <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
       <div className="  m-4 p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
@@ -821,20 +845,22 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                     </div>
                   </div>
                 </div>
+
                 {/* thong tin cap nhat */}
-                <div className="w-[40%] py-1">
-                  <div className="text-center p-2 font-medium">Thông tin cập nhật</div>
-                  <div className="border-2 rounded-md w-[98%] h-[80%] ">
+                <div className="w-[40%] py-1 box_content">
+                  <div className="text-center p-1 font-medium text_capnhat">Thông tin cập nhật</div>
+                  <div className=" rounded-md w-[98%] h-[80%] box_capnhat">
                     <div className="flex justify-between items-center ">
                       <div className="flex items-center p-1  ">
                         <label className="">Người tạo</label>
-                        <input type="text" className=" border border-gray-300 outline-none px-2" value={dataThongTin?.NguoiTao} />
+                        <input type="text" className=" border border-gray-300 outline-none px-2" value={dataThongTin?.NguoiTao} readOnly />
                       </div>
-                      <div className="flex items-center p-1 w-1/2">
+                      <div className="flex items-center p-1 ">
                         <label className="">Lúc</label>
                         <input
+                          readOnly
                           type="text"
-                          className="w-full border border-gray-300 outline-none px-2 "
+                          className="border border-gray-300 outline-none "
                           value={dataThongTin?.NgayTao && moment(dataThongTin.NgayTao).isValid() ? moment(dataThongTin.NgayTao).format('DD/MM/YYYY hh:mm:ss') : ''}
                         />
                       </div>
@@ -842,11 +868,12 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                     <div className="flex justify-between items-center ">
                       <div className="flex items-center p-1  ">
                         <label className="">Sửa cuối</label>
-                        <input type="text" className=" border border-gray-300 outline-none px-2 " value={dataThongTin?.NguoiSuaCuoi} />
+                        <input readOnly type="text" className=" border border-gray-300 outline-none px-2 " value={dataThongTin?.NguoiSuaCuoi} />
                       </div>
                       <div className="flex items-center p-1 w-1/2">
                         <label className="">Lúc</label>
                         <input
+                          readOnly
                           type="text"
                           className="w-full border border-gray-300 outline-none px-2 "
                           value={dataThongTin?.NgaySuaCuoi && moment(dataThongTin.NgaySuaCuoi).isValid() ? moment(dataThongTin.NgaySuaCuoi).format('DD/MM/YYYY hh:mm:ss') : ''}
@@ -869,74 +896,41 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                   }}
                   bordered
                   pagination={false}
-                  // Bảng Tổng
-                  // summary={(pageData) => {
-                  //   let totalTongCong = 0;
-                  //   let totalThanhTien = 0;
-                  //   let totalTienHang = 0;
-                  //   let totalSoLuong = 0;
-                  //   let totalDonGia = 0;
+                  Bảng
+                  Tổng
+                  summary={(pageData) => {
+                    let totalThanhTien = 0
+                    let totalTienHang = 0
+                    let totalSoLuong = 0
+                    let totalDonGia = 0
+                    let totalTienThue = 0
 
-                  //   pageData.forEach(
-                  //     ({ TongCong, ThanhTien, TienHang, SoLuong, DonGia }) => {
-                  //       totalDonGia += DonGia;
-                  //       totalTienHang += TienHang;
-                  //       totalSoLuong += SoLuong;
-                  //       totalThanhTien += ThanhTien;
-                  //       totalTongCong += TongCong;
-                  //     }
-                  //   );
-                  //   return (
-                  //     <Table.Summary fixed="bottom">
-                  //       <Table.Summary.Row className="text-end font-bold">
-                  //         <Table.Summary.Cell
-                  //           index={0}
-                  //           className="text-center "
-                  //         >
-                  //           {pageData.length}
-                  //         </Table.Summary.Cell>
-                  //         <Table.Summary.Cell index={1}></Table.Summary.Cell>
-                  //         <Table.Summary.Cell index={2}></Table.Summary.Cell>
-                  //         <Table.Summary.Cell index={3}></Table.Summary.Cell>
-                  //         <Table.Summary.Cell index={4}>
-                  //           {roundNumber(totalSoLuong)}
-                  //         </Table.Summary.Cell>
-                  //         <Table.Summary.Cell index={5}>
-                  //           <NumericFormat
-                  //             value={totalDonGia}
-                  //             displayType={"text"}
-                  //             thousandSeparator={true}
-                  //           />
-                  //         </Table.Summary.Cell>
-                  //         <Table.Summary.Cell index={6}>
-                  //           <NumericFormat
-                  //             value={totalTienHang}
-                  //             displayType={"text"}
-                  //             thousandSeparator={true}
-                  //           />
-                  //         </Table.Summary.Cell>
-                  //         <Table.Summary.Cell index={7}></Table.Summary.Cell>
-                  //         <Table.Summary.Cell index={8}></Table.Summary.Cell>
-                  //         <Table.Summary.Cell index={9}>
-                  //           <NumericFormat
-                  //             value={totalThanhTien}
-                  //             displayType={"text"}
-                  //             thousandSeparator={true}
-                  //           />
-                  //         </Table.Summary.Cell>
-                  //         <Table.Summary.Cell index={10}></Table.Summary.Cell>
-                  //         <Table.Summary.Cell index={11}></Table.Summary.Cell>
-                  //         <Table.Summary.Cell index={12}>
-                  //           <NumericFormat
-                  //             value={totalTongCong}
-                  //             displayType={"text"}
-                  //             thousandSeparator={true}
-                  //           />
-                  //         </Table.Summary.Cell>
-                  //       </Table.Summary.Row>
-                  //     </Table.Summary>
-                  //   );
-                  // }}
+                    pageData.forEach(({ ThanhTien, TienHang, SoLuong, DonGia, TienThue }) => {
+                      totalDonGia += DonGia
+                      totalTienHang += TienHang
+                      totalSoLuong += SoLuong
+                      totalThanhTien += ThanhTien
+                      totalTienThue += TienThue
+                    })
+                    return (
+                      <Table.Summary fixed="bottom">
+                        <Table.Summary.Row className="text-end font-bold">
+                          <Table.Summary.Cell index={0} className="text-center ">
+                            {pageData.length}
+                          </Table.Summary.Cell>
+                          <Table.Summary.Cell index={1}></Table.Summary.Cell>
+                          <Table.Summary.Cell index={2}></Table.Summary.Cell>
+                          <Table.Summary.Cell index={3}></Table.Summary.Cell>
+                          <Table.Summary.Cell index={4}>{formatQuantity(totalSoLuong, dataThongSo?.SOLESOLUONG)}</Table.Summary.Cell>
+                          <Table.Summary.Cell index={5}>{formatPrice(totalDonGia, dataThongSo?.SOLESOTIEN)}</Table.Summary.Cell>
+                          <Table.Summary.Cell index={6}>{formatPrice(totalTienHang, dataThongSo?.SOLESOTIEN)}</Table.Summary.Cell>
+                          <Table.Summary.Cell index={7}></Table.Summary.Cell>
+                          <Table.Summary.Cell index={8}>{formatPrice(totalTienThue, dataThongSo?.SOLESOTIEN)}</Table.Summary.Cell>
+                          <Table.Summary.Cell index={9}>{formatPrice(totalThanhTien, dataThongSo?.SOLESOTIEN)}</Table.Summary.Cell>
+                        </Table.Summary.Row>
+                      </Table.Summary>
+                    )
+                  }}
                 ></Table>
               </div>
             </div>
