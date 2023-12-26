@@ -165,6 +165,20 @@ const categoryAPI = {
     }
     return axiosClient.post(url, { SoChungTu }, { headers })
   },
+  NDCCreate(body, accessToken) {
+    const url = '/DuLieuNDC/Them'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  NDCEdit(body, accessToken) {
+    const url = '/DuLieuNDC/Sua'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
   NDCDelete(SoChungTu, accessToken) {
     const url = '/DuLieuNDC/Xoa'
     const headers = {
@@ -186,19 +200,19 @@ const categoryAPI = {
     }
     return axiosClient.post(url, body, { headers })
   },
-  ListKhoHangNDC(body, accessToken) {
+  ListKhoHangNDC(accessToken) {
     const url = '/DuLieuNDC/ListHelper_KhoHang'
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     }
-    return axiosClient.post(url, body, { headers })
+    return axiosClient.post(url, {}, { headers })
   },
-  ListHangHoaNDC(body, accessToken) {
+  ListHangHoaNDC(accessToken) {
     const url = '/DuLieuNDC/ListHelper_HangHoa'
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     }
-    return axiosClient.post(url, body, { headers })
+    return axiosClient.post(url, {}, { headers })
   },
 
   // Hethong/KhoanNgay

@@ -6,7 +6,6 @@ import API from '../../API/API'
 function ChangePass({ isShow, close }) {
   const onFinish = async (values) => {
     const token = localStorage.getItem('TKN')
-    console.log('Success:', values)
     await THAYDOIRMATKHAU(API.DOIMATKHAU, values, token)
     close()
   }

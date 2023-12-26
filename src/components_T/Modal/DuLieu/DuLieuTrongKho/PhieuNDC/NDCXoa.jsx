@@ -18,7 +18,7 @@ const NCKXoa = ({ close, dataNDC }) => {
   return (
     <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10">
       <div onClick={close} className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"></div>
-      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col min-w-[40rem] min-h-[8rem] bg-white  p-2 rounded-xl shadow-custom overflow-hidden">
+      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col min-w-[40rem] min-h-[8rem] bg-white  p-2 rounded shadow-custom overflow-hidden">
         <div className="flex flex-col gap-2 p-2">
           <div className="flex gap-2">
             <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
@@ -33,10 +33,13 @@ const NCKXoa = ({ close, dataNDC }) => {
             <p className="text-slate-500 text-lg font-light">Thông tin sản phẩm không thể hoàn tác nếu bạn xóa !</p>
           </div>
           <div className="flex gap-2 justify-end">
-            <button className="bg-red-500 rounded p-2 text-white font-bold hover:bg-red-400 w-[100px]" onClick={close}>
+            <button
+              className="rounded px-2 py-1.5 font-bold text-slate-50 bg-red-500 border-2 hover:bg-white border-red-500 hover:text-red-500 hover:bg-white-400 w-[100px]"
+              onClick={close}
+            >
               Đóng
             </button>
-            <button className="bg-blue-600 p-2 text-white font-bold rounded w-[100px] hover:bg-blue-500" onClick={handleDelete}>
+            <button className="px-2 p-1.5 text-slate-50 bg-blue-600 border-2 border-blue-600 hover:bg-white hover:text-blue-600 font-bold rounded w-[100px]" onClick={handleDelete}>
               Xác nhận
             </button>
           </div>

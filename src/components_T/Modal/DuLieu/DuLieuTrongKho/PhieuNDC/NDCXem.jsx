@@ -45,6 +45,7 @@ const NCKXem = ({ close, dataNDC }) => {
     try {
       const repsonse = await categoryAPI.NDCView(dataNDC?.SoChungTu, TokenAccess)
       if (repsonse.data.DataError == 0) {
+        console.log(repsonse.data.DataResult)
         setDataNDCView(repsonse.data.DataResult)
       }
     } catch (error) {
@@ -57,7 +58,7 @@ const NCKXem = ({ close, dataNDC }) => {
   return (
     <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10">
       <div onClick={close} className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"></div>
-      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col min-w-[40rem] min-h-[8rem] bg-white  p-2 rounded-xl shadow-custom overflow-hidden">
+      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col min-w-[40rem] min-h-[8rem] bg-white p-2 rounded shadow-custom overflow-hidden">
         <div className="flex flex-col gap-2 p-2 max-w-[70rem] ">
           <div className="flex gap-2">
             <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
@@ -69,21 +70,11 @@ const NCKXem = ({ close, dataNDC }) => {
                 <div className="flex gap-2">
                   <div className="flex items-center gap-1">
                     <label className="required whitespace-nowrap min-w-[110px] flex justify-end">Số chứng từ</label>
-                    <input
-                      type="text"
-                      value={dataNDCView?.SoChungTu || ''}
-                      className="px-2 w-full resize-none border-[0.125rem] border-[#0006] outline-none text-[1rem]"
-                      readOnly
-                    />
+                    <input type="text" value={dataNDCView?.SoChungTu || ''} className="px-2 w-full resize-none border-[0.125rem] outline-none text-[1rem]" readOnly />
                   </div>
                   <div className="flex items-center gap-1">
                     <label className="required whitespace-nowrap">Ngày chứng từ</label>
-                    <input
-                      type="text"
-                      value={formatDateTime(dataNDCView?.NgayCTu) || ''}
-                      className="px-2 w-full resize-none border-[0.125rem] border-[#0006] outline-none text-[1rem]"
-                      readOnly
-                    />
+                    <input type="text" value={formatDateTime(dataNDCView?.NgayCTu) || ''} className="px-2 w-full resize-none border-[0.125rem] outline-none text-[1rem]" readOnly />
                   </div>
                 </div>
                 <div className="flex items-center gap-1">
@@ -91,7 +82,7 @@ const NCKXem = ({ close, dataNDC }) => {
                   <input
                     type="text"
                     value={`${dataNDCView?.MaKho} - ${dataNDCView?.TenKho}` || ''}
-                    className="px-2 w-full resize-none border-[0.125rem] border-[#0006] outline-none text-[1rem]"
+                    className="px-2 w-full resize-none border-[0.125rem] outline-none text-[1rem]"
                     readOnly
                   />
                 </div>
@@ -100,36 +91,28 @@ const NCKXem = ({ close, dataNDC }) => {
                 <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
                 <div className="flex gap-1 items-center">
                   <label className="whitespace-nowrap">Người tạo</label>
-                  <input className="px-2 w-full resize-none border-[0.125rem] border-[#0006] outline-none text-[1rem]" value={dataNDCView?.NguoiTao || ''} readOnly />
+                  <input className="px-2 w-full resize-none border-[0.125rem] outline-none text-[1rem]" value={dataNDCView?.NguoiTao || ''} readOnly />
                 </div>
                 <div className="flex gap-1 items-center">
                   <label>Lúc</label>
-                  <input
-                    className="px-2 w-full resize-none border-[0.125rem] border-[#0006] outline-none text-[1rem]"
-                    value={formatDateTime(dataNDCView?.NgayTao, true)}
-                    readOnly
-                  />
+                  <input className="px-2 w-full resize-none border-[0.125rem] outline-none text-[1rem]" value={formatDateTime(dataNDCView?.NgayTao, true)} readOnly />
                 </div>
                 <div className="flex gap-1 items-center">
                   <label className="whitespace-nowrap">Người sửa</label>
-                  <input className="px-2 w-full resize-none border-[0.125rem] border-[#0006] outline-none text-[1rem]" value={dataNDCView?.NguoiSuaCuoi || ''} readOnly />
+                  <input className="px-2 w-full resize-none border-[0.125rem] outline-none text-[1rem]" value={dataNDCView?.NguoiSuaCuoi || ''} readOnly />
                 </div>
                 <div className="flex gap-1 items-center">
                   <label>Lúc</label>
-                  <input
-                    className="px-2 w-full resize-none border-[0.125rem] border-[#0006] outline-none text-[1rem]"
-                    value={formatDateTime(dataNDCView?.NgaySuaCuoi, true) || ''}
-                    readOnly
-                  />
+                  <input className="px-2 w-full resize-none border-[0.125rem] outline-none text-[1rem]" value={formatDateTime(dataNDCView?.NgaySuaCuoi, true) || ''} readOnly />
                 </div>
               </div>
             </div>
             <div className="flex items-center gap-1">
               <label className="whitespace-nowrap min-w-[110px] flex justify-end">Ghi chú</label>
-              <input type="text" value={dataNDCView?.GhiChu || ''} className="px-2 w-[70rem] resize-none border-[0.125rem] border-[#0006] outline-none text-[1rem]" readOnly />
+              <input type="text" value={dataNDCView?.GhiChu || ''} className="px-2 w-[70rem] resize-none border-[0.125rem] outline-none text-[1rem]" readOnly />
             </div>
             <div>
-              <div className="shadow-custom p-2 rounded-lg m-1 flex flex-col gap-2 max-h-[20rem] overflow-y-auto">
+              <div className=" p-2 rounded border-2 m-1 flex flex-col gap-2 max-h-[20rem] overflow-y-auto">
                 <table className="barcodeList ">
                   <thead>
                     <tr>
@@ -168,7 +151,7 @@ const NCKXem = ({ close, dataNDC }) => {
             </div>
           </div>
           <div className="flex gap-2 justify-end">
-            <button className="bg-red-500 rounded p-2 text-white font-bold hover:bg-red-400 w-[100px]" onClick={close}>
+            <button className="rounded px-2 py-1.5 font-bold text-slate-50 bg-red-500 border-2 border-red-500 hover:text-red-500 hover:bg-white w-[100px]" onClick={close}>
               Đóng
             </button>
           </div>

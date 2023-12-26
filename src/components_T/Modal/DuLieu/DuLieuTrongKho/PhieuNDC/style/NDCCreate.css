@@ -1,36 +1,37 @@
-.barcodeList {
+.listNDC {
   border-collapse: collapse;
   width: 100%;
   overflow-x: auto;
   width: 100%;
 }
 
-.barcodeList thead th {
-  font-weight: 600;
-  background-color: #eeeeee;
+.listNDC thead th {
+  background-color: #c0c0c0;
   border: 1px solid #c0c0c0;
   text-transform: uppercase;
-  padding: 0.25rem;
+  padding: 0.25rem 0.5rem;
   text-align: center;
+  white-space: nowrap;
+  font-size: 15px;
 }
 
-.barcodeList tr:hover {
-  background-color: #eeeeee;
+.listNDC tr:hover {
+  background-color: #e1ebee;
 }
 
-.barcodeList td {
+.listNDC td {
   text-align: center;
   border: 1px solid #dcdcdc;
   padding: 0.5rem;
 }
 
-.barcodeList td > input {
+.listNDC td > input {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.25rem;
 }
-.barcodeList td > div {
+.listNDC td > div {
   display: flex;
   align-items: center;
   gap: 0.25rem;
