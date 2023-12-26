@@ -4,9 +4,9 @@ function ActionButton({ handleAction, title, icon, color, background, color_hove
     <div className="flex justify-end">
       <button
         onClick={handleAction}
-        className={`border-2 border-${background} text-${color} hover:text-${color_hover} text-lg font-bold bg-${background} hover:bg-${bg_hover}   rounded-md px-2 py-1  flex items-center gap-1`}
+        className={`border-2 border-${background} text-${color} hover:text-${color_hover} text-base font-medium bg-${background} hover:bg-${bg_hover} rounded-md px-2 py-1 flex items-center gap-1`}
       >
-        <i className="text-xl">{icon}</i>
+        <i className="text-sm">{icon}</i>
         {title}
       </button>
     </div>

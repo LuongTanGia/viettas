@@ -11,7 +11,7 @@ import { IoIosCloseCircleOutline } from 'react-icons/io'
 import { HiOutlineDocumentMagnifyingGlass } from 'react-icons/hi2'
 import { TfiPrinter } from 'react-icons/tfi'
 import { RiFilePaper2Line } from 'react-icons/ri'
-import { LISTCHUNGTU } from '../../action/Actions'
+import { INPHIEUPBS, LISTCHUNGTU, base64ToPDF } from '../../action/Actions'
 import API from '../../API/API'
 
 const { Option } = Select
@@ -62,8 +62,16 @@ function ModelPrint({ isShowModel, handleCloseAction }) {
     setSoChungTuTo(value)
   }
 
-  const handleInPhieu = () => {
-    // await LISTCHUNGTU(API.LISTCHUNGTU, token, { NgayBatDau: dateFrom.format('YYYY-MM-DD'), NgayKetThuc: dateTo.format('YYYY-MM-DD') })
+  const handleInPhieu = async () => {
+    const response = await INPHIEUPBS(API.INPHIEU, token, {
+      NgayBatDau: dateFrom.format('YYYY-MM-DD'),
+      NgayKetThuc: dateTo.format('YYYY-MM-DD'),
+      SoChungTuBatDau: soChungTuFrom,
+      SoChungTuKetThuc: soChungTuTo,
+      SoLien: soLien,
+    })
+
+    base64ToPDF(response)
   }
   console.log(soLien)
   return (
@@ -160,7 +168,7 @@ function ModelPrint({ isShowModel, handleCloseAction }) {
                     icon={<HiOutlineDocumentMagnifyingGlass />}
                     bg_hover={'white'}
                     color_hover={'blue-500'}
-                    // handleAction={handleListPhieuThu}
+                    handleAction={handleInPhieu}
                   />
                   <ActionButton
                     color={'slate-50'}

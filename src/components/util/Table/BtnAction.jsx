@@ -1,7 +1,8 @@
 /* eslint-disable react/prop-types */
 import { toast } from 'react-toastify'
 import icons from '../../../untils/icons'
-const { FaRegEdit, MdDelete, GiReceiveMoney } = icons
+import { MdEdit } from 'react-icons/md'
+const { MdDelete, GiReceiveMoney } = icons
 
 // eslint-disable-next-line react/prop-types
 function BtnAction({ handleEdit, handleDelete, record, handleChangePhieuThu }) {
@@ -22,9 +23,9 @@ function BtnAction({ handleEdit, handleDelete, record, handleChangePhieuThu }) {
           <div
             onClick={() => (record.TTTienMat ? toast.info('Dữ liệu đã được lập phiếu thu tiền!. Không thể sủa.') : handleEdit(record))}
             title="Sửa"
-            className="p-[3px] border rounded-md text-slate-50 border-purple-500 bg-purple-500 hover:bg-white hover:text-purple-500 cursor-pointer"
+            className="p-[3px] border rounded-md text-slate-50 border-yellow-500 bg-yellow-400 hover:bg-white hover:text-yellow-500 cursor-pointer"
           >
-            <FaRegEdit size={16} />
+            <MdEdit size={16} />
           </div>
 
           <div

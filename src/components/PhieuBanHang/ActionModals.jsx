@@ -1,8 +1,7 @@
 /* eslint-disable react/prop-types */
-import { FcCancel } from 'react-icons/fc'
-import { FcOk } from 'react-icons/fc'
+
 import { useEffect, useState } from 'react'
-import icons from '../../untils/icons'
+// import icons from '../../untils/icons'
 import { chiTietPBS } from '../../redux/selector'
 import './phieubanhang.css'
 import dayjs from 'dayjs'
@@ -14,9 +13,10 @@ import API from '../../API/API'
 import ListHelper_HangHoa from './ListHelper_HangHoa'
 import { toast } from 'react-toastify'
 import { Select } from 'antd'
+import ActionButton from '../util/Button/ActionButton'
 
 const { Option } = Select
-const { IoMdClose } = icons
+
 const { RangePicker } = DatePicker
 
 const initState = {
@@ -138,9 +138,6 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction }) {
               <div className=" w-[90vw] h-[600px] ">
                 <div className="flex justify-between  items-start pb-1">
                   <label className="font-bold ">Xem thông tin - phiếu mua hàng</label>
-                  <button onClick={() => handleClose()} className="text-gray-500 p-1  hover: hover:bg-red-600 hover:text-white rounded-full">
-                    <IoMdClose />
-                  </button>
                 </div>
                 <div className=" w-full h-[96%] rounded-sm text-sm border border-gray-300">
                   <div className={`flex box_thongtin ${typeAction == 'create' ? 'create' : typeAction == 'edit' ? 'edit' : ''}`}>
@@ -295,8 +292,9 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction }) {
                       <TableEdit param={dataChitiet} handleEditData={handleEditData} yourMaHangOptions={yourMaHangOptions} yourTenHangOptions={yourTenHangOptions} />
                     ) : null}
                   </div>
-                  <div className="pr-4 w-full flex justify-end mt-2">
-                    <button
+                  q
+                  <div className="pr-4 w-full flex justify-end mt-2 gap-2">
+                    {/* <button
                       className=" hover:bg-rose-400 border-1 border-rose-500 p-2  rounded-md text-rose-700 hover:text-white font-medium float-right flex justify-center items-center
             mb-2"
                       onClick={() => handleClose()}
@@ -311,7 +309,9 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction }) {
                     >
                       <FcOk />
                       <p className="ml-2">Xác Nhận</p>
-                    </button>
+                    </button> */}
+                    <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={handleClose} />
+                    <ActionButton color={'slate-50'} title={'Xác Nhận'} background={'blue-500'} bg_hover={'white'} color_hover={'blue-500'} handleAction={handleSubmit} />
                   </div>
                 </div>
               </div>
