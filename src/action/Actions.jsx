@@ -493,7 +493,80 @@ export const LAPPHIEUTHU = async (API, token, data) => {
     toast.error('Error adding user:', error)
   }
 }
+export const LISTCHUNGTU = async (API, token, data) => {
+  try {
+    const response = await axios.post(API, data, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
 
+    if (response && response.data) {
+      if (response.data.DataError === -107 || response.data.DataError === -108) {
+        // toast.error(response.data.DataErrorDescription);
+        const newToken = await RETOKEN()
+        if (newToken !== '') {
+          await LISTCHUNGTU(API, newToken, data)
+        } else if (newToken === 0) {
+          toast.error('Failed to refresh token!')
+          window.localStorage.clear()
+          window.location.href = '/login'
+        }
+      }
+
+      if (response.data) {
+        toast.success(response.data.DataErrorDescription)
+        console.log(response.data.DataErrorDescription)
+      } else {
+        toast.error('DataResults is undefined or null.')
+      }
+
+      return response.data.DataResults
+    } else {
+      toast.error('Response or response.data is undefined or null.')
+    }
+  } catch (error) {
+    toast.error('Error adding user:', error)
+  }
+}
+export const INPHIEUPBS = async (API, token, data) => {
+  try {
+    const response = await axios.post(API, data, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    if (response && response.data) {
+      if (response.data.DataError === -107 || response.data.DataError === -108) {
+        // toast.error(response.data.DataErrorDescription);
+        const newToken = await RETOKEN()
+        if (newToken !== '') {
+          await INPHIEUPBS(API, newToken, data)
+        } else if (newToken === 0) {
+          toast.error('Failed to refresh token!')
+          window.localStorage.clear()
+          window.location.href = '/login'
+        }
+      }
+
+      if (response.data) {
+        toast.success(response.data.DataErrorDescription)
+        console.log(response.data.DataErrorDescription)
+      } else {
+        toast.error('DataResults is undefined or null.')
+      }
+
+      return response.data.DataResults
+    } else {
+      toast.error('Response or response.data is undefined or null.')
+    }
+  } catch (error) {
+    toast.error('Error adding user:', error)
+  }
+}
 // function Normal
 export const base64ToPDF = (Base64PMH) => {
   // Decode base64 string

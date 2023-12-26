@@ -251,3 +251,11 @@ input[type='radio'] {
 .sider-menu.visible {
   opacity: 1;
 }
+
+.css-1bn53lx {
+  height: 30px !important;
+  width: 150px !important;
+}
+.css-p0rm37 {
+  transform: translate(14px, 15px) scale(1) !important;
+}

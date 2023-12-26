@@ -10,6 +10,7 @@ import API from '../../API/API'
 import { FcAddDatabase } from 'react-icons/fc'
 import { DatePicker } from 'antd'
 import { toast } from 'react-toastify'
+import ModelPrint from './PrintModel'
 
 // import 'antd/dist/antd.css'
 // import dayjs from 'dayjs'
@@ -23,6 +24,8 @@ function PhieuBanHang() {
 
   const [data, setData] = useState()
   const [isShow, setIsShow] = useState(false)
+  const [isShowPrint, setIsShowPrint] = useState(false)
+
   const [type, setType] = useState()
   const [dataRecord, setDataRecord] = useState([])
 
@@ -59,6 +62,10 @@ function PhieuBanHang() {
     setIsShow(false)
     setDataRecord([])
   }
+  const handleCloseAction = () => {
+    setIsShowPrint(false)
+    setDataRecord([])
+  }
   const handleDelete = async (record) => {
     const response = await XOAPHIEUBANHANG(API.XOAPHIEUBANHANG, token, { SoChungTu: record?.SoChungTu }, dispatch)
     if (response !== 1) {
@@ -79,7 +86,9 @@ function PhieuBanHang() {
     await LAPPHIEUTHU(API.LAPPHIEUTHU, token, { SoChungTu: record?.SoChungTu }, dispatch)
     setDataLoaded(false)
   }
-
+  const handleShowPrint = () => {
+    setIsShowPrint(!isShowPrint)
+  }
   return (
     <>
       <DatePicker value={date} onChange={onChange} inputReadOnly />
@@ -89,6 +98,13 @@ function PhieuBanHang() {
             mb-2"
       >
         <FcAddDatabase /> <p className="ml-2">Thêm Phiếu</p>
+      </button>
+      <button
+        onClick={handleShowPrint}
+        className=" hover:bg-sky-500 border border-sky-500 p-2  rounded-md text-blue-400 hover:text-white font-medium float-right flex justify-center items-center
+            mb-2"
+      >
+        <FcAddDatabase /> <p className="ml-2">In phiéu</p>
       </button>
       <Table
         param={data?.DataResults}
@@ -101,6 +117,7 @@ function PhieuBanHang() {
         handleChangePhieuThu={handleChangePhieuThu}
       />
       <ActionModals isShow={isShow} handleClose={handleClose} dataRecord={dataRecord} typeAction={type} />
+      <ModelPrint isShowModel={isShowPrint} handleCloseAction={handleCloseAction} />
     </>
   )
 }

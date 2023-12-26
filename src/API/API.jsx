@@ -22,6 +22,9 @@ const API = {
   SUAPHIEUBANHANG: `${BASE_URL}/api/entries/DuLieuPBS/Sua`,
   XOAPHIEUBANHANG: `${BASE_URL}/api/entries/DuLieuPBS/Xoa`,
   LAPPHIEUTHU: `${BASE_URL}/api/entries/DuLieuPBS/LapPhieuThu`,
+  LISTCHUNGTU: `${BASE_URL}/api/entries/DuLieuPBS/ListHelper_ChungTuTheoNgay`,
+  INPHIEU: `${BASE_URL}/api/entries/DuLieuPBS/InPhieu`,
+  INPHIEUKHO: `${BASE_URL}/api/entries/DuLieuPBS/InPhieuKho`,
 }
 
 export default API
