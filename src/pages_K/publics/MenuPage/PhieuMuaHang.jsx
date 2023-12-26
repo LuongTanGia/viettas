@@ -14,7 +14,7 @@ import SimpleBackdrop from '../../../components/util/Loading/LoadingPage'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { useSearch } from '../../../components_K/myComponents/useSearch'
 
-const { IoAddCircleOutline, TiPrinter, FaRegEdit, MdDelete, GiPayMoney, BsSearch, TfiMoreAlt } = icons
+const { IoAddCircleOutline, TiPrinter, MdDelete, GiPayMoney, BsSearch, TfiMoreAlt, MdEdit } = icons
 const PhieuMuaHang = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [isLoadingPopup, setIsLoadingPopup] = useState(false)
@@ -360,9 +360,9 @@ const PhieuMuaHang = () => {
               <div
                 onClick={() => handleEdit(record)}
                 title="Sửa"
-                className="p-[3px] border rounded-md text-slate-50 border-purple-500 bg-purple-500 hover:bg-white hover:text-purple-500 cursor-pointer"
+                className="p-[3px] border rounded-md text-slate-50 border-yellow-500 bg-yellow-500 hover:bg-white hover:text-yellow-500 cursor-pointer"
               >
-                <FaRegEdit size={16} />
+                <MdEdit size={16} />
               </div>
 
               <div
@@ -435,20 +435,6 @@ const PhieuMuaHang = () => {
     return <SimpleBackdrop />
   }
 
-  //   selectedRowKeys,
-  //   onChange: (selectedKeys) => {
-  //     setSelectedRowKeys(selectedKeys);
-  //   },
-  // };
-
-  // const handleRowClick = (record) => {
-  //   const isSelected = selectedRowKeys.includes(record.key);
-  //   const newSelectedRowKeys = isSelected
-  //     ? selectedRowKeys.filter((key) => key !== record.key)
-  //     : [...selectedRowKeys, record.key];
-  //   setSelectedRowKeys(newSelectedRowKeys);
-  // };
-
   const handleSearch = (event) => {
     setSearchPMH(event.target.value)
   }
@@ -457,14 +443,14 @@ const PhieuMuaHang = () => {
     <div className="w-auto">
       <div className="relative text-lg  mx-4 my-2 flex justify-between items-center  ">
         <div className="flex items-center gap-x-4 font-bold">
-          <label>Phiếu mua hàng </label>
+          <h1 className="text-xl  uppercase">Phiếu mua hàng </h1>
           <div>
             <BsSearch size={18} className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
           </div>
         </div>
-        <div className="flex relative ">
+        <div className="flex  ">
           {isShowSearch && (
-            <div className={`flex absolute left-[11rem] -top-8 transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
+            <div className={`flex absolute left-[14rem] -top-1 transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
               <input
                 type="text"
                 placeholder="Nhập ký tự bạn cần tìm"
@@ -483,7 +469,7 @@ const PhieuMuaHang = () => {
             <div className=" absolute flex flex-col gap-2 bg-slate-100 p-3  top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom ">
               <button
                 onClick={handlePrint}
-                className="flex items-center  py-1 px-2  rounded-md border-dashed border border-gray-500  text-sm hover:text-sky-500  hover:border-sky-500 "
+                className="flex items-center  py-1 px-2  rounded-md border-dashed border border-gray-500  text-base hover:text-sky-500  hover:border-sky-500 "
               >
                 <div className="pr-1">
                   <TiPrinter size={20} />
@@ -492,7 +478,7 @@ const PhieuMuaHang = () => {
               </button>
               <button
                 onClick={handlePrintWareHouse}
-                className="flex items-center  py-1 px-2  rounded-md border-dashed border border-gray-500  text-sm hover:text-sky-500  hover:border-sky-500 "
+                className="flex items-center  py-1 px-2  rounded-md border-dashed border border-gray-500  text-base hover:text-sky-500  hover:border-sky-500 "
               >
                 <div className="pr-1">
                   <TiPrinter size={20} />
@@ -535,13 +521,13 @@ const PhieuMuaHang = () => {
             />
           </div>
           <div className=" ">
-            <button onClick={handleFilterDS} className="flex items-center py-1 px-2 bg-bg-main rounded-md  text-white text-sm hover:opacity-80">
+            <button onClick={handleFilterDS} className="flex items-center py-1 px-2 bg-bg-main rounded-md  text-white text-base hover:opacity-80">
               Lọc
             </button>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={handleCreate} className="flex items-center   py-1 px-2 bg-bg-main rounded-md  text-white text-sm hover:opacity-80">
+          <button onClick={handleCreate} className="flex items-center   py-1 px-2 bg-bg-main rounded-md  text-white text-base hover:opacity-80">
             <div className="pr-1">
               <IoAddCircleOutline size={20} />
             </div>

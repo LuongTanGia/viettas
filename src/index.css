@@ -208,8 +208,8 @@ input[type='radio'] {
 /* custom table antd */
 
 .table_view .ant-table-body {
-  min-height: 310px;
-  max-height: 310px;
+  min-height: 276px;
+  max-height: 276px;
 }
 
 /* custom input antd */
