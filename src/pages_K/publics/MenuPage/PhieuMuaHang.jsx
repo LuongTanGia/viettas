@@ -151,6 +151,8 @@ const PhieuMuaHang = () => {
       width: 150,
       fixed: 'left',
       sorter: (a, b) => a.SoChungTu.localeCompare(b.SoChungTu),
+
+      showSorterTooltip: false,
     },
     {
       title: 'Ngày Chứng Từ',
@@ -164,6 +166,7 @@ const PhieuMuaHang = () => {
         const dateB = new Date(b.NgayCTu)
         return dateA - dateB
       },
+      showSorterTooltip: false,
     },
     {
       title: 'Mã Đối Tượng',
@@ -171,6 +174,7 @@ const PhieuMuaHang = () => {
       key: 'MaDoiTuong',
       width: 150,
       sorter: (a, b) => a.MaDoiTuong.localeCompare(b.MaDoiTuong),
+      showSorterTooltip: false,
     },
     {
       title: 'Tên đối tượng',
@@ -178,13 +182,21 @@ const PhieuMuaHang = () => {
       key: 'TenDoiTuong',
       width: 300,
       sorter: (a, b) => a.TenDoiTuong.localeCompare(b.TenDoiTuong),
+      showSorterTooltip: false,
     },
     {
       title: 'Địa chỉ',
       dataIndex: 'DiaChi',
       key: 'DiaChi',
       width: 300,
-      sorter: (a, b) => a.DiaChi.localeCompare(b.DiaChi),
+      // sorter: (a, b) => a.DiaChi.localeCompare(b.DiaChi),
+      sorter: (a, b) => {
+        const diaChiA = a.DiaChi || ''
+        const diaChiB = b.DiaChi || ''
+
+        return diaChiA.localeCompare(diaChiB)
+      },
+      showSorterTooltip: false,
     },
     {
       title: 'Mã số thuế',
@@ -192,6 +204,7 @@ const PhieuMuaHang = () => {
       key: 'MaSoThue',
       width: 150,
       sorter: (a, b) => a.MaSoThue - b.MaSoThue,
+      showSorterTooltip: false,
     },
     {
       title: 'Mã kho',
@@ -199,6 +212,7 @@ const PhieuMuaHang = () => {
       key: 'MaKho',
       width: 150,
       sorter: (a, b) => a.MaKho.localeCompare(b.MaKho),
+      showSorterTooltip: false,
     },
     {
       title: 'Thông tin kho',
@@ -206,13 +220,20 @@ const PhieuMuaHang = () => {
       key: 'ThongTinKho',
       width: 150,
       sorter: (a, b) => a.ThongTinKho.localeCompare(b.ThongTinKho),
+      showSorterTooltip: false,
     },
     {
       title: 'Ghi chú',
       dataIndex: 'GhiChu',
       key: 'GhiChu',
       width: 150,
-      sorter: (a, b) => a.GhiChu.localeCompare(b.GhiChu),
+      sorter: (a, b) => {
+        const GhiChuA = a.GhiChu || ''
+        const GhiChuB = b.GhiChu || ''
+
+        return GhiChuA.localeCompare(GhiChuB)
+      },
+      showSorterTooltip: false,
     },
     {
       title: 'Tổng mặt hàng',
@@ -221,6 +242,7 @@ const PhieuMuaHang = () => {
       width: 150,
       align: 'end',
       sorter: (a, b) => a.TongMatHang - b.TongMatHang,
+      showSorterTooltip: false,
     },
     {
       title: 'Tổng số lượng',
@@ -234,6 +256,7 @@ const PhieuMuaHang = () => {
         </div>
       ),
       sorter: (a, b) => a.TongSoLuong - b.TongSoLuong,
+      showSorterTooltip: false,
     },
     {
       title: 'Tổng tiền hàng',
@@ -247,6 +270,7 @@ const PhieuMuaHang = () => {
         </div>
       ),
       sorter: (a, b) => a.TongTienHang - b.TongTienHang,
+      showSorterTooltip: false,
     },
     {
       title: 'Tổng tiền thuế',
@@ -260,6 +284,7 @@ const PhieuMuaHang = () => {
         </div>
       ),
       sorter: (a, b) => a.TongTienThue - b.TongTienThue,
+      showSorterTooltip: false,
     },
     {
       title: 'Tổng thành tiền',
@@ -273,6 +298,7 @@ const PhieuMuaHang = () => {
         </div>
       ),
       sorter: (a, b) => a.TongThanhTien - b.TongThanhTien,
+      showSorterTooltip: false,
     },
 
     {
@@ -280,7 +306,14 @@ const PhieuMuaHang = () => {
       dataIndex: 'PhieuChi',
       key: 'PhieuChi',
       width: 150,
-      sorter: (a, b) => a.PhieuChi.localeCompare(b.PhieuChi),
+
+      sorter: (a, b) => {
+        const PhieuChiA = a.PhieuChi || ''
+        const PhieuChiB = b.PhieuChi || ''
+
+        return PhieuChiA.localeCompare(PhieuChiB)
+      },
+      showSorterTooltip: false,
     },
     {
       title: 'Ngày tạo',
@@ -294,6 +327,7 @@ const PhieuMuaHang = () => {
         const dateB = new Date(b.NgayTao)
         return dateA - dateB
       },
+      showSorterTooltip: false,
     },
     {
       title: 'Người tạo',
@@ -301,6 +335,7 @@ const PhieuMuaHang = () => {
       key: 'NguoiTao',
       width: 300,
       sorter: (a, b) => a.NguoiTao.localeCompare(b.NguoiTao),
+      showSorterTooltip: false,
     },
     {
       title: 'Ngày sửa cuối',
@@ -314,13 +349,20 @@ const PhieuMuaHang = () => {
         const dateB = new Date(b.NgaySuaCuoi)
         return dateA - dateB
       },
+      showSorterTooltip: false,
     },
     {
       title: 'Người sửa cuối',
       dataIndex: 'NguoiSuaCuoi',
       key: 'NguoiSuaCuoi',
       width: 300,
-      sorter: (a, b) => a.NguoiSuaCuoi.localeCompare(b.NguoiSuaCuoi),
+      sorter: (a, b) => {
+        const NguoiSuaCuoiA = a.NguoiSuaCuoi || ''
+        const NguoiSuaCuoiB = b.NguoiSuaCuoi || ''
+
+        return NguoiSuaCuoiA.localeCompare(NguoiSuaCuoiB)
+      },
+      showSorterTooltip: false,
     },
 
     {
@@ -336,6 +378,7 @@ const PhieuMuaHang = () => {
         const valueB = b.TTTienMat ? 1 : 0
         return valueA - valueB
       },
+      showSorterTooltip: false,
     },
     {
       title: 'Chức năng',
@@ -351,8 +394,10 @@ const PhieuMuaHang = () => {
                 disabled="true"
                 onClick={() => handlePay(record)}
                 title="Lập phiếu chi"
-                className={`p-[3px] border rounded-md text-slate-50 ${
-                  record.TTTienMat ? 'bg-gray-400 cursor-not-allowed' : 'border-blue-500 bg-blue-500 hover:bg-white hover:text-blue-500 cursor-pointer'
+                className={`p-[3px] rounded-md text-slate-50 ${
+                  record.TTTienMat
+                    ? 'border-2 border-gray-400 bg-gray-400 cursor-not-allowed'
+                    : ' border-2 border-blue-500 bg-blue-500  hover:bg-white hover:text-blue-500 cursor-pointer'
                 }`}
               >
                 <GiPayMoney size={16} />
@@ -360,7 +405,7 @@ const PhieuMuaHang = () => {
               <div
                 onClick={() => handleEdit(record)}
                 title="Sửa"
-                className="p-[3px] border rounded-md text-slate-50 border-yellow-500 bg-yellow-500 hover:bg-white hover:text-yellow-500 cursor-pointer"
+                className="p-[3px] border-2 rounded-md text-slate-50 border-yellow-500 bg-yellow-500 hover:bg-white hover:text-yellow-500 cursor-pointer"
               >
                 <MdEdit size={16} />
               </div>
@@ -368,7 +413,7 @@ const PhieuMuaHang = () => {
               <div
                 onClick={() => handleDelete(record)}
                 title="Xóa"
-                className="p-[3px]  border  border-red-500 rounded-md text-slate-50 bg-red-500  hover:bg-white hover:text-red-500  cursor-pointer "
+                className="p-[3px]  border-2  border-red-500 rounded-md text-slate-50 bg-red-500  hover:bg-white hover:text-red-500  cursor-pointer "
               >
                 <MdDelete size={16} />
               </div>
@@ -441,9 +486,9 @@ const PhieuMuaHang = () => {
 
   return (
     <div className="w-auto">
-      <div className="relative text-lg  mx-4 my-2 flex justify-between items-center  ">
+      <div className="relative text-lg flex justify-between items-center mb-1">
         <div className="flex items-center gap-x-4 font-bold">
-          <h1 className="text-xl  uppercase">Phiếu mua hàng </h1>
+          <h1 className="text-xl uppercase">Phiếu mua hàng </h1>
           <div>
             <BsSearch size={18} className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
           </div>
@@ -469,7 +514,7 @@ const PhieuMuaHang = () => {
             <div className=" absolute flex flex-col gap-2 bg-slate-100 p-3  top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom ">
               <button
                 onClick={handlePrint}
-                className="flex items-center  py-1 px-2  rounded-md border-dashed border border-gray-500  text-base hover:text-sky-500  hover:border-sky-500 "
+                className="flex items-center  py-1 px-2  rounded-md  border-2 border-bg-main  text-slate-50 text-base bg-bg-main hover:bg-white hover:text-bg-main "
               >
                 <div className="pr-1">
                   <TiPrinter size={20} />
@@ -478,7 +523,7 @@ const PhieuMuaHang = () => {
               </button>
               <button
                 onClick={handlePrintWareHouse}
-                className="flex items-center  py-1 px-2  rounded-md border-dashed border border-gray-500  text-base hover:text-sky-500  hover:border-sky-500 "
+                className="flex items-center  py-1 px-2  rounded-md border-2 border-bg-main  text-slate-50 text-base bg-bg-main hover:bg-white hover:text-bg-main  "
               >
                 <div className="pr-1">
                   <TiPrinter size={20} />
@@ -489,7 +534,7 @@ const PhieuMuaHang = () => {
           )}
         </div>
       </div>
-      <div className="flex justify-between items-center px-4 mb-2">
+      <div className="flex justify-between items-center px-4 ">
         <div className="flex gap-3">
           {/* DatePicker */}
           <div className="flex gap-x-2 items-center">
@@ -521,13 +566,19 @@ const PhieuMuaHang = () => {
             />
           </div>
           <div className=" ">
-            <button onClick={handleFilterDS} className="flex items-center py-1 px-2 bg-bg-main rounded-md  text-white text-base hover:opacity-80">
+            <button
+              onClick={handleFilterDS}
+              className="flex items-center py-[2px] px-2 bg-bg-main rounded-md border-2 border-bg-main  text-slate-50 text-base hover:bg-white hover:text-bg-main"
+            >
               Lọc
             </button>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={handleCreate} className="flex items-center   py-1 px-2 bg-bg-main rounded-md  text-white text-base hover:opacity-80">
+          <button
+            onClick={handleCreate}
+            className="flex items-center   py-1 px-2 bg-bg-main rounded-md border-2 border-bg-main  text-slate-50 text-base hover:bg-white hover:text-bg-main"
+          >
             <div className="pr-1">
               <IoAddCircleOutline size={20} />
             </div>
@@ -548,7 +599,7 @@ const PhieuMuaHang = () => {
               y: 410,
             }}
             bordered
-            // pagination={false}
+            pagination={false}
             rowKey={(record) => record.SoChungTu}
             onRow={(record) => ({
               // onClick: () => {

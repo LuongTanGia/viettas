@@ -10,7 +10,7 @@ function BtnAction({ handleEdit, handleDelete, record, handleChangePhieuThu }) {
     <div>
       <>
         <div className=" flex gap-1 items-center justify-center ">
-          <div
+          {/* <div
             disabled="true"
             onClick={() => handleChangePhieuThu(record)}
             title="Lập phiếu chi"
@@ -26,7 +26,7 @@ function BtnAction({ handleEdit, handleDelete, record, handleChangePhieuThu }) {
             className="p-[3px] border rounded-md text-slate-50 border-yellow-500 bg-yellow-400 hover:bg-white hover:text-yellow-500 cursor-pointer"
           >
             <MdEdit size={16} />
-          </div>
+          </div> */}
 
           <div
             onClick={() => handleDelete(record)}

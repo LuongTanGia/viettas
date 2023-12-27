@@ -6,7 +6,7 @@ import BtnAction from './BtnAction'
 
 const { Option } = Select
 
-const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOptions }) => {
+const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOptions, ColumnTable, columName }) => {
   const EditableContext = React.createContext(null)
 
   const EditableRow = ({ index, ...props }) => {
@@ -90,19 +90,20 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
             ...values,
             TenHang: selectedOption.TenHang || '',
             MaHang: selectedOption.MaHang || '',
-            DonGia: GiaBan,
+            DonGia: GiaBan || 0,
             SoLuong: record.SoLuong || values.SoLuong || 1,
-            // TyLeCKTT: 0,
-            // TonKho: selectedOption.TonKho || true,
-            // TienThue: selectedOption.TienThue || undefined,
+            TyLeCKTT: 0,
+            TonKho: selectedOption.TonKho || true,
+            TienThue: selectedOption.TienThue || undefined,
             DVT: selectedOption.DVT || undefined,
-            // TienHang: selectedOption.DonGia || undefined,
-            // TyLeThue: 0,
-            // ThanhTien: selectedOption.DonGia || undefined,
+            TienHang: selectedOption.DonGia || undefined,
+            TyLeThue: 0,
+            ThanhTien: selectedOption.DonGia || undefined,
             // TienCKTT: 0,
             // TongCong: selectedOption.DonGia || undefined,
           }
-          console.log(updatedRow)
+          // console.log(updatedRow)
+          console.log('first', selectedOption)
           handleSave(updatedRow)
         } else {
           handleSave({
@@ -135,7 +136,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
           initialValue={record[dataIndex]}
         >
           {isSelect ? (
-            <Select ref={inputRef} onPressEnter={save} onBlur={save} style={{ width: '100%' }} showSearch>
+            <Select ref={inputRef} onPressEnter={save} onBlur={save} style={{ width: '100%' }} showSearch dropdownMatchSelectWidth={false}>
               {dataIndex === 'MaHang'
                 ? yourMaHangOptions?.map((option) => (
                     <Option key={option.MaHang} value={option.MaHang}>
@@ -188,36 +189,80 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
     return value?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })
   }
 
-  const listColumns = ['STT', 'MaHang', 'TenHang', 'DVT', 'SoLuong', 'DonGia', 'TienHang', 'TyLeThue', 'TienThue', 'ThanhTien', 'TyLeCKTT', 'TienCKTT', 'TongCong']
+  const listColumns = ColumnTable ? ColumnTable : []
 
   const newColumns = listColumns.map((item, index) => {
     if (item === 'STT') {
       return {
-        title: item,
-        width: 200,
+        title: columName[item] || item,
+        width: 80,
         dataIndex: item,
         key: item,
+        align: 'center',
         render: (text, record, index) => index + 1,
       }
     }
     if (item === 'TenHang') {
       return {
-        title: item,
-        width: 300,
+        title: columName[item] || item,
+        width: 250,
         dataIndex: item,
         editable: true,
         key: item,
       }
     }
-    if (item === 'TienHang' || item === 'TienThue' || item === 'ThanhTien' || item === 'TienCKTT' || item === 'TongCong' || item === 'DonGia') {
+
+    if (item === 'DVT') {
       return {
-        title: item,
+        title: columName[item] || item,
+        width: 150,
+        dataIndex: item,
+        // editable: true,
+        key: item,
+        align: 'center',
+      }
+    }
+    if (item === 'SoLuong') {
+      return {
+        title: columName[item] || item,
+        width: 150,
+        dataIndex: item,
+        editable: true,
+        key: item,
+        align: 'end',
+      }
+    }
+    if (item === 'DonGia') {
+      return {
+        title: columName[item] || item,
+        width: 150,
+        dataIndex: item,
+        editable: true,
+        key: item,
+        align: 'end',
+      }
+    }
+    if (item === 'TyLeThue') {
+      return {
+        title: columName[item] || item,
+        width: 80,
+        dataIndex: item,
+        editable: true,
+        key: item,
+        align: 'end',
+      }
+    }
+    if (item === 'TienHang' || item === 'TienThue' || item === 'ThanhTien' || item === 'TienCKTT' || item === 'TongCong') {
+      return {
+        title: columName[item] || item,
         width: 200,
         dataIndex: item,
         key: item,
+        align: 'end',
+
         render: (text) =>
           text !== 0 ? (
-            formatVND(text)
+            text
           ) : (
             <div
               style={{
@@ -231,11 +276,12 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
       }
     }
     return {
-      title: item,
-      width: 200,
+      title: columName[item] || item,
+      width: 150,
       dataIndex: item,
       editable: true,
       key: item,
+      showSorterTooltip: false,
       sorter: (a, b) => {
         const keywords = ['Tong', 'Gia', 'Tien', 'TLCK', 'So', 'Thue']
         const includesKeyword = keywords.some((keyword) => item.includes(keyword))
@@ -256,9 +302,9 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
   const defcolumns = [
     ...newColumns,
     {
-      title: 'operation',
+      title: '',
       dataIndex: 'operation',
-      width: 100,
+      width: 30,
       fixed: 'right',
       render: (_, record) => (dataSource.length >= 1 ? <BtnAction handleDelete={() => handleDelete(record.MaHang)} record={record} /> : null),
     },
