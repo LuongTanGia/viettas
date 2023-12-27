@@ -139,7 +139,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction }) {
                 <div className="flex justify-between  items-start pb-1">
                   <label className="font-bold ">Xem thông tin - phiếu mua hàng</label>
                 </div>
-                <div className=" w-full h-[96%] rounded-sm text-sm border border-gray-300">
+                <div className=" w-full h-[90%] rounded-sm text-sm border border-gray-300">
                   <div className={`flex box_thongtin ${typeAction == 'create' ? 'create' : typeAction == 'edit' ? 'edit' : ''}`}>
                     {/* thong tin phieu */}
                     <div className="w-[60%] box_content_left">
@@ -289,37 +289,28 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction }) {
                   </div>
                   <div className="p-4 pb-0">
                     {data_chitiet ? (
-                      <TableEdit param={dataChitiet} handleEditData={handleEditData} yourMaHangOptions={yourMaHangOptions} yourTenHangOptions={yourTenHangOptions} />
+                      <TableEdit
+                        typeTable={'BanHang'}
+                        param={dataChitiet}
+                        handleEditData={handleEditData}
+                        yourMaHangOptions={yourMaHangOptions}
+                        yourTenHangOptions={yourTenHangOptions}
+                        columnTable={['STT', 'MaHang', 'TenHang', 'DVT', 'SoLuong', 'DonGia', 'TienHang', 'TyLeThue', 'TienThue', 'ThanhTien', 'TyLeCKTT', 'TienCKTT', 'TongCong']}
+                      />
                     ) : null}
-                  </div>
-                  q
-                  <div className="pr-4 w-full flex justify-end mt-2 gap-2">
-                    {/* <button
-                      className=" hover:bg-rose-400 border-1 border-rose-500 p-2  rounded-md text-rose-700 hover:text-white font-medium float-right flex justify-center items-center
-            mb-2"
-                      onClick={() => handleClose()}
-                    >
-                      <FcCancel className="mt-1" />
-                      <p className="ml-2">Đóng</p>
-                    </button>
-                    <button
-                      className=" hover:bg-green-400 border-1 border-green-500  p-2  rounded-md text-green-400 hover:text-white font-medium float-right flex justify-center items-center
-            mb-2 ml-4"
-                      onClick={handleSubmit}
-                    >
-                      <FcOk />
-                      <p className="ml-2">Xác Nhận</p>
-                    </button> */}
-                    <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={handleClose} />
-                    <ActionButton color={'slate-50'} title={'Xác Nhận'} background={'blue-500'} bg_hover={'white'} color_hover={'blue-500'} handleAction={handleSubmit} />
                   </div>
                 </div>
               </div>
+
               <div>
                 {showPopup && (
                   <ListHelper_HangHoa data={form} isShowList={showPopup} close={handleClosePopup} handleAddData={handleAddData} setSelectDataOption={setSelectDataOption} />
                 )}
               </div>
+            </div>
+            <div className="pr-4 w-full flex justify-end mt-2 gap-2 absolute bottom-8 right-[60px]">
+              <ActionButton color={'slate-50'} title={'Xác Nhận'} background={'blue-500'} bg_hover={'white'} color_hover={'blue-500'} handleAction={handleSubmit} />
+              <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={handleClose} />
             </div>
           </div>
         </div>
