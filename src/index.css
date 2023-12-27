@@ -216,6 +216,14 @@ input[type='radio'] {
   min-height: 276px;
   max-height: 276px;
 }
+.ant-table-body {
+  min-height: 260px;
+  max-height: 260px;
+}
+
+.ant-table-title:hover {
+  display: none;
+}
 
 /* custom input antd */
 .ant-input-number .ant-input-number-input {

@@ -9,7 +9,8 @@ import dayjs from 'dayjs'
 import { NumericFormat } from 'react-number-format'
 import ModalHH from './ModalHH'
 import { toast } from 'react-toastify'
-
+import TableEdit from '../components/util/Table/EditTable'
+import { nameColumsPhieuMuaHang } from '../components/util/Table/ColumnName'
 import { CreateRow, EditRow } from '.'
 import { RETOKEN, base64ToPDF, formatPrice, formatQuantity, roundNumber } from '../action/Actions'
 
@@ -196,6 +197,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       sorter: (a, b) => a.ThanhTien - b.ThanhTien,
     },
   ]
+  const columnName = ['STT', 'MaHang', 'TenHang', 'DVT', 'SoLuong', 'DonGia', 'TienHang', 'TyLeThue', 'TienThue', 'ThanhTien']
 
   const title = ['STT', 'Mã hàng', 'Tên hàng', 'DVT', 'Số lượng', 'Đơn giá', 'Tiền hàng', '% Thuế', 'Tiền thuế', 'Thành tiền', '']
 
@@ -401,8 +403,6 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
         // toast.error(response.data.DataErrorDescription)
         console.log(response.data.DataErrorDescription)
       }
-
-      close()
     } catch (error) {
       console.error('Error while saving data:', error)
     }
@@ -579,15 +579,9 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
     setNewDataPMH(filteredData)
   }
 
-  // const summaryTable = (columnName) => {
-  //   return selectedRowData.reduce((total, item) => total + item[columnName], 0)
-  // }
-  // const tongSoLuong = summaryTable('SoLuong')
-  // const tongDonGia = summaryTable('DonGia')
-  // const tongTienHang = summaryTable('TienHang')
-  // const tongTyLeThue = summaryTable('TyLeThue')
-  // const tongTienThue = summaryTable('TienThue')
-  // const tongThanhTien = summaryTable('ThanhTien')
+  const handleEditData = (data) => {
+    setSelectedRowData(data)
+  }
   return (
     <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
       <div className="  m-4 p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
@@ -645,7 +639,10 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                 />
               </div>
 
-              <button className="flex items-center mx-2 py-1 px-2 bg-bg-main rounded-md  text-white text-sm hover:opacity-80" onClick={handleFilterPrint}>
+              <button
+                className="flex items-center mx-2 py-1 px-2  rounded-md   border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main"
+                onClick={handleFilterPrint}
+              >
                 Lọc
               </button>
             </div>
@@ -736,7 +733,10 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                 />
               </div>
 
-              <button className="flex items-center mx-2 py-1 px-2 bg-bg-main rounded-md  text-white text-sm hover:opacity-80" onClick={handleFilterPrint}>
+              <button
+                className="flex items-center mx-2 py-1 px-2 rounded-md   border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main"
+                onClick={handleFilterPrint}
+              >
                 Lọc
               </button>
             </div>
@@ -935,11 +935,11 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
               </div>
             </div>
             {/* button */}
-            <div className="flex justify-between items-center">
-              <div className="flex gap-x-3 py-2">
+            <div className="flex justify-between items-center pt-3">
+              <div className="flex gap-x-3   ">
                 <button
                   onClick={() => setIsShowModalOnlyPrint(true)}
-                  className="flex items-center  py-1 px-2  rounded-md border-dashed border border-gray-500  text-sm hover:text-sky-500  hover:border-sky-500 "
+                  className="flex items-center  py-1 px-2  rounded-md  border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main"
                 >
                   <div className="pr-1">
                     <TiPrinter size={20} />
@@ -948,7 +948,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                 </button>
                 <button
                   onClick={() => setIsShowModalOnlyPrintWareHouse(true)}
-                  className="flex items-center  py-1 px-2  rounded-md border-dashed border border-gray-500  text-sm hover:text-sky-500  hover:border-sky-500 "
+                  className="flex items-center  py-1 px-2  rounded-md  border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main"
                 >
                   <div className="pr-1">
                     <TiPrinter size={20} />
@@ -958,7 +958,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
               </div>
               <button
                 onClick={() => close()}
-                className="active:scale-[.98] active:duration-75 text-white text-text-main font-bold  bg-rose-500 rounded-md px-2 py-1 w-[80px] hover:opacity-80"
+                className="active:scale-[.98] active:duration-75 border-2 border-rose-500 text-slate-50 text-text-main font-bold  bg-rose-500 hover:bg-white hover:text-rose-500  rounded-md px-2 py-1 w-[80px] "
               >
                 Đóng
               </button>
@@ -1012,42 +1012,14 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                     <label form="doituong" className="w-[86px]">
                       Đối tượng
                     </label>
-                    {/* <Autocomplete
-                      className="autocomplete_PMH"
-                      size="small"
-                      value={selectedDoiTuong}
-                      onChange={(event, newValue) => {
-                        handleDoiTuongFocus(newValue.Ma)
-                      }}
-                      options={dataDoiTuong}
-                      getOptionLabel={(item) => `${item.Ma} - ${item.Ten}`}
-                      sx={{ width: 600 }}
-                      renderInput={(params) => <TextField {...params} />}
-                    /> */}
 
-                    <Select
-                      showSearch
-                      size="small"
-                      optionFilterProp="children"
-                      onChange={(value) => handleDoiTuongFocus(value)}
-                      // onSearch={onSearch}
-                      // filterOption={(input, option) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                      style={{ width: '100%' }}
-                      value={selectedDoiTuong}
-                    >
+                    <Select showSearch size="small" optionFilterProp="children" onChange={(value) => handleDoiTuongFocus(value)} style={{ width: '100%' }} value={selectedDoiTuong}>
                       {dataDoiTuong?.map((item) => (
                         <Option key={item.Ma} value={item.Ma}>
                           {item.Ma} - {item.Ten}
                         </Option>
                       ))}
                     </Select>
-                    {/* <select className=" bg-white border w-full outline-none border-gray-300  " value={selectedDoiTuong} onChange={(e) => handleDoiTuongFocus(e.target.value)}>
-                      {dataDoiTuong?.map((item) => (
-                        <option key={item.Ma} value={item.Ma}>
-                          {item.Ma} - {item.Ten}
-                        </option>
-                      ))}
-                    </select> */}
                   </div>
                   <div className="flex items-center  p-1">
                     <label className="w-[86px]">Tên</label>
@@ -1096,46 +1068,13 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                         Kho hàng
                       </label>
 
-                      {/* <Autocomplete
-                        className="autocomplete_PMH"
-                        size="small"
-                        value={selectedKhoHang}
-                        onChange={(event, newValue) => {
-                          setSelectedKhoHang(newValue.MaKho)
-                        }}
-                        options={dataKhoHang}
-                        getOptionLabel={(item) => `${item.MaKho} - ${item.TenKho}`}
-                        sx={{ width: 300 }}
-                        renderInput={(params) => <TextField {...params} />}
-                      /> */}
-
-                      <Select
-                        showSearch
-                        size="small"
-                        optionFilterProp="children"
-                        onChange={(value) => setSelectedKhoHang(value)}
-                        // onSearch={onSearch}
-                        // filterOption={(input, option) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                        style={{ width: '100%' }}
-                        value={selectedKhoHang}
-                      >
+                      <Select showSearch size="small" optionFilterProp="children" onChange={(value) => setSelectedKhoHang(value)} style={{ width: '100%' }} value={selectedKhoHang}>
                         {dataKhoHang?.map((item) => (
                           <Option key={item.MaKho} value={item.MaKho}>
                             {item.ThongTinKho}
                           </Option>
                         ))}
                       </Select>
-                      {/* <select
-                        className=" bg-white border w-full  border-gray-300 hover:border-gray-500 "
-                        onChange={(e) => setSelectedKhoHang(e.target.value)}
-                        value={selectedKhoHang}
-                      >
-                        {dataKhoHang?.map((item) => (
-                          <option key={item.MaKho} value={item.MaKho}>
-                            {item.ThongTinKho}
-                          </option>
-                        ))}
-                      </select> */}
                     </div>
                     <div className="flex items-center p-1 w-1/2 ">
                       <label className="w-[86px]">Ghi chú</label>
@@ -1194,7 +1133,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                 </button>
               </div>
               {/* table */}
-              <div className="max-w-[98%]  max-h-[50%] mx-auto bg-white  rounded-md my-3 overflow-y-auto ">
+              {/* <div className="max-w-[98%]  max-h-[50%] mx-auto bg-white  rounded-md my-3 overflow-y-auto ">
                 <table className="min-w-full min-h-full bg-white border border-gray-300 text-text-main">
                   <thead>
                     <tr>
@@ -1220,7 +1159,16 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                     ))}
                   </tbody>
                 </table>
-              </div>
+              </div> */}
+              <TableEdit
+                className="table_cre"
+                param={selectedRowData}
+                handleEditData={handleEditData}
+                ColumnTable={columnName}
+                columName={nameColumsPhieuMuaHang}
+                yourMaHangOptions={dataHangHoa}
+                yourTenHangOptions={dataHangHoa}
+              />
             </div>
             {/* button  */}
             <div className="flex justify-between items-center">
@@ -1247,16 +1195,16 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
               </div>
               <div className="flex justify-end items-center gap-3  pt-3">
                 <button
-                  onClick={() => close()}
-                  className="active:scale-[.98] active:duration-75 text-white text-text-main font-bold  bg-rose-500 rounded-md px-2 py-1 w-[80px] hover:opacity-80"
-                >
-                  Đóng
-                </button>
-                <button
                   onClick={handleCreate}
-                  className="active:scale-[.98] active:duration-75 text-white text-text-main font-bold  bg-blue-500 rounded-md px-2 py-1  w-[80px] hover:opacity-80"
+                  className="active:scale-[.98] active:duration-75   border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main  rounded-md px-2 py-1  w-[80px] "
                 >
                   Xác nhận
+                </button>
+                <button
+                  onClick={() => close()}
+                  className="active:scale-[.98] active:duration-75  border-2 border-rose-500 text-slate-50 text-text-main font-bold  bg-rose-500 hover:bg-white hover:text-rose-500 rounded-md px-2 py-1 w-[80px] "
+                >
+                  Đóng
                 </button>
               </div>
             </div>
@@ -1493,10 +1441,10 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
 
             {/* button  */}
             <div className="flex justify-between items-center">
-              <div className="flex gap-x-3 py-2">
+              <div className="flex gap-x-3 pt-3">
                 <button
                   onClick={() => setIsShowModalOnlyPrint(true)}
-                  className="flex items-center  py-1 px-2  rounded-md border-dashed border border-gray-500  text-sm hover:text-sky-500  hover:border-sky-500 "
+                  className="flex items-center  py-1 px-2  rounded-md  border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main "
                 >
                   <div className="pr-1">
                     <TiPrinter size={20} />
@@ -1505,7 +1453,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                 </button>
                 <button
                   onClick={() => setIsShowModalOnlyPrintWareHouse(true)}
-                  className="flex items-center  py-1 px-2  rounded-md border-dashed border border-gray-500  text-sm hover:text-sky-500  hover:border-sky-500 "
+                  className="flex items-center  py-1 px-2  rounded-md  border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main "
                 >
                   <div className="pr-1">
                     <TiPrinter size={20} />
@@ -1513,18 +1461,18 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                   <div>In phiếu kho</div>
                 </button>
               </div>
-              <div className="flex justify-end items-center gap-3  pt-3">
-                <button
-                  onClick={() => close()}
-                  className="active:scale-[.98] active:duration-75 text-white text-text-main font-bold  bg-rose-500 rounded-md px-2 py-1 w-[80px] hover:opacity-80"
-                >
-                  Đóng
-                </button>
+              <div className="flex justify-end items-center gap-x-3  pt-3">
                 <button
                   onClick={() => handleEdit(dataRecord)}
-                  className="active:scale-[.98] active:duration-75 text-white text-text-main font-bold  bg-blue-500 rounded-md px-2 py-1  w-[80px] hover:opacity-80"
+                  className="active:scale-[.98] active:duration-75  border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main rounded-md px-2 py-1  w-[80px] "
                 >
                   Xác nhận
+                </button>
+                <button
+                  onClick={() => close()}
+                  className="active:scale-[.98] active:duration-75  border-2 border-rose-500 text-slate-50 text-text-main font-bold  bg-rose-500 hover:bg-white hover:text-rose-500 rounded-md px-2 py-1 w-[80px] hover:opacity-80"
+                >
+                  Đóng
                 </button>
               </div>
             </div>
@@ -1535,62 +1483,62 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
         {actionType === 'delete' ? (
           <div className="flex justify-end mt-4 gap-2">
             <button
-              onClick={() => close()}
-              className="active:scale-[.98] active:duration-75 text-white text-text-main font-bold  bg-rose-500 rounded-md px-2 py-1 w-[80px] hover:opacity-80"
-            >
-              Đóng
-            </button>
-            <button
               onClick={() => handleDelete(dataRecord)}
-              className="active:scale-[.98] active:duration-75 text-white text-text-main font-bold  bg-blue-500 rounded-md px-2 py-1  w-[80px] hover:opacity-80"
+              className="active:scale-[.98] active:duration-75 red-500 border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main rounded-md px-2 py-1  w-[80px] "
             >
               Xác nhận
+            </button>
+            <button
+              onClick={() => close()}
+              className="active:scale-[.98] active:duration-75  border-2 border-rose-500 text-slate-50 text-text-main font-bold  bg-rose-500 hover:bg-white hover:text-rose-500 rounded-md px-2 py-1 w-[80px] "
+            >
+              Đóng
             </button>
           </div>
         ) : actionType === 'print' ? (
           <div className="flex justify-end mt-5 gap-2">
             <button
-              onClick={() => close()}
-              className="active:scale-[.98] active:duration-75 text-white text-text-main font-bold  bg-rose-500 rounded-md px-2 py-1 w-[80px] hover:opacity-80"
-            >
-              Đóng
-            </button>
-            <button
               onClick={handlePrint}
-              className="active:scale-[.98] active:duration-75 text-white text-text-main font-bold  bg-blue-500 rounded-md px-2 py-1  w-[80px] hover:opacity-80"
+              className="active:scale-[.98] active:duration-75  border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main rounded-md px-2 py-1  w-[80px] "
             >
               Xác nhận
+            </button>
+            <button
+              onClick={() => close()}
+              className="active:scale-[.98] active:duration-75  border-2 border-rose-500 text-slate-50 text-text-main font-bold  bg-rose-500 hover:bg-white hover:text-rose-500 rounded-md px-2 py-1 w-[80px] "
+            >
+              Đóng
             </button>
           </div>
         ) : actionType === 'printWareHouse' ? (
           <div className="flex justify-end mt-4 gap-2">
             <button
-              onClick={() => close()}
-              className="active:scale-[.98] active:duration-75 text-white text-text-main font-bold  bg-rose-500 rounded-md px-2 py-1 w-[80px] hover:opacity-80"
-            >
-              Đóng
-            </button>
-            <button
               onClick={handlePrintWareHouse}
-              className="active:scale-[.98] active:duration-75 text-white text-text-main font-bold  bg-blue-500 rounded-md px-2 py-1  w-[80px] hover:opacity-80"
+              className="active:scale-[.98] active:duration-75  border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main rounded-md px-2 py-1  w-[80px] "
             >
               Xác nhận
+            </button>
+            <button
+              onClick={() => close()}
+              className="active:scale-[.98] active:duration-75 border-2 border-rose-500 text-slate-50 text-text-main font-bold  bg-rose-500 hover:bg-white hover:text-rose-500  rounded-md px-2 py-1 w-[80px] "
+            >
+              Đóng
             </button>
           </div>
         ) : (
           actionType === 'pay' && (
             <div className="flex justify-end mt-4 gap-2">
               <button
-                onClick={() => close()}
-                className="active:scale-[.98] active:duration-75 text-white text-text-main font-bold  bg-rose-500 rounded-md px-2 py-1 w-[80px] hover:opacity-80"
-              >
-                Đóng
-              </button>
-              <button
                 onClick={() => handlePay(dataRecord)}
-                className="active:scale-[.98] active:duration-75 text-white text-text-main font-bold  bg-blue-500 rounded-md px-2 py-1  w-[80px] hover:opacity-80"
+                className="active:scale-[.98] active:duration-75  border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main rounded-md px-2 py-1  w-[80px] "
               >
                 Xác nhận
+              </button>
+              <button
+                onClick={() => close()}
+                className="active:scale-[.98] active:duration-75 border-2 border-rose-500 text-slate-50 text-text-main font-bold  bg-rose-500 hover:bg-white hover:text-rose-500  rounded-md px-2 py-1 w-[80px] "
+              >
+                Đóng
               </button>
             </div>
           )

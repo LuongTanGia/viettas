@@ -137,7 +137,10 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, dataPMH }) => {
               />
             </div>
 
-            <button className="flex items-center mx-2 py-1 px-2 bg-bg-main rounded-md  text-white text-sm hover:opacity-80" onClick={handleFilterPrint}>
+            <button
+              className="flex items-center mx-2 py-1 px-2  rounded-md   border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main  "
+              onClick={handleFilterPrint}
+            >
               Lọc
             </button>
           </div>
@@ -177,16 +180,16 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, dataPMH }) => {
           </div>
           <div className="flex justify-end mt-4 gap-2">
             <button
-              onClick={() => close()}
-              className="active:scale-[.98] active:duration-75 text-white text-text-main font-bold  bg-rose-500 rounded-md px-2 py-1 w-[80px] hover:opacity-80"
-            >
-              Đóng
-            </button>
-            <button
               onClick={handleOnlyPrintWareHouse}
-              className="active:scale-[.98] active:duration-75 text-white text-text-main font-bold  bg-blue-500 rounded-md px-2 py-1  w-[80px] hover:opacity-80"
+              className="active:scale-[.98] active:duration-75  border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main rounded-md px-2 py-1  w-[80px] "
             >
               Xác nhận
+            </button>
+            <button
+              onClick={() => close()}
+              className="active:scale-[.98] active:duration-75 border-2 border-rose-500 text-slate-50 text-text-main font-bold  bg-rose-500 hover:bg-white hover:text-rose-500  rounded-md px-2 py-1 w-[80px] "
+            >
+              Đóng
             </button>
           </div>
         </div>
