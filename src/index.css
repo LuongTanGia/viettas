@@ -176,13 +176,13 @@ a.nav-link span {
 }
 /* Tan */
 .table_DMHangHoa .ant-table-body {
-  min-height: 477px;
-  max-height: 477px;
+  min-height: 435px;
+  max-height: 435px;
   z-index: 0;
 }
 .table_TXNhapXuatTonKho .ant-table-body {
-  min-height: 420px;
-  max-height: 420px;
+  min-height: 407px;
+  max-height: 407px;
   z-index: 0;
 }
 .table_DLPhieuNDC .ant-table-body {

@@ -14,6 +14,7 @@ import { GrStatusUnknown } from 'react-icons/gr'
 import { CiBarcode } from 'react-icons/ci'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
 import { RETOKEN } from '../../action/Actions'
+import ActionButton from '../../components/util/Button/ActionButton'
 
 const HangHoa = () => {
   const TokenAccess = localStorage.getItem('TKN')
@@ -186,6 +187,7 @@ const HangHoa = () => {
       width: 150,
       align: 'center',
       sorter: (a, b) => a.MaHang.localeCompare(b.MaHang),
+      showSorterTooltip: false,
     },
     {
       title: 'Tên hàng',
@@ -195,6 +197,7 @@ const HangHoa = () => {
       width: 220,
       align: 'center',
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
+      showSorterTooltip: false,
       render: (text) => (
         <Tooltip title={text}>
           <div
@@ -218,6 +221,7 @@ const HangHoa = () => {
       width: 150,
       align: 'center',
       sorter: (a, b) => a.TenNhom.localeCompare(b.TenNhom),
+      showSorterTooltip: false,
       render: (text) => (
         <Tooltip title={text}>
           <div
@@ -240,6 +244,7 @@ const HangHoa = () => {
       align: 'center',
       width: 120,
       sorter: (a, b) => a.DVTKho.localeCompare(b.DVTKho),
+      showSorterTooltip: false,
     },
     {
       title: 'Quy đổi Đơn vị tính',
@@ -248,6 +253,7 @@ const HangHoa = () => {
       align: 'center',
       sorter: (a, b) => a.DienGiaiDVTQuyDoi - b.DienGiaiDVTQuyDoi,
       render: (text) => <span className="flex text-start">{text}</span>,
+      showSorterTooltip: false,
     },
     {
       title: 'Mã vạch',
@@ -256,6 +262,7 @@ const HangHoa = () => {
       align: 'center',
       width: 150,
       sorter: (a, b) => a.MaVach - b.MaVach,
+      showSorterTooltip: false,
     },
     {
       title: 'Lắp ráp',
@@ -263,6 +270,7 @@ const HangHoa = () => {
       key: 'LapRap',
       align: 'center',
       width: 100,
+      showSorterTooltip: false,
       sorter: (a, b) => {
         const valueA = a.LapRap ? 1 : 0
         const valueB = b.LapRap ? 1 : 0
@@ -276,6 +284,7 @@ const HangHoa = () => {
       key: 'TonKho',
       align: 'center',
       width: 100,
+      showSorterTooltip: false,
       sorter: (a, b) => {
         const valueA = a.TonKho ? 1 : 0
         const valueB = b.TonKho ? 1 : 0
@@ -289,6 +298,7 @@ const HangHoa = () => {
       key: 'GiaBanLe',
       align: 'center',
       width: 120,
+      showSorterTooltip: false,
       sorter: (a, b) => a.GiaBanLe - b.GiaBanLe,
       render: (text) => <span className={`flex justify-end  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''}`}>{formatCurrency(text)}</span>,
     },
@@ -297,6 +307,7 @@ const HangHoa = () => {
       dataIndex: 'BangGiaSi',
       key: 'BangGiaSi',
       width: 120,
+      showSorterTooltip: false,
       sorter: (a, b) => a.BangGiaSi - b.BangGiaSi,
       align: 'center',
       render: (text) => (
@@ -309,6 +320,7 @@ const HangHoa = () => {
       key: 'BangGiaSi_Min',
       width: 150,
       align: 'center',
+      showSorterTooltip: false,
       sorter: (a, b) => a.BangGiaSi_Min - b.BangGiaSi_Min,
       render: (text) => (
         <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 || text === null ? 'text-gray-300' : ''}`}>{formatCurrency(text)}</span>
@@ -320,6 +332,7 @@ const HangHoa = () => {
       key: 'BangGiaSi_Max',
       width: 150,
       align: 'center',
+      showSorterTooltip: false,
       sorter: (a, b) => a.BangGiaSi_Max - b.BangGiaSi_Max,
       render: (text) => (
         <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 || text === null ? 'text-gray-300' : ''}`}>{formatCurrency(text)}</span>
@@ -330,6 +343,7 @@ const HangHoa = () => {
       dataIndex: 'NguoiTao',
       key: 'NguoiTao',
       align: 'center',
+      showSorterTooltip: false,
       sorter: (a, b) => a.NguoiTao.localeCompare(b.NguoiTao),
       render: (text) => (
         <Tooltip title={text}>
@@ -350,6 +364,7 @@ const HangHoa = () => {
       dataIndex: 'NgayTao',
       key: 'NgayTao',
       align: 'center',
+      showSorterTooltip: false,
       sorter: (a, b) => {
         const dateA = new Date(a.NgayTao)
         const dateB = new Date(b.NgayTao)
@@ -362,6 +377,7 @@ const HangHoa = () => {
       dataIndex: 'NguoiSuaCuoi',
       key: 'NguoiSuaCuoi',
       align: 'center',
+      showSorterTooltip: false,
       sorter: (a, b) => {
         if (!a.NguoiSuaCuoi || !b.NguoiSuaCuoi) {
           return null
@@ -387,6 +403,7 @@ const HangHoa = () => {
       dataIndex: 'NgaySuaCuoi',
       key: 'NgaySuaCuoi',
       align: 'center',
+      showSorterTooltip: false,
       sorter: (a, b) => {
         const dateA = new Date(a.NgaySuaCuoi)
         const dateB = new Date(b.NgaySuaCuoi)
@@ -406,6 +423,7 @@ const HangHoa = () => {
       key: 'NA',
       width: 120,
       align: 'center',
+      showSorterTooltip: false,
       sorter: (a, b) => {
         const valueA = a.NA ? 1 : 0
         const valueB = b.NA ? 1 : 0
@@ -422,54 +440,28 @@ const HangHoa = () => {
       render: (record) => {
         return (
           <>
-            {/* <div className="flex gap-2 items-center justify-center">
+            <div className=" flex gap-1 items-center justify-center ">
               <div
-                className="p-1.5 rounded-md border-2 cursor-pointer  hover:bg-slate-50 hover:text-yellow-400 border-yellow-400  bg-yellow-400  text-slate-50 "
-                title="Sửa"
                 onClick={() => handleUpdate(record)}
+                title="Sửa"
+                className="p-[4px] border-2 rounded text-slate-50 border-yellow-400 bg-yellow-400 hover:bg-white hover:text-yellow-400 cursor-pointer"
               >
                 <MdEdit />
               </div>
               <div
-                className="p-1.5 border-2 rounded-md cursor-pointer  hover:bg-slate-50 hover:text-purple-500  border-purple-500  bg-purple-500  text-slate-50 "
-                title="In Mã Vạch"
                 onClick={() => handlePrintABarcode(record)}
+                title="Sửa"
+                className="p-[4px] border-2 rounded text-slate-50 border-purple-500 bg-purple-500 hover:bg-white hover:text-purple-500 cursor-pointer"
               >
                 <CiBarcode />
-              </div>
-              <div
-                className="p-1.5 border-2 rounded-md cursor-pointer  hover:bg-slate-50 hover:text-red-500  border-red-500  bg-red-500   text-slate-50 "
-                title="Xóa"
-                onClick={() => handleDelete(record)}
-              >
-                <MdDelete />
-              </div>
-            </div> */}
-            <div className=" flex gap-1 items-center justify-center ">
-              <div
-                disabled="true"
-                onClick={() => handleUpdate(record)}
-                title="Sửa"
-                className={`p-[3px] border rounded-md text-slate-50 ${
-                  record.TTTienMat ? 'bg-gray-400 cursor-not-allowed' : 'border-blue-500 bg-blue-500 hover:bg-white hover:text-blue-500 cursor-pointer'
-                }`}
-              >
-                <MdEdit size={16} />
-              </div>
-              <div
-                onClick={() => handlePrintABarcode(record)}
-                title="Sửa"
-                className="p-[3px] border rounded-md text-slate-50 border-purple-500 bg-purple-500 hover:bg-white hover:text-purple-500 cursor-pointer"
-              >
-                <CiBarcode size={16} />
               </div>
 
               <div
                 onClick={() => handleDelete(record)}
                 title="Xóa"
-                className="p-[3px]  border  border-red-500 rounded-md text-slate-50 bg-red-500  hover:bg-white hover:text-red-500  cursor-pointer "
+                className="p-[4px] border-2 border-red-500 rounded text-slate-50 bg-red-500  hover:bg-white hover:text-red-500  cursor-pointer "
               >
-                <MdDelete size={16} />
+                <MdDelete />
               </div>
             </div>
           </>
@@ -508,58 +500,58 @@ const HangHoa = () => {
                   <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
                 </div>
                 {isShowOption && (
-                  <div className="absolute flex flex-col gap-4 bg-slate-100 p-3  top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom ">
-                    <div
-                      className="justify-center px-3 py-2 bg-purple-600 rounded-lg font-semibold text-slate-50 border-purple-600 border-2 flex gap-1 items-center cursor-pointer hover:bg-white hover:text-purple-600"
-                      onClick={() => handlePrintBar()}
-                    >
-                      <div>
-                        <CiBarcode className="w-6 h-6" />
-                      </div>
-                      <div> In Mã Vạch</div>
-                    </div>
+                  <div className="absolute flex flex-col gap-4 bg-slate-100 p-3 top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom ">
+                    <ActionButton
+                      handleAction={() => handlePrintBar()}
+                      title={'In Mã Vạch'}
+                      icon={<CiBarcode className="w-6 h-6" />}
+                      color={'slate-50'}
+                      background={'purple-600'}
+                      color_hover={'purple-600'}
+                      bg_hover={'white'}
+                    />
                   </div>
                 )}
               </div>
             </div>
             <div className="flex justify-end ">
               <div className="flex gap-2">
-                <div
-                  className="px-2 py-1 rounded font-medium flex gap-1 items-center cursor-pointer border-2 border-blue-500 text-slate-50 bg-blue-500 hover:bg-white hover:text-blue-600"
-                  onClick={() => handleCreate()}
-                >
-                  <div>
-                    <IoMdAddCircleOutline className="w-6 h-6" />
-                  </div>
-                  <div> Thêm Sản Phẩm</div>
-                </div>
-                <div
-                  className="px-2 py-1 rounded font-medium flex gap-1 items-center cursor-pointer border-2 border-blue-500 text-slate-50 bg-blue-500 hover:bg-white hover:text-blue-600"
-                  onClick={() => handleStatusMany()}
-                >
-                  <div>
-                    <GrStatusUnknown className="w-6 h-6" />
-                  </div>
-                  <div> Đổi Trạng Thái </div>
-                </div>
-                <div
-                  className="px-2 py-1 rounded font-medium flex gap-1 items-center border-2 cursor-pointer border-blue-500 text-slate-50 bg-blue-500 hover:bg-white hover:text-blue-600"
-                  onClick={() => handleGroupMany()}
-                >
-                  <div>
-                    <MdOutlineGroupAdd className="w-6 h-6" />
-                  </div>
-                  <div> Đổi Nhóm Hàng </div>
-                </div>
-                <div
-                  className="px-2 py-1 rounded font-medium flex gap-1 items-center cursor-pointer border-2 border-purple-600 text-slate-50 bg-purple-600 hover:bg-white hover:text-purple-600"
-                  onClick={() => handlePrintABarcode()}
-                >
-                  <div>
-                    <CiBarcode className="w-6 h-6" />
-                  </div>
-                  <div> In Mã Vạch </div>
-                </div>
+                <ActionButton
+                  handleAction={() => handleCreate()}
+                  title={'Thêm Sản Phẩm'}
+                  icon={<IoMdAddCircleOutline className="w-6 h-6" />}
+                  color={'slate-50'}
+                  background={'blue-500'}
+                  color_hover={'blue-500'}
+                  bg_hover={'white'}
+                />
+                <ActionButton
+                  handleAction={() => handleStatusMany()}
+                  title={'Đổi Trạng Thái'}
+                  icon={<GrStatusUnknown className="w-6 h-6" />}
+                  color={'slate-50'}
+                  background={'blue-500'}
+                  color_hover={'blue-500'}
+                  bg_hover={'white'}
+                />
+                <ActionButton
+                  handleAction={() => handleGroupMany()}
+                  title={'Đổi Nhóm Hàng'}
+                  icon={<MdOutlineGroupAdd className="w-6 h-6" />}
+                  color={'slate-50'}
+                  background={'blue-500'}
+                  color_hover={'blue-500'}
+                  bg_hover={'white'}
+                />
+                <ActionButton
+                  handleAction={() => handlePrintABarcode()}
+                  title={'In Mã Vạch '}
+                  icon={<CiBarcode className="w-6 h-6" />}
+                  color={'slate-50'}
+                  background={'purple-600'}
+                  color_hover={'purple-600'}
+                  bg_hover={'white'}
+                />
               </div>
             </div>
             <div>

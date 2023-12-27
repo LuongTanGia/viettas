@@ -483,7 +483,6 @@ const PhieuMuaHang = () => {
   const handleSearch = (event) => {
     setSearchPMH(event.target.value)
   }
-
   return (
     <div className="w-auto">
       <div className="relative text-lg flex justify-between items-center mb-1">
@@ -505,7 +504,6 @@ const PhieuMuaHang = () => {
             </div>
           )}
         </div>
-
         <div>
           <div className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5  " onClick={() => setIsShowOption(!isShowOption)} title="Chức năng khác">
             <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />

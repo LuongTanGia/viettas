@@ -314,7 +314,7 @@ const NDCCreate = ({ close }) => {
                       type="text"
                       name="MaKho"
                       value={NDCForm?.MaKho || ''}
-                      className="px-2 w-full resize-none border-[0.125rem] outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"
+                      className="px-2 w-full resize-none py-1 rounded border outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"
                       onChange={(e) => {
                         setNDCForm({
                           ...NDCForm,
