@@ -5,7 +5,7 @@ import Cookies from 'js-cookie'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Footer from '../Footer/Footer'
-import { DANHSACHCHUCNANG, DANHSACHHANGHOA, KHOANNGAY, DATATONGHOP, DATADULIEU } from '../../action/Actions'
+import { DANHSACHCHUCNANG, DANHSACHHANGHOA, KHOANNGAY, DATATONGHOP, DATADULIEU, CallBackAPI } from '../../action/Actions'
 import API from '../../API/API'
 import { useDispatch, useSelector } from 'react-redux'
 import { khoanNgaySelect } from '../../redux/selector'
@@ -30,6 +30,12 @@ function Home({ handleToggleSidebar, isSidebarVisible }) {
 
       setDataLoaded(true)
     }
+    const ThongSo = async () => {
+      const ThongSo = await CallBackAPI(API.THONGSO, token)
+      localStorage.setItem('ThongSo', JSON.stringify(ThongSo))
+    }
+    ThongSo()
+
     loadData()
   }, [token, tokenRF])
   if (!dataLoaded) {

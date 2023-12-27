@@ -5,6 +5,54 @@ import DuLieuSlice from '../components/DULIEU/DuLieuSlice'
 import PBSSlice from '../components/PhieuBanHang/PBSSlice'
 import { toast } from 'react-toastify'
 
+// CallBack API Function
+export const CallBackAPI = async (API, token, data) => {
+  try {
+    const response = await axios.post(API, data, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    if (response && response.data) {
+      if (response.data.DataError === -107 || response.data.DataError === -108) {
+        const newToken = await RETOKEN()
+
+        if (newToken !== '') {
+          await CallBackAPI(API, newToken, data)
+        } else {
+          handleTokenRefreshError()
+        }
+      }
+
+      toast.success(response.data.DataErrorDescription)
+      console.log(response.data.DataResult)
+      return response.data.DataResult
+    }
+
+    handleResponseError()
+  } catch (error) {
+    handleError(error)
+  }
+}
+
+const handleTokenRefreshError = () => {
+  toast.error('Failed to refresh token!')
+  window.localStorage.clear()
+  window.location.href = '/login'
+}
+
+const handleResponseError = () => {
+  toast.error('DataResults is undefined or null.')
+}
+
+const handleError = (error) => {
+  console.error('Error during API call:', error)
+  toast.error('An unexpected error occurred.')
+}
+
+//------------------------------------------------------------------------------
 export const RETOKEN = async () => {
   const token = window.localStorage.getItem('RTKN')
 
@@ -200,7 +248,6 @@ export const THAYDOIRMATKHAU = async (API, data, token) => {
     console.error('Error adding user:', error)
   }
 }
-
 ////Phiếu mua hàng
 export const DANHSACHPHIEUBANHANG = async (API, token, dispatch) => {
   try {

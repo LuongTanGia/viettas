@@ -21,7 +21,7 @@ function Header({ handleToggleSidebar }) {
   }
   return (
     <>
-      <header id="header" className="header fixed-top d-flex align-items-center z-10">
+      <header id="header" className="header fixed-top d-flex align-items-center z-10 h-[50px]">
         <div className="d-flex align-items-center justify-content-between">
           <Link href="index.html" className="logo d-flex align-items-center">
             <img src="assets/img/logo.png" alt="" />

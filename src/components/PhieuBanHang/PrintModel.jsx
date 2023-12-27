@@ -86,7 +86,7 @@ function ModelPrint({ isShowModel, handleCloseAction }) {
                   In Phiếu Bán Hàng
                 </label>
               </div>
-              <div className="w-full h-[90%] rounded-sm text-sm border border-gray-300">
+              <div className="w-full h-[70%] rounded-sm text-sm border border-gray-300">
                 <div className="w-full flex items-center justify-center mt-3 gap-5 DateBox flex-wrap">
                   <DatePicker
                     value={dateFrom}
@@ -142,7 +142,7 @@ function ModelPrint({ isShowModel, handleCloseAction }) {
                     Liên 3
                   </Checkbox>
                 </div>
-                <div className="w-full h-[20%] flex items-center justify-end gap-2 mt-10 pr-2">
+                <div className="w-full h-[20%] flex items-center justify-end gap-2 mt-10 ">
                   <ActionButton
                     color={'slate-50'}
                     title={'Chữ Ký'}

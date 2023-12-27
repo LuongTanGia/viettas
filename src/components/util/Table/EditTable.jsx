@@ -1,12 +1,12 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { Button, Form, Input, Table, Select } from 'antd'
+import { Button, Form, Input, Table, Select, InputNumber } from 'antd'
 import BtnAction from './BtnAction'
 
 const { Option } = Select
 
-const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOptions }) => {
+const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOptions, columnTable, columName }) => {
   const EditableContext = React.createContext(null)
 
   const EditableRow = ({ index, ...props }) => {
@@ -88,19 +88,11 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
           const updatedRow = {
             ...record,
             ...values,
-            TenHang: selectedOption.TenHang || '',
-            MaHang: selectedOption.MaHang || '',
+            TenHang: selectedOption.TenHang || 0,
+            MaHang: selectedOption.MaHang || 0,
             DonGia: GiaBan,
             SoLuong: record.SoLuong || values.SoLuong || 1,
-            // TyLeCKTT: 0,
-            // TonKho: selectedOption.TonKho || true,
-            // TienThue: selectedOption.TienThue || undefined,
             DVT: selectedOption.DVT || undefined,
-            // TienHang: selectedOption.DonGia || undefined,
-            // TyLeThue: 0,
-            // ThanhTien: selectedOption.DonGia || undefined,
-            // TienCKTT: 0,
-            // TongCong: selectedOption.DonGia || undefined,
           }
           console.log(updatedRow)
           handleSave(updatedRow)
@@ -129,7 +121,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
           rules={[
             {
               required: true,
-              message: `${title} is required.`,
+              message: `không để trống ${title}`,
             },
           ]}
           initialValue={record[dataIndex]}
@@ -148,8 +140,10 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
                     </Option>
                   ))}
             </Select>
+          ) : dataIndex === 'SoLuong' ? (
+            <InputNumber ref={inputRef} onPressEnter={save} onBlur={save} min={1} />
           ) : (
-            <Input ref={inputRef} onPressEnter={save} onBlur={save} />
+            <InputNumber ref={inputRef} onPressEnter={save} onBlur={save} max={100} min={0} />
           )}
         </Form.Item>
       ) : (
@@ -185,10 +179,10 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
   }
 
   const formatVND = (value) => {
-    return value?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })
+    return Number(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
   }
 
-  const listColumns = ['STT', 'MaHang', 'TenHang', 'DVT', 'SoLuong', 'DonGia', 'TienHang', 'TyLeThue', 'TienThue', 'ThanhTien', 'TyLeCKTT', 'TienCKTT', 'TongCong']
+  const listColumns = columnTable ? columnTable : []
 
   const newColumns = listColumns.map((item, index) => {
     if (item === 'STT') {
@@ -198,6 +192,16 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
         dataIndex: item,
         key: item,
         render: (text, record, index) => index + 1,
+      }
+    }
+    if (item === 'DVT') {
+      return {
+        title: item,
+        width: 200,
+        dataIndex: item,
+        key: item,
+        render: (text) => <div>{text}</div>,
+        sorter: (a, b) => a[item] - b[item],
       }
     }
     if (item === 'TenHang') {
@@ -224,7 +228,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
                 color: 'rgba(0, 0, 0, 0.25)',
               }}
             >
-              {text}
+              {formatVND(text) || 0}
             </div>
           ),
         sorter: (a, b) => a[item] - b[item],
@@ -256,11 +260,11 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
   const defcolumns = [
     ...newColumns,
     {
-      title: 'operation',
+      title: '',
       dataIndex: 'operation',
       width: 100,
       fixed: 'right',
-      render: (_, record) => (dataSource.length >= 1 ? <BtnAction handleDelete={() => handleDelete(record.MaHang)} record={record} /> : null),
+      render: (_, record) => (dataSource.length >= 1 ? <BtnAction handleDelete={() => handleDelete(record.MaHang)} record={record} typeTable={'detail'} /> : null),
     },
   ]
 
@@ -289,6 +293,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
   return (
     <div>
       <Table
+        className={'h150'}
         components={components}
         rowClassName={() => 'editable-row'}
         bordered

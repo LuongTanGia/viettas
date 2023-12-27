@@ -25,6 +25,8 @@ const API = {
   LISTCHUNGTU: `${BASE_URL}/api/entries/DuLieuPBS/ListHelper_ChungTuTheoNgay`,
   INPHIEU: `${BASE_URL}/api/entries/DuLieuPBS/InPhieu`,
   INPHIEUKHO: `${BASE_URL}/api/entries/DuLieuPBS/InPhieuKho`,
+  //Lấy danh sách giá trị hệ thống
+  THONGSO: `${BASE_URL}/api/settings/GiaTriHeThong/ThongSo`,
 }
 
 export default API

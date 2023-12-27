@@ -7,8 +7,9 @@ import './table.css'
 import BtnAction from './BtnAction'
 import { useEffect, useState } from 'react'
 import { FcServices } from 'react-icons/fc'
-const { Text } = Typography
+import dayjs from 'dayjs'
 
+const { Text } = Typography
 const getInputNode = (inputType, record, dataIndex, text, typeTable, form, onChange) => {
   switch (inputType) {
     case 'number':
@@ -48,17 +49,7 @@ const getSelectOptions = (dataIndex) => {
   }
   return []
 }
-// const handleInputChange = (dataIndex, value, record) => {
-//   const newData = [...data]
-//   const index = newData.findIndex((item) => record.key === item.key)
-//   if (index > -1) {
-//     newData[index][dataIndex] = value
-//     setData(newData)
-//     form.setFieldsValue({
-//       [dataIndex]: value,
-//     })
-//   }
-// }
+
 const EditableCell = ({ editing, dataIndex, title, inputType, record, index, children, form, ...restProps }) => {
   const inputValue = record ? record[dataIndex] : undefined
   const inputNode = getInputNode(inputType, record, dataIndex, inputValue, 'edit', form)
@@ -90,32 +81,25 @@ const EditableCell = ({ editing, dataIndex, title, inputType, record, index, chi
 function Tables({ param, columName, height, handleView, handleEdit, typeTable, handleAddData, handleDelete, handleChangePhieuThu }) {
   const [pageSize, setPageSize] = useState('20')
   const [page, setPage] = useState('1')
-
-  // const getInputType = (cellValue, dataIndex) => {
-  //   if (dataIndex === 'MaHang' || dataIndex === 'DVT') {
-  //     return 'select'
-  //   } else if (typeof cellValue === 'number') {
-  //     return 'number'
-  //   } else if (typeof cellValue === 'boolean') {
-  //     return 'checkbox'
-  //   } else {
-  //     return 'text'
-  //   }
-  // }
   const [hiden, setHiden] = useState([])
   const DataColumns = param ? param[0] : []
 
-  const keysOnly = Object.keys(DataColumns || [])
+  const keysOnly = Object.keys(DataColumns || []).filter((key) => key !== 'MaSoThue')
+
+  const ThongSo = JSON.parse(localStorage.getItem('ThongSo'))
 
   const listColumns = keysOnly?.filter((value) => !hiden.includes(value))
   const newColumns = listColumns.map((item, index) => {
     if (item === 'DiaChi') {
       return {
-        title: item,
+        title: columName[item] || item,
         width: 200,
         dataIndex: item,
         key: index,
-        sorter: (a, b) => a.SoLuong - b.SoLuong,
+        sorter: (a, b) => a.DiaChi.localeCompare(b.DiaChi),
+        showSorterTooltip: false,
+        align: 'center',
+
         ellipsis: {
           showTitle: false,
         },
@@ -126,33 +110,87 @@ function Tables({ param, columName, height, handleView, handleEdit, typeTable, h
         ),
       }
     }
+    if (item === 'NgayCTu' || item === 'DaoHan') {
+      return {
+        title: columName[item] || item,
+        width: 150,
+        dataIndex: item,
+        key: index,
+        align: 'center',
+        sorter: (a, b) => dayjs(a[item]).unix() - dayjs(b[item]).unix(),
+        showSorterTooltip: false,
+        ellipsis: {
+          showTitle: false,
+        },
+        render: (text) => <div style={{ textAlign: 'center' }}>{text ? dayjs(text).format('DD/MM/YYYY') : ''}</div>,
+      }
+    }
+    if (item === 'NgayTao' || item === 'NgaySuaCuoi') {
+      return {
+        title: columName[item] || item,
+        width: 150,
+        dataIndex: item,
+        key: index,
+        align: 'center',
+        sorter: (a, b) => {
+          const dateA = new Date(a[item])
+          const dateB = new Date(b[item])
 
+          if (!isNaN(dateA.getTime()) && !isNaN(dateB.getTime())) {
+            return dateA.getTime() - dateB.getTime()
+          } else if (!isNaN(dateA.getTime())) {
+            return -1
+          } else if (!isNaN(dateB.getTime())) {
+            return 1
+          } else {
+            return 0
+          }
+        },
+        showSorterTooltip: false,
+        ellipsis: {
+          showTitle: false,
+        },
+        render: (address) => (
+          <Tooltip placement="topLeft" title={address}>
+            {address}
+          </Tooltip>
+        ),
+      }
+    }
+    if (item === 'NguoiSuaCuoi' || item === 'NguoiTao') {
+      return {
+        title: columName[item] || item,
+        width: 150,
+        dataIndex: item,
+        key: index,
+
+        sorter: (a, b) => a[item]?.toString().localeCompare(b[item]?.toString()),
+        showSorterTooltip: false,
+        align: 'center',
+        ellipsis: {
+          showTitle: false,
+        },
+        render: (address) => (
+          <Tooltip placement="topLeft" title={address}>
+            {address}
+          </Tooltip>
+        ),
+      }
+    }
     const isTienColumn = item.includes('Tien') && item !== 'TTTienMat'
     const isTienColumn2 = item.includes('TongTongCong')
-    const isSoluong = item.includes('TongTongCong')
+    const isSoluong = item.includes('TyLeCKTT')
+    const isTongSoLuong = item.includes('TongSoLuong')
 
-    const isNumericColumn = isTienColumn || item.includes('Gia') || item.includes('Thue') || item.includes('TyLeCKTT')
+    const isNumericColumn = isTienColumn || item.includes('Gia') || item.includes('Thue') || item.includes('TyLeCKTT') //TyLeCKTT
 
     return {
       title: columName[item] || item,
-      width: item === 'DiaChi' ? 250 : item === 'NguoiTao' ? 250 : item === 'NguoiSuaCuoi' ? 250 : item === 'TTTienMat' ? 200 : 200 || 200,
+      width: item === 'DiaChi' ? 250 : item === 'NguoiTao' ? 250 : item === 'NguoiSuaCuoi' ? 250 : item === 'TTTienMat' ? 100 : 150 || 100,
       dataIndex: item,
       editable: true,
-      align: isNumericColumn
-        ? 'right'
-        : isSoluong
-          ? 'right'
-          : item === 'TongTongCong'
-            ? 'right'
-            : item === 'SoLuongTon'
-              ? 'right'
-              : item === 'DVT'
-                ? 'center'
-                : item === 'LapRap'
-                  ? 'center'
-                  : item === 'TonKho'
-                    ? 'center'
-                    : 'left',
+
+      align: 'center',
       sorter: (a, b) => {
         const keywords = ['Tong', 'Gia', 'Tien', 'TLCK', 'So', 'Thue']
         const includesKeyword = keywords.some((keyword) => item.includes(keyword))
@@ -167,6 +205,7 @@ function Tables({ param, columName, height, handleView, handleEdit, typeTable, h
           return a[item]?.toString().localeCompare(b[item]?.toString()) || 0
         }
       },
+      showSorterTooltip: false,
       render: (text, record) => {
         if (item === 'TTTienMat' || item === 'LapRap' || item === 'TonKho') {
           return (
@@ -176,8 +215,14 @@ function Tables({ param, columName, height, handleView, handleEdit, typeTable, h
           )
         }
 
-        const formattedValue = isTienColumn || isTienColumn2 || isSoluong ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(text) : text
-
+        const formattedValue =
+          isTienColumn || isTienColumn2
+            ? Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLESOTIEN, maximumFractionDigits: ThongSo.SOLESOTIEN })
+            : isSoluong
+              ? Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLETYLE, maximumFractionDigits: ThongSo.SOLETYLE })
+              : isTongSoLuong
+                ? Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLESOLUONG, maximumFractionDigits: ThongSo.SOLESOLUONG })
+                : text
         return (
           <div
             style={{
@@ -195,6 +240,7 @@ function Tables({ param, columName, height, handleView, handleEdit, typeTable, h
 
   const columns = [
     ...newColumns,
+
     typeTable !== 'listHelper'
       ? {
           title: 'Action',
@@ -238,7 +284,9 @@ function Tables({ param, columName, height, handleView, handleEdit, typeTable, h
       },
     }
   })
-
+  // const formatVND = (value) => {
+  //   return Number(value).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLEDONGIA, maximumFractionDigits: ThongSo.SOLEDONGIA })
+  // }
   const originData = param?.map((record, index) => ({
     key: index,
     ...record,
@@ -259,14 +307,11 @@ function Tables({ param, columName, height, handleView, handleEdit, typeTable, h
     })
     setEditingKey(record.index)
   }
-  // const cancel = () => {
-  //   setEditingKey('')
-  // }
 
   const onRowClick = (record) => {
     return {
       onDoubleClick: () => {
-        typeTable === 'listHelper' ? handleAddData({ ...record, SoLuong: 1, DonGia: record.GiaBan, TyLeCKTT: 0 }) : handleView(record)
+        typeTable === 'listHelper' ? handleAddData({ ...record, SoLuong: 1, DonGia: record.GiaBan, TyLeCKTT: 0, TienHang: 0, ThanhTien: 0 }) : handleView(record)
       },
       onClick: () => {
         onSelectChange([record.key], [record])
@@ -304,7 +349,6 @@ function Tables({ param, columName, height, handleView, handleEdit, typeTable, h
     selectedRowKeys,
     onChange: onSelectChange,
   }
-  console.log('Selected Rows:', selectedMaHangs)
 
   return (
     <>
@@ -336,11 +380,12 @@ function Tables({ param, columName, height, handleView, handleEdit, typeTable, h
           dataSource={data}
           rowClassName="editable-row"
           pagination={{
-            position: true,
+            position: 'bottom',
             current: page,
             pageSize: pageSize,
             onChange: (page, pageSize) => {
-              setPage(page), setPageSize(pageSize)
+              setPage(page)
+              setPageSize(pageSize)
             },
           }}
           bordered
@@ -348,36 +393,37 @@ function Tables({ param, columName, height, handleView, handleEdit, typeTable, h
             ...onRowClick(record),
           })}
           scroll={{
-            x: 1500,
-            y: true,
+            y: 240,
+            // x: true,
           }}
+          scrollToFirstRowOnChange
           size="small"
-          summary={(pageData) => {
-            return (
-              <Table.Summary fixed="bottom">
-                <Table.Summary.Row>
-                  <Table.Summary.Cell></Table.Summary.Cell>
-                  {columns
-                    .filter((column) => column.render) // Loại bỏ cột có hàm render (cột checkbox)
-                    .map((column) => {
-                      const isNumericColumn = typeof data[0]?.[column.dataIndex] === 'number'
+          // summary={(pageData) => {
+          //   return (
+          //     <Table.Summary fixed="bottom">
+          //       <Table.Summary.Row>
+          //         <Table.Summary.Cell></Table.Summary.Cell>
+          //         {columns
+          //           .filter((column) => column.render)
+          //           .map((column) => {
+          //             const isNumericColumn = typeof data[0]?.[column.dataIndex] === 'number'
 
-                      return (
-                        <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'}>
-                          {isNumericColumn ? (
-                            <Text strong>
-                              {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(
-                                pageData.reduce((total, item) => total + (item[column.dataIndex] || 0), 0),
-                              )}
-                            </Text>
-                          ) : null}
-                        </Table.Summary.Cell>
-                      )
-                    })}
-                </Table.Summary.Row>
-              </Table.Summary>
-            )
-          }}
+          //             return (
+          //               <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'}>
+          //                 {isNumericColumn ? (
+          //                   <Text strong>
+          //                     {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(
+          //                       pageData.reduce((total, item) => total + (item[column.dataIndex] || 0), 0),
+          //                     )}
+          //                   </Text>
+          //                 ) : null}
+          //               </Table.Summary.Cell>
+          //             )
+          //           })}
+          //       </Table.Summary.Row>
+          //     </Table.Summary>
+          //   )
+          // }}
         />
       </Form>
     </>

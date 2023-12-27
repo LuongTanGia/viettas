@@ -30,3 +30,7 @@ tbody tr {
   top: 100%;
   font-size: 12px;
 }
+
+.ant-table-summary {
+  position: absolute;
+}

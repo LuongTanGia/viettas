@@ -96,11 +96,11 @@
 }
 .DateBox {
 }
-.selectBox .ant-select-selection-placeholder,
+/* .selectBox .ant-select-selection-placeholder,
 .ant-select-selection-item {
   font-weight: 400;
   opacity: 1;
   color: rgb(43, 42, 42);
   font-size: 18px;
   margin: 10px;
-}
+} */

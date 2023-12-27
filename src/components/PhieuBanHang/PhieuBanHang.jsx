@@ -8,7 +8,7 @@ import { useDispatch } from 'react-redux'
 import { THONGTINPHIEU, DANHSACHPHIEUBANHANG, XOAPHIEUBANHANG, LAPPHIEUTHU } from '../../action/Actions'
 import API from '../../API/API'
 import { FcAddDatabase } from 'react-icons/fc'
-import { DatePicker } from 'antd'
+// import { DatePicker } from 'antd'
 import { toast } from 'react-toastify'
 import ModelPrint from './PrintModel'
 import ActionButton from '../util/Button/ActionButton'
@@ -97,8 +97,8 @@ function PhieuBanHang() {
           <h1 className="text-xl font-black uppercase">Phiếu Bán Hàng</h1>
         </div>
       </div>
-      <div className="flex gap-3 mb-2">
-        {/* DatePicker */}
+      {/* <div className="flex gap-3 mb-2">
+       
         <div className="flex gap-x-2 items-center">
           <label htmlFor="">Ngày</label>
           <DatePicker className="DatePicker_PMH" format="DD/MM/YYYY" />
@@ -110,22 +110,8 @@ function PhieuBanHang() {
         <div className=" ">
           <button className="flex items-center py-1 px-2 bg-bg-main rounded-md  text-white text-sm hover:opacity-80">Lọc</button>
         </div>
-      </div>
-      {/* <DatePicker value={date} onChange={onChange} inputReadOnly /> */}
-      {/* <button
-        onClick={handleCreate}
-        className=" hover:bg-sky-500 border border-sky-500 p-2  rounded-md text-blue-400 hover:text-white font-medium float-right flex justify-center items-center
-            mb-2"
-      >
-        <FcAddDatabase /> <p className="ml-2">Thêm Phiếu</p>
-      </button>
-      <button
-        onClick={handleShowPrint}
-        className=" hover:bg-sky-500 border border-sky-500 p-2  rounded-md text-blue-400 hover:text-white font-medium float-right flex justify-center items-center
-            mb-2"
-      >
-        <FcAddDatabase /> <p className="ml-2">In phiéu</p>
-      </button> */}
+      </div> */}
+
       <div className="flex justify-end gap-2">
         <ActionButton color={'slate-50'} title={'Bản In'} background={'blue-500'} icon={''} bg_hover={'white'} color_hover={'blue-500'} handleAction={handleShowPrint} />
         <ActionButton
