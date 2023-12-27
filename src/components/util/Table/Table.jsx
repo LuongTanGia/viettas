@@ -150,9 +150,9 @@ function Tables({ param, columName, height, handleView, handleEdit, typeTable, h
         ellipsis: {
           showTitle: false,
         },
-        render: (address) => (
-          <Tooltip placement="topLeft" title={address}>
-            {address}
+        render: (value) => (
+          <Tooltip placement="topLeft" title={value}>
+            {value ? dayjs(value).format('DD/MM/YYYY hh:mm:ss') : ''}
           </Tooltip>
         ),
       }
