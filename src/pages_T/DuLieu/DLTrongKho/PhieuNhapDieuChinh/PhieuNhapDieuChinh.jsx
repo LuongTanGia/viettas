@@ -323,21 +323,21 @@ const PhieuNhapDieuChinh = () => {
       title: 'Action',
       key: 'operation',
       fixed: 'right',
-      width: 120,
+      width: 100,
       align: 'center',
       render: (record) => {
         return (
           <>
             <div className="flex gap-2 items-center justify-center">
               <div
-                className="p-1.5 border-2 rounded-md cursor-pointer hover:bg-slate-50 hover:text-yellow-400 border-yellow-400 bg-yellow-400 text-slate-50 "
+                className="p-[3px] border-2 rounded cursor-pointer hover:bg-slate-50 hover:text-yellow-400 border-yellow-400 bg-yellow-400 text-slate-50 "
                 title="Sửa"
                 onClick={() => handleEdit(record)}
               >
                 <MdEdit />
               </div>
               <div
-                className="p-1.5 border-2 rounded-md cursor-pointer hover:bg-slate-50 hover:text-red-500 border-red-500 bg-red-500 text-slate-50 "
+                className="p-[3px] border-2 rounded cursor-pointer hover:bg-slate-50 hover:text-red-500 border-red-500 bg-red-500 text-slate-50 "
                 title="Xóa"
                 onClick={() => handleDelete(record)}
               >

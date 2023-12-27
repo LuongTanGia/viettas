@@ -452,10 +452,9 @@ const PhieuMuaHang = () => {
   const handleSearch = (event) => {
     setSearchPMH(event.target.value)
   }
-
   return (
     <div className="w-auto">
-      <div className="relative text-lg  mx-4 my-2 flex justify-between items-center  ">
+      <div className="relative text-lg flex justify-between items-center">
         <div className="flex items-center gap-x-4 font-bold">
           <label>Phiếu mua hàng </label>
           <div>
@@ -474,7 +473,6 @@ const PhieuMuaHang = () => {
             </div>
           )}
         </div>
-
         <div>
           <div className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5  " onClick={() => setIsShowOption(!isShowOption)} title="Chức năng khác">
             <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
@@ -503,7 +501,7 @@ const PhieuMuaHang = () => {
           )}
         </div>
       </div>
-      <div className="flex justify-between items-center px-4 mb-2">
+      <div className="flex justify-between items-center px-4">
         <div className="flex gap-3">
           {/* DatePicker */}
           <div className="flex gap-x-2 items-center">

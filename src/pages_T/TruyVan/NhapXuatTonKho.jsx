@@ -9,6 +9,7 @@ import dayjs from 'dayjs'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { MdFilterListAlt } from 'react-icons/md'
 import { RETOKEN } from '../../action/Actions'
+import ActionButton from '../../components/util/Button/ActionButton'
 
 const NhapXuatTonKho = () => {
   const TokenAccess = localStorage.getItem('TKN')
@@ -176,12 +177,16 @@ const NhapXuatTonKho = () => {
       fixed: 'left',
       width: 150,
       align: 'center',
+      sorter: (a, b) => a.MaHang.localeCompare(b.MaHang),
+      showSorterTooltip: false,
     },
     {
       title: 'Tên hàng',
       dataIndex: 'TenHang',
       key: 'TenHang',
       fixed: 'left',
+      sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
+      showSorterTooltip: false,
       render: (text) => (
         <Tooltip title={text}>
           <div
@@ -202,6 +207,8 @@ const NhapXuatTonKho = () => {
       dataIndex: 'TenNhomHang',
       key: 'TenNhomHang',
       width: 150,
+      sorter: (a, b) => a.TenNhomHang.localeCompare(b.TenNhomHang),
+      showSorterTooltip: false,
       render: (text) => (
         <Tooltip title={text}>
           <div
@@ -221,6 +228,8 @@ const NhapXuatTonKho = () => {
       title: 'Tên Kho',
       dataIndex: 'TenKho',
       key: 'TenKho',
+      sorter: (a, b) => a.TenKho.localeCompare(b.TenKho),
+      showSorterTooltip: false,
     },
     {
       title: 'Đơn vị tính',
@@ -228,6 +237,8 @@ const NhapXuatTonKho = () => {
       key: 'DVT',
       width: 150,
       align: 'center',
+      sorter: (a, b) => a.DVT.localeCompare(b.DVT),
+      showSorterTooltip: false,
     },
     {
       title: 'Tồn đầu',
@@ -235,149 +246,167 @@ const NhapXuatTonKho = () => {
       key: 'SoLuongTonDK',
       width: 150,
       align: 'center',
+      showSorterTooltip: false,
+      sorter: (a, b) => a.SoLuongTonDK - b.SoLuongTonDK,
       render: (text) => (
         <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
       ),
     },
     {
-      title: 'Nhập',
-      children: [
-        {
-          title: 'Mua hàng',
-          dataIndex: 'SoLuongNhap_PMH',
-          key: 'SoLuongNhap_PMH',
-          width: 150,
-          align: 'center',
-          render: (text) => (
-            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
-          ),
-        },
-        {
-          title: 'Trả hàng',
-          dataIndex: 'SoLuongNhap_NTR',
-          key: 'SoLuongNhap_NTR',
-          width: 150,
-          align: 'center',
-          render: (text) => (
-            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
-          ),
-        },
-        {
-          title: 'Điều chỉnh',
-          dataIndex: 'SoLuongNhap_NDC',
-          key: 'SoLuongNhap_NDC',
-          width: 150,
-          align: 'center',
-          render: (text) => (
-            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
-          ),
-        },
-        {
-          title: 'Tổng nhập',
-          dataIndex: 'SoLuongNhap',
-          key: 'SoLuongNhap',
-          width: 150,
-          align: 'center',
-          render: (text) => (
-            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
-          ),
-        },
-      ],
+      title: 'Mua hàng',
+      dataIndex: 'SoLuongNhap_PMH',
+      key: 'SoLuongNhap_PMH',
+      width: 150,
+      align: 'center',
+      showSorterTooltip: false,
+      sorter: (a, b) => a.SoLuongNhap_PMH - b.SoLuongNhap_PMH,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
+      ),
     },
     {
-      title: 'Xuất',
-      children: [
-        {
-          title: 'Bán sỉ',
-          dataIndex: 'SoLuongXuat_PBS',
-          key: 'SoLuongXuat_PBS',
-          width: 150,
-          align: 'center',
-          render: (text) => (
-            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
-          ),
-        },
-        {
-          title: 'Bán lẻ',
-          dataIndex: 'SoLuongXuat_PBL',
-          key: 'SoLuongXuat_PBL',
-          width: 150,
-          align: 'center',
-          render: (text) => (
-            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
-          ),
-        },
-        {
-          title: 'Bán lẻ (Quầy)',
-          dataIndex: 'SoLuongXuat_PBQ',
-          key: 'SoLuongXuat_PBQ',
-          width: 150,
-          align: 'center',
-          render: (text) => (
-            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
-          ),
-        },
-        {
-          title: 'Trả hàng',
-          dataIndex: 'SoLuongXuat_XTR',
-          key: 'SoLuongXuat_XTR',
-          width: 150,
-          align: 'center',
-          render: (text) => (
-            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
-          ),
-        },
-        {
-          title: 'Sử dụng',
-          dataIndex: 'SoLuongXuat_XSD',
-          key: 'SoLuongXuat_XSD',
-          width: 150,
-          align: 'center',
-          render: (text) => (
-            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
-          ),
-        },
-        {
-          title: 'Hủy',
-          dataIndex: 'SoLuongXuat_HUY',
-          key: 'SoLuongXuat_HUY',
-          width: 150,
-          align: 'center',
-          render: (text) => (
-            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
-          ),
-        },
-        {
-          title: 'Điều chỉnh',
-          dataIndex: 'SoLuongXuat_XDC',
-          key: 'SoLuongXuat_XDC',
-          width: 150,
-          align: 'center',
-          render: (text) => (
-            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
-          ),
-        },
-        {
-          title: 'Chuyển kho',
-          dataIndex: 'SoLuongTonCK',
-          key: 'SoLuongTonCK',
-          width: 150,
-          align: 'center',
-          render: (text) => (
-            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
-          ),
-        },
-        {
-          title: 'Tổng xuất',
-          dataIndex: 'SoLuongXuat',
-          key: 'SoLuongXuat',
-          width: 150,
-          align: 'center',
-          render: (text) => (
-            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
-          ),
-        },
-      ],
+      title: 'Trả hàng',
+      dataIndex: 'SoLuongNhap_NTR',
+      key: 'SoLuongNhap_NTR',
+      width: 150,
+      align: 'center',
+      showSorterTooltip: false,
+      sorter: (a, b) => a.SoLuongNhap_NTR - b.SoLuongNhap_NTR,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
+      ),
+    },
+    {
+      title: 'Điều chỉnh',
+      dataIndex: 'SoLuongNhap_NDC',
+      key: 'SoLuongNhap_NDC',
+      width: 150,
+      align: 'center',
+      showSorterTooltip: false,
+      sorter: (a, b) => a.SoLuongNhap_NDC - b.SoLuongNhap_NDC,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
+      ),
+    },
+    {
+      title: 'Tổng nhập',
+      dataIndex: 'SoLuongNhap',
+      key: 'SoLuongNhap',
+      width: 150,
+      align: 'center',
+      showSorterTooltip: false,
+      sorter: (a, b) => a.SoLuongNhap - b.SoLuongNhap,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
+      ),
+    },
+    {
+      title: 'Bán sỉ',
+      dataIndex: 'SoLuongXuat_PBS',
+      key: 'SoLuongXuat_PBS',
+      width: 150,
+      align: 'center',
+      showSorterTooltip: false,
+      sorter: (a, b) => a.SoLuongXuat_PBS - b.SoLuongXuat_PBS,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
+      ),
+    },
+    {
+      title: 'Bán lẻ',
+      dataIndex: 'SoLuongXuat_PBL',
+      key: 'SoLuongXuat_PBL',
+      width: 150,
+      align: 'center',
+      showSorterTooltip: false,
+      sorter: (a, b) => a.SoLuongXuat_PBL - b.SoLuongXuat_PBL,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
+      ),
+    },
+    {
+      title: 'Bán lẻ (Quầy)',
+      dataIndex: 'SoLuongXuat_PBQ',
+      key: 'SoLuongXuat_PBQ',
+      width: 150,
+      align: 'center',
+      showSorterTooltip: false,
+      sorter: (a, b) => a.SoLuongXuat_PBQ - b.SoLuongXuat_PBQ,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
+      ),
+    },
+    {
+      title: 'Trả hàng',
+      dataIndex: 'SoLuongXuat_XTR',
+      key: 'SoLuongXuat_XTR',
+      width: 150,
+      align: 'center',
+      showSorterTooltip: false,
+      sorter: (a, b) => a.SoLuongXuat_XTR - b.SoLuongXuat_XTR,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
+      ),
+    },
+    {
+      title: 'Sử dụng',
+      dataIndex: 'SoLuongXuat_XSD',
+      key: 'SoLuongXuat_XSD',
+      width: 150,
+      align: 'center',
+      showSorterTooltip: false,
+      sorter: (a, b) => a.SoLuongXuat_XSD - b.SoLuongXuat_XSD,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
+      ),
+    },
+    {
+      title: 'Hủy',
+      dataIndex: 'SoLuongXuat_HUY',
+      key: 'SoLuongXuat_HUY',
+      width: 150,
+      align: 'center',
+      showSorterTooltip: false,
+      sorter: (a, b) => a.SoLuongXuat_HUY - b.SoLuongXuat_HUY,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
+      ),
+    },
+    {
+      title: 'Điều chỉnh',
+      dataIndex: 'SoLuongXuat_XDC',
+      key: 'SoLuongXuat_XDC',
+      width: 150,
+      align: 'center',
+      showSorterTooltip: false,
+      sorter: (a, b) => a.SoLuongXuat_XDC - b.SoLuongXuat_XDC,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
+      ),
+    },
+    {
+      title: 'Chuyển kho',
+      dataIndex: 'SoLuongTonCK',
+      key: 'SoLuongTonCK',
+      width: 150,
+      align: 'center',
+      showSorterTooltip: false,
+      sorter: (a, b) => a.SoLuongTonCK - b.SoLuongTonCK,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
+      ),
+    },
+    {
+      title: 'Tổng xuất',
+      dataIndex: 'SoLuongXuat',
+      key: 'SoLuongXuat',
+      width: 150,
+      align: 'center',
+      showSorterTooltip: false,
+      sorter: (a, b) => a.SoLuongXuat - b.SoLuongXuat,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
+      ),
     },
     {
       title: 'Tồn Cuối',
@@ -386,6 +415,8 @@ const NhapXuatTonKho = () => {
       key: 'SoLuongTonCK',
       width: 150,
       align: 'center',
+      showSorterTooltip: false,
+      sorter: (a, b) => a.SoLuongTonCK - b.SoLuongTonCK,
       render: (text) => (
         <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
       ),
@@ -604,9 +635,15 @@ const NhapXuatTonKho = () => {
                     </div>
                   </div>
                 </div>
-                <button type="submit" className="flex items-center gap-1 bg-blue-600 rounded px-2 py-1.5 text-white font-bold hover:bg-blue-500 whitespace-nowrap">
-                  Lọc hàng <MdFilterListAlt />
-                </button>
+                <ActionButton
+                  type="submit"
+                  title={'Lọc hàng'}
+                  icon={<MdFilterListAlt className="w-6 h-6" />}
+                  color={'slate-50'}
+                  background={'blue-600'}
+                  color_hover={'blue-600'}
+                  bg_hover={'white'}
+                />
               </form>
             </div>
           </div>
