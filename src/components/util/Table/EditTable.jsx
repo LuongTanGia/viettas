@@ -450,7 +450,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
   return (
     <div>
       <Table
-        className={'h264'}
+        className={'h250'}
         components={components}
         rowClassName={() => 'editable-row'}
         bordered
@@ -461,6 +461,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
           y: true,
         }}
         size="small"
+        pagination={false}
       />
     </div>
   )
