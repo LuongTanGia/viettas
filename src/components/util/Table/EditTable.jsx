@@ -84,6 +84,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
           const optionsArray = dataIndex === 'MaHang' ? yourMaHangOptions : yourTenHangOptions
 
           const selectedOption = optionsArray.find((option) => option[dataIndex] === values[dataIndex]) || {}
+
           const GiaBan = selectedOption.GiaBan
           const updatedRow = {
             ...record,
@@ -99,6 +100,8 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
             TienHang: selectedOption.DonGia || undefined,
             TyLeThue: 0,
             ThanhTien: selectedOption.DonGia || undefined,
+            DFDVT: selectedOption.DVT,
+            DFQUYDOI: selectedOption.DVTQuyDoi,
             // TienCKTT: 0,
             // TongCong: selectedOption.DonGia || undefined,
           }
@@ -111,16 +114,17 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
             ...values,
           })
         }
-        console.log(dataSource)
       } catch (errInfo) {
         console.log('Save failed:', errInfo)
       }
     }
 
     let childNode = children
-    if (editable) {
-      const isSelect = dataIndex === 'MaHang' || dataIndex === 'TenHang'
 
+    if (editable) {
+      const isSelect = dataIndex === 'MaHang' || dataIndex === 'TenHang' || dataIndex === 'DVT'
+
+      const listDVT = record.DFDVT !== record.DFQUYDOI ? [record.DFDVT, record.DFQUYDOI] : [record.DFDVT]
       childNode = editing ? (
         <Form.Item
           style={{
@@ -143,16 +147,22 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
                       {`${option.MaHang} - ${option.TenHang}`}
                     </Option>
                   ))
-                : yourTenHangOptions?.map((option) => (
-                    <Option key={option.TenHang} value={option.TenHang}>
-                      {`${option.MaHang} - ${option.TenHang}`}
-                    </Option>
-                  ))}
+                : dataIndex === 'TenHang'
+                  ? yourTenHangOptions?.map((option) => (
+                      <Option key={option.TenHang} value={option.TenHang}>
+                        {`${option.MaHang} - ${option.TenHang}`}
+                      </Option>
+                    ))
+                  : listDVT?.map((option) => (
+                      <Option key={option} value={option}>
+                        {option}
+                      </Option>
+                    ))}
             </Select>
-          ) : dataIndex === 'SoLuong' ? (
-            <InputNumber ref={inputRef} onPressEnter={save} onBlur={save} min={1} />
+          ) : dataIndex === 'SoLuong' || dataIndex === 'DonGia' ? (
+            <InputNumber ref={inputRef} onPressEnter={save} onBlur={save} min={1} style={{ width: '100%' }} />
           ) : (
-            <InputNumber ref={inputRef} onPressEnter={save} onBlur={save} max={100} min={0} />
+            <InputNumber ref={inputRef} onPressEnter={save} onBlur={save} max={100} min={0} style={{ width: '100%' }} />
           )}
         </Form.Item>
       ) : (
@@ -201,29 +211,22 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
         dataIndex: item,
         key: item,
         align: 'center',
-        render: (text, record, index) => index + 1,
+        render: (text, record, index) => <div style={{ textAlign: 'center' }}>{index + 1}</div>,
       }
     }
-    if (item === 'DVT') {
-      return {
-        title: columName[item] || item,
-        width: 80,
-        dataIndex: item,
-        key: item,
-        render: (text) => <div>{text}</div>,
-        sorter: (a, b) => a[item] - b[item],
-      }
-    }
-    if (item === 'DVT') {
-      return {
-        title: columName[item] || item,
-        width: 80,
-        dataIndex: item,
-        key: item,
-        align: 'center',
-        render: (text, record, index) => index + 1,
-      }
-    }
+    // if (item === 'DVT') {
+    //   return {
+    //     title: columName[item] || item,
+    //     width: 100,
+    //     dataIndex: item,
+    //     key: item,
+    //     align: 'center',
+    //     render: (text) => text,
+    //     sorter: (a, b) => a[item].localeCompare(b[item]),
+    //     showSorterTooltip: false,
+    //   }
+    // }
+
     if (item === 'TenHang') {
       return {
         title: columName[item] || item,
@@ -231,19 +234,13 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
         dataIndex: item,
         editable: true,
         key: item,
+        align: 'center',
+        render: (text, record, index) => <div style={{ textAlign: 'start' }}>{text}</div>,
+        sorter: (a, b) => a[item].localeCompare(b[item]),
+        showSorterTooltip: false,
       }
     }
 
-    if (item === 'DVT') {
-      return {
-        title: columName[item] || item,
-        width: 150,
-        dataIndex: item,
-        // editable: true,
-        key: item,
-        align: 'center',
-      }
-    }
     if (item === 'SoLuong') {
       return {
         title: columName[item] || item,
@@ -251,7 +248,10 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
         dataIndex: item,
         editable: true,
         key: item,
-        align: 'end',
+        align: 'center',
+        render: (text, record, index) => <div style={{ textAlign: 'end' }}>{text}</div>,
+        sorter: (a, b) => a[item] - b[item],
+        showSorterTooltip: false,
       }
     }
     if (item === 'DonGia') {
@@ -261,17 +261,23 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
         dataIndex: item,
         editable: true,
         key: item,
-        align: 'end',
+        align: 'center',
+        render: (text, record, index) => <div style={{ textAlign: 'end' }}>{text}</div>,
+        sorter: (a, b) => a[item] - b[item],
+        showSorterTooltip: false,
       }
     }
     if (item === 'TyLeThue') {
       return {
         title: columName[item] || item,
-        width: 80,
+        width: 100,
         dataIndex: item,
         editable: true,
         key: item,
-        align: 'end',
+        align: 'center',
+        sorter: (a, b) => a[item] - b[item],
+        render: (text) => <div style={{ textAlign: 'end' }}>{text}</div>,
+        showSorterTooltip: false,
       }
     }
     if (item === 'TienHang' || item === 'TienThue' || item === 'ThanhTien' || item === 'TienCKTT' || item === 'TongCong') {
@@ -280,15 +286,16 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
         width: 200,
         dataIndex: item,
         key: item,
-        align: 'end',
-
+        align: 'center',
+        showSorterTooltip: false,
         render: (text) =>
           text !== 0 ? (
-            text
+            <div style={{ textAlign: 'end' }}>{text}</div>
           ) : (
             <div
               style={{
                 color: 'rgba(0, 0, 0, 0.25)',
+                textAlign: 'end',
               }}
             >
               {formatVND(text) || 0}
@@ -303,6 +310,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
       dataIndex: item,
       editable: true,
       key: item,
+      align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => {
         const keywords = ['Tong', 'Gia', 'Tien', 'TLCK', 'So', 'Thue']
@@ -357,7 +365,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
   return (
     <div>
       <Table
-        className={'h150'}
+        className={'h264'}
         components={components}
         rowClassName={() => 'editable-row'}
         bordered

@@ -7,15 +7,24 @@
     max-height: 300px;
     min-height: 300px;
   }
+
+  .h264 .ant-table-container .ant-table-body {
+    max-height: 264px;
+    min-height: 264px;
+  }
   .h250 .ant-table-container .ant-table-body {
     max-height: 250px;
     min-height: 250px;
+  }
+
+  .h220 .ant-table-container .ant-table-body {
+    max-height: 220px;
+    min-height: 220px;
   }
   .h200 .ant-table-container .ant-table-body {
     max-height: 200px;
     min-height: 200px;
   }
-
   .h150 .ant-table-container .ant-table-body {
     max-height: 150px;
     min-height: 150px;

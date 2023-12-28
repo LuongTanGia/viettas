@@ -142,7 +142,7 @@ const PhieuMuaHang = () => {
       hight: 10,
       fixed: 'left',
       align: 'center',
-      render: (text, record, index) => index + 1,
+      render: (text, record, index) => <div style={{ textAlign: 'center' }}>{index + 1}</div>,
     },
     {
       title: 'Số Chứng Từ',
@@ -151,8 +151,9 @@ const PhieuMuaHang = () => {
       width: 150,
       fixed: 'left',
       sorter: (a, b) => a.SoChungTu.localeCompare(b.SoChungTu),
-
       showSorterTooltip: false,
+      align: 'center',
+      render: (text) => <div style={{ textAlign: 'start' }}>{text}</div>,
     },
     {
       title: 'Ngày Chứng Từ',
@@ -175,6 +176,8 @@ const PhieuMuaHang = () => {
       width: 150,
       sorter: (a, b) => a.MaDoiTuong.localeCompare(b.MaDoiTuong),
       showSorterTooltip: false,
+      align: 'center',
+      render: (text) => <div style={{ textAlign: 'start' }}>{text}</div>,
     },
     {
       title: 'Tên đối tượng',
@@ -183,6 +186,8 @@ const PhieuMuaHang = () => {
       width: 300,
       sorter: (a, b) => a.TenDoiTuong.localeCompare(b.TenDoiTuong),
       showSorterTooltip: false,
+      align: 'center',
+      render: (text) => <div style={{ textAlign: 'start' }}>{text}</div>,
     },
     {
       title: 'Địa chỉ',
@@ -197,6 +202,8 @@ const PhieuMuaHang = () => {
         return diaChiA.localeCompare(diaChiB)
       },
       showSorterTooltip: false,
+      align: 'center',
+      render: (text) => <div style={{ textAlign: 'start' }}>{text}</div>,
     },
     {
       title: 'Mã số thuế',
@@ -205,6 +212,8 @@ const PhieuMuaHang = () => {
       width: 150,
       sorter: (a, b) => a.MaSoThue - b.MaSoThue,
       showSorterTooltip: false,
+      align: 'center',
+      render: (text) => <div style={{ textAlign: 'start' }}>{text}</div>,
     },
     {
       title: 'Mã kho',
@@ -213,6 +222,8 @@ const PhieuMuaHang = () => {
       width: 150,
       sorter: (a, b) => a.MaKho.localeCompare(b.MaKho),
       showSorterTooltip: false,
+      align: 'center',
+      render: (text) => <div style={{ textAlign: 'start' }}>{text}</div>,
     },
     {
       title: 'Thông tin kho',
@@ -221,6 +232,8 @@ const PhieuMuaHang = () => {
       width: 150,
       sorter: (a, b) => a.ThongTinKho.localeCompare(b.ThongTinKho),
       showSorterTooltip: false,
+      align: 'center',
+      render: (text) => <div style={{ textAlign: 'start' }}>{text}</div>,
     },
     {
       title: 'Ghi chú',
@@ -234,6 +247,8 @@ const PhieuMuaHang = () => {
         return GhiChuA.localeCompare(GhiChuB)
       },
       showSorterTooltip: false,
+      align: 'center',
+      render: (text) => <div style={{ textAlign: 'start' }}>{text}</div>,
     },
     {
       title: 'Tổng mặt hàng',
@@ -314,6 +329,8 @@ const PhieuMuaHang = () => {
         return PhieuChiA.localeCompare(PhieuChiB)
       },
       showSorterTooltip: false,
+      align: 'center',
+      render: (text) => <div style={{ textAlign: 'start' }}>{text}</div>,
     },
     {
       title: 'Ngày tạo',
@@ -321,7 +338,7 @@ const PhieuMuaHang = () => {
       key: 'NgayTao',
       align: 'center',
       render: (text) => moment(text).format('DD/MM/YYYY hh:mm:ss'),
-      width: 300,
+      width: 200,
       sorter: (a, b) => {
         const dateA = new Date(a.NgayTao)
         const dateB = new Date(b.NgayTao)
@@ -336,6 +353,8 @@ const PhieuMuaHang = () => {
       width: 300,
       sorter: (a, b) => a.NguoiTao.localeCompare(b.NguoiTao),
       showSorterTooltip: false,
+      align: 'center',
+      render: (text) => <div style={{ textAlign: 'start' }}>{text}</div>,
     },
     {
       title: 'Ngày sửa cuối',
@@ -343,7 +362,7 @@ const PhieuMuaHang = () => {
       key: 'NgaySuaCuoi',
       align: 'center',
       render: (text) => (text ? moment(text).format('DD/MM/YYYY hh:mm:ss') : null),
-      width: 300,
+      width: 200,
       sorter: (a, b) => {
         const dateA = new Date(a.NgaySuaCuoi)
         const dateB = new Date(b.NgaySuaCuoi)
@@ -363,6 +382,8 @@ const PhieuMuaHang = () => {
         return NguoiSuaCuoiA.localeCompare(NguoiSuaCuoiB)
       },
       showSorterTooltip: false,
+      align: 'center',
+      render: (text) => <div style={{ textAlign: 'start' }}>{text}</div>,
     },
 
     {
@@ -597,7 +618,7 @@ const PhieuMuaHang = () => {
               y: 410,
             }}
             bordered
-            pagination={false}
+            // pagination={false}
             rowKey={(record) => record.SoChungTu}
             onRow={(record) => ({
               // onClick: () => {
@@ -616,52 +637,52 @@ const PhieuMuaHang = () => {
               },
             })}
             // Bảng Tổng
-            summary={(pageData) => {
-              let totalTongThanhTien = 0
-              let totalTongTienThue = 0
-              let totalTongTienHang = 0
-              let totalTongSoLuong = 0
-              let totalTongMatHang = 0
+            // summary={(pageData) => {
+            //   let totalTongThanhTien = 0
+            //   let totalTongTienThue = 0
+            //   let totalTongTienHang = 0
+            //   let totalTongSoLuong = 0
+            //   let totalTongMatHang = 0
 
-              pageData.forEach(({ TongThanhTien, TongTienThue, TongTienHang, TongSoLuong, TongMatHang }) => {
-                totalTongThanhTien += TongThanhTien
-                totalTongTienThue += TongTienThue
-                totalTongTienHang += TongTienHang
-                totalTongSoLuong += TongSoLuong
-                totalTongMatHang += TongMatHang
-              })
-              return (
-                <Table.Summary fixed="bottom">
-                  <Table.Summary.Row className="text-end font-bold">
-                    <Table.Summary.Cell index={0} className="text-center ">
-                      {pageData.length}
-                    </Table.Summary.Cell>
-                    <Table.Summary.Cell index={1}></Table.Summary.Cell>
-                    <Table.Summary.Cell index={2}></Table.Summary.Cell>
-                    <Table.Summary.Cell index={3}></Table.Summary.Cell>
-                    <Table.Summary.Cell index={4}></Table.Summary.Cell>
-                    <Table.Summary.Cell index={5}></Table.Summary.Cell>
-                    <Table.Summary.Cell index={6}></Table.Summary.Cell>
-                    <Table.Summary.Cell index={7}></Table.Summary.Cell>
-                    <Table.Summary.Cell index={8}></Table.Summary.Cell>
-                    <Table.Summary.Cell index={9}></Table.Summary.Cell>
-                    <Table.Summary.Cell index={10}>{totalTongMatHang}</Table.Summary.Cell>
-                    <Table.Summary.Cell index={11}>{formatQuantity(totalTongSoLuong, dataThongSo?.SOLESOLUONG)}</Table.Summary.Cell>
-                    <Table.Summary.Cell index={12}>{formatPrice(totalTongTienHang, dataThongSo?.SOLESOTIEN)}</Table.Summary.Cell>
-                    <Table.Summary.Cell index={13}> {formatPrice(totalTongTienThue, dataThongSo?.SOLESOTIEN)}</Table.Summary.Cell>
-                    <Table.Summary.Cell index={14}>{formatPrice(totalTongThanhTien, dataThongSo?.SOLESOTIEN)}</Table.Summary.Cell>
-                    <Table.Summary.Cell index={15}></Table.Summary.Cell>
-                    <Table.Summary.Cell index={16}></Table.Summary.Cell>
-                    <Table.Summary.Cell index={17}></Table.Summary.Cell>
-                    <Table.Summary.Cell index={18}></Table.Summary.Cell>
-                    <Table.Summary.Cell index={19}></Table.Summary.Cell>
-                    <Table.Summary.Cell index={20} className="text-center ">
-                      {data ? data.reduce((count, item) => count + (item.TTTienMat ? 1 : 0), 0) : null}
-                    </Table.Summary.Cell>
-                  </Table.Summary.Row>
-                </Table.Summary>
-              )
-            }}
+            //   pageData.forEach(({ TongThanhTien, TongTienThue, TongTienHang, TongSoLuong, TongMatHang }) => {
+            //     totalTongThanhTien += TongThanhTien
+            //     totalTongTienThue += TongTienThue
+            //     totalTongTienHang += TongTienHang
+            //     totalTongSoLuong += TongSoLuong
+            //     totalTongMatHang += TongMatHang
+            //   })
+            //   return (
+            //     <Table.Summary fixed="bottom">
+            //       <Table.Summary.Row className="text-end font-bold">
+            //         <Table.Summary.Cell index={0} className="text-center ">
+            //           {pageData.length}
+            //         </Table.Summary.Cell>
+            //         <Table.Summary.Cell index={1}></Table.Summary.Cell>
+            //         <Table.Summary.Cell index={2}></Table.Summary.Cell>
+            //         <Table.Summary.Cell index={3}></Table.Summary.Cell>
+            //         <Table.Summary.Cell index={4}></Table.Summary.Cell>
+            //         <Table.Summary.Cell index={5}></Table.Summary.Cell>
+            //         <Table.Summary.Cell index={6}></Table.Summary.Cell>
+            //         <Table.Summary.Cell index={7}></Table.Summary.Cell>
+            //         <Table.Summary.Cell index={8}></Table.Summary.Cell>
+            //         <Table.Summary.Cell index={9}></Table.Summary.Cell>
+            //         <Table.Summary.Cell index={10}>{totalTongMatHang}</Table.Summary.Cell>
+            //         <Table.Summary.Cell index={11}>{formatQuantity(totalTongSoLuong, dataThongSo?.SOLESOLUONG)}</Table.Summary.Cell>
+            //         <Table.Summary.Cell index={12}>{formatPrice(totalTongTienHang, dataThongSo?.SOLESOTIEN)}</Table.Summary.Cell>
+            //         <Table.Summary.Cell index={13}> {formatPrice(totalTongTienThue, dataThongSo?.SOLESOTIEN)}</Table.Summary.Cell>
+            //         <Table.Summary.Cell index={14}>{formatPrice(totalTongThanhTien, dataThongSo?.SOLESOTIEN)}</Table.Summary.Cell>
+            //         <Table.Summary.Cell index={15}></Table.Summary.Cell>
+            //         <Table.Summary.Cell index={16}></Table.Summary.Cell>
+            //         <Table.Summary.Cell index={17}></Table.Summary.Cell>
+            //         <Table.Summary.Cell index={18}></Table.Summary.Cell>
+            //         <Table.Summary.Cell index={19}></Table.Summary.Cell>
+            //         <Table.Summary.Cell index={20} className="text-center ">
+            //           {pageData.reduce((count, item) => count + (item.TTTienMat ? 1 : 0), 0)}
+            //         </Table.Summary.Cell>
+            //       </Table.Summary.Row>
+            //     </Table.Summary>
+            //   )
+            // }}
           ></Table>
         ) : (
           <SimpleBackdrop />
