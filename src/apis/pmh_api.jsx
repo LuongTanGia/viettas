@@ -139,10 +139,6 @@ export const SuaPMH = (token, Sct, formPMHEdit, MaDoiTuong, MaKho) =>
           SoChungTu: Sct,
           Data: {
             ...formPMHEdit,
-            DataDetails: formPMHEdit?.DataDetails?.map((item, index) => ({
-              ...item,
-              STT: index + 1,
-            })),
             MaDoiTuong: MaDoiTuong,
             MaKho: MaKho,
           },

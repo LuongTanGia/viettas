@@ -40,12 +40,12 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   const [newDataPMH, setNewDataPMH] = useState(dataPMH)
   const currentRowData = useCallback(
     (mahang) => {
-      return selectedRowData.map((item) => item.MaHang).filter((item) => item !== '' && item !== mahang)
+      return selectedRowData.map((item) => item.MaHang).filter((item) => item !== 'Chọn mã hàng' && item !== mahang)
     },
     [selectedRowData],
   )
 
-  const isAdd = useMemo(() => selectedRowData.map((item) => item.MaHang).includes(''), [selectedRowData])
+  const isAdd = useMemo(() => selectedRowData.map((item) => item.MaHang).includes('Chọn mã hàng'), [selectedRowData])
 
   const startDate = dayjs(controlDate.NgayBatDau).format('YYYY-MM-DDTHH:mm:ss')
   const endDate = dayjs(controlDate.NgayKetThuc).format('YYYY-MM-DDTHH:mm:ss')
@@ -82,7 +82,6 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
 
   useEffect(() => {
     if (dataThongTin !== null) setFormPMHEdit(dataThongTin)
-    console.log('dataThongTin1', dataThongTin)
   }, [dataThongTin, dataThongTin.DataDetails])
 
   const columns = [
@@ -315,7 +314,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
           }
           return item
         })
-      else dataNewRow = [...prevData, { ...newRow, DVTDefault: newRow.DVT }]
+      else dataNewRow = [...prevData, { ...newRow, DFDVT: newRow.DVT, DFQUYDOI: newRow.DVTQuyDoi }]
       return dataNewRow
     })
 
@@ -323,12 +322,12 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   }
 
   const handleAddEmptyRow = () => {
-    if (selectedRowData.map((item) => item.MaHang).includes('')) return
+    if (selectedRowData.map((item) => item.MaHang).includes('Chọn mã hàng')) return
 
     let emptyRow = {
       SoChungTu: '',
-      MaHang: '',
-      TenHang: '',
+      MaHang: 'Chọn mã hàng',
+      TenHang: 'Chọn tên hàng',
       DVT: '',
       SoLuong: 1,
       DonGia: 0,
@@ -1241,7 +1240,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                       <DatePicker
                         className="DatePicker_PMH"
                         format="DD/MM/YYYY"
-                        defaultValue={dayjs(dataThongTin?.NgayCTu)}
+                        defaultValue={dayjs(dataThongTin.NgayCTu)}
                         onChange={(newDate) => {
                           setFormPMHEdit({
                             ...formPMHEdit,
@@ -1255,7 +1254,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                       <DatePicker
                         className="DatePicker_PMH"
                         format="DD/MM/YYYY"
-                        defaultValue={dayjs(dataThongTin?.DaoHan)}
+                        defaultValue={dayjs(dataThongTin.DaoHan)}
                         onChange={(newDate) => {
                           setFormPMHEdit({
                             ...formPMHEdit,
@@ -1395,7 +1394,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                 </button>
               </div>
               {/* table */}
-              <div className="  max-w-[98%]  max-h-[50%] mx-auto bg-white  rounded-md my-3 overflow-y-auto ">
+              {/* <div className="  max-w-[98%]  max-h-[50%] mx-auto bg-white  rounded-md my-3 overflow-y-auto ">
                 <table className=" min-w-full min-h-full bg-white border border-gray-300 text-text-main">
                   <thead>
                     <tr>
@@ -1419,24 +1418,17 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                       />
                     ))}
                   </tbody>
-                  {/* <tfoot className="">
-                    <tr>
-                      <th className="py-2 px-4 border text-center"></th>
-                      <th className="py-2 px-4 border text-center"></th>
-                      <th className="py-2 px-4 border text-center"></th>
-                      <th className="py-2 px-4 border text-center"></th>
-                      <th className="py-1 px-3 border text-end">{tongSoLuong.toFixed(1)}</th>
-                      <th className="py-1 px-2 border text-end">{tongDonGia.toLocaleString()}</th>
-                      <th className="py-2 px-4 border text-end">{tongTienHang.toLocaleString()}</th>
-                      <th className="py-2 px-4 border text-center">{tongTyLeThue}</th>
-                      <th className="py-2 px-4 border text-end">{tongTienThue.toLocaleString()}</th>
-                      <th className="py-2 px-4 border text-end">{tongThanhTien.toLocaleString()}</th>
-                      <th className="py-2 px-4 border text-center"></th>
-                    </tr>
-                  </tfoot> */}
+              
                 </table>
-              </div>
-              {/* <Table dataSource={selectedRowData} columns={columns} />; */}
+              </div> */}
+              <TableEdit
+                param={selectedRowData}
+                handleEditData={handleEditData}
+                ColumnTable={columnName}
+                columName={nameColumsPhieuMuaHang}
+                yourMaHangOptions={dataHangHoa}
+                yourTenHangOptions={dataHangHoa}
+              />
             </div>
 
             {/* button  */}
