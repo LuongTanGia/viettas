@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { Button, Form, Input, Table, Select, InputNumber } from 'antd'
+import { Button, Form, Input, Table, Select, InputNumber, Tooltip } from 'antd'
 import BtnAction from './BtnAction'
 
 const { Option } = Select
@@ -130,7 +130,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
           rules={[
             {
               required: true,
-              message: `không để trống ${title}`,
+              // message: `không để trống ${title}`,
             },
           ]}
           initialValue={record[dataIndex]}
@@ -150,7 +150,17 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
                   ))}
             </Select>
           ) : dataIndex === 'SoLuong' || dataIndex === 'DonGia' ? (
-            <InputNumber ref={inputRef} onPressEnter={save} onBlur={save} min={1} />
+            <InputNumber
+              ref={inputRef}
+              onPressEnter={save}
+              onBlur={save}
+              min={1}
+              max={999999999999}
+              width={500}
+              style={dataIndex !== 'SoLuong' ? { width: 150 } : { width: 100 }}
+              formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              parser={(value) => value.replace(/\$\s?|(,*)/g, '')}
+            />
           ) : (
             <InputNumber ref={inputRef} onPressEnter={save} onBlur={save} max={100} min={0} />
           )}
@@ -187,12 +197,8 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
     })
   }
 
-  const formatVND = (value) => {
-    return Number(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-  }
-
   const listColumns = ColumnTable ? ColumnTable : []
-
+  const ThongSo = JSON.parse(localStorage.getItem('ThongSo'))
   const newColumns = listColumns.map((item, index) => {
     if (item === 'STT') {
       return {
@@ -201,6 +207,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
         dataIndex: item,
         key: item,
         align: 'center',
+        fixed: 'left',
         render: (text, record, index) => index + 1,
       }
     }
@@ -214,23 +221,24 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
         sorter: (a, b) => a[item] - b[item],
       }
     }
-    if (item === 'DVT') {
+    if (item === 'MaHang') {
       return {
         title: columName[item] || item,
-        width: 80,
+        width: 150,
         dataIndex: item,
+        editable: true,
         key: item,
-        align: 'center',
-        render: (text, record, index) => index + 1,
+        fixed: 'left',
       }
     }
     if (item === 'TenHang') {
       return {
         title: columName[item] || item,
-        width: 250,
+        width: 300,
         dataIndex: item,
         editable: true,
         key: item,
+        fixed: 'left',
       }
     }
 
@@ -244,6 +252,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
         align: 'center',
       }
     }
+
     if (item === 'SoLuong') {
       return {
         title: columName[item] || item,
@@ -252,9 +261,26 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
         editable: true,
         key: item,
         align: 'end',
+        render: (text) => (
+          <div>{text !== undefined ? Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLESOLUONG, maximumFractionDigits: ThongSo.SOLESOLUONG }) : ''}</div>
+        ),
       }
     }
     if (item === 'DonGia') {
+      return {
+        title: columName[item] || item,
+        width: 200,
+        dataIndex: item,
+        editable: true,
+        key: item,
+        align: 'end',
+        ellipsis: true,
+        render: (text) => (
+          <div>{text !== undefined ? Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLEDONGIA, maximumFractionDigits: ThongSo.SOLEDONGIA }) : ''}</div>
+        ),
+      }
+    }
+    if (item === 'TyLeThue') {
       return {
         title: columName[item] || item,
         width: 150,
@@ -262,16 +288,22 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
         editable: true,
         key: item,
         align: 'end',
+        render: (text) => (
+          <div>{text !== undefined ? Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLETYLE, maximumFractionDigits: ThongSo.SOLETYLE }) : ''}</div>
+        ),
       }
     }
-    if (item === 'TyLeThue') {
+    if (item === 'TyLeCKTT') {
       return {
         title: columName[item] || item,
-        width: 80,
+        width: 150,
         dataIndex: item,
         editable: true,
         key: item,
         align: 'end',
+        render: (text) => (
+          <div>{text !== undefined ? Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLETYLE, maximumFractionDigits: ThongSo.SOLETYLE }) : ''}</div>
+        ),
       }
     }
     if (item === 'TienHang' || item === 'TienThue' || item === 'ThanhTien' || item === 'TienCKTT' || item === 'TongCong') {
@@ -281,19 +313,28 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
         dataIndex: item,
         key: item,
         align: 'end',
+        render: (text) => {
+          const formattedValue =
+            text !== 0 ? (
+              Number(text) > 999999999999 ? (
+                <Tooltip placement="topLeft" title={999999999999}>
+                  {Number(999999999999).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLESOTIEN, maximumFractionDigits: ThongSo.SOLESOTIEN })}
+                </Tooltip>
+              ) : (
+                Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLESOTIEN, maximumFractionDigits: ThongSo.SOLESOTIEN }) || 0
+              )
+            ) : (
+              <div
+                style={{
+                  color: 'rgba(0, 0, 0, 0.25)',
+                }}
+              >
+                {Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLESOTIEN, maximumFractionDigits: ThongSo.SOLESOTIEN }) || 0}
+              </div>
+            )
 
-        render: (text) =>
-          text !== 0 ? (
-            text
-          ) : (
-            <div
-              style={{
-                color: 'rgba(0, 0, 0, 0.25)',
-              }}
-            >
-              {formatVND(text) || 0}
-            </div>
-          ),
+          return <div>{formattedValue}</div>
+        },
         sorter: (a, b) => a[item] - b[item],
       }
     }

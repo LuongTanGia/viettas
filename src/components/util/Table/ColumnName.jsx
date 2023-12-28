@@ -63,3 +63,15 @@ export const nameColumsPhieuMuaHang = {
   TienThue: 'Tiền thuế',
   ThanhTien: 'Thành tiền',
 }
+export const nameColumsPhieuBanHangChiTiet = {
+  STT: 'STT',
+  MaHang: 'Mã hàng',
+  TenHang: 'Tên hàng',
+  DVT: 'DVT',
+  SoLuong: 'Số lượng',
+  DonGia: 'Đơn giá',
+  TienHang: 'Tiền Hàng',
+  TyLeThue: '% Thuế',
+  TienThue: 'Tiền thuế',
+  ThanhTien: 'Thành tiền',
+}

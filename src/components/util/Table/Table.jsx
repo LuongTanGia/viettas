@@ -178,9 +178,10 @@ function Tables({ param, columName, height, handleView, handleEdit, typeTable, h
       }
     }
     const isTienColumn = item.includes('Tien') && item !== 'TTTienMat'
+    const isTGiaBan = item.includes('GiaBan')
     const isTienColumn2 = item.includes('TongTongCong')
-    const isSoluong = item.includes('TyLeCKTT')
-    const isTongSoLuong = item.includes('TongSoLuong')
+    const isTyLe = item.includes('TyLeCKTT')
+    const isTongSoLuong = item.includes('SoLuong')
 
     const isNumericColumn = isTienColumn || item.includes('Gia') || item.includes('Thue') || item.includes('TyLeCKTT') //TyLeCKTT
 
@@ -189,12 +190,10 @@ function Tables({ param, columName, height, handleView, handleEdit, typeTable, h
       width: item === 'DiaChi' ? 250 : item === 'NguoiTao' ? 250 : item === 'NguoiSuaCuoi' ? 250 : item === 'TTTienMat' ? 100 : 150 || 100,
       dataIndex: item,
       editable: true,
-
       align: 'center',
       sorter: (a, b) => {
         const keywords = ['Tong', 'Gia', 'Tien', 'TLCK', 'So', 'Thue']
         const includesKeyword = keywords.some((keyword) => item.includes(keyword))
-
         if (includesKeyword && a[item] !== undefined && b[item] !== undefined) {
           return Number(a[item]) - Number(b[item])
         } else if (includesKeyword && a[item] !== undefined) {
@@ -218,15 +217,17 @@ function Tables({ param, columName, height, handleView, handleEdit, typeTable, h
         const formattedValue =
           isTienColumn || isTienColumn2
             ? Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLESOTIEN, maximumFractionDigits: ThongSo.SOLESOTIEN })
-            : isSoluong
+            : isTyLe
               ? Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLETYLE, maximumFractionDigits: ThongSo.SOLETYLE })
               : isTongSoLuong
                 ? Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLESOLUONG, maximumFractionDigits: ThongSo.SOLESOLUONG })
-                : text
+                : isTGiaBan
+                  ? Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLEDONGIA, maximumFractionDigits: ThongSo.SOLEDONGIA })
+                  : text
         return (
           <div
             style={{
-              textAlign: isNumericColumn ? 'right' : isSoluong ? 'right' : item.includes('Tong') ? 'right' : item === 'SoLuongTon' ? 'right' : item === 'DVT' ? 'center' : 'left',
+              textAlign: isNumericColumn ? 'right' : isTyLe ? 'right' : item.includes('Tong') ? 'right' : item === 'SoLuongTon' ? 'right' : item === 'DVT' ? 'center' : 'left',
               opacity: text === 0 ? 0.5 : 1,
               color: text < 0 ? 'red' : 'black',
             }}
@@ -352,7 +353,7 @@ function Tables({ param, columName, height, handleView, handleEdit, typeTable, h
 
   return (
     <>
-      <Button onClick={handleToggleSelect} className="mr-4 ">
+      {/* <Button onClick={handleToggleSelect} className="mr-4 ">
         Ẩn/hiện cột
       </Button>
       {selectVisible && (
@@ -365,7 +366,7 @@ function Tables({ param, columName, height, handleView, handleEdit, typeTable, h
           optionRender={(option) => <Space>{option.data.label}</Space>}
           value={hiden}
         />
-      )}
+      )} */}
 
       <Form form={form} component={false}>
         <Table

@@ -1,13 +1,16 @@
 import { Form, Input, Typography } from 'antd'
 import { THAYDOIRMATKHAU } from '../../action/Actions'
 import API from '../../API/API'
+import ActionButton from '../util/Button/ActionButton'
 
 // eslint-disable-next-line react/prop-types
 function ChangePass({ isShow, close }) {
   const onFinish = async (values) => {
     const token = localStorage.getItem('TKN')
-    await THAYDOIRMATKHAU(API.DOIMATKHAU, values, token)
-    close()
+    const response = await THAYDOIRMATKHAU(API.DOIMATKHAU, values, token)
+    if (response === 0) {
+      window.location.href = '/login'
+    }
   }
   const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo)
@@ -91,19 +94,9 @@ function ChangePass({ isShow, close }) {
                   span: 16,
                 }}
               >
-                <div className="flex justify-end">
-                  <button
-                    className="active:scale-[.98] active:duration-75 text-white text-lg font-bold bg-rose-500 rounded-md px-2 py-1 w-[100px]"
-                    type=""
-                    onClick={() => {
-                      close()
-                    }}
-                  >
-                    Đóng
-                  </button>
-                  <button type="primary" className="active:scale-[.98] active:duration-75 text-white text-lg font-bold bg-blue-500 rounded-md px-2 py-1 w-[100px] ml-4">
-                    Thay đổi
-                  </button>
+                <div className="flex justify-end gap-4  absolute right-0 ">
+                  <ActionButton color={'slate-50'} title={'Xác Nhận'} background={'blue-500'} bg_hover={'white'} color_hover={'blue-500'} type="primary" />
+                  <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={close} />
                 </div>
               </Form.Item>
             </Form>
