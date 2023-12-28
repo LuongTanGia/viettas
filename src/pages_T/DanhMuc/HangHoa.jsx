@@ -27,6 +27,7 @@ const HangHoa = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [selectedRowKeys, setSelectedRowKeys] = useState([])
   const [isShowSearch, setIsShowSearch] = useState(false)
+  const [dataThongSo, setDataThongSo] = useState('')
   const [pageSize, setPageSize] = useState('10')
   const [page, setPage] = useState('1')
 
@@ -48,6 +49,7 @@ const HangHoa = () => {
   }
   useEffect(() => {
     getListHangHoa()
+    getThongSo()
   }, [getListHangHoa, isLoading])
 
   const handleCreate = () => {
@@ -165,6 +167,29 @@ const HangHoa = () => {
   }
   const formatCurrency = (value) => {
     return Number(value).toLocaleString('vi-VN')
+  }
+  const formatThapPhan = (number, decimalPlaces) => {
+    if (typeof number === 'number' && !isNaN(number)) {
+      const formatter = new Intl.NumberFormat('vi-VN', {
+        minimumFractionDigits: decimalPlaces,
+      })
+      return formatter.format(number)
+    }
+    return ''
+  }
+
+  const getThongSo = async () => {
+    try {
+      const response = await categoryAPI.ThongSo(TokenAccess)
+      if (response.data.DataError == 0) {
+        setDataThongSo(response.data.DataResult)
+      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        await RETOKEN()
+        getThongSo()
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
   const handleRowClick = (record) => {
     const isSelected = selectedRowKeys.includes(record.key)
@@ -300,7 +325,11 @@ const HangHoa = () => {
       width: 120,
       showSorterTooltip: false,
       sorter: (a, b) => a.GiaBanLe - b.GiaBanLe,
-      render: (text) => <span className={`flex justify-end  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''}`}>{formatCurrency(text)}</span>,
+      render: (text) => (
+        <span className={`flex justify-end  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''}`}>
+          {formatThapPhan(Number(text), dataThongSo.SOLEDONGIA)}
+        </span>
+      ),
     },
     {
       title: 'Bảng số giá',
@@ -323,7 +352,9 @@ const HangHoa = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.BangGiaSi_Min - b.BangGiaSi_Min,
       render: (text) => (
-        <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 || text === null ? 'text-gray-300' : ''}`}>{formatCurrency(text)}</span>
+        <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 || text === null ? 'text-gray-300' : ''}`}>
+          {formatThapPhan(Number(text), dataThongSo.SOLEDONGIA)}
+        </span>
       ),
     },
     {
@@ -335,7 +366,9 @@ const HangHoa = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.BangGiaSi_Max - b.BangGiaSi_Max,
       render: (text) => (
-        <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 || text === null ? 'text-gray-300' : ''}`}>{formatCurrency(text)}</span>
+        <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 || text === null ? 'text-gray-300' : ''}`}>
+          {formatThapPhan(Number(text), dataThongSo.SOLEDONGIA)}
+        </span>
       ),
     },
     {

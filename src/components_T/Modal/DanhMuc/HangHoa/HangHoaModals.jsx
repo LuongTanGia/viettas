@@ -5,6 +5,7 @@ import categoryAPI from '../../../../API/linkAPI'
 import { toast } from 'react-toastify'
 import { useEffect, useState } from 'react'
 import './HangHoaModals.css'
+import moment from 'moment'
 import { Checkbox, Select, Space } from 'antd'
 import logo from '../../../../assets/VTS-iSale.ico'
 import { RETOKEN } from '../../../../action/Actions'
@@ -59,18 +60,20 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
     NA: false,
     GhiChu: '',
     Barcodes: [{ MaVach: '', LastNum: 0, NA: false }],
-    HangHoa_CTs: [{ MaHangChiTiet: '', SoLuong: 1, DVT_CTs: 'Rổng' }],
+    HangHoa_CTs: [{ MaHangChiTiet: '', SoLuong: 1, DVT_CTs: '' }],
   })
   const [hangHoaForm, setHangHoaForm] = useState(() => {
-    return getMaHang ? { ...getMaHang, MaVach: getMaHang?.MaVach, TonKho: true, TyLeQuyDoi: 1 } : initProduct
+    return getMaHang ? { ...getMaHang, MaVach: getMaHang?.MaVach } : initProduct
   })
-
   useEffect(() => {
     getNhomHang()
     getDVT()
     getHangHoaCT()
     getThongSo()
     handleView()
+    if (type === 'create') {
+      setHangHoaForm({ ...hangHoaForm, TonKho: true, TyLeQuyDoi: 1, HangHoa_CTs: [{ SoLuong: 1, DVT_CTs: '' }] })
+    }
   }, [type, getMaHang, isLoading, hangHoaForm.Barcodes])
 
   // functions
@@ -149,32 +152,16 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
       console.log(error)
     }
   }
-  function formatDateTime(inputDate, includeTime = false) {
-    const date = new Date(inputDate)
-    const day = date.getDate().toString().padStart(2, '0')
-    const month = (date.getMonth() + 1).toString().padStart(2, '0')
-    const year = date.getFullYear()
-    let formattedDateTime = `${day}/${month}/${year}`
-    if (includeTime) {
-      const hours = date.getHours().toString().padStart(2, '0')
-      const minutes = date.getMinutes().toString().padStart(2, '0')
-      const seconds = date.getSeconds().toString().padStart(2, '0')
-      formattedDateTime += ` ${hours}:${minutes}:${seconds} `
-    }
-    return formattedDateTime
-  }
-  const formatSLSL = (number) => {
-    return number.toFixed(Math.max(1, dataThongSo.SOLESOLUONG)).replace(/,/g, '.')
-  }
-  const formatSLTL = (number) => {
-    if (dataView && dataThongSo.SOLETYLE) {
-      return (parseFloat(number) || 0).toFixed(Math.max(1, dataThongSo.SOLETYLE)).replace(/,/g, '.')
+  const formatThapPhan = (number, decimalPlaces) => {
+    if (typeof number === 'number' && !isNaN(number)) {
+      const formatter = new Intl.NumberFormat('vi-VN', {
+        minimumFractionDigits: decimalPlaces,
+      })
+      return formatter.format(number)
     }
     return ''
   }
-  const formatCurrency = (value) => {
-    return Number(value).toLocaleString('vi-VN')
-  }
+
   // Table Barcode
   const handleBarcodeChange = (index, key, value) => {
     if (type == 'create') {
@@ -268,19 +255,20 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
       const addHHCT = Array.isArray(hangHoaForm.HangHoa_CTs) ? [...hangHoaForm.HangHoa_CTs] : []
       setHangHoaForm({
         ...hangHoaForm,
-        HangHoa_CTs: [...addHHCT, { MaHangChiTiet: '', SoLuong: '', DVT_CTs: 'Rổng' }],
+        HangHoa_CTs: [...addHHCT, { MaHangChiTiet: '', SoLuong: 1, DVT_CTs: '' }],
       })
     } else {
       const addHHCT = Array.isArray(dataView.HangHoa_CTs) ? [...dataView.HangHoa_CTs] : []
       setDataView({
         ...dataView,
-        HangHoa_CTs: [...addHHCT, { MaHangChiTiet: '', TenHangChiTiet: '', SoLuong: 0 }],
+        HangHoa_CTs: [...addHHCT, { MaHangChiTiet: '', TenHangChiTiet: '', SoLuong: 1 }],
       })
     }
   }
   const removeHangHoaCT = (index) => {
     if (type == 'create') {
       const updatedHHCT = [...hangHoaForm.HangHoa_CTs]
+
       updatedHHCT.splice(index, 1)
       setHangHoaForm({
         ...hangHoaForm,
@@ -310,6 +298,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
       console.log(error)
     }
   }
+
   const handleCreate = async (e) => {
     e.preventDefault()
     const errors = {}
@@ -331,12 +320,16 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
       return
     }
     try {
-      let modifiedHangHoaForm = {
-        ...hangHoaForm,
-        MaVach: `${hangHoaForm.MaVach}${lastNumber13Main}`,
-      }
-      const response = await categoryAPI.ThemHangHoa(modifiedHangHoaForm, TokenAccess)
+      const response = await categoryAPI.ThemHangHoa(
+        {
+          ...hangHoaForm,
+          MaVach: `${hangHoaForm.MaVach}${lastNumber13Main}`,
+        },
+        TokenAccess,
+      )
       if (response.data.DataError === 0) {
+        console.log(hangHoaForm)
+        close()
         toast.success('Thêm sản phẩm thành công')
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
@@ -358,15 +351,16 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
             ...hangHoaForm,
             Barcodes: dataView.Barcodes,
             HangHoa_CTs: dataView.HangHoa_CTs,
+            MaVach: `${hangHoaForm.MaVach}${lastNumber13Main}`,
           },
         },
         TokenAccess,
       )
       console.log('hanghoa', hangHoaForm)
-      console.log('dataview', dataView)
-      console.log({ MaVach: `${hangHoaForm.MaVach}` })
+      // console.log('dataview', dataView)
       if (dataUpdate.data.DataError == 0) {
         toast.success('Sửa thành công')
+        close()
       } else if ((dataUpdate.data && dataUpdate.data.DataError === -107) || (dataUpdate.data && dataUpdate.data.DataError === -108)) {
         await RETOKEN()
         handleUpdate()
@@ -382,6 +376,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
       const dataDel = await categoryAPI.XoaHangHoa(getMaHang?.MaHang, TokenAccess)
       if (dataDel.data.DataError == 0) {
         toast.success('Xóa sản phẩm thành công')
+        close()
       } else if ((dataDel.data && dataDel.data.DataError === -107) || (dataDel.data && dataDel.data.DataError === -108)) {
         await RETOKEN()
         handleDelete()
@@ -404,6 +399,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
       )
       if (response.data.DataError === 0) {
         toast.success(response.data.DataErrorDescription)
+        close()
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         handleStatus()
@@ -424,6 +420,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
       )
       if (response.data.DataError == 0) {
         toast.success('Thay đổi nhóm thành công')
+        close()
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         handleGroup()
@@ -462,6 +459,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
         newWindow.onload = function () {
           newWindow.print()
         }
+        close()
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         handlePrintBar()
@@ -474,7 +472,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
   }
   return (
     <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10">
-      <div onClick={close} className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"></div>
+      <div className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"></div>
       <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col min-w-[40rem] min-h-[8rem] bg-white  p-2 rounded shadow-custom overflow-hidden">
         {type == 'view' && (
           <div className={`flex flex-col p-2 ${dataView?.Barcodes?.length > 0 || dataView?.HangHoa_CTs?.length > 0 ? ' min-w-[90rem]' : 'min-w-[50rem]'}`}>
@@ -524,7 +522,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                     <label>x</label>
                     <input
                       type="text"
-                      value={formatCurrency(formatSLTL(dataView?.TyLeQuyDoi)) || ''}
+                      value={formatThapPhan(Number(dataView?.TyLeQuyDoi), dataThongSo.SOLETYLE) || ''}
                       className="px-2 w-full resize-none border-[0.125rem] outline-none text-[1rem] flex text-end"
                       readOnly
                     />
@@ -568,7 +566,12 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                     </div>
                     <div className="flex items-center gap-1.5 whitespace-nowrap">
                       <label>Vào lúc</label>
-                      <input type="text" value={formatDateTime(dataView?.NgayTao) || ''} className="px-2 w-full resize-none border-[0.125rem] outline-none text-[1rem]" readOnly />
+                      <input
+                        type="text"
+                        value={moment(dataView?.NgayTao)?.format('DD/MM/YYYY') || ''}
+                        className="px-2 w-full resize-none border-[0.125rem] outline-none text-[1rem]"
+                        readOnly
+                      />
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-2">
@@ -580,7 +583,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                       <label>Vào lúc</label>
                       <input
                         type="text"
-                        value={formatDateTime(dataView?.NgaySuaCuoi, true) || ''}
+                        value={moment(dataView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') || ''}
                         className="px-2 w-full resize-none border-[0.125rem] outline-none text-[1rem]"
                         readOnly
                       />
@@ -637,7 +640,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                               </td>
                               <td>{item.DVTChiTiet}</td>
                               <td>
-                                <div className="flex justify-end px-4">{formatSLSL(item.SoLuong)}</div>
+                                <div className="flex justify-end px-4">{formatThapPhan(Number(item.SoLuong), dataThongSo.SOLESOLUONG)}</div>
                               </td>
                             </tr>
                           ))}
@@ -663,7 +666,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
             </div>
             <div className="flex flex-col gap-2">
               <div className="grid grid-cols-2 border-2 gap-4 py-3 px-2">
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-3">
                   <div className="grid grid-cols-6 gap-2 items-center">
                     <div className="col-span-3 flex items-center gap-1 relative">
                       <label className="required min-w-[110px] whitespace-nowrap flex justify-end">Mã hàng</label>
@@ -708,6 +711,8 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                           setHangHoaForm({
                             ...hangHoaForm,
                             TonKho: !e.target.checked,
+                            TyLeQuyDoi: 1,
+                            DVTQuyDoi: hangHoaForm.DVTKho,
                             [e.target.id]: e.target.checked,
                           })
                         }
@@ -747,7 +752,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                         setErrors({ ...errors, TenHang: '' })
                       }}
                     />
-                    {errors.TenHang && <p className="text-red-500 text-xs font-normal absolute -bottom-[18px] left-[7rem]">{errors.TenHang}</p>}
+                    {errors.TenHang && <p className="text-red-500 text-[10px] font-normal absolute -bottom-[16px] left-[7rem]">{errors.TenHang}</p>}
                   </div>
                   <div className="flex gap-1 items-center col-span-2 relative">
                     <label className="required min-w-[110px] flex justify-end whitespace-nowrap">Nhóm hàng</label>
@@ -776,7 +781,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                         )
                       })}
                     </Select>
-                    {errors.Nhom && <p className="text-red-500 text-xs font-normal absolute -bottom-[18px] left-[7rem]">{errors.Nhom}</p>}
+                    {errors.Nhom && <p className="text-red-500 text-[10px] font-normal absolute -bottom-[16px] left-[7rem]">{errors.Nhom}</p>}
                   </div>
                   <div className="grid grid-cols-5 gap-2 items-center">
                     <div className="flex col-span-2 gap-1 items-center relative">
@@ -808,15 +813,15 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                           </Select.Option>
                         ))}
                       </Select>
-                      {errors.DVTKho && <p className="text-red-500 text-xs font-normal absolute -bottom-[18px] left-[7rem] whitespace-nowrap">{errors.DVTKho}</p>}
+                      {errors.DVTKho && <p className="text-red-500 text-[10px] font-normal absolute -bottom-[16px] left-[7rem] whitespace-nowrap">{errors.DVTKho}</p>}
                     </div>
                     <div className="flex items-center gap-1">
                       <label className="font-semibold">x</label>
                       <input
-                        type="text"
+                        type="number"
                         className="px-2 w-full resize-none py-1 rounded border outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis flex text-end"
                         name="TyLeQuyDoi"
-                        disabled={dataThongSo && dataThongSo.SUDUNG_QUYDOIDVT === false}
+                        disabled={(dataThongSo && dataThongSo.SUDUNG_QUYDOIDVT === false) || hangHoaForm.LapRap == true}
                         // step="0.0000000001"
                         min={1}
                         value={hangHoaForm?.TyLeQuyDoi || 1}
@@ -845,7 +850,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                         id="DVTQuyDoi"
                         showSearch
                         value={hangHoaForm?.DVTQuyDoi || ''}
-                        disabled={dataThongSo && dataThongSo.SUDUNG_QUYDOIDVT === false}
+                        disabled={(dataThongSo && dataThongSo.SUDUNG_QUYDOIDVT === false) || hangHoaForm.LapRap == true}
                         style={{
                           width: '100%',
                         }}
@@ -890,7 +895,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                           setErrors({ ...errors, MaVach: '' })
                         }}
                       />
-                      {errors.MaVach && <p className="text-red-500 text-xs font-normal absolute -bottom-[18px] left-[7rem] whitespace-nowrap">{errors.MaVach}</p>}
+                      {errors.MaVach && <p className="text-red-500 text-[10px] font-normal absolute -bottom-[16px] left-[7rem] whitespace-nowrap">{errors.MaVach}</p>}
                     </div>
                     <div className="text-xl font-bold">{lastNumber13Main}</div>
                   </div>
@@ -954,7 +959,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                       <thead>
                         <tr>
                           <th>Mã vạch</th>
-                          <th className="w-[9rem]">Ngưng dùng</th>
+                          <th className="w-[10rem]">Ngưng dùng</th>
                           <th className="w-[3rem]"> </th>
                         </tr>
                       </thead>
@@ -1013,6 +1018,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                               <td>
                                 <div className="">
                                   <Select
+                                    showSearch
                                     value={item.MaHangChiTiet}
                                     style={{
                                       width: '100%',
@@ -1022,7 +1028,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                                     {HangHoaCT?.map((hangHoa) => (
                                       <>
                                         <Select.Option key={hangHoa.TenHang} value={hangHoa.MaHang} className="flex items-center text-sm">
-                                          <p className="text-base text-start">
+                                          <p className="text-base text-start truncate">
                                             {hangHoa.MaHang} - {hangHoa.TenHang}
                                           </p>
                                         </Select.Option>
@@ -1034,7 +1040,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                               <td>{item.DVT_CTs}</td>
                               <td>
                                 <input
-                                  className="px-2 w-full resize-none  border-[0.125rem] outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis flex text-end"
+                                  className="px-2 py-1 w-full resize-none rounded border outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis flex text-end"
                                   type="number"
                                   value={item.SoLuong}
                                   min={1}
@@ -1043,7 +1049,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                               </td>
                               <td>
                                 <div className="flex justify-center">
-                                  <IoMdClose className="w-6 h-6 hover:text-red-500 cursor-pointer" onClick={() => removeHangHoaCT()} />
+                                  <IoMdClose className="w-6 h-6 hover:text-red-500 cursor-pointer" onClick={() => removeHangHoaCT(index)} />
                                 </div>
                               </td>
                             </tr>
@@ -1118,6 +1124,8 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                           setHangHoaForm({
                             ...hangHoaForm,
                             TonKho: !e.target.checked || !hangHoaForm.LapRap,
+                            TyLeQuyDoi: 1,
+                            DVTQuyDoi: hangHoaForm.DVTKho,
                             [e.target.id]: e.target.checked,
                           })
                         }
@@ -1158,59 +1166,69 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                   </div>
                   <div className="col-span-2 flex items-center gap-1">
                     <label className="required min-w-[110px] whitespace-nowrap flex justify-end">Nhóm hàng</label>
-                    <select
+                    <Select
+                      showSearch
                       type="text"
                       name="Nhom"
                       value={hangHoaForm.Nhom}
-                      className="px-2  w-full resize-none  border-[0.125rem] outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"
-                      onChange={(e) => {
+                      style={{
+                        width: '100%',
+                      }}
+                      onChange={(value) => {
                         setHangHoaForm({
                           ...hangHoaForm,
-                          [e.target.name]: e.target.value,
+                          Nhom: value,
                         })
                       }}
                       required
                     >
-                      <option value="" disabled hidden></option>
                       {nhomHang?.map((item) => (
-                        <option key={item.Ma} value={item.Ma}>
+                        <Select.Option key={item.Ma} value={item.Ma}>
                           {item.ThongTinNhomHang}
-                        </option>
+                        </Select.Option>
                       ))}
-                    </select>
+                    </Select>
                   </div>
                   <div className="grid grid-cols-5 gap-2 items-center">
                     <div className="flex col-span-2 gap-1 items-center">
                       <label className="required min-w-[110px] whitespace-nowrap flex justify-end">Đơn vị tính</label>
-                      <select
+                      <Select
+                        showSearch
                         name="DVTKho"
                         value={hangHoaForm.DVTKho || ''}
-                        className="px-2 w-full resize-none py-1 rounded border outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"
-                        onChange={(e) =>
+                        style={{
+                          width: '100%',
+                        }}
+                        onChange={(value) => {
                           setHangHoaForm({
                             ...hangHoaForm,
-                            [e.target.name]: e.target.value,
+                            DVTKho: value,
                           })
-                        }
+                          if (hangHoaForm?.TyLeQuyDoi === 1) {
+                            setHangHoaForm((prev) => ({
+                              ...prev,
+                              DVTQuyDoi: value,
+                            }))
+                          }
+                        }}
                       >
-                        <option value="" disabled hidden></option>
                         {dVTQuyDoi?.map((item) => (
-                          <option key={item.DVT} value={item.DVT}>
+                          <Select.Option key={item.DVT} value={item.DVT}>
                             {item.DVT}
-                          </option>
+                          </Select.Option>
                         ))}
-                      </select>
+                      </Select>
                     </div>
                     <div className="flex items-center gap-1">
-                      <label className="font-semibold  ">x</label>
+                      <label className="font-semibold">x</label>
                       <input
-                        type="text"
-                        className="w-full resize-none border-[0.125rem] outline-none text-[1rem] text-end"
+                        type="number"
+                        className="w-full resize-none border rounded py-1 outline-none text-[1rem] text-end"
                         name="TyLeQuyDoi"
-                        value={formatSLTL(hangHoaForm.TyLeQuyDoi) || ''}
+                        value={hangHoaForm?.TyLeQuyDoi || ''}
                         min={1}
                         step="0.1"
-                        disabled={(dataThongSo && dataThongSo.SUDUNG_QUYDOIDVT === false) || dataView.DangSuDung === true}
+                        disabled={(dataThongSo && dataThongSo.SUDUNG_QUYDOIDVT === false) || dataView.DangSuDung === true || hangHoaForm.LapRap == true}
                         onChange={(e) => {
                           const tyLeQuyDoiValue = e.target.value
                           if (!isNaN(tyLeQuyDoiValue)) {
@@ -1230,25 +1248,27 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                     </div>
                     <div className="flex col-span-2 items-center gap-1">
                       <label className=" whitespace-nowrap required">Đơn vị quy đổi</label>
-                      <select
+                      <Select
                         id="DVTQuyDoi"
                         value={hangHoaForm.DVTQuyDoi || ''}
-                        disabled={(dataThongSo && dataThongSo.SUDUNG_QUYDOIDVT === false) || dataView.DangSuDung === true}
-                        className="px-2 w-full resize-none py-1 rounded border outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"
-                        onChange={(e) =>
+                        disabled={(dataThongSo && dataThongSo.SUDUNG_QUYDOIDVT === false) || dataView.DangSuDung === true || hangHoaForm.LapRap == true}
+                        style={{
+                          width: '100%',
+                        }}
+                        onChange={(value) =>
                           setHangHoaForm({
                             ...hangHoaForm,
-                            [e.target.id]: e.target.value,
+                            DVTQuyDoi: value,
                           })
                         }
                       >
                         <option value="" disabled hidden></option>
                         {dVTKho?.map((item) => (
-                          <option key={item.DVT} value={item.DVT}>
+                          <Select.Option key={item.DVT} value={item.DVT}>
                             {item.DVT}
-                          </option>
+                          </Select.Option>
                         ))}
-                      </select>
+                      </Select>
                     </div>
                   </div>
                   <div className="grid grid-cols-3 gap-2 items-center">
@@ -1313,24 +1333,29 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                     <div className="grid grid-cols-2 gap-2">
                       <div className="flex items-center gap-1.5 whitespace-nowrap" title={dataView.NguoiTao}>
                         <label>Người tạo</label>
-                        <input type="text" className="px-2 w-full resize-none border-[0.125rem] outline-none text-[1rem] block truncate" value={dataView.NguoiTao} disabled />
-                      </div>
-                      <div className="flex items-center gap-1.5 whitespace-nowrap">
-                        <label>Vào lúc</label>
-                        <input type="text" className="px-2 w-full resize-none border-[0.125rem] outline-none text-[1rem]" value={formatDateTime(dataView.NgayTao, true)} disabled />
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="flex items-center gap-1.5 whitespace-nowrap" title={dataView.NguoiSuaCuoi}>
-                        <label>Người sửa</label>
-                        <input type="text" className="px-2 w-full resize-none border-[0.125rem] outline-none text-[1rem] truncate" value={dataView.NguoiSuaCuoi} disabled />
+                        <input type="text" className="px-2 w-full resize-none border rounded py-1 outline-none text-[1rem] block truncate" value={dataView.NguoiTao} disabled />
                       </div>
                       <div className="flex items-center gap-1.5 whitespace-nowrap">
                         <label>Vào lúc</label>
                         <input
                           type="text"
-                          className="px-2 w-full resize-none border-[0.125rem] outline-none text-[1rem]"
-                          value={formatDateTime(dataView.NgaySuaCuoi, true)}
+                          className="px-2 w-full resize-none border rounded py-1 outline-none text-[1rem]"
+                          value={moment(dataView?.NgayTao).format('DD/MM/YYYY HH:mm:ss ')}
+                          disabled
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="flex items-center gap-1.5 whitespace-nowrap" title={dataView.NguoiSuaCuoi}>
+                        <label>Người sửa</label>
+                        <input type="text" className="px-2 w-full resize-none border rounded py-1 outline-none text-[1rem] truncate" value={dataView.NguoiSuaCuoi} disabled />
+                      </div>
+                      <div className="flex items-center gap-1.5 whitespace-nowrap">
+                        <label>Vào lúc</label>
+                        <input
+                          type="text"
+                          className="px-2 w-full resize-none border rounded py-1 outline-none text-[1rem]"
+                          value={moment(dataView?.NgaySuaCuoi).format('DD/MM/YYYY HH:mm:ss')}
                           disabled
                         />
                       </div>
@@ -1402,38 +1427,40 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                           <tbody key={index}>
                             <tr>
                               <td>
-                                <div className="px-4">
-                                  <select
-                                    className="px-2 w-full resize-none py-1 rounded border outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"
+                                <div className=" ">
+                                  <Select
+                                    showSearch
                                     value={item.MaHangChiTiet}
-                                    onChange={(e) => handleChangeHHCT(index, 'MaHangChiTiet', e.target.value)}
+                                    style={{
+                                      width: '100%',
+                                    }}
+                                    onChange={(value) => handleChangeHHCT(index, 'MaHangChiTiet', value)}
                                   >
-                                    <option value="" disabled hidden>
-                                      Chọn tên hàng
-                                    </option>
                                     {HangHoaCT?.map((hangHoa) => (
                                       <>
-                                        <option key={hangHoa.TenHang} value={hangHoa.MaHang} className="flex items-center">
-                                          {hangHoa.MaHang} - {hangHoa.TenHang}
+                                        <option key={hangHoa.TenHang} value={hangHoa.MaHang} className="flex items-center ">
+                                          <p className="text-start  truncate">
+                                            {hangHoa.MaHang} - {hangHoa.TenHang}
+                                          </p>
                                         </option>
                                       </>
                                     ))}
-                                  </select>
+                                  </Select>
                                 </div>
                               </td>
                               <td>{item.DVTChiTiet}</td>
                               <td>
                                 <input
-                                  className="px-2 w-full resize-none  border-[0.125rem] text-end outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"
+                                  className="  w-full resize-none  border-[0.125rem] text-end outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis  "
                                   type="number"
-                                  value={formatSLSL(item.SoLuong)}
+                                  value={item.SoLuong}
                                   min={1}
                                   onChange={(e) => handleChangeHHCT(index, 'SoLuong', e.target.value)}
                                 />
                               </td>
                               <td>
-                                <div className="cursor-pointer hover:text-red-500" onClick={removeHangHoaCT}>
-                                  X
+                                <div className="flex justify-center ">
+                                  <IoMdClose className="w-6 h-6 hover:text-red-500 cursor-pointer" onClick={() => removeHangHoaCT(index)} />
                                 </div>
                               </td>
                             </tr>
