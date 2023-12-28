@@ -12,6 +12,7 @@ import { FcAddDatabase } from 'react-icons/fc'
 import { toast } from 'react-toastify'
 import ModelPrint from './PrintModel'
 import ActionButton from '../util/Button/ActionButton'
+import Model from './Model'
 
 // import 'antd/dist/antd.css'
 // import dayjs from 'dayjs'
@@ -26,6 +27,8 @@ function PhieuBanHang() {
   const [data, setData] = useState()
   const [isShow, setIsShow] = useState(false)
   const [isShowPrint, setIsShowPrint] = useState(false)
+  const [isShowDelete, setIsShowDelete] = useState(false)
+  const [typeModel, setTypeModel] = useState('')
 
   const [type, setType] = useState()
   const [dataRecord, setDataRecord] = useState([])
@@ -39,8 +42,6 @@ function PhieuBanHang() {
 
     getListData()
   }, [dataRecord, token, dispatch, dataLoaded])
-
-  console.log(data)
 
   const handleView = async (record) => {
     await THONGTINPHIEU(API.CHITIETPBS, token, record?.SoChungTu, dispatch)
@@ -61,20 +62,43 @@ function PhieuBanHang() {
   }
   const handleClose = () => {
     setIsShow(false)
+    setIsShowDelete(false)
     setDataRecord([])
   }
   const handleCloseAction = () => {
     setIsShowPrint(false)
     setDataRecord([])
   }
+
   const handleDelete = async (record) => {
+    setIsShowDelete(true)
+    setDataRecord(record)
+    setTypeModel('Delete')
+    // const response = await XOAPHIEUBANHANG(API.XOAPHIEUBANHANG, token, { SoChungTu: record?.SoChungTu }, dispatch)
+    // if (response !== 1) {
+    //   setDataLoaded(false)
+    // } else {
+    //   toast.info('Dữ liệu đã được lập phiếu thu tiền!. Không thể xóa.')
+    // }
+  }
+
+  const ActionDelete = async (record) => {
     const response = await XOAPHIEUBANHANG(API.XOAPHIEUBANHANG, token, { SoChungTu: record?.SoChungTu }, dispatch)
     if (response !== 1) {
       setDataLoaded(false)
+      setIsShowDelete(false)
     } else {
-      toast.info('Dữ liệu đã được lập phiếu thu tiền!. Không thể xóa.')
+      toast.info(`${record?.SoChungTu} đã lập phiếu thu tiền!`)
     }
   }
+
+  //ActionPay
+  const ActionPay = async (record) => {
+    await LAPPHIEUTHU(API.LAPPHIEUTHU, token, { SoChungTu: record?.SoChungTu }, dispatch)
+    setDataLoaded(false)
+    setIsShowDelete(false)
+  }
+
   if (!dataLoaded) {
     return <LoadingPage />
   }
@@ -83,9 +107,11 @@ function PhieuBanHang() {
   //   setDate(date)
   // }
 
+  console.log(data.DataResults)
   const handleChangePhieuThu = async (record) => {
-    await LAPPHIEUTHU(API.LAPPHIEUTHU, token, { SoChungTu: record?.SoChungTu }, dispatch)
-    setDataLoaded(false)
+    setIsShowDelete(true)
+    setDataRecord(record)
+    setTypeModel('Pay')
   }
   const handleShowPrint = () => {
     setIsShowPrint(!isShowPrint)
@@ -112,7 +138,7 @@ function PhieuBanHang() {
         </div>
       </div> */}
 
-      <div className="flex justify-end gap-2">
+      <div className="flex justify-end gap-2 mb-3">
         <ActionButton color={'slate-50'} title={'Bản In'} background={'blue-500'} icon={''} bg_hover={'white'} color_hover={'blue-500'} handleAction={handleShowPrint} />
         <ActionButton
           color={'slate-50'}
@@ -136,6 +162,7 @@ function PhieuBanHang() {
         handleChangePhieuThu={handleChangePhieuThu}
       />
       <ActionModals isShow={isShow} handleClose={handleClose} dataRecord={dataRecord} typeAction={type} />
+      <Model isShow={isShowDelete} handleClose={handleClose} record={dataRecord} ActionDelete={ActionDelete} typeModel={typeModel} ActionPay={ActionPay} />
       <ModelPrint isShowModel={isShowPrint} handleCloseAction={handleCloseAction} />
     </>
   )

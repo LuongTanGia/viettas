@@ -14,6 +14,7 @@ import ListHelper_HangHoa from './ListHelper_HangHoa'
 import { toast } from 'react-toastify'
 import { Select } from 'antd'
 import ActionButton from '../util/Button/ActionButton'
+import { nameColumsPhieuBanHangChiTiet } from '../util/Table/ColumnName'
 
 const { Option } = Select
 
@@ -49,7 +50,6 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction }) {
   const [dataChitiet, setDataChitiet] = useState([])
   const data_chitiet = useSelector(chiTietPBS)
 
-  console.log(Dates)
   useEffect(() => {
     typeAction === 'edit' || typeAction === 'view' ? setForm(data_chitiet.DataResult) : setForm({ ...initState, ...Dates })
     setDataChitiet(form?.DataDetails)
@@ -78,7 +78,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction }) {
       // window.removeEventListener('keydown', handleKeyDown)
     }
   }, [isShow, dataRecord, token, form?.DataDetails])
-  console.log(form, 'Action Form')
+
   const setSelectDataOption = (data) => {
     setYourMaHangOptions(data)
     setYourTenHangOptions(data)
@@ -117,15 +117,11 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction }) {
   }
   const handleSubmit = async () => {
     if (typeAction === 'create') {
-      console.log('create', dataChitiet)
       const data = { ...form, ...Dates, DataDetails: dataChitiet }
       await THEMPHIEUBANHANG(API.THEMPHIEUBANHANG, token, data)
-      console.log(data)
     } else if (typeAction === 'edit') {
-      console.log('edit', dataChitiet)
       const data = { ...form, DataDetails: dataChitiet }
       await SUAPHIEUBANHANG(API.SUAPHIEUBANHANG, token, { SoChungTu: data.SoChungTu, Data: data })
-      console.log(data)
     }
   }
 
@@ -292,10 +288,11 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction }) {
                       <TableEdit
                         typeTable={'BanHang'}
                         param={dataChitiet}
+                        columName={nameColumsPhieuBanHangChiTiet}
                         handleEditData={handleEditData}
                         yourMaHangOptions={yourMaHangOptions}
                         yourTenHangOptions={yourTenHangOptions}
-                        columnTable={['STT', 'MaHang', 'TenHang', 'DVT', 'SoLuong', 'DonGia', 'TienHang', 'TyLeThue', 'TienThue', 'ThanhTien', 'TyLeCKTT', 'TienCKTT', 'TongCong']}
+                        ColumnTable={['STT', 'MaHang', 'TenHang', 'DVT', 'SoLuong', 'DonGia', 'TienHang', 'TyLeThue', 'TienThue', 'ThanhTien', 'TyLeCKTT', 'TienCKTT', 'TongCong']}
                       />
                     ) : null}
                   </div>
