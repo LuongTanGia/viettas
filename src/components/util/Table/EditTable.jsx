@@ -149,7 +149,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
                     </Option>
                   ))}
             </Select>
-          ) : dataIndex === 'SoLuong' ? (
+          ) : dataIndex === 'SoLuong' || dataIndex === 'DonGia' ? (
             <InputNumber ref={inputRef} onPressEnter={save} onBlur={save} min={1} />
           ) : (
             <InputNumber ref={inputRef} onPressEnter={save} onBlur={save} max={100} min={0} />
