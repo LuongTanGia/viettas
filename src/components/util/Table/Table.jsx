@@ -99,7 +99,7 @@ function Tables({ param, columName, height, handleView, handleEdit, typeTable, h
         sorter: (a, b) => a.DiaChi.localeCompare(b.DiaChi),
         showSorterTooltip: false,
         align: 'center',
-
+        // fixed: 'left',
         ellipsis: {
           showTitle: false,
         },
@@ -399,32 +399,32 @@ function Tables({ param, columName, height, handleView, handleEdit, typeTable, h
           }}
           scrollToFirstRowOnChange
           size="small"
-          // summary={(pageData) => {
-          //   return (
-          //     <Table.Summary fixed="bottom">
-          //       <Table.Summary.Row>
-          //         <Table.Summary.Cell></Table.Summary.Cell>
-          //         {columns
-          //           .filter((column) => column.render)
-          //           .map((column) => {
-          //             const isNumericColumn = typeof data[0]?.[column.dataIndex] === 'number'
+          summary={(pageData) => {
+            return (
+              <Table.Summary fixed="bottom">
+                <Table.Summary.Row>
+                  <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell>
+                  {columns
+                    .filter((column) => column.render)
+                    .map((column) => {
+                      const isNumericColumn = typeof data[0]?.[column.dataIndex] === 'number'
 
-          //             return (
-          //               <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'}>
-          //                 {isNumericColumn ? (
-          //                   <Text strong>
-          //                     {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(
-          //                       pageData.reduce((total, item) => total + (item[column.dataIndex] || 0), 0),
-          //                     )}
-          //                   </Text>
-          //                 ) : null}
-          //               </Table.Summary.Cell>
-          //             )
-          //           })}
-          //       </Table.Summary.Row>
-          //     </Table.Summary>
-          //   )
-          // }}
+                      return (
+                        <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                          {isNumericColumn ? (
+                            <Text strong>
+                              {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(
+                                pageData.reduce((total, item) => total + (item[column.dataIndex] || 0), 0),
+                              )}
+                            </Text>
+                          ) : null}
+                        </Table.Summary.Cell>
+                      )
+                    })}
+                </Table.Summary.Row>
+              </Table.Summary>
+            )
+          }}
         />
       </Form>
     </>

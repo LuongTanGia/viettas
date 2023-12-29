@@ -7,8 +7,6 @@
 @import url('../src/assets/vendor/quill/quill.bubble.css');
 @import url('../src/assets/vendor/remixicon/remixicon.css');
 @import url('../src/assets/vendor/simple-datatables/style.css');
-@import 'constants.css';
-@import 'base.css';
 
 @tailwind base;
 @tailwind components;
