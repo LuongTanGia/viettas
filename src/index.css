@@ -7,8 +7,8 @@
 @import url('../src/assets/vendor/quill/quill.bubble.css');
 @import url('../src/assets/vendor/remixicon/remixicon.css');
 @import url('../src/assets/vendor/simple-datatables/style.css');
-@import 'constants.css';
-@import 'base.css';
+/* @import 'constants.css';
+@import 'base.css'; */
 
 @tailwind base;
 @tailwind components;
@@ -249,7 +249,7 @@ input[type='radio'] {
 
 #main {
   /* max-height: 100vh; */
-  margin-bottom: 50px;
+  margin-bottom: 30px;
   margin-top: 40px;
 }
 
