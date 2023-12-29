@@ -14,7 +14,7 @@ import SimpleBackdrop from '../../../components/util/Loading/LoadingPage'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { useSearch } from '../../../components_K/myComponents/useSearch'
 
-const { IoAddCircleOutline, TiPrinter, MdDelete, GiPayMoney, BsSearch, TfiMoreAlt, MdEdit } = icons
+const { IoAddCircleOutline, TiPrinter, MdDelete, GiPayMoney, BsSearch, TfiMoreAlt, MdEdit, MdFilterAlt } = icons
 const PhieuMuaHang = () => {
   const optionContainerRef = useRef(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -604,9 +604,12 @@ const PhieuMuaHang = () => {
           <div className=" ">
             <button
               onClick={handleFilterDS}
-              className="flex items-center py-[2px] px-2 bg-bg-main rounded-md border-2 border-bg-main  text-slate-50 text-base hover:bg-white hover:text-bg-main"
+              className="flex items-center gap-x-1 py-[2px] px-2 bg-bg-main rounded-md border-2 border-bg-main  text-slate-50 text-base hover:bg-white hover:text-bg-main"
             >
-              Lọc
+              <span>
+                <MdFilterAlt />
+              </span>
+              <span>Lọc</span>
             </button>
           </div>
         </div>
