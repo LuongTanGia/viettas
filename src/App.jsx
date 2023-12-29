@@ -9,15 +9,34 @@ import Test from './components/util/testComponents/Test'
 import { useState } from 'react'
 
 function App() {
-  const [isSidebarVisible, setIsSidebarVisible] = useState(true)
+  const [isSidebarVisible, setIsSidebarVisible] = useState(false)
+
   const handleToggleSidebar = () => {
-    setIsSidebarVisible(!isSidebarVisible)
+    setIsSidebarVisible((prevIsSidebarVisible) => !prevIsSidebarVisible)
   }
+
   const isLogged = localStorage.getItem('firstLogin')
 
-  // if (!dataLoaded) {
-  //     return <LoadingPage />;
-  // }
+  // useEffect(() => {
+  //   let timeoutId
+
+  //   const handleKeyDown = () => {
+  //     console.log('abcssss')
+  //     setIsSidebarVisible((prevIsSidebarVisible) => !prevIsSidebarVisible)
+  //   }
+
+  //   if (!isSidebarVisible) {
+  //     timeoutId = setTimeout(() => {
+  //       document.addEventListener('click', handleKeyDown)
+  //     }, 100)
+  //   }
+
+  //   return () => {
+  //     clearTimeout(timeoutId)
+  //     document.removeEventListener('click', handleKeyDown)
+  //   }
+  // }, [isSidebarVisible])
+
   return (
     <Router>
       <Routes>

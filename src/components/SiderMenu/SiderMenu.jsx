@@ -1,15 +1,16 @@
+/* eslint-disable react/prop-types */
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { dataSelector } from '../../redux/selector'
 import './SiderMenu.css' // Import the CSS file for styling
 
-const SiderMenu = () => {
+const SiderMenu = ({ refs }) => {
   const data = useSelector(dataSelector)
   const [string] = useState([])
 
   return (
-    <aside id="sidebar" className="sidebar">
+    <aside id="sidebar" className="sidebar" ref={refs}>
       <ul className="sidebar-nav" id="sidebar-nav">
         <li className="nav-item">
           <Link className="nav-link" to="/">

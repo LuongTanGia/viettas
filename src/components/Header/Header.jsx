@@ -4,7 +4,7 @@ import Logo from '../../assets/img/logo.png'
 import ChangePass from './ChangePass'
 import { useState } from 'react'
 // eslint-disable-next-line react/prop-types
-function Header({ handleToggleSidebar }) {
+function Header({ handleToggleSidebar, refs }) {
   const userLogin = window.localStorage.getItem('userName')
   const [isShow, setIsShow] = useState(false)
   const user = localStorage.getItem('User')
@@ -20,7 +20,7 @@ function Header({ handleToggleSidebar }) {
   }
   return (
     <>
-      <header id="header" className="header fixed-top d-flex align-items-center z-10 h-[50px]">
+      <header id="header" className="header fixed-top d-flex align-items-center z-10 h-[50px]" ref={refs}>
         <div className="d-flex align-items-center justify-content-between">
           <Link href="index.html" className="logo d-flex align-items-center">
             <img src="assets/img/logo.png" alt="" />

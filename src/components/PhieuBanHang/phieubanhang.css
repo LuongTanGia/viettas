@@ -20,12 +20,12 @@
 }
 .box_thongtin {
   padding: 5px;
-  background-color: #ccc;
+  background-color: #fff;
 }
 .box_thongtin *,
 .box_thongtin select,
 .box_thongtin input {
-  background-color: #ccc;
+  background-color: #fff;
   font-weight: 500;
   /* outline: none; */
 }
@@ -37,9 +37,9 @@
   /* outline: none; */
 }
 
-.box_thongtin.create .sochungtu {
+/* .box_thongtin.create .sochungtu {
   background-color: gray;
-}
+} */
 .box_thongtin input,
 .box_thongtin select,
 .box_thongtin option {
@@ -53,10 +53,10 @@
 .date_edit * {
   background: #fff;
 }
-.box_thongtin.create .box_content,
+/* .box_thongtin.create .box_content,
 .box_thongtin.create .box_content * {
   background: #ccc;
-}
+} */
 .box_thongtin.create .box_content_left {
   border-radius: 5px;
   overflow: hidden;

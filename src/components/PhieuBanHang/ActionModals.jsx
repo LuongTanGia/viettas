@@ -1,4 +1,5 @@
 /* eslint-disable react/prop-types */
+import Logo from '../../assets/VTS-iSale.ico'
 
 import { useEffect, useState } from 'react'
 // import icons from '../../untils/icons'
@@ -66,14 +67,12 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction }) {
     }
     loadData()
 
-    //showList hàng hóa
     const handleKeyDown = (event) => {
       if (event.key === 'F9') {
         setShowPopup(true)
       }
     }
-
-    window.addEventListener('keydown', handleKeyDown)
+    document.addEventListener('keydown', handleKeyDown)
     return () => {
       // window.removeEventListener('keydown', handleKeyDown)
     }
@@ -134,8 +133,9 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction }) {
           <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
             <div className="m-6 p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
               <div className=" w-[90vw] h-[600px] ">
-                <div className="flex justify-between  items-start pb-1">
-                  <label className="font-bold ">Xem thông tin - phiếu mua hàng</label>
+                <div className="flex gap-2">
+                  <img src={Logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
+                  <p className="text-blue-700 uppercase font-semibold">{`${typeAction === 'view' ? 'Thông Tin' : typeAction === 'edit' ? 'Sửa' : 'Thêm'} - Phiếu Bán Hàng`}</p>
                 </div>
                 <div className=" w-full h-[90%] rounded-sm text-sm border border-gray-300">
                   <div className={`flex box_thongtin ${typeAction == 'create' ? 'create' : typeAction == 'edit' ? 'edit' : ''}`}>

@@ -1,19 +1,19 @@
 import Table from '../util/Table/Table'
 import LoadingPage from '../util/Loading/LoadingPage'
-
+import { SwitcherOutlined, PrinterOutlined, FileAddOutlined, HeartOutlined, FormOutlined } from '@ant-design/icons'
 import { nameColumsPhieuBanHang } from '../util/Table/ColumnName'
 import ActionModals from './ActionModals'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { THONGTINPHIEU, DANHSACHPHIEUBANHANG, XOAPHIEUBANHANG, LAPPHIEUTHU } from '../../action/Actions'
 import API from '../../API/API'
-import { FcAddDatabase } from 'react-icons/fc'
+// import { FcAddDatabase } from 'react-icons/fc'
 // import { DatePicker } from 'antd'
 import { toast } from 'react-toastify'
 import ModelPrint from './PrintModel'
 import ActionButton from '../util/Button/ActionButton'
 import Model from './Model'
-
+import { FloatButton } from 'antd'
 // import 'antd/dist/antd.css'
 // import dayjs from 'dayjs'
 
@@ -119,7 +119,7 @@ function PhieuBanHang() {
   return (
     <>
       <div>
-        <div className="flex items-center gap-x-4">
+        <div className="flex items-center gap-x-4 mb-6">
           <h1 className="text-xl font-black uppercase">Phiếu Bán Hàng</h1>
         </div>
       </div>
@@ -138,19 +138,55 @@ function PhieuBanHang() {
         </div>
       </div> */}
 
-      <div className="flex justify-end gap-2 mb-3">
-        <ActionButton color={'slate-50'} title={'Bản In'} background={'blue-500'} icon={''} bg_hover={'white'} color_hover={'blue-500'} handleAction={handleShowPrint} />
-        <ActionButton
-          color={'slate-50'}
-          title={'Thêm Phiếu'}
-          background={'blue-500'}
-          icon={<FcAddDatabase />}
-          bg_hover={'white'}
-          color_hover={'blue-500'}
-          handleAction={handleCreate}
-        />
-      </div>
-
+      <FloatButton.Group
+        trigger="click"
+        type="primary"
+        shape="square"
+        style={{
+          right: 10,
+          top: 60,
+        }}
+        icon={<SwitcherOutlined />}
+      >
+        <div className="flex justify-end gap-2 mb-3 absolute right-0 top-[70px] flex-col">
+          <ActionButton
+            icon={<PrinterOutlined />}
+            color={'slate-50'}
+            title={'Lập Phiếu In'}
+            background={'blue-500'}
+            bg_hover={'white'}
+            color_hover={'blue-500'}
+            handleAction={handleShowPrint}
+          />
+          <ActionButton
+            color={'slate-50'}
+            title={'Thêm Phiếu Bán Hàng'}
+            background={'blue-500'}
+            icon={<FileAddOutlined />}
+            bg_hover={'white'}
+            color_hover={'blue-500'}
+            handleAction={handleCreate}
+          />
+          <ActionButton
+            color={'slate-50'}
+            title={'Title button'}
+            background={'blue-500'}
+            icon={<HeartOutlined />}
+            bg_hover={'white'}
+            color_hover={'blue-500'}
+            // handleAction={handleCreate}
+          />
+          <ActionButton
+            color={'slate-50'}
+            title={'Title button'}
+            background={'blue-500'}
+            icon={<FormOutlined />}
+            bg_hover={'white'}
+            color_hover={'blue-500'}
+            // handleAction={handleCreate}
+          />
+        </div>
+      </FloatButton.Group>
       <Table
         param={data?.DataResults}
         columName={nameColumsPhieuBanHang}
