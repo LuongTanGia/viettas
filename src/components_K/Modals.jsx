@@ -22,7 +22,7 @@ import { Select } from 'antd'
 // import { create } from '@mui/material/styles/createTransitions'
 const { Option } = Select
 
-const { TiPrinter } = icons
+const { TiPrinter, MdFilterAlt } = icons
 
 const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, dataRecord, dataPMH, controlDate, isLoadingModel, dataThongSo }) => {
   const [isShowModalHH, setIsShowModalHH] = useState(false)
@@ -62,7 +62,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
     DataDetails: [],
   })
 
-  const [formPMHEdit, setFormPMHEdit] = useState()
+  const [formPMHEdit, setFormPMHEdit] = useState({ ...dataThongTin })
 
   const [formPrint, setFormPrint] = useState({
     NgayBatDau: startDate,
@@ -82,6 +82,10 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   useEffect(() => {
     if (dataThongTin !== null) setFormPMHEdit(dataThongTin)
   }, [dataThongTin, dataThongTin.DataDetails])
+
+  // useEffect(() => {
+  //   console.log('formEdit', formPMHEdit)
+  // }, [formPMHEdit])
 
   const columns = [
     {
@@ -357,27 +361,51 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
         DiaChi: selectedDoiTuongInfo.DiaChi,
       })
     }
-    if (actionType === 'edit') {
-      setFormPMHEdit({
-        ...formPMHEdit,
-        TenDoiTuong: selectedDoiTuongInfo.Ten,
-        DiaChi: selectedDoiTuongInfo.DiaChi,
-      })
-    }
-
-    // if (actionType === 'edit' && selectedValue !== 'NCVL') {
+    // if (actionType === 'edit') {
     //   setFormPMHEdit({
     //     ...formPMHEdit,
     //     TenDoiTuong: selectedDoiTuongInfo.Ten,
     //     DiaChi: selectedDoiTuongInfo.DiaChi,
     //   })
-    //   // console.log('first1', formPMHEdit)
-    // } else if (actionType === 'edit' && selectedValue === 'NCVL') {
-    //   setFormPMHEdit({
-    //     ...formPMHEdit,
-    //   })
-    //   // console.log('first2', formPMHEdit)
     // }
+
+    if (actionType === 'edit' && selectedValue !== 'NCVL') {
+      setFormPMHEdit({
+        ...formPMHEdit,
+        TenDoiTuong: selectedDoiTuongInfo.Ten,
+        DiaChi: selectedDoiTuongInfo.DiaChi,
+      })
+      // console.log('first1', formPMHEdit)
+    } else if (actionType === 'edit' && selectedValue === 'NCVL') {
+      setFormPMHEdit({
+        ...formPMHEdit,
+      })
+      // console.log('first2', formPMHEdit)
+    }
+  }
+
+  const handleCreateAndClose = async () => {
+    try {
+      const tokenLogin = localStorage.getItem('TKN')
+      const response = await apis.ThemPMH(tokenLogin, formPMH, selectedDoiTuong, selectedKhoHang)
+      // Kiểm tra call api thành công
+      if (response.data && response.data.DataError === 0) {
+        toast.success(response.data.DataErrorDescription)
+        window.location.reload()
+      } else if (response.data && response.data.DataError === -103) {
+        toast.error(response.data.DataErrorDescription)
+      } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        await RETOKEN()
+        handleCreate()
+      } else {
+        // toast.error(response.data.DataErrorDescription)
+        console.log(response.data.DataErrorDescription)
+      }
+    } catch (error) {
+      console.error('Error while saving data:', error)
+    }
   }
 
   const handleCreate = async () => {
@@ -387,7 +415,6 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       // Kiểm tra call api thành công
       if (response.data && response.data.DataError === 0) {
         toast.success(response.data.DataErrorDescription)
-        window.location.reload()
       } else if (response.data && response.data.DataError === -103) {
         toast.error(response.data.DataErrorDescription)
       } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
@@ -641,10 +668,13 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                   </div>
 
                   <button
-                    className="flex items-center mx-2 py-1 px-2  rounded-md   border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main"
+                    className="flex gap-x-1 items-center mx-2 py-1 px-2  rounded-md   border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main"
                     onClick={handleFilterPrint}
                   >
-                    Lọc
+                    <span>
+                      <MdFilterAlt />
+                    </span>
+                    <span>Lọc</span>
                   </button>
                 </div>
                 <div className="flex  mt-4 ">
@@ -756,10 +786,13 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                   </div>
 
                   <button
-                    className="flex items-center mx-2 py-1 px-2 rounded-md   border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main"
+                    className="flex items-center gap-x-1 mx-2 py-1 px-2 rounded-md   border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main"
                     onClick={handleFilterPrint}
                   >
-                    Lọc
+                    <span>
+                      <MdFilterAlt />
+                    </span>
+                    <span>Lọc</span>
                   </button>
                 </div>
                 <div className="flex  mt-4 ">
@@ -1057,7 +1090,15 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                       Đối tượng
                     </label>
 
-                    <Select showSearch size="small" optionFilterProp="children" onChange={(value) => handleDoiTuongFocus(value)} style={{ width: '100%' }} value={selectedDoiTuong}>
+                    <Select
+                      showSearch
+                      size="small"
+                      optionFilterProp="children"
+                      onChange={(value) => handleDoiTuongFocus(value)}
+                      style={{ width: '100%' }}
+                      value={selectedDoiTuong}
+                      // listHeight={280}
+                    >
                       {dataDoiTuong?.map((item) => (
                         <Option key={item.Ma} value={item.Ma}>
                           {item.Ma} - {item.Ten}
@@ -1239,13 +1280,13 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
               </div>
               <div className="flex justify-end items-center gap-3  pt-3">
                 <button
-                  // onClick={handleCreate}
+                  onClick={handleCreate}
                   className="active:scale-[.98] active:duration-75   border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main  rounded-md px-2 py-1  w-[80px] "
                 >
                   Lưu
                 </button>
                 <button
-                  onClick={handleCreate}
+                  onClick={handleCreateAndClose}
                   className="active:scale-[.98] active:duration-75   border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main  rounded-md px-2 py-1  w-[100px] "
                 >
                   Lưu & Đóng

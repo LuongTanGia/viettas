@@ -20,12 +20,12 @@ a {
 }
 
 ::-webkit-scrollbar-track {
-  background-color: var(--lightGray);
+  /* background-color: var(--lightGray); */
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: var(--blue);
-  background-image: var(--scrollbarGradient);
+  /* background-color: var(--blue); */
+  /* background-image: var(--scrollbarGradient); */
 }
 
 .required {

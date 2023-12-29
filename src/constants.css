@@ -1,13 +1,13 @@
 :root {
-    /* COLORS */
-    --white: #fff;
+  /* COLORS */
+  /* --white: #fff;
     --black: #000;
     --red: #e74c3c;
     --lightBlue: #e0ffff;
     --green: #27ae60;
-    --bgText: #e7f3ff;
-    --blue: #2980b9;
-    --purple: #8e44ad;
+    --bgText: #e7f3ff; */
+  --blue: #2980b9;
+  /* --purple: #8e44ad;
     --yellow: #d9b62a;
     --lightYellow: #ffe4b5;
     --orange: #e67e22;
@@ -20,10 +20,10 @@
     --dayStart-color: #b8f5cdff;
     --dayEnd-color: #fbbdbfff;
     --primary-color: #f9f9fa;
-    --bug-color: #ff2b91ff;
+    --bug-color: #ff2b91ff; */
 
-    /* Tag colors */
-    --open-color: #27a8e9ff;
+  /* Tag colors */
+  /* --open-color: #27a8e9ff;
     --fixing-color: #27a8e9ff;
     --confirm-color: #f49d1aff;
     --cancel-color: #ced2d8ff;
@@ -33,40 +33,29 @@
     --medium-color: #ffae00;
     --high-color: #e74c3c;
     --critical-color: #d942f4;
-    --pending-color: #8a2be2;
+    --pending-color: #8a2be2; */
 
-    /* Table colors */
-    --thead-color: #dadae8;
+  /* Table colors */
+  /* --thead-color: #dadae8;
     --hoverTable-color: #ccc;
-    --eventTable-color: #f3f3f3;
+    --eventTable-color: #f3f3f3; */
 
-    /* Button colors */
-    --btnBack-color: #f49d1aff;
+  /* Button colors */
+  /* --btnBack-color: #f49d1aff;
     --btnSubmit-color: #0974c6ff;
     --btnReset-color: #f22128ff;
-    --btnEditMark-color: #e5e5e5;
+    --btnEditMark-color: #e5e5e5; */
 
-    /* OTHERS */
-    --border: solid 0.125rem var(--border-color);
-    --lightBorder: solid 0.125rem var(--lightGray);
-    --rounded: 0.5rem;
-    --shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
-        rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
-    --gradient: linear-gradient(
-        45deg,
-        rgba(40, 91, 212, 0.73) 5%,
-        rgba(171, 53, 163, 0.45) 50%,
-        rgba(255, 204, 112, 0.37) 95%
-    );
-
-    --scrollbarGradient: linear-gradient(
-        -45deg,
-        rgba(255, 255, 255, 0.2) 25%,
-        transparent 25%,
-        transparent 50%,
-        rgba(255, 255, 255, 0.2) 50%,
-        rgba(255, 255, 255, 0.2) 75%,
-        transparent 75%,
-        transparent
-    );
+  /* OTHERS */
+  /* 
+  --scrollbarGradient: linear-gradient(
+    -45deg,
+    rgba(255, 255, 255, 0.2) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.2) 75%,
+    transparent 75%,
+    transparent
+  ); */
 }

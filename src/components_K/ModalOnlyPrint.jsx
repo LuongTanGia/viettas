@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useMemo, useState } from 'react'
 
-// import icons from '../untils/icons'
+import icons from '../untils/icons'
 import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
 import { base64ToPDF } from '../action/Actions'
@@ -10,7 +10,7 @@ import logo from '../assets/VTS-iSale.ico'
 
 import * as apis from '../apis'
 
-// const { IoMdClose } = icons
+const { MdFilterAlt } = icons
 
 const ModalOnlyPrint = ({ close, dataThongTin, dataPMH }) => {
   const [selectedSctBD, setSelectedSctBD] = useState()
@@ -145,10 +145,13 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH }) => {
                 </div>
 
                 <button
-                  className="flex items-center mx-2 py-1 px-2  rounded-md  border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main "
+                  className="flex gap-x-1 items-center mx-2 py-1 px-2  rounded-md  border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main "
                   onClick={handleFilterPrint}
                 >
-                  Lọc
+                  <span>
+                    <MdFilterAlt />
+                  </span>
+                  <span>Lọc</span>
                 </button>
               </div>
               <div className="flex  mt-4 ">

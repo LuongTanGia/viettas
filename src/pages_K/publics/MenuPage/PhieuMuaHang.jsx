@@ -14,7 +14,7 @@ import SimpleBackdrop from '../../../components/util/Loading/LoadingPage'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { useSearch } from '../../../components_K/myComponents/useSearch'
 
-const { IoAddCircleOutline, TiPrinter, MdDelete, GiPayMoney, BsSearch, TfiMoreAlt, MdEdit } = icons
+const { IoAddCircleOutline, TiPrinter, MdDelete, GiPayMoney, BsSearch, TfiMoreAlt, MdEdit, MdFilterAlt } = icons
 const PhieuMuaHang = () => {
   const optionContainerRef = useRef(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -38,6 +38,7 @@ const PhieuMuaHang = () => {
       if (optionContainerRef.current && !optionContainerRef.current.contains(event.target)) {
         // Click ngoài phần tử chứa isShowOption, ẩn isShowOption
         setIsShowOption(false)
+        console.log('aaaaaaaaaaa')
       }
     }
 
@@ -156,7 +157,7 @@ const PhieuMuaHang = () => {
       key: 'STT',
       width: 60,
       hight: 10,
-      fixed: 'left',
+      // fixed: 'left',
       align: 'center',
       render: (text, record, index) => <div style={{ textAlign: 'center' }}>{index + 1}</div>,
     },
@@ -165,7 +166,7 @@ const PhieuMuaHang = () => {
       dataIndex: 'SoChungTu',
       key: 'SoChungTu',
       width: 150,
-      fixed: 'left',
+      // fixed: 'left',
       sorter: (a, b) => a.SoChungTu.localeCompare(b.SoChungTu),
       showSorterTooltip: false,
       align: 'center',
@@ -406,7 +407,7 @@ const PhieuMuaHang = () => {
       title: 'Tiền mặt',
       key: 'TTTienMat',
       dataIndex: 'TTTienMat',
-      fixed: 'right',
+      // fixed: 'right',
       width: 100,
       align: 'center',
       render: (text) => <Checkbox value={text} disabled={!text} checked={text} />,
@@ -426,7 +427,7 @@ const PhieuMuaHang = () => {
       render: (record) => {
         return (
           <>
-            <div className=" flex gap-1 items-center justify-center ">
+            <div className=" flex gap-1 items-center justify-center bg-[#f1f1f1] ">
               <div
                 disabled="true"
                 onClick={() => handlePay(record)}
@@ -604,9 +605,12 @@ const PhieuMuaHang = () => {
           <div className=" ">
             <button
               onClick={handleFilterDS}
-              className="flex items-center py-[2px] px-2 bg-bg-main rounded-md border-2 border-bg-main  text-slate-50 text-base hover:bg-white hover:text-bg-main"
+              className="flex items-center gap-x-1 py-[2px] px-2 bg-bg-main rounded-md border-2 border-bg-main  text-slate-50 text-base hover:bg-white hover:text-bg-main"
             >
-              Lọc
+              <span>
+                <MdFilterAlt />
+              </span>
+              <span>Lọc</span>
             </button>
           </div>
         </div>
@@ -654,52 +658,52 @@ const PhieuMuaHang = () => {
               },
             })}
             // Bảng Tổng
-            // summary={(pageData) => {
-            //   let totalTongThanhTien = 0
-            //   let totalTongTienThue = 0
-            //   let totalTongTienHang = 0
-            //   let totalTongSoLuong = 0
-            //   let totalTongMatHang = 0
+            summary={(pageData) => {
+              let totalTongThanhTien = 0
+              let totalTongTienThue = 0
+              let totalTongTienHang = 0
+              let totalTongSoLuong = 0
+              let totalTongMatHang = 0
 
-            //   pageData.forEach(({ TongThanhTien, TongTienThue, TongTienHang, TongSoLuong, TongMatHang }) => {
-            //     totalTongThanhTien += TongThanhTien
-            //     totalTongTienThue += TongTienThue
-            //     totalTongTienHang += TongTienHang
-            //     totalTongSoLuong += TongSoLuong
-            //     totalTongMatHang += TongMatHang
-            //   })
-            //   return (
-            //     <Table.Summary fixed="bottom">
-            //       <Table.Summary.Row className="text-end font-bold">
-            //         <Table.Summary.Cell index={0} className="text-center ">
-            //           {pageData.length}
-            //         </Table.Summary.Cell>
-            //         <Table.Summary.Cell index={1}></Table.Summary.Cell>
-            //         <Table.Summary.Cell index={2}></Table.Summary.Cell>
-            //         <Table.Summary.Cell index={3}></Table.Summary.Cell>
-            //         <Table.Summary.Cell index={4}></Table.Summary.Cell>
-            //         <Table.Summary.Cell index={5}></Table.Summary.Cell>
-            //         <Table.Summary.Cell index={6}></Table.Summary.Cell>
-            //         <Table.Summary.Cell index={7}></Table.Summary.Cell>
-            //         <Table.Summary.Cell index={8}></Table.Summary.Cell>
-            //         <Table.Summary.Cell index={9}></Table.Summary.Cell>
-            //         <Table.Summary.Cell index={10}>{totalTongMatHang}</Table.Summary.Cell>
-            //         <Table.Summary.Cell index={11}>{formatQuantity(totalTongSoLuong, dataThongSo?.SOLESOLUONG)}</Table.Summary.Cell>
-            //         <Table.Summary.Cell index={12}>{formatPrice(totalTongTienHang, dataThongSo?.SOLESOTIEN)}</Table.Summary.Cell>
-            //         <Table.Summary.Cell index={13}> {formatPrice(totalTongTienThue, dataThongSo?.SOLESOTIEN)}</Table.Summary.Cell>
-            //         <Table.Summary.Cell index={14}>{formatPrice(totalTongThanhTien, dataThongSo?.SOLESOTIEN)}</Table.Summary.Cell>
-            //         <Table.Summary.Cell index={15}></Table.Summary.Cell>
-            //         <Table.Summary.Cell index={16}></Table.Summary.Cell>
-            //         <Table.Summary.Cell index={17}></Table.Summary.Cell>
-            //         <Table.Summary.Cell index={18}></Table.Summary.Cell>
-            //         <Table.Summary.Cell index={19}></Table.Summary.Cell>
-            //         <Table.Summary.Cell index={20} className="text-center ">
-            //           {pageData.reduce((count, item) => count + (item.TTTienMat ? 1 : 0), 0)}
-            //         </Table.Summary.Cell>
-            //       </Table.Summary.Row>
-            //     </Table.Summary>
-            //   )
-            // }}
+              pageData.forEach(({ TongThanhTien, TongTienThue, TongTienHang, TongSoLuong, TongMatHang }) => {
+                totalTongThanhTien += TongThanhTien
+                totalTongTienThue += TongTienThue
+                totalTongTienHang += TongTienHang
+                totalTongSoLuong += TongSoLuong
+                totalTongMatHang += TongMatHang
+              })
+              return (
+                <Table.Summary fixed="bottom" className="text-end font-bold  bg-[#f1f1f1]">
+                  <Table.Summary.Row className="text-end font-bold  bg-[#f1f1f1]">
+                    <Table.Summary.Cell index={0} className="text-center bg-[#f1f1f1]">
+                      {pageData.length}
+                    </Table.Summary.Cell>
+                    <Table.Summary.Cell index={1}></Table.Summary.Cell>
+                    <Table.Summary.Cell index={2}></Table.Summary.Cell>
+                    <Table.Summary.Cell index={3}></Table.Summary.Cell>
+                    <Table.Summary.Cell index={4}></Table.Summary.Cell>
+                    <Table.Summary.Cell index={5}></Table.Summary.Cell>
+                    <Table.Summary.Cell index={6}></Table.Summary.Cell>
+                    <Table.Summary.Cell index={7}></Table.Summary.Cell>
+                    <Table.Summary.Cell index={8}></Table.Summary.Cell>
+                    <Table.Summary.Cell index={9}></Table.Summary.Cell>
+                    <Table.Summary.Cell index={10}>{totalTongMatHang}</Table.Summary.Cell>
+                    <Table.Summary.Cell index={11}>{formatQuantity(totalTongSoLuong, dataThongSo?.SOLESOLUONG)}</Table.Summary.Cell>
+                    <Table.Summary.Cell index={12}>{formatPrice(totalTongTienHang, dataThongSo?.SOLESOTIEN)}</Table.Summary.Cell>
+                    <Table.Summary.Cell index={13}> {formatPrice(totalTongTienThue, dataThongSo?.SOLESOTIEN)}</Table.Summary.Cell>
+                    <Table.Summary.Cell index={14}>{formatPrice(totalTongThanhTien, dataThongSo?.SOLESOTIEN)}</Table.Summary.Cell>
+                    <Table.Summary.Cell index={15}></Table.Summary.Cell>
+                    <Table.Summary.Cell index={16}></Table.Summary.Cell>
+                    <Table.Summary.Cell index={17}></Table.Summary.Cell>
+                    <Table.Summary.Cell index={18}></Table.Summary.Cell>
+                    <Table.Summary.Cell index={19}></Table.Summary.Cell>
+                    <Table.Summary.Cell index={20} className="text-center bg-[#f1f1f1] ">
+                      {pageData.reduce((count, item) => count + (item.TTTienMat ? 1 : 0), 0)}
+                    </Table.Summary.Cell>
+                  </Table.Summary.Row>
+                </Table.Summary>
+              )
+            }}
           ></Table>
         ) : (
           <SimpleBackdrop />

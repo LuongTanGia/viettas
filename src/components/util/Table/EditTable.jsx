@@ -19,7 +19,10 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
       </Form>
     )
   }
-
+  // Hàm để tùy chỉnh kích thước drop-down
+  const dropdownRender = (menu) => {
+    return <div style={{ minHeight: '400px', overflowY: 'auto' }}>{menu}</div>
+  }
   const handleSave = (row) => {
     setDataSource((prevDataSource) => {
       const newData = [...prevDataSource]
@@ -112,7 +115,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
             // TongCong: selectedOption.DonGia || undefined,
           }
           // console.log(updatedRow)
-          console.log('first', selectedOption)
+
           handleSave(updatedRow)
         } else {
           handleSave({
@@ -133,7 +136,6 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
       const listDVT = record.DVTKho !== record.DVTQuyDoi ? [record.DVTKho, record.DVTQuyDoi] : [record.DVTQuyDoi]
       // const listDVT = [record.DVTKho, record.DVTQuyDoi]
 
-      console.log(listDVT)
       childNode = editing ? (
         <Form.Item
           style={{
@@ -149,7 +151,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
           initialValue={record[dataIndex]}
         >
           {isSelect ? (
-            <Select ref={inputRef} onPressEnter={save} onBlur={save} style={{ width: '100%' }} showSearch dropdownMatchSelectWidth={false}>
+            <Select ref={inputRef} onPressEnter={save} onBlur={save} style={{ width: '100%' }} showSearch dropdownMatchSelectWidth={false} listHeight={310}>
               {dataIndex === 'MaHang'
                 ? yourMaHangOptions?.map((option) => (
                     <Option key={option.MaHang} value={option.MaHang}>
@@ -253,16 +255,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
         fixed: 'left',
       }
     }
-    // if (item === 'DVT') {
-    //   return {
-    //     title: columName[item] || item,
-    //     width: 80,
-    //     dataIndex: item,
-    //     key: item,
-    //     render: (text) => <div>{text}</div>,
-    //     sorter: (a, b) => a[item] - b[item],
-    //   }
-    // }
+
     if (item === 'MaHang') {
       return {
         title: columName[item] || item,
