@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { Table, Checkbox, Typography } from 'antd'
 const { Text } = Typography
 
@@ -16,6 +16,7 @@ import { useSearch } from '../../../components_K/myComponents/useSearch'
 
 const { IoAddCircleOutline, TiPrinter, MdDelete, GiPayMoney, BsSearch, TfiMoreAlt, MdEdit } = icons
 const PhieuMuaHang = () => {
+  const optionContainerRef = useRef(null)
   const [isLoading, setIsLoading] = useState(false)
   const [isLoadingPopup, setIsLoadingPopup] = useState(false)
   const [isShowModal, setIsShowModal] = useState(false)
@@ -31,6 +32,21 @@ const PhieuMuaHang = () => {
   const [formKhoanNgay, setFormKhoanNgay] = useState([])
   const [dataThongSo, setDataThongSo] = useState()
   const [setSearchPMH, filteredPMH] = useSearch(data)
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (optionContainerRef.current && !optionContainerRef.current.contains(event.target)) {
+        // Click ngoài phần tử chứa isShowOption, ẩn isShowOption
+        setIsShowOption(false)
+      }
+    }
+
+    document.addEventListener('click', handleClickOutside)
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside)
+    }
+  }, [isShowOption])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -504,6 +520,7 @@ const PhieuMuaHang = () => {
   const handleSearch = (event) => {
     setSearchPMH(event.target.value)
   }
+
   return (
     <div className="w-auto">
       <div className="relative text-lg flex justify-between items-center mb-1">
@@ -525,7 +542,7 @@ const PhieuMuaHang = () => {
             </div>
           )}
         </div>
-        <div>
+        <div ref={optionContainerRef}>
           <div className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5  " onClick={() => setIsShowOption(!isShowOption)} title="Chức năng khác">
             <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
           </div>

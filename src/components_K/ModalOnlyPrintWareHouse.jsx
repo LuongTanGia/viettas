@@ -6,6 +6,7 @@ import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
 import { base64ToPDF } from '../action/Actions'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import logo from '../assets/VTS-iSale.ico'
 
 import * as apis from '../apis'
 
@@ -104,81 +105,88 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, dataPMH }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
       <div className="p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
-        <div className="   ">
-          <div className="pb-2 text-text-title font-bold">In phiếu kho</div>
-          <div className="flex justify-center items-center  gap-3 pl-[74px] ">
-            {/* DatePicker */}
-            <div className="flex gap-x-5 items-center">
-              <label htmlFor="">Ngày</label>
-              <DatePicker
-                className="DatePicker_PMH"
-                format="DD/MM/YYYY"
-                defaultValue={dayjs(dataThongTin?.NgayCTu)}
-                onChange={(newDate) => {
-                  setFormPrint({
-                    ...formPrint,
-                    NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
-                  })
-                }}
-              />
-            </div>
-            <div className="flex gap-x-5 items-center">
-              <label htmlFor="">Đến</label>
-              <DatePicker
-                className="DatePicker_PMH"
-                format="DD/MM/YYYY"
-                defaultValue={dayjs(dataThongTin?.NgayCTu)}
-                onChange={(newDate) => {
-                  setFormPrint({
-                    ...formPrint,
-                    NgayKetThuc: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
-                  })
-                }}
-              />
-            </div>
+        <div className=" h-[244px]  ">
+          <div className="flex gap-2">
+            <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
+            <label className="text-blue-700 font-semibold uppercase pb-1">In - phiếu mua hàng (Kho)</label>
+          </div>
+          <div className="border-2 my-1">
+            <div className="p-4">
+              <div className="flex justify-center items-center  gap-3 pl-[74px] ">
+                {/* DatePicker */}
+                <div className="flex gap-x-5 items-center">
+                  <label htmlFor="">Ngày</label>
+                  <DatePicker
+                    className="DatePicker_PMH"
+                    format="DD/MM/YYYY"
+                    defaultValue={dayjs(dataThongTin?.NgayCTu)}
+                    onChange={(newDate) => {
+                      setFormPrint({
+                        ...formPrint,
+                        NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                      })
+                    }}
+                  />
+                </div>
+                <div className="flex gap-x-5 items-center">
+                  <label htmlFor="">Đến</label>
+                  <DatePicker
+                    className="DatePicker_PMH"
+                    format="DD/MM/YYYY"
+                    defaultValue={dayjs(dataThongTin?.NgayCTu)}
+                    onChange={(newDate) => {
+                      setFormPrint({
+                        ...formPrint,
+                        NgayKetThuc: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                      })
+                    }}
+                  />
+                </div>
 
-            <button
-              className="flex items-center mx-2 py-1 px-2  rounded-md   border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main  "
-              onClick={handleFilterPrint}
-            >
-              Lọc
-            </button>
-          </div>
-          <div className="flex  mt-4">
-            <div className="flex ">
-              <label className="px-4">Số chứng từ</label>
-              <select className=" bg-white border outline-none border-gray-300  " value={selectedSctBD} onChange={(e) => setSelectedSctBD(e.target.value)}>
-                {newDataPMH?.map((item) => (
-                  <option key={item.SoChungTu} value={item.SoChungTu}>
-                    {item.SoChungTu}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="flex ">
-              <label className="px-4">Đến</label>
-              <select className=" bg-white border outline-none border-gray-300  " value={selectedSctKT} onChange={(e) => setSelectedSctKT(e.target.value)}>
-                {newDataPMH?.map((item) => (
-                  <option key={item.SoChungTu} value={item.SoChungTu}>
-                    {item.SoChungTu}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-          {/* liên */}
-          <div className="flex justify-center items-center gap-6 mt-4">
-            <div>
-              <input id="lien1" type="checkbox" checked={checkboxValues.checkbox1} onChange={() => handleLien('checkbox1')} />
-              <label htmlFor="lien1">Liên 1</label>
-            </div>
+                <button
+                  className="flex items-center mx-2 py-1 px-2  rounded-md   border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main  "
+                  onClick={handleFilterPrint}
+                >
+                  Lọc
+                </button>
+              </div>
+              <div className="flex  mt-4">
+                <div className="flex ">
+                  <label className="px-4">Số chứng từ</label>
+                  <select className=" bg-white border outline-none border-gray-300  " value={selectedSctBD} onChange={(e) => setSelectedSctBD(e.target.value)}>
+                    {newDataPMH?.map((item) => (
+                      <option key={item.SoChungTu} value={item.SoChungTu}>
+                        {item.SoChungTu}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex ">
+                  <label className="px-4">Đến</label>
+                  <select className=" bg-white border outline-none border-gray-300  " value={selectedSctKT} onChange={(e) => setSelectedSctKT(e.target.value)}>
+                    {newDataPMH?.map((item) => (
+                      <option key={item.SoChungTu} value={item.SoChungTu}>
+                        {item.SoChungTu}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              {/* liên */}
+              <div className="flex justify-center items-center gap-6 mt-4">
+                <div>
+                  <input id="lien1" type="checkbox" checked={checkboxValues.checkbox1} onChange={() => handleLien('checkbox1')} />
+                  <label htmlFor="lien1">Liên 1</label>
+                </div>
 
-            <div>
-              <input id="lien2" type="checkbox" checked={checkboxValues.checkbox2} onChange={() => handleLien('checkbox2')} />
-              <label htmlFor="lien2">Liên 2</label>
+                <div>
+                  <input id="lien2" type="checkbox" checked={checkboxValues.checkbox2} onChange={() => handleLien('checkbox2')} />
+                  <label htmlFor="lien2">Liên 2</label>
+                </div>
+              </div>
             </div>
           </div>
-          <div className="flex justify-end mt-4 gap-2">
+          <div className="flex justify-end pt-2 gap-2">
             <button
               onClick={handleOnlyPrintWareHouse}
               className="active:scale-[.98] active:duration-75  border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main rounded-md px-2 py-1  w-[80px] "

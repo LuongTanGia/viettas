@@ -221,16 +221,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
         fixed: 'left',
       }
     }
-    if (item === 'DVT') {
-      return {
-        title: columName[item] || item,
-        width: 80,
-        dataIndex: item,
-        key: item,
-        render: (text) => <div>{text}</div>,
-        sorter: (a, b) => a[item] - b[item],
-      }
-    }
+
     if (item === 'MaHang') {
       return {
         title: columName[item] || item,
@@ -252,19 +243,19 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
       }
     }
 
-    if (item === 'DVT') {
-      return {
-        title: columName[item] || item,
-        width: 150,
-        dataIndex: item,
-        // editable: true,
-        key: item,
-        align: 'center',
-        render: (text, record, index) => <div style={{ textAlign: 'start' }}>{text}</div>,
-        sorter: (a, b) => a[item].localeCompare(b[item]),
-        showSorterTooltip: false,
-      }
-    }
+    // if (item === 'DVT') {
+    //   return {
+    //     title: columName[item] || item,
+    //     width: 150,
+    //     dataIndex: item,
+    //     // editable: true,
+    //     key: item,
+    //     align: 'center',
+    //     render: (text, record, index) => <div style={{ textAlign: 'start' }}>{text}</div>,
+    //     sorter: (a, b) => a[item].localeCompare(b[item]),
+    //     showSorterTooltip: false,
+    //   }
+    // }
 
     if (item === 'SoLuong') {
       return {
@@ -320,21 +311,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
         ),
       }
     }
-    if (item === 'TyLeThue') {
-      return {
-        title: columName[item] || item,
-        width: 150,
-        dataIndex: item,
-        editable: true,
-        key: item,
-        align: 'center',
-        render: (text) => (
-          <div style={{ textAlign: 'end' }}>
-            {text !== undefined ? Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLETYLE, maximumFractionDigits: ThongSo.SOLETYLE }) : ''}
-          </div>
-        ),
-      }
-    }
+
     if (item === 'TyLeCKTT') {
       return {
         title: columName[item] || item,
