@@ -89,7 +89,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
           const optionsArray = dataIndex === 'MaHang' ? yourMaHangOptions : yourTenHangOptions
 
           const selectedOption = optionsArray.find((option) => option[dataIndex] === values[dataIndex]) || {}
-
+          console.log('selectedOption', selectedOption)
           const GiaBan = selectedOption.GiaBan
           const updatedRow = {
             ...record,
@@ -101,12 +101,13 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
             TyLeCKTT: 0,
             TonKho: selectedOption.TonKho || true,
             TienThue: selectedOption.TienThue || undefined,
-            DVT: selectedOption.DVT || undefined,
+            DVT: selectedOption.DVT,
             TienHang: selectedOption.DonGia || undefined,
             TyLeThue: 0,
             ThanhTien: selectedOption.DonGia || undefined,
-            DFDVT: selectedOption.DVT,
-            DFQUYDOI: selectedOption.DVTQuyDoi,
+            DVTKho: selectedOption.DVT,
+            DVTQuyDoi: selectedOption.DVTQuyDoi,
+
             // TienCKTT: 0,
             // TongCong: selectedOption.DonGia || undefined,
           }
@@ -129,12 +130,10 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
     if (editable) {
       const isSelect = dataIndex === 'MaHang' || dataIndex === 'TenHang' || dataIndex === 'DVT'
 
-      const listDVT =
-        record.DFDVT !== record.DFQUYDOI && record.DFDVT && record.DFQUYDOI
-          ? [record.DFDVT, record.DFQUYDOI]
-          : record.DVTKho === record.DVTQuyDoi
-            ? [record.DVTKho]
-            : [record.DVTKho, record.DVTQuyDoi]
+      const listDVT = record.DVTKho !== record.DVTQuyDoi ? [record.DVTKho, record.DVTQuyDoi] : [record.DVTQuyDoi]
+      // const listDVT = [record.DVTKho, record.DVTQuyDoi]
+
+      console.log(listDVT)
       childNode = editing ? (
         <Form.Item
           style={{
@@ -151,34 +150,25 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
         >
           {isSelect ? (
             <Select ref={inputRef} onPressEnter={save} onBlur={save} style={{ width: '100%' }} showSearch dropdownMatchSelectWidth={false}>
-              {dataIndex === 'MaHang' ? (
-                yourMaHangOptions?.map((option) => (
-                  <Option key={option.MaHang} value={option.MaHang}>
-                    {`${option.MaHang} - ${option.TenHang}`}
-                  </Option>
-                ))
-              ) : dataIndex === 'TenHang' ? (
-                yourTenHangOptions?.map((option) => (
-                  <Option key={option.TenHang} value={option.TenHang}>
-                    {`${option.MaHang} - ${option.TenHang}`}
-                  </Option>
-                ))
-              ) : typeTable !== 'BanHang' && listDVT.length !== 0 ? (
-                listDVT.map((option) => (
-                  <Option key={option} value={option}>
-                    {option}
-                  </Option>
-                ))
-              ) : (
-                <>
-                  <Option key={record.DVTKho} value={record.DVTKho}>
-                    {record.DVTKho}
-                  </Option>
-                  <Option key={record.DVTQuyDoi} value={record.DVTQuyDoi}>
-                    {record.DVTQuyDoi}
-                  </Option>
-                </>
-              )}
+              {dataIndex === 'MaHang'
+                ? yourMaHangOptions?.map((option) => (
+                    <Option key={option.MaHang} value={option.MaHang}>
+                      {`${option.MaHang} - ${option.TenHang}`}
+                    </Option>
+                  ))
+                : dataIndex === 'TenHang'
+                  ? yourTenHangOptions?.map((option) => (
+                      <Option key={option.TenHang} value={option.TenHang}>
+                        {`${option.MaHang} - ${option.TenHang}`}
+                      </Option>
+                    ))
+                  : typeTable !== 'BanHang'
+                    ? listDVT.map((option) => (
+                        <Option key={option} value={option}>
+                          {option}
+                        </Option>
+                      ))
+                    : null}
             </Select>
           ) : dataIndex === 'SoLuong' || dataIndex === 'DonGia' ? (
             <InputNumber
