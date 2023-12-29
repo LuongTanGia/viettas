@@ -119,9 +119,11 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction }) {
     if (typeAction === 'create') {
       const data = { ...form, ...Dates, DataDetails: dataChitiet }
       await THEMPHIEUBANHANG(API.THEMPHIEUBANHANG, token, data)
+      console.log(data)
     } else if (typeAction === 'edit') {
       const data = { ...form, DataDetails: dataChitiet }
       await SUAPHIEUBANHANG(API.SUAPHIEUBANHANG, token, { SoChungTu: data.SoChungTu, Data: data })
+      console.log(data)
     }
   }
 

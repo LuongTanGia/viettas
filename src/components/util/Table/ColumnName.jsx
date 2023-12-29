@@ -74,4 +74,7 @@ export const nameColumsPhieuBanHangChiTiet = {
   TyLeThue: '% Thuế',
   TienThue: 'Tiền thuế',
   ThanhTien: 'Thành tiền',
+  TyLeCKTT: '% CK Thanh Toán',
+  TienCKTT: 'Tiền CK.Thanh Toán',
+  TongCong: 'Tổng',
 }

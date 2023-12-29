@@ -6,7 +6,7 @@ import BtnAction from './BtnAction'
 
 const { Option } = Select
 
-const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOptions, ColumnTable, columName }) => {
+const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOptions, ColumnTable, columName, typeTable }) => {
   const EditableContext = React.createContext(null)
 
   const EditableRow = ({ index, ...props }) => {
@@ -37,11 +37,16 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
         const updatedRow = newData[index]
 
         if (updatedRow && updatedRow.SoLuong !== undefined && updatedRow.DonGia !== undefined) {
-          updatedRow.TienHang = updatedRow.SoLuong * updatedRow.DonGia
-          updatedRow.TienThue = (updatedRow.TienHang * updatedRow.TyLeThue) / 100
-          updatedRow.ThanhTien = updatedRow.TienHang + ((updatedRow.TienHang || 0) * (updatedRow.TyLeThue || 0)) / 100
-          updatedRow.TienCKTT = (updatedRow.ThanhTien * updatedRow.TyLeCKTT) / 100
-          updatedRow.TongCong = updatedRow.TienCKTT + updatedRow.ThanhTien
+          updatedRow.TienHang = (updatedRow.SoLuong * updatedRow.DonGia).toFixed(ThongSo.SOLESOTIEN)
+          updatedRow.TienHang = parseFloat(updatedRow.TienHang)
+          updatedRow.TienThue = ((updatedRow.TienHang * updatedRow.TyLeThue) / 100).toFixed(ThongSo.SOLESOTIEN)
+          updatedRow.TienThue = parseFloat(updatedRow.TienThue)
+          updatedRow.ThanhTien = (updatedRow.TienHang + (updatedRow.TienHang * updatedRow.TyLeThue) / 100).toFixed(ThongSo.SOLESOTIEN)
+          updatedRow.ThanhTien = parseFloat(updatedRow.ThanhTien)
+          updatedRow.TienCKTT = ((updatedRow.ThanhTien * updatedRow.TyLeCKTT) / 100).toFixed(ThongSo.SOLESOTIEN)
+          updatedRow.TienCKTT = parseFloat(updatedRow.TienCKTT)
+          updatedRow.TongCong = (updatedRow.ThanhTien - updatedRow.TienCKTT).toFixed(ThongSo.SOLESOTIEN)
+          updatedRow.TongCong = parseFloat(updatedRow.TongCong)
 
           console.log('handleSave - newData:', newData)
           handleEditData(newData)
@@ -124,7 +129,12 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
     if (editable) {
       const isSelect = dataIndex === 'MaHang' || dataIndex === 'TenHang' || dataIndex === 'DVT'
 
-      const listDVT = record.DFDVT !== record.DFQUYDOI ? [record.DFDVT, record.DFQUYDOI] : [record.DFDVT]
+      const listDVT =
+        record.DFDVT !== record.DFQUYDOI && record.DFDVT && record.DFQUYDOI
+          ? [record.DFDVT, record.DFQUYDOI]
+          : record.DVTKho === record.DVTQuyDoi
+            ? [record.DVTKho]
+            : [record.DVTKho, record.DVTQuyDoi]
       childNode = editing ? (
         <Form.Item
           style={{
@@ -141,23 +151,34 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
         >
           {isSelect ? (
             <Select ref={inputRef} onPressEnter={save} onBlur={save} style={{ width: '100%' }} showSearch dropdownMatchSelectWidth={false}>
-              {dataIndex === 'MaHang'
-                ? yourMaHangOptions?.map((option) => (
-                    <Option key={option.MaHang} value={option.MaHang}>
-                      {`${option.MaHang} - ${option.TenHang}`}
-                    </Option>
-                  ))
-                : dataIndex === 'TenHang'
-                  ? yourTenHangOptions?.map((option) => (
-                      <Option key={option.TenHang} value={option.TenHang}>
-                        {`${option.MaHang} - ${option.TenHang}`}
-                      </Option>
-                    ))
-                  : listDVT?.map((option) => (
-                      <Option key={option} value={option}>
-                        {option}
-                      </Option>
-                    ))}
+              {dataIndex === 'MaHang' ? (
+                yourMaHangOptions?.map((option) => (
+                  <Option key={option.MaHang} value={option.MaHang}>
+                    {`${option.MaHang} - ${option.TenHang}`}
+                  </Option>
+                ))
+              ) : dataIndex === 'TenHang' ? (
+                yourTenHangOptions?.map((option) => (
+                  <Option key={option.TenHang} value={option.TenHang}>
+                    {`${option.MaHang} - ${option.TenHang}`}
+                  </Option>
+                ))
+              ) : typeTable !== 'BanHang' && listDVT.length !== 0 ? (
+                listDVT.map((option) => (
+                  <Option key={option} value={option}>
+                    {option}
+                  </Option>
+                ))
+              ) : (
+                <>
+                  <Option key={record.DVTKho} value={record.DVTKho}>
+                    {record.DVTKho}
+                  </Option>
+                  <Option key={record.DVTQuyDoi} value={record.DVTQuyDoi}>
+                    {record.DVTQuyDoi}
+                  </Option>
+                </>
+              )}
             </Select>
           ) : dataIndex === 'SoLuong' || dataIndex === 'DonGia' ? (
             <InputNumber
@@ -169,7 +190,28 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
               width={500}
               style={dataIndex !== 'SoLuong' ? { width: 150 } : { width: 100 }}
               formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-              parser={(value) => value.replace(/\$\s?|(,*)/g, '')}
+              parser={(value) => {
+                const parsedValue = parseFloat(value.replace(/\$\s?|(,*)/g, ''))
+                return isNaN(parsedValue)
+                  ? null
+                  : dataIndex === 'SoLuong'
+                    ? parseFloat(parsedValue.toFixed(ThongSo.SOLESOLUONG))
+                    : parseFloat(parsedValue.toFixed(ThongSo.SOLEDONGIA))
+              }}
+            />
+          ) : dataIndex === 'TyLeThue' || dataIndex === 'TyLeCKTT' ? (
+            <InputNumber
+              ref={inputRef}
+              onPressEnter={save}
+              onBlur={save}
+              max={100}
+              min={0}
+              style={{ width: '100%' }}
+              formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              parser={(value) => {
+                const parsedValue = parseFloat(value.replace(/\$\s?|(,*)/g, ''))
+                return isNaN(parsedValue) ? null : parseFloat(parsedValue.toFixed(ThongSo.SOLETYLE))
+              }}
             />
           ) : (
             <InputNumber ref={inputRef} onPressEnter={save} onBlur={save} max={100} min={0} style={{ width: '100%' }} />
@@ -221,16 +263,16 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
         fixed: 'left',
       }
     }
-    if (item === 'DVT') {
-      return {
-        title: columName[item] || item,
-        width: 80,
-        dataIndex: item,
-        key: item,
-        render: (text) => <div>{text}</div>,
-        sorter: (a, b) => a[item] - b[item],
-      }
-    }
+    // if (item === 'DVT') {
+    //   return {
+    //     title: columName[item] || item,
+    //     width: 80,
+    //     dataIndex: item,
+    //     key: item,
+    //     render: (text) => <div>{text}</div>,
+    //     sorter: (a, b) => a[item] - b[item],
+    //   }
+    // }
     if (item === 'MaHang') {
       return {
         title: columName[item] || item,
@@ -252,7 +294,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
       }
     }
 
-    if (item === 'DVT') {
+    if (item === 'DVT' && typeTable === 'BanHang') {
       return {
         title: columName[item] || item,
         width: 150,
@@ -260,7 +302,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
         // editable: true,
         key: item,
         align: 'center',
-        render: (text, record, index) => <div style={{ textAlign: 'start' }}>{text}</div>,
+        render: (text, record, index) => <div style={{ textAlign: 'center' }}>{text}</div>,
         sorter: (a, b) => a[item].localeCompare(b[item]),
         showSorterTooltip: false,
       }
