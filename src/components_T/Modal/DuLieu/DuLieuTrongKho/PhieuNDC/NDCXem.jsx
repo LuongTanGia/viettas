@@ -3,6 +3,7 @@ import logo from '../../../../../assets/VTS-iSale.ico'
 import categoryAPI from '../../../../../API/linkAPI'
 import { useEffect, useState } from 'react'
 import { RETOKEN } from '../../../../../action/Actions'
+import ActionButton from '../../../../../components/util/Button/ActionButton'
 
 const NCKXem = ({ close, dataNDC }) => {
   const TokenAccess = localStorage.getItem('TKN')
@@ -150,10 +151,10 @@ const NCKXem = ({ close, dataNDC }) => {
               </div>
             </div>
           </div>
-          <div className="flex gap-2 justify-end">
-            <button className="rounded px-2 py-1.5 font-bold text-slate-50 bg-red-500 border-2 border-red-500 hover:text-red-500 hover:bg-white w-[100px]" onClick={close}>
-              Đóng
-            </button>
+          <div className="flex gap-2 justify-end ">
+            <div onClick={close}>
+              <ActionButton title={'Đóng'} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
+            </div>
           </div>
         </div>
       </div>
