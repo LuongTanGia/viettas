@@ -1,12 +1,13 @@
 .barcodeList {
   border-collapse: collapse;
   width: 100%;
-  overflow-x: auto;
-  width: 100%;
 }
-
+.barcodeList tbody {
+  max-height: 300px;
+  overflow-y: auto;
+}
 .barcodeList thead th {
-  font-weight: 600;
+  font-weight: 500;
   background-color: #eeeeee;
   border: 1px solid #c0c0c0;
   text-transform: uppercase;
