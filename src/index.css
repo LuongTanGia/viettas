@@ -207,6 +207,19 @@ a.nav-link span {
 input[type='radio'] {
   width: 20px;
 }
+.required {
+  position: relative;
+}
+
+.required::after {
+  content: '*';
+  color: #ff0000;
+  padding-left: 0.1rem;
+}
+.inputHH .ant-input-number-input-wrap > input.ant-input-number-input {
+  text-align: right;
+  padding: 0 1.5rem;
+}
 
 /* K custom antd and MUI */
 /* start */

@@ -19,13 +19,13 @@ const NhapXuatTonKho = () => {
   const [nhomHangNXT, setNhomHangNXT] = useState([])
   const [hangHoaNXT, setHangHoaNXT] = useState([])
   const [khoHangNXT, setKhoHangNXT] = useState([])
-  const [khoanNgayFrom, setKhoanNgayFrom] = useState('')
-  const [khoanNgayTo, setKhoanNgayTo] = useState('')
-  const [selectedMaFrom, setSelectedMaFrom] = useState('')
-  const [selectedMaTo, setSelectedMaTo] = useState('')
+  const [khoanNgayFrom, setKhoanNgayFrom] = useState([])
+  const [khoanNgayTo, setKhoanNgayTo] = useState([])
+  const [selectedMaFrom, setSelectedMaFrom] = useState(null)
+  const [selectedMaTo, setSelectedMaTo] = useState(null)
   const [selectedMaList, setSelectedMaList] = useState([])
-  const [selectedNhomFrom, setSelectedNhomFrom] = useState('')
-  const [selectedNhomTo, setSelectedNhomTo] = useState('')
+  const [selectedNhomFrom, setSelectedNhomFrom] = useState(null)
+  const [selectedNhomTo, setSelectedNhomTo] = useState(null)
   const [selectedNhomList, setSelectedNhomList] = useState([])
   const [selectedMaKho, setSelectedMaKho] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -55,6 +55,9 @@ const NhapXuatTonKho = () => {
         if (response.data.DataError == 0) {
           setDataNXT(response.data.DataResults)
           setIsLoading(true)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          getDataNXTFirst()
         } else {
           toast.error(response.data.DataErrorDescription)
         }
@@ -79,12 +82,16 @@ const NhapXuatTonKho = () => {
         },
         TokenAccess,
       )
+
       if (response.data.DataError == 0) {
-        toast.success(response.data.DataErrorDescription)
+        toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
         setDataNXT(response.data.DataResults)
         setIsLoading(true)
+      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        await RETOKEN()
+        getDataNXT()
       } else {
-        toast.error(response.data.DataErrorDescription)
+        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
         setIsLoading(true)
       }
     } catch (error) {
@@ -96,6 +103,9 @@ const NhapXuatTonKho = () => {
       const response = await categoryAPI.ListNhomHangNXT(TokenAccess)
       if (response.data.DataError == 0) {
         setNhomHangNXT(response.data.DataResults)
+      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        await RETOKEN()
+        getListNhomHangNXT()
       } else {
         console.log(response.data)
       }
@@ -108,6 +118,9 @@ const NhapXuatTonKho = () => {
       const response = await categoryAPI.ListHangHoaNXT(TokenAccess)
       if (response.data.DataError == 0) {
         setHangHoaNXT(response.data.DataResults)
+      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        await RETOKEN()
+        getListHangHoaNXT()
       } else {
         console.log(response.data)
       }
@@ -120,6 +133,9 @@ const NhapXuatTonKho = () => {
       const response = await categoryAPI.ListKhoHangNXT(TokenAccess)
       if (response.data.DataError == 0) {
         setKhoHangNXT(response.data.DataResults)
+      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        await RETOKEN()
+        getListKhoNXT()
       } else {
         console.log(response.data)
       }
@@ -134,6 +150,9 @@ const NhapXuatTonKho = () => {
         setKhoanNgayFrom(response.data.NgayBatDau)
         setKhoanNgayTo(response.data.NgayKetThuc)
         setIsLoading(true)
+      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        await RETOKEN()
+        getTimeSetting()
       } else {
         console.log(response.data)
       }
@@ -457,6 +476,7 @@ const NhapXuatTonKho = () => {
                     <div className="flex items-center gap-1">
                       <label>Từ</label>
                       <DatePicker
+                        showSearch
                         className="DatePicker_NXTKho"
                         format="DD/MM/YYYY"
                         maxDate={dayjs(khoanNgayTo)}
@@ -481,6 +501,7 @@ const NhapXuatTonKho = () => {
                   </div>
                   <div className="flex items-center gap-2">
                     <Select
+                      showSearch
                       allowClear
                       placeholder="Lọc Kho"
                       value={selectedMaKho}
@@ -505,8 +526,8 @@ const NhapXuatTonKho = () => {
                     <div className="flex gap-2 items-center">
                       <div>Từ</div>
                       <Select
+                        showSearch
                         allowClear
-                        filterOption
                         placeholder="Chọn nhóm"
                         value={selectedNhomFrom}
                         onChange={(value) => setSelectedNhomFrom(value)}
@@ -526,8 +547,8 @@ const NhapXuatTonKho = () => {
                     <div className="flex gap-2 items-center">
                       <div> Tới</div>
                       <Select
+                        showSearch
                         allowClear
-                        filterOption
                         placeholder="Chọn nhóm"
                         value={selectedNhomTo}
                         onChange={(value) => setSelectedNhomTo(value)}
@@ -572,7 +593,7 @@ const NhapXuatTonKho = () => {
                       <div>Từ</div>
                       <Select
                         allowClear
-                        filterOption
+                        showSearch
                         placeholder="Chọn mã hàng"
                         value={selectedMaFrom}
                         onChange={(value) => setSelectedMaFrom(value)}
@@ -593,7 +614,7 @@ const NhapXuatTonKho = () => {
                       <div>Tới</div>
                       <Select
                         allowClear
-                        filterOption
+                        showSearch
                         placeholder="Chọn mã hàng"
                         value={selectedMaTo}
                         onChange={(value) => setSelectedMaTo(value)}

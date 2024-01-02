@@ -135,7 +135,6 @@ const NDCCreate = ({ close }) => {
   }
   const handleCreate = async (e) => {
     e.preventDefault()
-    console.log({ ...NDCForm, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss') })
     try {
       const response = await categoryAPI.NDCCreate({ ...NDCForm, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss') }, TokenAccess)
       if (response.data.DataError == 0) {
@@ -382,7 +381,6 @@ const NDCCreate = ({ close }) => {
                   </thead>
                   <tbody className="">
                     {/* {NDCForm.DataDetails.map((item,index) => )} */}
-
                     {selectedRowData?.map((item, index) => (
                       <tr key={item.MaHang}>
                         <td>

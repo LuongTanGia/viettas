@@ -50,8 +50,11 @@ const HangHoa = () => {
   useEffect(() => {
     getListHangHoa()
     getThongSo()
-  }, [getListHangHoa, isLoading])
+  }, [isLoading])
 
+  const handleLoading = () => {
+    setIsLoading(false)
+  }
   const handleCreate = () => {
     setActionType('create')
     setIsShowModal(true)
@@ -80,7 +83,7 @@ const HangHoa = () => {
       setIsShowModal(true)
       setIsMaHang(selectedRowKeys)
     } else {
-      toast.warning('Vui Lòng Chọn Mã Hàng Muốn Đổi')
+      toast.warning('Vui Lòng Chọn Mã Hàng Muốn Đổi', { autoClose: 1000 })
     }
   }
   const handleGroupMany = () => {
@@ -89,7 +92,7 @@ const HangHoa = () => {
       setIsShowModal(true)
       setIsMaHang(selectedRowKeys)
     } else {
-      toast.warning('Vui Lòng Chọn Mã Hàng Muốn Đổi')
+      toast.warning('Vui Lòng Chọn Mã Hàng Muốn Đổi', { autoClose: 1000 })
     }
   }
   const handlePrintBar = () => {
@@ -177,7 +180,6 @@ const HangHoa = () => {
     }
     return ''
   }
-
   const getThongSo = async () => {
     try {
       const response = await categoryAPI.ThongSo(TokenAccess)
@@ -410,6 +412,7 @@ const HangHoa = () => {
       dataIndex: 'NguoiSuaCuoi',
       key: 'NguoiSuaCuoi',
       align: 'center',
+      ellipsis: 'true',
       showSorterTooltip: false,
       sorter: (a, b) => {
         if (!a.NguoiSuaCuoi || !b.NguoiSuaCuoi) {
@@ -417,19 +420,18 @@ const HangHoa = () => {
         }
         return a.NguoiSuaCuoi.localeCompare(b.NguoiSuaCuoi)
       },
-      render: (text) => (
-        <Tooltip title={text}>
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {text}
-          </div>
-        </Tooltip>
-      ),
+      render: (text) => text,
+      // <Tooltip title={text}>
+      //   <div
+      //     style={{
+      //       overflow: 'hidden',
+      //       textOverflow: 'ellipsis',
+      //       whiteSpace: 'nowrap',
+      //     }}
+      //   >
+      //     {text}
+      //   </div>
+      // </Tooltip>
     },
     {
       title: 'Ngày sửa',
@@ -633,7 +635,9 @@ const HangHoa = () => {
               />
             </div>
           </div>
-          <div>{isShowModal && <HangHoaModals type={actionType} close={() => setIsShowModal(false)} getMaHang={isMaHang} getDataHangHoa={dataHangHoa} />}</div>
+          <div>
+            {isShowModal && <HangHoaModals type={actionType} close={() => setIsShowModal(false)} getMaHang={isMaHang} getDataHangHoa={dataHangHoa} loadingData={handleLoading} />}
+          </div>
         </>
       )}
     </>

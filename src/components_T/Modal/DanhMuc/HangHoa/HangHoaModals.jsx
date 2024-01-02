@@ -6,12 +6,12 @@ import { toast } from 'react-toastify'
 import { useEffect, useState } from 'react'
 import './HangHoaModals.css'
 import moment from 'moment'
-import { Checkbox, Select, Space } from 'antd'
+import { Checkbox, Select, Space, InputNumber, Form } from 'antd'
 import logo from '../../../../assets/VTS-iSale.ico'
 import { RETOKEN } from '../../../../action/Actions'
 import ActionButton from '../../../../components/util/Button/ActionButton'
 
-const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
+const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const [dataView, setDataView] = useState({})
   const [nhomHang, setNhomHang] = useState([])
@@ -51,16 +51,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
     MaHang: '',
     TenHang: '',
     DVTKho: '',
-    DVTQuyDoi: '',
-    TyLeQuyDoi: 1,
     MaVach: '',
-    DienGiaiHangHoa: '',
-    LapRap: false,
-    TonKho: true,
-    NA: false,
-    GhiChu: '',
-    Barcodes: [{ MaVach: '', LastNum: 0, NA: false }],
-    HangHoa_CTs: [{ MaHangChiTiet: '', SoLuong: 1, DVT_CTs: '' }],
   })
   const [hangHoaForm, setHangHoaForm] = useState(() => {
     return getMaHang ? { ...getMaHang, MaVach: getMaHang?.MaVach } : initProduct
@@ -162,7 +153,6 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
     }
     return ''
   }
-
   // Table Barcode
   const handleBarcodeChange = (index, key, value) => {
     if (type == 'create') {
@@ -232,11 +222,16 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
         const selectedHangHoa = HangHoaCT.find((item) => item.MaHang === newValue)
         newDataList[index]['DVT_CTs'] = selectedHangHoa?.DVT
       }
-      if (property === 'SoLuong') {
-        newValue = parseInt(newValue)
+      const existMaHang = newDataList?.some((item) => item.MaHangChiTiet === newValue)
+      if (!existMaHang) {
+        newDataList[index][property] = newValue
+        setHangHoaForm({ ...hangHoaForm, HangHoa_CTs: newDataList })
+      } else {
+        toast.warning('Hàng hóa đã được chọn', { autoClose: 1000 })
       }
-      newDataList[index][property] = newValue
-      setHangHoaForm({ ...hangHoaForm, HangHoa_CTs: newDataList })
+      if (property === 'SoLuong') {
+        newValue = parseFloat(newValue)
+      }
     } else {
       const newDataList = [...dataView.HangHoa_CTs]
       if (property == 'MaHangChiTiet') {
@@ -244,11 +239,16 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
         newDataList[index]['TenHangChiTiet'] = selectedHangHoa?.TenHang
         newDataList[index]['DVTChiTiet'] = selectedHangHoa?.DVT
       }
-      if (property === 'SoLuong') {
-        newValue = parseInt(newValue)
+      const existMaHang = newDataList?.some((item) => item.MaHangChiTiet === newValue)
+      if (!existMaHang) {
+        newDataList[index][property] = newValue
+        setDataView({ ...dataView, HangHoa_CTs: newDataList })
+      } else {
+        toast.warning('Hàng hóa đã được chọn', { autoClose: 1000 })
       }
-      newDataList[index][property] = newValue
-      setDataView({ ...dataView, HangHoa_CTs: newDataList })
+      if (property === 'SoLuong') {
+        newValue = parseFloat(newValue)
+      }
     }
   }
   const addHangHoaCT = () => {
@@ -285,6 +285,47 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
     }
   }
   // Handle CRUD
+  const handleCreate = async (e, isSave = true) => {
+    if (
+      !hangHoaForm?.Nhom?.trim() ||
+      !hangHoaForm?.TenHang?.trim() ||
+      !hangHoaForm?.DVTKho?.trim() ||
+      !hangHoaForm?.MaVach?.trim() ||
+      (dataThongSo.SUDUNG_MAHANGHOATUDONG ? null : !hangHoaForm?.MaHang?.trim())
+    ) {
+      setErrors({
+        Nhom: hangHoaForm?.Nhom?.trim() ? '' : '*Nhóm không được để trống',
+        TenHang: hangHoaForm?.TenHang?.trim() ? '' : '*Tên hàng không được để trống',
+        DVTKho: hangHoaForm?.DVTKho?.trim() ? '' : '*Đơn vị tính không được để trống',
+        MaVach: hangHoaForm?.MaVach?.trim() ? '' : '*Mã vạch không được để trống',
+        MaHang: dataThongSo.SUDUNG_MAHANGHOATUDONG ? null : hangHoaForm?.MaHang?.trim() ? '' : '*Mã hàng không được để trống',
+      })
+      return
+    }
+    e.preventDefault()
+    try {
+      const response = await categoryAPI.ThemHangHoa(
+        {
+          ...hangHoaForm,
+          MaVach: `${hangHoaForm.MaVach}${lastNumber13Main}`,
+          TyLeQuyDoi: parseFloat(hangHoaForm.TyLeQuyDoi),
+        },
+        TokenAccess,
+      )
+      if (response.data.DataError === 0) {
+        isSave ? '' : close()
+        toast.success('Thêm sản phẩm thành công', { autoClose: 1000 })
+        loadingData()
+      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        await RETOKEN()
+        handleCreate()
+      } else {
+        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
   const handleView = async () => {
     try {
       const infoHang = await categoryAPI.InfoHangHoa(getMaHang?.MaHang, TokenAccess)
@@ -299,52 +340,27 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
       console.log(error)
     }
   }
-
-  const handleCreate = async (e, isSave = true) => {
-    e.preventDefault()
-    const errors = {}
-    if (
-      !hangHoaForm?.Nhom?.trim() ||
-      !hangHoaForm?.TenHang?.trim() ||
-      !hangHoaForm?.DVTKho?.trim() ||
-      !hangHoaForm?.MaVach?.trim() ||
-      (dataThongSo.SUDUNG_MAHANGHOATUDONG === false && !hangHoaForm?.MaHang?.trim())
-    ) {
-      errors.Nhom = '*Nhóm hàng không được để trống'
-      errors.TenHang = '*Tên hàng không được để trống'
-      errors.DVTKho = '*Đơn vị tính không được để trống'
-      errors.MaVach = '*Mã vạch không được để trống'
-      dataThongSo.SUDUNG_MAHANGHOATUDONG === false ? (errors.MaHang = '*Mã hàng không được để trống') : ''
-    }
-    if (Object.keys(errors).length > 0) {
-      setErrors(errors)
-      return
-    }
-    try {
-      const response = await categoryAPI.ThemHangHoa(
-        {
-          ...hangHoaForm,
-          MaVach: `${hangHoaForm.MaVach}${lastNumber13Main}`,
-        },
-        TokenAccess,
-      )
-      if (response.data.DataError === 0) {
-        console.log(hangHoaForm)
-        isSave ? '' : close()
-        toast.success('Thêm sản phẩm thành công')
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        handleCreate()
-      } else {
-        toast.error(response.data.DataErrorDescription)
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
   const handleUpdate = async (e) => {
+    // if (
+    //   !hangHoaForm?.Nhom?.trim() ||
+    //   !hangHoaForm?.TenHang?.trim() ||
+    //   !hangHoaForm?.DVTKho?.trim() ||
+    //   !hangHoaForm?.MaVach?.trim() ||
+    //   (dataThongSo.SUDUNG_MAHANGHOATUDONG ? null : !hangHoaForm?.MaHang?.trim())
+    // ) {
+    //   setErrors({
+    //     Nhom: hangHoaForm?.Nhom?.trim() ? '' : '*Nhóm không được để trống',
+    //     TenHang: hangHoaForm?.TenHang?.trim() ? '' : '*Tên hàng không được để trống',
+    //     DVTKho: hangHoaForm?.DVTKho?.trim() ? '' : '*Đơn vị tính không được để trống',
+    //     MaVach: hangHoaForm?.MaVach?.trim() ? '' : '*Mã vạch không được để trống',
+    //     MaHang: dataThongSo.SUDUNG_MAHANGHOATUDONG ? null : hangHoaForm?.MaHang?.trim() ? '' : '*Mã hàng không được để trống',
+    //   })
+    //   return
+    // }
     e.preventDefault()
     try {
+      console.log(hangHoaForm)
+
       const dataUpdate = await categoryAPI.SuaHangHoa(
         {
           Ma: hangHoaForm.MaHang,
@@ -358,13 +374,14 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
         TokenAccess,
       )
       if (dataUpdate.data.DataError == 0) {
-        toast.success('Sửa thành công')
+        toast.success('Sửa thành công', { autoClose: 1000 })
+        loadingData()
         close()
       } else if ((dataUpdate.data && dataUpdate.data.DataError === -107) || (dataUpdate.data && dataUpdate.data.DataError === -108)) {
         await RETOKEN()
         handleUpdate()
       } else {
-        toast.error(dataUpdate.data.DataErrorDescription)
+        toast.error(dataUpdate.data.DataErrorDescription, { autoClose: 1000 })
       }
     } catch (error) {
       console.log(error)
@@ -374,13 +391,15 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
     try {
       const dataDel = await categoryAPI.XoaHangHoa(getMaHang?.MaHang, TokenAccess)
       if (dataDel.data.DataError == 0) {
-        toast.success('Xóa sản phẩm thành công')
+        toast.success('Xóa sản phẩm thành công', { autoClose: 1000 })
+        setIsLoading(false)
+        loadingData()
         close()
       } else if ((dataDel.data && dataDel.data.DataError === -107) || (dataDel.data && dataDel.data.DataError === -108)) {
         await RETOKEN()
         handleDelete()
       } else {
-        toast.error(dataDel.data.DataErrorDescription)
+        toast.error(dataDel.data.DataErrorDescription, { autoClose: 1000 })
       }
     } catch (error) {
       console.log(error)
@@ -397,7 +416,8 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
         TokenAccess,
       )
       if (response.data.DataError === 0) {
-        toast.success(response.data.DataErrorDescription)
+        toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
+        loadingData()
         close()
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
@@ -418,7 +438,8 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
         TokenAccess,
       )
       if (response.data.DataError == 0) {
-        toast.success('Thay đổi nhóm thành công')
+        toast.success('Thay đổi nhóm thành công', { autoClose: 1000 })
+        loadingData()
         close()
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
@@ -463,7 +484,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
         await RETOKEN()
         handlePrintBar()
       } else {
-        toast.error(response.data.DataErrorDescription)
+        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
       }
     } catch (error) {
       console.log(error)
@@ -824,27 +845,38 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                       </Select>
                       {errors.DVTKho && <p className="text-red-500 text-[10px] font-normal absolute -bottom-[15px] left-[7.5rem] whitespace-nowrap">{errors.DVTKho}</p>}
                     </div>
-                    <div className="flex items-center gap-1">
+                    <div className="inputHH flex items-center gap-1  justify-center">
                       <label className="font-semibold">x</label>
-                      <input
-                        type="number"
-                        className="px-2 w-full resize-none rounded border outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis flex text-end"
-                        name="TyLeQuyDoi"
-                        disabled={(dataThongSo && dataThongSo.SUDUNG_QUYDOIDVT === false) || hangHoaForm.LapRap == true}
-                        // step="0.0000000001"
-                        min={1}
+                      <InputNumber
                         value={hangHoaForm?.TyLeQuyDoi || 1}
-                        onChange={(e) => {
-                          const tyLeQuyDoiValue = e.target.value
+                        min={1}
+                        max={999999999999}
+                        className=""
+                        size="small"
+                        style={{ width: '100%' }}
+                        disabled={(dataThongSo && dataThongSo.SUDUNG_QUYDOIDVT === false) || hangHoaForm.LapRap == true}
+                        formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                        parser={(value) => {
+                          const parsedValue = parseFloat(value.replace(/\$\s?|(,*)/g, ''))
+                          return isNaN(parsedValue) ? null : parsedValue.toFixed(dataThongSo.SOLETYLE)
+                        }}
+                        onChange={(value) => {
+                          const tyLeQuyDoiValue = value
                           if (!isNaN(tyLeQuyDoiValue)) {
                             setHangHoaForm({
                               ...hangHoaForm,
-                              [e.target.name]: tyLeQuyDoiValue,
+                              TyLeQuyDoi: tyLeQuyDoiValue,
                             })
                             if (tyLeQuyDoiValue == 1) {
                               setHangHoaForm((prev) => ({
                                 ...prev,
                                 DVTQuyDoi: prev.DVTKho,
+                              }))
+                            }
+                            if (tyLeQuyDoiValue !== 1) {
+                              setHangHoaForm((prev) => ({
+                                ...prev,
+                                DVTQuyDoi: !prev.DVTKho,
                               }))
                             }
                           }
@@ -864,12 +896,12 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                         style={{
                           width: '100%',
                         }}
-                        onChange={(value) =>
+                        onChange={(value) => {
                           setHangHoaForm({
                             ...hangHoaForm,
                             DVTQuyDoi: value,
                           })
-                        }
+                        }}
                       >
                         <Select.Option value="" disabled hidden></Select.Option>
                         {dVTKho?.map((item) => (
@@ -1017,7 +1049,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                 <div className="flex flex-col gap-2">
                   {hangHoaForm?.LapRap == true && (
                     <div className="border-[0.125rem] p-2 rounded  flex flex-col gap-2">
-                      <div className="w-full max-h-[500px] overflow-y-auto">
+                      <div className="w-full max-h-[475px] overflow-y-auto">
                         <table className="barcodeList">
                           <thead>
                             <tr>
@@ -1054,13 +1086,20 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                                   </div>
                                 </td>
                                 <td>{item.DVT_CTs}</td>
-                                <td>
-                                  <input
-                                    className="px-2 w-full resize-none rounded border outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis flex text-end"
-                                    type="number"
+                                <td className="inputHH">
+                                  <InputNumber
                                     value={item.SoLuong}
                                     min={1}
-                                    onChange={(e) => handleChangeHHCT(index, 'SoLuong', e.target.value)}
+                                    max={999999999999}
+                                    className=""
+                                    size="small"
+                                    style={{ width: '100%' }}
+                                    formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                    parser={(value) => {
+                                      const parsedValue = parseFloat(value.replace(/\$\s?|(,*)/g, ''))
+                                      return isNaN(parsedValue) ? null : parsedValue.toFixed(dataThongSo.SOLESOLUONG)
+                                    }}
+                                    onChange={(value) => handleChangeHHCT(index, 'SoLuong', value)}
                                   />
                                 </td>
                                 <td>
@@ -1108,6 +1147,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                     <div className="col-span-3 flex items-center gap-1">
                       <label className="required min-w-[110px] whitespace-nowrap flex justify-end">Mã hàng</label>
                       <input
+                        required
                         type="text"
                         className="px-2 w-full resize-none rounded border outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"
                         name="MaHang"
@@ -1120,6 +1160,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                           })
                         }
                       />
+                      {errors.MaHang && <p className="text-red-500 text-xs font-normal absolute -bottom-[15px] left-[7.5rem] whitespace-nowrap">{errors.MaHang}</p>}
                     </div>
                     <div>
                       <Checkbox
@@ -1173,6 +1214,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                   <div className="flex gap-1 items-center">
                     <label className="required min-w-[110px] whitespace-nowrap flex justify-end">Tên hàng</label>
                     <input
+                      required
                       type="text"
                       className="px-2 w-full resize-none rounded border outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"
                       name="TenHang"
@@ -1184,6 +1226,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                         })
                       }
                     />
+                    {errors.TenHang && <p className="text-red-500 text-xs font-normal absolute -bottom-[15px] left-[7.5rem] whitespace-nowrap">{errors.TenHang}</p>}
                   </div>
                   <div className="col-span-2 flex items-center gap-1">
                     <label className="required min-w-[110px] whitespace-nowrap flex justify-end">Nhóm hàng</label>
@@ -1210,6 +1253,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                         </Select.Option>
                       ))}
                     </Select>
+                    {errors.Nhom && <p className="text-red-500 text-xs font-normal absolute -bottom-[15px] left-[7.5rem] whitespace-nowrap">{errors.Nhom}</p>}
                   </div>
                   <div className="grid grid-cols-5 gap-2 items-center">
                     <div className="flex col-span-2 gap-1 items-center">
@@ -1241,28 +1285,40 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                           </Select.Option>
                         ))}
                       </Select>
+                      {errors.DVTKho && <p className="text-red-500 text-xs font-normal absolute -bottom-[15px] left-[7.5rem] whitespace-nowrap">{errors.DVTKho}</p>}
                     </div>
-                    <div className="flex items-center gap-1">
+                    <div className="inputHH flex items-center gap-1">
                       <label className="font-semibold">x</label>
-                      <input
-                        type="number"
-                        className="w-full resize-none border rounded outline-none text-[1rem] text-end"
+                      <InputNumber
                         name="TyLeQuyDoi"
                         value={hangHoaForm?.TyLeQuyDoi || ''}
                         min={1}
-                        step="0.1"
+                        max={999999999999}
+                        size="small"
+                        style={{ width: '100%' }}
                         disabled={(dataThongSo && dataThongSo.SUDUNG_QUYDOIDVT === false) || dataView.DangSuDung === true || hangHoaForm.LapRap == true}
-                        onChange={(e) => {
-                          const tyLeQuyDoiValue = e.target.value
+                        formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                        parser={(value) => {
+                          const parsedValue = parseFloat(value.replace(/\$\s?|(,*)/g, ''))
+                          return isNaN(parsedValue) ? null : parsedValue.toFixed(dataThongSo.SOLETYLE)
+                        }}
+                        onChange={(value) => {
+                          const tyLeQuyDoiValue = value
                           if (!isNaN(tyLeQuyDoiValue)) {
                             setHangHoaForm({
                               ...hangHoaForm,
-                              [e.target.name]: tyLeQuyDoiValue,
+                              TyLeQuyDoi: tyLeQuyDoiValue,
                             })
-                            if (tyLeQuyDoiValue < 10) {
+                            if (tyLeQuyDoiValue == 1) {
                               setHangHoaForm((prev) => ({
                                 ...prev,
                                 DVTQuyDoi: prev.DVTKho,
+                              }))
+                            }
+                            if (tyLeQuyDoiValue !== 1) {
+                              setHangHoaForm((prev) => ({
+                                ...prev,
+                                DVTQuyDoi: !prev.DVTKho,
                               }))
                             }
                           }
@@ -1279,12 +1335,12 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                         style={{
                           width: '100%',
                         }}
-                        onChange={(value) =>
+                        onChange={(value) => {
                           setHangHoaForm({
                             ...hangHoaForm,
                             DVTQuyDoi: value,
                           })
-                        }
+                        }}
                       >
                         <option value="" disabled hidden></option>
                         {dVTKho?.map((item) => (
@@ -1300,6 +1356,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                       <label className="required min-w-[110px] whitespace-nowrap flex justify-end">Mã vạch</label>
                       <input
                         type="text"
+                        required
                         className="px-2 w-full resize-none rounded border outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"
                         name="MaVach"
                         value={hangHoaForm?.MaVach ? `${hangHoaForm?.MaVach}${lastNumber13Main}` : ''}
@@ -1324,6 +1381,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                           setErrors({ ...errors, MaVach: '' })
                         }}
                       />
+                      {errors.MaVach && <p className="text-red-500 text-xs font-normal absolute -bottom-[15px] left-[7.5rem] whitespace-nowrap">{errors.MaVach}</p>}
                     </div>
                   </div>
                   <div className="border-[0.125rem] p-2 rounded flex gap-2 ml-[113px] items-center">
@@ -1481,13 +1539,20 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa }) => {
                                   </div>
                                 </td>
                                 <td>{item.DVTChiTiet}</td>
-                                <td>
-                                  <input
-                                    className="  w-full resize-none  border-[0.125rem] text-end outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis  "
-                                    type="number"
+                                <td className="inputHH">
+                                  <InputNumber
                                     value={item.SoLuong}
                                     min={1}
-                                    onChange={(e) => handleChangeHHCT(index, 'SoLuong', e.target.value)}
+                                    max={999999999999}
+                                    className=""
+                                    size="small"
+                                    style={{ width: '100%' }}
+                                    formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                    parser={(value) => {
+                                      const parsedValue = parseFloat(value.replace(/\$\s?|(,*)/g, ''))
+                                      return isNaN(parsedValue) ? null : parsedValue.toFixed(dataThongSo.SOLESOLUONG)
+                                    }}
+                                    onChange={(value) => handleChangeHHCT(index, 'SoLuong', value)}
                                   />
                                 </td>
                                 <td>
