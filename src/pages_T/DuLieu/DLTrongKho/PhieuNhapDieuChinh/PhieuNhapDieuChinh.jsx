@@ -48,6 +48,19 @@ const PhieuNhapDieuChinh = () => {
   const formatSLSL = (number) => {
     return number.toFixed(Math.max(1, dataThongSo.SOLESOLUONG)).replace(/,/g, '.')
   }
+  const formatCurrency = (value) => {
+    return Number(value).toLocaleString('vi-VN')
+  }
+  const formatThapPhan = (number, decimalPlaces) => {
+    if (typeof number === 'number' && !isNaN(number)) {
+      const formatter = new Intl.NumberFormat('vi-VN', {
+        minimumFractionDigits: decimalPlaces,
+        maximumFractionDigits: decimalPlaces,
+      })
+      return formatter.format(number)
+    }
+    return ''
+  }
   const getDataNDCFirst = async () => {
     try {
       if (isLoading == true) {
@@ -126,9 +139,6 @@ const PhieuNhapDieuChinh = () => {
   }
   const handleSearch = (event) => {
     setSearchHangHoa(event.target.value)
-  }
-  const formatCurrency = (value) => {
-    return Number(value).toLocaleString('vi-VN')
   }
   const handleCreate = () => {
     setIsShowModal(true)
@@ -224,7 +234,7 @@ const PhieuNhapDieuChinh = () => {
       align: 'center',
       width: 120,
       sorter: (a, b) => a.TongSoLuong - b.TongSoLuong,
-      render: (text) => <span className="flex justify-end">{formatSLSL(text)}</span>,
+      render: (text) => <span className="flex justify-end">{formatThapPhan(text, dataThongSo.SOLESOLUONG)}</span>,
     },
     {
       title: 'Ghi chú',
