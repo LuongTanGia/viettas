@@ -269,7 +269,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
     if (item === 'TenHang') {
       return {
         title: columName[item] || item,
-        width: 300,
+        width: 250,
         dataIndex: item,
         editable: true,
         key: item,
@@ -461,7 +461,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
   return (
     <div>
       <Table
-        className={'h250'}
+        className={'h310'}
         components={components}
         rowClassName={() => 'editable-row'}
         bordered

@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-no-undef */
 /* eslint-disable react/prop-types */
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import icons from '../untils/icons'
 import * as apis from '../apis'
 import { Table } from 'antd'
@@ -24,7 +24,7 @@ const { Option } = Select
 
 const { TiPrinter, MdFilterAlt } = icons
 
-const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, dataRecord, dataPMH, controlDate, isLoadingModel, dataThongSo }) => {
+const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, dataRecord, dataPMH, controlDate, isLoadingModel, dataThongSo, loading }) => {
   const [isShowModalHH, setIsShowModalHH] = useState(false)
   const [isShowModalOnlyPrint, setIsShowModalOnlyPrint] = useState(false)
   const [isShowModalOnlyPrintWareHouse, setIsShowModalOnlyPrintWareHouse] = useState(false)
@@ -43,7 +43,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   //   },
   //   [selectedRowData],
   // )
-
+  console.log(loading)
   const isAdd = useMemo(() => selectedRowData.map((item) => item.MaHang).includes('Chọn mã hàng'), [selectedRowData])
 
   const startDate = dayjs(controlDate.NgayBatDau).format('YYYY-MM-DDTHH:mm:ss')
@@ -332,6 +332,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       DVT: '',
       SoLuong: 1,
       DonGia: 0,
+      TienHang: 0,
       TyLeThue: 0,
       TienThue: 0,
       ThanhTien: 0,
@@ -391,7 +392,8 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       // Kiểm tra call api thành công
       if (response.data && response.data.DataError === 0) {
         toast.success(response.data.DataErrorDescription)
-        window.location.reload()
+        loading()
+        close()
       } else if (response.data && response.data.DataError === -103) {
         toast.error(response.data.DataErrorDescription)
       } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
@@ -415,6 +417,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       // Kiểm tra call api thành công
       if (response.data && response.data.DataError === 0) {
         toast.success(response.data.DataErrorDescription)
+        loading()
       } else if (response.data && response.data.DataError === -103) {
         toast.error(response.data.DataErrorDescription)
       } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
@@ -439,7 +442,8 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       // Kiểm tra call api thành công
       if (response.data && response.data.DataError === 0) {
         toast.success(response.data.DataErrorDescription)
-        window.location.reload()
+        loading()
+        close()
       } else if (response.data && response.data.DataError === -103) {
         toast.error(response.data.DataErrorDescription)
       } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
@@ -466,7 +470,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       // Kiểm tra call api thành công
       if (response.data && response.data.DataError === 0) {
         toast.success(response.data.DataErrorDescription)
-        window.location.reload()
+        loading()
       } else if (response.data && response.data.DataError === -104) {
         toast.error(response.data.DataErrorDescription)
       } else if (response.data && response.data.DataError === -103) {
@@ -550,7 +554,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       // Kiểm tra call api thành công
       if (response.data && response.data.DataError === 0) {
         toast.success(response.data.DataErrorDescription)
-        window.location.reload()
+        loading()
       } else if (response.data && response.data.DataError === -104) {
         toast.error(response.data.DataErrorDescription)
       } else if (response.data && response.data.DataError === -103) {
@@ -879,7 +883,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                     </div>
                     <div className="flex gap-x-2 items-center">
                       <label className="pr-3">Đáo Hạn</label>
-                      <DatePicker className="DatePicker_PMH" format="DD/MM/YYYY" value={dayjs(dataThongTin?.DaoHan)} />
+                      <DatePicker disabled className="DatePicker_PMH" format="DD/MM/YYYY" value={dayjs(dataThongTin?.DaoHan)} />
                     </div>
                   </div>
                   <div className="p-1 flex justify-between items-center">
@@ -1073,6 +1077,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                     <div className="flex gap-x-2 items-center">
                       <label className="pr-3">Đáo Hạn</label>
                       <DatePicker
+                        disabled
                         className="DatePicker_PMH"
                         format="DD/MM/YYYY"
                         defaultValue={dayjs()}
@@ -1347,9 +1352,10 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                     <div className="flex gap-x-2 items-center">
                       <label className="pr-3">Đáo Hạn</label>
                       <DatePicker
+                        disabled
                         className="DatePicker_PMH"
                         format="DD/MM/YYYY"
-                        defaultValue={dayjs(dataThongTin.DaoHan)}
+                        defaultValue={dayjs(formPMHEdit.DaoHan)}
                         onChange={(newDate) => {
                           setFormPMHEdit({
                             ...formPMHEdit,
@@ -1602,10 +1608,8 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
         )}
       </div>
 
-      {isShowModalHH && <ModalHH close={() => setIsShowModalHH(false)} data={dataHangHoa} onRowCreate={handleAddRow} />}
-
+      {isShowModalHH && <ModalHH close={() => setIsShowModalHH(false)} data={dataHangHoa} onRowCreate={handleAddRow} dataThongSo={dataThongSo} />}
       {isShowModalOnlyPrint && <ModalOnlyPrint close={() => setIsShowModalOnlyPrint(false)} dataThongTin={dataThongTin} dataPMH={dataPMH} />}
-
       {isShowModalOnlyPrintWareHouse && <ModalOnlyPrintWareHouse close={() => setIsShowModalOnlyPrintWareHouse(false)} dataThongTin={dataThongTin} dataPMH={dataPMH} />}
     </div>
   )

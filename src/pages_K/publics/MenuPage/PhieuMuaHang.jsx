@@ -18,7 +18,9 @@ const { IoAddCircleOutline, TiPrinter, MdDelete, GiPayMoney, BsSearch, TfiMoreAl
 const PhieuMuaHang = () => {
   const optionContainerRef = useRef(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [isLoadingPopup, setIsLoadingPopup] = useState(false)
+  const [isLoadingModal, setIsLoadingModal] = useState(false)
+
+  const [tableLoad, setTableLoad] = useState(false)
   const [isShowModal, setIsShowModal] = useState(false)
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [isShowOption, setIsShowOption] = useState(false)
@@ -27,7 +29,6 @@ const PhieuMuaHang = () => {
   const [dataRecord, setDataRecord] = useState(null)
   const [dataKhoHang, setDataKhoHang] = useState(null)
   const [dataDoiTuong, setDataDoiTuong] = useState(null)
-  const [tableLoad, setTableLoad] = useState(false)
   const [actionType, setActionType] = useState('')
   const [formKhoanNgay, setFormKhoanNgay] = useState([])
   const [dataThongSo, setDataThongSo] = useState()
@@ -38,7 +39,6 @@ const PhieuMuaHang = () => {
       if (optionContainerRef.current && !optionContainerRef.current.contains(event.target)) {
         // Click ngoài phần tử chứa isShowOption, ẩn isShowOption
         setIsShowOption(false)
-        console.log('aaaaaaaaaaa')
       }
     }
 
@@ -67,9 +67,9 @@ const PhieuMuaHang = () => {
           if (responseTT.data && responseTT.data.DataError === 0) {
             setDataThongTin(responseTT.data.DataResult)
 
-            setIsLoadingPopup(true)
+            setIsLoadingModal(true)
           } else {
-            setIsLoadingPopup(true)
+            setIsLoadingModal(false)
           }
         }
       } catch (error) {
@@ -87,7 +87,7 @@ const PhieuMuaHang = () => {
     getKhoanNgay()
     getThongSo()
     getDSPMH()
-  }, [])
+  }, [tableLoad])
 
   const getKhoanNgay = async () => {
     try {
@@ -143,10 +143,10 @@ const PhieuMuaHang = () => {
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         getDSPMH()
+        setTableLoad(true)
       }
     } catch (error) {
       console.error('Kiểm tra token thất bại', error)
-      setTableLoad(true)
     }
   }
 
@@ -157,7 +157,7 @@ const PhieuMuaHang = () => {
       key: 'STT',
       width: 60,
       hight: 10,
-      // fixed: 'left',
+      fixed: 'left',
       align: 'center',
       render: (text, record, index) => <div style={{ textAlign: 'center' }}>{index + 1}</div>,
     },
@@ -166,7 +166,7 @@ const PhieuMuaHang = () => {
       dataIndex: 'SoChungTu',
       key: 'SoChungTu',
       width: 150,
-      // fixed: 'left',
+      fixed: 'left',
       sorter: (a, b) => a.SoChungTu.localeCompare(b.SoChungTu),
       showSorterTooltip: false,
       align: 'center',
@@ -186,6 +186,7 @@ const PhieuMuaHang = () => {
       },
       showSorterTooltip: false,
     },
+
     {
       title: 'Mã Đối Tượng',
       dataIndex: 'MaDoiTuong',
@@ -207,11 +208,12 @@ const PhieuMuaHang = () => {
       render: (text) => <div style={{ textAlign: 'start' }}>{text}</div>,
     },
     {
-      title: 'Địa chỉ',
+      title: 'Địa chỉ ',
       dataIndex: 'DiaChi',
       key: 'DiaChi',
       width: 300,
-      // sorter: (a, b) => a.DiaChi.localeCompare(b.DiaChi),
+      ellipsis: true,
+
       sorter: (a, b) => {
         const diaChiA = a.DiaChi || ''
         const diaChiB = b.DiaChi || ''
@@ -253,10 +255,11 @@ const PhieuMuaHang = () => {
       render: (text) => <div style={{ textAlign: 'start' }}>{text}</div>,
     },
     {
-      title: 'Ghi chú',
+      title: 'Ghi chú ',
       dataIndex: 'GhiChu',
       key: 'GhiChu',
       width: 150,
+      ellipsis: true,
       sorter: (a, b) => {
         const GhiChuA = a.GhiChu || ''
         const GhiChuB = b.GhiChu || ''
@@ -407,9 +410,10 @@ const PhieuMuaHang = () => {
       title: 'Tiền mặt',
       key: 'TTTienMat',
       dataIndex: 'TTTienMat',
-      // fixed: 'right',
+      fixed: 'right',
       width: 100,
       align: 'center',
+
       render: (text) => <Checkbox value={text} disabled={!text} checked={text} />,
       sorter: (a, b) => {
         const valueA = a.TTTienMat ? 1 : 0
@@ -427,7 +431,7 @@ const PhieuMuaHang = () => {
       render: (record) => {
         return (
           <>
-            <div className=" flex gap-1 items-center justify-center bg-[#f1f1f1] ">
+            <div className=" flex gap-1 items-center justify-center  ">
               <div
                 disabled="true"
                 onClick={() => handlePay(record)}
@@ -579,7 +583,7 @@ const PhieuMuaHang = () => {
             <DatePicker
               className="DatePicker_PMH"
               format="DD/MM/YYYY"
-              defaultValue={dayjs(formKhoanNgay.NgayBatDau, 'YYYY-MM-DD')}
+              defaultValue={dayjs(formKhoanNgay.NgayBatDau)}
               onChange={(newDate) => {
                 setFormKhoanNgay({
                   ...formKhoanNgay,
@@ -593,7 +597,7 @@ const PhieuMuaHang = () => {
             <DatePicker
               className="DatePicker_PMH"
               format="DD/MM/YYYY"
-              defaultValue={dayjs(formKhoanNgay.NgayKetThuc, 'YYYY-MM-DD')}
+              defaultValue={dayjs(formKhoanNgay.NgayKetThuc)}
               onChange={(newDate) => {
                 setFormKhoanNgay({
                   ...formKhoanNgay,
@@ -639,7 +643,7 @@ const PhieuMuaHang = () => {
               y: 410,
             }}
             bordered
-            // pagination={false}
+            pagination={{ defaultPageSize: 50, showSizeChanger: true, pageSizeOptions: ['50', '100', '1000'] }}
             rowKey={(record) => record.SoChungTu}
             onRow={(record) => ({
               // onClick: () => {
@@ -673,12 +677,10 @@ const PhieuMuaHang = () => {
                 totalTongMatHang += TongMatHang
               })
               return (
-                <Table.Summary fixed="bottom" className="text-end font-bold  bg-[#f1f1f1]">
-                  <Table.Summary.Row className="text-end font-bold  bg-[#f1f1f1]">
-                    <Table.Summary.Cell index={0} className="text-center bg-[#f1f1f1]">
-                      {pageData.length}
-                    </Table.Summary.Cell>
-                    <Table.Summary.Cell index={1}></Table.Summary.Cell>
+                <Table.Summary fixed="bottom">
+                  <Table.Summary.Row className=" text-end font-bold bg-[#f1f1f1]">
+                    <Table.Summary.Cell className="text-center">{pageData.length}</Table.Summary.Cell>
+                    <Table.Summary.Cell></Table.Summary.Cell>
                     <Table.Summary.Cell index={2}></Table.Summary.Cell>
                     <Table.Summary.Cell index={3}></Table.Summary.Cell>
                     <Table.Summary.Cell index={4}></Table.Summary.Cell>
@@ -697,9 +699,8 @@ const PhieuMuaHang = () => {
                     <Table.Summary.Cell index={17}></Table.Summary.Cell>
                     <Table.Summary.Cell index={18}></Table.Summary.Cell>
                     <Table.Summary.Cell index={19}></Table.Summary.Cell>
-                    <Table.Summary.Cell index={20} className="text-center bg-[#f1f1f1] ">
-                      {pageData.reduce((count, item) => count + (item.TTTienMat ? 1 : 0), 0)}
-                    </Table.Summary.Cell>
+                    <Table.Summary.Cell className="text-center">{pageData.reduce((count, item) => count + (item.TTTienMat ? 1 : 0), 0)}</Table.Summary.Cell>
+                    <Table.Summary.Cell></Table.Summary.Cell>
                   </Table.Summary.Row>
                 </Table.Summary>
               )
@@ -713,7 +714,7 @@ const PhieuMuaHang = () => {
       {isShowModal && (
         <Modals
           close={() => {
-            setIsShowModal(false), setIsLoadingPopup(!isLoadingPopup)
+            setIsShowModal(false), setIsLoadingModal(!isLoadingModal)
           }}
           actionType={actionType}
           dataRecord={dataRecord}
@@ -722,8 +723,9 @@ const PhieuMuaHang = () => {
           dataDoiTuong={dataDoiTuong}
           dataPMH={data}
           controlDate={formKhoanNgay}
-          isLoadingModel={isLoadingPopup}
+          isLoadingModel={isLoadingModal}
           dataThongSo={dataThongSo}
+          loading={() => setTableLoad(false)}
         />
       )}
     </div>
