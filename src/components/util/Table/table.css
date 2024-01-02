@@ -3,6 +3,11 @@
     max-height: 400px;
     min-height: 400px;
   }
+  .h310 .ant-table-container .ant-table-body {
+    max-height: 310px;
+    min-height: 310px;
+  }
+
   .h300 .ant-table-container .ant-table-body {
     max-height: 300px;
     min-height: 300px;

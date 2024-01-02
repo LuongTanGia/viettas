@@ -217,6 +217,11 @@ input[type='radio'] {
   max-height: 276px;
 }
 
+.table_HH .ant-table-body {
+  min-height: 450px;
+  max-height: 450px;
+}
+
 .ant-table-title:hover {
   display: none;
 }
@@ -225,6 +230,14 @@ input[type='radio'] {
 .ant-input-number .ant-input-number-input {
   color: black;
   text-align: center;
+}
+
+/* .ant-table-cell-fix-left-last {
+  background-color: #f1f1f1;
+} */
+
+.ant-table-fixed-right {
+  background-color: #f1f1f1;
 }
 
 /* custom DatePicker MUI*/
