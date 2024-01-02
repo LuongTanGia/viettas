@@ -78,12 +78,12 @@ const EditableCell = ({ editing, dataIndex, title, inputType, record, index, chi
   )
 }
 
-function Tables({ param, columName, height, handleView, handleEdit, typeTable, handleAddData, handleDelete, handleChangePhieuThu }) {
+function Tables({ loadingSearch, param, columName, height, handleView, handleEdit, typeTable, handleAddData, handleDelete, handleChangePhieuThu, selectMH }) {
   const [pageSize, setPageSize] = useState('20')
   const [page, setPage] = useState('1')
   const [hiden, setHiden] = useState([])
   const DataColumns = param ? param[0] : []
-
+  console.log(selectMH, 'selectMH')
   const keysOnly = Object.keys(DataColumns || []).filter((key) => key !== 'MaSoThue')
 
   const ThongSo = JSON.parse(localStorage.getItem('ThongSo'))
@@ -267,7 +267,7 @@ function Tables({ param, columName, height, handleView, handleEdit, typeTable, h
         // Determine the input type based on the data type
         if (typeof cellValue === 'number') {
           inputType = 'number'
-        } else if (typeof cellValue === 'boolean') {
+        } else if (typeof cellValue === 'boolean' && param !== null) {
           inputType = 'checkbox'
         } else if (col.dataIndex === 'MaHang' || col.dataIndex === 'DVT') {
           inputType = 'select'
@@ -294,9 +294,18 @@ function Tables({ param, columName, height, handleView, handleEdit, typeTable, h
   }))
   const [form] = Form.useForm()
   const [data, setData] = useState(originData)
+  const initialSelectedRowKeys = [selectMH]
+  const initialSelectedMaHangs = [selectMH]
+
+  const [selectedRowKeys, setSelectedRowKeys] = useState(initialSelectedRowKeys)
+  const [selectedMaHangs, setSelectedMaHangs] = useState(initialSelectedMaHangs)
+
   useEffect(() => {
     setData(originData)
-  }, [param])
+    const setKey = originData.filter((item) => initialSelectedRowKeys.includes(item.SoChungTu))
+    console.log(setKey)
+    setSelectedRowKeys(setKey.map((item) => item.key))
+  }, [param, selectMH])
   const [editingKey, setEditingKey] = useState('')
   const isEditing = (record) => record.index === editingKey
   const edit = (record) => {
@@ -336,15 +345,32 @@ function Tables({ param, columName, height, handleView, handleEdit, typeTable, h
   }
 
   // select checkbox
-  const [selectedRowKeys, setSelectedRowKeys] = useState([])
-  const [selectedMaHangs, setSelectedMaHangs] = useState([])
+  // const [selectedRowKeys, setSelectedRowKeys] = useState([])
+  // const [selectedMaHangs, setSelectedMaHangs] = useState(['PBS.240102005'])
+
+  // const onSelectChange = (newSelectedRowKeys, selectedRows) => {
+  //   setSelectedMaHangs(newSelectedRowKeys)
+  //   const maHangs = selectedRows.map((record) => record.SoChungTu)
+  //   const filteredMaHangs = maHangs.filter((maHang) => maHang !== null && maHang !== undefined)
+  //   setSelectedMaHangs(filteredMaHangs)
+  // }
+  // console.log(selectedMaHangs)
+  // const rowSelection = {
+  //   selectedRowKeys,
+  //   onChange: onSelectChange,
+  //
+
+  // Rest of your component...
 
   const onSelectChange = (newSelectedRowKeys, selectedRows) => {
-    setSelectedRowKeys(newSelectedRowKeys)
+    console.log(selectedRows)
     const maHangs = selectedRows.map((record) => record.SoChungTu)
     const filteredMaHangs = maHangs.filter((maHang) => maHang !== null && maHang !== undefined)
     setSelectedMaHangs(filteredMaHangs)
+    setSelectedRowKeys(newSelectedRowKeys)
   }
+
+  console.log(selectedRowKeys)
 
   const rowSelection = {
     selectedRowKeys,
@@ -370,32 +396,34 @@ function Tables({ param, columName, height, handleView, handleEdit, typeTable, h
 
       <Form form={form} component={false}>
         <Table
+          loading={loadingSearch}
           rowSelection={rowSelection}
           components={{
             body: {
               cell: EditableCell,
             },
           }}
-          className={height}
+          className="setHeight"
           columns={mergedColumns}
           dataSource={data}
           rowClassName="editable-row"
-          pagination={{
-            position: 'bottom',
-            current: page,
-            pageSize: pageSize,
-            onChange: (page, pageSize) => {
-              setPage(page)
-              setPageSize(pageSize)
-            },
-          }}
+          // pagination={{
+          //   position: 'bottom',
+          //   current: page,
+          //   pageSize: pageSize,
+          //   onChange: (page, pageSize) => {
+          //     setPage(page)
+          //     setPageSize(pageSize)
+          //   },
+          // }}
+          pagination={false}
           bordered
           onRow={(record) => ({
             ...onRowClick(record),
           })}
           scroll={{
-            y: 240,
-            // x: true,
+            y: 300,
+            x: 200,
           }}
           scrollToFirstRowOnChange
           size="small"
@@ -413,9 +441,10 @@ function Tables({ param, columName, height, handleView, handleEdit, typeTable, h
                         <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
                           {isNumericColumn ? (
                             <Text strong>
-                              {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(
-                                pageData.reduce((total, item) => total + (item[column.dataIndex] || 0), 0),
-                              )}
+                              {Number(pageData.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                minimumFractionDigits: ThongSo.SOLESOTIEN,
+                                maximumFractionDigits: ThongSo.SOLESOTIEN,
+                              })}
                             </Text>
                           ) : null}
                         </Table.Summary.Cell>

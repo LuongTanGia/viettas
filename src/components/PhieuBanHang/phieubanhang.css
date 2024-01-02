@@ -22,18 +22,18 @@
   padding: 5px;
   background-color: #fff;
 }
-.box_thongtin *,
-.box_thongtin select,
-.box_thongtin input {
-  background-color: #fff;
-  font-weight: 500;
-  /* outline: none; */
+.box_thongtin .DatePicker_PMH input {
+  border: unset;
+}
+.box_thongtin .DatePicker_PMH input:hover {
+  border: unset;
 }
 .box_thongtin.create *,
 .box_thongtin.create select,
 .box_thongtin.create input {
-  background-color: white;
+  /* background-color: white; */
   font-weight: 500;
+
   /* outline: none; */
 }
 
@@ -70,10 +70,28 @@
   background-color: white;
 }
 .box_thongtin input {
-  padding: 0 11px;
-  height: 30px;
-  /* border: 1px solid #ccc; */
+  /* padding: 0 11px; */
+  height: 25px;
+  border: 1px solid #ccc;
   border-radius: 6px;
+}
+.box_thongtin .ant-select {
+  height: 25px;
+}
+
+.box_thongtin .ant-select-selector {
+  overflow: hidden;
+}
+.box_thongtin .ant-select-arrow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.box_thongtin .ant-select-selection-item {
+  height: 25px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
 }
 .box_thongtin input:hover {
   border: 1px solid #4897e6;

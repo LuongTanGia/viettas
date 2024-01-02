@@ -26,8 +26,6 @@ export const CallBackAPI = async (API, token, data) => {
         }
       }
 
-      toast.success(response.data.DataErrorDescription)
-
       return response.data.DataResult
     }
 
@@ -36,17 +34,14 @@ export const CallBackAPI = async (API, token, data) => {
     handleError(error)
   }
 }
-
 const handleTokenRefreshError = () => {
   toast.error('Failed to refresh token!')
   window.localStorage.clear()
   window.location.href = '/login'
 }
-
 const handleResponseError = () => {
   toast.error('DataResults is undefined or null.')
 }
-
 const handleError = (error) => {
   toast.error(error)
 }
@@ -61,7 +56,7 @@ export const RETOKEN = async () => {
     })
     if (response.data.DataError === 0) {
       window.localStorage.setItem('TKN', response.data.TKN)
-      toast.error(response.data.DataErrorDescription)
+
       return response.data.TKN
     } else if (response.data.DataError === -107 || response.data.DataError === -111) {
       window.location.href = '/login'
@@ -77,8 +72,6 @@ export const DANHSACHDULIEU = async (API, data) => {
     const response = await axios.post(API, data)
     window.localStorage.setItem('tokenDuLieu', response.data.TKN)
     if (response.data.DataError === 0) {
-      toast.success(response.data.DataErrorDescription)
-
       return response.data
     } else {
       toast.error(response.data.DataErrorDescription)
@@ -250,18 +243,14 @@ export const THAYDOIRMATKHAU = async (API, data, token) => {
   }
 }
 ////Phiếu mua hàng
-export const DANHSACHPHIEUBANHANG = async (API, token, dispatch) => {
+export const DANHSACHPHIEUBANHANG = async (API, token, data, dispatch) => {
   try {
-    const response = await axios.post(
-      API,
-      {},
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
+    const response = await axios.post(API, data, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
-    )
+    })
     if (response.data.DataError === -107 || response.data.DataError === -108) {
       // toast.error(response.data.DataErrorDescription);
       const newToken = await RETOKEN()
@@ -273,8 +262,11 @@ export const DANHSACHPHIEUBANHANG = async (API, token, dispatch) => {
         window.location.href = '/login'
       }
     }
-
-    return response.data
+    if (response.data.DataError === -104) {
+      toast.error(response.data.DataErrorDescription)
+      return -1
+    }
+    return response.data.DataResults
   } catch (error) {
     console.error('Error adding user:', error)
   }
@@ -427,6 +419,7 @@ export const THEMPHIEUBANHANG = async (API, token, data) => {
     } else {
       toast.error('Response or response.data is undefined or null.')
     }
+    return response.data.DataResults
   } catch (error) {
     toast.error('Error adding user:', error)
   }
@@ -497,6 +490,7 @@ export const SUAPHIEUBANHANG = async (API, token, data) => {
     } else {
       toast.error('Response or response.data is undefined or null.')
     }
+    return response.data
   } catch (error) {
     toast.error('Error adding user:', error)
   }
@@ -607,6 +601,7 @@ export const INPHIEUPBS = async (API, token, data) => {
     toast.error('Error adding user:', error)
   }
 }
+
 // function Normal
 export const base64ToPDF = (Base64PMH) => {
   // Decode base64 string
