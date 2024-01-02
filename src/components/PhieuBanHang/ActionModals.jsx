@@ -8,7 +8,7 @@ import './phieubanhang.css'
 import dayjs from 'dayjs'
 import { useSelector } from 'react-redux'
 import TableEdit from '../util/Table/EditTable'
-import { DatePicker, Space } from 'antd'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { DANHSACHDOITUONG, DANHSACHKHOHANG, THEMPHIEUBANHANG, SUAPHIEUBANHANG } from '../../action/Actions'
 import API from '../../API/API'
 import ListHelper_HangHoa from './ListHelper_HangHoa'
@@ -18,8 +18,6 @@ import ActionButton from '../util/Button/ActionButton'
 import { nameColumsPhieuBanHangChiTiet } from '../util/Table/ColumnName'
 
 const { Option } = Select
-
-const { RangePicker } = DatePicker
 
 const initState = {
   NgayCTu: '',
@@ -36,7 +34,7 @@ const initState = {
 }
 
 // eslint-disable-next-line react/prop-types
-function ActionModals({ isShow, handleClose, dataRecord, typeAction }) {
+function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }) {
   // yourMaHangOptions, yourTenHangOptions
   const [yourMaHangOptions, setYourMaHangOptions] = useState([])
   const [yourTenHangOptions, setYourTenHangOptions] = useState([])
@@ -98,9 +96,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction }) {
   const handleChangeInput_kho = (value) => {
     setForm({ ...form, MaKho: value })
   }
-  const onChange = (time, timeString) => {
-    setDates({ ...Dates, NgayCTu: timeString[0], DaoHan: timeString[1] })
-  }
+
   const handleAddData = (record) => {
     const isMaHangExists = dataChitiet.some((item) => item.MaHang === record.MaHang)
 
@@ -117,12 +113,20 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction }) {
   const handleSubmit = async () => {
     if (typeAction === 'create') {
       const data = { ...form, ...Dates, DataDetails: dataChitiet }
-      await THEMPHIEUBANHANG(API.THEMPHIEUBANHANG, token, data)
-      console.log(data)
+      const res = await THEMPHIEUBANHANG(API.THEMPHIEUBANHANG, token, data)
+      console.log(res)
+      setMaHang(res[0]?.SoChungTu)
+      if (res[0]?.SoChungTu) {
+        handleClose()
+      }
     } else if (typeAction === 'edit') {
       const data = { ...form, DataDetails: dataChitiet }
-      await SUAPHIEUBANHANG(API.SUAPHIEUBANHANG, token, { SoChungTu: data.SoChungTu, Data: data })
-      console.log(data)
+      const res = await SUAPHIEUBANHANG(API.SUAPHIEUBANHANG, token, { SoChungTu: data.SoChungTu, Data: data })
+
+      setMaHang(data.SoChungTu)
+      if (res.DataError === 0) {
+        handleClose()
+      }
     }
   }
 
@@ -146,23 +150,40 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction }) {
                           <label className="w-[86px]">Số chứng từ</label>
                           <input type="text" className=" outline-none px-2 sochungtu" value={form?.SoChungTu} readOnly />
                         </div>
-                        <Space direction="vertical" size={12}>
-                          <RangePicker
-                            className={typeAction === 'edit' ? 'date_edit' : ''}
-                            style={
-                              typeAction === 'edit'
-                                ? {
-                                    background: 'white',
-                                  }
-                                : {}
-                            }
-                            disabled={typeAction === 'view' ? true : false}
-                            size="large"
-                            format="YYYY-MM-DDTHH:mm:ss.SSS[Z]"
-                            defaultValue={data_chitiet ? [dayjs(form?.NgayCTu), dayjs(form?.DaoHan)] : []}
-                            onChange={onChange}
-                          />
-                        </Space>
+                        <div className="flex gap-2 max-h-[100px]">
+                          <div className="flex items-center max-h-[100px]">
+                            <label htmlFor="" className="w-[86px]">
+                              Ngày C.Từ
+                            </label>
+                            <DatePicker
+                              className="DatePicker_PMH max-h-[100px]"
+                              format="DD/MM/YYYY"
+                              defaultValue={Dates.NgayCTu}
+                              onChange={(newDate) => {
+                                setDates({
+                                  ...Dates,
+                                  NgayCTu: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                                })
+                              }}
+                            />
+                          </div>
+                          <div className="flex gap-x-2 items-center max-h-[100px]">
+                            <label htmlFor="" className="w-[86px]">
+                              Ngày Đ.Hạn
+                            </label>
+                            <DatePicker
+                              className="DatePicker_PMH max-h-[100px]"
+                              format="DD/MM/YYYY"
+                              defaultValue={Dates.DaoHan}
+                              onChange={(newDate) => {
+                                setDates({
+                                  ...Dates,
+                                  DaoHan: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                                })
+                              }}
+                            />
+                          </div>
+                        </div>
                       </div>
                       <div className="p-1 flex jjustify-start items-center">
                         <label form="doituong" className="w-[86px]">
@@ -215,19 +236,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction }) {
                           <label form="khohang" className="w-[86px]">
                             Kho hàng
                           </label>
-                          {/* <select
-                            className={`w-[70%] hover:-gray-500  ${typeAction === 'edit' ? 'bg-white' : ''}`}
-                            readOnly={typeAction === 'view' ? true : false}
-                            onChange={handleChangeInput_kho}
-                            value={form?.MaKho}
-                            name="MaKho"
-                          >
-                            {listKhoHang.map((item, index) => (
-                              <option value={item.MaKho} key={index}>
-                                {item?.MaKho} {item?.TenKho}
-                              </option>
-                            ))}
-                          </select> */}
+
                           <Select
                             className={`w-[70%] hover:-gray-500  ${typeAction === 'edit' ? 'bg-white' : ''} bg-white`}
                             style={{ borderRadius: 6 }}

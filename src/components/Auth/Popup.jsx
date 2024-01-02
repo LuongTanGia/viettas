@@ -55,17 +55,17 @@ const CollectionCreateForm = ({ isShow, close, data, dataUser }) => {
               ))}
             </div>
             <div className="flex justify-end">
-              <button onClick={() => close()} className="active:scale-[.98] active:duration-75 text-white text-lg font-bold bg-rose-500 rounded-md px-2 py-1 w-[100px]">
-                Đóng
-              </button>
               <button
                 onClick={handleLogin}
                 disabled={!isRemoteChanged}
-                className={`active:scale-[.98] active:duration-75 text-white text-lg font-bold bg-blue-500 rounded-md px-2 py-1 w-[100px] ml-4 ${
+                className={`active:scale-[.98] active:duration-75 text-white text-lg font-bold bg-blue-500 rounded-md px-2 py-1 w-[100px] mr-4 ${
                   !isRemoteChanged ? 'cursor-not-allowed bg-gray-500' : ''
                 }`}
               >
                 Xác nhận
+              </button>
+              <button onClick={() => close()} className="active:scale-[.98] active:duration-75 text-white text-lg font-bold bg-rose-500 rounded-md px-2 py-1 w-[100px]">
+                Đóng
               </button>
             </div>
           </div>

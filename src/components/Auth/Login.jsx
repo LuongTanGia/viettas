@@ -49,7 +49,6 @@ const App = () => {
       setData(response)
 
       if (response.DataResults.length === 1) {
-        console.log('hi1d')
         const remoteDB = response.DataResults[0].RemoteDB
         await LOGIN(API.DANGNHAP, API.DANHSACHDULIEU, response.TKN, remoteDB, {}, dispatch)
         window.localStorage.setItem('firstLogin', true)
