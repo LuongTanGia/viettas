@@ -670,7 +670,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                     <DatePicker
                       className="DatePicker_PMH"
                       format="DD/MM/YYYY"
-                      value={dayjs(controlDate.NgayKetThuc)}``````````````````````````````````````````````````````
+                      value={dayjs(controlDate.NgayKetThuc)}
                       onChange={(newDate) => {
                         setFormPrint({
                           ...formPrint,
