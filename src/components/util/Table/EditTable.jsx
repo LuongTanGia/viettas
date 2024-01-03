@@ -264,6 +264,10 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
         editable: true,
         key: item,
         fixed: 'left',
+        align: 'center',
+        sorter: (a, b) => a[item].localeCompare(b[item]),
+        showSorterTooltip: false,
+        render: (text) => <div className="text-start truncate">{text}</div>,
       }
     }
     if (item === 'TenHang') {
@@ -274,6 +278,10 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
         editable: true,
         key: item,
         fixed: 'left',
+        align: 'center',
+        sorter: (a, b) => a[item].localeCompare(b[item]),
+        showSorterTooltip: false,
+        render: (text) => <div className="text-start truncate">{text}</div>,
       }
     }
 
@@ -343,6 +351,8 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
             {text !== undefined ? Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLETYLE, maximumFractionDigits: ThongSo.SOLETYLE }) : ''}
           </div>
         ),
+        sorter: (a, b) => a[item] - b[item],
+        showSorterTooltip: false,
       }
     }
 
@@ -461,8 +471,8 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
   return (
     <div>
       <Table
-        loading={dataSource ? false : true}
-        className={'h250'}
+        loading={dataSource.length !== 0 || typeTable === 'create' ? false : true}
+        className={'h310'}
         components={components}
         rowClassName={() => 'editable-row'}
         bordered

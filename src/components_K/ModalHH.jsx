@@ -233,7 +233,7 @@ const ModalHH = ({ close, data, onRowCreate, dataThongSo }) => {
           <div className="flex justify-end mt-1 gap-x-2">
             <button
               onClick={() => close()}
-              className="active:scale-[.98] active:duration-75 text-white text-text-main font-bold  bg-rose-500 rounded-md px-2 py-1 w-[80px] hover:opacity-80"
+              className="active:scale-[.98] active:duration-75  border-2 border-rose-500 text-slate-50 text-text-main font-bold  bg-rose-500 hover:bg-white hover:text-rose-500 rounded-md px-2 py-1 w-[80px] hover:opacity-80"
             >
               Đóng
             </button>

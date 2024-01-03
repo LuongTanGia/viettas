@@ -69,23 +69,28 @@ const PhieuMuaHang = () => {
 
             setIsLoadingModal(true)
           } else {
-            setIsLoadingModal(false)
+            setIsLoadingModal(true)
           }
         }
       } catch (error) {
         console.error('Lấy data thất bại', error)
-        toast.error('Lấy data thất bại. Vui lòng thử lại sau.')
+        // toast.error('Lấy data thất bại. Vui lòng thử lại sau.')
       }
     }
 
     if (dataRecord && isShowModal) {
       fetchData()
     }
-  }, [dataRecord, isShowModal])
+
+    // console.log('loading', isLoadingModal)
+  }, [dataRecord, isShowModal, isLoadingModal])
 
   useEffect(() => {
     getKhoanNgay()
     getThongSo()
+  }, [])
+
+  useEffect(() => {
     getDSPMH()
   }, [tableLoad])
 
@@ -129,21 +134,22 @@ const PhieuMuaHang = () => {
 
   const getDSPMH = async () => {
     try {
+      setTableLoad(true)
       const tokenLogin = localStorage.getItem('TKN')
 
       const response = await apis.DanhSachPMH(tokenLogin, formKhoanNgay)
 
       if (response.data && response.data.DataError === 0) {
         setData(response.data.DataResults)
-        setTableLoad(true)
+        setTableLoad(false)
       } else if (response.data && response.data.DataError === -104) {
         toast.error(response.data.DataErrorDescription)
         setData(response.data.DataResults)
-        setTableLoad(true)
+        setTableLoad(false)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         getDSPMH()
-        setTableLoad(true)
+        setTableLoad(false)
       }
     } catch (error) {
       console.error('Kiểm tra token thất bại', error)
@@ -201,19 +207,17 @@ const PhieuMuaHang = () => {
       title: 'Tên đối tượng',
       dataIndex: 'TenDoiTuong',
       key: 'TenDoiTuong',
-      width: 300,
+      width: 200,
       sorter: (a, b) => a.TenDoiTuong.localeCompare(b.TenDoiTuong),
       showSorterTooltip: false,
       align: 'center',
-      render: (text) => <div style={{ textAlign: 'start' }}>{text}</div>,
+      render: (text) => <div className="truncate text-start">{text}</div>,
     },
     {
       title: 'Địa chỉ ',
       dataIndex: 'DiaChi',
       key: 'DiaChi',
-      width: 300,
-      ellipsis: true,
-
+      width: 250,
       sorter: (a, b) => {
         const diaChiA = a.DiaChi || ''
         const diaChiB = b.DiaChi || ''
@@ -222,7 +226,7 @@ const PhieuMuaHang = () => {
       },
       showSorterTooltip: false,
       align: 'center',
-      render: (text) => <div style={{ textAlign: 'start' }}>{text}</div>,
+      render: (text) => <div className="truncate text-start">{text}</div>,
     },
     {
       title: 'Mã số thuế',
@@ -252,23 +256,21 @@ const PhieuMuaHang = () => {
       sorter: (a, b) => a.ThongTinKho.localeCompare(b.ThongTinKho),
       showSorterTooltip: false,
       align: 'center',
-      render: (text) => <div style={{ textAlign: 'start' }}>{text}</div>,
+      render: (text) => <div className="truncate text-start">{text}</div>,
     },
     {
       title: 'Ghi chú ',
       dataIndex: 'GhiChu',
       key: 'GhiChu',
-      width: 150,
-      ellipsis: true,
+      width: 200,
       sorter: (a, b) => {
         const GhiChuA = a.GhiChu || ''
         const GhiChuB = b.GhiChu || ''
-
         return GhiChuA.localeCompare(GhiChuB)
       },
       showSorterTooltip: false,
       align: 'center',
-      render: (text) => <div style={{ textAlign: 'start' }}>{text}</div>,
+      render: (text) => <div className="truncate text-start">{text}</div>,
     },
     {
       title: 'Tổng mặt hàng',
@@ -370,11 +372,11 @@ const PhieuMuaHang = () => {
       title: 'Người tạo',
       dataIndex: 'NguoiTao',
       key: 'NguoiTao',
-      width: 300,
+      width: 250,
       sorter: (a, b) => a.NguoiTao.localeCompare(b.NguoiTao),
       showSorterTooltip: false,
       align: 'center',
-      render: (text) => <div style={{ textAlign: 'start' }}>{text}</div>,
+      render: (text) => <div className="truncate text-start">{text}</div>,
     },
     {
       title: 'Ngày sửa cuối',
@@ -394,7 +396,7 @@ const PhieuMuaHang = () => {
       title: 'Người sửa cuối',
       dataIndex: 'NguoiSuaCuoi',
       key: 'NguoiSuaCuoi',
-      width: 300,
+      width: 250,
       sorter: (a, b) => {
         const NguoiSuaCuoiA = a.NguoiSuaCuoi || ''
         const NguoiSuaCuoiB = b.NguoiSuaCuoi || ''
@@ -403,7 +405,7 @@ const PhieuMuaHang = () => {
       },
       showSorterTooltip: false,
       align: 'center',
-      render: (text) => <div style={{ textAlign: 'start' }}>{text}</div>,
+      render: (text) => <div className="truncate text-start">{text}</div>,
     },
 
     {
@@ -496,6 +498,7 @@ const PhieuMuaHang = () => {
     setActionType('create')
     setDataRecord(record)
     setIsShowModal(true)
+    setIsLoadingModal(true)
   }
   const handlePrint = (record) => {
     setActionType('print')
@@ -509,7 +512,6 @@ const PhieuMuaHang = () => {
   }
   const handleFilterDS = () => {
     getDSPMH()
-    setTableLoad(false)
   }
   const handlePay = (record) => {
     if (record.TTTienMat) return
@@ -631,91 +633,86 @@ const PhieuMuaHang = () => {
         </div>
       </div>
       <div className="relative px-2 py-1 ">
-        {tableLoad ? (
-          <Table
-            className="table_pmh"
-            // rowSelection={rowSelection}
-            columns={columns}
-            dataSource={filteredPMH}
-            size="small"
-            scroll={{
-              x: 1500,
-              y: 410,
-            }}
-            bordered
-            pagination={{ defaultPageSize: 50, showSizeChanger: true, pageSizeOptions: ['50', '100', '1000'] }}
-            rowKey={(record) => record.SoChungTu}
-            onRow={(record) => ({
-              // onClick: () => {
-              //   handleRowClick(record);
-              //   const selected = selectedRowKeys.includes(record.SoChungTu);
-              //   if (selected) {
-              //     setSelectedRowKeys(
-              //       selectedRowKeys.filter((key) => key !== record.SoChungTu)
-              //     );
-              //   } else {
-              //     setSelectedRowKeys([...selectedRowKeys, record.SoChungTu]);
-              //   }
-              // },
-              onDoubleClick: () => {
-                handleView(record)
-              },
-            })}
-            // Bảng Tổng
-            summary={(pageData) => {
-              let totalTongThanhTien = 0
-              let totalTongTienThue = 0
-              let totalTongTienHang = 0
-              let totalTongSoLuong = 0
-              let totalTongMatHang = 0
+        <Table
+          loading={tableLoad}
+          className="table_pmh"
+          // rowSelection={rowSelection}
+          columns={columns}
+          dataSource={filteredPMH}
+          size="small"
+          scroll={{
+            x: 1500,
+            y: 410,
+          }}
+          bordered
+          pagination={{ defaultPageSize: 50, showSizeChanger: true, pageSizeOptions: ['50', '100', '1000'] }}
+          rowKey={(record) => record.SoChungTu}
+          onRow={(record) => ({
+            // onClick: () => {
+            //   handleRowClick(record);
+            //   const selected = selectedRowKeys.includes(record.SoChungTu);
+            //   if (selected) {
+            //     setSelectedRowKeys(
+            //       selectedRowKeys.filter((key) => key !== record.SoChungTu)
+            //     );
+            //   } else {
+            //     setSelectedRowKeys([...selectedRowKeys, record.SoChungTu]);
+            //   }
+            // },
+            onDoubleClick: () => {
+              handleView(record)
+            },
+          })}
+          // Bảng Tổng
+          summary={(pageData) => {
+            let totalTongThanhTien = 0
+            let totalTongTienThue = 0
+            let totalTongTienHang = 0
+            let totalTongSoLuong = 0
+            let totalTongMatHang = 0
 
-              pageData.forEach(({ TongThanhTien, TongTienThue, TongTienHang, TongSoLuong, TongMatHang }) => {
-                totalTongThanhTien += TongThanhTien
-                totalTongTienThue += TongTienThue
-                totalTongTienHang += TongTienHang
-                totalTongSoLuong += TongSoLuong
-                totalTongMatHang += TongMatHang
-              })
-              return (
-                <Table.Summary fixed="bottom">
-                  <Table.Summary.Row className=" text-end font-bold bg-[#f1f1f1]">
-                    <Table.Summary.Cell className="text-center">{pageData.length}</Table.Summary.Cell>
-                    <Table.Summary.Cell></Table.Summary.Cell>
-                    <Table.Summary.Cell index={2}></Table.Summary.Cell>
-                    <Table.Summary.Cell index={3}></Table.Summary.Cell>
-                    <Table.Summary.Cell index={4}></Table.Summary.Cell>
-                    <Table.Summary.Cell index={5}></Table.Summary.Cell>
-                    <Table.Summary.Cell index={6}></Table.Summary.Cell>
-                    <Table.Summary.Cell index={7}></Table.Summary.Cell>
-                    <Table.Summary.Cell index={8}></Table.Summary.Cell>
-                    <Table.Summary.Cell index={9}></Table.Summary.Cell>
-                    <Table.Summary.Cell index={10}>{totalTongMatHang}</Table.Summary.Cell>
-                    <Table.Summary.Cell index={11}>{formatQuantity(totalTongSoLuong, dataThongSo?.SOLESOLUONG)}</Table.Summary.Cell>
-                    <Table.Summary.Cell index={12}>{formatPrice(totalTongTienHang, dataThongSo?.SOLESOTIEN)}</Table.Summary.Cell>
-                    <Table.Summary.Cell index={13}> {formatPrice(totalTongTienThue, dataThongSo?.SOLESOTIEN)}</Table.Summary.Cell>
-                    <Table.Summary.Cell index={14}>{formatPrice(totalTongThanhTien, dataThongSo?.SOLESOTIEN)}</Table.Summary.Cell>
-                    <Table.Summary.Cell index={15}></Table.Summary.Cell>
-                    <Table.Summary.Cell index={16}></Table.Summary.Cell>
-                    <Table.Summary.Cell index={17}></Table.Summary.Cell>
-                    <Table.Summary.Cell index={18}></Table.Summary.Cell>
-                    <Table.Summary.Cell index={19}></Table.Summary.Cell>
-                    <Table.Summary.Cell className="text-center">{pageData.reduce((count, item) => count + (item.TTTienMat ? 1 : 0), 0)}</Table.Summary.Cell>
-                    <Table.Summary.Cell></Table.Summary.Cell>
-                  </Table.Summary.Row>
-                </Table.Summary>
-              )
-            }}
-          ></Table>
-        ) : (
-          <SimpleBackdrop />
-        )}
+            pageData.forEach(({ TongThanhTien, TongTienThue, TongTienHang, TongSoLuong, TongMatHang }) => {
+              totalTongThanhTien += TongThanhTien
+              totalTongTienThue += TongTienThue
+              totalTongTienHang += TongTienHang
+              totalTongSoLuong += TongSoLuong
+              totalTongMatHang += TongMatHang
+            })
+            return (
+              <Table.Summary fixed="bottom">
+                <Table.Summary.Row className=" text-end font-bold bg-[#f1f1f1]">
+                  <Table.Summary.Cell className="text-center">{pageData.length}</Table.Summary.Cell>
+                  <Table.Summary.Cell></Table.Summary.Cell>
+                  <Table.Summary.Cell index={2}></Table.Summary.Cell>
+                  <Table.Summary.Cell index={3}></Table.Summary.Cell>
+                  <Table.Summary.Cell index={4}></Table.Summary.Cell>
+                  <Table.Summary.Cell index={5}></Table.Summary.Cell>
+                  <Table.Summary.Cell index={6}></Table.Summary.Cell>
+                  <Table.Summary.Cell index={7}></Table.Summary.Cell>
+                  <Table.Summary.Cell index={8}></Table.Summary.Cell>
+                  <Table.Summary.Cell index={9}></Table.Summary.Cell>
+                  <Table.Summary.Cell index={10}>{totalTongMatHang}</Table.Summary.Cell>
+                  <Table.Summary.Cell index={11}>{formatQuantity(totalTongSoLuong, dataThongSo?.SOLESOLUONG)}</Table.Summary.Cell>
+                  <Table.Summary.Cell index={12}>{formatPrice(totalTongTienHang, dataThongSo?.SOLESOTIEN)}</Table.Summary.Cell>
+                  <Table.Summary.Cell index={13}> {formatPrice(totalTongTienThue, dataThongSo?.SOLESOTIEN)}</Table.Summary.Cell>
+                  <Table.Summary.Cell index={14}>{formatPrice(totalTongThanhTien, dataThongSo?.SOLESOTIEN)}</Table.Summary.Cell>
+                  <Table.Summary.Cell index={15}></Table.Summary.Cell>
+                  <Table.Summary.Cell index={16}></Table.Summary.Cell>
+                  <Table.Summary.Cell index={17}></Table.Summary.Cell>
+                  <Table.Summary.Cell index={18}></Table.Summary.Cell>
+                  <Table.Summary.Cell index={19}></Table.Summary.Cell>
+                  <Table.Summary.Cell className="text-center">{pageData.reduce((count, item) => count + (item.TTTienMat ? 1 : 0), 0)}</Table.Summary.Cell>
+                  <Table.Summary.Cell></Table.Summary.Cell>
+                </Table.Summary.Row>
+              </Table.Summary>
+            )
+          }}
+        ></Table>
       </div>
 
       {isShowModal && (
         <Modals
-          close={() => {
-            setIsShowModal(false), setIsLoadingModal(!isLoadingModal)
-          }}
+          close={() => setIsShowModal(false)}
           actionType={actionType}
           dataRecord={dataRecord}
           dataThongTin={dataThongTin}
@@ -723,9 +720,9 @@ const PhieuMuaHang = () => {
           dataDoiTuong={dataDoiTuong}
           dataPMH={data}
           controlDate={formKhoanNgay}
-          isLoadingModel={isLoadingModal}
+          isLoadingModel={() => setIsLoadingModal(false)}
           dataThongSo={dataThongSo}
-          loading={() => setTableLoad(false)}
+          loading={() => setTableLoad(true)}
         />
       )}
     </div>
