@@ -5,20 +5,22 @@ import { LOGIN } from '../../action/Actions'
 import API from '../../API/API'
 import { useState, useEffect } from 'react'
 import Cookies from 'js-cookie'
-
+import { Spin } from 'antd'
 const CollectionCreateForm = ({ isShow, close, data, dataUser }) => {
   console.log(Cookies.get('remoteDb'))
   const [RemoteDB, setRemoteDB] = useState(Cookies.get('remoteDb'))
   const [isRemoteChanged, setIsRemoteChanged] = useState(Cookies.get('remoteDb') !== undefined ? true : false || false)
   const token = window.localStorage.getItem('tokenDuLieu')
   const dispatch = useDispatch()
-
+  const [loading, setLoading] = useState(false)
   useEffect(() => {
     Cookies.set('remoteDb', RemoteDB)
   }, [token])
   const handleLogin = async () => {
+    setLoading(true)
     const response = await LOGIN(API.DANGNHAP, API.DANHSACHDULIEU, token, RemoteDB, dataUser, dispatch)
-    console.log(response)
+    setLoading(false)
+
     window.localStorage.setItem('firstLogin', true)
 
     if (response === 1) {
@@ -55,15 +57,17 @@ const CollectionCreateForm = ({ isShow, close, data, dataUser }) => {
               ))}
             </div>
             <div className="flex justify-end">
-              <button
-                onClick={handleLogin}
-                disabled={!isRemoteChanged}
-                className={`active:scale-[.98] active:duration-75 text-white text-lg font-bold bg-blue-500 rounded-md px-2 py-1 w-[100px] mr-4 ${
-                  !isRemoteChanged ? 'cursor-not-allowed bg-gray-500' : ''
-                }`}
-              >
-                Xác nhận
-              </button>
+              <Spin spinning={loading} delay={500}>
+                <button
+                  onClick={handleLogin}
+                  disabled={!isRemoteChanged}
+                  className={` active:scale-[.98] active:duration-75 text-white text-lg font-bold bg-blue-500 rounded-md px-2 py-1 w-[100px] mr-4 ${
+                    !isRemoteChanged ? 'cursor-not-allowed bg-gray-500' : ''
+                  }`}
+                >
+                  Xác nhận
+                </button>
+              </Spin>
               <button onClick={() => close()} className="active:scale-[.98] active:duration-75 text-white text-lg font-bold bg-rose-500 rounded-md px-2 py-1 w-[100px]">
                 Đóng
               </button>

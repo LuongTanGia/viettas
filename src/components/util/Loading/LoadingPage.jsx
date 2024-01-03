@@ -1,25 +1,21 @@
-import * as React from "react";
-import Backdrop from "@mui/material/Backdrop";
-import CircularProgress from "@mui/material/CircularProgress";
-
+import { useEffect, useState } from 'react'
+import { Spin } from 'antd'
 export default function SimpleBackdrop() {
-    const [open, setOpen] = React.useState(true);
-    const handleClose = () => {
-        setOpen(false);
-    };
+  const [spinning, setSpinning] = useState(false)
 
-    return (
-        <div>
-            <Backdrop
-                sx={{
-                    color: "#fff",
-                    zIndex: (theme) => theme.zIndex.drawer + 1,
-                }}
-                open={open}
-                onClick={handleClose}
-            >
-                <CircularProgress color="inherit" />
-            </Backdrop>
-        </div>
-    );
+  useEffect(() => {
+    const showLoader = () => {
+      setSpinning(true)
+      setTimeout(() => {
+        setSpinning(false)
+      }, 3000)
+    }
+    showLoader()
+  }, [])
+
+  return (
+    <div>
+      <Spin spinning={spinning} fullscreen />
+    </div>
+  )
 }

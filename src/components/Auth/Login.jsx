@@ -4,7 +4,8 @@ import { GoogleLogin } from '@react-oauth/google'
 import API from '../../API/API'
 import { useDispatch } from 'react-redux'
 import Cookies from 'js-cookie'
-
+// import { LoadingOutlined } from '@ant-design/icons'
+import { Spin } from 'antd'
 import backgroundImg from '../../assets/img/backgroud.jfif'
 import CollectionCreateForm from './Popup'
 import FAQ from '../FAQ/FAQ'
@@ -14,7 +15,7 @@ const App = () => {
   const [rememberMe, setRememberMe] = useState(Cookies.get('useCookies') === 'true')
   const [isShow, setIsShow] = useState(false)
   const token = window.localStorage.getItem('tokenDuLieu')
-
+  const [loading, setLoading] = useState(false)
   const dispatch = useDispatch()
   const [data, setData] = useState()
   const [user, setUser] = useState({
@@ -45,8 +46,10 @@ const App = () => {
     window.localStorage.setItem('userName', user.User)
 
     try {
+      setLoading(true)
       const response = await DANHSACHDULIEU(API.DANHSACHDULIEU, user, dispatch)
       setData(response)
+      setLoading(false)
 
       if (response.DataResults.length === 1) {
         const remoteDB = response.DataResults[0].RemoteDB
@@ -145,15 +148,17 @@ const App = () => {
             </div>
           </div>
           <div className="flex flex-col gap-y-4 mt-14">
-            <button
-              onClick={handleAddUser}
-              disabled={!rememberMe}
-              className={` active:scale-[.98] active:duration-75 text-white text-lg font-bold  bg-blue-500 rounded-md px-4 py-2 ${
-                !rememberMe ? 'cursor-not-allowed bg-gray-500' : ''
-              }`}
-            >
-              Đăng nhập
-            </button>
+            <Spin spinning={loading} delay={500}>
+              <button
+                onClick={handleAddUser}
+                disabled={!rememberMe}
+                className={`w-full active:scale-[.98] active:duration-75 text-white text-lg font-bold  bg-blue-500 rounded-md px-4 py-2 ${
+                  !rememberMe ? 'cursor-not-allowed bg-gray-500' : ''
+                }`}
+              >
+                Đăng nhập
+              </button>
+            </Spin>
             <div className="flex justify-center items-center w-full">
               {rememberMe ? (
                 <GoogleLogin

@@ -1,11 +1,11 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { Button, Form, Input, Table, Select, InputNumber, Tooltip } from 'antd'
+import { Button, Form, Input, Table, Select, InputNumber, Tooltip, Typography } from 'antd'
 import BtnAction from './BtnAction'
 
 const { Option } = Select
-
+const { Text } = Typography
 const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOptions, ColumnTable, columName, typeTable }) => {
   const EditableContext = React.createContext(null)
 
@@ -468,6 +468,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
   return (
     <div>
       <Table
+        loading={dataSource ? false : true}
         className={'h250'}
         components={components}
         rowClassName={() => 'editable-row'}
@@ -480,6 +481,34 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
         }}
         size="small"
         pagination={false}
+        summary={(pageData) => {
+          return (
+            <Table.Summary fixed="bottom">
+              <Table.Summary.Row>
+                <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell>
+                <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell>
+
+                {columns
+                  .filter((column) => column.render)
+                  .map((column) => {
+                    const isNumericColumn = typeof dataSource[0]?.[column.dataIndex] === 'number' && column.dataIndex !== 'STT'
+                    return (
+                      <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                        {isNumericColumn ? (
+                          <Text strong>
+                            {Number(pageData.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                              minimumFractionDigits: ThongSo.SOLESOTIEN,
+                              maximumFractionDigits: ThongSo.SOLESOTIEN,
+                            })}
+                          </Text>
+                        ) : null}
+                      </Table.Summary.Cell>
+                    )
+                  })}
+              </Table.Summary.Row>
+            </Table.Summary>
+          )
+        }}
       />
     </div>
   )

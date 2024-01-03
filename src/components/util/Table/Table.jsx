@@ -403,7 +403,7 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
               cell: EditableCell,
             },
           }}
-          className="setHeight"
+          className={height}
           columns={mergedColumns}
           dataSource={data}
           rowClassName="editable-row"
