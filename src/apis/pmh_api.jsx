@@ -3,7 +3,9 @@ import axios from '../axios'
 export const DanhSachPMH = (token, formKhoanNgay) =>
   new Promise(async (resolve, reject) => {
     try {
-      console.log(formKhoanNgay)
+      console.log('Data to be sent to API:', {
+        formKhoanNgay,
+      })
       const response = await axios({
         url: '/entries/DuLieuPMH/DanhSach',
         method: 'post',
