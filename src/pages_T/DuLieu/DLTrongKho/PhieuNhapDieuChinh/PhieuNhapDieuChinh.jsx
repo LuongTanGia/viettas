@@ -15,6 +15,7 @@ import NDCXoa from '../../../../components_T/Modal/DuLieu/DuLieuTrongKho/PhieuND
 import NDCPrint from '../../../../components_T/Modal/DuLieu/DuLieuTrongKho/PhieuNDC/NDCPrint'
 import NDCCreate from '../../../../components_T/Modal/DuLieu/DuLieuTrongKho/PhieuNDC/NDCCreate'
 import NDCEdit from '../../../../components_T/Modal/DuLieu/DuLieuTrongKho/PhieuNDC/NDCEdit'
+import ActionButton from '../../../../components/util/Button/ActionButton'
 
 const PhieuNhapDieuChinh = () => {
   const TokenAccess = localStorage.getItem('TKN')
@@ -44,9 +45,6 @@ const PhieuNhapDieuChinh = () => {
       formattedDateTime += ` ${hours}:${minutes}:${seconds} `
     }
     return formattedDateTime
-  }
-  const formatSLSL = (number) => {
-    return number.toFixed(Math.max(1, dataThongSo.SOLESOLUONG)).replace(/,/g, '.')
   }
   const formatCurrency = (value) => {
     return Number(value).toLocaleString('vi-VN')
@@ -163,6 +161,9 @@ const PhieuNhapDieuChinh = () => {
     setIsShowModal(true)
     setActionType('print')
   }
+  const handleLoading = () => {
+    setIsLoading(false)
+  }
   const titles = [
     {
       title: 'STT',
@@ -179,6 +180,7 @@ const PhieuNhapDieuChinh = () => {
       width: 150,
       align: 'center',
       fixed: 'left',
+      showSorterTooltip: false,
       sorter: (a, b) => a.SoChungTu.localeCompare(b.SoChungTu),
       render: (text) => <span className="flex ">{text}</span>,
     },
@@ -188,6 +190,7 @@ const PhieuNhapDieuChinh = () => {
       key: 'NgayCTu',
       width: 150,
       align: 'center',
+      showSorterTooltip: false,
       sorter: (a, b) => {
         const dateA = new Date(a.NgayCTu)
         const dateB = new Date(b.NgayCTu)
@@ -199,8 +202,9 @@ const PhieuNhapDieuChinh = () => {
       title: 'Thông tin kho',
       dataIndex: 'ThongTinKho',
       key: 'ThongTinKho',
-      width: 180,
+      width: 150,
       align: 'center',
+      showSorterTooltip: false,
       sorter: (a, b) => a.ThongTinKho.localeCompare(b.ThongTinKho),
       render: (text) => (
         <Tooltip title={text}>
@@ -224,6 +228,7 @@ const PhieuNhapDieuChinh = () => {
       key: 'SoMatHang',
       align: 'center',
       width: 120,
+      showSorterTooltip: false,
       sorter: (a, b) => a.SoMatHang - b.SoMatHang,
       render: (text) => <span className="flex justify-end">{formatCurrency(text)}</span>,
     },
@@ -233,6 +238,7 @@ const PhieuNhapDieuChinh = () => {
       key: 'TongSoLuong',
       align: 'center',
       width: 120,
+      showSorterTooltip: false,
       sorter: (a, b) => a.TongSoLuong - b.TongSoLuong,
       render: (text) => <span className="flex justify-end">{formatThapPhan(text, dataThongSo.SOLESOLUONG)}</span>,
     },
@@ -240,6 +246,7 @@ const PhieuNhapDieuChinh = () => {
       title: 'Ghi chú',
       dataIndex: 'GhiChu',
       key: 'GhiChu',
+      showSorterTooltip: false,
       align: 'center',
       render: (text) => (
         <Tooltip title={text}>
@@ -262,6 +269,7 @@ const PhieuNhapDieuChinh = () => {
       dataIndex: 'NguoiTao',
       key: 'NguoiTao',
       align: 'center',
+      showSorterTooltip: false,
       sorter: (a, b) => a.NguoiTao.localeCompare(b.NguoiTao),
       render: (text) => (
         <Tooltip title={text}>
@@ -283,6 +291,7 @@ const PhieuNhapDieuChinh = () => {
       dataIndex: 'NgayTao',
       key: 'NgayTao',
       align: 'center',
+      showSorterTooltip: false,
       sorter: (a, b) => {
         const dateA = new Date(a.NgayTao)
         const dateB = new Date(b.NgayTao)
@@ -295,6 +304,7 @@ const PhieuNhapDieuChinh = () => {
       dataIndex: 'NguoiSuaCuoi',
       key: 'NgaySuaCuoi',
       align: 'center',
+      showSorterTooltip: false,
       sorter: (a, b) => {
         if (!a.NguoiSuaCuoi || !b.NguoiSuaCuoi) {
           return null
@@ -321,7 +331,7 @@ const PhieuNhapDieuChinh = () => {
       dataIndex: 'NgaySuaCuoi',
       key: 'NgaySuaCuoi',
       align: 'center',
-
+      showSorterTooltip: false,
       sorter: (a, b) => {
         const dateA = new Date(a.NgaySuaCuoi)
         const dateB = new Date(b.NgaySuaCuoi)
@@ -340,14 +350,14 @@ const PhieuNhapDieuChinh = () => {
           <>
             <div className="flex gap-2 items-center justify-center">
               <div
-                className="p-[3px] border-2 rounded cursor-pointer hover:bg-slate-50 hover:text-yellow-400 border-yellow-400 bg-yellow-400 text-slate-50 "
+                className="p-[4px] border-2 rounded cursor-pointer hover:bg-slate-50 hover:text-yellow-400 border-yellow-400 bg-yellow-400 text-slate-50 "
                 title="Sửa"
                 onClick={() => handleEdit(record)}
               >
                 <MdEdit />
               </div>
               <div
-                className="p-[3px] border-2 rounded cursor-pointer hover:bg-slate-50 hover:text-red-500 border-red-500 bg-red-500 text-slate-50 "
+                className="p-[4px] border-2 rounded cursor-pointer hover:bg-slate-50 hover:text-red-500 border-red-500 bg-red-500 text-slate-50 "
                 title="Xóa"
                 onClick={() => handleDelete(record)}
               >
@@ -366,7 +376,7 @@ const PhieuNhapDieuChinh = () => {
       ) : (
         <>
           <div className="flex flex-col gap-2 ">
-            <div className="flex justify-between gap-2 relative">
+            <div className="flex justify-between gap-2">
               <div>
                 <div className="flex items-center gap-2">
                   <h1 className="text-lg font-bold uppercase">Phiếu Nhập Kho Điều Chỉnh</h1>
@@ -414,33 +424,35 @@ const PhieuNhapDieuChinh = () => {
                     />
                   </div>
                 </div>
-                <button
-                  onClick={getDataNDC}
-                  className="flex items-center justify-center gap-1 rounded px-2 py-1 font-semibold border-2 text-slate-50 border-blue-500 bg-blue-500 hover:bg-white hover:text-blue-500 whitespace-nowrap"
-                >
-                  <MdFilterListAlt />
-                  <p>Lọc</p>
-                </button>
+                <ActionButton
+                  handleAction={getDataNDC}
+                  title={'Lọc'}
+                  icon={<MdFilterListAlt className="w-6 h-6" />}
+                  color={'slate-50'}
+                  background={'blue-500'}
+                  color_hover={'blue-500'}
+                  bg_hover={'white'}
+                />
               </div>
               <div className="flex items-center gap-2">
-                <div
-                  className="px-2 py-1 rounded font-medium flex gap-1 items-center cursor-pointer border-2 bg-blue-500 text-slate-50 border-blue-500 hover:bg-slate-50 hover:text-blue-600"
-                  onClick={handleCreate}
-                >
-                  <div>
-                    <IoMdAddCircleOutline className="w-6 h-6" />
-                  </div>
-                  <p> Thêm Sản Phẩm</p>
-                </div>
-                <div
-                  className="px-2 py-1 rounded font-medium flex gap-1 items-center cursor-pointer border-2 bg-purple-600 text-slate-50 border-purple-600 hover:bg-slate-50 hover:text-purple-600"
-                  onClick={handlePrint}
-                >
-                  <div>
-                    <MdPrint className="w-6 h-6" />
-                  </div>
-                  <div>In Phiếu</div>
-                </div>
+                <ActionButton
+                  handleAction={handleCreate}
+                  title={'Thêm Sản Phẩm'}
+                  icon={<IoMdAddCircleOutline className="w-6 h-6" />}
+                  color={'slate-50'}
+                  background={'blue-500'}
+                  color_hover={'blue-500'}
+                  bg_hover={'white'}
+                />
+                <ActionButton
+                  handleAction={handlePrint}
+                  title={'In Phiếu'}
+                  icon={<MdPrint className="w-6 h-6" />}
+                  color={'slate-50'}
+                  background={'purple-500'}
+                  color_hover={'purple-500'}
+                  bg_hover={'white'}
+                />
               </div>
             </div>
             <div>
@@ -463,7 +475,7 @@ const PhieuNhapDieuChinh = () => {
                 })}
                 size="small"
                 scroll={{
-                  x: 1800,
+                  x: 2000,
                   y: 400,
                 }}
                 style={{
@@ -476,13 +488,13 @@ const PhieuNhapDieuChinh = () => {
           <div>
             {isShowModal &&
               (actionType == 'create' ? (
-                <NDCCreate close={() => setIsShowModal(false)} />
+                <NDCCreate close={() => setIsShowModal(false)} loadingData={handleLoading} />
               ) : actionType == 'view' ? (
                 <NDCXem close={() => setIsShowModal(false)} dataNDC={isDataKhoDC} />
               ) : actionType == 'edit' ? (
-                <NDCEdit close={() => setIsShowModal(false)} dataNDC={isDataKhoDC} />
+                <NDCEdit close={() => setIsShowModal(false)} dataNDC={isDataKhoDC} loadingData={handleLoading} />
               ) : actionType == 'delete' ? (
-                <NDCXoa close={() => setIsShowModal(false)} dataNDC={isDataKhoDC} />
+                <NDCXoa close={() => setIsShowModal(false)} dataNDC={isDataKhoDC} loadingData={handleLoading} />
               ) : actionType == 'print' ? (
                 <NDCPrint close={() => setIsShowModal(false)} />
               ) : null)}

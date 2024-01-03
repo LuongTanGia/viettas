@@ -420,18 +420,19 @@ const HangHoa = () => {
         }
         return a.NguoiSuaCuoi.localeCompare(b.NguoiSuaCuoi)
       },
-      render: (text) => text,
-      // <Tooltip title={text}>
-      //   <div
-      //     style={{
-      //       overflow: 'hidden',
-      //       textOverflow: 'ellipsis',
-      //       whiteSpace: 'nowrap',
-      //     }}
-      //   >
-      //     {text}
-      //   </div>
-      // </Tooltip>
+      render: (text) => (
+        <Tooltip title={text}>
+          <div
+            style={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {text}
+          </div>
+        </Tooltip>
+      ),
     },
     {
       title: 'Ngày sửa',
@@ -541,8 +542,8 @@ const HangHoa = () => {
                       title={'In Mã Vạch'}
                       icon={<CiBarcode className="w-6 h-6" />}
                       color={'slate-50'}
-                      background={'purple-600'}
-                      color_hover={'purple-600'}
+                      background={'purple-500'}
+                      color_hover={'purple-500'}
                       bg_hover={'white'}
                     />
                   </div>
@@ -583,9 +584,9 @@ const HangHoa = () => {
                   title={'In Mã Vạch '}
                   icon={<CiBarcode className="w-6 h-6" />}
                   color={'slate-50'}
-                  background={'purple-600'}
-                  color_hover={'purple-600'}
-                  bg_hover={'white'}
+                  background={'purple-500'}
+                  color_hover={'purple-500'}
+                  bg_hover={'slate-50'}
                 />
               </div>
             </div>

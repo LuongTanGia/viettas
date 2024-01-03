@@ -1,19 +1,20 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
-import logo from '../../../../../assets/VTS-iSale.ico'
 import { useEffect, useState } from 'react'
-import categoryAPI from '../../../../../API/linkAPI'
-import { RETOKEN } from '../../../../../action/Actions'
-import './style/NDCCreate.css'
-import { Checkbox, Table, Tooltip } from 'antd'
-import { DatePicker } from '@mui/x-date-pickers/DatePicker'
-import dayjs from 'dayjs'
 import { FaSearch } from 'react-icons/fa'
 import { toast } from 'react-toastify'
 import { IoMdClose } from 'react-icons/io'
+import { Checkbox, Table, Tooltip, Select, InputNumber } from 'antd'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import dayjs from 'dayjs'
+import logo from '../../../../../assets/VTS-iSale.ico'
+import categoryAPI from '../../../../../API/linkAPI'
+import { RETOKEN } from '../../../../../action/Actions'
 import { useSearch } from '../../../../hooks/Search'
+import ActionButton from '../../../../../components/util/Button/ActionButton'
+import './style/NDCCreate.css'
 
-const NDCCreate = ({ close }) => {
+const NDCCreate = ({ close, loadingData }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const [dataKhoHang, setDataKhoHang] = useState('')
   const [isShowModal, setIsShowModal] = useState(false)
@@ -21,7 +22,7 @@ const NDCCreate = ({ close }) => {
   const [setSearchHangHoa, filteredHangHoa] = useSearch(dataHangHoa)
   const [selectedRowData, setSelectedRowData] = useState([])
   const [valueDate, setValueDate] = useState(dayjs(new Date()))
-
+  const [dataThongSo, setDataThongSo] = useState('')
   const innitProduct = {
     SoChungTu: '',
     NgayCTu: '',
@@ -61,6 +62,9 @@ const NDCCreate = ({ close }) => {
       const response = await categoryAPI.ListHangHoaNDC(TokenAccess)
       if (response.data.DataError == 0) {
         setDataHangHoa(response.data.DataResults)
+      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        await RETOKEN()
+        getDataHangHoaNDC()
       }
     } catch (error) {
       console.log(error)
@@ -69,6 +73,7 @@ const NDCCreate = ({ close }) => {
   useEffect(() => {
     getDataKhoHangNDC()
     getDataHangHoaNDC()
+    getThongSo()
     const handleKeyDown = (event) => {
       if (event.keyCode === 120) {
         setIsShowModal(true)
@@ -101,17 +106,31 @@ const NDCCreate = ({ close }) => {
   const handleSearch = (event) => {
     setSearchHangHoa(event.target.value)
   }
-  const handleChange = (index, key, newValue) => {
-    const newDataList = [...NDCForm.DataDetails]
-    if (key === 'SoLuong') {
-      newValue = parseInt(newValue)
-    }
-    newDataList[index][key] = newValue
-    setSelectedRowData(newDataList)
-    setNDCForm({ ...NDCForm, DataDetails: newDataList })
-  }
   const formatCurrency = (value) => {
     return Number(value).toLocaleString('vi-VN')
+  }
+  const formatThapPhan = (number, decimalPlaces) => {
+    if (typeof number === 'number' && !isNaN(number)) {
+      const formatter = new Intl.NumberFormat('vi-VN', {
+        minimumFractionDigits: decimalPlaces,
+        maximumFractionDigits: decimalPlaces,
+      })
+      return formatter.format(number)
+    }
+    return ''
+  }
+  const getThongSo = async () => {
+    try {
+      const response = await categoryAPI.ThongSo(TokenAccess)
+      if (response.data.DataError == 0) {
+        setDataThongSo(response.data.DataResult)
+      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        await RETOKEN()
+        getThongSo()
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
   const handleChoose = (dataRow) => {
     const defaultValues = {
@@ -133,11 +152,13 @@ const NDCCreate = ({ close }) => {
   const handleAddRow = (newRow) => {
     setSelectedRowData([...selectedRowData, newRow])
   }
-  const handleCreate = async (e) => {
+  const handleCreate = async (e, isSave = true) => {
     e.preventDefault()
     try {
       const response = await categoryAPI.NDCCreate({ ...NDCForm, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss') }, TokenAccess)
       if (response.data.DataError == 0) {
+        loadingData()
+        isSave ? '' : close()
         toast.success('Tạo thành công')
       } else {
         console.log(NDCForm)
@@ -146,6 +167,24 @@ const NDCCreate = ({ close }) => {
     } catch (error) {
       console.log(error)
     }
+  }
+  const handleChange = (index, key, newValue) => {
+    const newDataList = [...NDCForm.DataDetails]
+    if (key === 'SoLuong') {
+      newValue = parseFloat(newValue)
+    }
+    if (key == 'TenHang') {
+      const selectedHangHoa = dataHangHoa.find((item) => item.MaHang === newValue)
+      newDataList[index]['DonGia'] = selectedHangHoa?.DonGia
+      newDataList[index]['MaHang'] = selectedHangHoa?.MaHang
+    }
+    newDataList[index][key] = newValue
+    setSelectedRowData(newDataList)
+    setNDCForm({ ...NDCForm, DataDetails: newDataList })
+  }
+  const addHangHoaCT = () => {
+    const addHHCT = Array.isArray(NDCForm.DataDetails) ? [...NDCForm.DataDetails] : []
+    setSelectedRowData([...addHHCT, { MaHang: '', TenHang: '', DonGia: 0, SoLuong: 1 }])
   }
   const removeRow = (index) => {
     const updatedBarcodes = [...NDCForm.DataDetails]
@@ -170,6 +209,7 @@ const NDCCreate = ({ close }) => {
       key: 'MaHang',
       fixed: 'left',
       width: 150,
+      showSorterTooltip: false,
       align: 'center',
       sorter: (a, b) => a.MaHang.localeCompare(b.MaHang),
     },
@@ -177,7 +217,7 @@ const NDCCreate = ({ close }) => {
       title: 'Tên nhóm',
       dataIndex: 'NhomHang',
       key: 'NhomHang',
-
+      showSorterTooltip: false,
       align: 'center',
       sorter: (a, b) => a.NhomHang.localeCompare(b.NhomHang),
       render: (text) => (
@@ -200,7 +240,7 @@ const NDCCreate = ({ close }) => {
       dataIndex: 'TenHang',
       key: 'TenHang',
       fixed: 'left',
-
+      showSorterTooltip: false,
       align: 'center',
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       render: (text) => (
@@ -223,9 +263,10 @@ const NDCCreate = ({ close }) => {
       title: 'Đơn vị tính',
       dataIndex: 'DVT',
       key: 'DVT',
+      showSorterTooltip: false,
       align: 'center',
       width: 120,
-      sorter: (a, b) => a.DVTKho.localeCompare(b.DVTKho),
+      sorter: (a, b) => a.DVT.localeCompare(b.DVT),
     },
     {
       title: 'Lắp ráp',
@@ -233,6 +274,7 @@ const NDCCreate = ({ close }) => {
       key: 'LapRap',
       align: 'center',
       width: 120,
+      showSorterTooltip: false,
       sorter: (a, b) => {
         const valueA = a.LapRap ? 1 : 0
         const valueB = b.LapRap ? 1 : 0
@@ -246,6 +288,7 @@ const NDCCreate = ({ close }) => {
       key: 'TonKho',
       align: 'center',
       width: 120,
+      showSorterTooltip: false,
       sorter: (a, b) => {
         const valueA = a.TonKho ? 1 : 0
         const valueB = b.TonKho ? 1 : 0
@@ -258,6 +301,7 @@ const NDCCreate = ({ close }) => {
       dataIndex: 'SoLuongTon',
       key: 'SoLuongTon',
       width: 150,
+      showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongTon - b.SoLuongTon,
       align: 'center',
       render: (text) => (
@@ -268,9 +312,9 @@ const NDCCreate = ({ close }) => {
   return (
     <>
       <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10">
-        <div onClick={close} className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"></div>
+        <div className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"></div>
         <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col min-w-[40rem] min-h-[8rem] bg-white  p-2 rounded shadow-custom overflow-hidden">
-          <form className="flex flex-col gap-2 p-2 max-w-[70rem]" onSubmit={handleCreate}>
+          <div className="flex flex-col gap-2 p-2 max-w-[70rem]">
             <div className="flex gap-2">
               <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
               <p className="text-blue-700 font-semibold uppercase">Thêm - Phiếu Nhập Điều Chỉnh</p>
@@ -283,7 +327,7 @@ const NDCCreate = ({ close }) => {
                       <label className="required whitespace-nowrap min-w-[110px] flex justify-end">Số chứng từ</label>
                       <input
                         type="text"
-                        className="px-2 w-full resize-none border-[0.125rem] outline-none text-[1rem]"
+                        className="px-2 w-full resize-none rounded border outline-none text-[1rem]"
                         name="SoChungTu"
                         value={NDCForm?.SoChungTu || ''}
                         onChange={(e) =>
@@ -309,45 +353,44 @@ const NDCCreate = ({ close }) => {
                   </div>
                   <div className="flex items-center gap-1">
                     <label className="required whitespace-nowrap min-w-[110px] flex justify-end">Kho hàng</label>
-                    <select
-                      type="text"
-                      name="MaKho"
+                    <Select
+                      style={{ width: '100%' }}
+                      showSearch
+                      size="small"
                       value={NDCForm?.MaKho || ''}
-                      className="px-2 w-full resize-none py-1 rounded border outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"
-                      onChange={(e) => {
+                      onChange={(value) => {
                         setNDCForm({
                           ...NDCForm,
-                          [e.target.name]: e.target.value,
+                          MaKho: value,
                         })
                       }}
                     >
-                      <option value="" disabled hidden></option>
                       {dataKhoHang &&
                         dataKhoHang?.map((item) => (
-                          <option key={item.MaKho} value={item.MaKho}>
+                          <Select.Option key={item.MaKho} value={item.MaKho}>
                             {item.ThongTinKho}
-                          </option>
+                          </Select.Option>
                         ))}
-                    </select>
+                    </Select>
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-3 px-4 border-2 py-3 border-black-200 rounded relative">
                   <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
                   <div className="flex gap-1 items-center">
                     <label className="whitespace-nowrap">Người tạo</label>
-                    <input className="px-2 w-full resize-none border-[0.125rem] outline-none text-[1rem]" readOnly />
+                    <input className="px-2 w-full resize-none rounded border-[0.125rem] outline-none text-[1rem]" readOnly />
                   </div>
                   <div className="flex gap-1 items-center">
                     <label>Lúc</label>
-                    <input className="px-2 w-full resize-none border-[0.125rem] outline-none text-[1rem]" readOnly />
+                    <input className="px-2 w-full resize-none rounded border-[0.125rem] outline-none text-[1rem]" readOnly />
                   </div>
                   <div className="flex gap-1 items-center">
                     <label className="whitespace-nowrap">Người sửa</label>
-                    <input className="px-2 w-full resize-none border-[0.125rem] outline-none text-[1rem]" readOnly />
+                    <input className="px-2 w-full resize-none rounded border-[0.125rem] outline-none text-[1rem]" readOnly />
                   </div>
                   <div className="flex gap-1 items-center">
                     <label>Lúc</label>
-                    <input className="px-2 w-full resize-none border-[0.125rem] outline-none text-[1rem]" readOnly />
+                    <input className="px-2 w-full resize-none rounded border-[0.125rem] outline-none text-[1rem]" readOnly />
                   </div>
                 </div>
               </div>
@@ -355,7 +398,7 @@ const NDCCreate = ({ close }) => {
                 <label className="whitespace-nowrap min-w-[110px] flex justify-end">Ghi chú</label>
                 <input
                   type="text"
-                  className="px-2 w-[70rem] resize-none border-[0.125rem] outline-none text-[1rem]"
+                  className="px-2 w-[70rem] resize-none rounded border outline-none text-[1rem]"
                   name="GhiChu"
                   value={NDCForm?.GhiChu || ''}
                   onChange={(e) =>
@@ -368,66 +411,97 @@ const NDCCreate = ({ close }) => {
               </div>
               <div className="border-2 p-2 rounded m-1 flex flex-col gap-2 max-h-[20rem] overflow-y-auto">
                 <div className="flex justify-center text-xs text-blue-700 font-bold">Nhấn F9 để chọn mã hàng từ danh sách</div>
-                <table className="barcodeList ">
-                  <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>Mã hàng</th>
-                      <th>Tên hàng</th>
-                      <th>Đơn giá</th>
-                      <th>Số lượng</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody className="">
-                    {/* {NDCForm.DataDetails.map((item,index) => )} */}
-                    {selectedRowData?.map((item, index) => (
-                      <tr key={item.MaHang}>
-                        <td>
-                          <div className="flex justify-center">{index + 1}</div>
-                        </td>
-                        <td>
-                          <div className="flex justify-center">{item.MaHang}</div>
-                        </td>
-                        <td>
-                          <div>
-                            <p className="block truncate">{item.TenHang}</p>
-                          </div>
-                        </td>
-                        <td>
-                          <div className="flex justify-end">{formatCurrency(item.DonGia)}</div>
-                        </td>
-                        <td>
-                          <div className="flex justify-end">
-                            <input
-                              className="px-2 w-full resize-none border-[0.125rem]   outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis flex justify-end"
-                              type="number"
-                              defaultValue={item.SoLuong}
-                              min={1}
-                              onChange={(e) => handleChange(index, 'SoLuong', e.target.value)}
-                            />
-                          </div>
-                        </td>
-                        <td>
-                          <div className="flex justify-center">
-                            <IoMdClose className="hover:text-red-600" onClick={() => removeRow(index)} />
-                          </div>
-                        </td>
+                <div className="flex gap-2 items-center">
+                  <table className="barcodeList ">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th className="w-[10rem]">Mã hàng</th>
+                        <th className="w-[22rem]">Tên hàng</th>
+                        <th>Đơn giá</th>
+                        <th className="w-[12rem]">Số lượng</th>
+                        <th className="w-[3rem]"></th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="">
+                      {selectedRowData?.map((item, index) => (
+                        <tr key={item.MaHang}>
+                          <td>
+                            <div className="flex justify-center">{index + 1}</div>
+                          </td>
+                          <td>
+                            <div className="flex justify-center">{item.MaHang}</div>
+                          </td>
+                          <td>
+                            <div>
+                              <Select
+                                className="max-w-[22rem]"
+                                showSearch
+                                size="small"
+                                value={item.TenHang}
+                                style={{
+                                  width: '100%',
+                                }}
+                                onChange={(value) => handleChange(index, 'TenHang', value)}
+                              >
+                                {dataHangHoa?.map((hangHoa) => (
+                                  <>
+                                    <Select.Option key={hangHoa.TenHang} value={hangHoa.MaHang} className="flex items-center max-w-[25rem]">
+                                      <p className="text-start truncate">{hangHoa.TenHang}</p>
+                                    </Select.Option>
+                                  </>
+                                ))}
+                              </Select>
+                            </div>
+                          </td>
+                          <td>
+                            <div className="flex justify-end">{formatThapPhan(item.DonGia, dataThongSo.SOLEDONGIA)}</div>
+                          </td>
+                          <td>
+                            <div className="inputNDC flex justify-end">
+                              <InputNumber
+                                value={item.SoLuong}
+                                min={1}
+                                max={999999999999}
+                                size="small"
+                                style={{ width: '100%' }}
+                                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                parser={(value) => {
+                                  const parsedValue = parseFloat(value.replace(/\$\s?|(,*)/g, ''))
+                                  return isNaN(parsedValue) ? null : parsedValue.toFixed(dataThongSo.SOLESOLUONG)
+                                }}
+                                onChange={(value) => handleChange(index, 'SoLuong', value)}
+                              />
+                            </div>
+                          </td>
+                          <td>
+                            <div className="flex justify-center">
+                              <IoMdClose className="hover:text-red-600 w-6 h-6" onClick={() => removeRow(index)} />
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <div className="flex justify-end">
+                    <ActionButton handleAction={addHangHoaCT} title={'Thêm'} color={'slate-50'} background={'blue-500'} color_hover={'blue-500'} bg_hover={'white'} />
+                  </div>
+                </div>
               </div>
             </div>
             <div className="flex gap-2 justify-end">
-              <button className="rounded px-2 py-1.5 font-bold w-[100px] text-slate-50 bg-red-500 border-2 border-red-500 hover:text-red-500 hover:bg-white" onClick={close}>
-                Đóng
-              </button>
-              <button className="rounded px-2 py-1.5 font-bold w-[100px] text-slate-50 bg-blue-600 border-2 border-blue-600 hover:text-blue-600 hover:bg-white" type="submit">
-                Xác nhận
-              </button>
+              <ActionButton handleAction={handleCreate} title={'Lưu'} color={'slate-50'} background={'blue-500'} color_hover={'blue-500'} bg_hover={'white'} />
+              <ActionButton
+                handleAction={(e) => handleCreate(e, false)}
+                title={'Lưu & Đóng'}
+                color={'slate-50'}
+                background={'blue-500'}
+                color_hover={'blue-500'}
+                bg_hover={'white'}
+              />
+              <ActionButton handleAction={close} title={'Đóng'} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
             </div>
-          </form>
+          </div>
         </div>
       </div>
       <div>
@@ -471,12 +545,7 @@ const NDCCreate = ({ close }) => {
                 </div>
               </div>
               <div className="flex gap-2 justify-end">
-                <button
-                  className="rounded px-2 py-1.5 font-bold w-[100px] text-slate-50 bg-red-500 border-2 border-red-500 hover:text-red-500 hover:bg-white"
-                  onClick={() => setIsShowModal(false)}
-                >
-                  Đóng
-                </button>
+                <ActionButton handleAction={() => setIsShowModal(false)} title={'Đóng'} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
               </div>
             </div>
           </div>

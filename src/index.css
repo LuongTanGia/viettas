@@ -200,10 +200,12 @@ a.nav-link span {
   height: 30px;
   width: 150px;
 }
+
 .DatePicker_NDCKho .css-o9k5xi-MuiInputBase-root-MuiOutlinedInput-root {
   height: 30px;
-  width: 167px;
+  width: 170px;
 }
+
 input[type='radio'] {
   width: 20px;
 }
@@ -217,6 +219,10 @@ input[type='radio'] {
   padding-left: 0.1rem;
 }
 .inputHH .ant-input-number-input-wrap > input.ant-input-number-input {
+  text-align: right;
+  padding: 0 1.5rem;
+}
+.inputNDC .ant-input-number-input-wrap > input.ant-input-number-input {
   text-align: right;
   padding: 0 1.5rem;
 }

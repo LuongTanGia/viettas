@@ -7,12 +7,12 @@ import { toast } from 'react-toastify'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { useEffect, useState } from 'react'
 import { Select, Checkbox } from 'antd'
+import ActionButton from '../../../../../components/util/Button/ActionButton'
 
 const NDCPrint = ({ close }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const [khoanNgayFrom, setKhoanNgayFrom] = useState('')
   const [khoanNgayTo, setKhoanNgayTo] = useState('')
-  const [dataThongSo, setDataThongSo] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [dataListChungTu, setDataListChungTu] = useState('')
   const [selectedNhomFrom, setSelectedNhomFrom] = useState([])
@@ -23,9 +23,8 @@ const NDCPrint = ({ close }) => {
     checkbox3: false,
   })
   useEffect(() => {
-    getThongSo()
     getListChungTu()
-  }, [isLoading, khoanNgayFrom, khoanNgayTo])
+  }, [isLoading])
 
   const calculateTotal = () => {
     let total = 0
@@ -61,19 +60,24 @@ const NDCPrint = ({ close }) => {
       console.log(error)
     }
   }
-  const getThongSo = async () => {
-    try {
-      const response = await categoryAPI.ThongSo(TokenAccess)
-      if (response.data.DataError == 0) {
-        setDataThongSo(response.data.DataResult)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getThongSo()
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
+  // const getTimeSetting = async () => {
+  //   try {
+  //     const response = await categoryAPI.KhoanNgay(TokenAccess)
+  //     if (response.data.DataError == 0) {
+  //       console.log(response.data)
+  //       setKhoanNgayFrom(response.data.NgayBatDau)
+  //       setKhoanNgayTo(response.data.NgayKetThuc)
+  //       setIsLoading(true)
+  //     } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+  //       await RETOKEN()
+  //       getTimeSetting()
+  //     } else {
+  //       console.log(response.data)
+  //     }
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
   const getListChungTu = async () => {
     try {
       console.log('1', khoanNgayFrom, '2', khoanNgayTo)
@@ -95,7 +99,7 @@ const NDCPrint = ({ close }) => {
         <p>Loading</p>
       ) : (
         <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10">
-          <div onClick={close} className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"></div>
+          <div className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"></div>
           <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col min-w-[40rem] min-h-[8rem] bg-white  p-2 rounded shadow-custom overflow-hidden">
             <div className="flex flex-col gap-2 p-2 max-w-[60rem]">
               <div className="flex gap-2">
@@ -103,11 +107,11 @@ const NDCPrint = ({ close }) => {
                 <p className="text-blue-700 font-semibold uppercase">In - Phiếu Nhập Điều Chỉnh</p>
               </div>
               <div className="flex flex-col gap-4 border-2 p-3">
-                <div className="flex justify-center gap-8">
-                  <div className="flex items-center gap-2">
+                <div className="DatePicker_NDCKho flex justify-center gap-8">
+                  <div className="DatePicker_NDCKho flex items-center gap-2">
                     <label>Từ</label>
                     <DatePicker
-                      className="DatePicker_NDCKho w-[10rem]"
+                      className=""
                       format="DD/MM/YYYY"
                       maxDate={dayjs(khoanNgayTo)}
                       defaultValue={dayjs(khoanNgayFrom, 'YYYY-MM-DD')}
@@ -134,7 +138,7 @@ const NDCPrint = ({ close }) => {
                     <div>Số chứng từ</div>
                     <Select
                       allowClear
-                      filterOption
+                      showSearch
                       placeholder="Chọn nhóm"
                       value={selectedNhomFrom}
                       onChange={(value) => setSelectedNhomFrom(value)}
@@ -142,7 +146,7 @@ const NDCPrint = ({ close }) => {
                         width: '200px',
                       }}
                     >
-                      {dataListChungTu.map((item, index) => {
+                      {dataListChungTu?.map((item, index) => {
                         return (
                           <Select.Option key={index} value={item.SoChungTu} title={item.SoChungTu}>
                             <p className="truncate">{item.SoChungTu}</p>
@@ -155,7 +159,7 @@ const NDCPrint = ({ close }) => {
                     <div> Tới</div>
                     <Select
                       allowClear
-                      filterOption
+                      showSearch
                       placeholder="Chọn nhóm"
                       value={selectedNhomTo}
                       onChange={(value) => setSelectedNhomTo(value)}
@@ -205,15 +209,8 @@ const NDCPrint = ({ close }) => {
                 </div>
               </div>
               <div className="flex gap-2 justify-end">
-                <button className="rounded px-2 py-1.5 font-bold text-slate-50 bg-red-500 border-2 border-red-500 hover:text-red-500 hover:bg-white w-[100px]" onClick={close}>
-                  Đóng
-                </button>
-                <button
-                  className="px-2 py-1.5 font-bold rounded w-[100px] text-slate-50 bg-blue-600 border-2 border-blue-600 hover:text-blue-600 hover:bg-white"
-                  onClick={handlePrint}
-                >
-                  Xác nhận
-                </button>
+                <ActionButton handleAction={handlePrint} title={'Xác nhận'} color={'slate-50'} background={'blue-500'} color_hover={'blue-500'} bg_hover={'white'} />
+                <ActionButton handleAction={close} title={'Đóng'} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
               </div>
             </div>
           </div>
