@@ -269,7 +269,6 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) 
   const removeHangHoaCT = (index) => {
     if (type == 'create') {
       const updatedHHCT = [...hangHoaForm.HangHoa_CTs]
-
       updatedHHCT.splice(index, 1)
       setHangHoaForm({
         ...hangHoaForm,
@@ -359,8 +358,6 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) 
     // }
     e.preventDefault()
     try {
-      console.log(hangHoaForm)
-
       const dataUpdate = await categoryAPI.SuaHangHoa(
         {
           Ma: hangHoaForm.MaHang,
@@ -989,7 +986,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) 
                       </table>
                     </div>
                     <div className="flex justify-end">
-                      <ActionButton handleAction={addBarcodeRow} title={'Thêm'} color={'slate-50'} background={'blue-600'} color_hover={'blue-600'} bg_hover={'white'} />
+                      <ActionButton handleAction={addBarcodeRow} title={'Thêm'} color={'slate-50'} background={'blue-500'} color_hover={'blue-500'} bg_hover={'white'} />
                     </div>
                   </div>
                   <div className="flex col-span-2 gap-1 items-center">
@@ -1113,20 +1110,20 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) 
                         </table>
                       </div>
                       <div className="flex justify-end">
-                        <ActionButton handleAction={addHangHoaCT} title={'Thêm'} color={'slate-50'} background={'blue-600'} color_hover={'blue-600'} bg_hover={'white'} />
+                        <ActionButton handleAction={addHangHoaCT} title={'Thêm'} color={'slate-50'} background={'blue-500'} color_hover={'blue-500'} bg_hover={'white'} />
                       </div>
                     </div>
                   )}
                 </div>
               </div>
               <div className="flex justify-end gap-2">
-                <ActionButton handleAction={handleCreate} title={'Lưu'} color={'slate-50'} background={'blue-600'} color_hover={'blue-600'} bg_hover={'white'} />
+                <ActionButton handleAction={handleCreate} title={'Lưu'} color={'slate-50'} background={'blue-500'} color_hover={'blue-500'} bg_hover={'white'} />
                 <ActionButton
                   handleAction={(e) => handleCreate(e, false)}
                   title={'Lưu & Đóng'}
                   color={'slate-50'}
-                  background={'blue-600'}
-                  color_hover={'blue-600'}
+                  background={'blue-500'}
+                  color_hover={'blue-500'}
                   bg_hover={'white'}
                 />
                 <ActionButton handleAction={close} title={'Đóng'} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
@@ -1432,7 +1429,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) 
                       </table>
                     </div>
                     <div className="flex justify-end">
-                      <ActionButton handleAction={addBarcodeRow} title={'Thêm'} color={'slate-50'} background={'blue-600'} color_hover={'blue-600'} bg_hover={'white'} />
+                      <ActionButton handleAction={addBarcodeRow} title={'Thêm'} color={'slate-50'} background={'blue-500'} color_hover={'blue-500'} bg_hover={'white'} />
                     </div>
                   </div>
                   <div className="flex col-span-2 gap-1 items-center">
@@ -1566,14 +1563,14 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) 
                         </table>
                       </div>
                       <div className="flex justify-end">
-                        <ActionButton handleAction={addHangHoaCT} title={'Thêm'} color={'slate-50'} background={'blue-600'} color_hover={'blue-600'} bg_hover={'white'} />
+                        <ActionButton handleAction={addHangHoaCT} title={'Thêm'} color={'slate-50'} background={'blue-500'} color_hover={'blue-500'} bg_hover={'white'} />
                       </div>
                     </div>
                   )}
                 </div>
               </div>
               <div className="flex justify-end gap-2">
-                <ActionButton handleAction={handleUpdate} title={'Xác nhận'} color={'slate-50'} background={'blue-600'} color_hover={'blue-600'} bg_hover={'white'} />
+                <ActionButton handleAction={handleUpdate} title={'Xác nhận'} color={'slate-50'} background={'blue-500'} color_hover={'blue-500'} bg_hover={'white'} />
                 <ActionButton handleAction={close} title={'Đóng'} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
               </div>
             </div>
@@ -1596,7 +1593,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) 
               <p className="text-slate-500 text-lg font-light">Thông tin sản phẩm không thể hoàn tác nếu bạn xóa !</p>
             </div>
             <div className="flex gap-2 justify-end">
-              <ActionButton handleAction={handleDelete} title={'Xác nhận'} color={'slate-50'} background={'blue-600'} color_hover={'blue-600'} bg_hover={'white'} />
+              <ActionButton handleAction={handleDelete} title={'Xác nhận'} color={'slate-50'} background={'blue-500'} color_hover={'blue-500'} bg_hover={'white'} />
               <ActionButton handleAction={close} title={'Đóng'} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
             </div>
           </div>
@@ -1639,7 +1636,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) 
                 </Space>
               </div>
               <div className="flex justify-end gap-2">
-                <ActionButton handleAction={handleStatus} title={'Xác nhận'} color={'slate-50'} background={'blue-600'} color_hover={'blue-600'} bg_hover={'white'} />
+                <ActionButton handleAction={handleStatus} title={'Xác nhận'} color={'slate-50'} background={'blue-500'} color_hover={'blue-500'} bg_hover={'white'} />
                 <ActionButton handleAction={close} title={'Đóng'} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
               </div>
             </div>
@@ -1676,7 +1673,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) 
                 </Select>
               </div>
               <div className="flex justify-end gap-2" type="submit">
-                <ActionButton handleAction={handleGroup} title={'Xác nhận'} color={'slate-50'} background={'blue-600'} color_hover={'blue-600'} bg_hover={'white'} />
+                <ActionButton handleAction={handleGroup} title={'Xác nhận'} color={'slate-50'} background={'blue-500'} color_hover={'blue-500'} bg_hover={'white'} />
                 <ActionButton handleAction={close} title={'Đóng'} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
               </div>
             </div>
@@ -1839,7 +1836,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) 
               </div>
             </div>
             <div className="flex justify-end px-2 gap-2">
-              <ActionButton handleAction={handlePrintBar} title={'Xác nhận'} color={'slate-50'} background={'blue-600'} color_hover={'blue-600'} bg_hover={'white'} />
+              <ActionButton handleAction={handlePrintBar} title={'Xác nhận'} color={'slate-50'} background={'blue-500'} color_hover={'blue-500'} bg_hover={'white'} />
               <ActionButton handleAction={close} title={'Đóng'} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
             </div>
           </div>

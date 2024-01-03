@@ -661,8 +661,8 @@ const NhapXuatTonKho = () => {
                   title={'Lọc hàng'}
                   icon={<MdFilterListAlt className="w-6 h-6" />}
                   color={'slate-50'}
-                  background={'blue-600'}
-                  color_hover={'blue-600'}
+                  background={'blue-500'}
+                  color_hover={'blue-500'}
                   bg_hover={'white'}
                 />
               </form>
