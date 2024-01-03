@@ -32,8 +32,8 @@ function PhieuBanHang() {
   const [selectMH, setSelectMH] = useState()
 
   const [dataDate, setDataDate] = useState({
-    NgayBatDau: '2024-01-02T06:18:56.217Z',
-    NgayKetThuc: '2024-01-02T06:18:56.217Z',
+    NgayBatDau: '',
+    NgayKetThuc: '',
   })
   //selectMH
   useEffect(() => {
@@ -73,7 +73,7 @@ function PhieuBanHang() {
     }
 
     getListData()
-  }, [dataRecord, token, dispatch, searchText, dataDate, selectMH])
+  }, [token, dispatch, searchText, dataDate, selectMH])
 
   const handleView = async (record) => {
     await THONGTINPHIEU(API.CHITIETPBS, token, record?.SoChungTu, dispatch)
@@ -152,6 +152,7 @@ function PhieuBanHang() {
       ...dataDate,
       searchText: searchText.trim(),
     }
+
     const filteredDataRes = await DANHSACHPHIEUBANHANG(API.DANHSACHPBS, token, searchData, dispatch)
     if (filteredDataRes === -1) {
       setData([])
@@ -184,7 +185,7 @@ function PhieuBanHang() {
   return (
     <>
       <div>
-        <div className="relative flex items-center gap-x-4 mb-6">
+        <div className="relative flex items-center gap-x-4 ">
           <h1 className="text-xl font-black uppercase">Phiếu Bán Hàng</h1>
           <div>
             <BsSearch size={18} className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
@@ -211,7 +212,7 @@ function PhieuBanHang() {
             <DatePicker
               className="DatePicker_PMH max-h-[100px]"
               format="DD/MM/YYYY"
-              defaultValue={dayjs(dataDate.NgayBatDau)}
+              defaultValue={dayjs(new Date())}
               onChange={(newDate) => {
                 setDataDate({
                   ...dataDate,
@@ -225,7 +226,7 @@ function PhieuBanHang() {
             <DatePicker
               className="DatePicker_PMH max-h-[100px]"
               format="DD/MM/YYYY"
-              defaultValue={dayjs(dataDate.NgayKetThuc)}
+              defaultValue={dayjs(new Date())}
               onChange={(newDate) => {
                 setDataDate({
                   ...dataDate,
@@ -273,7 +274,7 @@ function PhieuBanHang() {
         columName={nameColumsPhieuBanHang}
         handleView={handleView}
         handleEdit={handleEdit}
-        height={'h400'}
+        height={'setHeight'}
         handleCreate={handleCreate}
         handleDelete={handleDelete}
         handleChangePhieuThu={handleChangePhieuThu}
