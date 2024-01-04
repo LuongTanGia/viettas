@@ -6,9 +6,34 @@ import BtnAction from './BtnAction'
 
 const { Option } = Select
 const { Text } = Typography
-const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOptions, ColumnTable, columName, typeTable }) => {
+const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOptions, ColumnTable, columName, typeTable, listHP }) => {
   const EditableContext = React.createContext(null)
+  const [dataSource, setDataSource] = useState(param)
 
+  useEffect(() => {
+    setDataSource(param)
+    const updatePrices = () => {
+      setDataSource((prevDataSource) => {
+        const newData = prevDataSource.map((item) => {
+          const matchingHP = listHP?.find((hp) => hp.MaHang === item.MaHang)
+          if (matchingHP) {
+            return {
+              ...item,
+              DonGia: matchingHP.GiaBan || 0,
+              TienHang: matchingHP.GiaBan * item.SoLuong,
+            }
+          }
+
+          return item
+        })
+
+        // handleEditData(newData)
+        return newData
+      })
+    }
+
+    updatePrices()
+  }, [param, listHP])
   const EditableRow = ({ index, ...props }) => {
     const [form] = Form.useForm()
     return (
@@ -48,7 +73,6 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
           updatedRow.TongCong = (updatedRow.ThanhTien - updatedRow.TienCKTT).toFixed(ThongSo.SOLESOTIEN)
           updatedRow.TongCong = parseFloat(updatedRow.TongCong)
 
-          console.log('handleSave - newData:', newData)
           handleEditData(newData)
           return newData
         } else {
@@ -86,10 +110,10 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
         toggleEdit()
 
         if (dataIndex === 'MaHang' || dataIndex === 'TenHang') {
-          const optionsArray = dataIndex === 'MaHang' ? yourMaHangOptions : yourTenHangOptions
+          const optionsArray = dataIndex === 'MaHang' ? listHP : listHP
 
           const selectedOption = optionsArray.find((option) => option[dataIndex] === values[dataIndex]) || {}
-          console.log('selectedOption', selectedOption)
+
           const GiaBan = selectedOption.GiaBan
           const updatedRow = {
             ...record,
@@ -111,8 +135,8 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
             // TienCKTT: 0,
             // TongCong: selectedOption.DonGia || undefined,
           }
-          // console.log(updatedRow)
-          console.log('first', selectedOption)
+          //
+
           handleSave(updatedRow)
         } else {
           handleSave({
@@ -133,7 +157,6 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
       const listDVT = record.DVTKho !== record.DVTQuyDoi ? [record.DVTKho, record.DVTQuyDoi] : [record.DVTQuyDoi]
       // const listDVT = [record.DVTKho, record.DVTQuyDoi]
 
-      console.log(listDVT)
       childNode = editing ? (
         <Form.Item
           style={{
@@ -223,18 +246,12 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
     return <td {...restProps}>{childNode}</td>
   }
 
-  const [dataSource, setDataSource] = useState(param)
-
-  useEffect(() => {
-    setDataSource(param)
-  }, [param])
-
   const handleDelete = (MaHang) => {
     setDataSource((prevDataSource) => {
       const newData = prevDataSource.filter((item) => item.MaHang !== MaHang)
-      console.log('handleDelete - newData:', newData)
+
       handleEditData(newData)
-      console.log(newData)
+
       return newData
     })
   }

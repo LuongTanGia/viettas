@@ -9,7 +9,7 @@ import dayjs from 'dayjs'
 import { useSelector } from 'react-redux'
 import TableEdit from '../util/Table/EditTable'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
-import { DANHSACHDOITUONG, DANHSACHKHOHANG, THEMPHIEUBANHANG, SUAPHIEUBANHANG } from '../../action/Actions'
+import { DANHSACHDOITUONG, DANHSACHKHOHANG, THEMPHIEUBANHANG, SUAPHIEUBANHANG, DANHSACHHANGHOA_PBS } from '../../action/Actions'
 import API from '../../API/API'
 import ListHelper_HangHoa from './ListHelper_HangHoa'
 import { toast } from 'react-toastify'
@@ -36,8 +36,8 @@ const initState = {
 // eslint-disable-next-line react/prop-types
 function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }) {
   // yourMaHangOptions, yourTenHangOptions
-  const [yourMaHangOptions, setYourMaHangOptions] = useState([])
-  const [yourTenHangOptions, setYourTenHangOptions] = useState([])
+  // const [yourMaHangOptions, setYourMaHangOptions] = useState([])
+  // const [yourTenHangOptions, setYourTenHangOptions] = useState([])
 
   const token = window.localStorage.getItem('TKN')
   const [isModalOpen, setIsModalOpen] = useState(isShow)
@@ -47,6 +47,8 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
   const [listKhoHang, setListKhoHang] = useState([])
   const [showPopup, setShowPopup] = useState(false)
   const [dataChitiet, setDataChitiet] = useState([])
+  const [dataListHP, setDataListHP] = useState([])
+
   const data_chitiet = useSelector(chiTietPBS)
 
   useEffect(() => {
@@ -54,8 +56,11 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
     setDataChitiet(form?.DataDetails)
     const loadData = async () => {
       try {
+        const result_listHp = await DANHSACHHANGHOA_PBS(API.DANHSACHHANGHOA_PBS, token, form)
         const result_doituong = await DANHSACHDOITUONG(API.DANHSACHDOITUONG_PBS, token)
         const result_khohang = await DANHSACHKHOHANG(API.DANHSACHKHOHANG_PBS, token)
+        setDataListHP(result_listHp)
+        // setSelectDataOption(result_listHp)
         setListDoiTuong(result_doituong)
         setListKhoHang(result_khohang)
         setIsModalOpen(isShow)
@@ -66,7 +71,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
     loadData()
 
     const handleKeyDown = (event) => {
-      if (event.key === 'F9') {
+      if (event.key === 'F9' && form.MaDoiTuong !== '' && form.MaKho !== '') {
         setShowPopup(true)
       }
     }
@@ -76,10 +81,10 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
     }
   }, [isShow, dataRecord, token, form?.DataDetails])
 
-  const setSelectDataOption = (data) => {
-    setYourMaHangOptions(data)
-    setYourTenHangOptions(data)
-  }
+  // const setSelectDataOption = (data) => {
+  //   setYourMaHangOptions(data)
+  //   setYourTenHangOptions(data)
+  // }
   const handleClosePopup = () => {
     setShowPopup(false)
   }
@@ -89,12 +94,18 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
 
     setForm({ ...form, [name]: value })
   }
-  const handleChangeInput = (value) => {
+  const handleChangeInput = async (value) => {
     const [MaDoiTuong, TenDoiTuong, DiaChi] = value.split(' - ')
     setForm({ ...form, MaDoiTuong, TenDoiTuong, DiaChi })
+    const result_listHp = await DANHSACHHANGHOA_PBS(API.DANHSACHHANGHOA_PBS, token, form)
+    setDataListHP(result_listHp)
+    // setSelectDataOption(result_listHp)
   }
-  const handleChangeInput_kho = (value) => {
+  const handleChangeInput_kho = async (value) => {
     setForm({ ...form, MaKho: value })
+    const result_listHp = await DANHSACHHANGHOA_PBS(API.DANHSACHHANGHOA_PBS, token, form)
+    setDataListHP(result_listHp)
+    // setSelectDataOption(result_listHp)
   }
 
   const handleAddData = (record) => {
@@ -184,7 +195,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
                           <DatePicker
                             className="DatePicker_PMH max-h-[100px]"
                             format="DD/MM/YYYY"
-                            defaultValue={typeAction === 'create' ? Dates.NgayCTu : dayjs(form.NgayCTu)}
+                            defaultValue={typeAction === 'create' ? Dates.NgayCTu : dayjs(form?.NgayCTu)}
                             onChange={(newDate) => {
                               setDates({
                                 ...Dates,
@@ -319,12 +330,13 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
                 <div className="p-4 pb-0">
                   {data_chitiet ? (
                     <TableEdit
+                      listHP={dataListHP}
                       typeTable={'BanHang'}
                       param={dataChitiet}
                       columName={nameColumsPhieuBanHangChiTiet}
                       handleEditData={handleEditData}
-                      yourMaHangOptions={yourMaHangOptions}
-                      yourTenHangOptions={yourTenHangOptions}
+                      yourMaHangOptions={dataListHP}
+                      yourTenHangOptions={dataListHP}
                       ColumnTable={['STT', 'MaHang', 'TenHang', 'DVT', 'SoLuong', 'DonGia', 'TienHang', 'TyLeThue', 'TienThue', 'ThanhTien', 'TyLeCKTT', 'TienCKTT', 'TongCong']}
                     />
                   ) : null}
@@ -332,11 +344,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
               </div>
             </div>
 
-            <div>
-              {showPopup && (
-                <ListHelper_HangHoa data={form} isShowList={showPopup} close={handleClosePopup} handleAddData={handleAddData} setSelectDataOption={setSelectDataOption} />
-              )}
-            </div>
+            <div>{showPopup && <ListHelper_HangHoa data={dataListHP} isShowList={showPopup} close={handleClosePopup} handleAddData={handleAddData} />}</div>
             <div className=" w-full flex justify-end  gap-2 ">
               {typeAction === 'edit' || typeAction === 'view' ? null : (
                 <ActionButton color={'slate-50'} background={'blue-500'} bg_hover={'white'} color_hover={'blue-500'} title={'Lưu'} handleAction={handleSubmit} />

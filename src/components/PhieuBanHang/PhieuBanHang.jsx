@@ -280,6 +280,7 @@ function PhieuBanHang() {
         handleChangePhieuThu={handleChangePhieuThu}
         loadingSearch={loadingSearch}
         selectMH={selectMH}
+        textSearch={searchText}
       />
       <ActionModals isShow={isShow} handleClose={handleClose} dataRecord={dataRecord} typeAction={type} setMaHang={setMaHang} />
       <Model isShow={isShowDelete} handleClose={handleClose} record={dataRecord} ActionDelete={ActionDelete} typeModel={typeModel} ActionPay={ActionPay} />
