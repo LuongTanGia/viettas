@@ -183,7 +183,16 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
                         {typeAction === 'create' ? (
                           <>
                             <label className="mr-2 ml-2">Lập phiếu thu</label>
-                            <input type="checkbox" className="outline-none px-2 " />
+                            <input
+                              type="checkbox"
+                              className="outline-none px-2 "
+                              onChange={(e) =>
+                                setForm({
+                                  ...form,
+                                  TTTienMat: e.target.checked ? true : false,
+                                })
+                              }
+                            />
                           </>
                         ) : null}
                       </div>
