@@ -22,17 +22,18 @@ function BtnAction({ handleEdit, handleDelete, record, handleChangePhieuThu, typ
         ) : (
           <div className=" flex gap-1 items-center justify-center ">
             <div
-              disabled="true"
-              onClick={() => handleChangePhieuThu(record)}
+              // disabled="true"
+              onClick={() => (record.PhieuThu ? null : handleChangePhieuThu(record))}
               title="Lập phiếu chi"
               className={`p-[3px] border rounded-md text-slate-50 ${
-                record.TTTienMat ? 'bg-gray-400 cursor-not-allowed' : 'border-blue-500 bg-blue-500 hover:bg-white hover:text-blue-500 cursor-pointer'
+                record.PhieuThu ? 'bg-gray-400 cursor-not-allowed' : 'border-blue-500 bg-blue-500 hover:bg-white hover:text-blue-500 cursor-pointer'
               }`}
+              disabled={record.PhieuThu ? true : false}
             >
               <GiReceiveMoney size={16} />
             </div>
             <div
-              onClick={() => (record.TTTienMat ? toast.info('Dữ liệu đã được lập phiếu thu tiền!. Không thể sủa.') : handleEdit(record))}
+              onClick={() => (record.PhieuThu ? toast.info('Dữ liệu đã được lập phiếu thu tiền!. Không thể sủa.') : handleEdit(record))}
               title="Sửa"
               className="p-[3px] border rounded-md text-slate-50 border-yellow-500 bg-yellow-400 hover:bg-white hover:text-yellow-500 cursor-pointer"
             >

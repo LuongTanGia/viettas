@@ -10,77 +10,8 @@ import { FcServices } from 'react-icons/fc'
 import dayjs from 'dayjs'
 
 const { Text } = Typography
-const getInputNode = (inputType, record, dataIndex, text, typeTable, form, onChange) => {
-  switch (inputType) {
-    case 'number':
-      return <InputNumber value={text} onChange={(value) => onChange && onChange(dataIndex, value)} />
-    case 'checkbox':
-      const checked = text // Giữ giá trị hiện tại
-      const inputNode = <Checkbox checked={checked} onChange={(e) => onChange && onChange(dataIndex, e.target.checked)} />
-      return inputNode
-    case 'select':
-      const options = getSelectOptions(dataIndex)
-      return (
-        <Select value={text} onChange={(value) => onChange && onChange(dataIndex, value)}>
-          {options.map((option) => (
-            <Select.Option key={option.value} value={option.value}>
-              {option.label}
-            </Select.Option>
-          ))}
-        </Select>
-      )
-    default:
-      // For any other input type, return a default Input with the provided text
-      return <Input value={text} onChange={(e) => onChange && onChange(dataIndex, e.target.value)} />
-  }
-}
 
-const getSelectOptions = (dataIndex) => {
-  if (dataIndex === 'MaHang') {
-    return [
-      { value: 'option1', label: 'Option 1' },
-      { value: 'option2', label: 'Option 2' },
-    ]
-  } else if (dataIndex === 'DVT') {
-    return [
-      { value: 'kg', label: 'Kilogram' },
-      { value: 'g', label: 'Gram' },
-    ]
-  }
-  return []
-}
-
-const EditableCell = ({ editing, dataIndex, title, inputType, record, index, children, form, ...restProps }) => {
-  const inputValue = record ? record[dataIndex] : undefined
-  const inputNode = getInputNode(inputType, record, dataIndex, inputValue, 'edit', form)
-
-  return (
-    <td {...restProps}>
-      {editing ? (
-        <Form.Item
-          name={dataIndex}
-          style={{
-            margin: 0,
-          }}
-          rules={[
-            {
-              required: true,
-              message: `Please Input ${title}!`,
-            },
-          ]}
-        >
-          {inputNode}
-        </Form.Item>
-      ) : (
-        children
-      )}
-    </td>
-  )
-}
-
-function Tables({ loadingSearch, param, columName, height, handleView, handleEdit, typeTable, handleAddData, handleDelete, handleChangePhieuThu, selectMH }) {
-  const [pageSize, setPageSize] = useState('20')
-  const [page, setPage] = useState('1')
+function Tables({ loadingSearch, param, columName, height, handleView, handleEdit, typeTable, handleAddData, handleDelete, handleChangePhieuThu, selectMH, textSearch }) {
   const [hiden, setHiden] = useState([])
   const DataColumns = param ? param[0] : []
   console.log(selectMH, 'selectMH')
@@ -88,6 +19,27 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
 
   const ThongSo = JSON.parse(localStorage.getItem('ThongSo'))
 
+  const [searchText, setSearchText] = useState('')
+  useEffect(() => {
+    setSearchText(textSearch)
+  }, [textSearch])
+
+  const renderHighlightedCell = (text) => {
+    if (!searchText || typeof text !== 'string' || !text.toLowerCase().includes(searchText.toLowerCase())) {
+      return <div>{text}</div>
+    }
+
+    const parts = text.split(new RegExp(`(${searchText})`, 'gi'))
+    return (
+      <div>
+        {parts.map((part, index) => (
+          <span key={index} style={part.toLowerCase() === searchText.toLowerCase() ? { background: 'yellow' } : {}}>
+            {part}
+          </span>
+        ))}
+      </div>
+    )
+  }
   const listColumns = keysOnly?.filter((value) => !hiden.includes(value))
   const newColumns = listColumns.map((item, index) => {
     if (item === 'DiaChi') {
@@ -232,7 +184,7 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
               color: text < 0 ? 'red' : 'black',
             }}
           >
-            {formattedValue}
+            {renderHighlightedCell(formattedValue)}
           </div>
         )
       },
@@ -257,14 +209,11 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
     if (!col.editable) {
       return col
     }
-
     return {
       ...col,
       onCell: (record) => {
         const cellValue = record[col.dataIndex]
         let inputType
-
-        // Determine the input type based on the data type
         if (typeof cellValue === 'number') {
           inputType = 'number'
         } else if (typeof cellValue === 'boolean' && param !== null) {
@@ -285,9 +234,6 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
       },
     }
   })
-  // const formatVND = (value) => {
-  //   return Number(value).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLEDONGIA, maximumFractionDigits: ThongSo.SOLEDONGIA })
-  // }
   const originData = param?.map((record, index) => ({
     key: index,
     ...record,
@@ -302,21 +248,12 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
 
   useEffect(() => {
     setData(originData)
-    const setKey = originData.filter((item) => initialSelectedRowKeys.includes(item.SoChungTu))
+    const setKey = originData?.filter((item) => initialSelectedRowKeys.includes(item.SoChungTu))
     console.log(setKey)
     setSelectedRowKeys(setKey.map((item) => item.key))
   }, [param, selectMH])
   const [editingKey, setEditingKey] = useState('')
   const isEditing = (record) => record.index === editingKey
-  const edit = (record) => {
-    form.setFieldsValue({
-      SoChungTu: '',
-      MaDoiTuong: '',
-      DiaChi: '',
-      ...record,
-    })
-    setEditingKey(record.index)
-  }
 
   const onRowClick = (record) => {
     return {
@@ -328,7 +265,6 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
       },
     }
   }
-  const [selectVisible, setSelectVisible] = useState(false)
   const options = []
   for (let i = 0; i < keysOnly.length; i++) {
     options.push({
@@ -336,31 +272,6 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
       label: columName[keysOnly[i]] || keysOnly[i],
     })
   }
-  const handleChange = (value) => {
-    console.log(`selected ${value}`)
-    setHiden(value)
-  }
-  const handleToggleSelect = () => {
-    setSelectVisible(!selectVisible)
-  }
-
-  // select checkbox
-  // const [selectedRowKeys, setSelectedRowKeys] = useState([])
-  // const [selectedMaHangs, setSelectedMaHangs] = useState(['PBS.240102005'])
-
-  // const onSelectChange = (newSelectedRowKeys, selectedRows) => {
-  //   setSelectedMaHangs(newSelectedRowKeys)
-  //   const maHangs = selectedRows.map((record) => record.SoChungTu)
-  //   const filteredMaHangs = maHangs.filter((maHang) => maHang !== null && maHang !== undefined)
-  //   setSelectedMaHangs(filteredMaHangs)
-  // }
-  // console.log(selectedMaHangs)
-  // const rowSelection = {
-  //   selectedRowKeys,
-  //   onChange: onSelectChange,
-  //
-
-  // Rest of your component...
 
   const onSelectChange = (newSelectedRowKeys, selectedRows) => {
     console.log(selectedRows)
@@ -370,13 +281,10 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
     setSelectedRowKeys(newSelectedRowKeys)
   }
 
-  console.log(selectedRowKeys)
-
   const rowSelection = {
     selectedRowKeys,
     onChange: onSelectChange,
   }
-
   return (
     <>
       {/* <Button onClick={handleToggleSelect} className="mr-4 ">
@@ -395,66 +303,107 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
       )} */}
 
       <Form form={form} component={false}>
-        <Table
-          loading={loadingSearch}
-          rowSelection={rowSelection}
-          components={{
-            body: {
-              cell: EditableCell,
-            },
-          }}
-          className={height}
-          columns={mergedColumns}
-          dataSource={data}
-          rowClassName="editable-row"
-          // pagination={{
-          //   position: 'bottom',
-          //   current: page,
-          //   pageSize: pageSize,
-          //   onChange: (page, pageSize) => {
-          //     setPage(page)
-          //     setPageSize(pageSize)
-          //   },
-          // }}
-          pagination={false}
-          bordered
-          onRow={(record) => ({
-            ...onRowClick(record),
-          })}
-          scroll={{
-            y: 300,
-            x: 200,
-          }}
-          scrollToFirstRowOnChange
-          size="small"
-          summary={(pageData) => {
-            return (
-              <Table.Summary fixed="bottom">
-                <Table.Summary.Row>
-                  <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell>
-                  {columns
-                    .filter((column) => column.render)
-                    .map((column) => {
-                      const isNumericColumn = typeof data[0]?.[column.dataIndex] === 'number'
+        {typeTable !== 'listHelper' ? (
+          <Table
+            loading={loadingSearch}
+            rowSelection={rowSelection}
+            className={height}
+            columns={mergedColumns}
+            dataSource={data}
+            // rowClassName="editable-row"
+            rowClassName={(record) => {
+              for (const col of listColumns) {
+                if (record[col] && typeof record[col] === 'string' && record[col].toLowerCase().includes(searchText.toLowerCase())) {
+                  return 'highlight-row'
+                }
+              }
+              return ''
+            }}
+            pagination={false}
+            bordered
+            onRow={(record) => ({
+              ...onRowClick(record),
+            })}
+            scroll={{
+              y: 300,
+              x: 200,
+            }}
+            scrollToFirstRowOnChange
+            size="small"
+            summary={(pageData) => {
+              return (
+                <Table.Summary fixed="bottom">
+                  <Table.Summary.Row>
+                    <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell>
+                    {columns
+                      .filter((column) => column.render)
+                      .map((column) => {
+                        const isNumericColumn = typeof data[0]?.[column.dataIndex] === 'number'
 
-                      return (
-                        <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
-                          {isNumericColumn ? (
-                            <Text strong>
-                              {Number(pageData.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                minimumFractionDigits: ThongSo.SOLESOTIEN,
-                                maximumFractionDigits: ThongSo.SOLESOTIEN,
-                              })}
-                            </Text>
-                          ) : null}
-                        </Table.Summary.Cell>
-                      )
-                    })}
-                </Table.Summary.Row>
-              </Table.Summary>
-            )
-          }}
-        />
+                        return (
+                          <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                            {isNumericColumn ? (
+                              <Text strong>
+                                {Number(pageData.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                  minimumFractionDigits: ThongSo.SOLESOTIEN,
+                                  maximumFractionDigits: ThongSo.SOLESOTIEN,
+                                })}
+                              </Text>
+                            ) : null}
+                          </Table.Summary.Cell>
+                        )
+                      })}
+                  </Table.Summary.Row>
+                </Table.Summary>
+              )
+            }}
+          />
+        ) : (
+          <Table
+            loading={loadingSearch}
+            className={height}
+            columns={mergedColumns}
+            dataSource={data}
+            pagination={false}
+            bordered
+            onRow={(record) => ({
+              ...onRowClick(record),
+            })}
+            scroll={{
+              y: 300,
+              x: 200,
+            }}
+            scrollToFirstRowOnChange
+            size="small"
+            summary={(pageData) => {
+              return (
+                <Table.Summary fixed="bottom">
+                  <Table.Summary.Row>
+                    {/* <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell> */}
+                    {columns
+                      .filter((column) => column.render)
+                      .map((column) => {
+                        const isNumericColumn = typeof data[0]?.[column.dataIndex] === 'number'
+
+                        return (
+                          <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                            {isNumericColumn ? (
+                              <Text strong>
+                                {Number(pageData.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                  minimumFractionDigits: ThongSo.SOLESOTIEN,
+                                  maximumFractionDigits: ThongSo.SOLESOTIEN,
+                                })}
+                              </Text>
+                            ) : null}
+                          </Table.Summary.Cell>
+                        )
+                      })}
+                  </Table.Summary.Row>
+                </Table.Summary>
+              )
+            }}
+          />
+        )}
       </Form>
     </>
   )

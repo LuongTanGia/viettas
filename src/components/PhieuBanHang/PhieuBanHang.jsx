@@ -14,6 +14,7 @@ import Model from './Model'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { BsSearch } from 'react-icons/bs'
 import dayjs from 'dayjs'
+import * as XLSX from 'xlsx'
 
 function PhieuBanHang() {
   const dispatch = useDispatch()
@@ -181,6 +182,34 @@ function PhieuBanHang() {
     setDataLoaded(true)
     setLoadingSearch(false)
   }
+  // const exportToExcel = () => {
+  //   const ws = XLSX.utils.table_to_sheet(document.getElementById('my-table'))
+  //   const wb = XLSX.utils.book_new()
+  //   XLSX.utils.book_append_sheet(wb, ws, 'Sheet1')
+  //   XLSX.writeFile(wb, 'du_lieu.xlsx')
+  // }
+  const exportToExcel = () => {
+    const ws = XLSX.utils.table_to_sheet(document.getElementById('my-table'))
+    const wb = XLSX.utils.book_new()
+
+    // Add company information to the worksheet starting from cell A1
+    const companyInfo = [['Tên Công Ty: ABC Corporation'], ['Địa Chỉ: 123 Main Street'], ['Ngày: 2024-01-01']]
+    XLSX.utils.sheet_add_aoa(ws, companyInfo, { origin: 'A1' })
+
+    // Append the worksheet to the workbook
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1')
+
+    // Add additional data starting from row 11 (excluding the first 10 rows)
+    const additionalData = [
+      ['John Doe', '30', 'Engineer'],
+      ['Jane Doe', '25', 'Designer'],
+      // Add more data as needed
+    ]
+    XLSX.utils.sheet_add_aoa(ws, additionalData, { origin: 'A11' })
+
+    // Save the workbook to a file
+    XLSX.writeFile(wb, 'du_lieu.xlsx')
+  }
 
   return (
     <>
@@ -237,7 +266,7 @@ function PhieuBanHang() {
           </div>
           <div className=" ">
             <ActionButton
-              icon={<PrinterOutlined />}
+              // icon={<PrinterOutlined />}
               color={'slate-50'}
               title={'Lọc'}
               background={'blue-500'}
@@ -248,6 +277,15 @@ function PhieuBanHang() {
           </div>
         </div>
         <div className="flex justify-end gap-2    ">
+          <ActionButton
+            // icon={<PrinterOutlined />}
+            color={'slate-50'}
+            title={'Xuất File Excel'}
+            background={'blue-500'}
+            bg_hover={'white'}
+            color_hover={'blue-500'}
+            handleAction={exportToExcel}
+          />
           <ActionButton
             icon={<PrinterOutlined />}
             color={'slate-50'}
@@ -269,18 +307,21 @@ function PhieuBanHang() {
         </div>
       </div>
 
-      <Table
-        param={data}
-        columName={nameColumsPhieuBanHang}
-        handleView={handleView}
-        handleEdit={handleEdit}
-        height={'setHeight'}
-        handleCreate={handleCreate}
-        handleDelete={handleDelete}
-        handleChangePhieuThu={handleChangePhieuThu}
-        loadingSearch={loadingSearch}
-        selectMH={selectMH}
-      />
+      <div id="my-table">
+        <Table
+          param={data}
+          columName={nameColumsPhieuBanHang}
+          handleView={handleView}
+          handleEdit={handleEdit}
+          height={'setHeight'}
+          handleCreate={handleCreate}
+          handleDelete={handleDelete}
+          handleChangePhieuThu={handleChangePhieuThu}
+          loadingSearch={loadingSearch}
+          selectMH={selectMH}
+          textSearch={searchText}
+        />
+      </div>
       <ActionModals isShow={isShow} handleClose={handleClose} dataRecord={dataRecord} typeAction={type} setMaHang={setMaHang} />
       <Model isShow={isShowDelete} handleClose={handleClose} record={dataRecord} ActionDelete={ActionDelete} typeModel={typeModel} ActionPay={ActionPay} />
       <ModelPrint isShowModel={isShowPrint} handleCloseAction={handleCloseAction} />
