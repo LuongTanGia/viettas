@@ -600,7 +600,12 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   // }
 
   const handleTienMat = () => {
-    setFormPMH({ ...formPMH, TTTienMat: !formPMH.TTTienMat })
+    setFormPMH((prevFormPMH) => {
+      return {
+        ...prevFormPMH,
+        TTTienMat: !prevFormPMH.TTTienMat,
+      }
+    })
   }
 
   const handleFilterPrint = () => {
@@ -1190,7 +1195,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                         }}
                       />
                     </div> */}
-                    <div className="flex gap-x-2 items-center  ">
+                    {/* <div className="flex gap-x-2 items-center  ">
                       <label htmlFor="lapphieuchi" className="cursor-pointer">
                         Lập phiếu chi
                       </label>
@@ -1202,6 +1207,11 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                         checked={formPMH.TTTienMat}
                         onChange={handleTienMat}
                       />
+                    </div> */}
+                    <div className="flex gap-x-2 items-center">
+                      <Checkbox checked={formPMH.TTTienMat} onChange={handleTienMat}>
+                        Lập phiếu chi
+                      </Checkbox>
                     </div>
                   </div>
                   <div className="p-1 flex  ">
