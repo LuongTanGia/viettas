@@ -6,7 +6,7 @@ import { toast } from 'react-toastify'
 import { useEffect, useState } from 'react'
 import './HangHoaModals.css'
 import moment from 'moment'
-import { Checkbox, Select, Space, InputNumber, Form } from 'antd'
+import { Checkbox, Select, Space, InputNumber } from 'antd'
 import logo from '../../../../assets/VTS-iSale.ico'
 import { RETOKEN } from '../../../../action/Actions'
 import ActionButton from '../../../../components/util/Button/ActionButton'
@@ -223,6 +223,8 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) 
         newDataList[index]['DVT_CTs'] = selectedHangHoa?.DVT
       }
       const existMaHang = newDataList?.some((item) => item.MaHangChiTiet === newValue)
+      console.log(newDataList)
+      console.log(newDataList?.map((item) => item.MaHangChiTiet))
       if (!existMaHang) {
         newDataList[index][property] = newValue
         setHangHoaForm({ ...hangHoaForm, HangHoa_CTs: newDataList })
@@ -234,7 +236,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) 
       }
     } else {
       const newDataList = [...dataView.HangHoa_CTs]
-      if (property == 'MaHangChiTiet') {
+      if (property === 'MaHangChiTiet') {
         const selectedHangHoa = HangHoaCT.find((item) => item.MaHang === newValue)
         newDataList[index]['TenHangChiTiet'] = selectedHangHoa?.TenHang
         newDataList[index]['DVTChiTiet'] = selectedHangHoa?.DVT
@@ -313,12 +315,13 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) 
       )
       if (response.data.DataError === 0) {
         isSave ? '' : close()
-        toast.success('Thêm sản phẩm thành công', { autoClose: 1000 })
         loadingData()
+        toast.success('Thêm sản phẩm thành công', { autoClose: 1000 })
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         handleCreate()
       } else {
+        console.log(hangHoaForm)
         toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
       }
     } catch (error) {

@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSearch } from '../../components_T/hooks/Search'
 import { Checkbox, Table, Tooltip } from 'antd'
 import HangHoaModals from '../../components_T/Modal/DanhMuc/HangHoa/HangHoaModals'
@@ -24,6 +24,7 @@ const HangHoa = () => {
   const [isShowModal, setIsShowModal] = useState(false)
   const [actionType, setActionType] = useState('')
   const [isShowOption, setIsShowOption] = useState(false)
+  const showOption = useRef(null)
   const [isLoading, setIsLoading] = useState(false)
   const [selectedRowKeys, setSelectedRowKeys] = useState([])
   const [isShowSearch, setIsShowSearch] = useState(false)
@@ -51,6 +52,18 @@ const HangHoa = () => {
     getListHangHoa()
     getThongSo()
   }, [isLoading])
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showOption.current && !showOption.current.contains(event.target)) {
+        setIsShowOption(false)
+      }
+    }
+    document.addEventListener('click', handleClickOutside)
+    return () => {
+      document.removeEventListener('click', handleClickOutside)
+    }
+  }, [])
 
   const handleLoading = () => {
     setIsLoading(false)
@@ -531,7 +544,7 @@ const HangHoa = () => {
                   )}
                 </div>
               </div>
-              <div className="flex justify-between ">
+              <div className="flex justify-between" ref={showOption}>
                 <div className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5  " onClick={() => setIsShowOption(!isShowOption)} title="Chức năng khác">
                   <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
                 </div>

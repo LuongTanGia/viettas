@@ -106,9 +106,6 @@ const NDCCreate = ({ close, loadingData }) => {
   const handleSearch = (event) => {
     setSearchHangHoa(event.target.value)
   }
-  const formatCurrency = (value) => {
-    return Number(value).toLocaleString('vi-VN')
-  }
   const formatThapPhan = (number, decimalPlaces) => {
     if (typeof number === 'number' && !isNaN(number)) {
       const formatter = new Intl.NumberFormat('vi-VN', {
@@ -141,24 +138,23 @@ const NDCCreate = ({ close, loadingData }) => {
     const newRow = { ...dataRow, ...defaultValues }
     const existMaHang = selectedRowData.some((item) => item.MaHang === newRow.MaHang)
     if (!existMaHang) {
-      handleAddRow(newRow)
+      setSelectedRowData([...selectedRowData, newRow])
       toast.success('Chọn hàng hóa thành công', {
         autoClose: 1000,
       })
     } else {
-      toast.warning('Hàng hóa đã được chọn', { autoClose: 1000 })
+      const index = selectedRowData.findIndex((item) => item.MaHang === newRow.MaHang)
+      const oldQuantity = selectedRowData[index].SoLuong
+      selectedRowData[index].SoLuong = oldQuantity + newRow.SoLuong
+      setNDCForm({ ...NDCForm, DataDetails: selectedRowData })
     }
-  }
-  const handleAddRow = (newRow) => {
-    setSelectedRowData([...selectedRowData, newRow])
   }
   const handleCreate = async (e, isSave = true) => {
     e.preventDefault()
     try {
       const response = await categoryAPI.NDCCreate({ ...NDCForm, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss') }, TokenAccess)
       if (response.data.DataError == 0) {
-        loadingData()
-        isSave ? '' : close()
+        isSave ? '' : close() && loadingData()
         toast.success('Tạo thành công')
       } else {
         console.log(NDCForm)
@@ -173,18 +169,23 @@ const NDCCreate = ({ close, loadingData }) => {
     if (key === 'SoLuong') {
       newValue = parseFloat(newValue)
     }
-    if (key == 'TenHang') {
+    if (key === 'TenHang') {
       const selectedHangHoa = dataHangHoa.find((item) => item.MaHang === newValue)
       newDataList[index]['DonGia'] = selectedHangHoa?.DonGia
       newDataList[index]['MaHang'] = selectedHangHoa?.MaHang
     }
-    newDataList[index][key] = newValue
-    setSelectedRowData(newDataList)
-    setNDCForm({ ...NDCForm, DataDetails: newDataList })
+    const existMaHang = newDataList.some((item, i) => i !== index && item.MaHang === newValue)
+    if (!existMaHang) {
+      newDataList[index][key] = newValue
+      setSelectedRowData(newDataList)
+      setNDCForm((prevNDCForm) => ({ ...prevNDCForm, DataDetails: newDataList }))
+    } else {
+      toast.warning('Hàng hóa đã được chọn', { autoClose: 1000 })
+    }
   }
   const addHangHoaCT = () => {
-    const addHHCT = Array.isArray(NDCForm.DataDetails) ? [...NDCForm.DataDetails] : []
-    setSelectedRowData([...addHHCT, { MaHang: '', TenHang: '', DonGia: 0, SoLuong: 1 }])
+    // const addHHCT = Array.isArray(NDCForm.DataDetails) ? [...NDCForm.DataDetails] : []
+    // setSelectedRowData([...addHHCT, { MaHang: '', TenHang: '', DonGia: 0, SoLuong: 1 }])
   }
   const removeRow = (index) => {
     const updatedBarcodes = [...NDCForm.DataDetails]
@@ -199,7 +200,6 @@ const NDCCreate = ({ close, loadingData }) => {
     {
       title: 'STT',
       render: (text, record, index) => index + 1,
-      fixed: 'left',
       width: 80,
       align: 'center',
     },
@@ -207,7 +207,6 @@ const NDCCreate = ({ close, loadingData }) => {
       title: 'Mã hàng',
       dataIndex: 'MaHang',
       key: 'MaHang',
-      fixed: 'left',
       width: 150,
       showSorterTooltip: false,
       align: 'center',
@@ -217,6 +216,7 @@ const NDCCreate = ({ close, loadingData }) => {
       title: 'Tên nhóm',
       dataIndex: 'NhomHang',
       key: 'NhomHang',
+      width: 250,
       showSorterTooltip: false,
       align: 'center',
       sorter: (a, b) => a.NhomHang.localeCompare(b.NhomHang),
@@ -239,7 +239,6 @@ const NDCCreate = ({ close, loadingData }) => {
       title: 'Tên hàng',
       dataIndex: 'TenHang',
       key: 'TenHang',
-      fixed: 'left',
       showSorterTooltip: false,
       align: 'center',
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
@@ -305,7 +304,9 @@ const NDCCreate = ({ close, loadingData }) => {
       sorter: (a, b) => a.SoLuongTon - b.SoLuongTon,
       align: 'center',
       render: (text) => (
-        <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 || text === null ? 'text-gray-300' : ''}`}>{formatCurrency(text)}</span>
+        <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 || text === null ? 'text-gray-300' : ''}`}>
+          {formatThapPhan(text, dataThongSo.SOLESOLUONG)}
+        </span>
       ),
     },
   ]
@@ -412,20 +413,20 @@ const NDCCreate = ({ close, loadingData }) => {
               <div className="border-2 p-2 rounded m-1 flex flex-col gap-2 max-h-[20rem] overflow-y-auto">
                 <div className="flex justify-center text-xs text-blue-700 font-bold">Nhấn F9 để chọn mã hàng từ danh sách</div>
                 <div className="flex gap-2 items-center">
-                  <table className="barcodeList ">
+                  <table className="barcodeList   ">
                     <thead>
                       <tr>
-                        <th>#</th>
+                        <th className="w-[5rem]">STT</th>
                         <th className="w-[10rem]">Mã hàng</th>
                         <th className="w-[22rem]">Tên hàng</th>
-                        <th>Đơn giá</th>
+                        <th className="w-[12rem]">Đơn giá</th>
                         <th className="w-[12rem]">Số lượng</th>
                         <th className="w-[3rem]"></th>
                       </tr>
                     </thead>
                     <tbody className="">
                       {selectedRowData?.map((item, index) => (
-                        <tr key={item.MaHang}>
+                        <tr key={index}>
                           <td>
                             <div className="flex justify-center">{index + 1}</div>
                           </td>
@@ -435,10 +436,10 @@ const NDCCreate = ({ close, loadingData }) => {
                           <td>
                             <div>
                               <Select
-                                className="max-w-[22rem]"
+                                className="max-w-[22rem] text-start"
                                 showSearch
                                 size="small"
-                                value={item.TenHang}
+                                value={item.TenHang || ''}
                                 style={{
                                   width: '100%',
                                 }}
@@ -446,7 +447,7 @@ const NDCCreate = ({ close, loadingData }) => {
                               >
                                 {dataHangHoa?.map((hangHoa) => (
                                   <>
-                                    <Select.Option key={hangHoa.TenHang} value={hangHoa.MaHang} className="flex items-center max-w-[25rem]">
+                                    <Select.Option key={hangHoa.MaHang} title={hangHoa.MaHang} value={hangHoa.MaHang} className="flex text-start max-w-[25rem]">
                                       <p className="text-start truncate">{hangHoa.TenHang}</p>
                                     </Select.Option>
                                   </>
@@ -506,14 +507,14 @@ const NDCCreate = ({ close, loadingData }) => {
       </div>
       <div>
         {isShowModal && (
-          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col min-w-[80rem] min-h-[8rem] bg-white  p-2 rounded-xl shadow-custom overflow-hidden z-10">
-            <div className="flex flex-col gap-2 p-2">
+          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col max-w-[80rem] min-h-[8rem] bg-white  p-2 rounded-xl shadow-custom overflow-hidden z-10">
+            <div className="flex flex-col gap-2 p-2 ">
               <div className="flex items-center gap-2">
                 <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
                 <p className="text-blue-700 font-semibold uppercase">Danh Sách Hàng Hóa - Phiếu Nhập Điều Chỉnh</p>
               </div>
               <div className="border-2">
-                <div className=" p-2 rounded m-1 flex flex-col gap-2 max-h-[35rem]  ">
+                <div className=" p-2 rounded m-1 flex flex-col gap-2 max-h-[35rem]">
                   <div className="flex w-[20rem] overflow-hidden  relative ">
                     <FaSearch className="absolute left-[0.5rem] top-2.5 hover:text-red-400 cursor-pointer" />
                     <input
@@ -524,7 +525,7 @@ const NDCCreate = ({ close, loadingData }) => {
                     />
                   </div>
                   <Table
-                    className="table_DLPhieuNDC"
+                    className=" "
                     columns={title}
                     dataSource={filteredHangHoa}
                     onRow={(record) => ({
@@ -534,8 +535,8 @@ const NDCCreate = ({ close, loadingData }) => {
                     })}
                     size="small"
                     scroll={{
-                      x: 900,
-                      y: 400,
+                      x: 1100,
+                      y: 420,
                     }}
                     style={{
                       whiteSpace: 'nowrap',
