@@ -15,7 +15,6 @@ export const DanhSachPMH = (token, formKhoanNgay) =>
         data: formKhoanNgay,
       })
       resolve(response)
-      console.log('dataAPI', response)
     } catch (error) {
       reject(error)
     }

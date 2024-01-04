@@ -18,7 +18,7 @@ import ModalOnlyPrintWareHouse from './ModalOnlyPrintWareHouse'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import logo from '../assets/VTS-iSale.ico'
 import { Select } from 'antd'
-import SimpleBackdrop from '../components/util/Loading/LoadingPage'
+import { Checkbox } from 'antd'
 
 // import { number } from 'prop-types'
 // import { create } from '@mui/material/styles/createTransitions'
@@ -38,7 +38,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   const [selectedSctBD, setSelectedSctBD] = useState()
   const [selectedSctKT, setSelectedSctKT] = useState()
   const [newDataPMH, setNewDataPMH] = useState(dataPMH)
-
+  // const [checkedValues, setCheckedValues] = useState([1])
   // const currentRowData = useCallback(
   //   (mahang) => {
   //     return selectedRowData.map((item) => item.MaHang).filter((item) => item !== 'Chọn mã hàng' && item !== mahang)
@@ -502,7 +502,9 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   const handlePrint = async () => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
+
       const lien = calculateTotal()
+
       const response = await apis.InPMH(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
       // Kiểm tra call api thành công
       if (response.data && response.data.DataError === 0) {
@@ -590,12 +592,12 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
     return total
   }
 
-  const handleLien = (checkboxName) => {
-    setCheckboxValues((prevValues) => ({
-      ...prevValues,
-      [checkboxName]: !prevValues[checkboxName],
-    }))
-  }
+  // const handleLien = (checkboxName) => {
+  //   setCheckboxValues((prevValues) => ({
+  //     ...prevValues,
+  //     [checkboxName]: !prevValues[checkboxName],
+  //   }))
+  // }
 
   const handleTienMat = () => {
     setFormPMH({ ...formPMH, TTTienMat: !formPMH.TTTienMat })
@@ -618,6 +620,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   const handleEditData = (data) => {
     setSelectedRowData(data)
   }
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
       <div className="p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
@@ -705,7 +708,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                   <div className="flex ">
                     <label className="px-[16px]">Đến</label>
 
-                    <Select showSearch optionFilterProp="children" onChange={(value) => selectedSctKT(value)} style={{ width: '154px' }} value={selectedSctKT}>
+                    <Select showSearch optionFilterProp="children" onChange={(value) => setSelectedSctKT(value)} style={{ width: '154px' }} value={selectedSctKT}>
                       {newDataPMH?.map((item) => (
                         <Option key={item.SoChungTu} value={item.SoChungTu}>
                           {item.SoChungTu}
@@ -715,20 +718,69 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                   </div>
                 </div>
                 {/* liên */}
-                <div className="flex justify-center items-center gap-6 mt-4">
-                  <div>
+                <div className="flex justify-center  gap-6 mt-4">
+                  {/* <div className="">
                     <input id="lien1" type="checkbox" checked={checkboxValues.checkbox1} onChange={() => handleLien('checkbox1')} />
-                    <label htmlFor="lien1">Liên 1</label>
+                    <label className="pl-2 " htmlFor="lien1">
+                      Liên 1
+                    </label>
                   </div>
 
                   <div>
                     <input id="lien2" type="checkbox" checked={checkboxValues.checkbox2} onChange={() => handleLien('checkbox2')} />
-                    <label htmlFor="lien2">Liên 2</label>
+                    <label className="pl-2" htmlFor="lien2">
+                      Liên 2
+                    </label>
                   </div>
 
                   <div>
                     <input id="lien3" type="checkbox" checked={checkboxValues.checkbox3} onChange={() => handleLien('checkbox3')} />
-                    <label htmlFor="lien3">Liên 3</label>
+                    <label className="pl-2" htmlFor="lien3">
+                      Liên 3
+                    </label>
+                  </div> */}
+                  {/*  */}
+                  <div>
+                    <Checkbox
+                      value="checkbox1"
+                      checked={checkboxValues.checkbox1}
+                      onChange={(e) =>
+                        setCheckboxValues((prevValues) => ({
+                          ...prevValues,
+                          [e.target.value]: !prevValues[e.target.value],
+                        }))
+                      }
+                    >
+                      Liên 1
+                    </Checkbox>
+                  </div>
+                  <div>
+                    <Checkbox
+                      value="checkbox2"
+                      checked={checkboxValues.checkbox2}
+                      onChange={(e) =>
+                        setCheckboxValues((prevValues) => ({
+                          ...prevValues,
+                          [e.target.value]: !prevValues[e.target.value],
+                        }))
+                      }
+                    >
+                      Liên 2
+                    </Checkbox>
+                  </div>
+                  <div>
+                    <Checkbox
+                      value="checkbox3"
+                      checked={checkboxValues.checkbox3}
+                      onChange={(e) =>
+                        setCheckboxValues((prevValues) => ({
+                          ...prevValues,
+                          [e.target.value]: !prevValues[e.target.value],
+                        }))
+                      }
+                    >
+                      Liên 3
+                    </Checkbox>
                   </div>
                 </div>
               </div>
@@ -799,7 +851,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                   </button>
                 </div>
                 <div className="flex  mt-4 ">
-                  <div className="flex ">
+                  {/* <div className="flex ">
                     <label className="px-4">Số chứng từ</label>
                     <select
                       className=" bg-white border outline-none border-gray-300  "
@@ -813,8 +865,19 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                         </option>
                       ))}
                     </select>
-                  </div>
+                  </div> */}
                   <div className="flex ">
+                    <label className="px-[22px]">Số chứng từ</label>
+
+                    <Select showSearch optionFilterProp="children" onChange={(value) => setSelectedSctBD(value)} style={{ width: '154px' }} value={selectedSctBD}>
+                      {newDataPMH?.map((item) => (
+                        <Option key={item.SoChungTu} value={item.SoChungTu}>
+                          {item.SoChungTu}
+                        </Option>
+                      ))}
+                    </Select>
+                  </div>
+                  {/* <div className="flex ">
                     <label className="px-4">Đến</label>
                     <select
                       className=" bg-white border outline-none border-gray-300  "
@@ -828,11 +891,22 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                         </option>
                       ))}
                     </select>
+                  </div> */}
+                  <div className="flex ">
+                    <label className="px-[16px]">Đến</label>
+
+                    <Select showSearch optionFilterProp="children" onChange={(value) => setSelectedSctKT(value)} style={{ width: '154px' }} value={selectedSctKT}>
+                      {newDataPMH?.map((item) => (
+                        <Option key={item.SoChungTu} value={item.SoChungTu}>
+                          {item.SoChungTu}
+                        </Option>
+                      ))}
+                    </Select>
                   </div>
                 </div>
                 {/* liên */}
                 <div className="flex justify-center items-center gap-6 mt-4">
-                  <div>
+                  {/* <div>
                     <input id="lien1" type="checkbox" checked={checkboxValues.checkbox1} onChange={() => handleLien('checkbox1')} />
                     <label htmlFor="lien1">Liên 1</label>
                   </div>
@@ -840,6 +914,35 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                   <div>
                     <input id="lien2" type="checkbox" checked={checkboxValues.checkbox2} onChange={() => handleLien('checkbox2')} />
                     <label htmlFor="lien2">Liên 2</label>
+                  </div> */}
+
+                  <div>
+                    <Checkbox
+                      value="checkbox1"
+                      checked={checkboxValues.checkbox1}
+                      onChange={(e) =>
+                        setCheckboxValues((prevValues) => ({
+                          ...prevValues,
+                          [e.target.value]: !prevValues[e.target.value],
+                        }))
+                      }
+                    >
+                      Liên 1
+                    </Checkbox>
+                  </div>
+                  <div>
+                    <Checkbox
+                      value="checkbox2"
+                      checked={checkboxValues.checkbox2}
+                      onChange={(e) =>
+                        setCheckboxValues((prevValues) => ({
+                          ...prevValues,
+                          [e.target.value]: !prevValues[e.target.value],
+                        }))
+                      }
+                    >
+                      Liên 2
+                    </Checkbox>
                   </div>
                 </div>
               </div>
@@ -918,7 +1021,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                     </div>
                     <div className="flex items-center p-1 w-1/2">
                       <label className="w-[86px]">Ghi chú</label>
-                      <input type="text" className="w-full border border-gray-300 outline-none px-2 " value={dataThongTin?.GhiChu} />
+                      <input type="text" className="w-full border border-gray-300 outline-none px-2 rounded-[4px]" value={dataThongTin?.GhiChu} />
                     </div>
                   </div>
                 </div>
@@ -930,14 +1033,15 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                     <div className="flex justify-between items-center ">
                       <div className="flex items-center p-1  ">
                         <label className="">Người tạo</label>
-                        <input type="text" className=" border border-gray-300 outline-none px-2" value={dataThongTin?.NguoiTao} readOnly />
+                        <input type="text" className=" border border-gray-300 outline-none px-2 rounded-[4px]" value={dataThongTin?.NguoiTao} readOnly />
                       </div>
-                      <div className="flex items-center p-1 ">
-                        <label className="">Lúc</label>
+
+                      <div className="flex items-center p-1 w-1/2">
+                        <label className="pl-8">Lúc</label>
                         <input
                           readOnly
                           type="text"
-                          className="border border-gray-300 outline-none "
+                          className="w-full border border-gray-300 outline-none px-2 rounded-[4px]"
                           value={dataThongTin?.NgayTao && moment(dataThongTin.NgayTao).isValid() ? moment(dataThongTin.NgayTao).format('DD/MM/YYYY hh:mm:ss') : ''}
                         />
                       </div>
@@ -945,14 +1049,14 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                     <div className="flex justify-between items-center ">
                       <div className="flex items-center p-1  ">
                         <label className="">Sửa cuối</label>
-                        <input readOnly type="text" className=" border border-gray-300 outline-none px-2 " value={dataThongTin?.NguoiSuaCuoi} />
+                        <input readOnly type="text" className=" border border-gray-300 outline-none px-2 rounded-[4px]" value={dataThongTin?.NguoiSuaCuoi} />
                       </div>
                       <div className="flex items-center p-1 w-1/2">
-                        <label className="">Lúc</label>
+                        <label className="pl-8">Lúc</label>
                         <input
                           readOnly
                           type="text"
-                          className="w-full border border-gray-300 outline-none px-2 "
+                          className="w-full border border-gray-300 outline-none px-2 rounded-[4px]"
                           value={dataThongTin?.NgaySuaCuoi && moment(dataThongTin.NgaySuaCuoi).isValid() ? moment(dataThongTin.NgaySuaCuoi).format('DD/MM/YYYY hh:mm:ss') : ''}
                         />
                       </div>
@@ -1093,8 +1197,8 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                       <input
                         id="lapphieuchi"
                         type="checkbox"
-                        className="border border-blue-500 rounded-md px-4 py-2
-                  hover:bg-blue-500 hover:text-white cursor-pointer"
+                        className="border-[1px] hover:border-blue-500 rounded-md px-4 py-2
+                  hover:bg-blue-500 hover:text-white cursor-pointer "
                         checked={formPMH.TTTienMat}
                         onChange={handleTienMat}
                       />
@@ -1184,25 +1288,26 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                 {/* thong tin cap nhat */}
                 <div className="w-[40%] py-1 box_content">
                   <div className="text-center p-1 font-medium text_capnhat">Thông tin cập nhật</div>
-                  <div className="-2 rounded-md w-[98%] h-[80%] box_capnhat">
+                  <div className=" rounded-md w-[98%] h-[80%] box_capnhat">
                     <div className="flex justify-between items-center ">
                       <div className="flex items-center p-1  ">
                         <label className="">Người tạo</label>
-                        <input type="text" className="   outline-none px-2" readOnly />
+                        <input type="text" className=" border border-gray-300 outline-none px-2 rounded-[4px]" readOnly />
                       </div>
+
                       <div className="flex items-center p-1 w-1/2">
-                        <label className="">Lúc</label>
-                        <input readOnly type="text" className="w-full   outline-none px-2 " />
+                        <label className="pl-8">Lúc</label>
+                        <input readOnly type="text" className="w-full border border-gray-300 outline-none px-2 rounded-[4px]" />
                       </div>
                     </div>
                     <div className="flex justify-between items-center ">
                       <div className="flex items-center p-1  ">
                         <label className="">Sửa cuối</label>
-                        <input readOnly type="text" className="   outline-none px-2 " />
+                        <input readOnly type="text" className=" border border-gray-300 outline-none px-2 rounded-[4px]" />
                       </div>
                       <div className="flex items-center p-1 w-1/2">
-                        <label className="">Lúc</label>
-                        <input readOnly type="text" className="w-full   outline-none px-2 " />
+                        <label className="pl-8">Lúc</label>
+                        <input readOnly type="text" className="w-full border border-gray-300 outline-none px-2 rounded-[4px]" />
                       </div>
                     </div>
                   </div>
@@ -1463,25 +1568,26 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                 {/* thong tin cap nhat */}
                 <div className="w-[40%] py-1 box_content">
                   <div className="text-center p-1 font-medium text_capnhat">Thông tin cập nhật</div>
-                  <div className="-2 rounded-md w-[98%] h-[80%] box_capnhat">
+                  <div className=" rounded-md w-[98%] h-[80%] box_capnhat">
                     <div className="flex justify-between items-center ">
                       <div className="flex items-center p-1  ">
                         <label className="">Người tạo</label>
-                        <input type="text" className="   outline-none px-2" readOnly />
+                        <input type="text" className=" border border-gray-300 outline-none px-2 rounded-[4px]" readOnly />
                       </div>
+
                       <div className="flex items-center p-1 w-1/2">
-                        <label className="">Lúc</label>
-                        <input readOnly type="text" className="w-full   outline-none px-2 " />
+                        <label className="pl-8">Lúc</label>
+                        <input readOnly type="text" className="w-full border border-gray-300 outline-none px-2 rounded-[4px]" />
                       </div>
                     </div>
                     <div className="flex justify-between items-center ">
                       <div className="flex items-center p-1  ">
                         <label className="">Sửa cuối</label>
-                        <input readOnly type="text" className="   outline-none px-2 " />
+                        <input readOnly type="text" className=" border border-gray-300 outline-none px-2 rounded-[4px]" />
                       </div>
                       <div className="flex items-center p-1 w-1/2">
-                        <label className="">Lúc</label>
-                        <input readOnly type="text" className="w-full   outline-none px-2 " />
+                        <label className="pl-8">Lúc</label>
+                        <input readOnly type="text" className="w-full border border-gray-300 outline-none px-2 rounded-[4px]" />
                       </div>
                     </div>
                   </div>

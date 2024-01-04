@@ -198,6 +198,7 @@ const ModalHH = ({ close, data, onRowCreate, dataThongSo }) => {
               </tbody>
             </table>
           </div> */}
+
           <Table
             className="table_HH"
             columns={columns}
@@ -230,6 +231,7 @@ const ModalHH = ({ close, data, onRowCreate, dataThongSo }) => {
               },
             })}
           />
+
           <div className="flex justify-end mt-1 gap-x-2">
             <button
               onClick={() => close()}
