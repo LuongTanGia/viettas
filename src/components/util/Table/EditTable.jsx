@@ -472,7 +472,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
     <div>
       <Table
         loading={dataSource.length !== 0 || typeTable === 'create' ? false : true}
-        className={'h310'}
+        className={'h250'}
         components={components}
         rowClassName={() => 'editable-row'}
         bordered
@@ -488,17 +488,18 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
           return (
             <Table.Summary fixed="bottom">
               <Table.Summary.Row>
-                <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell>
-                <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell>
+                {/* <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell> */}
+                {/* <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell> */}
 
                 {columns
                   .filter((column) => column.render)
                   .map((column) => {
-                    const isNumericColumn = typeof dataSource[0]?.[column.dataIndex] === 'number' && column.dataIndex !== 'STT'
+                    const isNumericColumn = typeof dataSource[0]?.[column.dataIndex] === 'number'
+                    // && column.dataIndex !== 'STT'
                     return (
-                      <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                      <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'center' : 'center'} className="text-end font-bold  bg-[#f1f1f1] pr-5">
                         {isNumericColumn ? (
-                          <Text strong>
+                          <Text strong align="center">
                             {Number(pageData.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                               minimumFractionDigits: ThongSo.SOLESOTIEN,
                               maximumFractionDigits: ThongSo.SOLESOTIEN,

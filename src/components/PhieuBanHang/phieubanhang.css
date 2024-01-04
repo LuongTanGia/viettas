@@ -32,7 +32,7 @@
 .box_thongtin.create select,
 .box_thongtin.create input {
   /* background-color: white; */
-  font-weight: 500;
+  /* font-weight: 500; */
 
   /* outline: none; */
 }
@@ -71,7 +71,7 @@
 }
 .box_thongtin input {
   /* padding: 0 11px; */
-  height: 25px;
+  /* height: 25px; */
   border: 1px solid #ccc;
   border-radius: 6px;
 }
