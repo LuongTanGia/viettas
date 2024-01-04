@@ -6,10 +6,12 @@ import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
 import { base64ToPDF } from '../action/Actions'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import { Select } from 'antd'
 import logo from '../assets/VTS-iSale.ico'
-
 import * as apis from '../apis'
+import { Checkbox } from 'antd'
 
+const { Option } = Select
 const { MdFilterAlt } = icons
 
 const ModalOnlyPrint = ({ close, dataThongTin, dataPMH }) => {
@@ -72,12 +74,12 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH }) => {
     setNewDataPMH(filteredData)
   }
 
-  const handleLien = (checkboxName) => {
-    setCheckboxValues((prevValues) => ({
-      ...prevValues,
-      [checkboxName]: !prevValues[checkboxName],
-    }))
-  }
+  // const handleLien = (checkboxName) => {
+  //   setCheckboxValues((prevValues) => ({
+  //     ...prevValues,
+  //     [checkboxName]: !prevValues[checkboxName],
+  //   }))
+  // }
 
   const handleOnlyPrint = async () => {
     try {
@@ -155,7 +157,7 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH }) => {
                 </button>
               </div>
               <div className="flex  mt-4 ">
-                <div className="flex ">
+                {/* <div className="flex ">
                   <label className="px-4">Số chứng từ</label>
                   <select className=" bg-white border outline-none border-gray-300  " value={selectedSctBD} onChange={(e) => setSelectedSctBD(e.target.value)}>
                     {newDataPMH?.map((item) => (
@@ -164,8 +166,19 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH }) => {
                       </option>
                     ))}
                   </select>
-                </div>
+                </div> */}
                 <div className="flex ">
+                  <label className="px-[22px]">Số chứng từ</label>
+
+                  <Select showSearch optionFilterProp="children" onChange={(value) => setSelectedSctBD(value)} style={{ width: '154px' }} value={selectedSctBD}>
+                    {newDataPMH?.map((item) => (
+                      <Option key={item.SoChungTu} value={item.SoChungTu}>
+                        {item.SoChungTu}
+                      </Option>
+                    ))}
+                  </Select>
+                </div>
+                {/* <div className="flex ">
                   <label className="px-4">Đến</label>
                   <select className=" bg-white border outline-none border-gray-300  " value={selectedSctKT} onChange={(e) => setSelectedSctKT(e.target.value)}>
                     {newDataPMH?.map((item) => (
@@ -174,11 +187,22 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH }) => {
                       </option>
                     ))}
                   </select>
+                </div> */}
+                <div className="flex ">
+                  <label className="px-[16px]">Đến</label>
+
+                  <Select showSearch optionFilterProp="children" onChange={(value) => setSelectedSctKT(value)} style={{ width: '154px' }} value={selectedSctKT}>
+                    {newDataPMH?.map((item) => (
+                      <Option key={item.SoChungTu} value={item.SoChungTu}>
+                        {item.SoChungTu}
+                      </Option>
+                    ))}
+                  </Select>
                 </div>
               </div>
               {/* liên */}
               <div className="flex justify-center items-center gap-6 mt-4">
-                <div>
+                {/* <div>
                   <input id="lien1" type="checkbox" checked={checkboxValues.checkbox1} onChange={() => handleLien('checkbox1')} />
                   <label htmlFor="lien1">Liên 1</label>
                 </div>
@@ -191,6 +215,48 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH }) => {
                 <div>
                   <input id="lien3" type="checkbox" checked={checkboxValues.checkbox3} onChange={() => handleLien('checkbox3')} />
                   <label htmlFor="lien3">Liên 3</label>
+                </div> */}
+                <div>
+                  <Checkbox
+                    value="checkbox1"
+                    checked={checkboxValues.checkbox1}
+                    onChange={(e) =>
+                      setCheckboxValues((prevValues) => ({
+                        ...prevValues,
+                        [e.target.value]: !prevValues[e.target.value],
+                      }))
+                    }
+                  >
+                    Liên 1
+                  </Checkbox>
+                </div>
+                <div>
+                  <Checkbox
+                    value="checkbox2"
+                    checked={checkboxValues.checkbox2}
+                    onChange={(e) =>
+                      setCheckboxValues((prevValues) => ({
+                        ...prevValues,
+                        [e.target.value]: !prevValues[e.target.value],
+                      }))
+                    }
+                  >
+                    Liên 2
+                  </Checkbox>
+                </div>
+                <div>
+                  <Checkbox
+                    value="checkbox3"
+                    checked={checkboxValues.checkbox3}
+                    onChange={(e) =>
+                      setCheckboxValues((prevValues) => ({
+                        ...prevValues,
+                        [e.target.value]: !prevValues[e.target.value],
+                      }))
+                    }
+                  >
+                    Liên 3
+                  </Checkbox>
                 </div>
               </div>
             </div>

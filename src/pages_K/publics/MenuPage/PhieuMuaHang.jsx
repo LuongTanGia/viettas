@@ -18,9 +18,8 @@ const { IoAddCircleOutline, TiPrinter, MdDelete, GiPayMoney, BsSearch, TfiMoreAl
 const PhieuMuaHang = () => {
   const optionContainerRef = useRef(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [isLoadingModal, setIsLoadingModal] = useState(false)
 
-  const [tableLoad, setTableLoad] = useState(false)
+  const [tableLoad, setTableLoad] = useState(true)
   const [isShowModal, setIsShowModal] = useState(false)
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [isShowOption, setIsShowOption] = useState(false)
@@ -66,10 +65,8 @@ const PhieuMuaHang = () => {
           const responseTT = await apis.ThongTinPMH(tokenLogin, dataRecord.SoChungTu)
           if (responseTT.data && responseTT.data.DataError === 0) {
             setDataThongTin(responseTT.data.DataResult)
-
-            setIsLoadingModal(true)
           } else {
-            setIsLoadingModal(true)
+            console.error('Lấy data thất bại')
           }
         }
       } catch (error) {
@@ -83,10 +80,49 @@ const PhieuMuaHang = () => {
     }
 
     // console.log('loading', isLoadingModal)
-  }, [dataRecord, isShowModal, isLoadingModal])
+  }, [dataRecord, isShowModal])
 
   useEffect(() => {
+    const getKhoanNgay = async () => {
+      try {
+        const tokenLogin = localStorage.getItem('TKN')
+        const response = await apis.KhoanNgay(tokenLogin)
+
+        if (response.data && response.data.DataError === 0) {
+          setFormKhoanNgay(response.data)
+          setIsLoading(true)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          getKhoanNgay()
+        }
+      } catch (error) {
+        console.error('Kiểm tra token thất bại', error)
+        setIsLoading(true)
+      }
+    }
     getKhoanNgay()
+  }, [])
+
+  useEffect(() => {
+    const getThongSo = async () => {
+      try {
+        const tokenLogin = localStorage.getItem('TKN')
+        const response = await apis.ThongSo(tokenLogin)
+
+        if (response.data && response.data.DataError === 0) {
+          setDataThongSo(response.data.DataResult)
+          setIsLoading(true)
+        } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
+          toast.warning(response.data.DataErrorDescription)
+        } else {
+          await RETOKEN()
+          getThongSo()
+        }
+      } catch (error) {
+        console.error('Kiểm tra token thất bại', error)
+        setIsLoading(true)
+      }
+    }
     getThongSo()
   }, [])
 
@@ -94,47 +130,9 @@ const PhieuMuaHang = () => {
     getDSPMH()
   }, [tableLoad])
 
-  const getKhoanNgay = async () => {
-    try {
-      const tokenLogin = localStorage.getItem('TKN')
-      const response = await apis.KhoanNgay(tokenLogin)
-
-      if (response.data && response.data.DataError === 0) {
-        setFormKhoanNgay(response.data)
-        setIsLoading(true)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getKhoanNgay()
-      }
-    } catch (error) {
-      console.error('Kiểm tra token thất bại', error)
-      setIsLoading(true)
-    }
-  }
-
-  const getThongSo = async () => {
-    try {
-      const tokenLogin = localStorage.getItem('TKN')
-      const response = await apis.ThongSo(tokenLogin)
-
-      if (response.data && response.data.DataError === 0) {
-        setDataThongSo(response.data.DataResult)
-        setIsLoading(true)
-      } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        toast.warning(response.data.DataErrorDescription)
-      } else {
-        await RETOKEN()
-        getThongSo()
-      }
-    } catch (error) {
-      console.error('Kiểm tra token thất bại', error)
-      setIsLoading(true)
-    }
-  }
-
   const getDSPMH = async () => {
     try {
-      setTableLoad(true)
+      // setTableLoad(true)
       const tokenLogin = localStorage.getItem('TKN')
 
       const response = await apis.DanhSachPMH(tokenLogin, formKhoanNgay)
@@ -498,7 +496,6 @@ const PhieuMuaHang = () => {
     setActionType('create')
     setDataRecord(record)
     setIsShowModal(true)
-    setIsLoadingModal(true)
   }
   const handlePrint = (record) => {
     setActionType('print')
@@ -512,6 +509,7 @@ const PhieuMuaHang = () => {
   }
   const handleFilterDS = () => {
     getDSPMH()
+    setTableLoad(true)
   }
   const handlePay = (record) => {
     if (record.TTTienMat) return
@@ -720,7 +718,6 @@ const PhieuMuaHang = () => {
           dataDoiTuong={dataDoiTuong}
           dataPMH={data}
           controlDate={formKhoanNgay}
-          isLoadingModel={() => setIsLoadingModal(false)}
           dataThongSo={dataThongSo}
           loading={() => setTableLoad(true)}
         />
