@@ -1374,7 +1374,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                 </button>
                 <button
                   onClick={handleCreateAndClose}
-                  className="active:scale-[.98] active:duration-75   border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main  rounded-md px-2 py-1  w-[100px] "
+                  className="active:scale-[.98] active:duration-75   border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main  rounded-md px-2 py-1  w-[120px] "
                 >
                   Lưu & Đóng
                 </button>
@@ -1555,7 +1555,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                   />
                 </div>
               </div>
-              <div className="flex justify-end items-center gap-3 pr-3 pb-1">
+              {/* <div className="flex justify-end items-center gap-3 pr-3 pb-1">
                 <button
                   disabled={isAdd}
                   onClick={handleAddEmptyRow}
@@ -1571,43 +1571,28 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                 >
                   chọn từ danh sách
                 </button>
-              </div>
-              {/* table */}
-              {/* <div className="  max-w-[98%]  max-h-[50%] mx-auto bg-white  rounded-md my-3 overflow-y-auto ">
-                <table className=" min-w-full min-h-full bg-white border border-gray-300 text-text-main">
-                  <thead>
-                    <tr>
-                      {title.map((item, index) => (
-                        <th key={index} className="py-1 px-2 border text-center">
-                          {item}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody className="">
-                    {selectedRowData.map((item, index) => (
-                      <EditRow
-                        key={item.MaHang}
-                        index={index}
-                        item={item}
-                        dataHangHoa={dataHangHoa}
-                        handleDeleteRow={handleDeleteRow}
-                        setRowData={setSelectedRowData}
-                        currentRowData={currentRowData(item.MaHang)}
-                      />
-                    ))}
-                  </tbody>
-              
-                </table>
               </div> */}
-              <TableEdit
-                param={selectedRowData}
-                handleEditData={handleEditData}
-                ColumnTable={columnName}
-                columName={nameColumsPhieuMuaHang}
-                yourMaHangOptions={dataHangHoa}
-                yourTenHangOptions={dataHangHoa}
-              />
+              {/* table */}
+              <div className=" pb-0  relative mt-1">
+                <FloatButton
+                  className="z-3 opacity-50 bg-transparent w-[30px] h-[30px]"
+                  style={{
+                    right: 5,
+                    top: 4,
+                  }}
+                  icon={<IoMdAddCircle />}
+                  onClick={handleAddEmptyRow}
+                  tooltip={<div>Bấm vào đây để thêm hàng mới hoặc F9 để chọn từ danh sách !</div>}
+                />
+                <TableEdit
+                  param={selectedRowData}
+                  handleEditData={handleEditData}
+                  ColumnTable={columnName}
+                  columName={nameColumsPhieuMuaHang}
+                  yourMaHangOptions={dataHangHoa}
+                  yourTenHangOptions={dataHangHoa}
+                />
+              </div>
             </div>
 
             {/* button  */}
@@ -1635,7 +1620,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
               <div className="flex justify-end items-center gap-x-3  pt-3">
                 <button
                   onClick={() => handleEdit(dataRecord)}
-                  className="active:scale-[.98] active:duration-75   border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main  rounded-md px-2 py-1  w-[100px] "
+                  className="active:scale-[.98] active:duration-75   border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main  rounded-md px-2 py-1  w-[120px]"
                 >
                   Lưu & Đóng
                 </button>
