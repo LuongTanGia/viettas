@@ -3,7 +3,7 @@ import { Table, Tooltip } from 'antd'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { FaSearch } from 'react-icons/fa'
 import { useSearch } from '../../../../components_T/hooks/Search'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { toast } from 'react-toastify'
 import { IoMdAddCircleOutline } from 'react-icons/io'
 import { MdEdit, MdDelete, MdPrint, MdFilterListAlt } from 'react-icons/md'
@@ -31,6 +31,7 @@ const PhieuNhapDieuChinh = () => {
   const [pageSize, setPageSize] = useState('10')
   const [page, setPage] = useState('1')
   const [dataThongSo, setDataThongSo] = useState('')
+  const showOption = useRef(null)
 
   function formatDateTime(inputDate, includeTime = false) {
     const date = new Date(inputDate)
@@ -82,6 +83,17 @@ const PhieuNhapDieuChinh = () => {
     getDataNDC()
   }, [isLoading])
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showOption.current && !showOption.current.contains(event.target)) {
+        setIsShowSearch(false)
+      }
+    }
+    document.addEventListener('click', handleClickOutside)
+    return () => {
+      document.removeEventListener('click', handleClickOutside)
+    }
+  }, [])
   const getDataNDC = async () => {
     try {
       const response = await categoryAPI.GetDataNDC(
@@ -377,7 +389,7 @@ const PhieuNhapDieuChinh = () => {
         <>
           <div className="flex flex-col gap-2 ">
             <div className="flex justify-between gap-2">
-              <div>
+              <div ref={showOption}>
                 <div className="flex items-center gap-2">
                   <h1 className="text-lg font-bold uppercase">Phiếu Nhập Kho Điều Chỉnh</h1>
                   <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
@@ -389,7 +401,7 @@ const PhieuNhapDieuChinh = () => {
                         type="text"
                         placeholder="Nhập ký tự bạn cần tìm"
                         onChange={handleSearch}
-                        className={'px-2 py-1 w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[0.125rem] outline-none text-[1rem] '}
+                        className={'px-2 py-1 w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[1px] hover:border-blue-500 outline-none text-[1rem] '}
                       />
                     </div>
                   )}
@@ -405,6 +417,9 @@ const PhieuNhapDieuChinh = () => {
                       className="DatePicker_NXTKho"
                       format="DD/MM/YYYY"
                       maxDate={dayjs(khoanNgayTo)}
+                      sx={{
+                        '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                      }}
                       defaultValue={dayjs(khoanNgayFrom, 'YYYY-MM-DD')}
                       onChange={(values) => {
                         setKhoanNgayFrom(values ? dayjs(values).format('YYYY-MM-DDTHH:mm:ss') : '')
@@ -418,6 +433,9 @@ const PhieuNhapDieuChinh = () => {
                       format="DD/MM/YYYY"
                       minDate={dayjs(khoanNgayFrom)}
                       defaultValue={dayjs(khoanNgayTo, 'YYYY-MM-DD')}
+                      sx={{
+                        '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                      }}
                       onChange={(values) => {
                         setKhoanNgayTo(values ? dayjs(values).format('YYYY-MM-DDTHH:mm:ss') : '')
                       }}

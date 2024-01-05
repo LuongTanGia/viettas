@@ -15,11 +15,12 @@ import { CiBarcode } from 'react-icons/ci'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
 import { RETOKEN } from '../../action/Actions'
 import ActionButton from '../../components/util/Button/ActionButton'
+import HighlightedCell from '../../components_T/hooks/HighlightedCell'
 
 const HangHoa = () => {
   const TokenAccess = localStorage.getItem('TKN')
   const [dataHangHoa, setDataHangHoa] = useState()
-  const [setSearchHangHoa, filteredHangHoa] = useSearch(dataHangHoa)
+  const [setSearchHangHoa, filteredHangHoa, searchHangHoa] = useSearch(dataHangHoa)
   const [isMaHang, setIsMaHang] = useState()
   const [isShowModal, setIsShowModal] = useState(false)
   const [actionType, setActionType] = useState('')
@@ -57,6 +58,7 @@ const HangHoa = () => {
     const handleClickOutside = (event) => {
       if (showOption.current && !showOption.current.contains(event.target)) {
         setIsShowOption(false)
+        setIsShowSearch(false)
       }
     }
     document.addEventListener('click', handleClickOutside)
@@ -142,7 +144,7 @@ const HangHoa = () => {
           await RETOKEN()
           handlePrintABarcode()
         } else {
-          toast.error(response.data.DataErrorDescription)
+          toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
         }
       } else {
         const response = await categoryAPI.InMaVach(
@@ -171,7 +173,7 @@ const HangHoa = () => {
           await RETOKEN()
           handlePrintABarcode()
         } else {
-          toast.error(response.data.DataErrorDescription)
+          toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
         }
       }
     } catch (error) {
@@ -228,6 +230,7 @@ const HangHoa = () => {
       align: 'center',
       sorter: (a, b) => a.MaHang.localeCompare(b.MaHang),
       showSorterTooltip: false,
+      render: (text) => <HighlightedCell text={text} search={searchHangHoa} />,
     },
     {
       title: 'Tên hàng',
@@ -249,7 +252,7 @@ const HangHoa = () => {
               textAlign: 'start',
             }}
           >
-            {text}
+            <HighlightedCell text={text} search={searchHangHoa} />
           </div>
         </Tooltip>
       ),
@@ -272,7 +275,7 @@ const HangHoa = () => {
               textAlign: 'start',
             }}
           >
-            {text}
+            <HighlightedCell text={text} search={searchHangHoa} />
           </div>
         </Tooltip>
       ),
@@ -285,6 +288,7 @@ const HangHoa = () => {
       width: 120,
       sorter: (a, b) => a.DVTKho.localeCompare(b.DVTKho),
       showSorterTooltip: false,
+      render: (text) => <HighlightedCell text={text} search={searchHangHoa} />,
     },
     {
       title: 'Quy đổi Đơn vị tính',
@@ -292,7 +296,11 @@ const HangHoa = () => {
       key: 'DienGiaiDVTQuyDoi',
       align: 'center',
       sorter: (a, b) => a.DienGiaiDVTQuyDoi - b.DienGiaiDVTQuyDoi,
-      render: (text) => <span className="flex text-start">{text}</span>,
+      render: (text) => (
+        <span className="flex text-start">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </span>
+      ),
       showSorterTooltip: false,
     },
     {
@@ -303,6 +311,7 @@ const HangHoa = () => {
       width: 150,
       sorter: (a, b) => a.MaVach - b.MaVach,
       showSorterTooltip: false,
+      render: (text) => <HighlightedCell text={text} search={searchHangHoa} />,
     },
     {
       title: 'Lắp ráp',
@@ -342,7 +351,7 @@ const HangHoa = () => {
       sorter: (a, b) => a.GiaBanLe - b.GiaBanLe,
       render: (text) => (
         <span className={`flex justify-end  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''}`}>
-          {formatThapPhan(Number(text), dataThongSo.SOLEDONGIA)}
+          <HighlightedCell text={formatThapPhan(Number(text), dataThongSo.SOLEDONGIA)} search={searchHangHoa} />
         </span>
       ),
     },
@@ -355,7 +364,9 @@ const HangHoa = () => {
       sorter: (a, b) => a.BangGiaSi - b.BangGiaSi,
       align: 'center',
       render: (text) => (
-        <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 || text === null ? 'text-gray-300' : ''}`}>{formatCurrency(text)}</span>
+        <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 || text === null ? 'text-gray-300' : ''}`}>
+          <HighlightedCell text={formatCurrency(text)} search={searchHangHoa} />
+        </span>
       ),
     },
     {
@@ -368,7 +379,7 @@ const HangHoa = () => {
       sorter: (a, b) => a.BangGiaSi_Min - b.BangGiaSi_Min,
       render: (text) => (
         <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 || text === null ? 'text-gray-300' : ''}`}>
-          {formatThapPhan(Number(text), dataThongSo.SOLEDONGIA)}
+          <HighlightedCell text={formatThapPhan(Number(text), dataThongSo.SOLEDONGIA)} search={searchHangHoa} />
         </span>
       ),
     },
@@ -382,7 +393,7 @@ const HangHoa = () => {
       sorter: (a, b) => a.BangGiaSi_Max - b.BangGiaSi_Max,
       render: (text) => (
         <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 || text === null ? 'text-gray-300' : ''}`}>
-          {formatThapPhan(Number(text), dataThongSo.SOLEDONGIA)}
+          <HighlightedCell text={formatThapPhan(Number(text), dataThongSo.SOLEDONGIA)} search={searchHangHoa} />
         </span>
       ),
     },
@@ -402,7 +413,7 @@ const HangHoa = () => {
               whiteSpace: 'nowrap',
             }}
           >
-            {text}
+            <HighlightedCell text={text} search={searchHangHoa} />
           </div>
         </Tooltip>
       ),
@@ -418,7 +429,7 @@ const HangHoa = () => {
         const dateB = new Date(b.NgayTao)
         return dateA - dateB
       },
-      render: (text) => moment(text).format('DD/MM/YYYY HH:mm:ss.SS'),
+      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss.SS')} search={searchHangHoa} />,
     },
     {
       title: 'Người sửa',
@@ -442,7 +453,7 @@ const HangHoa = () => {
               whiteSpace: 'nowrap',
             }}
           >
-            {text}
+            <HighlightedCell text={text} search={searchHangHoa} />
           </div>
         </Tooltip>
       ),
@@ -460,7 +471,7 @@ const HangHoa = () => {
       },
       render: (text) => {
         if (text) {
-          return moment(text).format('DD/MM/YYYY HH:mm:ss.SS')
+          return <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss.SS')} search={searchHangHoa} />
         } else {
           return ''
         }
@@ -518,6 +529,7 @@ const HangHoa = () => {
       },
     },
   ]
+
   return (
     <>
       {!isLoading ? (
@@ -525,7 +537,7 @@ const HangHoa = () => {
       ) : (
         <>
           <div className="flex flex-col gap-2 ">
-            <div className="flex justify-between gap-2 relative">
+            <div className="flex justify-between gap-2 relative" ref={showOption}>
               <div>
                 <div className="flex items-center gap-2">
                   <h1 className="text-xl font-black uppercase">Hàng Hóa</h1>
@@ -535,16 +547,17 @@ const HangHoa = () => {
                   {isShowSearch && (
                     <div className={`flex absolute left-[9rem] -top-8 transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
                       <input
+                        value={searchHangHoa}
                         type="text"
                         placeholder="Nhập ký tự bạn cần tìm"
                         onChange={handleSearch}
-                        className={'px-2 py-1 w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[0.125rem] outline-none text-[1rem] '}
+                        className={'px-2 py-1 w-[20rem] border-slate-200 resize-none rounded-[0.5rem] border-[1px] hover:border-blue-500 outline-none text-[1rem] '}
                       />
                     </div>
                   )}
                 </div>
               </div>
-              <div className="flex justify-between" ref={showOption}>
+              <div className="flex justify-between">
                 <div className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5  " onClick={() => setIsShowOption(!isShowOption)} title="Chức năng khác">
                   <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
                 </div>

@@ -216,7 +216,7 @@ const NDCCreate = ({ close, loadingData }) => {
       title: 'Tên nhóm',
       dataIndex: 'NhomHang',
       key: 'NhomHang',
-      width: 250,
+      width: 200,
       showSorterTooltip: false,
       align: 'center',
       sorter: (a, b) => a.NhomHang.localeCompare(b.NhomHang),
@@ -239,6 +239,7 @@ const NDCCreate = ({ close, loadingData }) => {
       title: 'Tên hàng',
       dataIndex: 'TenHang',
       key: 'TenHang',
+      width: 250,
       showSorterTooltip: false,
       align: 'center',
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
@@ -320,12 +321,12 @@ const NDCCreate = ({ close, loadingData }) => {
               <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
               <p className="text-blue-700 font-semibold uppercase">Thêm - Phiếu Nhập Điều Chỉnh</p>
             </div>
-            <div className="flex flex-col gap-2 border-2 p-3">
+            <div className="flex flex-col gap-2 border-2 px-1 py-2.5">
               <div className="flex items-center gap-2">
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-3">
                   <div className="flex gap-2">
                     <div className="flex items-center gap-1">
-                      <label className="required whitespace-nowrap min-w-[110px] flex justify-end">Số chứng từ</label>
+                      <label className="required whitespace-nowrap min-w-[100px] flex justify-end">Số chứng từ</label>
                       <input
                         type="text"
                         className="px-2 w-full resize-none rounded border outline-none text-[1rem]"
@@ -349,11 +350,14 @@ const NDCCreate = ({ close, loadingData }) => {
                         onChange={(values) => {
                           setNDCForm({ ...NDCForm, NgayCTu: dayjs(setValueDate(values)).format('YYYY-MM-DDTHH:mm:ss') })
                         }}
+                        sx={{
+                          '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                        }}
                       />
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
-                    <label className="required whitespace-nowrap min-w-[110px] flex justify-end">Kho hàng</label>
+                    <label className="required whitespace-nowrap min-w-[100px] flex justify-end">Kho hàng</label>
                     <Select
                       style={{ width: '100%' }}
                       showSearch
@@ -375,31 +379,35 @@ const NDCCreate = ({ close, loadingData }) => {
                     </Select>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-3 px-4 border-2 py-3 border-black-200 rounded relative">
+                <div className="grid grid-cols-1 gap-2 px-2 border-2 py-2.5 border-black-200 rounded relative">
                   <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
-                  <div className="flex gap-1 items-center">
-                    <label className="whitespace-nowrap">Người tạo</label>
-                    <input className="px-2 w-full resize-none rounded border-[0.125rem] outline-none text-[1rem]" readOnly />
+                  <div className="flex gap-1">
+                    <div className="flex gap-1 items-center">
+                      <label className="whitespace-nowrap">Người tạo</label>
+                      <input className="px-2 w-[16rem] resize-none rounded border-[0.125rem] outline-none text-[1rem]" readOnly />
+                    </div>
+                    <div className="flex gap-1 items-center">
+                      <label>Lúc</label>
+                      <input className="px-2 w-full resize-none rounded border-[0.125rem] outline-none text-[1rem]" readOnly />
+                    </div>
                   </div>
-                  <div className="flex gap-1 items-center">
-                    <label>Lúc</label>
-                    <input className="px-2 w-full resize-none rounded border-[0.125rem] outline-none text-[1rem]" readOnly />
-                  </div>
-                  <div className="flex gap-1 items-center">
-                    <label className="whitespace-nowrap">Người sửa</label>
-                    <input className="px-2 w-full resize-none rounded border-[0.125rem] outline-none text-[1rem]" readOnly />
-                  </div>
-                  <div className="flex gap-1 items-center">
-                    <label>Lúc</label>
-                    <input className="px-2 w-full resize-none rounded border-[0.125rem] outline-none text-[1rem]" readOnly />
+                  <div className="flex gap-1">
+                    <div className="flex gap-1 items-center">
+                      <label className="whitespace-nowrap">Người sửa</label>
+                      <input className="px-2  w-[16rem] resize-none rounded border-[0.125rem] outline-none text-[1rem]" readOnly />
+                    </div>
+                    <div className="flex gap-1 items-center">
+                      <label>Lúc</label>
+                      <input className="px-2 w-full resize-none rounded border-[0.125rem] outline-none text-[1rem]" readOnly />
+                    </div>
                   </div>
                 </div>
               </div>
               <div className="flex items-center gap-1">
-                <label className="whitespace-nowrap min-w-[110px] flex justify-end">Ghi chú</label>
+                <label className="whitespace-nowrap min-w-[100px]  flex justify-end">Ghi chú</label>
                 <input
                   type="text"
-                  className="px-2 w-[70rem] resize-none rounded border outline-none text-[1rem]"
+                  className="px-2 w-[70rem] resize-none rounded border-[1px] hover:border-blue-500 outline-none text-[1rem]"
                   name="GhiChu"
                   value={NDCForm?.GhiChu || ''}
                   onChange={(e) =>
@@ -521,7 +529,7 @@ const NDCCreate = ({ close, loadingData }) => {
                       type="text"
                       placeholder="Nhập ký tự bạn cần tìm"
                       onChange={handleSearch}
-                      className="px-[2rem] py-1 w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[0.125rem] outline-none text-[1rem]  "
+                      className="px-[2rem] py-1 w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[1px] hover:border-blue-500 outline-none text-[1rem]  "
                     />
                   </div>
                   <Table
