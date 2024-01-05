@@ -215,7 +215,7 @@ function PhieuBanHang() {
     <>
       <div>
         <div className="relative flex items-center gap-x-4 ">
-          <h1 className="text-xl font-black uppercase">Phiếu Bán Hàng</h1>
+          <h1 className="text-xl font-black uppercase">Phiếu Bán Hàng </h1>
           <div>
             <BsSearch size={18} className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
           </div>
