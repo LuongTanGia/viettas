@@ -975,17 +975,17 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
               <label className="text-blue-700 font-semibold uppercase pb-1">thông tin - phiếu mua hàng</label>
             </div>
             <div className="border w-full h-[90%] rounded-sm text-sm">
-              <div className="flex gap-3">
+              <div className="flex gap-3 pl-1">
                 {/* thong tin phieu */}
-                <div className="w-[60%]">
-                  <div className="flex p-1 gap-5 ">
+                <div className="w-[62%]">
+                  <div className="flex p-1 gap-[18px] ">
                     <div className=" flex items-center ">
                       <label className="pr-1">Số chứng từ</label>
-                      <input disabled type="text" className=" border border-gray-300 outline-none  px-2 rounded-[4px]" value={dataThongTin?.SoChungTu} />
+                      <input disabled type="text" className="w-[186px] border border-gray-300 outline-none  px-2 rounded-[4px] h-[24px]" value={dataThongTin?.SoChungTu} />
                     </div>
                     {/* DatePicker */}
                     <div className="flex gap-x-2 items-center">
-                      <label className="pr-3">Ngày</label>
+                      <label className="pr-[25px] pl-[6px]">Ngày</label>
                       <DatePicker className="DatePicker_PMH" format="DD/MM/YYYY" value={dayjs(dataThongTin?.NgayCTu)} disabled />
                     </div>
                     {/* <div className="flex gap-x-2 items-center">
@@ -997,7 +997,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                     <label form="doituong" className="w-[86px]">
                       Đối tượng
                     </label>
-                    <Select showSearch size="small" optionFilterProp="children" style={{ width: '100%' }} value={selectedDoiTuong} disabled>
+                    <Select disabled showSearch size="small" optionFilterProp="children" style={{ width: '100%' }} value={selectedDoiTuong} readOnly>
                       {dataDoiTuong?.map((item) => (
                         <Option key={item.Ma} value={item.Ma}>
                           {item.Ma} - {item.Ten}
@@ -1007,66 +1007,67 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                   </div>
                   <div className="flex items-center justify-between p-1">
                     <label className="w-[86px]">Tên</label>
-                    <input disabled type="text" className="w-full border border-gray-300 outline-none px-2 rounded-[4px]" value={dataThongTin?.TenDoiTuong} />
+                    <input disabled type="text" className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" value={dataThongTin?.TenDoiTuong} />
                   </div>
                   <div className="flex items-center justify-between p-1">
                     <label className="w-[86px]">Địa chỉ</label>
-                    <input disabled type="text" className="w-full border border-gray-300 outline-none px-2 rounded-[4px]" value={dataThongTin?.DiaChi} />
-                  </div>
-                  <div className="flex items-center  w-full">
-                    <div className="p-1 flex  items-center w-1/2">
-                      <label form="khohang" className="w-[94px]">
-                        Kho hàng
-                      </label>
-                      <select disabled className=" bg-white border w-full  border-gray-300 hover:border-gray-500 rounded-[4px]">
-                        <option value="ThongTinKho">
-                          {dataThongTin?.MaKho} - {dataThongTin?.TenKho}
-                        </option>
-                      </select>
-                    </div>
-                    <div className="flex items-center p-1 w-1/2">
-                      <label className="w-[86px]">Ghi chú</label>
-                      <input type="text" className="w-full border border-gray-300 outline-none px-2 rounded-[4px]" value={dataThongTin?.GhiChu} />
-                    </div>
+                    <input disabled type="text" className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" value={dataThongTin?.DiaChi} />
                   </div>
                 </div>
 
                 {/* thong tin cap nhat */}
-                <div className="w-[40%] py-1 box_content">
+                <div className="w-[38%] py-1 box_content">
                   <div className="text-center p-1 font-medium text_capnhat">Thông tin cập nhật</div>
-                  <div className=" rounded-md w-[98%] h-[80%] box_capnhat">
+                  <div className=" rounded-md w-[98%]  box_capnhat px-1 py-4">
                     <div className="flex justify-between items-center ">
-                      <div className="flex items-center p-1  ">
-                        <label className="">Người tạo</label>
-                        <input type="text" className=" border border-gray-300 outline-none px-2 rounded-[4px]" value={dataThongTin?.NguoiTao} readOnly />
+                      <div className="flex items-center px-1  ">
+                        <label className="w-[70px]">Người tạo</label>
+                        <input disabled type="text" className="w-[234px] border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" value={dataThongTin?.NguoiTao} readOnly />
                       </div>
 
-                      <div className="flex items-center p-1 w-1/2">
-                        <label className="pl-8">Lúc</label>
+                      <div className="flex items-center p-1">
+                        <label className="w-[30px]">Lúc</label>
                         <input
-                          readOnly
+                          disabled
                           type="text"
-                          className="w-full border border-gray-300 outline-none px-2 rounded-[4px]"
+                          className="w-[144px] border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]"
                           value={dataThongTin?.NgayTao && moment(dataThongTin.NgayTao).isValid() ? moment(dataThongTin.NgayTao).format('DD/MM/YYYY hh:mm:ss') : ''}
                         />
                       </div>
                     </div>
                     <div className="flex justify-between items-center ">
                       <div className="flex items-center p-1  ">
-                        <label className="">Sửa cuối</label>
-                        <input readOnly type="text" className=" border border-gray-300 outline-none px-2 rounded-[4px]" value={dataThongTin?.NguoiSuaCuoi} />
+                        <label className="w-[70px]">Sửa cuối</label>
+                        <input disabled type="text" className="w-[234px]  border border-gray-300 outline-none px-2 rounded-[4px] h-[24px] " value={dataThongTin?.NguoiSuaCuoi} />
                       </div>
-                      <div className="flex items-center p-1 w-1/2">
-                        <label className="pl-8">Lúc</label>
+                      <div className="flex items-center p-1 ">
+                        <label className="w-[30px]">Lúc</label>
                         <input
-                          readOnly
+                          disabled
                           type="text"
-                          className="w-full border border-gray-300 outline-none px-2 rounded-[4px]"
+                          className="w-[144px] border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]"
                           value={dataThongTin?.NgaySuaCuoi && moment(dataThongTin.NgaySuaCuoi).isValid() ? moment(dataThongTin.NgaySuaCuoi).format('DD/MM/YYYY hh:mm:ss') : ''}
                         />
                       </div>
                     </div>
                   </div>
+                </div>
+              </div>
+              {/* kho and ghi chu */}
+              <div className="flex gap-3 pl-1 pr-[6px] items-center  w-full">
+                <div className="p-1 flex  items-center w-1/4">
+                  <label form="khohang" className="w-[110px]">
+                    Kho hàng
+                  </label>
+                  <select readOnly className="  border w-full  bg-[#fafafa] rounded-[4px] h-[24px]">
+                    <option value="ThongTinKho">
+                      {dataThongTin?.MaKho} - {dataThongTin?.TenKho}
+                    </option>
+                  </select>
+                </div>
+                <div className="flex items-center p-1 w-full">
+                  <label className="w-[70px]">Ghi chú</label>
+                  <input disabled type="are" className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" value={dataThongTin?.GhiChu} />
                 </div>
               </div>
               {/* table */}
@@ -1157,19 +1158,19 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
               <label className="text-blue-700 font-semibold uppercase pb-1">Thêm - phiếu mua hàng</label>
             </div>
             <div className="border w-full h-[90%] rounded-sm text-sm">
-              <div className="flex gap-4  ">
+              <div className="flex gap-3 pl-1 ">
                 {/* thong tin phieu */}
-                <div className="w-[60%]">
-                  <div className="flex p-1 justify-between">
+                <div className="w-[62%]">
+                  <div className="flex p-1 gap-[18px] ">
                     <div className="flex items-center ">
-                      <label className="pr-[4px]">Số chứng từ</label>
-                      <input readOnly type="text" className=" border border-gray-300 outline-none  px-2   bg-[#fafafa] rounded-[4px]" />
+                      <label className="pr-1">Số chứng từ</label>
+                      <input readOnly type="text" className="w-[186px] border border-gray-300 outline-none  px-2   bg-[#fafafa] rounded-[4px] h-[24px]" />
                     </div>
                     {/* DatePicker */}
                     <div className="flex gap-x-2 items-center">
-                      <label className="pr-3">Ngày</label>
+                      <label className="pr-[25px] pl-[8px]">Ngày</label>
                       <DatePicker
-                        className="DatePicker_PMH border-[1px] hover:border-[#4897e6]"
+                        className="DatePicker_PMH "
                         format="DD/MM/YYYY"
                         defaultValue={dayjs()}
                         onChange={(newDate) => {
@@ -1210,7 +1211,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                     </div> */}
                     <div className="flex gap-x-2 items-center">
                       <Checkbox checked={formPMH.TTTienMat} onChange={handleTienMat}>
-                        Lập phiếu chi
+                        Tiền mặt
                       </Checkbox>
                     </div>
                   </div>
@@ -1239,7 +1240,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                     <label className="w-[86px]">Tên</label>
                     <input
                       type="text"
-                      className={`w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] ${selectedDoiTuong === 'NCVL' && 'hover:border-[#4897e6]'}`}
+                      className={`w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] h-[24px] ${selectedDoiTuong === 'NCVL' && 'hover:border-[#4897e6]'}`}
                       value={selectedDoiTuong === 'NCVL' ? formPMH.TenDoiTuong : doiTuongInfo.Ten}
                       onChange={(e) =>
                         setFormPMH({
@@ -1254,7 +1255,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                     <label className="w-[86px]">Địa chỉ {formPMH.MaDoiTuong}</label>
                     <input
                       type="text"
-                      className={`w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] ${selectedDoiTuong === 'NCVL' && 'hover:border-[#4897e6]'}`}
+                      className={`w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] h-[24px] ${selectedDoiTuong === 'NCVL' && 'hover:border-[#4897e6]'}`}
                       value={selectedDoiTuong === 'NCVL' ? formPMH.DiaChi : doiTuongInfo.DiaChi}
                       onChange={(e) =>
                         setFormPMH({
@@ -1265,65 +1266,66 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                       disabled={selectedDoiTuong !== 'NCVL'}
                     />
                   </div>
-                  <div className="flex items-center  w-full">
-                    <div className="p-1 flex  items-center w-1/2">
-                      <label form="khohang" className="w-[94px]">
-                        Kho hàng
-                      </label>
-
-                      <Select showSearch size="small" optionFilterProp="children" onChange={(value) => setSelectedKhoHang(value)} style={{ width: '100%' }} value={selectedKhoHang}>
-                        {dataKhoHang?.map((item) => (
-                          <Option key={item.MaKho} value={item.MaKho}>
-                            {item.ThongTinKho}
-                          </Option>
-                        ))}
-                      </Select>
-                    </div>
-                    <div className="flex items-center p-1 w-1/2 ">
-                      <label className="w-[86px]">Ghi chú</label>
-                      <input
-                        type="text"
-                        className="w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] hover:border-[#4897e6]"
-                        value={formPMH.GhiChu}
-                        onChange={(e) =>
-                          setFormPMH({
-                            ...formPMH,
-                            GhiChu: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-                  </div>
                 </div>
                 {/* thong tin cap nhat */}
-                <div className="w-[40%] py-1 box_content">
+
+                <div className="w-[38%] py-1 box_content">
                   <div className="text-center p-1 font-medium text_capnhat">Thông tin cập nhật</div>
-                  <div className=" rounded-md w-[98%] h-[80%] box_capnhat">
+                  <div className=" rounded-md w-[98%]  box_capnhat px-1 py-4">
                     <div className="flex justify-between items-center ">
                       <div className="flex items-center p-1  ">
-                        <label className="">Người tạo</label>
-                        <input type="text" className=" border border-gray-300 outline-none px-2 rounded-[4px]" readOnly />
+                        <label className="w-[70px]">Người tạo</label>
+                        <input disabled type="text" className="w-[234px] border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" />
                       </div>
 
-                      <div className="flex items-center p-1 w-1/2">
-                        <label className="pl-8">Lúc</label>
-                        <input readOnly type="text" className="w-full border border-gray-300 outline-none px-2 rounded-[4px]" />
+                      <div className="flex items-center p-1 ">
+                        <label className="w-[30px]">Lúc</label>
+                        <input disabled type="text" className="w-[144px] border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" />
                       </div>
                     </div>
                     <div className="flex justify-between items-center ">
                       <div className="flex items-center p-1  ">
-                        <label className="">Sửa cuối</label>
-                        <input readOnly type="text" className=" border border-gray-300 outline-none px-2 rounded-[4px]" />
+                        <label className="w-[70px]">Sửa cuối</label>
+                        <input disabled type="text" className="w-[234px]  border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" />
                       </div>
-                      <div className="flex items-center p-1 w-1/2">
-                        <label className="pl-8">Lúc</label>
-                        <input readOnly type="text" className="w-full border border-gray-300 outline-none px-2 rounded-[4px]" />
+                      <div className="flex items-center p-1 ">
+                        <label className="w-[30px]">Lúc</label>
+                        <input disabled type="text" className="w-[144px] border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" />
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
+              {/* kho hang and Ghi chu */}
+              <div className="flex gap-3 pl-1 pr-[6px] items-center  w-full">
+                <div className="p-1 flex  items-center w-1/4">
+                  <label form="khohang" className="w-[110px]">
+                    Kho hàng
+                  </label>
 
+                  <Select showSearch size="small" optionFilterProp="children" onChange={(value) => setSelectedKhoHang(value)} style={{ width: '100%' }} value={selectedKhoHang}>
+                    {dataKhoHang?.map((item) => (
+                      <Option key={item.MaKho} value={item.MaKho}>
+                        {item.ThongTinKho}
+                      </Option>
+                    ))}
+                  </Select>
+                </div>
+                <div className="flex items-center p-1 w-full">
+                  <label className="w-[70px]">Ghi chú</label>
+                  <input
+                    type="text"
+                    className="w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] hover:border-[#4897e6] h-[24px]"
+                    value={formPMH.GhiChu}
+                    onChange={(e) =>
+                      setFormPMH({
+                        ...formPMH,
+                        GhiChu: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+              </div>
               <div className="flex justify-end items-center gap-3  pr-3 pb-1">
                 <button
                   disabled={isAdd}
@@ -1434,16 +1436,16 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
               <label className="text-blue-700 font-semibold uppercase pb-1">sửa - phiếu mua hàng</label>
             </div>
             <div className=" border w-full h-[90%] rounded-sm text-sm">
-              <div className="flex gap-4">
+              <div className="flex gap-3 pl-1 ">
                 {/* thong tin phieu */}
-                <div className="w-[60%] ">
-                  <div className="flex p-1  gap-5">
+                <div className="w-[62%] ">
+                  <div className="flex p-1   gap-[18px]">
                     <div className=" flex items-center ">
-                      <label className="pr-[4px]">Số chứng từ</label>
+                      <label className="pr-1">Số chứng từ</label>
                       <input
                         readOnly
                         type="text"
-                        className=" border border-gray-300 outline-none  px-2   bg-[#fafafa] rounded-[4px]"
+                        className="w-[186px] border border-gray-300 outline-none  px-2   bg-[#fafafa] rounded-[4px] h-[24px]"
                         value={dataThongTin?.SoChungTu}
                         onChange={(e) =>
                           setFormPMHEdit({
@@ -1456,7 +1458,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
 
                     {/* DatePicker */}
                     <div className="flex gap-x-2 items-center ">
-                      <label className="pr-3">Ngày</label>
+                      <label className="pr-[25px] pl-[8px]">Ngày</label>
                       <DatePicker
                         className="DatePicker_PMH"
                         format="DD/MM/YYYY"
@@ -1508,7 +1510,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                     <label className="w-[86px]">Tên</label>
                     <input
                       type="text"
-                      className={`w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] ${selectedDoiTuong === 'NCVL' && 'hover:border-[#4897e6]'}`}
+                      className={`w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] h-[24px] ${selectedDoiTuong === 'NCVL' && 'hover:border-[#4897e6]'}`}
                       value={selectedDoiTuong === 'NCVL' ? formPMHEdit.TenDoiTuong : doiTuongInfo.Ten}
                       onChange={(e) =>
                         setFormPMHEdit({
@@ -1523,7 +1525,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                     <label className="w-[86px]">Địa chỉ</label>
                     <input
                       type="text"
-                      className={`w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] ${selectedDoiTuong === 'NCVL' && 'hover:border-[#4897e6]'}`}
+                      className={`w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] h-[24px] ${selectedDoiTuong === 'NCVL' && 'hover:border-[#4897e6]'}`}
                       value={selectedDoiTuong === 'NCVL' ? formPMHEdit.DiaChi : doiTuongInfo.DiaChi}
                       onChange={(e) =>
                         setFormPMHEdit({
@@ -1534,73 +1536,63 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                       disabled={selectedDoiTuong !== 'NCVL'}
                     />
                   </div>
-                  <div className="flex items-center w-full  ">
-                    <div className="p-1 flex  items-center w-1/2 ">
-                      <label form="khohang" className="w-[94px]">
-                        Kho hàng
-                      </label>
+                </div>
+                {/* thong tin cap nhat */}
+                <div className="w-[38%] py-1 box_content">
+                  <div className="text-center p-1 font-medium text_capnhat">Thông tin cập nhật</div>
+                  <div className="rounded-md w-[98%]  box_capnhat px-1 py-4">
+                    <div className="flex justify-between items-center ">
+                      <div className="flex items-center p-1  ">
+                        <label className="w-[70px]">Người tạo</label>
+                        <input type="text" className="w-[234px] border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" readOnly />
+                      </div>
 
-                      <Select showSearch size="small" optionFilterProp="children" onChange={(value) => setSelectedKhoHang(value)} style={{ width: '100%' }} value={selectedKhoHang}>
-                        {dataKhoHang?.map((item) => (
-                          <Option key={item.MaKho} value={item.MaKho}>
-                            {item.ThongTinKho}
-                          </Option>
-                        ))}
-                      </Select>
-                      {/* <select
-                        className=" bg-white border  w-full border-gray-300 hover:border-gray-500 "
-                        onChange={(e) => setSelectedKhoHang(e.target.value)}
-                        value={selectedKhoHang}
-                      >
-                        {dataKhoHang?.map((item) => (
-                          <option key={item.MaKho} value={item.MaKho}>
-                            {item.MaKho} - {item.TenKho}
-                          </option>
-                        ))}
-                      </select> */}
+                      <div className="flex items-center p-1 w-1/2">
+                        <label className="w-[30px]">Lúc</label>
+                        <input readOnly type="text" className="w-[144px]  border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" />
+                      </div>
                     </div>
-                    <div className="flex items-center p-1  w-1/2">
-                      <label className="w-[86px]">Ghi chú</label>
-                      <input
-                        type="text"
-                        className="w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] hover:border-[#4897e6]"
-                        defaultValue={dataThongTin.GhiChu}
-                        onChange={(e) =>
-                          setFormPMHEdit({
-                            ...formPMHEdit,
-                            GhiChu: e.target.value,
-                          })
-                        }
-                      />
+                    <div className="flex justify-between items-center ">
+                      <div className="flex items-center p-1  ">
+                        <label className="w-[70px]">Sửa cuối</label>
+                        <input readOnly type="text" className="w-[234px] border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" />
+                      </div>
+                      <div className="flex items-center p-1 w-1/2">
+                        <label className="w-[30px]">Lúc</label>
+                        <input readOnly type="text" className="w-[144px]  border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" />
+                      </div>
                     </div>
                   </div>
                 </div>
-                {/* thong tin cap nhat */}
-                <div className="w-[40%] py-1 box_content">
-                  <div className="text-center p-1 font-medium text_capnhat">Thông tin cập nhật</div>
-                  <div className=" rounded-md w-[98%] h-[80%] box_capnhat">
-                    <div className="flex justify-between items-center ">
-                      <div className="flex items-center p-1  ">
-                        <label className="">Người tạo</label>
-                        <input type="text" className=" border border-gray-300 outline-none px-2 rounded-[4px]" readOnly />
-                      </div>
+              </div>
+              {/* kho hang and ghi chu */}
+              <div className="flex gap-3 pl-1 pr-[6px] items-center  w-full ">
+                <div className="p-1 flex  items-center w-1/4 ">
+                  <label form="khohang" className="w-[110px]">
+                    Kho hàng
+                  </label>
 
-                      <div className="flex items-center p-1 w-1/2">
-                        <label className="pl-8">Lúc</label>
-                        <input readOnly type="text" className="w-full border border-gray-300 outline-none px-2 rounded-[4px]" />
-                      </div>
-                    </div>
-                    <div className="flex justify-between items-center ">
-                      <div className="flex items-center p-1  ">
-                        <label className="">Sửa cuối</label>
-                        <input readOnly type="text" className=" border border-gray-300 outline-none px-2 rounded-[4px]" />
-                      </div>
-                      <div className="flex items-center p-1 w-1/2">
-                        <label className="pl-8">Lúc</label>
-                        <input readOnly type="text" className="w-full border border-gray-300 outline-none px-2 rounded-[4px]" />
-                      </div>
-                    </div>
-                  </div>
+                  <Select showSearch size="small" optionFilterProp="children" onChange={(value) => setSelectedKhoHang(value)} style={{ width: '100%' }} value={selectedKhoHang}>
+                    {dataKhoHang?.map((item) => (
+                      <Option key={item.MaKho} value={item.MaKho}>
+                        {item.ThongTinKho}
+                      </Option>
+                    ))}
+                  </Select>
+                </div>
+                <div className="flex items-center p-1   w-full">
+                  <label className="w-[70px]">Ghi chú</label>
+                  <input
+                    type="text"
+                    className="w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px]  hover:border-[#4897e6] h-[24px]"
+                    defaultValue={dataThongTin.GhiChu}
+                    onChange={(e) =>
+                      setFormPMHEdit({
+                        ...formPMHEdit,
+                        GhiChu: e.target.value,
+                      })
+                    }
+                  />
                 </div>
               </div>
               <div className="flex justify-end items-center gap-3 pr-3 pb-1">
