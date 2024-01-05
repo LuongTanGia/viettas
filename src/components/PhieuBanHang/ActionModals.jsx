@@ -355,7 +355,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
                   {data_chitiet ? (
                     <TableEdit
                       listHP={dataListHP}
-                      typeTable={'BanHang'}
+                      typeTable={'create'}
                       param={dataChitiet}
                       columName={nameColumsPhieuBanHangChiTiet}
                       handleEditData={handleEditData}

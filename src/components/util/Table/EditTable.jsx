@@ -202,9 +202,13 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
               max={999999999999}
               width={500}
               style={dataIndex !== 'SoLuong' ? { width: 150 } : { width: 100 }}
-              formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              formatter={(value) => {
+                const parts = `${value}`.split('.')
+                parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                return parts.join('.')
+              }}
               parser={(value) => {
-                const parsedValue = parseFloat(value.replace(/\$\s?|(,*)/g, ''))
+                const parsedValue = parseFloat(value.replace(/[^\d.]/g, ''))
                 return isNaN(parsedValue)
                   ? null
                   : dataIndex === 'SoLuong'
