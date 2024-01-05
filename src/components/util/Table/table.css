@@ -1,21 +1,26 @@
 .ant-table-wrapper.setHeight,
 .setHeight .ant-spin-container,
 .setHeight .ant-table,
-.setHeight .ant-table-container,
 .setHeight .ant-table-container .ant-table-body {
-  max-height: unset !important;
+  /* max-height: unset !important; */
   height: calc(100vh - 300px);
 }
-
-@media (min-width: 536px) {
+.setHeight .ant-table-container .ant-table-body {
+  max-height: unset !important;
+  /* height: calc(100vh - 500px); */
+}
+.setHeight .ant-table {
+  height: calc(100vh - 225px);
+}
+/* @media (min-width: 536px) {
   .ant-table-wrapper.setHeight,
   .setHeight .ant-spin-container,
   .setHeight .ant-table,
   .setHeight .ant-table-container,
   .setHeight .ant-table-container .ant-table-body {
-    height: calc(100vh - 255px);
+    height: calc(100vh - 400px);
   }
-}
+} */
 
 @media (min-width: 1299px) {
   .h400 .ant-table-container .ant-table-body {
@@ -67,6 +72,38 @@ tbody tr {
 .ant-table-summary {
   position: absolute;
 }
-/* .highlight-row {
-  background-color: yellow;
+
+.highlight-row {
+  background-color: #d7f4fd;
+}
+.ant-table-cell-row-hover {
+  background-color: #d7f4fd !important;
+}
+/* tr.highlight-row:hover {
+  background-color: #87b4ef !important;
 } */
+/* .setHeight .ant-table-body:--w {
+  overflow-y: hidden !important;
+} */
+/* width */
+.ant-table-body::-webkit-scrollbar {
+  width: 10px;
+  height: 12px;
+}
+
+/* Track */
+.ant-table-body::-webkit-scrollbar-track {
+  background: transparent;
+  display: none;
+}
+
+/* Handle */
+.ant-table-body::-webkit-scrollbar-thumb {
+  background: #f1f1f1;
+  border-radius: 20000px;
+}
+
+/* Handle on hover */
+.ant-table-body::-webkit-scrollbar-thumb:hover {
+  background: #969696;
+}

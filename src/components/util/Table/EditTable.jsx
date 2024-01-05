@@ -85,7 +85,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
         console.error('Row not found in data.')
       }
 
-      return prevDataSource // Trả về dữ liệu không thay đổi nếu không tìm thấy hàng.
+      return prevDataSource
     })
   }
 
@@ -113,7 +113,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
         toggleEdit()
 
         if (dataIndex === 'MaHang' || dataIndex === 'TenHang') {
-          const optionsArray = dataIndex === 'MaHang' ? listHP : listHP
+          const optionsArray = dataIndex === 'MaHang' ? yourMaHangOptions : yourTenHangOptions
 
           const selectedOption = optionsArray.find((option) => option[dataIndex] === values[dataIndex]) || {}
 
@@ -127,11 +127,11 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
             SoLuong: record.SoLuong || values.SoLuong || 1,
             TyLeCKTT: 0,
             TonKho: selectedOption.TonKho || true,
-            TienThue: selectedOption.TienThue || undefined,
+            TienThue: selectedOption.TienThue || 0,
             DVT: selectedOption.DVT,
-            TienHang: selectedOption.DonGia || undefined,
+            TienHang: selectedOption.DonGia || 0,
             TyLeThue: 0,
-            ThanhTien: selectedOption.DonGia || undefined,
+            ThanhTien: selectedOption.DonGia || 0,
             DVTKho: selectedOption.DVT,
             DVTQuyDoi: selectedOption.DVTQuyDoi,
 
