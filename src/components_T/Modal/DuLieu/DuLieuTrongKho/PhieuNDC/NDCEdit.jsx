@@ -340,7 +340,6 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
         <SimpleBackdrop />
       ) : (
         <>
-          {' '}
           <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10">
             <div className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"></div>
             <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col min-w-[40rem] min-h-[8rem] bg-white  p-2 rounded shadow-custom overflow-hidden">
@@ -349,12 +348,12 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
                   <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
                   <p className="text-blue-700 font-semibold uppercase">Sửa - Phiếu Nhập Điều Chỉnh</p>
                 </div>
-                <div className="flex flex-col gap-2 border-2 p-3">
+                <div className="flex flex-col gap-2 border-2 px-1 py-2.5">
                   <div className="flex items-center gap-2">
-                    <div className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-3">
                       <div className="flex gap-2">
                         <div className="flex items-center gap-1">
-                          <label className="required whitespace-nowrap min-w-[110px] flex justify-end">Số chứng từ</label>
+                          <label className="required whitespace-nowrap min-w-[100px] flex justify-end">Số chứng từ</label>
                           <input
                             type="text"
                             className="px-2 w-full rounded resize-none border outline-none text-[1rem]"
@@ -380,11 +379,14 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
                               setValueDate(dayjs(values))
                               setNDCForm({ ...NDCForm, NgayCTu: newDate })
                             }}
+                            sx={{
+                              '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                            }}
                           />
                         </div>
                       </div>
                       <div className="flex items-center gap-1">
-                        <label className="required whitespace-nowrap min-w-[110px] flex justify-end">Kho hàng</label>
+                        <label className="required whitespace-nowrap min-w-[100px] flex justify-end">Kho hàng</label>
                         <Select
                           style={{ width: '100%' }}
                           type="text"
@@ -407,46 +409,50 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
                         </Select>
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-3 px-3 border-2 py-3 border-black-200 rounded relative">
+                    <div className="grid grid-cols-1 gap-2 px-2 border-2 py-2.5 border-black-200 rounded relative">
                       <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
-                      <div className="flex gap-1 items-center">
-                        <label className="whitespace-nowrap">Người tạo</label>
-                        <input
-                          title={dataNDCView.NguoiTao}
-                          value={dataNDCView.NguoiTao}
-                          className="px-2 w-full rounded resize-none border-[0.125rem] outline-none text-[1rem] overflow-ellipsis"
-                          readOnly
-                        />
+                      <div className="flex gap-1">
+                        <div className="flex gap-1 items-center">
+                          <label className="whitespace-nowrap">Người tạo</label>
+                          <input
+                            title={dataNDCView.NguoiTao}
+                            value={dataNDCView.NguoiTao}
+                            className="px-2 w-[16rem] rounded resize-none border-[0.125rem] outline-none text-[1rem] overflow-ellipsis"
+                            readOnly
+                          />
+                        </div>
+                        <div className="flex gap-1 items-center">
+                          <label>Lúc</label>
+                          <input
+                            value={moment(dataNDCView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
+                            className="px-2 w-full rounded resize-none border-[0.125rem] outline-none text-[1rem]"
+                            readOnly
+                          />
+                        </div>
                       </div>
-                      <div className="flex gap-1 items-center">
-                        <label>Lúc</label>
-                        <input
-                          value={moment(dataNDCView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
-                          className="px-2 w-full rounded resize-none border-[0.125rem] outline-none text-[1rem]"
-                          readOnly
-                        />
-                      </div>
-                      <div className="flex gap-1 items-center">
-                        <label className="whitespace-nowrap">Người sửa</label>
-                        <input
-                          title={dataNDCView.NguoiSuaCuoi}
-                          value={dataNDCView.NguoiSuaCuoi || ''}
-                          className="px-2 w-full rounded resize-none border-[0.125rem] outline-none text-[1rem] overflow-ellipsis"
-                          readOnly
-                        />
-                      </div>
-                      <div className="flex gap-1 items-center">
-                        <label>Lúc</label>
-                        <input
-                          value={dataNDCView?.NgaySuaCuoi ? moment(dataNDCView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                          className="px-2 w-full rounded resize-none border-[0.125rem] outline-none text-[1rem]"
-                          readOnly
-                        />
+                      <div className="flex gap-1">
+                        <div className="flex gap-1 items-center">
+                          <label className="whitespace-nowrap">Người sửa</label>
+                          <input
+                            title={dataNDCView.NguoiSuaCuoi}
+                            value={dataNDCView.NguoiSuaCuoi || ''}
+                            className="px-2 w-[16rem] rounded resize-none border-[0.125rem] outline-none text-[1rem] overflow-ellipsis"
+                            readOnly
+                          />
+                        </div>
+                        <div className="flex gap-1 items-center">
+                          <label>Lúc</label>
+                          <input
+                            value={dataNDCView?.NgaySuaCuoi ? moment(dataNDCView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
+                            className="px-2 w-full rounded resize-none border-[0.125rem] outline-none text-[1rem]"
+                            readOnly
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
-                    <label className="whitespace-nowrap min-w-[110px] flex justify-end">Ghi chú</label>
+                    <label className="whitespace-nowrap min-w-[100px] flex justify-end">Ghi chú</label>
                     <input
                       type="text"
                       className="px-2 w-[70rem] resize-none rounded border-[1px] border-solid outline-none text-[1rem] hover:border-blue-500 "

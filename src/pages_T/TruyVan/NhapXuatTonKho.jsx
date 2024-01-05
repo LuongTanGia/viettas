@@ -2,7 +2,7 @@
 import categoryAPI from '../../API/linkAPI'
 import { useSearch } from '../../components_T/hooks/Search'
 import { FaSearch } from 'react-icons/fa'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { Table, Select, Tooltip } from 'antd'
 import { toast } from 'react-toastify'
 import dayjs from 'dayjs'
@@ -10,11 +10,12 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { MdFilterListAlt } from 'react-icons/md'
 import { RETOKEN } from '../../action/Actions'
 import ActionButton from '../../components/util/Button/ActionButton'
+import HighlightedCell from '../../components_T/hooks/HighlightedCell'
 
 const NhapXuatTonKho = () => {
   const TokenAccess = localStorage.getItem('TKN')
   const [dataNXT, setDataNXT] = useState('')
-  const [setSearchHangHoa, filteredHangHoa] = useSearch(dataNXT)
+  const [setSearchHangHoa, filteredHangHoa, searchHangHoa] = useSearch(dataNXT)
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [nhomHangNXT, setNhomHangNXT] = useState([])
   const [hangHoaNXT, setHangHoaNXT] = useState([])
@@ -32,6 +33,7 @@ const NhapXuatTonKho = () => {
   const [pageSize, setPageSize] = useState('100')
   const [page, setPage] = useState('1')
   const [dataThongSo, setDataThongSo] = useState('')
+  const showOption = useRef(null)
 
   useEffect(() => {
     getListNhomHangNXT()
@@ -42,6 +44,17 @@ const NhapXuatTonKho = () => {
     getThongSo()
   }, [isLoading])
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showOption.current && !showOption.current.contains(event.target)) {
+        setIsShowSearch(false)
+      }
+    }
+    document.addEventListener('click', handleClickOutside)
+    return () => {
+      document.removeEventListener('click', handleClickOutside)
+    }
+  }, [])
   const getDataNXTFirst = async () => {
     try {
       if (isLoading == true) {
@@ -198,6 +211,7 @@ const NhapXuatTonKho = () => {
       align: 'center',
       sorter: (a, b) => a.MaHang.localeCompare(b.MaHang),
       showSorterTooltip: false,
+      render: (text) => <HighlightedCell text={text} search={searchHangHoa} />,
     },
     {
       title: 'Tên hàng',
@@ -449,20 +463,21 @@ const NhapXuatTonKho = () => {
       ) : (
         <div className="flex flex-col gap-2">
           <div className="flex flex-col gap-2">
-            <div className="flex justify-between relative">
+            <div className="flex relative" ref={showOption}>
               <div className="flex items-center gap-2">
                 <h1 className="text-lg font-bold text-black-600 uppercase">Nhập Xuất Tồn - Theo Kho</h1>
                 <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
               </div>
               <div className="flex ">
                 {isShowSearch && (
-                  <div className={`flex absolute left-[18.5rem]  -top-1.5 transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
+                  <div className={`flex absolute left-[18.5rem] -top-1.5 transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
                     <input
+                      value={searchHangHoa}
                       type="text"
                       placeholder="Nhập tên bạn cần tìm"
                       onChange={handleSearch}
                       className={
-                        'px-2 py-1 w-[20rem] border-slate-200 resize-none rounded-[0.5rem] border-[0.125rem] outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis '
+                        'px-2 py-1 w-[20rem] border-slate-200 resize-none rounded-[0.5rem] border-[1px] hover:border-blue-500 outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis '
                       }
                     />
                   </div>
@@ -484,6 +499,9 @@ const NhapXuatTonKho = () => {
                         onChange={(values) => {
                           setKhoanNgayFrom(values ? dayjs(values).format('YYYY-MM-DDTHH:mm:ss') : '')
                         }}
+                        sx={{
+                          '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                        }}
                       />
                     </div>
                     <div className=" flex items-center gap-1 ">
@@ -495,6 +513,9 @@ const NhapXuatTonKho = () => {
                         defaultValue={dayjs(khoanNgayTo, 'YYYY-MM-DD')}
                         onChange={(values) => {
                           setKhoanNgayTo(values ? dayjs(values).format('YYYY-MM-DDTHH:mm:ss') : '')
+                        }}
+                        sx={{
+                          '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
                         }}
                       />
                     </div>
