@@ -19,12 +19,13 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import logo from '../assets/VTS-iSale.ico'
 import { Select } from 'antd'
 import { Checkbox } from 'antd'
+import { FloatButton } from 'antd'
 
 // import { number } from 'prop-types'
 // import { create } from '@mui/material/styles/createTransitions'
 const { Option } = Select
 
-const { TiPrinter, MdFilterAlt } = icons
+const { TiPrinter, MdFilterAlt, IoMdAddCircle } = icons
 
 const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, dataRecord, dataPMH, controlDate, dataThongSo, loading }) => {
   const [isShowModalHH, setIsShowModalHH] = useState(false)
@@ -47,6 +48,20 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   // )
 
   const isAdd = useMemo(() => selectedRowData.map((item) => item.MaHang).includes('Chọn mã hàng'), [selectedRowData])
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'F9') {
+      setIsShowModalHH(true)
+    }
+  }
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [])
 
   const startDate = dayjs(controlDate.NgayBatDau).format('YYYY-MM-DDTHH:mm:ss')
   const endDate = dayjs(controlDate.NgayKetThuc).format('YYYY-MM-DDTHH:mm:ss')
@@ -417,7 +432,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   const handleCreate = async () => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
-      const response = await apis.ThemPMH(tokenLogin, formPMH, selectedDoiTuong, selectedKhoHang)
+      const response = await apis.ThemPMH(tokenLogin, { ...formPMH, DataDetails: selectedRowData }, selectedDoiTuong, selectedKhoHang)
       // Kiểm tra call api thành công
       if (response.data && response.data.DataError === 0) {
         toast.success(response.data.DataErrorDescription)
@@ -446,7 +461,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   const handleEdit = async (dataRecord) => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
-      const response = await apis.SuaPMH(tokenLogin, dataRecord.SoChungTu, formPMHEdit, selectedDoiTuong, selectedKhoHang)
+      const response = await apis.SuaPMH(tokenLogin, dataRecord.SoChungTu, { ...formPMHEdit, DataDetails: selectedRowData }, selectedDoiTuong, selectedKhoHang)
 
       // Kiểm tra call api thành công
       if (response.data && response.data.DataError === 0) {
@@ -1074,6 +1089,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
               {/* table */}
               <div className="py-4">
                 <Table
+                  // loading={true}
                   className="table_view"
                   dataSource={dataThongTin?.DataDetails}
                   columns={columns}
@@ -1182,34 +1198,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                         }}
                       />
                     </div>
-                    {/* <div className="flex gap-x-2 items-center">
-                      <label className="pr-3">Đáo Hạn</label>
-                      <DatePicker
-                        disabled
-                        className="DatePicker_PMH"
-                        format="DD/MM/YYYY"
-                        defaultValue={dayjs()}
-                        onChange={(newDate) => {
-                          setFormPMH({
-                            ...formPMH,
-                            DaoHan: newDate ? dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss') : null,
-                          })
-                        }}
-                      />
-                    </div> */}
-                    {/* <div className="flex gap-x-2 items-center  ">
-                      <label htmlFor="lapphieuchi" className="cursor-pointer">
-                        Lập phiếu chi
-                      </label>
-                      <input
-                        id="lapphieuchi"
-                        type="checkbox"
-                        className="border-[1px] hover:border-blue-500 rounded-md px-4 py-2
-                  hover:bg-blue-500 hover:text-white cursor-pointer "
-                        checked={formPMH.TTTienMat}
-                        onChange={handleTienMat}
-                      />
-                    </div> */}
+
                     <div className="flex gap-x-2 items-center">
                       <Checkbox checked={formPMH.TTTienMat} onChange={handleTienMat}>
                         Tiền mặt
@@ -1327,61 +1316,31 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                   />
                 </div>
               </div>
-              <div className="flex justify-end items-center gap-3  pr-3 pb-1">
-                <button
-                  disabled={isAdd}
-                  onClick={handleAddEmptyRow}
-                  className={`"active:scale-[.98] active:duration-75    text-slate-50  rounded-md px-2 py-1 ${
-                    isAdd ? 'cursor-not-allowed text-slate-400 bg-slate-400 border-2 border-slate-400' : 'border-2 border-bg-main hover:bg-white hover:text-bg-main bg-bg-main '
-                  }`}
-                >
-                  Thêm hàng mới
-                </button>
-                <button
-                  onClick={() => setIsShowModalHH(true)}
-                  className="active:scale-[.98] active:duration-75   border-2 border-bg-main text-slate-50 bg-bg-main  rounded-md px-2 py-1 hover:bg-white hover:text-bg-main "
-                >
-                  chọn từ danh sách
-                </button>
-              </div>
+
               {/* table */}
-              {/* <div className="max-w-[98%]  max-h-[50%] mx-auto bg-white  rounded-md my-3 overflow-y-auto ">
-                <table className="min-w-full min-h-full bg-white border border-gray-300 text-text-main">
-                  <thead>
-                    <tr>
-                      {title.map((item) => (
-                        <th key={item} className="py-1 px-2 border text-center">
-                          {item}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {selectedRowData.map((item, index) => (
-                      <CreateRow
-                        key={item.SoChungTu}
-                        index={index}
-                        item={item}
-                        dataHangHoa={dataHangHoa}
-                        handleDeleteRow={handleDeleteRow}
-                        setRowData={setSelectedRowData}
-                        currentRowData={currentRowData(item.MaHang)}
-                        dataThongSo={dataThongSo}
-                      />
-                    ))}
-                  </tbody>
-                </table>
-              </div> */}
-              <TableEdit
-                typeTable="create"
-                className="table_cre"
-                param={selectedRowData}
-                handleEditData={handleEditData}
-                ColumnTable={columnName}
-                columName={nameColumsPhieuMuaHang}
-                yourMaHangOptions={dataHangHoa}
-                yourTenHangOptions={dataHangHoa}
-              />
+
+              <div className=" pb-0  relative mt-1">
+                <FloatButton
+                  className="z-3 opacity-50 bg-transparent w-[30px] h-[30px]"
+                  style={{
+                    right: 5,
+                    top: 4,
+                  }}
+                  icon={<IoMdAddCircle />}
+                  onClick={handleAddEmptyRow}
+                  tooltip={<div>Bấm vào đây để thêm hàng mới hoặc F9 để chọn từ danh sách !</div>}
+                />
+                <TableEdit
+                  typeTable="create"
+                  className="table_cre"
+                  param={selectedRowData}
+                  handleEditData={handleEditData}
+                  ColumnTable={columnName}
+                  columName={nameColumsPhieuMuaHang}
+                  yourMaHangOptions={dataHangHoa}
+                  yourTenHangOptions={dataHangHoa}
+                />
+              </div>
             </div>
             {/* button  */}
             <div className="flex justify-between items-center">

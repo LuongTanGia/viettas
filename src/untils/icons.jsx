@@ -18,6 +18,8 @@ import { GiReceiveMoney } from 'react-icons/gi'
 import { BsSearch } from 'react-icons/bs'
 import { TfiMoreAlt } from 'react-icons/tfi'
 
+import { IoMdAddCircle } from 'react-icons/io'
+
 const icons = {
   TfiSearch,
   FcGoogle,
@@ -50,5 +52,6 @@ const icons = {
   TfiMoreAlt,
   MdEdit,
   MdFilterAlt,
+  IoMdAddCircle,
 }
 export default icons
