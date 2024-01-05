@@ -229,68 +229,68 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
     if (dataPMH) setSelectedSctKT(dataPMH[0].SoChungTu)
   }, [dataPMH])
 
-  useEffect(() => {
-    setFormPMH((prevFormPMH) => ({
-      ...prevFormPMH,
-      DataDetails: selectedRowData.map((item, index) => {
-        // Đảm bảo rằng item.DonGia là một chuỗi hợp lệ
-        const donGiaString = item.DonGia && typeof item.DonGia === 'string' ? item.DonGia : '0'
+  // useEffect(() => {
+  //   setFormPMH((prevFormPMH) => ({
+  //     ...prevFormPMH,
+  //     DataDetails: selectedRowData.map((item, index) => {
+  //       // Đảm bảo rằng item.DonGia là một chuỗi hợp lệ
+  //       const donGiaString = item.DonGia && typeof item.DonGia === 'string' ? item.DonGia : '0'
 
-        // Loại bỏ dấu phẩy và chuyển đổi thành số
-        const donGiaNumber = parseFloat(donGiaString.replace(/,/g, '')) || 0
+  //       // Loại bỏ dấu phẩy và chuyển đổi thành số
+  //       const donGiaNumber = parseFloat(donGiaString.replace(/,/g, '')) || 0
 
-        const tienHang = Number(item.SoLuong) * Number(donGiaNumber)
-        const tienThue = Number(tienHang) * (Number(item.TyLeThue) / 100)
-        const thanhTien = Number(tienHang) + Number(tienThue)
-        const tongCong = Number(thanhTien)
+  //       const tienHang = Number(item.SoLuong) * Number(donGiaNumber)
+  //       const tienThue = Number(tienHang) * (Number(item.TyLeThue) / 100)
+  //       const thanhTien = Number(tienHang) + Number(tienThue)
+  //       const tongCong = Number(thanhTien)
 
-        return {
-          STT: index + 1,
-          MaHang: item.MaHang,
-          TenHang: item.TenHang,
-          DVT: item.DVT,
-          SoLuong: item.SoLuong,
-          DonGia: donGiaNumber,
-          TienHang: tienHang,
-          TyLeThue: Number(item.TyLeThue),
-          TienThue: tienThue,
-          ThanhTien: thanhTien,
-          TyLeCKTT: 0,
-          TienCKTT: 0,
-          TongCong: tongCong,
-        }
-      }),
-    }))
+  //       return {
+  //         STT: index + 1,
+  //         MaHang: item.MaHang,
+  //         TenHang: item.TenHang,
+  //         DVT: item.DVT,
+  //         SoLuong: item.SoLuong,
+  //         DonGia: donGiaNumber,
+  //         TienHang: tienHang,
+  //         TyLeThue: Number(item.TyLeThue),
+  //         TienThue: tienThue,
+  //         ThanhTien: thanhTien,
+  //         TyLeCKTT: 0,
+  //         TienCKTT: 0,
+  //         TongCong: tongCong,
+  //       }
+  //     }),
+  //   }))
 
-    setFormPMHEdit((prevFormPMHEdit) => ({
-      ...prevFormPMHEdit,
-      DataDetails: selectedRowData.map((item, index) => {
-        // Đảm bảo rằng item.DonGia là một chuỗi hợp lệ
-        const donGiaString = item.DonGia && typeof item.DonGia === 'string' ? item.DonGia : String(item.DonGia)
-        // Loại bỏ dấu phẩy và chuyển đổi thành số
-        const donGiaNumber = parseFloat(donGiaString.replace(/,/g, '')) || 0
+  //   setFormPMHEdit((prevFormPMHEdit) => ({
+  //     ...prevFormPMHEdit,
+  //     DataDetails: selectedRowData.map((item, index) => {
+  //       // Đảm bảo rằng item.DonGia là một chuỗi hợp lệ
+  //       const donGiaString = item.DonGia && typeof item.DonGia === 'string' ? item.DonGia : String(item.DonGia)
+  //       // Loại bỏ dấu phẩy và chuyển đổi thành số
+  //       const donGiaNumber = parseFloat(donGiaString.replace(/,/g, '')) || 0
 
-        const tienHang = Number(item.SoLuong) * Number(donGiaNumber)
-        const tienThue = Number(tienHang) * (Number(item.TyLeThue) / 100)
-        const thanhTien = Number(tienHang) + Number(tienThue)
-        const tongCong = Number(thanhTien)
-        return {
-          ...item,
-          STT: index + 1,
-          MaHang: item.MaHang,
-          TenHang: item.TenHang,
-          DVT: item.DVT,
-          SoLuong: item.SoLuong,
-          DonGia: donGiaNumber,
-          TienHang: tienHang,
-          TyLeThue: Number(item.TyLeThue),
-          TienThue: tienThue,
-          ThanhTien: thanhTien,
-          TongCong: tongCong,
-        }
-      }),
-    }))
-  }, [selectedRowData, dataThongTin])
+  //       const tienHang = Number(item.SoLuong) * Number(donGiaNumber)
+  //       const tienThue = Number(tienHang) * (Number(item.TyLeThue) / 100)
+  //       const thanhTien = Number(tienHang) + Number(tienThue)
+  //       const tongCong = Number(thanhTien)
+  //       return {
+  //         ...item,
+  //         STT: index + 1,
+  //         MaHang: item.MaHang,
+  //         TenHang: item.TenHang,
+  //         DVT: item.DVT,
+  //         SoLuong: item.SoLuong,
+  //         DonGia: donGiaNumber,
+  //         TienHang: tienHang,
+  //         TyLeThue: Number(item.TyLeThue),
+  //         TienThue: tienThue,
+  //         ThanhTien: thanhTien,
+  //         TongCong: tongCong,
+  //       }
+  //     }),
+  //   }))
+  // }, [selectedRowData, dataThongTin])
 
   const handleAddInList = async () => {
     try {
@@ -319,7 +319,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
           }
           return item
         })
-      else dataNewRow = [...prevData, { ...newRow, DFDVT: newRow.DVT, DFQUYDOI: newRow.DVTQuyDoi }]
+      else dataNewRow = [...prevData, { ...newRow, DFDVT: newRow.DVT, DFQUYDOI: newRow.DVTQuyDoi, TyLeCKTT: 0, TienCKTT: 0 }]
       return dataNewRow
     })
 
@@ -392,7 +392,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   const handleCreateAndClose = async () => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
-      const response = await apis.ThemPMH(tokenLogin, formPMH, selectedDoiTuong, selectedKhoHang)
+      const response = await apis.ThemPMH(tokenLogin, { ...formPMH, DataDetails: selectedRowData }, selectedDoiTuong, selectedKhoHang)
       // Kiểm tra call api thành công
       if (response.data && response.data.DataError === 0) {
         toast.success(response.data.DataErrorDescription)
@@ -624,6 +624,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
 
   const handleEditData = (data) => {
     setSelectedRowData(data)
+    console.log('cuu', data)
   }
 
   return (
