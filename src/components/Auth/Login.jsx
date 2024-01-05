@@ -70,12 +70,21 @@ const App = () => {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false)
 
+  const fetchGoogleUserInfo = async (googleCredential) => {
+    const googleResponse = await fetch(`https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${googleCredential}`)
+    const googleUserInfo = await googleResponse.json()
+    return googleUserInfo
+  }
   const handleGoogleLogin = async (TokenID) => {
     try {
+      const googleUserInfo = await fetchGoogleUserInfo(TokenID.credential)
+      window.localStorage.setItem('userInfo', JSON.stringify(googleUserInfo))
+
       const response = await DANHSACHDULIEU(API.DANHSACHDULIEU, { TokenId: TokenID.credential }, dispatch)
       setData(response)
       if (response.DataResults.length === 1) {
         const remoteDB = response.DataResults[0].RemoteDB
+
         await LOGIN(API.DANGNHAP, API.DANHSACHDULIEU, response.TKN, remoteDB, {}, dispatch)
         window.localStorage.setItem('firstLogin', true)
         window.location.href = '/'

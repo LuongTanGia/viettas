@@ -311,7 +311,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
           }
           return item
         })
-      else dataNewRow = [...prevData, { ...newRow, DFDVT: newRow.DVT, DFQUYDOI: newRow.DVTQuyDoi }]
+      else dataNewRow = [...prevData, { ...newRow, DFDVT: newRow.DVT, DFQUYDOI: newRow.DVTQuyDoi, TienCKTT: 0, TongCong: 0 }]
       return dataNewRow
     })
 

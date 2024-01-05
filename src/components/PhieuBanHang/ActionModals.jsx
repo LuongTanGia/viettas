@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import Logo from '../../assets/VTS-iSale.ico'
-
+import { FloatButton } from 'antd'
 import { useEffect, useState } from 'react'
 // import icons from '../../untils/icons'
 import { chiTietPBS } from '../../redux/selector'
@@ -16,6 +16,7 @@ import { toast } from 'react-toastify'
 import { Select } from 'antd'
 import ActionButton from '../util/Button/ActionButton'
 import { nameColumsPhieuBanHangChiTiet } from '../util/Table/ColumnName'
+import { IoMdAddCircle } from 'react-icons/io'
 
 const { Option } = Select
 
@@ -71,13 +72,13 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
     loadData()
 
     const handleKeyDown = (event) => {
-      if (event.key === 'F9' && form.MaDoiTuong !== '' && form.MaKho !== '') {
+      if (event.key === 'F9') {
         setShowPopup(true)
       }
     }
     document.addEventListener('keydown', handleKeyDown)
     return () => {
-      // window.removeEventListener('keydown', handleKeyDown)
+      window.removeEventListener('keydown', handleKeyDown)
     }
   }, [isShow, dataRecord, token, form?.DataDetails])
 
@@ -87,6 +88,9 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
   // }
   const handleClosePopup = () => {
     setShowPopup(false)
+  }
+  const handleShowPopup = () => {
+    setShowPopup(true)
   }
   // Action Sửa
   const handleChangeInput_other = (e) => {
@@ -160,6 +164,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
       }
     }
   }
+
   return (
     <>
       {isModalOpen ? (
@@ -237,7 +242,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
                       </label>
                       <Select
                         className="w-[90%] outline-none"
-                        value={`${form?.MaDoiTuong} - ${form?.TenDoiTuong} - ${form?.DiaChi}`}
+                        value={`${form?.MaDoiTuong}  ${form?.TenDoiTuong}  ${form?.DiaChi}`}
                         disabled={typeAction === 'view' || typeAction === 'edit'}
                         onChange={handleChangeInput}
                         showSearch
@@ -336,7 +341,17 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
                     </div>
                   </div>
                 </div>
-                <div className="p-4 pb-0">
+                <div className=" pb-0  relative">
+                  <FloatButton
+                    className="z-3 opacity-50 bg-transparent w-[30px] h-[30px]"
+                    style={{
+                      right: 5,
+                      top: 4,
+                    }}
+                    icon={<IoMdAddCircle />}
+                    onClick={handleShowPopup}
+                    tooltip={<div>Bấm vào đây để thêm hàng hoặc F9 để chọn từ danh sách !</div>}
+                  />
                   {data_chitiet ? (
                     <TableEdit
                       listHP={dataListHP}
@@ -353,7 +368,16 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
               </div>
             </div>
 
-            <div>{showPopup && <ListHelper_HangHoa data={dataListHP} isShowList={showPopup} close={handleClosePopup} handleAddData={handleAddData} />}</div>
+            <div>
+              {showPopup && form.MaDoiTuong !== '' && form.MaKho !== '' ? (
+                <ListHelper_HangHoa
+                  data={form.MaDoiTuong !== '' && form.MaKho !== '' ? dataListHP : []}
+                  isShowList={showPopup}
+                  close={handleClosePopup}
+                  handleAddData={handleAddData}
+                />
+              ) : null}
+            </div>
             <div className=" w-full flex justify-end  gap-2 ">
               {typeAction === 'edit' || typeAction === 'view' ? null : (
                 <ActionButton color={'slate-50'} background={'blue-500'} bg_hover={'white'} color_hover={'blue-500'} title={'Lưu'} handleAction={handleSubmit} />

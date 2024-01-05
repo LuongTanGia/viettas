@@ -71,12 +71,12 @@
 }
 .box_thongtin input {
   /* padding: 0 11px; */
-  height: 25px;
+  height: 24px;
   border: 1px solid #ccc;
   border-radius: 6px;
 }
 .box_thongtin .ant-select {
-  height: 25px;
+  height: 24px;
 }
 
 .box_thongtin .ant-select-selector {
@@ -121,4 +121,7 @@
   color: rgb(43, 42, 42);
   font-size: 18px;
   margin: 10px;
+}
+.ant-float-btn-default {
+  position: absolute;
 }

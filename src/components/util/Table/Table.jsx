@@ -250,7 +250,8 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
     setData(originData)
     const setKey = originData?.filter((item) => initialSelectedRowKeys.includes(item.SoChungTu))
     console.log(setKey)
-    setSelectedRowKeys(setKey.map((item) => item.key))
+    setSelectedRowKeys(setKey?.map((item) => item.SoChungTu))
+    setSelectedRecord(selectMH)
   }, [param, selectMH])
   const [editingKey, setEditingKey] = useState('')
   const isEditing = (record) => record.index === editingKey
@@ -258,7 +259,9 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
   const onRowClick = (record) => {
     return {
       onDoubleClick: () => {
-        typeTable === 'listHelper' ? handleAddData({ ...record, SoLuong: 1, DonGia: record.GiaBan, TyLeCKTT: 0, TienHang: 0, ThanhTien: 0 }) : handleView(record)
+        typeTable === 'listHelper'
+          ? handleAddData({ ...record, SoLuong: 1, DonGia: record.GiaBan, TyLeCKTT: 0, TienHang: 0, ThanhTien: 0, TienCKTT: 0, TongCong: 0 })
+          : handleView(record)
       },
       onClick: () => {
         onSelectChange([record.key], [record])
@@ -280,11 +283,18 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
     setSelectedMaHangs(filteredMaHangs)
     setSelectedRowKeys(newSelectedRowKeys)
   }
-
+  console.log(selectedRowKeys)
   const rowSelection = {
     selectedRowKeys,
     onChange: onSelectChange,
   }
+
+  const [selectedRecord, setSelectedRecord] = useState(null)
+
+  const handleRowClick = (record) => {
+    setSelectedRecord(record.SoChungTu)
+  }
+
   return (
     <>
       {/* <Button onClick={handleToggleSelect} className="mr-4 ">
@@ -306,23 +316,23 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
         {typeTable !== 'listHelper' ? (
           <Table
             loading={loadingSearch}
-            rowSelection={rowSelection}
+            // rowSelection={rowSelection}
             className={height}
             columns={mergedColumns}
             dataSource={data}
             // rowClassName="editable-row"
+
             rowClassName={(record) => {
-              for (const col of listColumns) {
-                if (record[col] && typeof record[col] === 'string' && record[col].toLowerCase().includes(searchText.toLowerCase())) {
-                  return 'highlight-row'
-                }
+              if (record.SoChungTu === selectedRecord) {
+                console.log(record.SoChungTu, 'sochungtu')
+                return 'highlight-row'
               }
               return ''
             }}
-            pagination={false}
             bordered
             onRow={(record) => ({
               ...onRowClick(record),
+              onClick: () => handleRowClick(record),
             })}
             scroll={{
               y: 300,
@@ -330,11 +340,11 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
             }}
             scrollToFirstRowOnChange
             size="small"
-            summary={(pageData) => {
+            summary={() => {
               return (
                 <Table.Summary fixed="bottom">
                   <Table.Summary.Row>
-                    <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell>
+                    {/* <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell> */}
                     {columns
                       .filter((column) => column.render)
                       .map((column) => {
@@ -344,7 +354,7 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
                           <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
                             {isNumericColumn ? (
                               <Text strong>
-                                {Number(pageData.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                   minimumFractionDigits: ThongSo.SOLESOTIEN,
                                   maximumFractionDigits: ThongSo.SOLESOTIEN,
                                 })}
@@ -357,6 +367,7 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
                 </Table.Summary>
               )
             }}
+            pagination={{ defaultPageSize: 50, showSizeChanger: true, pageSizeOptions: ['50', '100', '1000'] }}
           />
         ) : (
           <Table
@@ -364,7 +375,6 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
             className={height}
             columns={mergedColumns}
             dataSource={data}
-            pagination={false}
             bordered
             onRow={(record) => ({
               ...onRowClick(record),
@@ -402,6 +412,7 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
                 </Table.Summary>
               )
             }}
+            pagination={{ defaultPageSize: 50, showSizeChanger: true, pageSizeOptions: ['50', '100', '1000'] }}
           />
         )}
       </Form>
