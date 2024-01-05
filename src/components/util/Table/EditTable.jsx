@@ -494,7 +494,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
     <div>
       <Table
         loading={dataSource.length !== 0 || typeTable === 'create' ? false : true}
-        className={'h250'}
+        className={'h285'}
         components={components}
         rowClassName={() => 'editable-row'}
         bordered
@@ -510,14 +510,14 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
           return (
             <Table.Summary fixed="bottom">
               <Table.Summary.Row>
-                {/* <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell> */}
+                <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell>
                 {/* <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell> */}
 
                 {columns
                   .filter((column) => column.render)
                   .map((column) => {
-                    const isNumericColumn = typeof dataSource[0]?.[column.dataIndex] === 'number'
-                    // && column.dataIndex !== 'STT'
+                    const isNumericColumn = typeof dataSource[0]?.[column.dataIndex] === 'number' && column.dataIndex !== 'STT'
+
                     return (
                       <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'center' : 'center'} className="text-end font-bold  bg-[#f1f1f1] pr-5">
                         {isNumericColumn ? (
