@@ -10,6 +10,7 @@ const API = {
   KHOANNGAY: `${BASE_URL}/api/settings/GiaTriHeThong/KhoanNgay`,
   PHIEUMUAHANG: `${BASE_URL}/api/entries/DuLieuPMH/DanhSach`,
   DOIMATKHAU: `${BASE_URL}/api/NguoiDung/DoiMatKhau`,
+  DoanhSoHangHoa_TopChart: `${BASE_URL}/api/statistics/DoanhSoHangHoa_TopChart`,
 
   //Phiếu Bán Hàng ///api/entries/DuLieuPBS
 

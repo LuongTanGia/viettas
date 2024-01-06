@@ -165,7 +165,7 @@ export const DANHSACHHANGHOA = async (API, token, dispatch) => {
     console.error('Error adding user:', error)
   }
 }
-export const KHOANNGAY = async (API, token, dispatch) => {
+export const KHOANNGAY = async (API, token) => {
   try {
     const response = await axios.post(
       API,
@@ -177,7 +177,7 @@ export const KHOANNGAY = async (API, token, dispatch) => {
         },
       },
     )
-    dispatch(MainSlice.actions.getKhoanNgay(response.data))
+    return response.data
   } catch (error) {
     console.error('Error adding user:', error)
   }
@@ -238,6 +238,30 @@ export const THAYDOIRMATKHAU = async (API, data, token) => {
       toast(response.data.DataErrorDescription)
       return 1
     }
+  } catch (error) {
+    console.error('Error adding user:', error)
+  }
+}
+export const DoanhSoHangHoa_TopChart = async (API, token, data) => {
+  try {
+    const response = await axios.post(API, data, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    if (response.data.DataError === -107 || response.data.DataError === -108) {
+      // toast.error(response.data.DataErrorDescription);
+      const newToken = await RETOKEN()
+      if (newToken !== '') {
+        await DoanhSoHangHoa_TopChart(API, newToken, data)
+      } else if (newToken === 0) {
+        toast.error('Failed to refresh token!')
+        window.localStorage.clear()
+        window.location.href = '/login'
+      }
+    }
+    return response.data.DataResults
   } catch (error) {
     console.error('Error adding user:', error)
   }

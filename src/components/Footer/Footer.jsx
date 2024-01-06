@@ -1,5 +1,5 @@
 import logo from '../../assets/whitelogo_viettas.svg'
-import BackGround from '../..//assets/login_background.svg'
+import BackGround from '../../assets/login_background.svg'
 
 const Footer = () => {
   return (
