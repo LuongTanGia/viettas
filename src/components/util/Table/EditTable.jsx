@@ -121,8 +121,8 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
           const updatedRow = {
             ...record,
             ...values,
-            TenHang: selectedOption.TenHang || '',
-            MaHang: selectedOption.MaHang || '',
+            TenHang: selectedOption.TenHang || record.TenHang,
+            MaHang: selectedOption.MaHang || record.MaHang,
             DonGia: GiaBan || 0,
             SoLuong: record.SoLuong || values.SoLuong || 1,
             TyLeCKTT: 0,
@@ -490,7 +490,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
     <div>
       <Table
         loading={dataSource.length !== 0 || typeTable === 'create' ? false : true}
-        className={'h250'}
+        className={'h290'}
         components={components}
         rowClassName={() => 'editable-row'}
         bordered

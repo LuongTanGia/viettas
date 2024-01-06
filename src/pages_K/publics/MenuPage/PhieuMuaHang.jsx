@@ -13,6 +13,7 @@ import { RETOKEN, formatPrice, formatQuantity } from '../../../action/Actions'
 import SimpleBackdrop from '../../../components/util/Loading/LoadingPage'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { useSearch } from '../../../components_K/myComponents/useSearch'
+import HighlightedCell from '../../../components_T/hooks/HighlightedCell'
 
 const { IoAddCircleOutline, TiPrinter, MdDelete, GiPayMoney, BsSearch, TfiMoreAlt, MdEdit, MdFilterAlt } = icons
 const PhieuMuaHang = () => {
@@ -31,7 +32,7 @@ const PhieuMuaHang = () => {
   const [actionType, setActionType] = useState('')
   const [formKhoanNgay, setFormKhoanNgay] = useState([])
   const [dataThongSo, setDataThongSo] = useState()
-  const [setSearchPMH, filteredPMH] = useSearch(data)
+  const [setSearchPMH, filteredPMH, searchPMH] = useSearch(data)
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -174,14 +175,18 @@ const PhieuMuaHang = () => {
       sorter: (a, b) => a.SoChungTu.localeCompare(b.SoChungTu),
       showSorterTooltip: false,
       align: 'center',
-      render: (text) => <div style={{ textAlign: 'start' }}>{text}</div>,
+      render: (text) => (
+        <div style={{ textAlign: 'start' }}>
+          <HighlightedCell text={text} search={searchPMH} />
+        </div>
+      ),
     },
     {
       title: 'Ngày Chứng Từ',
       dataIndex: 'NgayCTu',
       key: 'NgayCTu',
       align: 'center',
-      render: (text) => moment(text).format('DD/MM/YYYY'),
+      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY')} search={searchPMH} />,
       width: 150,
       sorter: (a, b) => {
         const dateA = new Date(a.NgayCTu)
@@ -199,7 +204,11 @@ const PhieuMuaHang = () => {
       sorter: (a, b) => a.MaDoiTuong.localeCompare(b.MaDoiTuong),
       showSorterTooltip: false,
       align: 'center',
-      render: (text) => <div style={{ textAlign: 'start' }}>{text}</div>,
+      render: (text) => (
+        <div style={{ textAlign: 'start' }}>
+          <HighlightedCell text={text} search={searchPMH} />
+        </div>
+      ),
     },
     {
       title: 'Tên đối tượng',
@@ -209,7 +218,11 @@ const PhieuMuaHang = () => {
       sorter: (a, b) => a.TenDoiTuong.localeCompare(b.TenDoiTuong),
       showSorterTooltip: false,
       align: 'center',
-      render: (text) => <div className="truncate text-start">{text}</div>,
+      render: (text) => (
+        <div className="truncate text-start">
+          <HighlightedCell text={text} search={searchPMH} />
+        </div>
+      ),
     },
     {
       title: 'Địa chỉ ',
@@ -224,7 +237,11 @@ const PhieuMuaHang = () => {
       },
       showSorterTooltip: false,
       align: 'center',
-      render: (text) => <div className="truncate text-start">{text}</div>,
+      render: (text) => (
+        <div className="truncate text-start">
+          <HighlightedCell text={text} search={searchPMH} />
+        </div>
+      ),
     },
     {
       title: 'Mã số thuế',
@@ -234,7 +251,11 @@ const PhieuMuaHang = () => {
       sorter: (a, b) => a.MaSoThue - b.MaSoThue,
       showSorterTooltip: false,
       align: 'center',
-      render: (text) => <div style={{ textAlign: 'start' }}>{text}</div>,
+      render: (text) => (
+        <div style={{ textAlign: 'start' }}>
+          <HighlightedCell text={text} search={searchPMH} />
+        </div>
+      ),
     },
     {
       title: 'Mã kho',
@@ -244,7 +265,11 @@ const PhieuMuaHang = () => {
       sorter: (a, b) => a.MaKho.localeCompare(b.MaKho),
       showSorterTooltip: false,
       align: 'center',
-      render: (text) => <div style={{ textAlign: 'start' }}>{text}</div>,
+      render: (text) => (
+        <div style={{ textAlign: 'start' }}>
+          <HighlightedCell text={text} search={searchPMH} />
+        </div>
+      ),
     },
     {
       title: 'Thông tin kho',
@@ -254,7 +279,11 @@ const PhieuMuaHang = () => {
       sorter: (a, b) => a.ThongTinKho.localeCompare(b.ThongTinKho),
       showSorterTooltip: false,
       align: 'center',
-      render: (text) => <div className="truncate text-start">{text}</div>,
+      render: (text) => (
+        <div className="truncate text-start">
+          <HighlightedCell text={text} search={searchPMH} />
+        </div>
+      ),
     },
     {
       title: 'Ghi chú ',
@@ -268,7 +297,11 @@ const PhieuMuaHang = () => {
       },
       showSorterTooltip: false,
       align: 'center',
-      render: (text) => <div className="truncate text-start">{text}</div>,
+      render: (text) => (
+        <div className="truncate text-start">
+          <HighlightedCell text={text} search={searchPMH} />
+        </div>
+      ),
     },
     {
       title: 'Tổng mặt hàng',
@@ -276,6 +309,8 @@ const PhieuMuaHang = () => {
       key: 'TongMatHang',
       width: 150,
       align: 'end',
+      // render: (text) => <div className="">{text} </div>,
+
       sorter: (a, b) => a.TongMatHang - b.TongMatHang,
       showSorterTooltip: false,
     },
@@ -287,7 +322,7 @@ const PhieuMuaHang = () => {
       align: 'end',
       render: (text) => (
         <div className={`flex justify-end w-full h-full    ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
-          {formatQuantity(text, dataThongSo?.SOLESOLUONG)}
+          <HighlightedCell text={formatQuantity(text, dataThongSo?.SOLESOLUONG)} search={searchPMH} />
         </div>
       ),
       sorter: (a, b) => a.TongSoLuong - b.TongSoLuong,
@@ -301,7 +336,7 @@ const PhieuMuaHang = () => {
       align: 'end',
       render: (text) => (
         <div className={`flex justify-end w-full h-full ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
-          {formatPrice(text, dataThongSo?.SOLESOTIEN)}
+          <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchPMH} />
         </div>
       ),
       sorter: (a, b) => a.TongTienHang - b.TongTienHang,
@@ -315,7 +350,7 @@ const PhieuMuaHang = () => {
       align: 'end',
       render: (text) => (
         <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
-          {formatPrice(text, dataThongSo?.SOLESOTIEN)}
+          <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchPMH} />
         </div>
       ),
       sorter: (a, b) => a.TongTienThue - b.TongTienThue,
@@ -329,7 +364,7 @@ const PhieuMuaHang = () => {
       align: 'end',
       render: (text) => (
         <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
-          {formatPrice(text, dataThongSo?.SOLESOTIEN)}
+          <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchPMH} />
         </div>
       ),
       sorter: (a, b) => a.TongThanhTien - b.TongThanhTien,
@@ -341,23 +376,26 @@ const PhieuMuaHang = () => {
       dataIndex: 'PhieuChi',
       key: 'PhieuChi',
       width: 150,
-
       sorter: (a, b) => {
         const PhieuChiA = a.PhieuChi || ''
         const PhieuChiB = b.PhieuChi || ''
-
         return PhieuChiA.localeCompare(PhieuChiB)
       },
       showSorterTooltip: false,
       align: 'center',
-      render: (text) => <div style={{ textAlign: 'start' }}>{text}</div>,
+      render: (text) => (
+        <div style={{ textAlign: 'start' }}>
+          {' '}
+          <HighlightedCell text={text} search={searchPMH} />
+        </div>
+      ),
     },
     {
       title: 'Ngày tạo',
       dataIndex: 'NgayTao',
       key: 'NgayTao',
       align: 'center',
-      render: (text) => moment(text).format('DD/MM/YYYY hh:mm:ss'),
+      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY hh:mm:ss')} search={searchPMH} />,
       width: 200,
       sorter: (a, b) => {
         const dateA = new Date(a.NgayTao)
@@ -374,14 +412,18 @@ const PhieuMuaHang = () => {
       sorter: (a, b) => a.NguoiTao.localeCompare(b.NguoiTao),
       showSorterTooltip: false,
       align: 'center',
-      render: (text) => <div className="truncate text-start">{text}</div>,
+      render: (text) => (
+        <div className="truncate text-start">
+          <HighlightedCell text={text} search={searchPMH} />
+        </div>
+      ),
     },
     {
       title: 'Ngày sửa cuối',
       dataIndex: 'NgaySuaCuoi',
       key: 'NgaySuaCuoi',
       align: 'center',
-      render: (text) => (text ? moment(text).format('DD/MM/YYYY hh:mm:ss') : null),
+      render: (text) => <HighlightedCell text={text ? moment(text).format('DD/MM/YYYY hh:mm:ss') : null} search={searchPMH} />,
       width: 200,
       sorter: (a, b) => {
         const dateA = new Date(a.NgaySuaCuoi)
@@ -403,7 +445,11 @@ const PhieuMuaHang = () => {
       },
       showSorterTooltip: false,
       align: 'center',
-      render: (text) => <div className="truncate text-start">{text}</div>,
+      render: (text) => (
+        <div className="truncate text-start">
+          <HighlightedCell text={text} search={searchPMH} />
+        </div>
+      ),
     },
 
     {
@@ -621,7 +667,7 @@ const PhieuMuaHang = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={handleCreate}
-            className="flex items-center   py-1 px-2 bg-bg-main rounded-md border-2 border-bg-main  text-slate-50 text-base hover:bg-white hover:text-bg-main"
+            className="flex items-center   py-1 px-2 bg-bg-main rounded-md border-2 border-bg-main  text-slate-50 text-base hover:bg-white hover:text-bg-main w-[130px]"
           >
             <div className="pr-1">
               <IoAddCircleOutline size={20} />
@@ -633,7 +679,7 @@ const PhieuMuaHang = () => {
       <div className="relative px-2 py-1 ">
         <Table
           loading={tableLoad}
-          className="table_pmh"
+          className="table_pmh setHeight "
           // rowSelection={rowSelection}
           columns={columns}
           dataSource={filteredPMH}
@@ -662,14 +708,14 @@ const PhieuMuaHang = () => {
             },
           })}
           // Bảng Tổng
-          summary={(pageData) => {
+          summary={() => {
             let totalTongThanhTien = 0
             let totalTongTienThue = 0
             let totalTongTienHang = 0
             let totalTongSoLuong = 0
             let totalTongMatHang = 0
 
-            pageData.forEach(({ TongThanhTien, TongTienThue, TongTienHang, TongSoLuong, TongMatHang }) => {
+            filteredPMH.forEach(({ TongThanhTien, TongTienThue, TongTienHang, TongSoLuong, TongMatHang }) => {
               totalTongThanhTien += TongThanhTien
               totalTongTienThue += TongTienThue
               totalTongTienHang += TongTienHang
@@ -679,7 +725,7 @@ const PhieuMuaHang = () => {
             return (
               <Table.Summary fixed="bottom">
                 <Table.Summary.Row className=" text-end font-bold bg-[#f1f1f1]">
-                  <Table.Summary.Cell className="text-center">{pageData.length}</Table.Summary.Cell>
+                  <Table.Summary.Cell className="text-center"></Table.Summary.Cell>
                   <Table.Summary.Cell></Table.Summary.Cell>
                   <Table.Summary.Cell index={2}></Table.Summary.Cell>
                   <Table.Summary.Cell index={3}></Table.Summary.Cell>
@@ -699,7 +745,7 @@ const PhieuMuaHang = () => {
                   <Table.Summary.Cell index={17}></Table.Summary.Cell>
                   <Table.Summary.Cell index={18}></Table.Summary.Cell>
                   <Table.Summary.Cell index={19}></Table.Summary.Cell>
-                  <Table.Summary.Cell className="text-center">{pageData.reduce((count, item) => count + (item.TTTienMat ? 1 : 0), 0)}</Table.Summary.Cell>
+                  <Table.Summary.Cell className="text-center">{filteredPMH.reduce((count, item) => count + (item.TTTienMat ? 1 : 0), 0)}</Table.Summary.Cell>
                   <Table.Summary.Cell></Table.Summary.Cell>
                 </Table.Summary.Row>
               </Table.Summary>

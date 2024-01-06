@@ -7,13 +7,12 @@ import { toast } from 'react-toastify'
 import { Table, Checkbox } from 'antd'
 import { formatQuantity } from '../action/Actions'
 import { useSearchHH } from './myComponents/useSearchHH'
-import { cleanDigitSectionValue } from '@mui/x-date-pickers/internals/hooks/useField/useField.utils'
+import HighlightedCell from '../components_T/hooks/HighlightedCell'
 
-const { IoMdClose, BsSearch } = icons
+const { BsSearch } = icons
 const ModalHH = ({ close, data, onRowCreate, dataThongSo }) => {
-  const [selectedRow, setSelectedRow] = useState(null)
   const [isShowSearch, setIsShowSearch] = useState(false)
-  const [setSearchPMH, filteredPMH] = useSearchHH(data)
+  const [setSearchPMH, filteredPMH, searchHH] = useSearchHH(data)
   // const [pageSize, setPageSize] = useState(50)
 
   // const handleRowClick = (dataRow) => {
@@ -56,7 +55,12 @@ const ModalHH = ({ close, data, onRowCreate, dataThongSo }) => {
       sorter: (a, b) => a.MaHang.localeCompare(b.MaHang),
       showSorterTooltip: false,
       align: 'center',
-      render: (text) => <div style={{ textAlign: 'start' }}>{text}</div>,
+      render: (text) => (
+        <div style={{ textAlign: 'start' }}>
+          {' '}
+          <HighlightedCell text={text} search={searchHH} />
+        </div>
+      ),
     },
     {
       title: 'Tên hàng',
@@ -66,7 +70,11 @@ const ModalHH = ({ close, data, onRowCreate, dataThongSo }) => {
       width: 100,
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       showSorterTooltip: false,
-      render: (text) => <div style={{ textAlign: 'start' }}>{text}</div>,
+      render: (text) => (
+        <div style={{ textAlign: 'start' }}>
+          <HighlightedCell text={text} search={searchHH} />
+        </div>
+      ),
     },
     {
       title: 'DVT',
@@ -74,7 +82,11 @@ const ModalHH = ({ close, data, onRowCreate, dataThongSo }) => {
       key: 'DVT',
       width: 30,
       align: 'center',
-      render: (text) => text,
+      render: (text) => (
+        <div>
+          <HighlightedCell text={text} search={searchHH} />
+        </div>
+      ),
       sorter: (a, b) => a.DVT.localeCompare(b.DVT),
       showSorterTooltip: false,
     },
@@ -116,7 +128,7 @@ const ModalHH = ({ close, data, onRowCreate, dataThongSo }) => {
       align: 'center',
       render: (text) => (
         <div className={`flex justify-end w-full h-full    ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
-          {formatQuantity(text, dataThongSo?.SOLESOLUONG)}
+          <HighlightedCell text={formatQuantity(text, dataThongSo?.SOLESOLUONG)} search={searchHH} />
         </div>
       ),
       sorter: (a, b) => a.SoLuongTon - b.SoLuongTon,
@@ -130,10 +142,13 @@ const ModalHH = ({ close, data, onRowCreate, dataThongSo }) => {
       sorter: (a, b) => a.NhomHang.localeCompare(b.NhomHang),
       showSorterTooltip: false,
       align: 'center',
-      render: (text) => <div style={{ textAlign: 'start' }}>{text}</div>,
+      render: (text) => (
+        <div style={{ textAlign: 'start' }}>
+          <HighlightedCell text={text} search={searchHH} />
+        </div>
+      ),
     },
   ]
-  const title = ['STT', 'Mã Hàng', 'Tên Hàng', 'DVT', 'Lắp Ráp', 'Lưu Kho', 'Số Lượng Tồn', 'Nhóm']
 
   const handleSearch = (event) => {
     setSearchPMH(event.target.value)
@@ -162,42 +177,6 @@ const ModalHH = ({ close, data, onRowCreate, dataThongSo }) => {
             )}
           </div>
           {/* table */}
-          {/* <div className="max-w-[98%]  max-h-[90%] mx-auto bg-white  rounded-md my-3 overflow-y-auto text-sm">
-            <table className="min-w-full min-h-full bg-white border border-gray-300 text-text-main">
-              <thead>
-                <tr className="bg-gray-100">
-                  {title.map((item) => (
-                    <th key={item} className="py-2 px-4 border">
-                      {item}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {data?.map((item, index) => (
-                  <tr
-                    key={item.MaHang}
-                    className={`hover:bg-blue-200  cursor-pointer ${selectedRow === item.MaHang ? 'bg-blue-200 ' : ''}`}
-                    // onClick={() => handleRowClick(item)}
-                    onDoubleClick={() => handleChoose(item)}
-                  >
-                    <td className="py-2 px-4 border text-center">{index + 1}</td>
-                    <td className="py-2 px-4 border">{item.MaHang}</td>
-                    <td className="py-2 px-4 border">{item.TenHang}</td>
-                    <td className="py-2 px-4 border">{item.DVT}</td>
-                    <td className="py-2 px-4 border text-center">
-                      <input type="checkbox" defaultChecked={item.LapRap} />
-                    </td>
-                    <td className="py-2 px-4 border text-center">
-                      <input type="checkbox" defaultChecked={item.TonKho} />
-                    </td>
-                    <td className={`py-2 px-4 border text-end ${item.SoLuongTon < 0 ? 'text-red-600 font-bold' : ''}`}>{item.SoLuongTon}.0</td>
-                    <td className="py-2 px-4 border">{item.NhomHang}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div> */}
 
           <Table
             className="table_HH"
