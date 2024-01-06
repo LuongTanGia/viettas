@@ -16,11 +16,12 @@ import NDCPrint from '../../../../components_T/Modal/DuLieu/DuLieuTrongKho/Phieu
 import NDCCreate from '../../../../components_T/Modal/DuLieu/DuLieuTrongKho/PhieuNDC/NDCCreate'
 import NDCEdit from '../../../../components_T/Modal/DuLieu/DuLieuTrongKho/PhieuNDC/NDCEdit'
 import ActionButton from '../../../../components/util/Button/ActionButton'
+import HighlightedCell from '../../../../components_T/hooks/HighlightedCell'
 
 const PhieuNhapDieuChinh = () => {
   const TokenAccess = localStorage.getItem('TKN')
   const [dataNDC, setDataNDC] = useState('')
-  const [setSearchHangHoa, filteredHangHoa] = useSearch(dataNDC)
+  const [setSearchHangHoa, filteredHangHoa, searchHangHoa] = useSearch(dataNDC)
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [isShowModal, setIsShowModal] = useState(false)
   const [isDataKhoDC, setIsDataKhoDC] = useState('')
@@ -28,8 +29,6 @@ const PhieuNhapDieuChinh = () => {
   const [khoanNgayTo, setKhoanNgayTo] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [actionType, setActionType] = useState('')
-  const [pageSize, setPageSize] = useState('10')
-  const [page, setPage] = useState('1')
   const [dataThongSo, setDataThongSo] = useState('')
   const showOption = useRef(null)
 
@@ -48,11 +47,11 @@ const PhieuNhapDieuChinh = () => {
     return formattedDateTime
   }
   const formatCurrency = (value) => {
-    return Number(value).toLocaleString('vi-VN')
+    return Number(value).toLocaleString('en-US')
   }
   const formatThapPhan = (number, decimalPlaces) => {
     if (typeof number === 'number' && !isNaN(number)) {
-      const formatter = new Intl.NumberFormat('vi-VN', {
+      const formatter = new Intl.NumberFormat('en-US', {
         minimumFractionDigits: decimalPlaces,
         maximumFractionDigits: decimalPlaces,
       })
@@ -194,7 +193,11 @@ const PhieuNhapDieuChinh = () => {
       fixed: 'left',
       showSorterTooltip: false,
       sorter: (a, b) => a.SoChungTu.localeCompare(b.SoChungTu),
-      render: (text) => <span className="flex ">{text}</span>,
+      render: (text) => (
+        <span className="flex ">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </span>
+      ),
     },
     {
       title: 'Ngày chứng từ',
@@ -208,7 +211,11 @@ const PhieuNhapDieuChinh = () => {
         const dateB = new Date(b.NgayCTu)
         return dateA - dateB
       },
-      render: (text) => <span className="flex justify-center">{formatDateTime(text)}</span>,
+      render: (text) => (
+        <span className="flex justify-center">
+          <HighlightedCell text={formatDateTime(text)} search={searchHangHoa} />
+        </span>
+      ),
     },
     {
       title: 'Thông tin kho',
@@ -260,6 +267,7 @@ const PhieuNhapDieuChinh = () => {
       key: 'GhiChu',
       showSorterTooltip: false,
       align: 'center',
+      sorter: (a, b) => (a.GhiChu?.toString() || '').localeCompare(b.GhiChu?.toString() || ''),
       render: (text) => (
         <Tooltip title={text}>
           <div
@@ -314,15 +322,11 @@ const PhieuNhapDieuChinh = () => {
     {
       title: 'Người sửa',
       dataIndex: 'NguoiSuaCuoi',
-      key: 'NgaySuaCuoi',
+      key: 'NguoiSuaCuoi',
       align: 'center',
       showSorterTooltip: false,
-      sorter: (a, b) => {
-        if (!a.NguoiSuaCuoi || !b.NguoiSuaCuoi) {
-          return null
-        }
-        return a.NguoiSuaCuoi.localeCompare(b.NguoiSuaCuoi)
-      },
+      sorter: (a, b) => (a.NguoiSuaCuoi?.toString() || '').localeCompare(b.NguoiSuaCuoi?.toString() || ''),
+
       render: (text) => (
         <Tooltip title={text}>
           <div
@@ -398,6 +402,7 @@ const PhieuNhapDieuChinh = () => {
                   {isShowSearch && (
                     <div className={`flex absolute left-[19rem] -top-8 transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
                       <input
+                        value={searchHangHoa}
                         type="text"
                         placeholder="Nhập ký tự bạn cần tìm"
                         onChange={handleSearch}
@@ -467,8 +472,8 @@ const PhieuNhapDieuChinh = () => {
                   title={'In Phiếu'}
                   icon={<MdPrint className="w-6 h-6" />}
                   color={'slate-50'}
-                  background={'purple-500'}
-                  color_hover={'purple-500'}
+                  background={'blue-500'}
+                  color_hover={'blue-500'}
                   bg_hover={'white'}
                 />
               </div>
@@ -478,14 +483,7 @@ const PhieuNhapDieuChinh = () => {
                 className="table_DMHangHoa"
                 columns={titles}
                 dataSource={filteredHangHoa}
-                pagination={{
-                  current: page,
-                  pageSize: pageSize,
-                  showSizeChanger: true,
-                  onChange: (page, pageSize) => {
-                    setPage(page), setPageSize(pageSize)
-                  },
-                }}
+                pagination={{ defaultPageSize: 50, showSizeChanger: true, pageSizeOptions: ['10', '20', '50', '100', '1000'] }}
                 onRow={(record) => ({
                   onDoubleClick: () => {
                     handleView(record)

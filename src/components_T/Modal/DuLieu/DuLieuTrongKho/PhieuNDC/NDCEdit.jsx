@@ -6,12 +6,12 @@ import categoryAPI from '../../../../../API/linkAPI'
 import { RETOKEN } from '../../../../../action/Actions'
 import './style/NDCCreate.css'
 import { useSearch } from '../../../../hooks/Search'
-import { Checkbox, InputNumber, Select, Table, Tooltip } from 'antd'
+import { Checkbox, FloatButton, InputNumber, Select, Table, Tooltip } from 'antd'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import dayjs from 'dayjs'
 import { FaSearch } from 'react-icons/fa'
 import { toast } from 'react-toastify'
-import { IoMdClose } from 'react-icons/io'
+import { IoMdClose, IoMdAddCircle } from 'react-icons/io'
 
 import moment from 'moment'
 import ActionButton from '../../../../../components/util/Button/ActionButton'
@@ -134,7 +134,7 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
   }
   const formatThapPhan = (number, decimalPlaces) => {
     if (typeof number === 'number' && !isNaN(number)) {
-      const formatter = new Intl.NumberFormat('vi-VN', {
+      const formatter = new Intl.NumberFormat('en-US', {
         minimumFractionDigits: decimalPlaces,
         maximumFractionDigits: decimalPlaces,
       })
@@ -211,11 +211,11 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
     }
   }
   const removeRow = (index) => {
-    const updatedBarcodes = [...dataNDCView.DataDetails]
+    const updatedBarcodes = [...NDCForm.DataDetails]
     updatedBarcodes.splice(index, 1)
     setSelectedRowData(updatedBarcodes)
-    setDataNDCView({
-      ...dataNDCView,
+    setNDCForm({
+      ...NDCForm,
       DataDetails: updatedBarcodes,
     })
   }
@@ -334,6 +334,7 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
       ),
     },
   ]
+  console.log(selectedRowData)
   return (
     <>
       {!isLoading ? (
@@ -466,79 +467,90 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
                       }
                     />
                   </div>
-                  <div className="border-2 p-2 rounded m-1 flex flex-col gap-2 max-h-[20rem] overflow-y-auto">
-                    <div className="flex justify-center text-xs text-blue-700 font-bold">Nhấn F9 để chọn mã hàng từ danh sách</div>
-                    <table className="barcodeList ">
-                      <thead>
-                        <tr>
-                          <th className="w-[5rem]"> STT</th>
-                          <th className="w-[10rem]">Mã hàng</th>
-                          <th className="w-[22rem]">Tên hàng</th>
-                          <th className="w-[12rem]">Đơn giá</th>
-                          <th className="w-[12rem]">Số lượng</th>
-                          <th className="w-[3rem]"></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {selectedRowData?.map((item, index) => (
-                          <tr key={item.MaHang}>
-                            <td>
-                              <div className="flex justify-center">{item.STT ? item.STT : index + 1}</div>
-                            </td>
-                            <td>
-                              <div className="flex justify-center">{item.MaHang}</div>
-                            </td>
-                            <td>
-                              <div>
-                                <Select
-                                  className="max-w-[22rem] text-start"
-                                  showSearch
-                                  size="small"
-                                  value={item.TenHang || ''}
-                                  style={{
-                                    width: '100%',
-                                  }}
-                                  onChange={(value) => handleChange(index, 'TenHang', value)}
-                                >
-                                  {dataHangHoa?.map((hangHoa, index) => (
-                                    <>
-                                      <Select.Option key={index} title={hangHoa.MaHang} value={hangHoa.MaHang} className="flex text-start max-w-[25rem]">
-                                        <p className="text-start truncate">{hangHoa.TenHang}</p>
-                                      </Select.Option>
-                                    </>
-                                  ))}
-                                </Select>
-                              </div>
-                            </td>
-                            <td>
-                              <div className="flex justify-end">{formatThapPhan(item.DonGia, dataThongSo.SOLEDONGIA)}</div>
-                            </td>
-                            <td>
-                              <div className="inputNDC flex justify-end">
-                                <InputNumber
-                                  value={item.SoLuong || ''}
-                                  min={1}
-                                  max={999999999999}
-                                  size="small"
-                                  style={{ width: '100%' }}
-                                  formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                                  parser={(value) => {
-                                    const parsedValue = parseFloat(value.replace(/\$\s?|(,*)/g, ''))
-                                    return isNaN(parsedValue) ? null : parsedValue.toFixed(dataThongSo.SOLESOLUONG)
-                                  }}
-                                  onChange={(value) => handleChange(index, 'SoLuong', value)}
-                                />
-                              </div>
-                            </td>
-                            <td>
-                              <div className="flex justify-center">
-                                <IoMdClose className="hover:text-red-600 w-6 h-6" onClick={() => removeRow(index)} />
-                              </div>
-                            </td>
+                  <div className="border-2 p-2 rounded m-1 flex flex-col gap-2 min-h-[26rem] items-start relative ">
+                    <div className="w-full max-h-[25.25rem] overflow-y-auto">
+                      <table className="barcodeList ">
+                        <thead>
+                          <tr>
+                            <th className="w-[3rem]">STT</th>
+                            <th className="w-[8rem]">Mã hàng</th>
+                            <th className="w-[22rem]">Tên hàng</th>
+                            <th className="w-[12rem]">Đơn giá</th>
+                            <th className="w-[10rem]">Số lượng</th>
+                            <th className={`${selectedRowData?.length > 9 ? 'w-[3.5rem]' : 'w-[5.5rem]'}`}></th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+                        <tbody>
+                          {selectedRowData?.map((item, index) => (
+                            <tr key={item.MaHang}>
+                              <td>
+                                <div className="flex justify-center">{item.STT ? item.STT : index + 1}</div>
+                              </td>
+                              <td>
+                                <div className="flex justify-center">{item.MaHang}</div>
+                              </td>
+                              <td>
+                                <div>
+                                  <Select
+                                    className="max-w-[22rem] text-start"
+                                    showSearch
+                                    size="small"
+                                    value={item.TenHang || ''}
+                                    style={{
+                                      width: '100%',
+                                    }}
+                                    onChange={(value) => handleChange(index, 'TenHang', value)}
+                                  >
+                                    {dataHangHoa?.map((hangHoa, index) => (
+                                      <>
+                                        <Select.Option key={index} title={hangHoa.MaHang} value={hangHoa.MaHang} className="flex text-start max-w-[25rem]">
+                                          <p className="text-start truncate">{hangHoa.TenHang}</p>
+                                        </Select.Option>
+                                      </>
+                                    ))}
+                                  </Select>
+                                </div>
+                              </td>
+                              <td>
+                                <div className="flex justify-end">{formatThapPhan(item.DonGia, dataThongSo?.SOLEDONGIA)}</div>
+                              </td>
+                              <td>
+                                <div className="inputNDC flex justify-end">
+                                  <InputNumber
+                                    value={item.SoLuong || ''}
+                                    min={1}
+                                    max={999999999999}
+                                    size="small"
+                                    style={{ width: '100%' }}
+                                    formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                    parser={(value) => {
+                                      const parsedValue = parseFloat(value.replace(/\$\s?|(,*)/g, ''))
+                                      return isNaN(parsedValue) ? null : parsedValue.toFixed(dataThongSo.SOLESOLUONG)
+                                    }}
+                                    onChange={(value) => handleChange(index, 'SoLuong', value)}
+                                  />
+                                </div>
+                              </td>
+                              <td>
+                                <div className="flex justify-center">
+                                  <IoMdClose className="hover:text-red-600 w-6 h-6" onClick={() => removeRow(index)} />
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    <FloatButton
+                      className="z-3 opacity-50 bg-transparent w-[30px] h-[30px]"
+                      style={{
+                        right: 40,
+                        top: 10,
+                      }}
+                      icon={<IoMdAddCircle />}
+                      // onClick={addHangHoaCT}
+                      tooltip={<div>Bấm vào đây để thêm hàng hoặc nhấn F9!</div>}
+                    />
                   </div>
                 </div>
                 <div className="flex gap-2 justify-end">

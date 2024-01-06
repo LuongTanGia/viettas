@@ -30,8 +30,6 @@ const HangHoa = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([])
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [dataThongSo, setDataThongSo] = useState('')
-  const [pageSize, setPageSize] = useState('10')
-  const [page, setPage] = useState('1')
 
   const getListHangHoa = async () => {
     try {
@@ -184,11 +182,11 @@ const HangHoa = () => {
     setSearchHangHoa(event.target.value)
   }
   const formatCurrency = (value) => {
-    return Number(value).toLocaleString('vi-VN')
+    return Number(value).toLocaleString('en-US')
   }
   const formatThapPhan = (number, decimalPlaces) => {
     if (typeof number === 'number' && !isNaN(number)) {
-      const formatter = new Intl.NumberFormat('vi-VN', {
+      const formatter = new Intl.NumberFormat('en-US', {
         minimumFractionDigits: decimalPlaces,
       })
       return formatter.format(number)
@@ -438,12 +436,7 @@ const HangHoa = () => {
       align: 'center',
       ellipsis: 'true',
       showSorterTooltip: false,
-      sorter: (a, b) => {
-        if (!a.NguoiSuaCuoi || !b.NguoiSuaCuoi) {
-          return null
-        }
-        return a.NguoiSuaCuoi.localeCompare(b.NguoiSuaCuoi)
-      },
+      sorter: (a, b) => (a.NguoiSuaCuoi?.toString() || '').localeCompare(b.NguoiSuaCuoi?.toString() || ''),
       render: (text) => (
         <Tooltip title={text}>
           <div
@@ -648,13 +641,7 @@ const HangHoa = () => {
                   x: 3000,
                   y: 400,
                 }}
-                pagination={{
-                  current: page,
-                  pageSize: pageSize,
-                  onChange: (page, pageSize) => {
-                    setPage(page), setPageSize(pageSize)
-                  },
-                }}
+                pagination={{ defaultPageSize: 50, showSizeChanger: true, pageSizeOptions: ['10', '20', '50', '100', '1000'] }}
                 style={{
                   whiteSpace: 'nowrap',
                   fontSize: '24px',

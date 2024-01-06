@@ -341,11 +341,11 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
                     </div>
                   </div>
                 </div>
-                <div className=" pb-0  relative">
+                <div className=" pb-0 relative">
                   <FloatButton
                     className="z-3 opacity-50 bg-transparent w-[30px] h-[30px]"
                     style={{
-                      right: 5,
+                      right: 6,
                       top: 4,
                     }}
                     icon={<IoMdAddCircle />}
