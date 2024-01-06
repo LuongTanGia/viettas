@@ -168,10 +168,10 @@ a.nav-link span {
   margin-left: 20px;
 }
 
-.table_pmh .ant-table-body {
+/* .table_pmh .ant-table-body {
   min-height: 418px;
   max-height: 418px;
-}
+} */
 
 .table_modal .ant-table-body {
   min-height: 220px;

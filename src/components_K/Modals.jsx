@@ -39,6 +39,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   const [selectedSctBD, setSelectedSctBD] = useState()
   const [selectedSctKT, setSelectedSctKT] = useState()
   const [newDataPMH, setNewDataPMH] = useState(dataPMH)
+
   // const [checkedValues, setCheckedValues] = useState([1])
   // const currentRowData = useCallback(
   //   (mahang) => {
@@ -360,13 +361,6 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
     setSelectedRowData((prevData) => [...prevData, emptyRow])
     setFormPMHEdit((prev) => ({ ...prev, DataDetails: emptyRow }))
   }
-
-  // const handleDeleteRow = (index) => {
-  //   const updatedRows = [...selectedRowData]
-  //   updatedRows.splice(index, 1)
-  //   setSelectedRowData(updatedRows)
-  //   setFormPMHEdit((prev) => ({ ...prev, DataDetails: updatedRows }))
-  // }
 
   const handleDoiTuongFocus = (selectedValue) => {
     setSelectedDoiTuong(selectedValue)
@@ -991,23 +985,19 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
               <label className="text-blue-700 font-semibold uppercase pb-1">thông tin - phiếu mua hàng</label>
             </div>
             <div className="border w-full h-[90%] rounded-sm text-sm">
-              <div className="flex gap-3 pl-1">
+              <div className="flex  md:gap-0 lg:gap-1 pl-1">
                 {/* thong tin phieu */}
                 <div className="w-[62%]">
-                  <div className="flex p-1 gap-[18px] ">
+                  <div className="flex p-1  ">
                     <div className=" flex items-center ">
-                      <label className="pr-1">Số chứng từ</label>
-                      <input disabled type="text" className="w-[186px] border border-gray-300 outline-none  px-2 rounded-[4px] h-[24px]" value={dataThongTin?.SoChungTu} />
+                      <label className="md:w-[107px] lg:w-[110px] pr-1">Số C.từ</label>
+                      <input disabled type="text" className="w-full border border-gray-300 outline-none  px-2 rounded-[4px] h-[24px]" value={dataThongTin?.SoChungTu} />
                     </div>
                     {/* DatePicker */}
-                    <div className="flex gap-x-2 items-center">
-                      <label className="pr-[25px] pl-[6px]">Ngày</label>
+                    <div className="flex md:px-1 lg:px-4 items-center">
+                      <label className="pr-1 lg:pr-[30px] lg:pl-[8px]">Ngày</label>
                       <DatePicker className="DatePicker_PMH" format="DD/MM/YYYY" value={dayjs(dataThongTin?.NgayCTu)} disabled />
                     </div>
-                    {/* <div className="flex gap-x-2 items-center">
-                      <label className="pr-3">Đáo Hạn</label>
-                      <DatePicker disabled className="DatePicker_PMH" format="DD/MM/YYYY" value={dayjs(dataThongTin?.DaoHan)} />
-                    </div> */}
                   </div>
                   <div className="p-1 flex justify-between items-center">
                     <label form="doituong" className="w-[86px]">
@@ -1037,31 +1027,31 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                   <div className=" rounded-md w-[98%]  box_capnhat px-1 py-4">
                     <div className="flex justify-between items-center ">
                       <div className="flex items-center px-1  ">
-                        <label className="w-[70px]">Người tạo</label>
-                        <input disabled type="text" className="w-[234px] border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" value={dataThongTin?.NguoiTao} readOnly />
+                        <label className="md:w-[134px] lg:w-[100px]">Người tạo</label>
+                        <input disabled type="text" className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" value={dataThongTin?.NguoiTao} readOnly />
                       </div>
 
                       <div className="flex items-center p-1">
-                        <label className="w-[30px]">Lúc</label>
+                        <label className="w-[30px] pr-1">Lúc</label>
                         <input
                           disabled
                           type="text"
-                          className="w-[144px] border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]"
+                          className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]"
                           value={dataThongTin?.NgayTao && moment(dataThongTin.NgayTao).isValid() ? moment(dataThongTin.NgayTao).format('DD/MM/YYYY hh:mm:ss') : ''}
                         />
                       </div>
                     </div>
                     <div className="flex justify-between items-center ">
                       <div className="flex items-center p-1  ">
-                        <label className="w-[70px]">Sửa cuối</label>
-                        <input disabled type="text" className="w-[234px]  border border-gray-300 outline-none px-2 rounded-[4px] h-[24px] " value={dataThongTin?.NguoiSuaCuoi} />
+                        <label className="md:w-[134px] lg:w-[100px]">Sửa cuối</label>
+                        <input disabled type="text" className="w-full  border border-gray-300 outline-none px-2 rounded-[4px] h-[24px] " value={dataThongTin?.NguoiSuaCuoi} />
                       </div>
                       <div className="flex items-center p-1 ">
-                        <label className="w-[30px]">Lúc</label>
+                        <label className="w-[30px] pr-1">Lúc</label>
                         <input
                           disabled
                           type="text"
-                          className="w-[144px] border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]"
+                          className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]"
                           value={dataThongTin?.NgaySuaCuoi && moment(dataThongTin.NgaySuaCuoi).isValid() ? moment(dataThongTin.NgaySuaCuoi).format('DD/MM/YYYY hh:mm:ss') : ''}
                         />
                       </div>
@@ -1070,9 +1060,9 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                 </div>
               </div>
               {/* kho and ghi chu */}
-              <div className="flex gap-3 pl-1 pr-[6px] items-center  w-full">
-                <div className="p-1 flex  items-center w-1/4">
-                  <label form="khohang" className="w-[110px]">
+              <div className="flex gap-3 pl-1 lg:pr-[6px] items-center  w-full">
+                <div className="p-1 flex  items-center ">
+                  <label form="khohang" className="md:w-[136px] lg:w-[144px] ">
                     Kho hàng
                   </label>
                   <select readOnly className="  border w-full  bg-[#fafafa] rounded-[4px] h-[24px]">
@@ -1175,17 +1165,17 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
               <label className="text-blue-700 font-semibold uppercase pb-1">Thêm - phiếu mua hàng</label>
             </div>
             <div className="border w-full h-[90%] rounded-sm text-sm">
-              <div className="flex gap-3 pl-1 ">
+              <div className="flex md:gap-0 lg:gap-1 pl-1 ">
                 {/* thong tin phieu */}
                 <div className="w-[62%]">
-                  <div className="flex p-1 gap-[18px] ">
+                  <div className="flex p-1  ">
                     <div className="flex items-center ">
-                      <label className="pr-1">Số chứng từ</label>
-                      <input readOnly type="text" className="w-[186px] border border-gray-300 outline-none  px-2   bg-[#fafafa] rounded-[4px] h-[24px]" />
+                      <label className="md:w-[72px] lg:w-[110px] pr-1">Số C.từ</label>
+                      <input readOnly type="text" className="md:w-[50px] lg:w-full border border-gray-300 outline-none bg-[#fafafa] rounded-[4px] h-[24px]" />
                     </div>
                     {/* DatePicker */}
-                    <div className="flex gap-x-2 items-center">
-                      <label className="pr-[25px] pl-[8px]">Ngày</label>
+                    <div className="flex md:px-1 lg:px-4 items-center">
+                      <label className="pr-1 lg:pr-[30px] lg:pl-[8px]">Ngày</label>
                       <DatePicker
                         className="DatePicker_PMH "
                         format="DD/MM/YYYY"
@@ -1196,11 +1186,14 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                             NgayCTu: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
                           })
                         }}
+                        sx={{
+                          '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                        }}
                       />
                     </div>
 
-                    <div className="flex gap-x-2 items-center">
-                      <Checkbox checked={formPMH.TTTienMat} onChange={handleTienMat}>
+                    <div className="flex  items-center ">
+                      <Checkbox className="w-full " checked={formPMH.TTTienMat} onChange={handleTienMat}>
                         Tiền mặt
                       </Checkbox>
                     </div>
@@ -1258,42 +1251,41 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                   </div>
                 </div>
                 {/* thong tin cap nhat */}
-
                 <div className="w-[38%] py-1 box_content">
                   <div className="text-center p-1 font-medium text_capnhat">Thông tin cập nhật</div>
                   <div className=" rounded-md w-[98%]  box_capnhat px-1 py-4">
                     <div className="flex justify-between items-center ">
                       <div className="flex items-center p-1  ">
-                        <label className="w-[70px]">Người tạo</label>
-                        <input disabled type="text" className="w-[234px] border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" />
+                        <label className="md:w-[134px] lg:w-[100px]">Người tạo</label>
+                        <input disabled type="text" className=" w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" />
                       </div>
 
                       <div className="flex items-center p-1 ">
-                        <label className="w-[30px]">Lúc</label>
-                        <input disabled type="text" className="w-[144px] border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" />
+                        <label className="w-[30px] pr-1">Lúc</label>
+                        <input disabled type="text" className="w-full  border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" />
                       </div>
                     </div>
                     <div className="flex justify-between items-center ">
                       <div className="flex items-center p-1  ">
-                        <label className="w-[70px]">Sửa cuối</label>
-                        <input disabled type="text" className="w-[234px]  border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" />
+                        <label className="md:w-[134px] lg:w-[100px]">Sửa cuối</label>
+                        <input disabled type="text" className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" />
                       </div>
                       <div className="flex items-center p-1 ">
-                        <label className="w-[30px]">Lúc</label>
-                        <input disabled type="text" className="w-[144px] border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" />
+                        <label className="w-[30px] pr-1">Lúc</label>
+                        <input disabled type="text" className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" />
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
               {/* kho hang and Ghi chu */}
-              <div className="flex gap-3 pl-1 pr-[6px] items-center  w-full">
-                <div className="p-1 flex  items-center w-1/4">
-                  <label form="khohang" className="w-[110px]">
+              <div className="flex gap-3 pl-1 lg:pr-[6px] items-center  w-full">
+                <div className="p-1 flex  items-center ">
+                  <label form="khohang" className="md:w-[98px] lg:w-[110px]">
                     Kho hàng
                   </label>
 
-                  <Select showSearch size="small" optionFilterProp="children" onChange={(value) => setSelectedKhoHang(value)} style={{ width: '100%' }} value={selectedKhoHang}>
+                  <Select className="w-full" showSearch size="small" optionFilterProp="children" onChange={(value) => setSelectedKhoHang(value)} value={selectedKhoHang}>
                     {dataKhoHang?.map((item) => (
                       <Option key={item.MaKho} value={item.MaKho}>
                         {item.ThongTinKho}
@@ -1321,14 +1313,15 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
 
               <div className=" pb-0  relative mt-1">
                 <FloatButton
-                  className="z-3 opacity-50 bg-transparent w-[30px] h-[30px]"
+                  className="absolute z-3  bg-transparent w-[26px] h-[26px] "
                   style={{
-                    right: 5,
-                    top: 4,
+                    right: 12,
+                    top: 8,
                   }}
+                  type={`${isAdd ? 'default' : 'primary'}`}
                   icon={<IoMdAddCircle />}
                   onClick={handleAddEmptyRow}
-                  tooltip={<div>Bấm vào đây để thêm hàng mới hoặc F9 để chọn từ danh sách !</div>}
+                  tooltip={`${isAdd ? 'Vui lòng chọn hàng hóa hoặc F9 để chọn từ danh sách ' : 'Bấm vào đây để thêm hàng mới hoặc F9 để chọn từ danh sách !'}`}
                 />
                 <TableEdit
                   typeTable="create"
@@ -1396,16 +1389,16 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
               <label className="text-blue-700 font-semibold uppercase pb-1">sửa - phiếu mua hàng</label>
             </div>
             <div className=" border w-full h-[90%] rounded-sm text-sm">
-              <div className="flex gap-3 pl-1 ">
+              <div className="flex  md:gap-0 lg:gap-1 pl-1 ">
                 {/* thong tin phieu */}
                 <div className="w-[62%] ">
-                  <div className="flex p-1   gap-[18px]">
+                  <div className="flex p-1  ">
                     <div className=" flex items-center ">
-                      <label className="pr-1">Số chứng từ</label>
+                      <label className="md:w-[100px] lg:w-[110px] pr-1">Số C.từ</label>
                       <input
                         readOnly
                         type="text"
-                        className="w-[186px] border border-gray-300 outline-none  px-2   bg-[#fafafa] rounded-[4px] h-[24px]"
+                        className="w-full border border-gray-300 outline-none  px-2   bg-[#fafafa] rounded-[4px] h-[24px]"
                         value={dataThongTin?.SoChungTu}
                         onChange={(e) =>
                           setFormPMHEdit({
@@ -1417,8 +1410,8 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                     </div>
 
                     {/* DatePicker */}
-                    <div className="flex gap-x-2 items-center ">
-                      <label className="pr-[25px] pl-[8px]">Ngày</label>
+                    <div className="flex md:px-1 lg:px-4 items-center">
+                      <label className="pr-1 lg:pr-[30px] lg:pl-[8px]">Ngày</label>
                       <DatePicker
                         className="DatePicker_PMH"
                         format="DD/MM/YYYY"
@@ -1429,23 +1422,11 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                             NgayCTu: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
                           })
                         }}
-                      />
-                    </div>
-                    {/* <div className="flex gap-x-2 items-center">
-                      <label className="pr-3">Đáo Hạn</label>
-                      <DatePicker
-                        disabled
-                        className="DatePicker_PMH"
-                        format="DD/MM/YYYY"
-                        defaultValue={dayjs(formPMHEdit.DaoHan)}
-                        onChange={(newDate) => {
-                          setFormPMHEdit({
-                            ...formPMHEdit,
-                            DaoHan: newDate ? dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss') : null,
-                          })
+                        sx={{
+                          '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
                         }}
                       />
-                    </div> */}
+                    </div>
                   </div>
                   <div className="p-1 flex ">
                     <label form="doituong" className="w-[86px]">
@@ -1458,13 +1439,6 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                         </Option>
                       ))}
                     </Select>
-                    {/* <select className=" bg-white border w-full  outline-none border-gray-300  " value={selectedDoiTuong} onChange={(e) => handleDoiTuongFocus(e.target.value)}>
-                      {dataDoiTuong?.map((item) => (
-                        <option key={item.Ma} value={item.Ma}>
-                          {item.Ma} - {item.Ten}
-                        </option>
-                      ))}
-                    </select> */}
                   </div>
                   <div className="flex items-center   p-1">
                     <label className="w-[86px]">Tên</label>
@@ -1503,32 +1477,32 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                   <div className="rounded-md w-[98%]  box_capnhat px-1 py-4">
                     <div className="flex justify-between items-center ">
                       <div className="flex items-center p-1  ">
-                        <label className="w-[70px]">Người tạo</label>
-                        <input type="text" className="w-[234px] border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" readOnly />
+                        <label className="md:w-[134px] lg:w-[100px]">Người tạo</label>
+                        <input disabled type="text" className=" w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" />
                       </div>
 
-                      <div className="flex items-center p-1 w-1/2">
-                        <label className="w-[30px]">Lúc</label>
-                        <input readOnly type="text" className="w-[144px]  border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" />
+                      <div className="flex items-center p-1">
+                        <label className="w-[30px] pr-1">Lúc</label>
+                        <input disabled type="text" className=" w-full  border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" />
                       </div>
                     </div>
                     <div className="flex justify-between items-center ">
                       <div className="flex items-center p-1  ">
-                        <label className="w-[70px]">Sửa cuối</label>
-                        <input readOnly type="text" className="w-[234px] border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" />
+                        <label className="md:w-[134px] lg:w-[100px]">Sửa cuối</label>
+                        <input disabled type="text" className=" w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" />
                       </div>
-                      <div className="flex items-center p-1 w-1/2">
-                        <label className="w-[30px]">Lúc</label>
-                        <input readOnly type="text" className="w-[144px]  border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" />
+                      <div className="flex items-center p-1 ">
+                        <label className="w-[30px] pr-1">Lúc</label>
+                        <input disabled type="text" className=" w-full  border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" />
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
               {/* kho hang and ghi chu */}
-              <div className="flex gap-3 pl-1 pr-[6px] items-center  w-full ">
-                <div className="p-1 flex  items-center w-1/4 ">
-                  <label form="khohang" className="w-[110px]">
+              <div className="flex gap-3 pl-1 lg:pr-[6px] items-center  w-full">
+                <div className="p-1 flex  items-center ">
+                  <label form="khohang" className="md:w-[104px] lg:w-[110px]">
                     Kho hàng
                   </label>
 
@@ -1540,7 +1514,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                     ))}
                   </Select>
                 </div>
-                <div className="flex items-center p-1   w-full">
+                <div className="flex items-center p-1 w-full">
                   <label className="w-[70px]">Ghi chú</label>
                   <input
                     type="text"
@@ -1555,34 +1529,19 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                   />
                 </div>
               </div>
-              {/* <div className="flex justify-end items-center gap-3 pr-3 pb-1">
-                <button
-                  disabled={isAdd}
-                  onClick={handleAddEmptyRow}
-                  className={`"active:scale-[.98] active:duration-75    text-slate-50  rounded-md px-2 py-1 ${
-                    isAdd ? 'cursor-not-allowed text-slate-400 bg-slate-400 border-2 border-slate-400' : 'border-2 border-bg-main hover:bg-white hover:text-bg-main bg-bg-main '
-                  }`}
-                >
-                  Thêm hàng mới
-                </button>
-                <button
-                  onClick={() => setIsShowModalHH(true)}
-                  className="active:scale-[.98] active:duration-75   border-2 border-bg-main text-slate-50 bg-bg-main  rounded-md px-2 py-1 hover:bg-white hover:text-bg-main "
-                >
-                  chọn từ danh sách
-                </button>
-              </div> */}
+
               {/* table */}
               <div className=" pb-0  relative mt-1">
                 <FloatButton
-                  className="z-3 opacity-50 bg-transparent w-[30px] h-[30px]"
+                  className="absolute z-3  bg-transparent w-[26px] h-[26px] "
                   style={{
-                    right: 5,
-                    top: 4,
+                    right: 12,
+                    top: 8,
                   }}
+                  type={`${isAdd ? 'default' : 'primary'}`}
                   icon={<IoMdAddCircle />}
                   onClick={handleAddEmptyRow}
-                  tooltip={<div>Bấm vào đây để thêm hàng mới hoặc F9 để chọn từ danh sách !</div>}
+                  tooltip={`${isAdd ? 'Vui lòng chọn hàng hóa hoặc F9 để chọn từ danh sách ' : 'Bấm vào đây để thêm hàng mới hoặc F9 để chọn từ danh sách !'}`}
                 />
                 <TableEdit
                   param={selectedRowData}
