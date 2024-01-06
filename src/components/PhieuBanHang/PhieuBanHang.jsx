@@ -280,7 +280,7 @@ function PhieuBanHang() {
           <ActionButton
             // icon={<PrinterOutlined />}
             color={'slate-50'}
-            title={'Xuất File Excel'}
+            title={'Xuất Excel'}
             background={'blue-500'}
             bg_hover={'white'}
             color_hover={'blue-500'}
@@ -289,7 +289,7 @@ function PhieuBanHang() {
           <ActionButton
             icon={<PrinterOutlined />}
             color={'slate-50'}
-            title={'Lập Phiếu In'}
+            title={'In Phiếu'}
             background={'blue-500'}
             bg_hover={'white'}
             color_hover={'blue-500'}
@@ -297,7 +297,7 @@ function PhieuBanHang() {
           />
           <ActionButton
             color={'slate-50'}
-            title={'Thêm Phiếu Bán Hàng'}
+            title={'Thêm Phiếu'}
             background={'blue-500'}
             icon={<FileAddOutlined />}
             bg_hover={'white'}

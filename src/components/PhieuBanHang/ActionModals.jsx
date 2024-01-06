@@ -57,7 +57,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
     setDataChitiet(form?.DataDetails)
     const loadData = async () => {
       try {
-        const result_listHp = await DANHSACHHANGHOA_PBS(API.DANHSACHHANGHOA_PBS, token, form)
+        const result_listHp = typeAction !== '' ? await DANHSACHHANGHOA_PBS(API.DANHSACHHANGHOA_PBS, token, form) : null
         const result_doituong = await DANHSACHDOITUONG(API.DANHSACHDOITUONG_PBS, token)
         const result_khohang = await DANHSACHKHOHANG(API.DANHSACHKHOHANG_PBS, token)
         setDataListHP(result_listHp)

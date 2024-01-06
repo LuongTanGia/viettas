@@ -507,7 +507,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
         size="small"
         pagination={false}
         summary={(pageData) => {
-          return (
+          return pageData.length !== 0 ? (
             <Table.Summary fixed="bottom">
               <Table.Summary.Row>
                 <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell>
@@ -528,6 +528,24 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
                             })}
                           </Text>
                         ) : null}
+                      </Table.Summary.Cell>
+                    )
+                  })}
+              </Table.Summary.Row>
+            </Table.Summary>
+          ) : (
+            <Table.Summary fixed="bottom">
+              <Table.Summary.Row>
+                <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell>
+                <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell>
+                {/* <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell> */}
+
+                {columns
+                  .filter((column) => column.render)
+                  .map((column) => {
+                    return (
+                      <Table.Summary.Cell key={column.key} className="text-end font-bold  bg-[#f1f1f1] ">
+                        <p className="opacity-0">0</p>
                       </Table.Summary.Cell>
                     )
                   })}
