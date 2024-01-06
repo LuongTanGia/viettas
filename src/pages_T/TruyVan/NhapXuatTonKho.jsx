@@ -30,8 +30,6 @@ const NhapXuatTonKho = () => {
   const [selectedNhomList, setSelectedNhomList] = useState([])
   const [selectedMaKho, setSelectedMaKho] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [pageSize, setPageSize] = useState('100')
-  const [page, setPage] = useState('1')
   const [dataThongSo, setDataThongSo] = useState('')
   const showOption = useRef(null)
 
@@ -189,8 +187,14 @@ const NhapXuatTonKho = () => {
   const handleSearch = (event) => {
     setSearchHangHoa(event.target.value)
   }
-  const formatSLSL = (number) => {
-    return number.toFixed(Math.max(1, dataThongSo.SOLESOLUONG)).replace(/,/g, '.')
+  const formatThapPhan = (number, decimalPlaces) => {
+    if (typeof number === 'number' && !isNaN(number)) {
+      const formatter = new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: decimalPlaces,
+      })
+      return formatter.format(number)
+    }
+    return ''
   }
 
   const titles = [
@@ -230,7 +234,7 @@ const NhapXuatTonKho = () => {
               cursor: 'pointer',
             }}
           >
-            {text}
+            <HighlightedCell text={text} search={searchHangHoa} />
           </div>
         </Tooltip>
       ),
@@ -252,7 +256,7 @@ const NhapXuatTonKho = () => {
               cursor: 'pointer',
             }}
           >
-            {text}
+            <HighlightedCell text={text} search={searchHangHoa} />
           </div>
         </Tooltip>
       ),
@@ -261,8 +265,10 @@ const NhapXuatTonKho = () => {
       title: 'Tên Kho',
       dataIndex: 'TenKho',
       key: 'TenKho',
+      width: 150,
       sorter: (a, b) => a.TenKho.localeCompare(b.TenKho),
       showSorterTooltip: false,
+      render: (text) => <HighlightedCell text={text} search={searchHangHoa} />,
     },
     {
       title: 'Đơn vị tính',
@@ -272,6 +278,7 @@ const NhapXuatTonKho = () => {
       align: 'center',
       sorter: (a, b) => a.DVT.localeCompare(b.DVT),
       showSorterTooltip: false,
+      render: (text) => <HighlightedCell text={text} search={searchHangHoa} />,
     },
     {
       title: 'Tồn đầu',
@@ -282,7 +289,9 @@ const NhapXuatTonKho = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongTonDK - b.SoLuongTonDK,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -294,7 +303,9 @@ const NhapXuatTonKho = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongNhap_PMH - b.SoLuongNhap_PMH,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -306,7 +317,23 @@ const NhapXuatTonKho = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongNhap_NTR - b.SoLuongNhap_NTR,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+        </div>
+      ),
+    },
+    {
+      title: 'Chuyển kho',
+      dataIndex: 'SoLuongNhap_NCK',
+      key: 'SoLuongTonCK',
+      width: 150,
+      align: 'center',
+      showSorterTooltip: false,
+      sorter: (a, b) => a.SoLuongTonCK - b.SoLuongTonCK,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -318,7 +345,9 @@ const NhapXuatTonKho = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongNhap_NDC - b.SoLuongNhap_NDC,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -330,7 +359,9 @@ const NhapXuatTonKho = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongNhap - b.SoLuongNhap,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -342,7 +373,9 @@ const NhapXuatTonKho = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongXuat_PBS - b.SoLuongXuat_PBS,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -354,7 +387,9 @@ const NhapXuatTonKho = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongXuat_PBL - b.SoLuongXuat_PBL,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -366,7 +401,9 @@ const NhapXuatTonKho = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongXuat_PBQ - b.SoLuongXuat_PBQ,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -378,7 +415,9 @@ const NhapXuatTonKho = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongXuat_XTR - b.SoLuongXuat_XTR,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -390,7 +429,9 @@ const NhapXuatTonKho = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongXuat_XSD - b.SoLuongXuat_XSD,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -402,7 +443,9 @@ const NhapXuatTonKho = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongXuat_HUY - b.SoLuongXuat_HUY,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -414,19 +457,23 @@ const NhapXuatTonKho = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongXuat_XDC - b.SoLuongXuat_XDC,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+        </div>
       ),
     },
     {
       title: 'Chuyển kho',
-      dataIndex: 'SoLuongTonCK',
+      dataIndex: 'SoLuongXuat_XCK',
       key: 'SoLuongTonCK',
       width: 150,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongTonCK - b.SoLuongTonCK,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -438,7 +485,9 @@ const NhapXuatTonKho = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongXuat - b.SoLuongXuat,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -451,7 +500,9 @@ const NhapXuatTonKho = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongTonCK - b.SoLuongTonCK,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{formatSLSL(text)}</div>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+        </div>
       ),
     },
   ]
@@ -485,7 +536,7 @@ const NhapXuatTonKho = () => {
               </div>
             </div>
             <div className="flex justify-between">
-              <form className="flex gap-4 justify-center items-center" onSubmit={getDataNXT}>
+              <form className="flex gap-2 justify-center items-center" onSubmit={getDataNXT}>
                 <div className="flex flex-col gap-2 justify-end content-end">
                   <div className="flex gap-1">
                     <div className="flex items-center gap-1">
@@ -528,14 +579,13 @@ const NhapXuatTonKho = () => {
                       value={selectedMaKho}
                       onChange={(value) => setSelectedMaKho(value)}
                       style={{
-                        width: '150px',
-                        color: 'red',
+                        width: '170px',
                       }}
                     >
                       {khoHangNXT?.map((item, index) => {
                         return (
                           <Select.Option key={index} value={item.MaKho} title={item.TenKho} className="py-8">
-                            <p> {item.TenKho}</p>
+                            <p> {item.ThongTinKho}</p>
                           </Select.Option>
                         )
                       })}
@@ -551,9 +601,11 @@ const NhapXuatTonKho = () => {
                         allowClear
                         placeholder="Chọn nhóm"
                         value={selectedNhomFrom}
+                        disabled={selectedMaFrom?.length > 0 || selectedMaTo?.length > 0 || selectedMaList?.length > 0}
                         onChange={(value) => setSelectedNhomFrom(value)}
                         style={{
-                          width: '200px',
+                          width: '180px',
+                          textOverflow: 'ellipsis',
                         }}
                       >
                         {nhomHangNXT?.map((item, index) => {
@@ -571,10 +623,12 @@ const NhapXuatTonKho = () => {
                         showSearch
                         allowClear
                         placeholder="Chọn nhóm"
+                        disabled={selectedMaFrom?.length > 0 || selectedMaTo?.length > 0 || selectedMaList?.length > 0}
                         value={selectedNhomTo}
                         onChange={(value) => setSelectedNhomTo(value)}
                         style={{
-                          width: '200px',
+                          width: '180px',
+                          textOverflow: 'ellipsis',
                         }}
                       >
                         {nhomHangNXT?.map((item, index) => {
@@ -593,6 +647,7 @@ const NhapXuatTonKho = () => {
                         maxTagCount={2}
                         filterOption
                         placeholder="Danh sách nhóm"
+                        disabled={selectedMaFrom?.length > 0 || selectedMaTo?.length > 0 || selectedMaList?.length > 0}
                         value={selectedNhomList}
                         onChange={(value) => setSelectedNhomList(value)}
                         style={{
@@ -616,10 +671,12 @@ const NhapXuatTonKho = () => {
                         allowClear
                         showSearch
                         placeholder="Chọn mã hàng"
+                        disabled={selectedNhomFrom?.length > 0 || selectedNhomTo?.length > 0 || selectedNhomList?.length > 0}
                         value={selectedMaFrom}
                         onChange={(value) => setSelectedMaFrom(value)}
                         style={{
-                          width: '200px',
+                          width: '180px',
+                          textOverflow: 'ellipsis',
                         }}
                       >
                         {hangHoaNXT?.map((item, index) => {
@@ -636,11 +693,13 @@ const NhapXuatTonKho = () => {
                       <Select
                         allowClear
                         showSearch
+                        disabled={selectedNhomFrom?.length > 0 || selectedNhomTo?.length > 0 || selectedNhomList?.length > 0}
                         placeholder="Chọn mã hàng"
                         value={selectedMaTo}
                         onChange={(value) => setSelectedMaTo(value)}
                         style={{
-                          width: '200px',
+                          width: '180px',
+                          textOverflow: 'ellipsis',
                         }}
                       >
                         {hangHoaNXT?.map((item, index) => {
@@ -658,6 +717,7 @@ const NhapXuatTonKho = () => {
                         mode="multiple"
                         maxTagCount={2}
                         allowClear
+                        disabled={selectedNhomFrom?.length > 0 || selectedNhomTo?.length > 0 || selectedNhomList?.length > 0}
                         filterOption
                         value={selectedMaList}
                         onChange={(value) => setSelectedMaList(value)}
@@ -679,7 +739,7 @@ const NhapXuatTonKho = () => {
                 </div>
                 <ActionButton
                   type="submit"
-                  title={'Lọc hàng'}
+                  title={'Lọc'}
                   icon={<MdFilterListAlt className="w-6 h-6" />}
                   color={'slate-50'}
                   background={'blue-500'}
@@ -696,17 +756,10 @@ const NhapXuatTonKho = () => {
               dataSource={filteredHangHoa.filter((item) => (selectedMaKho ? item.MaKho === selectedMaKho : true))}
               size="small"
               scroll={{
-                x: 3100,
+                x: 3300,
                 y: 300,
               }}
-              pagination={{
-                current: page,
-                pageSize: pageSize,
-                showSizeChanger: true,
-                onChange: (page, pageSize) => {
-                  setPage(page), setPageSize(pageSize)
-                },
-              }}
+              pagination={{ defaultPageSize: 50, showSizeChanger: true, pageSizeOptions: ['10', '20', '50', '100', '1000'] }}
               bordered
               style={{
                 whiteSpace: 'nowrap',

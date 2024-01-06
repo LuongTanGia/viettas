@@ -4,6 +4,7 @@ const HighlightedCell = ({ text, search }) => {
   if (!searchLower || !text?.toLowerCase().includes(searchLower)) {
     return <span>{text}</span>
   }
+
   const parts = text.split(new RegExp(`(${searchLower})`, 'gi'))
   return (
     <span>

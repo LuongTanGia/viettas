@@ -40,7 +40,7 @@ const NCKXem = ({ close, dataNDC }) => {
   }
   const formatThapPhan = (number, decimalPlaces) => {
     if (typeof number === 'number' && !isNaN(number)) {
-      const formatter = new Intl.NumberFormat('vi-VN', {
+      const formatter = new Intl.NumberFormat('en-US', {
         minimumFractionDigits: decimalPlaces,
         maximumFractionDigits: decimalPlaces,
       })
@@ -171,9 +171,7 @@ const NCKXem = ({ close, dataNDC }) => {
             </div>
           </div>
           <div className="flex gap-2 justify-end ">
-            <div onClick={close}>
-              <ActionButton title={'Đóng'} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
-            </div>
+            <ActionButton handleAction={close} title={'Đóng'} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
           </div>
         </div>
       </div>

@@ -152,63 +152,63 @@ const categoryAPI = {
   },
   // DuLieu/DLTK/PhieuNDC
   GetDataNDC(body, accessToken) {
-    const url = '/DuLieuNDC/DanhSach'
+    const url = '/entries/DuLieuNDC/DanhSach'
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     }
     return axiosClient.post(url, body, { headers })
   },
   NDCView(SoChungTu, accessToken) {
-    const url = '/DuLieuNDC/ThongTin'
+    const url = '/entries/DuLieuNDC/ThongTin'
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     }
     return axiosClient.post(url, { SoChungTu }, { headers })
   },
   NDCCreate(body, accessToken) {
-    const url = '/DuLieuNDC/Them'
+    const url = '/entries/DuLieuNDC/Them'
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     }
     return axiosClient.post(url, body, { headers })
   },
   NDCEdit(body, accessToken) {
-    const url = '/DuLieuNDC/Sua'
+    const url = '/entries/DuLieuNDC/Sua'
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     }
     return axiosClient.post(url, body, { headers })
   },
   NDCDelete(SoChungTu, accessToken) {
-    const url = '/DuLieuNDC/Xoa'
+    const url = '/entries/DuLieuNDC/Xoa'
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     }
     return axiosClient.post(url, { SoChungTu }, { headers })
   },
   NDCPrint(body, accessToken) {
-    const url = '/DuLieuNDC/InPhieu'
+    const url = '/entries/DuLieuNDC/InPhieu'
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     }
     return axiosClient.post(url, body, { headers })
   },
   ListChungTuNDC(body, accessToken) {
-    const url = '/DuLieuNDC/ListHelper_ChungTuTheoNgay'
+    const url = '/entries/DuLieuNDC/ListHelper_ChungTuTheoNgay'
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     }
     return axiosClient.post(url, body, { headers })
   },
   ListKhoHangNDC(accessToken) {
-    const url = '/DuLieuNDC/ListHelper_KhoHang'
+    const url = '/entries/DuLieuNDC/ListHelper_KhoHang'
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     }
     return axiosClient.post(url, {}, { headers })
   },
   ListHangHoaNDC(accessToken) {
-    const url = '/DuLieuNDC/ListHelper_HangHoa'
+    const url = '/entries/DuLieuNDC/ListHelper_HangHoa'
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     }

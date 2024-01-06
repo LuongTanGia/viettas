@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react'
 import { FaSearch } from 'react-icons/fa'
 import { toast } from 'react-toastify'
-import { IoMdClose } from 'react-icons/io'
-import { Checkbox, Table, Tooltip, Select, InputNumber } from 'antd'
+import { IoMdClose, IoMdAddCircle } from 'react-icons/io'
+import { Checkbox, Table, Tooltip, Select, InputNumber, FloatButton } from 'antd'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import dayjs from 'dayjs'
 import logo from '../../../../../assets/VTS-iSale.ico'
@@ -108,7 +108,7 @@ const NDCCreate = ({ close, loadingData }) => {
   }
   const formatThapPhan = (number, decimalPlaces) => {
     if (typeof number === 'number' && !isNaN(number)) {
-      const formatter = new Intl.NumberFormat('vi-VN', {
+      const formatter = new Intl.NumberFormat('en-US', {
         minimumFractionDigits: decimalPlaces,
         maximumFractionDigits: decimalPlaces,
       })
@@ -418,18 +418,17 @@ const NDCCreate = ({ close, loadingData }) => {
                   }
                 />
               </div>
-              <div className="border-2 p-2 rounded m-1 flex flex-col gap-2 max-h-[20rem] overflow-y-auto">
-                <div className="flex justify-center text-xs text-blue-700 font-bold">Nhấn F9 để chọn mã hàng từ danh sách</div>
-                <div className="flex gap-2 items-center">
-                  <table className="barcodeList   ">
+              <div className="border-2 p-2 rounded m-1 flex flex-col gap-2 min-h-[26rem] items-start relative ">
+                <div className="w-full max-h-[25.25rem] overflow-y-auto">
+                  <table className="barcodeList">
                     <thead>
                       <tr>
-                        <th className="w-[5rem]">STT</th>
-                        <th className="w-[10rem]">Mã hàng</th>
+                        <th className="w-[3rem]">STT</th>
+                        <th className="w-[8rem]">Mã hàng</th>
                         <th className="w-[22rem]">Tên hàng</th>
                         <th className="w-[12rem]">Đơn giá</th>
-                        <th className="w-[12rem]">Số lượng</th>
-                        <th className="w-[3rem]"></th>
+                        <th className="w-[10rem]">Số lượng</th>
+                        <th className={`${selectedRowData?.length > 9 ? 'w-[3.5rem]' : 'w-[5.5rem]'}`}></th>
                       </tr>
                     </thead>
                     <tbody className="">
@@ -464,7 +463,7 @@ const NDCCreate = ({ close, loadingData }) => {
                             </div>
                           </td>
                           <td>
-                            <div className="flex justify-end">{formatThapPhan(item.DonGia, dataThongSo.SOLEDONGIA)}</div>
+                            <div className="flex justify-end">{formatThapPhan(item.DonGia, dataThongSo?.SOLEDONGIA)}</div>
                           </td>
                           <td>
                             <div className="inputNDC flex justify-end">
@@ -477,7 +476,7 @@ const NDCCreate = ({ close, loadingData }) => {
                                 formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                                 parser={(value) => {
                                   const parsedValue = parseFloat(value.replace(/\$\s?|(,*)/g, ''))
-                                  return isNaN(parsedValue) ? null : parsedValue.toFixed(dataThongSo.SOLESOLUONG)
+                                  return isNaN(parsedValue) ? null : parsedValue.toFixed(dataThongSo?.SOLESOLUONG)
                                 }}
                                 onChange={(value) => handleChange(index, 'SoLuong', value)}
                               />
@@ -492,10 +491,17 @@ const NDCCreate = ({ close, loadingData }) => {
                       ))}
                     </tbody>
                   </table>
-                  <div className="flex justify-end">
-                    <ActionButton handleAction={addHangHoaCT} title={'Thêm'} color={'slate-50'} background={'blue-500'} color_hover={'blue-500'} bg_hover={'white'} />
-                  </div>
                 </div>
+                <FloatButton
+                  className="z-3 opacity-50 bg-transparent w-[30px] h-[30px]"
+                  style={{
+                    right: 40,
+                    top: 10,
+                  }}
+                  icon={<IoMdAddCircle />}
+                  onClick={addHangHoaCT}
+                  tooltip={<div>Bấm vào đây để thêm hàng hoặc nhấn F9!</div>}
+                />
               </div>
             </div>
             <div className="flex gap-2 justify-end">

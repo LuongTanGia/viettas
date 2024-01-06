@@ -2,18 +2,20 @@
   border-collapse: collapse;
   width: 100%;
 }
-.barcodeList tbody {
-  max-height: 300px;
-  overflow-y: auto;
-}
 .barcodeList thead th {
   font-weight: 500;
   background-color: #fafafa;
   border: 1px solid #dcdcdc;
-  padding: 0.25rem;
+  padding: 0.35rem;
   text-align: center;
 }
-
+.barcodeList thead {
+  border: 1px solid #dcdcdc;
+  width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
 .barcodeList tr:hover {
   background-color: #fafafa;
 }
