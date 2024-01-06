@@ -494,7 +494,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
     <div>
       <Table
         loading={dataSource.length !== 0 || typeTable === 'create' ? false : true}
-        className={'h285'}
+        className={'h290'}
         components={components}
         rowClassName={() => 'editable-row'}
         bordered
