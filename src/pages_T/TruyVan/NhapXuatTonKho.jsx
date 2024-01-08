@@ -3,7 +3,9 @@ import categoryAPI from '../../API/linkAPI'
 import { useSearch } from '../../components_T/hooks/Search'
 import { FaSearch } from 'react-icons/fa'
 import { useEffect, useState, useRef } from 'react'
-import { Table, Select, Tooltip } from 'antd'
+import { Table, Select, Tooltip, Typography } from 'antd'
+const { Text } = Typography
+
 import { toast } from 'react-toastify'
 import dayjs from 'dayjs'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
@@ -11,6 +13,7 @@ import { MdFilterListAlt } from 'react-icons/md'
 import { RETOKEN } from '../../action/Actions'
 import ActionButton from '../../components/util/Button/ActionButton'
 import HighlightedCell from '../../components_T/hooks/HighlightedCell'
+import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
 
 const NhapXuatTonKho = () => {
   const TokenAccess = localStorage.getItem('TKN')
@@ -510,7 +513,7 @@ const NhapXuatTonKho = () => {
   return (
     <>
       {!isLoading ? (
-        <p>Loading</p>
+        <SimpleBackdrop />
       ) : (
         <div className="flex flex-col gap-2">
           <div className="flex flex-col gap-2">
@@ -553,11 +556,13 @@ const NhapXuatTonKho = () => {
                         sx={{
                           '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
                         }}
+                        slotProps={{ textField: { size: 'small' } }}
                       />
                     </div>
                     <div className=" flex items-center gap-1 ">
                       <label>-</label>
                       <DatePicker
+                        slotProps={{ textField: { size: 'small' } }}
                         className="DatePicker_NXTKho"
                         format="DD/MM/YYYY"
                         minDate={dayjs(khoanNgayFrom)}
@@ -567,6 +572,9 @@ const NhapXuatTonKho = () => {
                         }}
                         sx={{
                           '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                          '& .MuiInputBase-root.MuiOutlinedInput-input.MuiInputBase-inputSizeSmall': {
+                            padding: '8px 12px',
+                          },
                         }}
                       />
                     </div>
@@ -575,6 +583,7 @@ const NhapXuatTonKho = () => {
                     <Select
                       showSearch
                       allowClear
+                      size="small"
                       placeholder="Lọc Kho"
                       value={selectedMaKho}
                       onChange={(value) => setSelectedMaKho(value)}
@@ -598,6 +607,7 @@ const NhapXuatTonKho = () => {
                       <div>Từ</div>
                       <Select
                         showSearch
+                        size="small"
                         allowClear
                         placeholder="Chọn nhóm"
                         value={selectedNhomFrom}
@@ -622,6 +632,7 @@ const NhapXuatTonKho = () => {
                       <Select
                         showSearch
                         allowClear
+                        size="small"
                         placeholder="Chọn nhóm"
                         disabled={selectedMaFrom?.length > 0 || selectedMaTo?.length > 0 || selectedMaList?.length > 0}
                         value={selectedNhomTo}
@@ -646,6 +657,7 @@ const NhapXuatTonKho = () => {
                         mode="multiple"
                         maxTagCount={2}
                         filterOption
+                        size="small"
                         placeholder="Danh sách nhóm"
                         disabled={selectedMaFrom?.length > 0 || selectedMaTo?.length > 0 || selectedMaList?.length > 0}
                         value={selectedNhomList}
@@ -671,6 +683,7 @@ const NhapXuatTonKho = () => {
                         allowClear
                         showSearch
                         placeholder="Chọn mã hàng"
+                        size="small"
                         disabled={selectedNhomFrom?.length > 0 || selectedNhomTo?.length > 0 || selectedNhomList?.length > 0}
                         value={selectedMaFrom}
                         onChange={(value) => setSelectedMaFrom(value)}
@@ -693,6 +706,7 @@ const NhapXuatTonKho = () => {
                       <Select
                         allowClear
                         showSearch
+                        size="small"
                         disabled={selectedNhomFrom?.length > 0 || selectedNhomTo?.length > 0 || selectedNhomList?.length > 0}
                         placeholder="Chọn mã hàng"
                         value={selectedMaTo}
@@ -717,6 +731,7 @@ const NhapXuatTonKho = () => {
                         mode="multiple"
                         maxTagCount={2}
                         allowClear
+                        size="small"
                         disabled={selectedNhomFrom?.length > 0 || selectedNhomTo?.length > 0 || selectedNhomList?.length > 0}
                         filterOption
                         value={selectedMaList}
@@ -749,9 +764,9 @@ const NhapXuatTonKho = () => {
               </form>
             </div>
           </div>
-          <div>
+          <div className="NhapXuatTonKho">
             <Table
-              className="table_TXNhapXuatTonKho setHeight"
+              className=" setHeight"
               columns={titles}
               dataSource={filteredHangHoa.filter((item) => (selectedMaKho ? item.MaKho === selectedMaKho : true))}
               size="small"
@@ -765,6 +780,32 @@ const NhapXuatTonKho = () => {
                 whiteSpace: 'nowrap',
                 fontSize: '24px',
                 borderRadius: '10px',
+              }}
+              summary={() => {
+                return (
+                  <Table.Summary fixed="bottom">
+                    <Table.Summary.Row>
+                      {titles
+                        .filter((column) => column.render)
+                        .map((column) => {
+                          const isNumericColumn = typeof filteredHangHoa[0]?.[column.dataIndex] === 'number'
+
+                          return (
+                            <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                              {isNumericColumn ? (
+                                <Text strong>
+                                  {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                    minimumFractionDigits: dataThongSo.SOLESOLUONG,
+                                    maximumFractionDigits: dataThongSo.SOLESOLUONG,
+                                  })}
+                                </Text>
+                              ) : null}
+                            </Table.Summary.Cell>
+                          )
+                        })}
+                    </Table.Summary.Row>
+                  </Table.Summary>
+                )
               }}
             />
           </div>

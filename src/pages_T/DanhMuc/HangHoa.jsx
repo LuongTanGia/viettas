@@ -1,7 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from 'react'
 import { useSearch } from '../../components_T/hooks/Search'
-import { Checkbox, Table, Tooltip } from 'antd'
+import { Checkbox, Table, Tooltip, Typography } from 'antd'
+const { Text } = Typography
 import HangHoaModals from '../../components_T/Modal/DanhMuc/HangHoa/HangHoaModals'
 import categoryAPI from '../../API/linkAPI'
 import moment from 'moment'
@@ -293,13 +294,13 @@ const HangHoa = () => {
       dataIndex: 'DienGiaiDVTQuyDoi',
       key: 'DienGiaiDVTQuyDoi',
       align: 'center',
+      showSorterTooltip: false,
       sorter: (a, b) => a.DienGiaiDVTQuyDoi - b.DienGiaiDVTQuyDoi,
       render: (text) => (
         <span className="flex text-start">
           <HighlightedCell text={text} search={searchHangHoa} />
         </span>
       ),
-      showSorterTooltip: false,
     },
     {
       title: 'Mã vạch',
@@ -522,7 +523,6 @@ const HangHoa = () => {
       },
     },
   ]
-
   return (
     <>
       {!isLoading ? (
@@ -633,9 +633,12 @@ const HangHoa = () => {
                     handleView(record)
                   },
                 })}
-                className="table_DMHangHoa"
+                className="setHeight"
                 columns={titles}
-                dataSource={filteredHangHoa}
+                dataSource={filteredHangHoa.map((item, index) => ({
+                  ...item,
+                  modifiedIndex: index + 1,
+                }))}
                 size="small"
                 scroll={{
                   x: 3000,
@@ -645,6 +648,41 @@ const HangHoa = () => {
                 style={{
                   whiteSpace: 'nowrap',
                   fontSize: '24px',
+                }}
+                summary={() => {
+                  return (
+                    <Table.Summary fixed="bottom">
+                      <Table.Summary.Row>
+                        <Table.Summary.Cell className=" bg-gray-100"></Table.Summary.Cell>
+                        {titles
+                          .filter((column) => column.render)
+                          .map((column) => {
+                            const isNumericColumn = typeof filteredHangHoa[0]?.[column.dataIndex] === 'number'
+                            return (
+                              <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                                {isNumericColumn ? (
+                                  column.dataIndex === 'GiaBanLe' || column.dataIndex === 'BangGiaSi_Min' || column.dataIndex === 'BangGiaSi_Max' ? (
+                                    <Text strong>
+                                      {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                        minimumFractionDigits: dataThongSo.SOLEDONGIA,
+                                        maximumFractionDigits: dataThongSo.SOLEDONGIA,
+                                      })}
+                                    </Text>
+                                  ) : (
+                                    <Text strong>
+                                      {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                        minimumFractionDigits: 0,
+                                        maximumFractionDigits: 0,
+                                      })}
+                                    </Text>
+                                  )
+                                ) : null}
+                              </Table.Summary.Cell>
+                            )
+                          })}
+                      </Table.Summary.Row>
+                    </Table.Summary>
+                  )
                 }}
               />
             </div>

@@ -493,9 +493,9 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) 
   return (
     <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10">
       <div className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"></div>
-      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col min-w-[40rem] min-h-[8rem] bg-white px-2 rounded shadow-custom overflow-hidden">
+      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col min-h-[10rem] bg-white px-2 rounded shadow-custom overflow-hidden">
         {type == 'view' && (
-          <div className={`flex flex-col p-2 ${dataView?.HangHoa_CTs?.length > 0 ? ' min-w-[90rem]' : 'min-w-[50rem]'}`}>
+          <div className={`flex flex-col p-2 ${dataView?.HangHoa_CTs?.length > 0 ? 'w-[95vw]' : 'w-[52vw]'}`}>
             <div className="flex items-center justify-between p-2">
               <div className="flex gap-2">
                 <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
@@ -504,45 +504,45 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) 
             </div>
             <div className={`border-2 py-2 px-2 gap-2 ${dataView?.HangHoa_CTs?.length > 0 ? 'grid grid-cols-2' : 'grid grid-cols-1'}`}>
               <div className="flex flex-col gap-3">
-                <div className="grid grid-cols-5 gap-2 items-center">
+                <div className="grid grid-cols-5 gap-1 items-center">
                   <div className="flex items-center gap-1 whitespace-nowrap col-span-2">
-                    <label className="required min-w-[110px] flex justify-end">Mã hàng</label>
-                    <input type="text" value={dataView?.MaHang || ''} className="px-2 w-full rounded resize-none border-[0.125rem] outline-none text-[1rem]" readOnly />
+                    <label className="required  min-w-[100px] flex justify-end">Mã hàng</label>
+                    <input type="text" value={dataView?.MaHang || ''} className="px-2 w-full rounded resize-none border-[0.125rem] outline-none text-[1rem] truncate" readOnly />
                   </div>
-                  <div className="flex items-center gap-1 whitespace-nowrap ml-4">
+                  <div className="flex items-center whitespace-nowrap ml-2">
                     <Checkbox className="text-base" id="TonKho" checked={dataView?.NA}>
                       Ngưng dùng
                     </Checkbox>
                   </div>
-                  <div className="flex items-center gap-1 whitespace-nowrap ml-4">
+                  <div className="flex items-center whitespace-nowrap ml-4">
                     <Checkbox className="text-base" id="TonKho" checked={dataView?.LapRap}>
                       Lắp ráp
                     </Checkbox>
                   </div>
-                  <div className="flex items-center gap-1 ">
+                  <div className="flex items-center whitespace-nowrap">
                     <Checkbox className="text-base" id="TonKho" checked={dataView?.TonKho}>
                       Tồn kho
                     </Checkbox>
                   </div>
                 </div>
                 <div className="flex items-center gap-1">
-                  <label className=" whitespace-nowrap required min-w-[110px] flex justify-end">Tên hàng</label>
+                  <label className=" whitespace-nowrap required min-w-[100px] flex justify-end">Tên hàng</label>
                   <input type="text" value={dataView?.TenHang || ''} className="px-2 rounded w-full resize-none border-[0.125rem] outline-none text-[1rem]" readOnly />
                 </div>
                 <div className="flex items-center gap-1 whitespace-nowrap  ">
-                  <label className="required min-w-[110px] flex justify-end">Tên nhóm</label>
+                  <label className="required min-w-[100px] flex justify-end">Tên nhóm</label>
                   <input type="text" value={dataView?.TenNhom || ''} className="px-2 rounded w-full resize-none border-[0.125rem] outline-none text-[1rem]" readOnly />
                 </div>
                 <div className="grid grid-cols-5 gap-2">
                   <div className="flex items-center gap-1 col-span-2">
-                    <label className="required whitespace-nowrap min-w-[110px] flex justify-end">Đơn vị tính</label>
+                    <label className="required whitespace-nowrap min-w-[100px] flex justify-end">Đơn vị tính</label>
                     <input type="text" value={dataView?.DVTKho || ''} className="px-2 rounded w-full resize-none border-[0.125rem] outline-none text-[1rem] " readOnly />
                   </div>
                   <div className="flex items-center gap-1 ">
                     <label>x</label>
                     <input
                       type="text"
-                      value={formatThapPhan(Number(dataView?.TyLeQuyDoi), dataThongSo.SOLETYLE) || ''}
+                      value={formatThapPhan(Number(dataView?.TyLeQuyDoi), dataThongSo?.SOLETYLE) || ''}
                       className="px-2 rounded w-full resize-none border-[0.125rem] outline-none text-[1rem] flex text-end"
                       readOnly
                     />
@@ -554,11 +554,11 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) 
                 </div>
                 <div className="grid grid-cols-3">
                   <div className="flex items-center gap-1 whitespace-nowrap col-span-2">
-                    <label className="required min-w-[110px] flex justify-end">Mã vạch</label>
+                    <label className="required min-w-[100px] flex justify-end">Mã vạch</label>
                     <input type="text" value={dataView?.MaVach || ''} className="px-2 rounded w-full resize-none border-[0.125rem] outline-none text-[1rem]" readOnly />
                   </div>
                 </div>
-                <div className="border-[0.125rem] ml-[113px] p-2 rounded flex flex-col items-end gap-2">
+                <div className="border-[0.125rem] ml-[105px] p-2 rounded flex flex-col items-end gap-2">
                   <div className="w-full max-h-[118px] overflow-y-auto">
                     <table className="barcodeList">
                       <thead>
@@ -585,61 +585,65 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) 
                   </div>
                 </div>
                 <div className="flex items-center gap-1">
-                  <label className="whitespace-nowrap min-w-[110px] flex justify-end">Diễn giải hàng</label>
+                  <label className="whitespace-nowrap min-w-[100px] flex justify-end">Diễn giải hàng</label>
                   <input
                     type="text"
                     value={dataView?.DienGiaiHangHoa == null ? 'Trống' : dataView?.DienGiaiHangHoa || ''}
-                    className="px-2 rounded w-full resize-none border-[0.125rem] outline-none text-[1rem]"
+                    className="px-2 rounded w-full resize-none border-[0.125rem] outline-none text-[1rem] truncate"
                     readOnly
                   />
                 </div>
                 <div className="flex items-center gap-1 whitespace-nowrap">
-                  <label className="min-w-[110px] flex justify-end">Ghi chú</label>
+                  <label className="min-w-[100px] flex justify-end">Ghi chú</label>
                   <textarea
                     type="text"
                     value={dataView?.GhiChu == null ? 'Trống' : dataView?.GhiChu || ''}
-                    className="px-2 rounded w-full resize-none border-[0.125rem] outline-none text-[1rem]"
+                    className="px-2 rounded w-full resize-none border-[0.125rem] outline-none text-[1rem] truncate"
                     readOnly
                   />
                 </div>
-                <div className="grid grid-cols-1 mt-1 gap-3 px-2 py-3 rounded border-black-200 ml-[110px] relative border-[0.125rem]">
+                <div className="grid grid-cols-1 mt-1 gap-3 px-2 py-3 rounded border-black-200 ml-[105px] relative border-[0.125rem]">
                   <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
-                  <div className="flex gap-2">
+                  <div className="flex gap-1">
                     <div className="flex items-center gap-1.5 whitespace-nowrap" title={dataView.NguoiTao}>
                       <label>Người tạo</label>
                       <input
+                        title={dataView?.NguoiTao}
                         type="text"
                         value={dataView?.NguoiTao || ''}
-                        className={`${hangHoaForm?.LapRap == true ? 'w-[17rem]' : 'w-[19rem]'} px-2 rounded  resize-none border-[0.125rem] outline-none text-[1rem] truncate`}
+                        className={`${hangHoaForm?.LapRap == true ? 'w-[15vw]' : 'w-[18vw]'} px-2 rounded  resize-none border-[0.125rem] outline-none text-[1rem] truncate`}
                         readOnly
                       />
                     </div>
                     <div className="flex items-center gap-1 whitespace-nowrap">
                       <label>Lúc</label>
                       <input
+                        title={dataView?.NgayTao}
                         type="text"
                         value={moment(dataView?.NgayTao)?.format('DD/MM/YYYY') || ''}
-                        className="px-2 rounded w-full resize-none border-[0.125rem] outline-none text-[1rem]"
+                        className="px-2 rounded w-full resize-none border-[0.125rem] outline-none text-[1rem] truncate"
                         readOnly
                       />
                     </div>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-1">
                     <div className="flex items-center gap-1.5 whitespace-nowrap" title={dataView.NguoiSuaCuoi}>
                       <label>Người sửa</label>
                       <input
+                        title={dataView?.NguoiSuaCuoi}
                         type="text"
                         value={dataView?.NguoiSuaCuoi || ' '}
-                        className={`${hangHoaForm?.LapRap == true ? 'w-[17rem]' : 'w-[19rem]'} px-2 rounded  resize-none border-[0.125rem] outline-none text-[1rem] truncate`}
+                        className={`${hangHoaForm?.LapRap == true ? 'w-[15vw]' : 'w-[18vw]'} px-2 rounded  resize-none border-[0.125rem] outline-none text-[1rem] truncate`}
                         readOnly
                       />
                     </div>
                     <div className="flex items-center gap-1 whitespace-nowrap">
                       <label>Lúc</label>
                       <input
+                        title={dataView?.NgaySuaCuoi}
                         type="text"
                         value={dataView?.NgaySuaCuoi ? moment(dataView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                        className="px-2 rounded w-full resize-none border-[0.125rem] outline-none text-[1rem]"
+                        className="px-2 rounded w-full resize-none border-[0.125rem] outline-none text-[1rem] truncate"
                         readOnly
                       />
                     </div>
@@ -668,7 +672,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) 
                               </td>
                               <td>{item.DVTChiTiet}</td>
                               <td>
-                                <div className="flex justify-end px-4">{formatThapPhan(Number(item.SoLuong), dataThongSo.SOLESOLUONG)}</div>
+                                <div className="flex justify-end px-4 items-end">{formatThapPhan(Number(item.SoLuong), dataThongSo.SOLESOLUONG)}</div>
                               </td>
                             </tr>
                           ))}
@@ -687,7 +691,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) 
           </div>
         )}
         {type == 'create' && (
-          <div className={`flex flex-col p-2 ${hangHoaForm?.LapRap == true ? ' min-w-[90rem]' : 'min-w-[50rem]'}`}>
+          <div className={`flex flex-col p-2 ${hangHoaForm?.LapRap == true ? 'w-[95vw]' : 'w-[60vw]'}`}>
             <div className="flex items-center justify-between p-1">
               <div className="flex gap-2">
                 <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
@@ -695,11 +699,11 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) 
               </div>
             </div>
             <div className="flex flex-col gap-2 p-1">
-              <div className={`border-2 py-2 px-2 gap-2 ${hangHoaForm?.LapRap == true ? 'grid grid-cols-2' : 'grid grid-cols-1'}`}>
-                <div className="flex flex-col gap-3 p-1">
-                  <div className="grid grid-cols-6 gap-3 items-center">
+              <div className={`border-2 py-2 px-1 gap-3 ${hangHoaForm?.LapRap == true ? 'grid grid-cols-2' : 'grid grid-cols-1'}`}>
+                <div className="flex flex-col gap-3 p-1 ">
+                  <div className="md:grid-cols-3 grid-cols-6 grid gap-2 items-center">
                     <div className="col-span-3 flex items-center gap-1 relative">
-                      <label className="required min-w-[110px] whitespace-nowrap flex justify-end">Mã hàng</label>
+                      <label className="required  min-w-[100px] whitespace-nowrap flex justify-end">Mã hàng</label>
                       <input
                         type="text"
                         className={`px-2 rounded border-[1px] w-full resize-none outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis ${
@@ -769,7 +773,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) 
                     </div>
                   </div>
                   <div className="flex gap-1 items-center relative">
-                    <label className="required min-w-[110px] flex justify-end whitespace-nowrap">Tên hàng</label>
+                    <label className="required min-w-[100px] flex justify-end whitespace-nowrap">Tên hàng</label>
                     <input
                       type="text"
                       className="px-2 w-full resize-none rounded border-[1px] outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis hover:border-blue-500"
@@ -787,7 +791,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) 
                     {errors.TenHang && <p className="text-red-500 text-[10px] font-normal absolute -bottom-[15px] left-[7.5rem]">{errors.TenHang}</p>}
                   </div>
                   <div className="flex gap-1 items-center col-span-2 relative">
-                    <label className="required min-w-[110px] flex justify-end whitespace-nowrap">Nhóm hàng</label>
+                    <label className="required  min-w-[100px] flex justify-end whitespace-nowrap">Nhóm hàng</label>
                     <Select
                       showSearch
                       name="Nhom"
@@ -818,7 +822,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) 
                   </div>
                   <div className="grid grid-cols-5 gap-2 items-center">
                     <div className="flex col-span-2 gap-1 items-center relative">
-                      <label className="required min-w-[110px] flex justify-end whitespace-nowrap">Đơn vị tính</label>
+                      <label className="required  min-w-[100px] flex justify-end whitespace-nowrap">Đơn vị tính</label>
                       <Select
                         name="DVTKho"
                         showSearch
@@ -918,7 +922,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) 
                   </div>
                   <div className="grid grid-cols-3 gap-2 items-center">
                     <div className="flex col-span-2 gap-1 items-center justify-center relative">
-                      <label className="required min-w-[110px] flex justify-end whitespace-nowrap">Mã vạch</label>
+                      <label className="required  min-w-[100px] flex justify-end whitespace-nowrap">Mã vạch</label>
                       <input
                         type="text"
                         required
@@ -948,8 +952,8 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) 
                       {errors.MaVach && <p className="text-red-500 text-[10px] font-normal absolute -bottom-[15px] left-[7.5rem] whitespace-nowrap">{errors.MaVach}</p>}
                     </div>
                   </div>
-                  <div className=" border-[0.125rem] ml-[110px] p-2 min-h-[8.5rem] rounded flex gap-2 items-start relative ">
-                    <div className="w-full max-h-[120px] overflow-y-auto">
+                  <div className=" border-[0.125rem] ml-[105px] p-2 min-h-[8.5rem] rounded flex gap-2 items-start relative ">
+                    <div className="w-full max-h-[125px] overflow-y-auto">
                       <table className="barcodeList  ">
                         <thead>
                           <tr>
@@ -995,7 +999,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) 
                     <FloatButton
                       className="z-3 opacity-50 bg-transparent w-[30px] h-[30px]"
                       style={{
-                        right: 35,
+                        right: 37,
                         top: 10,
                       }}
                       icon={<IoMdAddCircle />}
@@ -1004,7 +1008,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) 
                     />
                   </div>
                   <div className="flex col-span-2 gap-1 items-center">
-                    <label className="min-w-[110px] flex justify-end whitespace-nowrap">Diễn giải hàng</label>
+                    <label className=" min-w-[100px] flex justify-end whitespace-nowrap">Diễn giải hàng</label>
                     <input
                       type="text"
                       className="px-2 w-full resize-none rounded border-[1px] hover:border-blue-500 outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"
@@ -1019,7 +1023,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) 
                     />
                   </div>
                   <div className="flex col-span-2 gap-1 items-center">
-                    <label className="min-w-[110px] flex justify-end whitespace-nowrap">Ghi chú</label>
+                    <label className=" min-w-[100px] flex justify-end whitespace-nowrap">Ghi chú</label>
                     <textarea
                       type="text"
                       className="px-2 w-full resize-none rounded border-[1px] hover:border-blue-500 outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsispx-4  "
@@ -1033,14 +1037,14 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) 
                       }
                     />
                   </div>
-                  <div className="grid grid-cols-1 gap-3 mt-1 px-2 py-3 border-black-200 ml-[115px] relative rounded border-[0.125rem]">
+                  <div className="grid grid-cols-1 gap-3 mt-1 px-2 py-3 border-black-200 ml-[105px] relative rounded border-[0.125rem]">
                     <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
                     <div className="flex gap-2">
                       <div className="flex items-center gap-1.5 whitespace-nowrap">
                         <label>Người tạo</label>
                         <input
                           type="text"
-                          className={`${hangHoaForm?.LapRap == true ? 'w-[18rem]' : 'w-[19rem]'} px-2 rounded  resize-none border-[0.125rem] outline-none text-[1rem] truncate`}
+                          className={`${hangHoaForm?.LapRap == true ? 'w-[15vw]' : 'w-[18vw]'} px-2 rounded  resize-none border-[0.125rem] outline-none text-[1rem] truncate`}
                           disabled
                         />
                       </div>
@@ -1054,7 +1058,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) 
                         <label>Người sửa</label>
                         <input
                           type="text"
-                          className={`${hangHoaForm?.LapRap == true ? 'w-[18rem]' : 'w-[19rem]'} px-2 rounded  resize-none border-[0.125rem] outline-none text-[1rem] truncate`}
+                          className={`${hangHoaForm?.LapRap == true ? 'w-[15vw]' : 'w-[18vw]'} px-2 rounded  resize-none border-[0.125rem] outline-none text-[1rem] truncate`}
                           disabled
                         />
                       </div>
@@ -1162,7 +1166,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) 
           </div>
         )}
         {type == 'edit' && (
-          <div className={`flex flex-col p-2 ${hangHoaForm?.LapRap == true ? ' min-w-[90rem]' : 'min-w-[50rem]'}`}>
+          <div className={`flex flex-col p-2 ${hangHoaForm?.LapRap == true ? ' min-w-[90rem]' : 'w-full'}`}>
             <div className="flex items-center p-1 gap-2">
               <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
               <p className="text-blue-700 font-semibold uppercase">Sửa - Hàng hóa</p>
@@ -1172,7 +1176,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) 
                 <div className="flex flex-col gap-3">
                   <div className="grid grid-cols-6 gap-3 items-center justify-center">
                     <div className="col-span-3 flex items-center gap-1">
-                      <label className="required min-w-[110px] whitespace-nowrap flex justify-end">Mã hàng</label>
+                      <label className="required  min-w-[100px] whitespace-nowrap flex justify-end">Mã hàng</label>
                       <input
                         required
                         type="text"
@@ -1241,7 +1245,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) 
                     </div>
                   </div>
                   <div className="flex gap-1 items-center">
-                    <label className="required min-w-[110px] whitespace-nowrap flex justify-end">Tên hàng</label>
+                    <label className="required  min-w-[100px] whitespace-nowrap flex justify-end">Tên hàng</label>
                     <input
                       required
                       type="text"
@@ -1258,7 +1262,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) 
                     {errors.TenHang && <p className="text-red-500 text-xs font-normal absolute -bottom-[15px] left-[7.5rem] whitespace-nowrap">{errors.TenHang}</p>}
                   </div>
                   <div className="col-span-2 flex items-center gap-1">
-                    <label className="required min-w-[110px] whitespace-nowrap flex justify-end">Nhóm hàng</label>
+                    <label className="required  min-w-[100px] whitespace-nowrap flex justify-end">Nhóm hàng</label>
                     <Select
                       showSearch
                       size="small"
@@ -1286,7 +1290,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) 
                   </div>
                   <div className="grid grid-cols-5 gap-2 items-center">
                     <div className="flex col-span-2 gap-1 items-center">
-                      <label className="required min-w-[110px] whitespace-nowrap flex justify-end">Đơn vị tính</label>
+                      <label className="required  min-w-[100px] whitespace-nowrap flex justify-end">Đơn vị tính</label>
                       <Select
                         showSearch
                         name="DVTKho"
@@ -1382,7 +1386,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) 
                   </div>
                   <div className="grid grid-cols-3 gap-2 items-center">
                     <div className="flex col-span-2 gap-1 items-center">
-                      <label className="required min-w-[110px] whitespace-nowrap flex justify-end">Mã vạch</label>
+                      <label className="required  min-w-[100px] whitespace-nowrap flex justify-end">Mã vạch</label>
                       <input
                         type="text"
                         required
@@ -1472,7 +1476,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) 
                     />
                   </div>
                   <div className="flex col-span-2 gap-1 items-center">
-                    <label className="min-w-[110px] whitespace-nowrap flex justify-end">Diễn giải hàng</label>
+                    <label className=" min-w-[100px] whitespace-nowrap flex justify-end">Diễn giải hàng</label>
                     <input
                       type="text"
                       className="px-2 w-full resize-none rounded border-[1px] hover:border-blue-500 outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"
@@ -1487,7 +1491,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) 
                     />
                   </div>
                   <div className="flex col-span-2 gap-1 items-center">
-                    <label className="min-w-[110px] whitespace-nowrap flex justify-end">Ghi chú</label>
+                    <label className=" min-w-[100px] whitespace-nowrap flex justify-end">Ghi chú</label>
                     <textarea
                       type="text"
                       className="px-2 w-full resize-none rounded border-[1px] hover:border-blue-500 outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"

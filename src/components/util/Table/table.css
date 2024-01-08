@@ -12,6 +12,22 @@
 .setHeight .ant-table {
   height: calc(100vh - 225px);
 }
+/* NXT */
+.NhapXuatTonKho .ant-table-wrapper.setHeight,
+.NhapXuatTonKho .setHeight .ant-spin-container,
+.NhapXuatTonKho .setHeight .ant-table,
+.NhapXuatTonKho .setHeight .ant-table-container .ant-table-body {
+  /* max-height: unset !important; */
+  height: calc(100vh - 330px);
+}
+.NhapXuatTonKho .setHeight .ant-table-container .ant-table-body {
+  max-height: unset !important;
+  /* height: calc(100vh - 500px); */
+}
+.NhapXuatTonKho .setHeight .ant-table {
+  height: calc(100vh - 255px);
+}
+
 /* @media (min-width: 536px) {
   .ant-table-wrapper.setHeight,
   .setHeight .ant-spin-container,
