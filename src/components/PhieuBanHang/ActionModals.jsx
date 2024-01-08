@@ -169,25 +169,25 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
     <>
       {isModalOpen ? (
         <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10 ">
-          <div className="m-6 p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
+          <div className=" p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
             <div className=" w-[90vw] h-[600px] ">
               <div className="flex gap-2">
                 <img src={Logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
                 <p className="text-blue-700 uppercase font-semibold">{`${typeAction === 'view' ? 'Thông Tin' : typeAction === 'edit' ? 'Sửa' : 'Thêm'} - Phiếu Bán Hàng`}</p>
               </div>
               <div className=" w-full h-[90%] rounded-sm text-sm border border-gray-300">
-                <div className={`flex box_thongtin ${typeAction == 'create' ? 'create' : typeAction == 'edit' ? 'edit' : ''}`}>
+                <div className={`flex  md:gap-0 lg:gap-1 pl-1 box_thongtin ${typeAction == 'create' ? 'create' : typeAction == 'edit' ? 'edit' : ''}`}>
                   {/* thong tin phieu */}
                   <div className="w-[62%]">
-                    <div className="flex p-1 gap-[18px]">
+                    <div className="flex p-1">
                       <div className=" flex items-center ">
-                        <label className="pr-1">Số chứng từ</label>
-                        <input readOnly type="text" className="w-[186px] border border-gray-300 outline-none  px-2   bg-[#fafafa] rounded-[4px] h-[24px]" />
+                        <label className="w-[110px]  pr-1">Số C.từ</label>
+                        <input readOnly type="text" className="w-full border border-gray-300 outline-none  px-2   bg-[#fafafa] rounded-[4px] h-[24px]" />
                       </div>
                       <div className="flex justify-center items-center"></div>
 
-                      <div className="flex gap-x-2 items-center">
-                        <label htmlFor="" className="pr-[25px] pl-[8px]">
+                      <div className="flex md:px-1 lg:px-4 items-center">
+                        <label htmlFor="" className="pr-1 lg:pr-[30px] lg:pl-[8px]">
                           Ngày
                         </label>
                         <DatePicker
@@ -200,11 +200,14 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
                               NgayCTu: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
                             })
                           }}
+                          sx={{
+                            '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                          }}
                         />
                       </div>
                       {typeAction === 'create' ? (
                         <>
-                          <label className="mr-2 ml-2">Tiền mặt</label>
+                          <label className="mr-2 ml-2 w-[110px]">Tiền mặt</label>
                           <input
                             type="checkbox"
                             className="outline-none px-2 "
@@ -224,7 +227,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
                       </label>
                       <Select
                         className="w-full outline-none"
-                        value={`${form?.MaDoiTuong}  ${form?.TenDoiTuong}  ${form?.DiaChi}`}
+                        value={`${form?.MaDoiTuong} - ${form?.TenDoiTuong} - ${form?.DiaChi}`}
                         disabled={typeAction === 'view' || typeAction === 'edit'}
                         onChange={handleChangeInput}
                         showSearch
@@ -267,36 +270,36 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
                     <div className="rounded-md w-[98%]  box_capnhat px-1 py-4 ">
                       <div className="flex justify-between items-center">
                         <div className="flex items-center p-1 ">
-                          <label className="w-[70px]">Người tạo</label>
-                          <input type="text" className="w-[234px]   outline-none px-2" value={form?.NguoiTao} readOnly />
+                          <label className="md:w-[134px] lg:w-[100px]">Người tạo</label>
+                          <input type="text" className="w-full   outline-none px-2" value={form?.NguoiTao} readOnly />
                         </div>
                         <div className="flex items-center p-1">
-                          <label className="w-[30px]">Lúc</label>
-                          <input readOnly type="text" className="w-[144px]   outline-none px-2 " value={form?.NgayTao} />
+                          <label className="w-[30px] pr-1">Lúc</label>
+                          <input readOnly type="text" className="w-full   outline-none px-2 " value={form?.NgayTao} />
                         </div>
                       </div>
                       <div className="flex justify-between items-center">
                         <div className="flex items-center p-1 ">
-                          <label className="w-[70px]">Sửa cuối</label>
-                          <input readOnly type="text" className="w-[234px]  outline-none px-2 " value={form?.NguoiSuaCuoi} />
+                          <label className="md:w-[134px] lg:w-[100px]">Sửa cuối</label>
+                          <input readOnly type="text" className="w-full outline-none px-2 " value={form?.NguoiSuaCuoi} />
                         </div>
                         <div className="flex items-center p-1">
-                          <label className="w-[30px]">Lúc</label>
-                          <input readOnly type="text" className="w-[144px] outline-none px-2 " value={form?.NgaySuaCuoi} />
+                          <label className="w-[30px] pr-1">Lúc</label>
+                          <input readOnly type="text" className="w-full outline-none px-2 " value={form?.NgaySuaCuoi} />
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
                 {/* kho and ghi chu */}
-                <div className="flex gap-3 pl-1 pr-[6px] items-center  w-full">
-                  <div className="p-1 flex  items-center w-1/4">
-                    <label form="khohang" className="w-[110px]">
+                <div className="flex gap-3 pl-1 lg:pr-[6px] items-center  w-full">
+                  <div className="p-1 flex  items-center ">
+                    <label form="khohang" className="md:w-[104px] lg:w-[116px]">
                       Kho hàng
                     </label>
 
                     <Select
-                      className={` hover:-gray-500  ${typeAction === 'edit' ? 'bg-white' : ''} bg-white`}
+                      className={`  hover:-gray-500  ${typeAction === 'edit' ? 'bg-white' : ''} bg-white`}
                       style={{ width: '100%' }}
                       size="small"
                       readOnly={typeAction === 'view' ? true : false}

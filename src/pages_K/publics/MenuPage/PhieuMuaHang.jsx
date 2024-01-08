@@ -601,7 +601,7 @@ const PhieuMuaHang = () => {
             <div className=" absolute flex flex-col gap-2 bg-slate-100 p-3  top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom ">
               <button
                 onClick={handlePrint}
-                className="flex items-center  py-1 px-2  rounded-md  border-2 border-bg-main  text-slate-50 text-base bg-bg-main hover:bg-white hover:text-bg-main "
+                className="flex items-center py-1 px-2 rounded-md border-2 border-purple-500  text-slate-50 text-base bg-purple-500 hover:bg-white hover:text-purple-500 "
               >
                 <div className="pr-1">
                   <TiPrinter size={20} />
@@ -610,7 +610,7 @@ const PhieuMuaHang = () => {
               </button>
               <button
                 onClick={handlePrintWareHouse}
-                className="flex items-center  py-1 px-2  rounded-md border-2 border-bg-main  text-slate-50 text-base bg-bg-main hover:bg-white hover:text-bg-main  "
+                className="flex items-center  py-1 px-2  rounded-md border-2 border-purple-500  text-slate-50 text-base bg-purple-500 hover:bg-white hover:text-purple-500  "
               >
                 <div className="pr-1">
                   <TiPrinter size={20} />
@@ -636,6 +636,9 @@ const PhieuMuaHang = () => {
                   NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
                 })
               }}
+              sx={{
+                '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+              }}
             />
           </div>
           <div className="flex gap-x-2 items-center">
@@ -649,6 +652,9 @@ const PhieuMuaHang = () => {
                   ...formKhoanNgay,
                   NgayKetThuc: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
                 })
+              }}
+              sx={{
+                '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
               }}
             />
           </div>

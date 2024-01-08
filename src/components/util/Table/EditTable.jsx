@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { Button, Form, Input, Table, Select, InputNumber, Tooltip, Typography } from 'antd'
 import BtnAction from './BtnAction'
 
@@ -9,6 +9,11 @@ const { Text } = Typography
 const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOptions, ColumnTable, columName, typeTable, listHP }) => {
   const EditableContext = React.createContext(null)
   const [dataSource, setDataSource] = useState(param)
+  // const currentRowData = useCallback(() => {
+  //   return param.map((item) => item.MaHang).filter((item) => item !== 'Chọn mã hàng')
+  // }, [param])
+
+  // console.log('currentRowData', currentRowData)
 
   useEffect(() => {
     setDataSource(param)
