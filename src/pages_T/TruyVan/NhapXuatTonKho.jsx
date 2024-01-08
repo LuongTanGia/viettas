@@ -751,7 +751,7 @@ const NhapXuatTonKho = () => {
           </div>
           <div>
             <Table
-              className="table_TXNhapXuatTonKho"
+              className="table_TXNhapXuatTonKho setHeight"
               columns={titles}
               dataSource={filteredHangHoa.filter((item) => (selectedMaKho ? item.MaKho === selectedMaKho : true))}
               size="small"

@@ -340,33 +340,55 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
             }}
             scrollToFirstRowOnChange
             size="small"
-            summary={() => {
-              return (
-                <Table.Summary fixed="bottom">
-                  <Table.Summary.Row>
-                    {/* <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell> */}
-                    {columns
-                      .filter((column) => column.render)
-                      .map((column) => {
-                        const isNumericColumn = typeof data[0]?.[column.dataIndex] === 'number'
+            summary={() => (
+              <Table.Summary fixed="bottom">
+                <Table.Summary.Row>
+                  {/* <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"> {data.length + 1}</Table.Summary.Cell> */}
+                  {columns
+                    .filter((column) => column.render)
+                    .map((column) => {
+                      const isNumericColumn = typeof data[0]?.[column.dataIndex] === 'number'
 
-                        return (
-                          <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
-                            {isNumericColumn ? (
+                      return (
+                        <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                          {isNumericColumn ? (
+                            // Use conditional rendering based on column.dataIndex
+                            column.dataIndex === 'TongSoLuong' ? (
+                              <Text strong>
+                                {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                  minimumFractionDigits: ThongSo.SOLESOLUONG,
+                                  maximumFractionDigits: ThongSo.SOLESOLUONG,
+                                })}
+                              </Text>
+                            ) : ['TongTienHang', 'TongTienThue', 'TongThanhTien', 'TongTienCKTT', 'TongTongCong'].includes(column.dataIndex) ? (
                               <Text strong>
                                 {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                   minimumFractionDigits: ThongSo.SOLESOTIEN,
                                   maximumFractionDigits: ThongSo.SOLESOTIEN,
                                 })}
                               </Text>
-                            ) : null}
-                          </Table.Summary.Cell>
-                        )
-                      })}
-                  </Table.Summary.Row>
-                </Table.Summary>
-              )
-            }}
+                            ) : ['TyLeCKTT'].includes(column.dataIndex) ? (
+                              <Text strong>
+                                {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                  minimumFractionDigits: ThongSo.SOLETYLE,
+                                  maximumFractionDigits: ThongSo.SOLETYLE,
+                                })}
+                              </Text>
+                            ) : (
+                              <Text strong>
+                                {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                  minimumFractionDigits: 0,
+                                  maximumFractionDigits: 0,
+                                })}
+                              </Text>
+                            )
+                          ) : null}
+                        </Table.Summary.Cell>
+                      )
+                    })}
+                </Table.Summary.Row>
+              </Table.Summary>
+            )}
             pagination={{ defaultPageSize: 50, showSizeChanger: true, pageSizeOptions: ['50', '100', '1000'] }}
           />
         ) : (
@@ -385,7 +407,7 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
             }}
             scrollToFirstRowOnChange
             size="small"
-            summary={(pageData) => {
+            summary={() => {
               return (
                 <Table.Summary fixed="bottom">
                   <Table.Summary.Row>
@@ -394,12 +416,12 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
                       .filter((column) => column.render)
                       .map((column) => {
                         const isNumericColumn = typeof data[0]?.[column.dataIndex] === 'number'
-
+                        console.log(data[0])
                         return (
                           <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
                             {isNumericColumn ? (
                               <Text strong>
-                                {Number(pageData.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                   minimumFractionDigits: ThongSo.SOLESOTIEN,
                                   maximumFractionDigits: ThongSo.SOLESOTIEN,
                                 })}

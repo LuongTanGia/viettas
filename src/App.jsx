@@ -9,7 +9,7 @@ import Test from './components/util/testComponents/Test'
 import { useState } from 'react'
 
 function App() {
-  const [isSidebarVisible, setIsSidebarVisible] = useState(false)
+  const [isSidebarVisible, setIsSidebarVisible] = useState(true)
 
   const handleToggleSidebar = () => {
     setIsSidebarVisible((prevIsSidebarVisible) => !prevIsSidebarVisible)

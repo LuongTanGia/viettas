@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import Logo from '../../assets/VTS-iSale.ico'
-import { FloatButton } from 'antd'
+import { FloatButton, Checkbox } from 'antd'
 import { useEffect, useState } from 'react'
 // import icons from '../../untils/icons'
 import { chiTietPBS } from '../../redux/selector'
@@ -184,6 +184,62 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
                         <label className="pr-1">Số chứng từ</label>
                         <input readOnly type="text" className="w-[186px] border border-gray-300 outline-none  px-2   bg-[#fafafa] rounded-[4px] h-[24px]" />
                       </div>
+                      <div className="flex justify-center items-center">
+                        {typeAction === 'create' ? (
+                          <>
+                            <Checkbox
+                              onChange={(e) =>
+                                setForm({
+                                  ...form,
+                                  TTTienMat: e.target.checked ? true : false,
+                                })
+                              }
+                            >
+                              Lập phiếu thu
+                            </Checkbox>
+                            {/* <label className="mr-2 ml-2">Lập phiếu thu</label>
+                            <input
+                              type="checkbox"
+                              className="outline-none px-2 "
+                              onChange={(e) =>
+                                setForm({
+                                  ...form,
+                                  TTTienMat: e.target.checked ? true : false,
+                                })
+                              }
+                            /> */}
+                          </>
+                        ) : null}
+                      </div>
+                      <div className="flex gap-2 max-h-[100px]">
+                        <div className="flex items-center max-h-[100px]">
+                          <label htmlFor="" className="w-[86px]">
+                            Ngày C.Từ
+                          </label>
+                          <DatePicker
+                            className="DatePicker_PMH max-h-[100px]"
+                            format="DD/MM/YYYY"
+                            defaultValue={typeAction === 'create' ? Dates.NgayCTu : dayjs(form?.NgayCTu)}
+                            onChange={(newDate) => {
+                              setDates({
+                                ...Dates,
+                                NgayCTu: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                              })
+                            }}
+                          />
+                        </div>
+                        {/* <div className="flex gap-x-2 items-center max-h-[100px]">
+                          <label htmlFor="" className="w-[86px]">
+                            Ngày Đ.Hạn
+                          </label>
+                          <DatePicker
+                            className="DatePicker_PMH max-h-[100px]"
+                            format="DD/MM/YYYY"
+                            defaultValue={typeAction === 'create' ? Dates.DaoHan : dayjs(form.DaoHan)}
+                            onChange={(newDate) => {
+                              setDates({
+                                ...Dates,
+                                DaoHan: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
                       <div className="flex justify-center items-center"></div>
 
                       <div className="flex gap-x-2 items-center">
@@ -327,11 +383,12 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
                 </div>
                 <div className=" pb-0 relative">
                   <FloatButton
-                    className="z-3 opacity-50 bg-transparent w-[30px] h-[30px]"
+                    className="z-3 absolute w-[30px] h-[30px] "
                     style={{
                       right: 6,
                       top: 4,
                     }}
+                    type="primary"
                     icon={<IoMdAddCircle />}
                     onClick={handleShowPopup}
                     tooltip={<div>Bấm vào đây để thêm hàng hoặc F9 để chọn từ danh sách !</div>}

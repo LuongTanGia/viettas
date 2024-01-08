@@ -9,6 +9,7 @@ const { Text } = Typography
 const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOptions, ColumnTable, columName, typeTable, listHP }) => {
   const EditableContext = React.createContext(null)
   const [dataSource, setDataSource] = useState(param)
+  const [newOptions, setNewOptions] = useState(yourMaHangOptions)
 
   useEffect(() => {
     setDataSource(param)
@@ -31,7 +32,9 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
         return newData
       })
     }
+    // const newOptions = yourMaHangOptions?.filter((item) => dataSource.every((item2) => item.MaHang !== item2.MaHang))
 
+    // setNewOptions(newOptions)
     updatePrices()
   }, [param, listHP])
   const EditableRow = ({ index, ...props }) => {
@@ -113,22 +116,25 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
         toggleEdit()
 
         if (dataIndex === 'MaHang' || dataIndex === 'TenHang') {
-          const optionsArray = dataIndex === 'MaHang' ? yourMaHangOptions : yourTenHangOptions
+          const newOptions = yourMaHangOptions.filter((item) => dataSource.every((item2) => item.MaHang !== item2.MaHang))
 
+          const optionsArray = dataIndex === 'MaHang' ? newOptions : newOptions
           const selectedOption = optionsArray.find((option) => option[dataIndex] === values[dataIndex]) || {}
 
           const GiaBan = selectedOption.GiaBan
+          setNewOptions([...newOptions, record.MaHang])
+          console.log(newOptions)
           const updatedRow = {
             ...record,
             ...values,
-            TenHang: selectedOption.TenHang || '',
-            MaHang: selectedOption.MaHang || '',
+            TenHang: selectedOption.TenHang || record.TenHang,
+            MaHang: selectedOption.MaHang || record.MaHang,
             DonGia: GiaBan || 0,
             SoLuong: record.SoLuong || values.SoLuong || 1,
             TyLeCKTT: 0,
             TonKho: selectedOption.TonKho || true,
             TienThue: selectedOption.TienThue || 0,
-            DVT: selectedOption.DVT,
+            DVT: selectedOption.DVT || record.DVT,
             TienHang: selectedOption.DonGia || 0,
             TyLeThue: 0,
             ThanhTien: selectedOption.DonGia || 0,
@@ -139,7 +145,6 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
             // TongCong: selectedOption.DonGia || undefined,
           }
           //
-
           handleSave(updatedRow)
         } else {
           handleSave({
@@ -177,13 +182,13 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
           {isSelect ? (
             <Select ref={inputRef} onPressEnter={save} onBlur={save} style={{ width: '100%' }} showSearch dropdownMatchSelectWidth={false} listHeight={310}>
               {dataIndex === 'MaHang'
-                ? yourMaHangOptions?.map((option) => (
+                ? newOptions?.map((option) => (
                     <Option key={option.MaHang} value={option.MaHang}>
                       {`${option.MaHang} - ${option.TenHang}`}
                     </Option>
                   ))
                 : dataIndex === 'TenHang'
-                  ? yourTenHangOptions?.map((option) => (
+                  ? newOptions?.map((option) => (
                       <Option key={option.TenHang} value={option.TenHang}>
                         {`${option.MaHang} - ${option.TenHang}`}
                       </Option>
@@ -204,7 +209,12 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
               min={1}
               max={999999999999}
               width={500}
-              style={dataIndex !== 'SoLuong' ? { width: 150 } : { width: 100 }}
+              // style={dataIndex !== 'SoLuong' ? { width: 150 } : { width: 100 }}
+              style={{
+                ...(dataIndex !== 'SoLuong' ? { width: 150 } : { width: 100 }),
+                // direction: 'ltr',
+                textAlign: 'left',
+              }}
               formatter={(value) => {
                 const parts = `${value}`.split('.')
                 parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
@@ -495,6 +505,8 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
       <Table
         loading={dataSource.length !== 0 || typeTable === 'create' ? false : true}
         className={'h290'}
+        loading={dataSource ? false : true}
+        className={'h290'}
         components={components}
         rowClassName={() => 'editable-row'}
         bordered
@@ -511,7 +523,8 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
             <Table.Summary fixed="bottom">
               <Table.Summary.Row>
                 <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell>
-                {/* <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell> */}
+                <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell>
+                <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell>
 
                 {columns
                   .filter((column) => column.render)
@@ -539,6 +552,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
                 <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell>
                 <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell>
                 {/* <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell> */}
+                <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell>
 
                 {columns
                   .filter((column) => column.render)

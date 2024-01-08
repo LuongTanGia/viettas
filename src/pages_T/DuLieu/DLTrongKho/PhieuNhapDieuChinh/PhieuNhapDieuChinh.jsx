@@ -480,7 +480,7 @@ const PhieuNhapDieuChinh = () => {
             </div>
             <div>
               <Table
-                className="table_DMHangHoa"
+                className="table_DMHangHoa setHeight"
                 columns={titles}
                 dataSource={filteredHangHoa}
                 pagination={{ defaultPageSize: 50, showSizeChanger: true, pageSizeOptions: ['10', '20', '50', '100', '1000'] }}
