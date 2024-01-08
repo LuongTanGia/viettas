@@ -178,11 +178,11 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
               <div className=" w-full h-[90%] rounded-sm text-sm border border-gray-300">
                 <div className={`flex box_thongtin ${typeAction == 'create' ? 'create' : typeAction == 'edit' ? 'edit' : ''}`}>
                   {/* thong tin phieu */}
-                  <div className="w-[62%]">
-                    <div className="flex p-1 gap-[18px]">
+                  <div className="w-[60%] box_content_left">
+                    <div className="flex p-1 gap-12 w-full justify-between">
                       <div className=" flex items-center ">
-                        <label className="pr-1">Số chứng từ</label>
-                        <input readOnly type="text" className="w-[186px] border border-gray-300 outline-none  px-2   bg-[#fafafa] rounded-[4px] h-[24px]" />
+                        <label className="w-[86px]">Số chứng từ</label>
+                        <input disabled type="text" className=" outline-none px-2 sochungtu" value={form?.SoChungTu} readOnly />
                       </div>
                       <div className="flex justify-center items-center">
                         {typeAction === 'create' ? (
@@ -240,47 +240,19 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
                               setDates({
                                 ...Dates,
                                 DaoHan: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
-                      <div className="flex justify-center items-center"></div>
-
-                      <div className="flex gap-x-2 items-center">
-                        <label htmlFor="" className="pr-[25px] pl-[8px]">
-                          Ngày
-                        </label>
-                        <DatePicker
-                          className="DatePicker_PMH max-h-[100px]"
-                          format="DD/MM/YYYY"
-                          defaultValue={typeAction === 'create' ? Dates.NgayCTu : dayjs(form?.NgayCTu)}
-                          onChange={(newDate) => {
-                            setDates({
-                              ...Dates,
-                              NgayCTu: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
-                            })
-                          }}
-                        />
-                      </div>
-                      {typeAction === 'create' ? (
-                        <>
-                          <label className="mr-2 ml-2">Tiền mặt</label>
-                          <input
-                            type="checkbox"
-                            className="outline-none px-2 "
-                            onChange={(e) =>
-                              setForm({
-                                ...form,
-                                TTTienMat: e.target.checked ? true : false,
                               })
-                            }
+                            }}
                           />
-                        </>
-                      ) : null}
+                        </div> */}
+                      </div>
                     </div>
-                    <div className="p-1 flex ">
+                    <div className="p-1 flex jjustify-start items-center">
                       <label form="doituong" className="w-[86px]">
                         Đối tượng
                       </label>
                       <Select
-                        className="w-full outline-none"
-                        value={`${form?.MaDoiTuong}  ${form?.TenDoiTuong}  ${form?.DiaChi}`}
+                        className="w-[90%] outline-none"
+                        value={`${form?.MaDoiTuong} - ${form?.TenDoiTuong} - ${form?.DiaChi}`}
                         disabled={typeAction === 'view' || typeAction === 'edit'}
                         onChange={handleChangeInput}
                         showSearch
@@ -292,11 +264,11 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
                         ))}
                       </Select>
                     </div>
-                    <div className="flex items-center  p-1">
+                    <div className="flex items-center justify-start p-1">
                       <label className="w-[86px]">Tên</label>
                       <input
                         type="text"
-                        className="w-full   outline-none px-2 "
+                        className="w-[90%]   outline-none px-2 "
                         value={form?.TenDoiTuong}
                         name="TenDoiTuong"
                         readOnly={typeAction === 'view' || typeAction === 'edit' ? true : false}
@@ -304,11 +276,11 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
                         disabled
                       />
                     </div>
-                    <div className="flex  items-center p-1">
+                    <div className="flex items-center p-1 justify-start">
                       <label className="w-[86px]">Địa chỉ</label>
                       <input
                         type="text"
-                        className="w-full outline-none px-2"
+                        className="w-[90%] outline-none px-2"
                         value={form?.DiaChi}
                         name="DiaChi"
                         readOnly={typeAction === 'view' || typeAction === 'edit' ? true : false}
@@ -316,76 +288,79 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
                         disabled
                       />
                     </div>
+                    <div className="flex items-center p-1 justify-between ">
+                      <div className="flex  items-center w-[45%] ">
+                        <label form="khohang" className="w-[86px]">
+                          Kho hàng
+                        </label>
+
+                        <Select
+                          className={`w-[70%] hover:-gray-500  ${typeAction === 'edit' ? 'bg-white' : ''} bg-white`}
+                          style={{ borderRadius: 6 }}
+                          readOnly={typeAction === 'view' ? true : false}
+                          onChange={handleChangeInput_kho}
+                          value={form?.MaKho}
+                          name="MaKho"
+                          showSearch
+                          disabled={typeAction === 'view' ? true : false}
+                        >
+                          {listKhoHang?.map((item, index) => (
+                            <Option value={item.MaKho} key={index}>
+                              {item?.MaKho} {item?.TenKho}
+                            </Option>
+                          ))}
+                        </Select>
+                      </div>
+                      <div className="flex items-center  w-[45%]">
+                        <label className="w-[86px]">Ghi chú</label>
+                        <input
+                          type="text"
+                          name="GhiChu"
+                          className={`w-full   outline-none px-2 ${typeAction === 'edit' ? 'bg-white' : ''}`}
+                          value={form?.GhiChu}
+                          readOnly={typeAction === 'view' ? true : false}
+                          onChange={handleChangeInput_other}
+                        />
+                      </div>
+                    </div>
                   </div>
                   {/* thong tin cap nhat */}
-                  <div className="w-[38%] py-1 box_content">
+                  <div className="w-[40%] py-1 box_content">
                     <div className="text-center p-1 font-medium text_capnhat">Thông tin cập nhật</div>
-                    <div className="rounded-md w-[98%]  box_capnhat px-1 py-4 ">
-                      <div className="flex justify-between items-center">
-                        <div className="flex items-center p-1 ">
-                          <label className="w-[70px]">Người tạo</label>
-                          <input type="text" className="w-[234px]   outline-none px-2" value={form?.NguoiTao} readOnly />
+                    <div className="-2 rounded-md w-[98%] h-[80%] box_capnhat overflow-hidden ">
+                      <div className="flex justify-between items-center flex-wrap mt-3 ">
+                        <div className="flex items-center p-1  justify-between">
+                          <label className="">Người tạo</label>
+                          <input type="text" className="w-[170px]    outline-none px-2" value={form?.NguoiTao} readOnly />
                         </div>
-                        <div className="flex items-center p-1">
-                          <label className="w-[30px]">Lúc</label>
-                          <input readOnly type="text" className="w-[144px]   outline-none px-2 " value={form?.NgayTao} />
+                        <div className="flex items-center p-1 w-1/2 flex-wrapjustify-between">
+                          <label className="">Lúc</label>
+                          <input readOnly type="text" className="w-[170px]   outline-none px-2 text-center" value={dayjs(form?.NgayTao).format('DD/MM/YYYY hh:mm:ss')} />
                         </div>
                       </div>
-                      <div className="flex justify-between items-center">
-                        <div className="flex items-center p-1 ">
-                          <label className="w-[70px]">Sửa cuối</label>
-                          <input readOnly type="text" className="w-[234px]  outline-none px-2 " value={form?.NguoiSuaCuoi} />
+                      <div className="flex justify-between items-center flex-wrap">
+                        <div className="flex items-center p-1  flex-wrap justify-between">
+                          <label className="">Sửa cuối</label>
+                          <input readOnly type="text" className="w-[170px]    outline-none px-2 " value={form?.NguoiSuaCuoi} />
                         </div>
-                        <div className="flex items-center p-1">
-                          <label className="w-[30px]">Lúc</label>
-                          <input readOnly type="text" className="w-[144px] outline-none px-2 " value={form?.NgaySuaCuoi} />
+                        <div className="flex items-center p-1 w-1/2 justify-between">
+                          <label className="">Lúc</label>
+                          <input
+                            readOnly
+                            type="text"
+                            className="w-[170px] outline-none px-2  text-center"
+                            value={dayjs(form?.NgaySuaCuoi || new Date()).format('DD/MM/YYYY hh:mm:ss')}
+                          />
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-                {/* kho and ghi chu */}
-                <div className="flex gap-3 pl-1 pr-[6px] items-center  w-full">
-                  <div className="p-1 flex  items-center w-1/4">
-                    <label form="khohang" className="w-[110px]">
-                      Kho hàng
-                    </label>
-
-                    <Select
-                      className={` hover:-gray-500  ${typeAction === 'edit' ? 'bg-white' : ''} bg-white`}
-                      style={{ width: '100%' }}
-                      size="small"
-                      readOnly={typeAction === 'view' ? true : false}
-                      onChange={handleChangeInput_kho}
-                      value={form?.MaKho}
-                      name="MaKho"
-                      showSearch
-                      disabled={typeAction === 'view' ? true : false}
-                    >
-                      {listKhoHang?.map((item, index) => (
-                        <Option value={item.MaKho} key={index}>
-                          {item?.MaKho} {item?.TenKho}
-                        </Option>
-                      ))}
-                    </Select>
-                  </div>
-                  <div className="flex items-center p-1 w-full">
-                    <label className="w-[70px]">Ghi chú</label>
-                    <input
-                      type="text"
-                      name="GhiChu"
-                      className={`w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] hover:border-[#4897e6] h-[24px] ${typeAction === 'edit' ? 'bg-white' : ''}`}
-                      value={form?.GhiChu}
-                      readOnly={typeAction === 'view' ? true : false}
-                      onChange={handleChangeInput_other}
-                    />
-                  </div>
-                </div>
-                <div className=" pb-0 relative">
+                <div className=" pb-0  relative">
                   <FloatButton
                     className="z-3 absolute w-[30px] h-[30px] "
                     style={{
-                      right: 6,
+                      right: 5,
                       top: 4,
                     }}
                     type="primary"

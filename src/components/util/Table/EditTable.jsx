@@ -505,8 +505,6 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
       <Table
         loading={dataSource.length !== 0 || typeTable === 'create' ? false : true}
         className={'h290'}
-        loading={dataSource ? false : true}
-        className={'h290'}
         components={components}
         rowClassName={() => 'editable-row'}
         bordered
