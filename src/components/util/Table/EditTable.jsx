@@ -521,8 +521,8 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
             <Table.Summary fixed="bottom">
               <Table.Summary.Row>
                 <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell>
-                <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell>
-                <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell>
+                {/* <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell> */}
+                {/* <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell> */}
 
                 {columns
                   .filter((column) => column.render)
