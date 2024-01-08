@@ -47,7 +47,7 @@ function DoughNut() {
   return (
     <>
       <div className="pt-1 pb-3 flex justify-between gap-2">
-        <div className="w-[40%] h-[40%] z-10 pt-3">
+        <div className="w-[40%] h-[40%]  pt-3">
           <Pie data={data} options={options} />
         </div>
         <div className="w-[60%] flex flex-col ">
