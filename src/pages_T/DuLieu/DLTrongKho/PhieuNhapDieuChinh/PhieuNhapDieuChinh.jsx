@@ -1,9 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Table, Tooltip } from 'antd'
+import { useState, useEffect, useRef } from 'react'
+import { Table, Tooltip, Typography } from 'antd'
+const { Text } = Typography
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { FaSearch } from 'react-icons/fa'
 import { useSearch } from '../../../../components_T/hooks/Search'
-import { useState, useEffect, useRef } from 'react'
 import { toast } from 'react-toastify'
 import { IoMdAddCircleOutline } from 'react-icons/io'
 import { MdEdit, MdDelete, MdPrint, MdFilterListAlt } from 'react-icons/md'
@@ -17,6 +18,7 @@ import NDCCreate from '../../../../components_T/Modal/DuLieu/DuLieuTrongKho/Phie
 import NDCEdit from '../../../../components_T/Modal/DuLieu/DuLieuTrongKho/PhieuNDC/NDCEdit'
 import ActionButton from '../../../../components/util/Button/ActionButton'
 import HighlightedCell from '../../../../components_T/hooks/HighlightedCell'
+import SimpleBackdrop from '../../../../components/util/Loading/LoadingPage'
 
 const PhieuNhapDieuChinh = () => {
   const TokenAccess = localStorage.getItem('TKN')
@@ -388,7 +390,7 @@ const PhieuNhapDieuChinh = () => {
   return (
     <>
       {!isLoading ? (
-        <p>Loading</p>
+        <SimpleBackdrop />
       ) : (
         <>
           <div className="flex flex-col gap-2 ">
@@ -480,7 +482,7 @@ const PhieuNhapDieuChinh = () => {
             </div>
             <div>
               <Table
-                className="table_DMHangHoa"
+                className="table_DMHangHoa setHeight"
                 columns={titles}
                 dataSource={filteredHangHoa}
                 pagination={{ defaultPageSize: 50, showSizeChanger: true, pageSizeOptions: ['10', '20', '50', '100', '1000'] }}
@@ -497,6 +499,32 @@ const PhieuNhapDieuChinh = () => {
                 style={{
                   whiteSpace: 'nowrap',
                   fontSize: '24px',
+                }}
+                summary={() => {
+                  return (
+                    <Table.Summary fixed="bottom">
+                      <Table.Summary.Row>
+                        {titles
+                          .filter((column) => column.render)
+                          .map((column) => {
+                            const isNumericColumn = typeof filteredHangHoa[0]?.[column.dataIndex] === 'number'
+
+                            return (
+                              <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                                {isNumericColumn ? (
+                                  <Text strong>
+                                    {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                      minimumFractionDigits: dataThongSo.SOLESOLUONG,
+                                      maximumFractionDigits: dataThongSo.SOLESOLUONG,
+                                    })}
+                                  </Text>
+                                ) : null}
+                              </Table.Summary.Cell>
+                            )
+                          })}
+                      </Table.Summary.Row>
+                    </Table.Summary>
+                  )
                 }}
               />
             </div>

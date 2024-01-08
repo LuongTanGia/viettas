@@ -8,6 +8,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { useEffect, useState } from 'react'
 import { Select, Checkbox } from 'antd'
 import ActionButton from '../../../../../components/util/Button/ActionButton'
+import SimpleBackdrop from '../../../../../components/util/Loading/LoadingPage'
 
 const NDCPrint = ({ close }) => {
   const TokenAccess = localStorage.getItem('TKN')
@@ -96,7 +97,7 @@ const NDCPrint = ({ close }) => {
   return (
     <>
       {!isLoading ? (
-        <p>Loading</p>
+        <SimpleBackdrop />
       ) : (
         <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10">
           <div className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"></div>
