@@ -1028,7 +1028,13 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                     <div className="flex justify-between items-center ">
                       <div className="flex items-center px-1  ">
                         <label className="md:w-[134px] lg:w-[100px]">Người tạo</label>
-                        <input disabled type="text" className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" value={dataThongTin?.NguoiTao} readOnly />
+                        <input
+                          disabled
+                          type="text"
+                          className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px] truncate"
+                          value={dataThongTin?.NguoiTao}
+                          readOnly
+                        />
                       </div>
 
                       <div className="flex items-center p-1">
@@ -1036,7 +1042,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                         <input
                           disabled
                           type="text"
-                          className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]"
+                          className="w-full text-center border border-gray-300 outline-none px-2 rounded-[4px] h-[24px] "
                           value={dataThongTin?.NgayTao && moment(dataThongTin.NgayTao).isValid() ? moment(dataThongTin.NgayTao).format('DD/MM/YYYY hh:mm:ss') : ''}
                         />
                       </div>
@@ -1044,14 +1050,19 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                     <div className="flex justify-between items-center ">
                       <div className="flex items-center p-1  ">
                         <label className="md:w-[134px] lg:w-[100px]">Sửa cuối</label>
-                        <input disabled type="text" className="w-full  border border-gray-300 outline-none px-2 rounded-[4px] h-[24px] " value={dataThongTin?.NguoiSuaCuoi} />
+                        <input
+                          disabled
+                          type="text"
+                          className="w-full  border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]  truncate"
+                          value={dataThongTin?.NguoiSuaCuoi}
+                        />
                       </div>
                       <div className="flex items-center p-1 ">
                         <label className="w-[30px] pr-1">Lúc</label>
                         <input
                           disabled
                           type="text"
-                          className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]"
+                          className="w-full text-center border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]"
                           value={dataThongTin?.NgaySuaCuoi && moment(dataThongTin.NgaySuaCuoi).isValid() ? moment(dataThongTin.NgaySuaCuoi).format('DD/MM/YYYY hh:mm:ss') : ''}
                         />
                       </div>
@@ -1062,7 +1073,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
               {/* kho and ghi chu */}
               <div className="flex gap-3 pl-1 lg:pr-[6px] items-center  w-full">
                 <div className="p-1 flex  items-center ">
-                  <label form="khohang" className="md:w-[136px] lg:w-[144px] ">
+                  <label form="khohang" className="md:w-[116px] lg:w-[120px] ">
                     Kho hàng
                   </label>
                   <select readOnly className="  border w-full  bg-[#fafafa] rounded-[4px] h-[24px]">
@@ -1131,7 +1142,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
               <div className="flex gap-x-3   ">
                 <button
                   onClick={() => setIsShowModalOnlyPrint(true)}
-                  className="flex items-center  py-1 px-2  rounded-md  border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main"
+                  className="flex items-center  py-1 px-2  rounded-md  border-2 border-purple-500 text-slate-50 text-text-main font-bold  bg-purple-500 hover:bg-white hover:text-purple-500"
                 >
                   <div className="pr-1">
                     <TiPrinter size={20} />
@@ -1140,7 +1151,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                 </button>
                 <button
                   onClick={() => setIsShowModalOnlyPrintWareHouse(true)}
-                  className="flex items-center  py-1 px-2  rounded-md  border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main"
+                  className="flex items-center  py-1 px-2  rounded-md  border-2 border-purple-500 text-slate-50 text-text-main font-bold  bg-purple-500 hover:bg-white hover:text-purple-500"
                 >
                   <div className="pr-1">
                     <TiPrinter size={20} />
@@ -1394,7 +1405,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                 <div className="w-[62%] ">
                   <div className="flex p-1  ">
                     <div className=" flex items-center ">
-                      <label className="md:w-[100px] lg:w-[110px] pr-1">Số C.từ</label>
+                      <label className="md:w-[106px] lg:w-[110px] pr-1">Số C.từ</label>
                       <input
                         readOnly
                         type="text"
@@ -1502,7 +1513,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
               {/* kho hang and ghi chu */}
               <div className="flex gap-3 pl-1 lg:pr-[6px] items-center  w-full">
                 <div className="p-1 flex  items-center ">
-                  <label form="khohang" className="md:w-[104px] lg:w-[110px]">
+                  <label form="khohang" className="md:w-[100px] lg:w-[110px]">
                     Kho hàng
                   </label>
 
@@ -1559,7 +1570,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
               <div className="flex gap-x-3 pt-3">
                 <button
                   onClick={() => setIsShowModalOnlyPrint(true)}
-                  className="flex items-center  py-1 px-2  rounded-md  border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main "
+                  className="flex items-center  py-1 px-2  rounded-md  border-2 border-purple-500 text-slate-50 text-text-main font-bold  bg-purple-500 hover:bg-white hover:text-purple-500 "
                 >
                   <div className="pr-1">
                     <TiPrinter size={20} />
@@ -1568,7 +1579,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                 </button>
                 <button
                   onClick={() => setIsShowModalOnlyPrintWareHouse(true)}
-                  className="flex items-center  py-1 px-2  rounded-md  border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main "
+                  className="flex items-center  py-1 px-2  rounded-md  border-2 border-purple-500 text-slate-50 text-text-main font-bold  bg-purple-500 hover:bg-white hover:text-purple-500 "
                 >
                   <div className="pr-1">
                     <TiPrinter size={20} />
