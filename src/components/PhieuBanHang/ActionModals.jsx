@@ -57,7 +57,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
     setDataChitiet(form?.DataDetails)
     const loadData = async () => {
       try {
-        const result_listHp = typeAction !== '' ? await DANHSACHHANGHOA_PBS(API.DANHSACHHANGHOA_PBS, token, form) : null
+        const result_listHp = await DANHSACHHANGHOA_PBS(API.DANHSACHHANGHOA_PBS, token, form)
         const result_doituong = await DANHSACHDOITUONG(API.DANHSACHDOITUONG_PBS, token)
         const result_khohang = await DANHSACHKHOHANG(API.DANHSACHKHOHANG_PBS, token)
         setDataListHP(result_listHp)
@@ -182,7 +182,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
                     <div className="flex p-1">
                       <div className=" flex items-center ">
                         <label className="w-[110px]  pr-1">Số C.từ</label>
-                        <input readOnly type="text" className="w-full border border-gray-300 outline-none  px-2   bg-[#fafafa] rounded-[4px] h-[24px]" />
+                        <input readOnly type="text" value={form?.SoChungTu} className="w-full border border-gray-300 outline-none  px-2   bg-[#fafafa] rounded-[4px] h-[24px]" />
                       </div>
                       <div className="flex justify-center items-center"></div>
 
@@ -205,35 +205,23 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
                           }}
                         />
                       </div>
-                      <div className="flex justify-center items-center">
-                        {typeAction === 'create' ? (
-                          <>
-                            <Checkbox
-                              onChange={(e) =>
-                                setForm({
-                                  ...form,
-                                  TTTienMat: e.target.checked ? true : false,
-                                })
-                              }
-                            >
-                              Lập phiếu thu
-                            </Checkbox>
-                            {/* <label className="mr-2 ml-2">Lập phiếu thu</label>
-                            <input
-                              type="checkbox"
-                              className="outline-none px-2 "
-                              onChange={(e) =>
-                                setForm({
-                                  ...form,
-                                  TTTienMat: e.target.checked ? true : false,
-                                })
-                              }
-                            /> */}
-                          </>
-                        ) : null}
-                      </div>
+                      {typeAction === 'create' ? (
+                        <div className="flex items-center">
+                          <Checkbox
+                            className=" w-full"
+                            onChange={(e) =>
+                              setForm({
+                                ...form,
+                                TTTienMat: e.target.checked ? true : false,
+                              })
+                            }
+                          >
+                            Tiền Mặt
+                          </Checkbox>
+                        </div>
+                      ) : null}
                     </div>
-                    <div className="p-1 flex jjustify-start items-center">
+                    <div className="p-1 flex ">
                       <label form="doituong" className="w-[86px]">
                         Đối tượng
                       </label>
@@ -251,11 +239,11 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
                         ))}
                       </Select>
                     </div>
-                    <div className="flex items-center justify-start p-1">
+                    <div className="flex items-center  p-1">
                       <label className="w-[86px]">Tên</label>
                       <input
                         type="text"
-                        className="w-[90%]   outline-none px-2 "
+                        className="w-full   outline-none px-2 "
                         value={form?.TenDoiTuong}
                         name="TenDoiTuong"
                         readOnly={typeAction === 'view' || typeAction === 'edit' ? true : false}
@@ -263,11 +251,11 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
                         disabled
                       />
                     </div>
-                    <div className="flex items-center p-1 justify-start">
+                    <div className="flex  items-center p-1">
                       <label className="w-[86px]">Địa chỉ</label>
                       <input
                         type="text"
-                        className="w-[90%] outline-none px-2"
+                        className="w-full outline-none px-2"
                         value={form?.DiaChi}
                         name="DiaChi"
                         readOnly={typeAction === 'view' || typeAction === 'edit' ? true : false}
@@ -282,22 +270,32 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
                     <div className="rounded-md w-[98%]  box_capnhat px-1 py-4 ">
                       <div className="flex justify-between items-center">
                         <div className="flex items-center p-1 ">
-                          <label className="md:w-[134px] lg:w-[100px]">Người tạo</label>
-                          <input type="text" className="w-full   outline-none px-2" value={form?.NguoiTao} readOnly />
+                          <label className="md:w-[134px] lg:w-[100px] ">Người tạo</label>
+                          <input type="text" className="w-full   outline-none px-2 truncate" value={form?.NguoiTao} readOnly title={form?.NguoiTao} />
                         </div>
                         <div className="flex items-center p-1">
                           <label className="w-[30px] pr-1">Lúc</label>
-                          <input readOnly type="text" className="w-full   outline-none px-2 " value={dayjs(form?.NgayTao).format('DD/MM/YYYY hh:mm:ss')} />
+                          <input
+                            readOnly
+                            type="text"
+                            className="w-full   outline-none px-2  text-center"
+                            value={dayjs(form?.NgayTao || new Date()).format('DD/MM/YYYY hh:mm:ss')}
+                          />
                         </div>
                       </div>
                       <div className="flex justify-between items-center">
                         <div className="flex items-center p-1 ">
-                          <label className="md:w-[134px] lg:w-[100px]">Sửa cuối</label>
-                          <input readOnly type="text" className="w-full outline-none px-2 " value={form?.NguoiSuaCuoi} />
+                          <label className="md:w-[134px] lg:w-[100px] ">Sửa cuối</label>
+                          <input readOnly type="text" className="w-full outline-none px-2 truncate" value={form?.NguoiSuaCuoi} title={form?.NguoiSuaCuoi} />
                         </div>
                         <div className="flex items-center p-1">
                           <label className="w-[30px] pr-1">Lúc</label>
-                          <input readOnly type="text" className="w-full outline-none px-2 " value={dayjs(form?.NgaySuaCuoi).format('DD/MM/YYYY hh:mm:ss')} />
+                          <input
+                            readOnly
+                            type="text"
+                            className="w-full outline-none px-2 text-center"
+                            value={dayjs(form?.NgaySuaCuoi || new Date()).format('DD/MM/YYYY hh:mm:ss')}
+                          />
                         </div>
                       </div>
                     </div>
@@ -306,7 +304,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
                 {/* kho and ghi chu */}
                 <div className="flex gap-3 pl-1 lg:pr-[6px] items-center  w-full">
                   <div className="p-1 flex  items-center ">
-                    <label form="khohang" className="md:w-[104px] lg:w-[116px]">
+                    <label form="khohang" className="md:w-[106px] lg:w-[116px]">
                       Kho hàng
                     </label>
 
@@ -316,7 +314,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
                       size="small"
                       readOnly={typeAction === 'view' ? true : false}
                       onChange={handleChangeInput_kho}
-                      value={form?.MaKho}
+                      value={form?.MaKho || 'Chọn kho hàng'}
                       name="MaKho"
                       showSearch
                       disabled={typeAction === 'view' ? true : false}
@@ -342,7 +340,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
                 </div>
                 <div className=" pb-0  relative">
                   <FloatButton
-                    className="z-3 absolute w-[30px] h-[30px] "
+                    className="z-3 absolute w-[30px] h-[30px]"
                     style={{
                       right: 5,
                       top: 4,
