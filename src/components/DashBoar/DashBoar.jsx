@@ -40,14 +40,6 @@ function DashBoar() {
       <section className="section dashboard">
         <div className="row">
           <div className="col-lg-6">
-            <div className="row gridMain">
-              {resultArrays?.map((resultArray, arrayIndex) => (
-                <Card resultArray={resultArray} formatter={formatter} icon={resultArray[0]?.DataCode.split('_')[0]} key={arrayIndex} />
-              ))}
-            </div>
-          </div>
-
-          <div className="col-lg-6">
             <div className="">
               <div className="card h-[140px] bgDash bg-transparent">
                 <DateTimeClock />
@@ -59,6 +51,13 @@ function DashBoar() {
                 <h5 className="card-title">Doanh Số Hàng Hóa</h5>
                 <PieChart />
               </div>
+            </div>
+          </div>
+          <div className="col-lg-6">
+            <div className="row gridMain">
+              {resultArrays?.map((resultArray, arrayIndex) => (
+                <Card resultArray={resultArray} formatter={formatter} icon={resultArray[0]?.DataCode.split('_')[0]} key={arrayIndex} />
+              ))}
             </div>
           </div>
         </div>
