@@ -126,8 +126,8 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
           const updatedRow = {
             ...record,
             ...values,
-            TenHang: selectedOption.TenHang || record.TenHang,
-            MaHang: selectedOption.MaHang || record.MaHang,
+            TenHang: selectedOption.TenHang || '',
+            MaHang: selectedOption.MaHang || '',
             DonGia: GiaBan || 0,
             SoLuong: record.SoLuong || values.SoLuong || 1,
             TyLeCKTT: 0,
@@ -210,9 +210,13 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
               max={999999999999}
               width={500}
               style={dataIndex !== 'SoLuong' ? { width: 150 } : { width: 100 }}
-              formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              formatter={(value) => {
+                const parts = `${value}`.split('.')
+                parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                return parts.join('.')
+              }}
               parser={(value) => {
-                const parsedValue = parseFloat(value.replace(/\$\s?|(,*)/g, ''))
+                const parsedValue = parseFloat(value.replace(/[^\d.]/g, ''))
                 return isNaN(parsedValue)
                   ? null
                   : dataIndex === 'SoLuong'
@@ -511,14 +515,14 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
           return (
             <Table.Summary fixed="bottom">
               <Table.Summary.Row>
-                {/* <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell> */}
+                <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell>
                 {/* <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell> */}
 
                 {columns
                   .filter((column) => column.render)
                   .map((column) => {
-                    const isNumericColumn = typeof dataSource[0]?.[column.dataIndex] === 'number'
-                    // && column.dataIndex !== 'STT'
+                    const isNumericColumn = typeof dataSource[0]?.[column.dataIndex] === 'number' && column.dataIndex !== 'STT'
+
                     return (
                       <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'center' : 'center'} className="text-end font-bold  bg-[#f1f1f1] pr-5">
                         {isNumericColumn ? (
