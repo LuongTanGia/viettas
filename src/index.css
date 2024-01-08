@@ -280,3 +280,9 @@ input[type='radio'] {
   background-position: center;
   background-size: cover;
 }
+.ant-input-number .ant-input-number-input {
+  text-align: right;
+}
+.ant-input-number-handler-wrap {
+  display: none !important;
+}

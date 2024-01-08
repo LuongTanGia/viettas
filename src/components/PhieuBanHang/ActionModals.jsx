@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import Logo from '../../assets/VTS-iSale.ico'
-import { FloatButton } from 'antd'
+import { FloatButton, Checkbox } from 'antd'
 import { useEffect, useState } from 'react'
 // import icons from '../../untils/icons'
 import { chiTietPBS } from '../../redux/selector'
@@ -187,7 +187,17 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
                       <div className="flex justify-center items-center">
                         {typeAction === 'create' ? (
                           <>
-                            <label className="mr-2 ml-2">Lập phiếu thu</label>
+                            <Checkbox
+                              onChange={(e) =>
+                                setForm({
+                                  ...form,
+                                  TTTienMat: e.target.checked ? true : false,
+                                })
+                              }
+                            >
+                              Lập phiếu thu
+                            </Checkbox>
+                            {/* <label className="mr-2 ml-2">Lập phiếu thu</label>
                             <input
                               type="checkbox"
                               className="outline-none px-2 "
@@ -197,7 +207,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
                                   TTTienMat: e.target.checked ? true : false,
                                 })
                               }
-                            />
+                            /> */}
                           </>
                         ) : null}
                       </div>
@@ -242,7 +252,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
                       </label>
                       <Select
                         className="w-[90%] outline-none"
-                        value={`${form?.MaDoiTuong}  ${form?.TenDoiTuong}  ${form?.DiaChi}`}
+                        value={`${form?.MaDoiTuong} - ${form?.TenDoiTuong} - ${form?.DiaChi}`}
                         disabled={typeAction === 'view' || typeAction === 'edit'}
                         onChange={handleChangeInput}
                         showSearch
@@ -325,7 +335,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
                         </div>
                         <div className="flex items-center p-1 w-1/2 flex-wrapjustify-between">
                           <label className="">Lúc</label>
-                          <input readOnly type="text" className="w-[170px]   outline-none px-2 " value={form?.NgayTao} />
+                          <input readOnly type="text" className="w-[170px]   outline-none px-2 text-center" value={dayjs(form?.NgayTao).format('DD/MM/YYYY hh:mm:ss')} />
                         </div>
                       </div>
                       <div className="flex justify-between items-center flex-wrap">
@@ -335,7 +345,12 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
                         </div>
                         <div className="flex items-center p-1 w-1/2 justify-between">
                           <label className="">Lúc</label>
-                          <input readOnly type="text" className="w-[170px] outline-none px-2 " value={form?.NgaySuaCuoi} />
+                          <input
+                            readOnly
+                            type="text"
+                            className="w-[170px] outline-none px-2  text-center"
+                            value={dayjs(form?.NgaySuaCuoi || new Date()).format('DD/MM/YYYY hh:mm:ss')}
+                          />
                         </div>
                       </div>
                     </div>
@@ -343,11 +358,12 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
                 </div>
                 <div className=" pb-0  relative">
                   <FloatButton
-                    className="z-3 opacity-50 bg-transparent w-[30px] h-[30px]"
+                    className="z-3 absolute w-[30px] h-[30px] "
                     style={{
                       right: 5,
                       top: 4,
                     }}
+                    type="primary"
                     icon={<IoMdAddCircle />}
                     onClick={handleShowPopup}
                     tooltip={<div>Bấm vào đây để thêm hàng hoặc F9 để chọn từ danh sách !</div>}

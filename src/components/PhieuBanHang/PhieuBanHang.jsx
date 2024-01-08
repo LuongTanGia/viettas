@@ -52,17 +52,18 @@ function PhieuBanHang() {
           return Object.keys(record).some((key) => {
             const stringValue = String(record[key]).toLowerCase()
             const searchTextLower = searchText.toLowerCase()
-            const isDate = dayjs(stringValue).isValid()
 
-            if (isDate && dayjs(searchTextLower).isValid()) {
-              const formattedValue = dayjs(stringValue).format('DD/MM/YYYY')
-              const formattedSearchText = dayjs(searchTextLower).format('DD/MM/YYYY')
-              if (stringValue.includes(formattedSearchText)) {
+            const isDateTime = dayjs(stringValue).isValid()
+
+            if (isDateTime) {
+              const formattedValue = dayjs(stringValue).format('DD/MM/YYYY').toString()
+
+              const formattedSearchText = searchTextLower
+
+              if (formattedValue.includes(formattedSearchText)) {
                 return true
               }
-              return formattedValue.includes(formattedSearchText)
-            }
-            return stringValue.includes(searchTextLower)
+            } else return false
           })
         })
 
@@ -102,7 +103,6 @@ function PhieuBanHang() {
   }
   const setMaHang = (value) => {
     setSelectMH(value)
-    console.log(value, 'valueMH')
   }
   const handleCloseAction = () => {
     setIsShowPrint(false)
@@ -160,19 +160,23 @@ function PhieuBanHang() {
     } else {
       const newData = filteredDataRes.filter((record) => {
         return Object.keys(record).some((key) => {
-          const stringValue = String(record[key]).toLowerCase()
-          const searchTextLower = searchText.toLowerCase()
-          const isDate = dayjs(stringValue).isValid()
+          const stringValue = String(record[key]).toString().toLowerCase()
+          const searchTextLower = searchText.toString().toLowerCase()
+          const isDate = dayjs(searchTextLower, { strict: true }).isValid()
+          const isDateTime = dayjs(stringValue).isValid()
 
-          if (isDate && dayjs(searchTextLower).isValid()) {
-            const formattedValue = dayjs(stringValue).format('DD/MM/YYYY')
-            const formattedSearchText = dayjs(searchTextLower).format('DD/MM/YYYY')
-            if (stringValue.includes(formattedSearchText)) {
+          if (isDate && isDateTime) {
+            const formattedValue = dayjs(stringValue).format('YYYY-MM-DDTHH:mm:ss')
+            const formattedSearchText = dayjs(searchTextLower, { strict: true }).format('YYYY-MM-DDTHH:mm:ss')
+
+            if (formattedValue.startsWith(formattedSearchText)) {
               return true
             }
-            return formattedValue.includes(formattedSearchText)
+          } else if (!isDate && stringValue.includes(searchTextLower)) {
+            return true
           }
-          return stringValue.includes(searchTextLower)
+
+          return false
         })
       })
 

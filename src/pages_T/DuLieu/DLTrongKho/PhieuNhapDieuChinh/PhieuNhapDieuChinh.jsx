@@ -435,7 +435,7 @@ const PhieuNhapDieuChinh = () => {
             </div>
             <div>
               <Table
-                className="table_DMHangHoa"
+                className="table_DMHangHoa setHeight"
                 columns={titles}
                 dataSource={filteredHangHoa}
                 pagination={{
