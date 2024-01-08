@@ -9,11 +9,6 @@ const { Text } = Typography
 const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOptions, ColumnTable, columName, typeTable, listHP }) => {
   const EditableContext = React.createContext(null)
   const [dataSource, setDataSource] = useState(param)
-  // const currentRowData = useCallback(() => {
-  //   return param.map((item) => item.MaHang).filter((item) => item !== 'Chọn mã hàng')
-  // }, [param])
-
-  // console.log('currentRowData', currentRowData)
 
   useEffect(() => {
     setDataSource(param)

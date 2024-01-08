@@ -48,8 +48,6 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   //   [selectedRowData],
   // )
 
-  // console.log('currentRowData', currentRowData)
-
   const isAdd = useMemo(() => selectedRowData.map((item) => item.MaHang).includes('Chọn mã hàng'), [selectedRowData])
 
   const handleKeyDown = (event) => {
