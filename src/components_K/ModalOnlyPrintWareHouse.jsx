@@ -49,9 +49,9 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, dataPMH }) => {
   })
 
   useEffect(() => {
-    if (dataPMHByDate) setSelectedSctBD(dataPMHByDate[0].SoChungTu)
-    if (dataPMHByDate) setSelectedSctKT(dataPMHByDate[0].SoChungTu)
-  }, [dataPMH, dataPMHByDate])
+    if (dataThongTin) setSelectedSctBD(dataThongTin.SoChungTu)
+    if (dataThongTin) setSelectedSctKT(dataThongTin.SoChungTu)
+  }, [dataThongTin])
 
   const calculateTotal = () => {
     let total = 0

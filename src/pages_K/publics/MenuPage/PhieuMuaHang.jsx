@@ -31,6 +31,7 @@ const PhieuMuaHang = () => {
   const [dataDoiTuong, setDataDoiTuong] = useState(null)
   const [actionType, setActionType] = useState('')
   const [formKhoanNgay, setFormKhoanNgay] = useState([])
+  // const [KhoanNgay, setKhoanNgay] = useState([])
   const [dataThongSo, setDataThongSo] = useState()
   const [setSearchPMH, filteredPMH, searchPMH] = useSearch(data)
 
@@ -91,6 +92,7 @@ const PhieuMuaHang = () => {
 
         if (response.data && response.data.DataError === 0) {
           setFormKhoanNgay(response.data)
+          setKhoanNgay(response.data)
           setIsLoading(true)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
@@ -583,7 +585,7 @@ const PhieuMuaHang = () => {
         </div>
         <div className="flex  ">
           {isShowSearch && (
-            <div className={`flex absolute left-[14rem] -top-1 transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
+            <div className={`flex absolute left-[14rem] -top-[2px] transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
               <input
                 type="text"
                 placeholder="Nhập ký tự bạn cần tìm"
@@ -630,6 +632,7 @@ const PhieuMuaHang = () => {
               className="DatePicker_PMH"
               format="DD/MM/YYYY"
               defaultValue={dayjs(formKhoanNgay.NgayBatDau)}
+              maxDate={dayjs(formKhoanNgay.NgayKetThuc)}
               onChange={(newDate) => {
                 setFormKhoanNgay({
                   ...formKhoanNgay,
@@ -646,6 +649,7 @@ const PhieuMuaHang = () => {
             <DatePicker
               className="DatePicker_PMH"
               format="DD/MM/YYYY"
+              minDate={dayjs(formKhoanNgay.NgayBatDau)}
               defaultValue={dayjs(formKhoanNgay.NgayKetThuc)}
               onChange={(newDate) => {
                 setFormKhoanNgay({

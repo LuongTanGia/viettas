@@ -28,13 +28,10 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
           return item
         })
 
-        // handleEditData(newData)
         return newData
       })
     }
-    // const newOptions = yourMaHangOptions?.filter((item) => dataSource.every((item2) => item.MaHang !== item2.MaHang))
 
-    // setNewOptions(newOptions)
     updatePrices()
   }, [param, listHP])
   const EditableRow = ({ index, ...props }) => {
@@ -344,7 +341,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
         showSorterTooltip: false,
 
         render: (text) => (
-          <div style={{ textAlign: 'end' }}>
+          <div className="text-right">
             {text !== undefined ? Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLESOLUONG, maximumFractionDigits: ThongSo.SOLESOLUONG }) : ''}
           </div>
         ),
@@ -417,18 +414,21 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
         render: (text) => {
           const formattedValue =
             text !== 0 ? (
-              Number(text) > 999999999999 ? (
-                <Tooltip placement="topLeft" title={999999999999}>
-                  {Number(999999999999).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLESOTIEN, maximumFractionDigits: ThongSo.SOLESOTIEN })}
-                </Tooltip>
-              ) : (
-                Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLESOTIEN, maximumFractionDigits: ThongSo.SOLESOTIEN }) || 0
-              )
+              <div className="text-right">
+                {Number(text) > 999999999999 ? (
+                  <Tooltip placement="topLeft" title={999999999999}>
+                    {Number(999999999999).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLESOTIEN, maximumFractionDigits: ThongSo.SOLESOTIEN })}
+                  </Tooltip>
+                ) : (
+                  Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLESOTIEN, maximumFractionDigits: ThongSo.SOLESOTIEN }) || 0
+                )}
+              </div>
             ) : (
               <div
                 style={{
                   color: 'rgba(0, 0, 0, 0.25)',
                 }}
+                className="text-right"
               >
                 {Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLESOTIEN, maximumFractionDigits: ThongSo.SOLESOTIEN }) || 0}
               </div>
