@@ -74,13 +74,6 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH }) => {
     setNewDataPMH(filteredData)
   }
 
-  // const handleLien = (checkboxName) => {
-  //   setCheckboxValues((prevValues) => ({
-  //     ...prevValues,
-  //     [checkboxName]: !prevValues[checkboxName],
-  //   }))
-  // }
-
   const handleOnlyPrint = async () => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
@@ -157,16 +150,6 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH }) => {
                 </button>
               </div>
               <div className="flex  mt-4 ">
-                {/* <div className="flex ">
-                  <label className="px-4">Số chứng từ</label>
-                  <select className=" bg-white border outline-none border-gray-300  " value={selectedSctBD} onChange={(e) => setSelectedSctBD(e.target.value)}>
-                    {newDataPMH?.map((item) => (
-                      <option key={item.SoChungTu} value={item.SoChungTu}>
-                        {item.SoChungTu}
-                      </option>
-                    ))}
-                  </select>
-                </div> */}
                 <div className="flex ">
                   <label className="px-[22px]">Số chứng từ</label>
 
@@ -178,16 +161,7 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH }) => {
                     ))}
                   </Select>
                 </div>
-                {/* <div className="flex ">
-                  <label className="px-4">Đến</label>
-                  <select className=" bg-white border outline-none border-gray-300  " value={selectedSctKT} onChange={(e) => setSelectedSctKT(e.target.value)}>
-                    {newDataPMH?.map((item) => (
-                      <option key={item.SoChungTu} value={item.SoChungTu}>
-                        {item.SoChungTu}
-                      </option>
-                    ))}
-                  </select>
-                </div> */}
+
                 <div className="flex ">
                   <label className="px-[16px]">Đến</label>
 

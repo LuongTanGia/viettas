@@ -191,13 +191,13 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
                   {/* thong tin phieu */}
                   <div className="w-[62%]">
                     <div className="flex p-1">
-                      <div className=" flex items-center ">
-                        <label className="w-[110px]  pr-1">Số C.từ</label>
-                        <input readOnly type="text" value={form?.SoChungTu} className="w-full border border-gray-300 outline-none  px-2   bg-[#fafafa] rounded-[4px] h-[24px]" />
+                      <div className=" flex items-center  ">
+                        <label className="md:w-[114px] lg:w-[110px]  pr-1">Số C.từ</label>
+                        <input readOnly type="text" value={form?.SoChungTu} className=" w-full border border-gray-300 outline-none  px-2   bg-[#fafafa] rounded-[4px] h-[24px]" />
                       </div>
                       <div className="flex justify-center items-center"></div>
 
-                      <div className="flex md:px-1 lg:px-4 items-center">
+                      <div className="flex  md:px-1 lg:px-4 items-center ">
                         <label htmlFor="" className="pr-1 lg:pr-[30px] lg:pl-[8px]">
                           Ngày
                         </label>
@@ -217,7 +217,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
                         />
                       </div>
                       {typeAction === 'create' ? (
-                        <div className="flex items-center">
+                        <div className="flex items-center w-[200px]">
                           <Checkbox
                             className=" w-full"
                             onChange={(e) =>
@@ -278,10 +278,10 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
                   {/* thong tin cap nhat */}
                   <div className="w-[38%] py-1 box_content">
                     <div className="text-center p-1 font-medium text_capnhat">Thông tin cập nhật</div>
-                    <div className="rounded-md w-[98%]  box_capnhat px-1 py-4 ">
+                    <div className="rounded-md w-[98%]  box_capnhat px-1 py-3 ">
                       <div className="flex justify-between items-center">
                         <div className="flex items-center p-1 ">
-                          <label className="md:w-[134px] lg:w-[100px] ">Người tạo</label>
+                          <label className="md:w-[134px] lg:w-[104px] ">Người tạo</label>
                           <input type="text" className="w-full   outline-none px-2 truncate" value={form?.NguoiTao} readOnly title={form?.NguoiTao} />
                         </div>
                         <div className="flex items-center p-1">
@@ -296,7 +296,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
                       </div>
                       <div className="flex justify-between items-center">
                         <div className="flex items-center p-1 ">
-                          <label className="md:w-[134px] lg:w-[100px] ">Sửa cuối</label>
+                          <label className="md:w-[134px] lg:w-[104px] ">Sửa cuối</label>
                           <input readOnly type="text" className="w-full outline-none px-2 truncate" value={form?.NguoiSuaCuoi} title={form?.NguoiSuaCuoi} />
                         </div>
                         <div className="flex items-center p-1">
