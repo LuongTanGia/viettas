@@ -529,7 +529,7 @@ const HangHoa = () => {
         <SimpleBackdrop />
       ) : (
         <>
-          <div className="flex flex-col gap-2 ">
+          <div className="flex flex-col gap-1 ">
             <div className="flex justify-between gap-2 relative" ref={showOption}>
               <div>
                 <div className="flex items-center gap-2">
@@ -558,7 +558,7 @@ const HangHoa = () => {
                   <div className="absolute flex flex-col gap-4 bg-slate-100 p-3 top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom ">
                     <ActionButton
                       handleAction={() => handlePrintBar()}
-                      title={'In Mã Vạch'}
+                      title={'In Theo Số Tem'}
                       icon={<CiBarcode className="w-6 h-6" />}
                       color={'slate-50'}
                       background={'purple-500'}

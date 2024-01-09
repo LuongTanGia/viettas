@@ -393,7 +393,7 @@ const PhieuNhapDieuChinh = () => {
         <SimpleBackdrop />
       ) : (
         <>
-          <div className="flex flex-col gap-2 ">
+          <div className="flex flex-col gap-1">
             <div className="flex justify-between gap-2">
               <div ref={showOption}>
                 <div className="flex items-center gap-2">
@@ -474,8 +474,8 @@ const PhieuNhapDieuChinh = () => {
                   title={'In Phiếu'}
                   icon={<MdPrint className="w-6 h-6" />}
                   color={'slate-50'}
-                  background={'blue-500'}
-                  color_hover={'blue-500'}
+                  background={'purple-500'}
+                  color_hover={'purple-500'}
                   bg_hover={'white'}
                 />
               </div>
