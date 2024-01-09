@@ -28,11 +28,9 @@ function ModelPrint({ isShowModel, handleCloseAction }) {
 
   const handleDateFromChange = (newValue) => {
     setDateFrom(newValue)
-    console.log(dayjs(newValue).format('YYYY-MM-DD'), 'change dateFrom MUI')
   }
   const handleDateToChange = (newValue) => {
     setDateTo(newValue)
-    console.log(dayjs(newValue).format('YYYY-MM-DD'), 'change dateTo MUI')
   }
   const onChange = (e) => {
     if (e.target.checked) {
@@ -41,6 +39,7 @@ function ModelPrint({ isShowModel, handleCloseAction }) {
       setSoLien((pre) => pre - e.target.value)
     }
   }
+  console.log(soLien)
   useEffect(() => {
     const handleListPhieuThu = async () => {
       const response = await LISTCHUNGTU(API.LISTCHUNGTU, token, { NgayBatDau: dateFrom.format('YYYY-MM-DD'), NgayKetThuc: dateTo.format('YYYY-MM-DD') })
@@ -48,12 +47,14 @@ function ModelPrint({ isShowModel, handleCloseAction }) {
     }
     if (isShowModel) {
       handleListPhieuThu()
+      setSoLien(1)
     }
+
     if (dataSoChungTu < 1) {
       setSoChungTuTo()
       setSoChungTuFrom()
     }
-  }, [dateFrom, dateTo])
+  }, [dateFrom, dateTo, isShowModel])
 
   const handleChangeSCTFrom = (value) => {
     setSoChungTuFrom(value)
@@ -73,7 +74,7 @@ function ModelPrint({ isShowModel, handleCloseAction }) {
 
     base64ToPDF(response)
   }
-  console.log(soLien)
+
   return (
     <>
       {isShowModel ? (

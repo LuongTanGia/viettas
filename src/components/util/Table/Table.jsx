@@ -8,14 +8,19 @@ import BtnAction from './BtnAction'
 import { useEffect, useState } from 'react'
 import { FcServices } from 'react-icons/fc'
 import dayjs from 'dayjs'
+import { bool } from 'prop-types'
 
 const { Text } = Typography
 
 function Tables({ loadingSearch, param, columName, height, handleView, handleEdit, typeTable, handleAddData, handleDelete, handleChangePhieuThu, selectMH, textSearch }) {
   const [hiden, setHiden] = useState([])
+  console.log(param)
   const DataColumns = param ? param[0] : []
-  console.log(selectMH, 'selectMH')
-  const keysOnly = Object.keys(DataColumns || []).filter((key) => key !== 'MaSoThue')
+
+  const keysOnly =
+    typeTable !== 'listHelper'
+      ? Object.keys(DataColumns || []).filter((key) => key !== 'MaSoThue')
+      : ['MaHang', 'TenHang', 'DVT', 'LapRap', 'TonKho', 'SoLuongTon', 'GiaBan', 'NhomHang']
 
   const ThongSo = JSON.parse(localStorage.getItem('ThongSo'))
 
@@ -62,6 +67,66 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
         ),
       }
     }
+    if (item === 'NhomHang') {
+      return {
+        title: columName[item] || item,
+        width: 290,
+        dataIndex: item,
+        key: index,
+        sorter: (a, b) => a.NhomHang.localeCompare(b.NhomHang),
+        showSorterTooltip: false,
+        align: 'center',
+        // fixed: 'left',
+        ellipsis: {
+          showTitle: false,
+        },
+        render: (address) => (
+          <Tooltip placement="topLeft" title={address}>
+            {address}
+          </Tooltip>
+        ),
+      }
+    }
+    if (item === 'TenHang') {
+      return {
+        title: columName[item] || item,
+        width: 250,
+        dataIndex: item,
+        key: index,
+        sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
+        showSorterTooltip: false,
+        align: 'center',
+        // fixed: 'left',
+        ellipsis: {
+          showTitle: false,
+        },
+        render: (address) => (
+          <Tooltip placement="topLeft" title={address}>
+            {address}
+          </Tooltip>
+        ),
+      }
+    }
+    // if (item === 'LapRap' || item === 'TonKho') {
+    //   return {
+    //     title: columName[item] || item,
+    //     width: 100,
+    //     dataIndex: item,
+    //     key: index,
+    //     sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
+    //     showSorterTooltip: false,
+    //     align: 'center',
+    //     // fixed: 'left',
+    //     ellipsis: {
+    //       showTitle: false,
+    //     },
+    //     render: (address) => (
+    //       <Tooltip placement="topLeft" title={address}>
+    //         {address}
+    //       </Tooltip>
+    //     ),
+    //   }
+    // }
     if (item === 'NgayCTu' || item === 'DaoHan') {
       return {
         title: columName[item] || item,
@@ -139,7 +204,18 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
 
     return {
       title: columName[item] || item,
-      width: item === 'DiaChi' ? 250 : item === 'NguoiTao' ? 250 : item === 'NguoiSuaCuoi' ? 250 : item === 'TTTienMat' ? 100 : 150 || 100,
+      width:
+        item === 'DiaChi'
+          ? 250
+          : item === 'NguoiTao'
+            ? 250
+            : item === 'NguoiSuaCuoi'
+              ? 250
+              : item === 'TTTienMat'
+                ? 100
+                : item === 'TonKho' || item === 'LapRap'
+                  ? 100
+                  : 150 || 100,
       dataIndex: item,
       editable: true,
       align: 'center',
@@ -182,6 +258,7 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
               textAlign: isNumericColumn ? 'right' : isTyLe ? 'right' : item.includes('Tong') ? 'right' : item === 'SoLuongTon' ? 'right' : item === 'DVT' ? 'center' : 'left',
               opacity: text === 0 ? 0.5 : 1,
               color: text < 0 ? 'red' : 'black',
+              fontWeight: text < 0 ? 'bold' : '',
             }}
           >
             {renderHighlightedCell(formattedValue)}
@@ -249,7 +326,7 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
   useEffect(() => {
     setData(originData)
     const setKey = originData?.filter((item) => initialSelectedRowKeys.includes(item.SoChungTu))
-    console.log(setKey)
+
     setSelectedRowKeys(setKey?.map((item) => item.SoChungTu))
     setSelectedRecord(selectMH)
   }, [param, selectMH])
@@ -277,13 +354,12 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
   }
 
   const onSelectChange = (newSelectedRowKeys, selectedRows) => {
-    console.log(selectedRows)
     const maHangs = selectedRows.map((record) => record.SoChungTu)
     const filteredMaHangs = maHangs.filter((maHang) => maHang !== null && maHang !== undefined)
     setSelectedMaHangs(filteredMaHangs)
     setSelectedRowKeys(newSelectedRowKeys)
   }
-  console.log(selectedRowKeys)
+
   const rowSelection = {
     selectedRowKeys,
     onChange: onSelectChange,
@@ -324,7 +400,6 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
 
             rowClassName={(record) => {
               if (record.SoChungTu === selectedRecord) {
-                console.log(record.SoChungTu, 'sochungtu')
                 return 'highlight-row'
               }
               return ''
@@ -340,55 +415,59 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
             }}
             scrollToFirstRowOnChange
             size="small"
-            summary={() => (
-              <Table.Summary fixed="bottom">
-                <Table.Summary.Row>
-                  {/* <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"> {data.length + 1}</Table.Summary.Cell> */}
-                  {columns
-                    .filter((column) => column.render)
-                    .map((column) => {
-                      const isNumericColumn = typeof data[0]?.[column.dataIndex] === 'number'
+            summary={
+              typeTable !== 'listHelper'
+                ? () => (
+                    <Table.Summary fixed="bottom">
+                      <Table.Summary.Row>
+                        {/* <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"> {data.length + 1}</Table.Summary.Cell> */}
+                        {columns
+                          .filter((column) => column.render)
+                          .map((column) => {
+                            const isNumericColumn = typeof data[0]?.[column.dataIndex] === 'number'
 
-                      return (
-                        <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
-                          {isNumericColumn ? (
-                            // Use conditional rendering based on column.dataIndex
-                            column.dataIndex === 'TongSoLuong' ? (
-                              <Text strong>
-                                {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                  minimumFractionDigits: ThongSo.SOLESOLUONG,
-                                  maximumFractionDigits: ThongSo.SOLESOLUONG,
-                                })}
-                              </Text>
-                            ) : ['TongTienHang', 'TongTienThue', 'TongThanhTien', 'TongTienCKTT', 'TongTongCong'].includes(column.dataIndex) ? (
-                              <Text strong>
-                                {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                  minimumFractionDigits: ThongSo.SOLESOTIEN,
-                                  maximumFractionDigits: ThongSo.SOLESOTIEN,
-                                })}
-                              </Text>
-                            ) : ['TyLeCKTT'].includes(column.dataIndex) ? (
-                              <Text strong>
-                                {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                  minimumFractionDigits: ThongSo.SOLETYLE,
-                                  maximumFractionDigits: ThongSo.SOLETYLE,
-                                })}
-                              </Text>
-                            ) : (
-                              <Text strong>
-                                {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                  minimumFractionDigits: 0,
-                                  maximumFractionDigits: 0,
-                                })}
-                              </Text>
+                            return (
+                              <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                                {isNumericColumn ? (
+                                  // Use conditional rendering based on column.dataIndex
+                                  column.dataIndex === 'TongSoLuong' ? (
+                                    <Text strong>
+                                      {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                        minimumFractionDigits: ThongSo.SOLESOLUONG,
+                                        maximumFractionDigits: ThongSo.SOLESOLUONG,
+                                      })}
+                                    </Text>
+                                  ) : ['TongTienHang', 'TongTienThue', 'TongThanhTien', 'TongTienCKTT', 'TongTongCong'].includes(column.dataIndex) ? (
+                                    <Text strong>
+                                      {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                        minimumFractionDigits: ThongSo.SOLESOTIEN,
+                                        maximumFractionDigits: ThongSo.SOLESOTIEN,
+                                      })}
+                                    </Text>
+                                  ) : ['TyLeCKTT'].includes(column.dataIndex) ? (
+                                    <Text strong>
+                                      {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                        minimumFractionDigits: ThongSo.SOLETYLE,
+                                        maximumFractionDigits: ThongSo.SOLETYLE,
+                                      })}
+                                    </Text>
+                                  ) : (
+                                    <Text strong>
+                                      {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                        minimumFractionDigits: 0,
+                                        maximumFractionDigits: 0,
+                                      })}
+                                    </Text>
+                                  )
+                                ) : null}
+                              </Table.Summary.Cell>
                             )
-                          ) : null}
-                        </Table.Summary.Cell>
-                      )
-                    })}
-                </Table.Summary.Row>
-              </Table.Summary>
-            )}
+                          })}
+                      </Table.Summary.Row>
+                    </Table.Summary>
+                  )
+                : null
+            }
             pagination={{ defaultPageSize: 50, showSizeChanger: true, pageSizeOptions: ['50', '100', '1000'] }}
           />
         ) : (
@@ -407,33 +486,37 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
             }}
             scrollToFirstRowOnChange
             size="small"
-            summary={() => {
-              return (
-                <Table.Summary fixed="bottom">
-                  <Table.Summary.Row>
-                    {/* <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell> */}
-                    {columns
-                      .filter((column) => column.render)
-                      .map((column) => {
-                        const isNumericColumn = typeof data[0]?.[column.dataIndex] === 'number'
-                        console.log(data[0])
-                        return (
-                          <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
-                            {isNumericColumn ? (
-                              <Text strong>
-                                {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                  minimumFractionDigits: ThongSo.SOLESOTIEN,
-                                  maximumFractionDigits: ThongSo.SOLESOTIEN,
-                                })}
-                              </Text>
-                            ) : null}
-                          </Table.Summary.Cell>
-                        )
-                      })}
-                  </Table.Summary.Row>
-                </Table.Summary>
-              )
-            }}
+            summary={
+              typeTable !== 'listHelper'
+                ? () => {
+                    return (
+                      <Table.Summary fixed="bottom">
+                        <Table.Summary.Row>
+                          {/* <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell> */}
+                          {columns
+                            .filter((column) => column.render)
+                            .map((column) => {
+                              const isNumericColumn = typeof data[0]?.[column.dataIndex] === 'number'
+
+                              return (
+                                <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                                  {isNumericColumn ? (
+                                    <Text strong>
+                                      {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                        minimumFractionDigits: ThongSo.SOLESOTIEN,
+                                        maximumFractionDigits: ThongSo.SOLESOTIEN,
+                                      })}
+                                    </Text>
+                                  ) : null}
+                                </Table.Summary.Cell>
+                              )
+                            })}
+                        </Table.Summary.Row>
+                      </Table.Summary>
+                    )
+                  }
+                : null
+            }
             pagination={{ defaultPageSize: 50, showSizeChanger: true, pageSizeOptions: ['50', '100', '1000'] }}
           />
         )}

@@ -15,7 +15,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
     setDataSource(param)
     const updatePrices = () => {
       setDataSource((prevDataSource) => {
-        const newData = prevDataSource.map((item) => {
+        const newData = prevDataSource?.map((item) => {
           const matchingHP = listHP?.find((hp) => hp.MaHang === item.MaHang)
           if (matchingHP) {
             return {
@@ -503,7 +503,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
   return (
     <div>
       <Table
-        loading={dataSource.length !== 0 || typeTable === 'create' ? false : true}
+        loading={dataSource?.length !== 0 || typeTable === 'create' ? false : true}
         className={'h290'}
         components={components}
         rowClassName={() => 'editable-row'}

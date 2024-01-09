@@ -1,9 +1,9 @@
 import Table from '../util/Table/Table'
 import LoadingPage from '../util/Loading/LoadingPage'
-import { PrinterOutlined, FileAddOutlined } from '@ant-design/icons'
+import { FileAddOutlined, PrinterOutlined } from '@ant-design/icons'
 import { nameColumsPhieuBanHang } from '../util/Table/ColumnName'
 import ActionModals from './ActionModals'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { THONGTINPHIEU, DANHSACHPHIEUBANHANG, XOAPHIEUBANHANG, LAPPHIEUTHU } from '../../action/Actions'
 import API from '../../API/API'
@@ -15,8 +15,13 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { BsSearch } from 'react-icons/bs'
 import dayjs from 'dayjs'
 import * as XLSX from 'xlsx'
+import { TfiMoreAlt } from 'react-icons/tfi'
+import { MdFilterAlt } from 'react-icons/md'
+import { RiFileExcel2Fill } from 'react-icons/ri'
 
 function PhieuBanHang() {
+  const optionContainerRef = useRef(null)
+
   const dispatch = useDispatch()
   const token = localStorage.getItem('TKN')
   const [dataLoaded, setDataLoaded] = useState(false)
@@ -31,7 +36,7 @@ function PhieuBanHang() {
   const [type, setType] = useState()
   const [dataRecord, setDataRecord] = useState([])
   const [selectMH, setSelectMH] = useState()
-
+  const [isShowOption, setIsShowOption] = useState(false)
   const [dataDate, setDataDate] = useState({
     NgayBatDau: '',
     NgayKetThuc: '',
@@ -75,8 +80,22 @@ function PhieuBanHang() {
     }
 
     getListData()
-  }, [token, dispatch, searchText, dataDate, selectMH])
+  }, [dataRecord, token, dispatch, searchText, dataDate, selectMH])
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (optionContainerRef.current && !optionContainerRef.current.contains(event.target)) {
+        // Click ngoài phần tử chứa isShowOption, ẩn isShowOption
+        setIsShowOption(false)
+      }
+    }
+
+    document.addEventListener('click', handleClickOutside)
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside)
+    }
+  }, [isShowOption])
   const handleView = async (record) => {
     await THONGTINPHIEU(API.CHITIETPBS, token, record?.SoChungTu, dispatch)
     setIsShow(true)
@@ -217,8 +236,8 @@ function PhieuBanHang() {
 
   return (
     <>
-      <div>
-        <div className="relative flex items-center gap-x-4 ">
+      <div className="flex justify-between mb-2 relative">
+        <div className=" flex items-center gap-x-4 ">
           <h1 className="text-xl font-black uppercase">Phiếu Bán Hàng </h1>
           <div>
             <BsSearch size={18} className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
@@ -232,6 +251,35 @@ function PhieuBanHang() {
                   value={searchText}
                   onChange={(e) => setSearchText(e.target.value)}
                   className={'px-2  w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] '}
+                />
+              </div>
+            )}
+          </div>
+        </div>
+        <div>
+          <div ref={optionContainerRef}>
+            <div className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5  " onClick={() => setIsShowOption(!isShowOption)} title="Chức năng khác">
+              <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
+            </div>
+            {isShowOption && (
+              <div className=" absolute flex flex-col gap-2 bg-slate-100 p-3  top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom ">
+                <ActionButton
+                  icon={<RiFileExcel2Fill />}
+                  color={'slate-50'}
+                  title={'Xuất Excel'}
+                  background={'red-500'}
+                  bg_hover={'white'}
+                  color_hover={'red-500'}
+                  handleAction={exportToExcel}
+                />
+                <ActionButton
+                  icon={<PrinterOutlined />}
+                  color={'slate-50'}
+                  title={'In Phiếu'}
+                  background={'purple-500'}
+                  bg_hover={'white'}
+                  color_hover={'purple-500'}
+                  handleAction={handleShowPrint}
                 />
               </div>
             )}
@@ -269,36 +317,11 @@ function PhieuBanHang() {
             />
           </div>
           <div className=" ">
-            <ActionButton
-              // icon={<PrinterOutlined />}
-              color={'slate-50'}
-              title={'Lọc'}
-              background={'blue-500'}
-              bg_hover={'white'}
-              color_hover={'blue-500'}
-              handleAction={handleSearch}
-            />
+            <ActionButton icon={<MdFilterAlt />} color={'slate-50'} title={'Lọc'} background={'blue-500'} bg_hover={'white'} color_hover={'blue-500'} handleAction={handleSearch} />
           </div>
         </div>
+
         <div className="flex justify-end gap-2    ">
-          <ActionButton
-            // icon={<PrinterOutlined />}
-            color={'slate-50'}
-            title={'Xuất Excel'}
-            background={'blue-500'}
-            bg_hover={'white'}
-            color_hover={'blue-500'}
-            handleAction={exportToExcel}
-          />
-          <ActionButton
-            icon={<PrinterOutlined />}
-            color={'slate-50'}
-            title={'In Phiếu'}
-            background={'blue-500'}
-            bg_hover={'white'}
-            color_hover={'blue-500'}
-            handleAction={handleShowPrint}
-          />
           <ActionButton
             color={'slate-50'}
             title={'Thêm Phiếu'}

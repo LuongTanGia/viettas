@@ -57,7 +57,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
     setDataChitiet(form?.DataDetails)
     const loadData = async () => {
       try {
-        const result_listHp = await DANHSACHHANGHOA_PBS(API.DANHSACHHANGHOA_PBS, token, form)
+        const result_listHp = isShow ? await DANHSACHHANGHOA_PBS(API.DANHSACHHANGHOA_PBS, token, form) : null
         const result_doituong = await DANHSACHDOITUONG(API.DANHSACHDOITUONG_PBS, token)
         const result_khohang = await DANHSACHKHOHANG(API.DANHSACHKHOHANG_PBS, token)
         setDataListHP(result_listHp)
@@ -70,17 +70,27 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
       }
     }
     loadData()
+  }, [isShow, dataRecord, token, form?.DataDetails])
 
+  useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === 'F9') {
-        setShowPopup(true)
+        if (form?.MaDoiTuong !== '' && form?.MaKho !== '') {
+          setShowPopup(true)
+        } else {
+          toast.info('Nhập đối tượng mua hàng !')
+        }
+        console.log(form)
       }
     }
+
     document.addEventListener('keydown', handleKeyDown)
+
+    // Cleanup the event listener when the component unmounts
     return () => {
-      window.removeEventListener('keydown', handleKeyDown)
+      document.removeEventListener('keydown', handleKeyDown)
     }
-  }, [isShow, dataRecord, token, form?.DataDetails])
+  }, [form])
 
   // const setSelectDataOption = (data) => {
   //   setYourMaHangOptions(data)
@@ -89,9 +99,9 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
   const handleClosePopup = () => {
     setShowPopup(false)
   }
-  const handleShowPopup = () => {
-    setShowPopup(true)
-  }
+  // const handleShowPopup = () => {
+  //   setShowPopup(true)
+  // }
   // Action Sửa
   const handleChangeInput_other = (e) => {
     const { name, value } = e.target
@@ -101,7 +111,8 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
   const handleChangeInput = async (value) => {
     const [MaDoiTuong, TenDoiTuong, DiaChi] = value.split(' - ')
     setForm({ ...form, MaDoiTuong, TenDoiTuong, DiaChi })
-    const result_listHp = await DANHSACHHANGHOA_PBS(API.DANHSACHHANGHOA_PBS, token, form)
+
+    const result_listHp = await DANHSACHHANGHOA_PBS(API.DANHSACHHANGHOA_PBS, token, { ...form, MaDoiTuong, TenDoiTuong, DiaChi })
     setDataListHP(result_listHp)
     // setSelectDataOption(result_listHp)
   }
@@ -347,7 +358,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
                     }}
                     type="primary"
                     icon={<IoMdAddCircle />}
-                    onClick={handleShowPopup}
+                    // onClick={}
                     tooltip={<div>Bấm vào đây để thêm hàng hoặc F9 để chọn từ danh sách !</div>}
                   />
                   {data_chitiet ? (
@@ -367,13 +378,15 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
             </div>
 
             <div>
-              {showPopup && form.MaDoiTuong !== '' && form.MaKho !== '' ? (
-                <ListHelper_HangHoa
-                  data={form.MaDoiTuong !== '' && form.MaKho !== '' ? dataListHP : []}
-                  isShowList={showPopup}
-                  close={handleClosePopup}
-                  handleAddData={handleAddData}
-                />
+              {form?.MaDoiTuong !== '' && form?.MaKho !== '' ? (
+                showPopup ? (
+                  <ListHelper_HangHoa
+                    data={form?.MaDoiTuong !== '' && form?.MaKho !== '' ? dataListHP : []}
+                    isShowList={showPopup}
+                    close={handleClosePopup}
+                    handleAddData={handleAddData}
+                  />
+                ) : null
               ) : null}
             </div>
             <div className=" w-full flex justify-end  gap-2 ">

@@ -45,14 +45,11 @@ function Home({ handleToggleSidebar, isSidebarVisible }) {
   }, [token, tokenRF])
 
   useEffect(() => {
-    console.log('effectChange')
-
     // Đảm bảo là chỉ khi thanh bên không hiển thị mới thực hiện đoạn mã xử lý sự kiện.
     if (!isSidebarVisible) {
       const handleDocumentClick = (event) => {
         // Kiểm tra xem thanh bên không hiển thị và click không nằm trong thanh bên.
         if (!isSidebarVisible && sidebarRef.current && !sidebarRef.current.contains(event.target)) {
-          console.log('click')
           handleToggleSidebar() // Gọi hàm để chuyển đổi trạng thái của thanh bên.
         }
       }
