@@ -14,7 +14,8 @@ const { Text } = Typography
 
 function Tables({ loadingSearch, param, columName, height, handleView, handleEdit, typeTable, handleAddData, handleDelete, handleChangePhieuThu, selectMH, textSearch }) {
   const [hiden, setHiden] = useState([])
-  console.log(param)
+  const [soLuong, setSoLuong] = useState(1)
+
   const DataColumns = param ? param[0] : []
 
   const keysOnly =
@@ -45,6 +46,7 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
       </div>
     )
   }
+
   const listColumns = keysOnly?.filter((value) => !hiden.includes(value))
   const newColumns = listColumns.map((item, index) => {
     if (item === 'DiaChi') {
@@ -61,8 +63,8 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
           showTitle: false,
         },
         render: (address) => (
-          <Tooltip placement="topLeft" title={address}>
-            {address}
+          <Tooltip placement="topLeft" title={address} className="truncate" color="blue">
+            {renderHighlightedCell(address)}
           </Tooltip>
         ),
       }
@@ -81,8 +83,8 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
           showTitle: false,
         },
         render: (address) => (
-          <Tooltip placement="topLeft" title={address}>
-            {address}
+          <Tooltip placement="topLeft" title={address} className=" truncate" color="blue">
+            {renderHighlightedCell(address)}
           </Tooltip>
         ),
       }
@@ -101,7 +103,7 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
           showTitle: false,
         },
         render: (address) => (
-          <Tooltip placement="topLeft" title={address}>
+          <Tooltip placement="topLeft" title={address} className=" truncate" color="blue">
             {address}
           </Tooltip>
         ),
@@ -139,7 +141,7 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
         ellipsis: {
           showTitle: false,
         },
-        render: (text) => <div style={{ textAlign: 'center' }}>{text ? dayjs(text).format('DD/MM/YYYY') : ''}</div>,
+        render: (text) => <div style={{ textAlign: 'center' }}>{renderHighlightedCell(text ? dayjs(text).format('DD/MM/YYYY') : '')}</div>,
       }
     }
     if (item === 'NgayTao' || item === 'NgaySuaCuoi') {
@@ -168,8 +170,8 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
           showTitle: false,
         },
         render: (value) => (
-          <Tooltip placement="topLeft" title={value}>
-            {value ? dayjs(value).format('DD/MM/YYYY hh:mm:ss') : ''}
+          <Tooltip placement="topLeft" title={value} className=" truncate" color="blue">
+            {renderHighlightedCell(value ? dayjs(value).format('DD/MM/YYYY hh:mm:ss') : '')}
           </Tooltip>
         ),
       }
@@ -188,8 +190,8 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
           showTitle: false,
         },
         render: (address) => (
-          <Tooltip placement="topLeft" title={address}>
-            {address}
+          <Tooltip placement="topLeft" title={address} className=" truncate" color="blue">
+            {renderHighlightedCell(address)}
           </Tooltip>
         ),
       }
@@ -337,7 +339,16 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
     return {
       onDoubleClick: () => {
         typeTable === 'listHelper'
-          ? handleAddData({ ...record, SoLuong: 1, DonGia: record.GiaBan, TyLeCKTT: 0, TienHang: 0, ThanhTien: 0, TienCKTT: 0, TongCong: 0 })
+          ? handleAddData({
+              ...record,
+              SoLuong: soLuong,
+              DonGia: record.GiaBan,
+              TyLeCKTT: 0,
+              TienHang: record.GiaBan * soLuong,
+              ThanhTien: record.GiaBan * soLuong,
+              TienCKTT: 0,
+              TongCong: record.GiaBan * soLuong,
+            })
           : handleView(record)
       },
       onClick: () => {
@@ -370,7 +381,9 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
   const handleRowClick = (record) => {
     setSelectedRecord(record.SoChungTu)
   }
-
+  const onChangeInphutSL = (value) => {
+    setSoLuong(value)
+  }
   return (
     <>
       {/* <Button onClick={handleToggleSelect} className="mr-4 ">
@@ -387,7 +400,12 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
           value={hiden}
         />
       )} */}
-
+      {typeTable !== 'listHelper' ? null : (
+        <>
+          <Text>Nhập số lượng cần thêm vào chi tiết :</Text>
+          <InputNumber min={1} max={999} onChange={onChangeInphutSL} />
+        </>
+      )}
       <Form form={form} component={false}>
         {typeTable !== 'listHelper' ? (
           <Table

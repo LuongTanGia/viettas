@@ -5,7 +5,7 @@ import { nameColumsPhieuBanHang } from '../util/Table/ColumnName'
 import ActionModals from './ActionModals'
 import { useEffect, useRef, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { THONGTINPHIEU, DANHSACHPHIEUBANHANG, XOAPHIEUBANHANG, LAPPHIEUTHU } from '../../action/Actions'
+import { THONGTINPHIEU, DANHSACHPHIEUBANHANG, XOAPHIEUBANHANG, LAPPHIEUTHU, KHOANNGAY } from '../../action/Actions'
 import API from '../../API/API'
 import { toast } from 'react-toastify'
 import ModelPrint from './PrintModel'
@@ -26,6 +26,8 @@ function PhieuBanHang() {
   const token = localStorage.getItem('TKN')
   const [dataLoaded, setDataLoaded] = useState(false)
   const [searchText, setSearchText] = useState('')
+  const [modelType, setModelType] = useState('')
+
   const [loadingSearch, setLoadingSearch] = useState(false)
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [data, setData] = useState()
@@ -37,39 +39,54 @@ function PhieuBanHang() {
   const [dataRecord, setDataRecord] = useState([])
   const [selectMH, setSelectMH] = useState()
   const [isShowOption, setIsShowOption] = useState(false)
-  const [dataDate, setDataDate] = useState({
-    NgayBatDau: '',
-    NgayKetThuc: '',
-  })
-  //selectMH
+  const [dataDate, setDataDate] = useState({})
+
+  const isMatch = (value, searchText) => {
+    const stringValue = String(value).toLowerCase()
+    const searchTextLower = searchText.toLowerCase()
+
+    // Check if the string includes the searchText
+    if (stringValue.includes(searchTextLower)) {
+      return true
+    }
+
+    // Check if it's a valid date and matches (formatted or not)
+    const isDateTime = dayjs(stringValue).isValid()
+    if (isDateTime) {
+      const formattedValue = dayjs(stringValue).format('DD/MM/YYYY').toString()
+      const formattedSearchText = searchTextLower
+
+      if (formattedValue.includes(formattedSearchText)) {
+        return true
+      }
+    }
+
+    return false
+  }
+
   useEffect(() => {
+    const getDate = async () => {
+      const date = await KHOANNGAY(API.KHOANNGAY, token)
+      setDataDate(date)
+    }
+    getDate()
+  }, [])
+  useEffect(() => {
+    // setDataDate(dateHT)
     const getListData = async () => {
       setLoadingSearch(true)
       const searchData = {
         ...dataDate,
         searchText: searchText.trim(),
       }
+
       const filteredDataRes = await DANHSACHPHIEUBANHANG(API.DANHSACHPBS, token, searchData, dispatch)
+
       if (filteredDataRes === -1) {
         setData([])
       } else {
         const newData = filteredDataRes.filter((record) => {
-          return Object.keys(record).some((key) => {
-            const stringValue = String(record[key]).toLowerCase()
-            const searchTextLower = searchText.toLowerCase()
-
-            const isDateTime = dayjs(stringValue).isValid()
-
-            if (isDateTime) {
-              const formattedValue = dayjs(stringValue).format('DD/MM/YYYY').toString()
-
-              const formattedSearchText = searchTextLower
-
-              if (formattedValue.includes(formattedSearchText)) {
-                return true
-              }
-            } else return false
-          })
+          return Object.keys(record).some((key) => isMatch(record[key], searchText))
         })
 
         setData(newData)
@@ -85,7 +102,6 @@ function PhieuBanHang() {
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (optionContainerRef.current && !optionContainerRef.current.contains(event.target)) {
-        // Click ngoài phần tử chứa isShowOption, ẩn isShowOption
         setIsShowOption(false)
       }
     }
@@ -165,6 +181,11 @@ function PhieuBanHang() {
 
   const handleShowPrint = () => {
     setIsShowPrint(!isShowPrint)
+    setModelType('')
+  }
+  const handleShowPrint_kho = () => {
+    setIsShowPrint(!isShowPrint)
+    setModelType('PhieuKho')
   }
   const handleSearch = async () => {
     setLoadingSearch(true)
@@ -267,9 +288,9 @@ function PhieuBanHang() {
                   icon={<RiFileExcel2Fill />}
                   color={'slate-50'}
                   title={'Xuất Excel'}
-                  background={'red-500'}
+                  background={'green-500'}
                   bg_hover={'white'}
-                  color_hover={'red-500'}
+                  color_hover={'green-500'}
                   handleAction={exportToExcel}
                 />
                 <ActionButton
@@ -280,6 +301,15 @@ function PhieuBanHang() {
                   bg_hover={'white'}
                   color_hover={'purple-500'}
                   handleAction={handleShowPrint}
+                />
+                <ActionButton
+                  icon={<PrinterOutlined />}
+                  color={'slate-50'}
+                  title={'In Phiếu Kho'}
+                  background={'purple-500'}
+                  bg_hover={'white'}
+                  color_hover={'purple-500'}
+                  handleAction={handleShowPrint_kho}
                 />
               </div>
             )}
@@ -293,7 +323,7 @@ function PhieuBanHang() {
             <DatePicker
               className="DatePicker_PMH max-h-[100px]"
               format="DD/MM/YYYY"
-              defaultValue={dayjs(new Date())}
+              defaultValue={dayjs(dataDate?.NgayBatDau)}
               onChange={(newDate) => {
                 setDataDate({
                   ...dataDate,
@@ -307,7 +337,7 @@ function PhieuBanHang() {
             <DatePicker
               className="DatePicker_PMH max-h-[100px]"
               format="DD/MM/YYYY"
-              defaultValue={dayjs(new Date())}
+              defaultValue={dayjs(dataDate?.NgayKetThuc)}
               onChange={(newDate) => {
                 setDataDate({
                   ...dataDate,
@@ -351,7 +381,7 @@ function PhieuBanHang() {
       </div>
       <ActionModals isShow={isShow} handleClose={handleClose} dataRecord={dataRecord} typeAction={type} setMaHang={setMaHang} />
       <Model isShow={isShowDelete} handleClose={handleClose} record={dataRecord} ActionDelete={ActionDelete} typeModel={typeModel} ActionPay={ActionPay} />
-      <ModelPrint isShowModel={isShowPrint} handleCloseAction={handleCloseAction} />
+      <ModelPrint isShowModel={isShowPrint} handleCloseAction={handleCloseAction} data={dataDate} modelType={modelType} />
     </>
   )
 }

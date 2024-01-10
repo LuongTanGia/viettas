@@ -51,7 +51,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
   const handleSave = (row) => {
     setDataSource((prevDataSource) => {
       const newData = [...prevDataSource]
-      const index = newData.findIndex((item) => item.STT === row.STT)
+      const index = newData.findIndex((item) => item.key === row.key)
 
       if (index !== -1) {
         const item = newData[index]
@@ -120,24 +120,26 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
 
           const GiaBan = selectedOption.GiaBan
           setNewOptions([...newOptions, record.MaHang])
-          console.log(newOptions)
+
           const updatedRow = {
             ...record,
             ...values,
+
             TenHang: selectedOption.TenHang || record.TenHang,
             MaHang: selectedOption.MaHang || record.MaHang,
-            DonGia: GiaBan || 0,
+            DonGia: GiaBan || record.DonGia,
             SoLuong: record.SoLuong || values.SoLuong || 1,
             TyLeCKTT: 0,
             TonKho: selectedOption.TonKho || true,
-            TienThue: selectedOption.TienThue || 0,
+            TienThue: selectedOption.TienThue || record.TienThue,
             DVT: selectedOption.DVT || record.DVT,
-            TienHang: selectedOption.DonGia || 0,
-            TyLeThue: 0,
-            ThanhTien: selectedOption.DonGia || 0,
+            TienHang: selectedOption.DonGia || record.TienHang,
+            TyLeThue: record.TyLeThue,
+            ThanhTien: selectedOption.DonGia || record.DonGia,
             DVTKho: selectedOption.DVT,
             DVTQuyDoi: selectedOption.DVTQuyDoi,
-
+            TongCong: GiaBan * record.SoLuong || record.SoLuong * record.DonGia,
+            DVTDF: selectedOption.DVT || record.DVT,
             // TienCKTT: 0,
             // TongCong: selectedOption.DonGia || undefined,
           }
@@ -159,7 +161,14 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
     if (editable) {
       const isSelect = dataIndex === 'MaHang' || dataIndex === 'TenHang' || dataIndex === 'DVT'
 
-      const listDVT = record.DVTKho !== record.DVTQuyDoi ? [record.DVTKho, record.DVTQuyDoi] : [record.DVTQuyDoi]
+      const listDVT =
+        typeTable !== 'create'
+          ? record.DVTKho !== record.DVTQuyDoi
+            ? [record.DVTKho, record.DVTQuyDoi]
+            : [record.DVTQuyDoi]
+          : record.DVTDF !== record.DVTQuyDoi
+            ? [record.DVTDF, record.DVTQuyDoi]
+            : [record.DVTQuyDoi]
       // const listDVT = [record.DVTKho, record.DVTQuyDoi]
 
       childNode = editing ? (
@@ -532,12 +541,48 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
                     return (
                       <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'center' : 'center'} className="text-end font-bold  bg-[#f1f1f1] pr-5">
                         {isNumericColumn ? (
-                          <Text strong align="center">
-                            {Number(pageData.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                              minimumFractionDigits: ThongSo.SOLESOTIEN,
-                              maximumFractionDigits: ThongSo.SOLESOTIEN,
-                            })}
-                          </Text>
+                          // <Text strong align="center">
+                          //   {Number(pageData.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                          //     minimumFractionDigits: ThongSo.SOLESOTIEN,
+                          //     maximumFractionDigits: ThongSo.SOLESOTIEN,
+                          //   })}
+                          // </Text>
+                          column.dataIndex === 'DonGia' ? (
+                            <Text strong className="mr-6">
+                              {Number(pageData.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                minimumFractionDigits: ThongSo.SOLEDONGIA,
+                                maximumFractionDigits: ThongSo.SOLEDONGIA,
+                              })}
+                            </Text>
+                          ) : ['TongCong', 'TienCKTT', 'ThanhTien', 'TienThue', 'TienHang'].includes(column.dataIndex) ? (
+                            <Text strong>
+                              {Number(pageData.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                minimumFractionDigits: ThongSo.SOLESOTIEN,
+                                maximumFractionDigits: ThongSo.SOLESOTIEN,
+                              })}
+                            </Text>
+                          ) : ['TyLeCKTT', 'TyLeThue'].includes(column.dataIndex) ? (
+                            <Text strong className="mr-6">
+                              {Number(pageData.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                minimumFractionDigits: ThongSo.SOLETYLE,
+                                maximumFractionDigits: ThongSo.SOLETYLE,
+                              })}
+                            </Text>
+                          ) : ['SoLuong'].includes(column.dataIndex) ? (
+                            <Text strong className="mr-6">
+                              {Number(pageData.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                minimumFractionDigits: ThongSo.SOLESOLUONG,
+                                maximumFractionDigits: ThongSo.SOLESOLUONG,
+                              })}
+                            </Text>
+                          ) : (
+                            <Text strong>
+                              {Number(pageData.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 0,
+                              })}
+                            </Text>
+                          )
                         ) : null}
                       </Table.Summary.Cell>
                     )

@@ -158,7 +158,13 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
   }
   const handleSubmitAndClose = async () => {
     if (typeAction === 'create') {
-      const data = { ...form, ...Dates, DataDetails: dataChitiet }
+      const newData = dataChitiet.map((item, index) => {
+        return {
+          ...item,
+          STT: index + 1,
+        }
+      })
+      const data = { ...form, ...Dates, DataDetails: newData }
       const res = await THEMPHIEUBANHANG(API.THEMPHIEUBANHANG, token, data)
       console.log(res)
       setMaHang(res[0]?.SoChungTu)
@@ -166,9 +172,15 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
         handleClose()
       }
     } else if (typeAction === 'edit') {
-      const data = { ...form, DataDetails: dataChitiet }
+      const newData = dataChitiet.map((item, index) => {
+        return {
+          ...item,
+          STT: index + 1,
+        }
+      })
+      const data = { ...form, DataDetails: newData }
       const res = await SUAPHIEUBANHANG(API.SUAPHIEUBANHANG, token, { SoChungTu: data.SoChungTu, Data: data })
-
+      console.log(data)
       setMaHang(data.SoChungTu)
       if (res.DataError === 0) {
         handleClose()
@@ -385,6 +397,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
                     isShowList={showPopup}
                     close={handleClosePopup}
                     handleAddData={handleAddData}
+                    form={form}
                   />
                 ) : null
               ) : null}
