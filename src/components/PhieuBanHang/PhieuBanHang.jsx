@@ -5,7 +5,7 @@ import { nameColumsPhieuBanHang } from '../util/Table/ColumnName'
 import ActionModals from './ActionModals'
 import { useEffect, useRef, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { THONGTINPHIEU, DANHSACHPHIEUBANHANG, XOAPHIEUBANHANG, LAPPHIEUTHU, KHOANNGAY } from '../../action/Actions'
+import { THONGTINPHIEU, DANHSACHPHIEUBANHANG, XOAPHIEUBANHANG, LAPPHIEUTHU, KHOANNGAY, exportToExcel } from '../../action/Actions'
 import API from '../../API/API'
 import { toast } from 'react-toastify'
 import ModelPrint from './PrintModel'
@@ -14,7 +14,7 @@ import Model from './Model'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { BsSearch } from 'react-icons/bs'
 import dayjs from 'dayjs'
-import * as XLSX from 'xlsx'
+
 import { TfiMoreAlt } from 'react-icons/tfi'
 import { MdFilterAlt } from 'react-icons/md'
 import { RiFileExcel2Fill } from 'react-icons/ri'
@@ -225,34 +225,6 @@ function PhieuBanHang() {
 
     setDataLoaded(true)
     setLoadingSearch(false)
-  }
-  // const exportToExcel = () => {
-  //   const ws = XLSX.utils.table_to_sheet(document.getElementById('my-table'))
-  //   const wb = XLSX.utils.book_new()
-  //   XLSX.utils.book_append_sheet(wb, ws, 'Sheet1')
-  //   XLSX.writeFile(wb, 'du_lieu.xlsx')
-  // }
-  const exportToExcel = () => {
-    const ws = XLSX.utils.table_to_sheet(document.getElementById('my-table'))
-    const wb = XLSX.utils.book_new()
-
-    // Add company information to the worksheet starting from cell A1
-    const companyInfo = [['Tên Công Ty: ABC Corporation'], ['Địa Chỉ: 123 Main Street'], ['Ngày: 2024-01-01']]
-    XLSX.utils.sheet_add_aoa(ws, companyInfo, { origin: 'A1' })
-
-    // Append the worksheet to the workbook
-    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1')
-
-    // Add additional data starting from row 11 (excluding the first 10 rows)
-    const additionalData = [
-      ['John Doe', '30', 'Engineer'],
-      ['Jane Doe', '25', 'Designer'],
-      // Add more data as needed
-    ]
-    XLSX.utils.sheet_add_aoa(ws, additionalData, { origin: 'A11' })
-
-    // Save the workbook to a file
-    XLSX.writeFile(wb, 'du_lieu.xlsx')
   }
 
   return (

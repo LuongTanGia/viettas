@@ -4,7 +4,8 @@ import MainSlice from '../components/MainPage/MainSlice'
 import DuLieuSlice from '../components/DULIEU/DuLieuSlice'
 import PBSSlice from '../components/PhieuBanHang/PBSSlice'
 import { toast } from 'react-toastify'
-
+import * as XLSX from 'xlsx'
+import dayjs from 'dayjs'
 // CallBack API Function
 export const CallBackAPI = async (API, token, data) => {
   try {
@@ -691,4 +692,13 @@ export const formatPrice = (price, odd) => {
   const formattedAmount = `${integerPart}${decimalPart}`
 
   return formattedAmount
+}
+
+export const exportToExcel = () => {
+  const ws = XLSX.utils.table_to_sheet(document.getElementById('my-table'), { origin: 'A6' })
+  const wb = XLSX.utils.book_new()
+  const companyInfo = [['Tên Công Ty: Viettas SaiGon JSC'], ['Địa Chỉ: 351/9 Nơ Trang Long P.13 Q.Bình Thạnh TPHCM'], [`Ngày :${dayjs(new Date()).format('YYYY-MM-DD')}`]]
+  XLSX.utils.sheet_add_aoa(ws, companyInfo, { origin: 'A2' })
+  XLSX.utils.book_append_sheet(wb, ws, 'DanhSach')
+  XLSX.writeFile(wb, 'du_lieu.xlsx')
 }
