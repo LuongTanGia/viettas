@@ -328,11 +328,11 @@ const NhapXuatTonKho = () => {
     {
       title: 'Chuyển kho',
       dataIndex: 'SoLuongNhap_NCK',
-      key: 'SoLuongTonCK',
+      key: 'SoLuongNhap_NCK',
       width: 150,
       align: 'center',
       showSorterTooltip: false,
-      sorter: (a, b) => a.SoLuongTonCK - b.SoLuongTonCK,
+      sorter: (a, b) => a.SoLuongNhap_NCK - b.SoLuongNhap_NCK,
       render: (text) => (
         <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
@@ -468,11 +468,11 @@ const NhapXuatTonKho = () => {
     {
       title: 'Chuyển kho',
       dataIndex: 'SoLuongXuat_XCK',
-      key: 'SoLuongTonCK',
+      key: 'SoLuongXuat_XCK',
       width: 150,
       align: 'center',
       showSorterTooltip: false,
-      sorter: (a, b) => a.SoLuongTonCK - b.SoLuongTonCK,
+      sorter: (a, b) => a.SoLuongXuat_XCK - b.SoLuongXuat_XCK,
       render: (text) => (
         <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
@@ -516,7 +516,7 @@ const NhapXuatTonKho = () => {
         <SimpleBackdrop />
       ) : (
         <div className="flex flex-col gap-2">
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-1">
             <div className="flex relative" ref={showOption}>
               <div className="flex items-center gap-2">
                 <h1 className="text-lg font-bold text-black-600 uppercase">Nhập Xuất Tồn - Theo Kho</h1>
@@ -538,9 +538,9 @@ const NhapXuatTonKho = () => {
                 )}
               </div>
             </div>
-            <div className="flex justify-between">
-              <form className="flex gap-2 justify-center items-center" onSubmit={getDataNXT}>
-                <div className="flex flex-col gap-2 justify-end content-end">
+            <div className="flex justify-between items-end gap-2">
+              <form className="flex flex-col gap-1 items-start" onSubmit={getDataNXT}>
+                <div className="flex gap-2 justify-between">
                   <div className="flex gap-1">
                     <div className="flex items-center gap-1">
                       <label>Từ</label>
@@ -579,31 +579,21 @@ const NhapXuatTonKho = () => {
                       />
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Select
-                      showSearch
-                      allowClear
-                      size="small"
-                      placeholder="Lọc Kho"
-                      value={selectedMaKho}
-                      onChange={(value) => setSelectedMaKho(value)}
-                      style={{
-                        width: '170px',
-                      }}
-                    >
-                      {khoHangNXT?.map((item, index) => {
-                        return (
-                          <Select.Option key={index} value={item.MaKho} title={item.TenKho} className="py-8">
-                            <p> {item.ThongTinKho}</p>
-                          </Select.Option>
-                        )
-                      })}
-                    </Select>
+                  <div>
+                    <ActionButton
+                      type="submit"
+                      title={'Lọc'}
+                      icon={<MdFilterListAlt className="w-6 h-6" />}
+                      color={'slate-50'}
+                      background={'blue-500'}
+                      color_hover={'blue-500'}
+                      bg_hover={'white'}
+                    />
                   </div>
                 </div>
                 <div className=" flex flex-col gap-2">
-                  <div className="flex gap-2">
-                    <div className="flex gap-2 items-center">
+                  <div className="flex gap-1">
+                    <div className="flex gap-1 items-center">
                       <div>Từ</div>
                       <Select
                         showSearch
@@ -611,8 +601,11 @@ const NhapXuatTonKho = () => {
                         allowClear
                         placeholder="Chọn nhóm"
                         value={selectedNhomFrom}
-                        disabled={selectedMaFrom?.length > 0 || selectedMaTo?.length > 0 || selectedMaList?.length > 0}
-                        onChange={(value) => setSelectedNhomFrom(value)}
+                        disabled={selectedMaFrom?.length > 0 || selectedMaTo?.length > 0 || selectedMaList?.length > 0 || selectedNhomList?.length > 0}
+                        onChange={(value) => {
+                          setSelectedNhomFrom(value)
+                          selectedNhomTo == null ? setSelectedNhomTo(value) : ''
+                        }}
                         style={{
                           width: '180px',
                           textOverflow: 'ellipsis',
@@ -627,16 +620,19 @@ const NhapXuatTonKho = () => {
                         })}
                       </Select>
                     </div>
-                    <div className="flex gap-2 items-center">
-                      <div> Tới</div>
+                    <div className="flex gap-1 items-center">
+                      <div>-</div>
                       <Select
                         showSearch
                         allowClear
                         size="small"
                         placeholder="Chọn nhóm"
-                        disabled={selectedMaFrom?.length > 0 || selectedMaTo?.length > 0 || selectedMaList?.length > 0}
+                        disabled={selectedMaFrom?.length > 0 || selectedMaTo?.length > 0 || selectedMaList?.length > 0 || selectedNhomList?.length > 0}
                         value={selectedNhomTo}
-                        onChange={(value) => setSelectedNhomTo(value)}
+                        onChange={(value) => {
+                          setSelectedNhomTo(value)
+                          selectedNhomFrom == null ? setSelectedNhomFrom(value) : ''
+                        }}
                         style={{
                           width: '180px',
                           textOverflow: 'ellipsis',
@@ -651,7 +647,7 @@ const NhapXuatTonKho = () => {
                         })}
                       </Select>
                     </div>
-                    <div className="flex gap-2 items-center">
+                    <div className="flex gap-1 items-center">
                       <div>Gộp</div>
                       <Select
                         mode="multiple"
@@ -659,34 +655,37 @@ const NhapXuatTonKho = () => {
                         filterOption
                         size="small"
                         placeholder="Danh sách nhóm"
-                        disabled={selectedMaFrom?.length > 0 || selectedMaTo?.length > 0 || selectedMaList?.length > 0}
+                        disabled={
+                          selectedMaFrom?.length > 0 || selectedMaTo?.length > 0 || selectedMaList?.length > 0 || selectedNhomFrom?.length > 0 || selectedNhomTo?.length > 0
+                        }
                         value={selectedNhomList}
                         onChange={(value) => setSelectedNhomList(value)}
-                        style={{
-                          width: '380px',
-                        }}
+                        className="w-[100%] min-w-[360px]"
                       >
                         {nhomHangNXT?.map((item) => {
                           return (
                             <Select.Option key={item.Ma} value={item.Ma} title={item.ThongTinNhomHang}>
-                              <p className="truncate">{item.Ma}</p>
+                              <p className="truncate">{item.ThongTinNhomHang}</p>
                             </Select.Option>
                           )
                         })}
                       </Select>
                     </div>
                   </div>
-                  <div className="flex gap-2">
-                    <div className="flex gap-2 items-center">
+                  <div className="flex gap-1">
+                    <div className="flex gap-1 items-center">
                       <div>Từ</div>
                       <Select
                         allowClear
                         showSearch
                         placeholder="Chọn mã hàng"
                         size="small"
-                        disabled={selectedNhomFrom?.length > 0 || selectedNhomTo?.length > 0 || selectedNhomList?.length > 0}
+                        disabled={selectedNhomFrom?.length > 0 || selectedNhomTo?.length > 0 || selectedNhomList?.length > 0 || selectedMaList?.length > 0}
                         value={selectedMaFrom}
-                        onChange={(value) => setSelectedMaFrom(value)}
+                        onChange={(value) => {
+                          setSelectedMaFrom(value)
+                          selectedMaTo == null ? setSelectedMaTo(value) : ''
+                        }}
                         style={{
                           width: '180px',
                           textOverflow: 'ellipsis',
@@ -701,16 +700,19 @@ const NhapXuatTonKho = () => {
                         })}
                       </Select>
                     </div>
-                    <div className="flex gap-2 items-center">
-                      <div>Tới</div>
+                    <div className="flex gap-1 items-center">
+                      <div>-</div>
                       <Select
                         allowClear
                         showSearch
                         size="small"
-                        disabled={selectedNhomFrom?.length > 0 || selectedNhomTo?.length > 0 || selectedNhomList?.length > 0}
+                        disabled={selectedNhomFrom?.length > 0 || selectedNhomTo?.length > 0 || selectedNhomList?.length > 0 || selectedMaList?.length > 0}
                         placeholder="Chọn mã hàng"
                         value={selectedMaTo}
-                        onChange={(value) => setSelectedMaTo(value)}
+                        onChange={(value) => {
+                          setSelectedMaTo(value)
+                          selectedMaFrom == null ? setSelectedMaFrom(value) : ''
+                        }}
                         style={{
                           width: '180px',
                           textOverflow: 'ellipsis',
@@ -725,26 +727,28 @@ const NhapXuatTonKho = () => {
                         })}
                       </Select>
                     </div>
-                    <div className="flex items-center gap-2 col-span-2">
+                    <div className="flex items-center gap-1 col-span-2">
                       <div>Gộp</div>
                       <Select
                         mode="multiple"
                         maxTagCount={2}
                         allowClear
                         size="small"
-                        disabled={selectedNhomFrom?.length > 0 || selectedNhomTo?.length > 0 || selectedNhomList?.length > 0}
+                        disabled={
+                          selectedNhomFrom?.length > 0 || selectedNhomTo?.length > 0 || selectedNhomList?.length > 0 || selectedMaFrom?.length > 0 || selectedMaTo?.length > 0
+                        }
                         filterOption
                         value={selectedMaList}
                         onChange={(value) => setSelectedMaList(value)}
                         placeholder="Chọn mã hàng"
-                        style={{
-                          width: '380px',
-                        }}
+                        className="w-[100%] min-w-[360px]"
                       >
                         {hangHoaNXT?.map((item, index) => {
                           return (
                             <Select.Option key={index} value={item.MaHang} title={item.TenHang}>
-                              <p className="truncate">{item.MaHang}</p>
+                              <p className="truncate">
+                                {item.MaHang}-{item.TenHang}
+                              </p>
                             </Select.Option>
                           )
                         })}
@@ -752,16 +756,28 @@ const NhapXuatTonKho = () => {
                     </div>
                   </div>
                 </div>
-                <ActionButton
-                  type="submit"
-                  title={'Lọc'}
-                  icon={<MdFilterListAlt className="w-6 h-6" />}
-                  color={'slate-50'}
-                  background={'blue-500'}
-                  color_hover={'blue-500'}
-                  bg_hover={'white'}
-                />
               </form>
+              <div className="flex items-center gap-2">
+                <Select
+                  showSearch
+                  allowClear
+                  size="small"
+                  placeholder="Lọc Kho"
+                  value={selectedMaKho}
+                  onChange={(value) => setSelectedMaKho(value)}
+                  style={{
+                    width: '160px',
+                  }}
+                >
+                  {khoHangNXT?.map((item, index) => {
+                    return (
+                      <Select.Option key={index} value={item.MaKho} title={item.TenKho} className="py-8">
+                        <p> {item.ThongTinKho}</p>
+                      </Select.Option>
+                    )
+                  })}
+                </Select>
+              </div>
             </div>
           </div>
           <div className="NhapXuatTonKho">

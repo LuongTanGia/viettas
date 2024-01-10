@@ -149,7 +149,6 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
     }
     if (key === 'TenHang') {
       const selectedHangHoa = dataHangHoa.find((item) => item.MaHang === newValue)
-      newDataList[index]['DonGia'] = selectedHangHoa?.DonGia
       newDataList[index]['MaHang'] = selectedHangHoa?.MaHang
     }
     const existMaHang = newDataList.some((item, i) => i !== index && item.MaHang === newValue)
@@ -377,7 +376,7 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
                             value={dayjs(NDCForm?.NgayCTu) || ''}
                             onChange={(values) => {
                               const newDate = dayjs(values).format('YYYY-MM-DDTHH:mm:ss')
-                              setValueDate(dayjs(values))
+                              // setValueDate(dayjs(values))
                               setNDCForm({ ...NDCForm, NgayCTu: newDate })
                             }}
                             sx={{
@@ -418,7 +417,7 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
                           <input
                             title={dataNDCView.NguoiTao}
                             value={dataNDCView.NguoiTao}
-                            className="px-2 w-[16rem] rounded resize-none border-[0.125rem] outline-none text-[1rem] overflow-ellipsis"
+                            className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] rounded resize-none border-[0.125rem] outline-none text-[1rem] overflow-ellipsis"
                             readOnly
                           />
                         </div>
@@ -437,7 +436,7 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
                           <input
                             title={dataNDCView.NguoiSuaCuoi}
                             value={dataNDCView.NguoiSuaCuoi || ''}
-                            className="px-2 w-[16rem] rounded resize-none border-[0.125rem] outline-none text-[1rem] overflow-ellipsis"
+                            className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] rounded resize-none border-[0.125rem] outline-none text-[1rem] overflow-ellipsis"
                             readOnly
                           />
                         </div>
@@ -475,9 +474,8 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
                             <th className="w-[3rem]">STT</th>
                             <th className="w-[8rem]">Mã hàng</th>
                             <th className="w-[22rem]">Tên hàng</th>
-                            <th className="w-[12rem]">Đơn giá</th>
                             <th className="w-[10rem]">Số lượng</th>
-                            <th className={`${selectedRowData?.length > 9 ? 'w-[3.5rem]' : 'w-[5.5rem]'}`}></th>
+                            <th className={`${selectedRowData?.length > 9 ? 'w-[3.5rem]' : 'w-[5rem]'}`}></th>
                           </tr>
                         </thead>
                         <tbody>
@@ -512,9 +510,6 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
                                 </div>
                               </td>
                               <td>
-                                <div className="flex justify-end">{formatThapPhan(item.DonGia, dataThongSo?.SOLEDONGIA)}</div>
-                              </td>
-                              <td>
                                 <div className="inputNDC flex justify-end">
                                   <InputNumber
                                     value={item.SoLuong || ''}
@@ -544,7 +539,7 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
                     <FloatButton
                       className="z-3 opacity-50 bg-transparent w-[30px] h-[30px]"
                       style={{
-                        right: 40,
+                        right: 50,
                         top: 10,
                       }}
                       icon={<IoMdAddCircle />}

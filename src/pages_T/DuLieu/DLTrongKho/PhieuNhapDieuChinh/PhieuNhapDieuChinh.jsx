@@ -512,12 +512,21 @@ const PhieuNhapDieuChinh = () => {
                             return (
                               <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
                                 {isNumericColumn ? (
-                                  <Text strong>
-                                    {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                      minimumFractionDigits: dataThongSo.SOLESOLUONG,
-                                      maximumFractionDigits: dataThongSo.SOLESOLUONG,
-                                    })}
-                                  </Text>
+                                  column.dataIndex === 'SoMatHang' ? (
+                                    <Text strong>
+                                      {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                        minimumFractionDigits: 0,
+                                        maximumFractionDigits: 0,
+                                      })}
+                                    </Text>
+                                  ) : (
+                                    <Text strong>
+                                      {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                        minimumFractionDigits: dataThongSo.SOLESOLUONG,
+                                        maximumFractionDigits: dataThongSo.SOLESOLUONG,
+                                      })}
+                                    </Text>
+                                  )
                                 ) : null}
                               </Table.Summary.Cell>
                             )
