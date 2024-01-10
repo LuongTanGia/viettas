@@ -319,7 +319,13 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
         align: 'center',
         sorter: (a, b) => a[item].localeCompare(b[item]),
         showSorterTooltip: false,
-        render: (text) => <div className="text-start truncate">{text}</div>,
+        render: (text) => (
+          <div className="text-start truncate">
+            <Tooltip title={text} color="blue">
+              {text}
+            </Tooltip>
+          </div>
+        ),
       }
     }
 

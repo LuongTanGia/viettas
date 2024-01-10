@@ -108,13 +108,14 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH }) => {
           </div>
           <div className="border-2 my-1">
             <div className="p-4">
-              <div className="flex justify-center items-center  gap-3 pl-[74px]">
+              <div className="flex justify-center items-center  gap-3 pl-[74px] ">
                 {/* DatePicker */}
                 <div className="flex gap-x-5 items-center">
                   <label htmlFor="">Ngày</label>
                   <DatePicker
                     className="DatePicker_PMH"
                     format="DD/MM/YYYY"
+                    maxDate={dayjs(formPrint.NgayKetThuc)}
                     defaultValue={dayjs(dataThongTin?.NgayCTu)}
                     onChange={(newDate) => {
                       setFormPrint({
@@ -129,6 +130,7 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH }) => {
                   <DatePicker
                     className="DatePicker_PMH"
                     format="DD/MM/YYYY"
+                    minDate={dayjs(formPrint.NgayBatDau)}
                     defaultValue={dayjs(dataThongTin?.NgayCTu)}
                     onChange={(newDate) => {
                       setFormPrint({

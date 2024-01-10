@@ -123,6 +123,7 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, dataPMH }) => {
                   <DatePicker
                     className="DatePicker_PMH"
                     format="DD/MM/YYYY"
+                    maxDate={dayjs(formPrint.NgayKetThuc)}
                     defaultValue={dayjs(dataThongTin?.NgayCTu)}
                     onChange={(newDate) => {
                       setFormPrint({
@@ -137,6 +138,7 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, dataPMH }) => {
                   <DatePicker
                     className="DatePicker_PMH"
                     format="DD/MM/YYYY"
+                    minDate={dayjs(formPrint.NgayBatDau)}
                     defaultValue={dayjs(dataThongTin?.NgayCTu)}
                     onChange={(newDate) => {
                       setFormPrint({
