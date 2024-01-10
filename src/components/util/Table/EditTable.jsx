@@ -6,7 +6,7 @@ import BtnAction from './BtnAction'
 
 const { Option } = Select
 const { Text } = Typography
-const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOptions, ColumnTable, columName, typeTable, listHP }) => {
+const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOptions, ColumnTable, columName, typeTable, listHP, tableName }) => {
   const EditableContext = React.createContext(null)
   const [dataSource, setDataSource] = useState(param)
   const [newOptions, setNewOptions] = useState(yourMaHangOptions)
@@ -49,9 +49,10 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
     return <div style={{ minHeight: '400px', overflowY: 'auto' }}>{menu}</div>
   }
   const handleSave = (row) => {
+    console.log(row)
     setDataSource((prevDataSource) => {
       const newData = [...prevDataSource]
-      const index = newData.findIndex((item) => item.key === row.key)
+      const index = newData.findIndex((item) => (tableName === 'BanHang' ? item.key === row.key : item.STT === row.STT))
 
       if (index !== -1) {
         const item = newData[index]

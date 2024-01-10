@@ -1267,6 +1267,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                 <TableEdit
                   typeTable="create"
                   className="table_cre"
+                  tableName="MuaHang"
                   param={selectedRowData}
                   handleEditData={handleEditData}
                   ColumnTable={columnName}

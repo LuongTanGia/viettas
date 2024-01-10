@@ -20,6 +20,7 @@ const ModalHH = ({ close, data, onRowCreate, dataThongSo }) => {
   // }
 
   const handleChoose = (dataRow) => {
+    console.log(dataRow)
     const defaultValues = {
       SoLuong: 1,
       DonGia: 0,
@@ -42,7 +43,7 @@ const ModalHH = ({ close, data, onRowCreate, dataThongSo }) => {
       key: 'STT',
       width: 20,
       hight: 10,
-
+      fixed: 'left',
       align: 'center',
       render: (text, record, index) => <div style={{ textAlign: 'center' }}>{index + 1}</div>,
     },
@@ -51,7 +52,7 @@ const ModalHH = ({ close, data, onRowCreate, dataThongSo }) => {
       dataIndex: 'MaHang',
       key: 'MaHang',
       width: 50,
-
+      fixed: 'left',
       sorter: (a, b) => a.MaHang.localeCompare(b.MaHang),
       showSorterTooltip: false,
       align: 'center',
@@ -67,6 +68,7 @@ const ModalHH = ({ close, data, onRowCreate, dataThongSo }) => {
       dataIndex: 'TenHang',
       key: 'TenHang',
       align: 'center',
+      fixed: 'left',
       width: 100,
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       showSorterTooltip: false,
@@ -185,7 +187,7 @@ const ModalHH = ({ close, data, onRowCreate, dataThongSo }) => {
             dataSource={filteredPMH}
             size="small"
             scroll={{
-              // x: 1390,
+              x: 1390,
               y: 410,
             }}
             bordered
