@@ -120,7 +120,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
 
           const GiaBan = selectedOption.GiaBan
           setNewOptions([...newOptions, record.MaHang])
-          console.log(newOptions)
+          console.log('aaaaaa', newOptions)
           const updatedRow = {
             ...record,
             ...values,
@@ -137,7 +137,6 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
             ThanhTien: selectedOption.DonGia || 0,
             DVTKho: selectedOption.DVT,
             DVTQuyDoi: selectedOption.DVTQuyDoi,
-
             // TienCKTT: 0,
             // TongCong: selectedOption.DonGia || undefined,
           }
@@ -159,7 +158,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
     if (editable) {
       const isSelect = dataIndex === 'MaHang' || dataIndex === 'TenHang' || dataIndex === 'DVT'
 
-      const listDVT = record.DVTKho !== record.DVTQuyDoi ? [record.DVTKho, record.DVTQuyDoi] : [record.DVTQuyDoi]
+      const listDVT = record.DVT !== record.DVTQuyDoi ? [record.DVT, record.DVTQuyDoi] : record.DVTKho !== record.DVTQuyDoi ? [record.DVTKho, record.DVTQuyDoi] : [record.DVTQuyDoi]
       // const listDVT = [record.DVTKho, record.DVTQuyDoi]
 
       childNode = editing ? (
@@ -310,7 +309,13 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
         align: 'center',
         sorter: (a, b) => a[item].localeCompare(b[item]),
         showSorterTooltip: false,
-        render: (text) => <div className="text-start truncate">{text}</div>,
+        render: (text) => (
+          <div className="text-start truncate">
+            <Tooltip title={text} color="blue">
+              {text}
+            </Tooltip>
+          </div>
+        ),
       }
     }
 

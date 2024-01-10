@@ -267,9 +267,9 @@ function PhieuBanHang() {
                   icon={<RiFileExcel2Fill />}
                   color={'slate-50'}
                   title={'Xuất Excel'}
-                  background={'red-500'}
+                  background={'green-500'}
                   bg_hover={'white'}
-                  color_hover={'red-500'}
+                  color_hover={'blue-500'}
                   handleAction={exportToExcel}
                 />
                 <ActionButton

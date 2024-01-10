@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
-import { Table, Checkbox, Typography } from 'antd'
-const { Text } = Typography
+import { Table, Checkbox, Tooltip } from 'antd'
 
 import moment from 'moment'
 
@@ -31,7 +30,6 @@ const PhieuMuaHang = () => {
   const [dataDoiTuong, setDataDoiTuong] = useState(null)
   const [actionType, setActionType] = useState('')
   const [formKhoanNgay, setFormKhoanNgay] = useState([])
-  // const [KhoanNgay, setKhoanNgay] = useState([])
   const [dataThongSo, setDataThongSo] = useState()
   const [setSearchPMH, filteredPMH, searchPMH] = useSearch(data)
 
@@ -56,20 +54,42 @@ const PhieuMuaHang = () => {
         const tokenLogin = localStorage.getItem('TKN')
 
         const responseKH = await apis.ListHelperKhoHang(tokenLogin)
-        if (responseKH.data && responseKH.data.DataError === 0) {
-          setDataKhoHang(responseKH.data.DataResults)
-
-          const responseDT = await apis.ListHelperDoiTuong(tokenLogin)
-          if (responseDT.data && responseDT.data.DataError === 0) {
-            setDataDoiTuong(responseDT.data.DataResults)
-          }
-
-          const responseTT = await apis.ThongTinPMH(tokenLogin, dataRecord.SoChungTu)
-          if (responseTT.data && responseTT.data.DataError === 0) {
-            setDataThongTin(responseTT.data.DataResult)
-          } else {
-            console.error('Lấy data thất bại')
-          }
+        if (responseKH.data && responseKH.data.DataError === 0) setDataKhoHang(responseKH.data.DataResults)
+        else if (
+          (responseKH.data && responseKH.data.DataError === -100) ||
+          responseKH.data.DataError === -101 ||
+          responseKH.data.DataError === -107 ||
+          responseKH.data.DataError === -108 ||
+          responseKH.data.DataError === -110
+        ) {
+          await RETOKEN()
+          fetchData()
+        }
+        const responseDT = await apis.ListHelperDoiTuong(tokenLogin)
+        if (responseDT.data && responseDT.data.DataError === 0) {
+          setDataDoiTuong(responseDT.data.DataResults)
+        } else if (
+          (responseKH.data && responseKH.data.DataError === -100) ||
+          responseKH.data.DataError === -101 ||
+          responseKH.data.DataError === -107 ||
+          responseKH.data.DataError === -108 ||
+          responseKH.data.DataError === -110
+        ) {
+          await RETOKEN()
+          fetchData()
+        }
+        const responseTT = await apis.ThongTinPMH(tokenLogin, dataRecord.SoChungTu)
+        if (responseTT.data && responseTT.data.DataError === 0) {
+          setDataThongTin(responseTT.data.DataResult)
+        } else if (
+          (responseKH.data && responseKH.data.DataError === -100) ||
+          responseKH.data.DataError === -101 ||
+          responseKH.data.DataError === -107 ||
+          responseKH.data.DataError === -108 ||
+          responseKH.data.DataError === -110
+        ) {
+          await RETOKEN()
+          fetchData()
         }
       } catch (error) {
         console.error('Lấy data thất bại', error)
@@ -80,9 +100,14 @@ const PhieuMuaHang = () => {
     if (dataRecord && isShowModal) {
       fetchData()
     }
-
-    // console.log('loading', isLoadingModal)
   }, [dataRecord, isShowModal])
+
+  useEffect(() => {
+    if (dataThongTin) {
+      // Data đã được chuyền vào, dừng loading
+      setTableLoad(false)
+    }
+  }, [dataRecord, dataThongTin])
 
   useEffect(() => {
     const getKhoanNgay = async () => {
@@ -92,7 +117,7 @@ const PhieuMuaHang = () => {
 
         if (response.data && response.data.DataError === 0) {
           setFormKhoanNgay(response.data)
-          setKhoanNgay(response.data)
+
           setIsLoading(true)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
@@ -241,7 +266,11 @@ const PhieuMuaHang = () => {
       align: 'center',
       render: (text) => (
         <div className="truncate text-start">
-          <HighlightedCell text={text} search={searchPMH} />
+          <Tooltip title={text} color="blue">
+            <span>
+              <HighlightedCell text={text} search={searchPMH} />
+            </span>
+          </Tooltip>
         </div>
       ),
     },
@@ -534,7 +563,6 @@ const PhieuMuaHang = () => {
     } else {
       setActionType('edit')
       setDataRecord(record)
-
       setDataThongTin(record)
       setIsShowModal(true)
     }

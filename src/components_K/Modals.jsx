@@ -1,28 +1,20 @@
 /* eslint-disable react/jsx-no-undef */
 /* eslint-disable react/prop-types */
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import icons from '../untils/icons'
 import * as apis from '../apis'
-import { Table, Spin } from 'antd'
 import moment from 'moment'
 import dayjs from 'dayjs'
-// import { NumericFormat } from 'react-number-format'
 import ModalHH from './ModalHH'
 import { toast } from 'react-toastify'
 import TableEdit from '../components/util/Table/EditTable'
 import { nameColumsPhieuMuaHang } from '../components/util/Table/ColumnName'
-// import { CreateRow, EditRow } from '.'
 import { RETOKEN, base64ToPDF, formatPrice, formatQuantity } from '../action/Actions'
 import ModalOnlyPrint from './ModalOnlyPrint'
 import ModalOnlyPrintWareHouse from './ModalOnlyPrintWareHouse'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import logo from '../assets/VTS-iSale.ico'
-import { Select } from 'antd'
-import { Checkbox } from 'antd'
-import { FloatButton } from 'antd'
-
-// import { number } from 'prop-types'
-// import { create } from '@mui/material/styles/createTransitions'
+import { Table, Select, Tooltip, Checkbox, FloatButton } from 'antd'
 const { Option } = Select
 
 const { TiPrinter, MdFilterAlt, IoMdAddCircle } = icons
@@ -39,6 +31,14 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   const [selectedSctBD, setSelectedSctBD] = useState()
   const [selectedSctKT, setSelectedSctKT] = useState()
   const [newDataPMH, setNewDataPMH] = useState(dataPMH)
+  // const [isLoading, setIsLoading] = useState(true)
+
+  // useEffect(() => {
+  //   if (dataThongTin) {
+  //     // Data đã được chuyền vào, dừng loading
+  //     setIsLoading(false)
+  //   }
+  // }, [dataThongTin])
 
   // const [checkedValues, setCheckedValues] = useState([1])
   // const currentRowData = useCallback(
@@ -47,6 +47,13 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   //   },
   //   [selectedRowData],
   // )
+
+  // useEffect(() => {
+  //   if (dataThongTin && dataThongTin.DataDetails) {
+  //     // Data đã được chuyền vào, dừng loading
+  //     loading(false)
+  //   }
+  // }, [dataThongTin, dataThongTin.DataDetails])
 
   const isAdd = useMemo(() => selectedRowData.map((item) => item.MaHang).includes('Chọn mã hàng'), [selectedRowData])
 
@@ -135,7 +142,13 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       width: 250,
       align: 'center',
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
-      render: (text) => <div className="text-start truncate">{text}</div>,
+      render: (text) => (
+        <div className="text-start truncate">
+          <Tooltip title={text} color="blue">
+            {text}
+          </Tooltip>
+        </div>
+      ),
     },
     {
       title: 'Đơn vị tính',
@@ -191,7 +204,11 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       width: 150,
       align: 'center',
       sorter: (a, b) => a.TyLeThue - b.TyLeThue,
-      render: (text) => <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{text}</div>,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          {formatQuantity(text, dataThongSo?.SOLETYLE)}
+        </div>
+      ),
     },
     {
       title: 'Tiền thuế',
@@ -224,7 +241,15 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   const columnName = ['STT', 'MaHang', 'TenHang', 'DVT', 'SoLuong', 'DonGia', 'TienHang', 'TyLeThue', 'TienThue', 'ThanhTien']
 
   useEffect(() => {
-    if (dataDoiTuong && actionType === 'create') handleDoiTuongFocus(dataDoiTuong[0].Ma)
+    // if (dataDoiTuong && actionType === 'create') handleDoiTuongFocus(dataDoiTuong[0].Ma)
+    if (dataDoiTuong && actionType === 'create') {
+      // Tìm giá trị có mã là 'NCVL' trong mảng dataDoiTuong
+      const ncvlDoiTuong = dataDoiTuong.find((item) => item.Ma === 'NCVL')
+      // Sử dụng 'NCVL' nếu có, ngược lại sử dụng mã đầu tiên trong mảng
+      const defaultMa = ncvlDoiTuong?.Ma || dataDoiTuong[0]?.Ma || ''
+      handleDoiTuongFocus(defaultMa)
+    }
+
     if ((dataDoiTuong && dataThongTin && actionType === 'edit') || (dataDoiTuong && dataThongTin && actionType === 'view')) {
       handleDoiTuongFocus(dataThongTin.MaDoiTuong)
 
@@ -274,7 +299,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
           }
           return item
         })
-      else dataNewRow = [...prevData, { ...newRow, DFDVT: newRow.DVT, DFQUYDOI: newRow.DVTQuyDoi, TyLeCKTT: 0, TienCKTT: 0 }]
+      else dataNewRow = [...prevData, { ...newRow, DFDVT: newRow.DVT, TyLeCKTT: 0, TienCKTT: 0 }]
       return dataNewRow
     })
 
@@ -470,8 +495,6 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
         // toast.error(response.data.DataErrorDescription)
         console.log(response.data.DataErrorDescription)
       }
-
-      close()
     } catch (error) {
       console.error('Error while saving data:', error)
     }
@@ -499,8 +522,6 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
         // toast.error(response.data.DataErrorDescription)
         console.log(response.data.DataErrorDescription)
       }
-
-      close()
     } catch (error) {
       console.error('Error while saving data:', error)
     }
@@ -514,6 +535,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       if (response.data && response.data.DataError === 0) {
         toast.success(response.data.DataErrorDescription)
         loading()
+        close()
       } else if (response.data && response.data.DataError === -104) {
         toast.error(response.data.DataErrorDescription)
       } else if (response.data && response.data.DataError === -103) {
@@ -527,7 +549,6 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
         // toast.error(response.data.DataErrorDescription)
         console.log(response.data.DataErrorDescription)
       }
-      close()
     } catch (error) {
       console.error('Error while saving data:', error)
     }
@@ -572,7 +593,6 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
 
   const handleEditData = (data) => {
     setSelectedRowData(data)
-    console.log('cuu', data)
   }
 
   return (
@@ -613,6 +633,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                     <DatePicker
                       className="DatePicker_PMH"
                       format="DD/MM/YYYY"
+                      maxDate={dayjs(controlDate.NgayKetThuc)}
                       value={dayjs(controlDate.NgayBatDau)}
                       onChange={(newDate) => {
                         setFormPrint({
@@ -627,6 +648,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                     <DatePicker
                       className="DatePicker_PMH"
                       format="DD/MM/YYYY"
+                      minDate={dayjs(controlDate.NgayBatDau)}
                       value={dayjs(controlDate.NgayKetThuc)}
                       onChange={(newDate) => {
                         setFormPrint({
@@ -651,7 +673,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                   <div className="flex ">
                     <label className="px-[22px]">Số chứng từ</label>
 
-                    <Select showSearch optionFilterProp="children" onChange={(value) => setSelectedSctBD(value)} style={{ width: '154px' }} value={selectedSctBD}>
+                    <Select size="small" showSearch optionFilterProp="children" onChange={(value) => setSelectedSctBD(value)} style={{ width: '154px' }} value={selectedSctBD}>
                       {newDataPMH?.map((item) => (
                         <Option key={item.SoChungTu} value={item.SoChungTu}>
                           {item.SoChungTu}
@@ -662,7 +684,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                   <div className="flex ">
                     <label className="px-[16px]">Đến</label>
 
-                    <Select showSearch optionFilterProp="children" onChange={(value) => setSelectedSctKT(value)} style={{ width: '154px' }} value={selectedSctKT}>
+                    <Select size="small" showSearch optionFilterProp="children" onChange={(value) => setSelectedSctKT(value)} style={{ width: '154px' }} value={selectedSctKT}>
                       {newDataPMH?.map((item) => (
                         <Option key={item.SoChungTu} value={item.SoChungTu}>
                           {item.SoChungTu}
@@ -770,6 +792,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                     <DatePicker
                       className="DatePicker_PMH"
                       format="DD/MM/YYYY"
+                      maxDate={dayjs(controlDate.NgayKetThuc)}
                       defaultValue={dayjs(controlDate.NgayBatDau)}
                       onChange={(newDate) => {
                         setFormPrint({
@@ -784,6 +807,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                     <DatePicker
                       className="DatePicker_PMH"
                       format="DD/MM/YYYY"
+                      minDate={dayjs(controlDate.NgayBatDau)}
                       defaultValue={dayjs(controlDate.NgayKetThuc)}
                       onChange={(newDate) => {
                         setFormPrint({
@@ -805,25 +829,10 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                   </button>
                 </div>
                 <div className="flex  mt-4 ">
-                  {/* <div className="flex ">
-                    <label className="px-4">Số chứng từ</label>
-                    <select
-                      className=" bg-white border outline-none border-gray-300  "
-                      value={selectedSctBD}
-                      onChange={(e) => setSelectedSctBD(e.target.value)}
-                      onClick={(e) => setSelectedSctBD(e.target.value)}
-                    >
-                      {newDataPMH?.map((item) => (
-                        <option key={item.SoChungTu} value={item.SoChungTu}>
-                          {item.SoChungTu}
-                        </option>
-                      ))}
-                    </select>
-                  </div> */}
                   <div className="flex ">
                     <label className="px-[22px]">Số chứng từ</label>
 
-                    <Select showSearch optionFilterProp="children" onChange={(value) => setSelectedSctBD(value)} style={{ width: '154px' }} value={selectedSctBD}>
+                    <Select size="small" showSearch optionFilterProp="children" onChange={(value) => setSelectedSctBD(value)} style={{ width: '154px' }} value={selectedSctBD}>
                       {newDataPMH?.map((item) => (
                         <Option key={item.SoChungTu} value={item.SoChungTu}>
                           {item.SoChungTu}
@@ -831,25 +840,11 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                       ))}
                     </Select>
                   </div>
-                  {/* <div className="flex ">
-                    <label className="px-4">Đến</label>
-                    <select
-                      className=" bg-white border outline-none border-gray-300  "
-                      value={selectedSctKT}
-                      onChange={(e) => setSelectedSctKT(e.target.value)}
-                      onClick={(e) => setSelectedSctKT(e.target.value)}
-                    >
-                      {newDataPMH?.map((item) => (
-                        <option key={item.SoChungTu} value={item.SoChungTu}>
-                          {item.SoChungTu}
-                        </option>
-                      ))}
-                    </select>
-                  </div> */}
+
                   <div className="flex ">
                     <label className="px-[16px]">Đến</label>
 
-                    <Select showSearch optionFilterProp="children" onChange={(value) => setSelectedSctKT(value)} style={{ width: '154px' }} value={selectedSctKT}>
+                    <Select size="small" showSearch optionFilterProp="children" onChange={(value) => setSelectedSctKT(value)} style={{ width: '154px' }} value={selectedSctKT}>
                       {newDataPMH?.map((item) => (
                         <Option key={item.SoChungTu} value={item.SoChungTu}>
                           {item.SoChungTu}
@@ -860,16 +855,6 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                 </div>
                 {/* liên */}
                 <div className="flex justify-center items-center gap-6 mt-4">
-                  {/* <div>
-                    <input id="lien1" type="checkbox" checked={checkboxValues.checkbox1} onChange={() => handleLien('checkbox1')} />
-                    <label htmlFor="lien1">Liên 1</label>
-                  </div>
-
-                  <div>
-                    <input id="lien2" type="checkbox" checked={checkboxValues.checkbox2} onChange={() => handleLien('checkbox2')} />
-                    <label htmlFor="lien2">Liên 2</label>
-                  </div> */}
-
                   <div>
                     <Checkbox
                       value="checkbox1"
@@ -1029,7 +1014,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
               {/* table */}
               <div className="py-4">
                 <Table
-                  // loading={true}
+                  loading={loading}
                   className="table_view"
                   dataSource={dataThongTin?.DataDetails}
                   columns={columns}
@@ -1048,13 +1033,15 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                     let totalSoLuong = 0
                     let totalDonGia = 0
                     let totalTienThue = 0
+                    let totalTyLeThue = 0
 
-                    pageData.forEach(({ ThanhTien, TienHang, SoLuong, DonGia, TienThue }) => {
+                    pageData.forEach(({ ThanhTien, TienHang, SoLuong, DonGia, TienThue, TyLeThue }) => {
                       totalDonGia += DonGia
                       totalTienHang += TienHang
                       totalSoLuong += SoLuong
                       totalThanhTien += ThanhTien
                       totalTienThue += TienThue
+                      totalTyLeThue += TyLeThue
                     })
                     return (
                       <Table.Summary fixed="bottom">
@@ -1066,7 +1053,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                           <Table.Summary.Cell index={4}>{formatQuantity(totalSoLuong, dataThongSo?.SOLESOLUONG)}</Table.Summary.Cell>
                           <Table.Summary.Cell index={5}>{formatPrice(totalDonGia, dataThongSo?.SOLESOTIEN)}</Table.Summary.Cell>
                           <Table.Summary.Cell index={6}>{formatPrice(totalTienHang, dataThongSo?.SOLESOTIEN)}</Table.Summary.Cell>
-                          <Table.Summary.Cell index={7}></Table.Summary.Cell>
+                          <Table.Summary.Cell index={7}>{formatQuantity(totalTyLeThue, dataThongSo?.SOLETYLE)}</Table.Summary.Cell>
                           <Table.Summary.Cell index={8}>{formatPrice(totalTienThue, dataThongSo?.SOLESOTIEN)}</Table.Summary.Cell>
                           <Table.Summary.Cell>{formatPrice(totalThanhTien, dataThongSo?.SOLESOTIEN)}</Table.Summary.Cell>
                         </Table.Summary.Row>
@@ -1107,7 +1094,6 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
             </div>
           </div>
         )}
-
         {actionType === 'create' && (
           <div className=" w-[90vw] h-[600px] ">
             <div className="flex gap-2">
@@ -1262,17 +1248,22 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
               {/* table */}
 
               <div className=" pb-0  relative mt-1">
-                <FloatButton
-                  className="absolute z-3  bg-transparent w-[26px] h-[26px] "
-                  style={{
-                    right: 12,
-                    top: 8,
-                  }}
-                  type={`${isAdd ? 'default' : 'primary'}`}
-                  icon={<IoMdAddCircle />}
-                  onClick={handleAddEmptyRow}
-                  tooltip={`${isAdd ? 'Vui lòng chọn hàng hóa hoặc F9 để chọn từ danh sách ' : 'Bấm vào đây để thêm hàng mới hoặc F9 để chọn từ danh sách !'}`}
-                />
+                <Tooltip
+                  placement="topLeft"
+                  title={isAdd ? 'Vui lòng chọn hàng hóa hoặc F9 để chọn từ danh sách' : 'Bấm vào đây để thêm hàng mới hoặc F9 để chọn từ danh sách!'}
+                  color="blue"
+                >
+                  <FloatButton
+                    className="absolute z-3 bg-transparent w-[26px] h-[26px]"
+                    style={{
+                      right: 12,
+                      top: 8,
+                    }}
+                    type={`${isAdd ? 'default' : 'primary'}`}
+                    icon={<IoMdAddCircle />}
+                    onClick={handleAddEmptyRow}
+                  />
+                </Tooltip>
                 <TableEdit
                   typeTable="create"
                   className="table_cre"
@@ -1331,7 +1322,6 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
             </div>
           </div>
         )}
-
         {actionType === 'edit' && (
           <div className=" w-[90vw] h-[600px] ">
             <div className="flex gap-2">
@@ -1487,17 +1477,22 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
 
               {/* table */}
               <div className=" pb-0  relative mt-1">
-                <FloatButton
-                  className="absolute z-3  bg-transparent w-[26px] h-[26px] "
-                  style={{
-                    right: 12,
-                    top: 8,
-                  }}
-                  type={`${isAdd ? 'default' : 'primary'}`}
-                  icon={<IoMdAddCircle />}
-                  onClick={handleAddEmptyRow}
-                  tooltip={`${isAdd ? 'Vui lòng chọn hàng hóa hoặc F9 để chọn từ danh sách ' : 'Bấm vào đây để thêm hàng mới hoặc F9 để chọn từ danh sách !'}`}
-                />
+                <Tooltip
+                  placement="topLeft"
+                  title={isAdd ? 'Vui lòng chọn hàng hóa hoặc F9 để chọn từ danh sách' : 'Bấm vào đây để thêm hàng mới hoặc F9 để chọn từ danh sách!'}
+                  color="blue"
+                >
+                  <FloatButton
+                    className="absolute z-3 bg-transparent w-[26px] h-[26px]"
+                    style={{
+                      right: 12,
+                      top: 8,
+                    }}
+                    type={`${isAdd ? 'default' : 'primary'}`}
+                    icon={<IoMdAddCircle />}
+                    onClick={handleAddEmptyRow}
+                  />
+                </Tooltip>
                 <TableEdit
                   param={selectedRowData}
                   handleEditData={handleEditData}
@@ -1548,7 +1543,6 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
             </div>
           </div>
         )}
-
         {actionType === 'delete' ? (
           <div className="flex justify-end mt-4 gap-2">
             <button
@@ -1584,9 +1578,11 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
         )}
       </div>
 
-      {isShowModalHH && <ModalHH close={() => setIsShowModalHH(false)} data={dataHangHoa} onRowCreate={handleAddRow} dataThongSo={dataThongSo} />}
+      {isShowModalHH && <ModalHH close={() => setIsShowModalHH(false)} data={dataHangHoa} onRowCreate={handleAddRow} dataThongSo={dataThongSo} controlDate={controlDate} />}
       {isShowModalOnlyPrint && <ModalOnlyPrint close={() => setIsShowModalOnlyPrint(false)} dataThongTin={dataThongTin} dataPMH={dataPMH} />}
-      {isShowModalOnlyPrintWareHouse && <ModalOnlyPrintWareHouse close={() => setIsShowModalOnlyPrintWareHouse(false)} dataThongTin={dataThongTin} dataPMH={dataPMH} />}
+      {isShowModalOnlyPrintWareHouse && (
+        <ModalOnlyPrintWareHouse close={() => setIsShowModalOnlyPrintWareHouse(false)} dataThongTin={dataThongTin} dataPMH={dataPMH} controlDate={controlDate} />
+      )}
     </div>
   )
 }
