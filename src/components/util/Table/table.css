@@ -18,14 +18,14 @@
 .NhapXuatTonKho .setHeight .ant-table,
 .NhapXuatTonKho .setHeight .ant-table-container .ant-table-body {
   /* max-height: unset !important; */
-  height: calc(100vh - 330px);
+  height: calc(100vh - 365px);
 }
 .NhapXuatTonKho .setHeight .ant-table-container .ant-table-body {
   max-height: unset !important;
   /* height: calc(100vh - 500px); */
 }
 .NhapXuatTonKho .setHeight .ant-table {
-  height: calc(100vh - 255px);
+  height: calc(100vh - 290px);
 }
 
 /* @media (min-width: 536px) {
