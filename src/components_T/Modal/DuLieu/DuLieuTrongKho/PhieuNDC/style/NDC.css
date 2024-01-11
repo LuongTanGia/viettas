@@ -35,3 +35,9 @@
   align-items: center;
   gap: 0.25rem;
 }
+
+@media (max-width: 819px) {
+  .nDC_Edit {
+    right: 20px;
+  }
+}
