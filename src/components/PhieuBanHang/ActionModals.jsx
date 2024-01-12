@@ -163,7 +163,6 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
       })
       const data = { ...form, DataDetails: newData }
       const res = await SUAPHIEUBANHANG(API.SUAPHIEUBANHANG, token, { SoChungTu: data.SoChungTu, Data: data })
-
       setMaHang(data.SoChungTu)
       if (res.DataError === 0) {
         console.log('sua')

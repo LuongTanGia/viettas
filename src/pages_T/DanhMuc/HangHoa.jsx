@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from 'react'
 import { useSearch } from '../../components_T/hooks/Search'
-import { Checkbox, Table, Tooltip, Typography } from 'antd'
+import { Checkbox, Input, Table, Tooltip, Typography } from 'antd'
 const { Text } = Typography
 import HangHoaModals from '../../components_T/Modal/DanhMuc/HangHoa/HangHoaModals'
 import categoryAPI from '../../API/linkAPI'
@@ -31,6 +31,7 @@ const HangHoa = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([])
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [dataThongSo, setDataThongSo] = useState('')
+  const [targetRow, setTargetRow] = useState(null)
 
   const getListHangHoa = async () => {
     try {
@@ -539,7 +540,7 @@ const HangHoa = () => {
                 <div className="flex relative ">
                   {isShowSearch && (
                     <div className={`flex absolute left-[9rem] -top-8 transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
-                      <input
+                      <Input
                         value={searchHangHoa}
                         type="text"
                         placeholder="Nhập ký tự bạn cần tìm"
@@ -633,6 +634,7 @@ const HangHoa = () => {
                     handleView(record)
                   },
                 })}
+                rowClassName={(record) => (record.MaHang === targetRow ? 'highlighted-row' : '')}
                 className="setHeight"
                 columns={titles}
                 dataSource={filteredHangHoa.map((item, index) => ({
@@ -688,7 +690,16 @@ const HangHoa = () => {
             </div>
           </div>
           <div>
-            {isShowModal && <HangHoaModals type={actionType} close={() => setIsShowModal(false)} getMaHang={isMaHang} getDataHangHoa={dataHangHoa} loadingData={handleLoading} />}
+            {isShowModal && (
+              <HangHoaModals
+                type={actionType}
+                close={() => setIsShowModal(false)}
+                getMaHang={isMaHang}
+                getDataHangHoa={dataHangHoa}
+                loadingData={handleLoading}
+                targetRow={setTargetRow}
+              />
+            )}
           </div>
         </>
       )}
