@@ -157,7 +157,7 @@ const App = () => {
             </div>
           </div>
           <div className="flex flex-col gap-y-4 mt-14">
-            <Spin spinning={loading} delay={500}>
+            <Spin spinning={loading}>
               <button
                 onClick={handleAddUser}
                 disabled={!rememberMe}

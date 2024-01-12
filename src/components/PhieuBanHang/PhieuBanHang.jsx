@@ -18,7 +18,7 @@ import { Checkbox, Col, Row } from 'antd'
 import { TfiMoreAlt } from 'react-icons/tfi'
 import { MdFilterAlt } from 'react-icons/md'
 import { RiFileExcel2Fill } from 'react-icons/ri'
-import { Input } from 'antd'
+import { Input, Button, Spin } from 'antd'
 
 function PhieuBanHang() {
   const optionContainerRef = useRef(null)
@@ -26,6 +26,7 @@ function PhieuBanHang() {
   const dispatch = useDispatch()
   const token = localStorage.getItem('TKN')
   const [dataLoaded, setDataLoaded] = useState(false)
+
   const [searchText, setSearchText] = useState('')
   const [modelType, setModelType] = useState('')
   const [selectVisible, setSelectVisible] = useState(false)
@@ -44,6 +45,8 @@ function PhieuBanHang() {
   const [dataDate, setDataDate] = useState({})
 
   const [hiden, setHiden] = useState([])
+  const [checkedList, setcheckedList] = useState([])
+
   // const [searchTimeout, setSearchTimeout] = useState(null)
 
   const isMatch = (value, searchText) => {
@@ -70,6 +73,8 @@ function PhieuBanHang() {
   }
   useEffect(() => {
     setHiden(JSON.parse(localStorage.getItem('hidenColumns')))
+    setcheckedList(JSON.parse(localStorage.getItem('hidenColumns')))
+
     const key = Object.keys(data ? data[0] : []).filter((key) => key !== 'MaSoThue')
     setOptions(key)
   }, [selectVisible])
@@ -117,7 +122,7 @@ function PhieuBanHang() {
     }
 
     getListData()
-  }, [dataRecord, token, dispatch, searchText, dataDate, selectMH, hiden])
+  }, [dataRecord, token, dispatch, searchText, dataDate, selectMH])
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -254,8 +259,16 @@ function PhieuBanHang() {
     setSelectVisible(!selectVisible)
   }
   const onChange = (checkedValues) => {
-    setHiden(checkedValues)
+    setcheckedList(checkedValues)
     localStorage.setItem('hidenColumns', JSON.stringify(checkedValues))
+  }
+  const onClickSubmit = () => {
+    // setcheckedList(checkedValues)
+    setLoadingSearch(true)
+    setTimeout(() => {
+      setLoadingSearch(false)
+      setHiden(checkedList)
+    }, 700)
   }
 
   return (
@@ -339,7 +352,8 @@ function PhieuBanHang() {
                           borderRadius: 10,
                           boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
                         }}
-                        defaultValue={hiden}
+                        className="flex flex-col"
+                        defaultValue={checkedList}
                         onChange={onChange}
                       >
                         <Row>
@@ -351,6 +365,11 @@ function PhieuBanHang() {
                             </Col>
                           ))}
                         </Row>
+                        <Spin spinning={loadingSearch}>
+                          <Button className="mt-2 w-full" onClick={onClickSubmit}>
+                            Xác Nhận
+                          </Button>
+                        </Spin>
                       </Checkbox.Group>
                     </div>
                   )}
