@@ -15,6 +15,7 @@ function Header({ handleToggleSidebar, refs }) {
     window.localStorage.removeItem('TKN')
     window.localStorage.removeItem('tokenDuLieu')
     window.localStorage.removeItem('RTKN')
+    window.localStorage.removeItem('userName')
 
     window.location.href = '/login'
   }
