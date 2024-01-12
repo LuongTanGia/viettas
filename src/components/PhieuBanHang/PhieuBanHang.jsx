@@ -387,11 +387,22 @@ function PhieuBanHang() {
               className="DatePicker_PMH max-h-[100px]"
               format="DD/MM/YYYY"
               defaultValue={dayjs(dataDate?.NgayBatDau)}
+              maxDate={dayjs(dataDate.NgayKetThuc)}
               onChange={(newDate) => {
                 setDataDate({
                   ...dataDate,
                   NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
                 })
+              }}
+              sx={{
+                '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                '& .MuiButtonBase-root': {
+                  padding: '4px',
+                },
+                '& .MuiSvgIcon-root': {
+                  width: '18px',
+                  height: '18px',
+                },
               }}
             />
           </div>
@@ -407,9 +418,19 @@ function PhieuBanHang() {
                   NgayKetThuc: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
                 })
               }}
+              sx={{
+                '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                '& .MuiButtonBase-root': {
+                  padding: '4px',
+                },
+                '& .MuiSvgIcon-root': {
+                  width: '18px',
+                  height: '18px',
+                },
+              }}
             />
           </div>
-          <div className=" ">
+          <div className="flex items-center">
             <ActionButton icon={<MdFilterAlt />} color={'slate-50'} title={'Lọc'} background={'blue-500'} bg_hover={'white'} color_hover={'blue-500'} handleAction={handleSearch} />
           </div>
         </div>
@@ -443,7 +464,15 @@ function PhieuBanHang() {
           hiden={hiden}
         />
       </div>
-      <ActionModals isShow={isShow} handleClose={handleClose} dataRecord={dataRecord} typeAction={type} setMaHang={setMaHang} />
+      <ActionModals
+        isShow={isShow}
+        handleClose={handleClose}
+        dataRecord={dataRecord}
+        typeAction={type}
+        setMaHang={setMaHang}
+        handleShowPrint={handleShowPrint}
+        handleShowPrint_kho={handleShowPrint_kho}
+      />
       <Model isShow={isShowDelete} handleClose={handleClose} record={dataRecord} ActionDelete={ActionDelete} typeModel={typeModel} ActionPay={ActionPay} />
       <ModelPrint isShowModel={isShowPrint} handleCloseAction={handleCloseAction} data={dataDate} modelType={modelType} />
     </>
