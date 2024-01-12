@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-no-undef */
 /* eslint-disable react/prop-types */
 import { useEffect, useMemo, useState } from 'react'
 import icons from '../untils/icons'
@@ -647,6 +646,16 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                           NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
                         })
                       }}
+                      sx={{
+                        '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                        '& .MuiButtonBase-root': {
+                          padding: '4px',
+                        },
+                        '& .MuiSvgIcon-root': {
+                          width: '18px',
+                          height: '18px',
+                        },
+                      }}
                     />
                   </div>
                   <div className="flex gap-x-5 items-center ">
@@ -661,6 +670,16 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                           ...formPrint,
                           NgayKetThuc: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
                         })
+                      }}
+                      sx={{
+                        '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                        '& .MuiButtonBase-root': {
+                          padding: '4px',
+                        },
+                        '& .MuiSvgIcon-root': {
+                          width: '18px',
+                          height: '18px',
+                        },
                       }}
                     />
                   </div>
@@ -701,26 +720,6 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                 </div>
                 {/* liên */}
                 <div className="flex justify-center  gap-6 mt-4">
-                  {/* <div className="">
-                    <input id="lien1" type="checkbox" checked={checkboxValues.checkbox1} onChange={() => handleLien('checkbox1')} />
-                    <label className="pl-2 " htmlFor="lien1">
-                      Liên 1
-                    </label>
-                  </div>
-
-                  <div>
-                    <input id="lien2" type="checkbox" checked={checkboxValues.checkbox2} onChange={() => handleLien('checkbox2')} />
-                    <label className="pl-2" htmlFor="lien2">
-                      Liên 2
-                    </label>
-                  </div>
-
-                  <div>
-                    <input id="lien3" type="checkbox" checked={checkboxValues.checkbox3} onChange={() => handleLien('checkbox3')} />
-                    <label className="pl-2" htmlFor="lien3">
-                      Liên 3
-                    </label>
-                  </div> */}
                   {/*  */}
                   <div>
                     <Checkbox
@@ -806,6 +805,16 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                           NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
                         })
                       }}
+                      sx={{
+                        '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                        '& .MuiButtonBase-root': {
+                          padding: '4px',
+                        },
+                        '& .MuiSvgIcon-root': {
+                          width: '18px',
+                          height: '18px',
+                        },
+                      }}
                     />
                   </div>
                   <div className="flex gap-x-5 items-center ">
@@ -820,6 +829,16 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                           ...formPrint,
                           NgayKetThuc: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
                         })
+                      }}
+                      sx={{
+                        '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                        '& .MuiButtonBase-root': {
+                          padding: '4px',
+                        },
+                        '& .MuiSvgIcon-root': {
+                          width: '18px',
+                          height: '18px',
+                        },
                       }}
                     />
                   </div>
@@ -1130,10 +1149,12 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                         }}
                         sx={{
                           '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                          '& .MuiButtonBase-root': {
+                            padding: '4px',
+                          },
                           '& .MuiSvgIcon-root': {
-                            width: '16px',
-                            height: '16px',
-                            // padding: '4px',
+                            width: '18px',
+                            height: '18px',
                           },
                         }}
                       />
@@ -1374,6 +1395,13 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                         }}
                         sx={{
                           '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                          '& .MuiButtonBase-root': {
+                            padding: '4px',
+                          },
+                          '& .MuiSvgIcon-root': {
+                            width: '18px',
+                            height: '18px',
+                          },
                         }}
                       />
                     </div>
