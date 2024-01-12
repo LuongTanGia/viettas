@@ -14,10 +14,11 @@ import Model from './Model'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { BsSearch } from 'react-icons/bs'
 import dayjs from 'dayjs'
-
+import { Checkbox, Col, Row } from 'antd'
 import { TfiMoreAlt } from 'react-icons/tfi'
 import { MdFilterAlt } from 'react-icons/md'
 import { RiFileExcel2Fill } from 'react-icons/ri'
+import { Input } from 'antd'
 
 function PhieuBanHang() {
   const optionContainerRef = useRef(null)
@@ -27,7 +28,8 @@ function PhieuBanHang() {
   const [dataLoaded, setDataLoaded] = useState(false)
   const [searchText, setSearchText] = useState('')
   const [modelType, setModelType] = useState('')
-
+  const [selectVisible, setSelectVisible] = useState(false)
+  const [options, setOptions] = useState()
   const [loadingSearch, setLoadingSearch] = useState(false)
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [data, setData] = useState()
@@ -40,6 +42,9 @@ function PhieuBanHang() {
   const [selectMH, setSelectMH] = useState()
   const [isShowOption, setIsShowOption] = useState(false)
   const [dataDate, setDataDate] = useState({})
+
+  const [hiden, setHiden] = useState([])
+  // const [searchTimeout, setSearchTimeout] = useState(null)
 
   const isMatch = (value, searchText) => {
     const stringValue = String(value).toLowerCase()
@@ -63,7 +68,11 @@ function PhieuBanHang() {
 
     return false
   }
-
+  useEffect(() => {
+    setHiden(JSON.parse(localStorage.getItem('hidenColumns')))
+    const key = Object.keys(data ? data[0] : []).filter((key) => key !== 'MaSoThue')
+    setOptions(key)
+  }, [selectVisible])
   useEffect(() => {
     const getDate = async () => {
       const date = await KHOANNGAY(API.KHOANNGAY, token)
@@ -71,6 +80,17 @@ function PhieuBanHang() {
     }
     getDate()
   }, [])
+  let timerId
+  const handleInputChange = (e) => {
+    const inputValue = e.target.value
+    clearTimeout(timerId)
+
+    timerId = setTimeout(() => {
+      setSearchText(inputValue)
+    }, 700)
+
+    console.log(inputValue)
+  }
   useEffect(() => {
     // setDataDate(dateHT)
     const getListData = async () => {
@@ -97,7 +117,7 @@ function PhieuBanHang() {
     }
 
     getListData()
-  }, [dataRecord, token, dispatch, searchText, dataDate, selectMH])
+  }, [dataRecord, token, dispatch, searchText, dataDate, selectMH, hiden])
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -226,6 +246,17 @@ function PhieuBanHang() {
     setDataLoaded(true)
     setLoadingSearch(false)
   }
+  // const [debouncedSearchText] = useDebounce(searchText, 2000); // 2000 milliseconds (2 seconds)
+
+  // useEffect will run after 2 seconds of user inactivity
+
+  const handleShow_hiden = () => {
+    setSelectVisible(!selectVisible)
+  }
+  const onChange = (checkedValues) => {
+    setHiden(checkedValues)
+    localStorage.setItem('hidenColumns', JSON.stringify(checkedValues))
+  }
 
   return (
     <>
@@ -238,51 +269,92 @@ function PhieuBanHang() {
           <div className="flex  ">
             {isShowSearch && (
               <div className={`flex absolute left-[14rem] top-0 transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
-                <input
+                {/* <input
                   type="text"
                   placeholder="Nhập ký tự bạn cần tìm"
                   value={searchText}
                   onChange={(e) => setSearchText(e.target.value)}
                   className={'px-2  w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] '}
-                />
+                /> */}
+                <Input placeholder="Nhập ký tự bạn cần tìm" onChange={handleInputChange} />
               </div>
             )}
           </div>
         </div>
-        <div>
-          <div ref={optionContainerRef}>
+        <div ref={optionContainerRef}>
+          <div>
             <div className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5  " onClick={() => setIsShowOption(!isShowOption)} title="Chức năng khác">
               <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
             </div>
             {isShowOption && (
-              <div className=" absolute flex flex-col gap-2 bg-slate-100 p-3  top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom ">
-                <ActionButton
-                  icon={<RiFileExcel2Fill />}
-                  color={'slate-50'}
-                  title={'Xuất Excel'}
-                  background={'green-500'}
-                  bg_hover={'white'}
-                  color_hover={'green-500'}
-                  handleAction={exportToExcel}
-                />
-                <ActionButton
-                  icon={<PrinterOutlined />}
-                  color={'slate-50'}
-                  title={'In Phiếu'}
-                  background={'purple-500'}
-                  bg_hover={'white'}
-                  color_hover={'purple-500'}
-                  handleAction={handleShowPrint}
-                />
-                <ActionButton
-                  icon={<PrinterOutlined />}
-                  color={'slate-50'}
-                  title={'In Phiếu Kho'}
-                  background={'purple-500'}
-                  bg_hover={'white'}
-                  color_hover={'purple-500'}
-                  handleAction={handleShowPrint_kho}
-                />
+              <div className="absolute  flex flex-col gap-2 bg-slate-100 p-3  top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom ">
+                <div className={`flex flex-grow flex-wrap gap-1 ${!selectVisible ? 'flex-col' : ''}`}>
+                  <ActionButton
+                    icon={<RiFileExcel2Fill />}
+                    color={'slate-50'}
+                    title={'Xuất Excel'}
+                    background={'green-500'}
+                    bg_hover={'white'}
+                    color_hover={'green-500'}
+                    handleAction={exportToExcel}
+                  />
+                  <ActionButton
+                    icon={<PrinterOutlined />}
+                    color={'slate-50'}
+                    title={'In Phiếu'}
+                    background={'purple-500'}
+                    bg_hover={'white'}
+                    color_hover={'purple-500'}
+                    handleAction={handleShowPrint}
+                  />
+                  <ActionButton
+                    icon={<PrinterOutlined />}
+                    color={'slate-50'}
+                    title={'In Phiếu Kho'}
+                    background={'purple-500'}
+                    bg_hover={'white'}
+                    color_hover={'purple-500'}
+                    handleAction={handleShowPrint_kho}
+                  />
+                  <>
+                    <ActionButton
+                      icon={<PrinterOutlined />}
+                      color={'slate-50'}
+                      title={'Ẩn cột'}
+                      background={'red-500'}
+                      bg_hover={'white'}
+                      color_hover={'red-500'}
+                      handleAction={handleShow_hiden}
+                    />
+                  </>
+                </div>
+                <div>
+                  {selectVisible && (
+                    <div>
+                      <Checkbox.Group
+                        style={{
+                          width: '430px',
+                          background: 'white',
+                          padding: 10,
+                          borderRadius: 10,
+                          boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+                        }}
+                        defaultValue={hiden}
+                        onChange={onChange}
+                      >
+                        <Row>
+                          {options.map((item) => (
+                            <Col span={8} key={item}>
+                              <Checkbox value={item} checked={true}>
+                                {item}
+                              </Checkbox>
+                            </Col>
+                          ))}
+                        </Row>
+                      </Checkbox.Group>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>
@@ -349,6 +421,7 @@ function PhieuBanHang() {
           loadingSearch={loadingSearch}
           selectMH={selectMH}
           textSearch={searchText}
+          hiden={hiden}
         />
       </div>
       <ActionModals isShow={isShow} handleClose={handleClose} dataRecord={dataRecord} typeAction={type} setMaHang={setMaHang} />

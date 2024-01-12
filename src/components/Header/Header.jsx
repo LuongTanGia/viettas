@@ -11,7 +11,11 @@ function Header({ handleToggleSidebar, refs }) {
   const [isShow, setIsShow] = useState(false)
   const user = localStorage.getItem('User')
   const logout = () => {
-    window.localStorage.clear()
+    window.localStorage.removeItem('firstLogin')
+    window.localStorage.removeItem('TKN')
+    window.localStorage.removeItem('tokenDuLieu')
+    window.localStorage.removeItem('RTKN')
+
     window.location.href = '/login'
   }
   const handeleChange = () => {

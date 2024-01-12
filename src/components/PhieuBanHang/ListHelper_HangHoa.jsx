@@ -1,10 +1,13 @@
 import Tables from '../util/Table/Table'
+import Logo from '../../assets/VTS-iSale.ico'
+
 import { nameColumsHangHoa } from '../util/Table/ColumnName'
 import ActionButton from '../util/Button/ActionButton'
 import { useEffect, useState } from 'react'
 import dayjs from 'dayjs'
 import { DANHSACHHANGHOA_PBS } from '../../action/Actions'
 import API from '../../API/API'
+import { BsSearch } from 'react-icons/bs'
 // eslint-disable-next-line react/prop-types
 function ListHelper_HangHoa({ data, close, handleAddData, form }) {
   const token = localStorage.getItem('TKN')
@@ -77,18 +80,24 @@ function ListHelper_HangHoa({ data, close, handleAddData, form }) {
       <div className="  m-6  p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
         <div className=" w-[90vw] h-[600px] ">
           <div className="flex justify-between items-start pb-1">
-            <label className="font-bold ">Danh sách hàng hóa</label>
+            <div className="flex justify-between items-start gap-2">
+              <img src={Logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
+              <label className="text-blue-700 uppercase font-semibold">Danh sách hàng hóa</label>
+            </div>
             {/* <button onClick={() => close()} className="text-gray-500 p-1 border hover:border-gray-300 hover:bg-red-600 hover:text-white rounded-full">
               <IoMdClose />
             </button> */}
+            <div className="flex relative">
+              <input
+                type="text"
+                placeholder="Nhập ký tự bạn cần tìm"
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                className={'px-2 h-[30px] w-[17rem] border-slate-200  resize-none   border-[#0006] outline-none text-[1rem] border-b-2'}
+              />
+              <BsSearch size={18} className="text-[#0006] absolute right-0 top-1 bg-white " />
+            </div>
           </div>
-          <input
-            type="text"
-            placeholder="Nhập ký tự bạn cần tìm"
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            className={'px-2  w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] '}
-          />
           {/* table */}
           <div className="max-w-[98%]  max-h-[90%] mx-auto bg-white  rounded-md my-3 overflow-y-auto text-sm">
             <Tables
