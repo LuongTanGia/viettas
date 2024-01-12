@@ -32,6 +32,7 @@ const PhieuMuaHang = () => {
   const [formKhoanNgay, setFormKhoanNgay] = useState([])
   const [dataThongSo, setDataThongSo] = useState()
   const [setSearchPMH, filteredPMH, searchPMH] = useSearch(data)
+  const [donePMH, setDonePMH] = useState(null)
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -730,20 +731,10 @@ const PhieuMuaHang = () => {
           pagination={{ defaultPageSize: 50, showSizeChanger: true, pageSizeOptions: ['50', '100', '1000'] }}
           rowKey={(record) => record.SoChungTu}
           onRow={(record) => ({
-            // onClick: () => {
-            //   handleRowClick(record);
-            //   const selected = selectedRowKeys.includes(record.SoChungTu);
-            //   if (selected) {
-            //     setSelectedRowKeys(
-            //       selectedRowKeys.filter((key) => key !== record.SoChungTu)
-            //     );
-            //   } else {
-            //     setSelectedRowKeys([...selectedRowKeys, record.SoChungTu]);
-            //   }
-            // },
             onDoubleClick: () => {
               handleView(record)
             },
+            style: { background: record.SoChungTu === donePMH ? '#d7f4fd' : '' },
           })}
           // Bảng Tổng
           summary={() => {
@@ -804,6 +795,7 @@ const PhieuMuaHang = () => {
           controlDate={formKhoanNgay}
           dataThongSo={dataThongSo}
           loading={() => setTableLoad(true)}
+          setDonePMH={setDonePMH}
         />
       )}
     </div>

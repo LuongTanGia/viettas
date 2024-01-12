@@ -52,7 +52,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
     console.log(row)
     setDataSource((prevDataSource) => {
       const newData = [...prevDataSource]
-      const index = newData.findIndex((item) => (tableName === 'BanHang' ? item.key === row.key : item.STT === row.STT))
+      const index = newData.findIndex((item) => item.key === row.key)
 
       if (index !== -1) {
         const item = newData[index]

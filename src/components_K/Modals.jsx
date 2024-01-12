@@ -19,7 +19,7 @@ const { Option } = Select
 
 const { TiPrinter, MdFilterAlt, IoMdAddCircle } = icons
 
-const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, dataRecord, dataPMH, controlDate, dataThongSo, loading }) => {
+const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, dataRecord, dataPMH, controlDate, dataThongSo, loading, setDonePMH }) => {
   const [isShowModalHH, setIsShowModalHH] = useState(false)
   const [isShowModalOnlyPrint, setIsShowModalOnlyPrint] = useState(false)
   const [isShowModalOnlyPrintWareHouse, setIsShowModalOnlyPrintWareHouse] = useState(false)
@@ -31,29 +31,6 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   const [selectedSctBD, setSelectedSctBD] = useState()
   const [selectedSctKT, setSelectedSctKT] = useState()
   const [newDataPMH, setNewDataPMH] = useState(dataPMH)
-  // const [isLoading, setIsLoading] = useState(true)
-
-  // useEffect(() => {
-  //   if (dataThongTin) {
-  //     // Data đã được chuyền vào, dừng loading
-  //     setIsLoading(false)
-  //   }
-  // }, [dataThongTin])
-
-  // const [checkedValues, setCheckedValues] = useState([1])
-  // const currentRowData = useCallback(
-  //   (mahang) => {
-  //     return selectedRowData.map((item) => item.MaHang).filter((item) => item !== 'Chọn mã hàng' && item !== mahang)
-  //   },
-  //   [selectedRowData],
-  // )
-
-  // useEffect(() => {
-  //   if (dataThongTin && dataThongTin.DataDetails) {
-  //     // Data đã được chuyền vào, dừng loading
-  //     loading(false)
-  //   }
-  // }, [dataThongTin, dataThongTin.DataDetails])
 
   const isAdd = useMemo(() => selectedRowData.map((item) => item.MaHang).includes('Chọn mã hàng'), [selectedRowData])
 
@@ -375,6 +352,10 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       // Kiểm tra call api thành công
       if (response.data && response.data.DataError === 0) {
         toast.success(response.data.DataErrorDescription)
+        const soChungTu = response.data.DataResults[0].SoChungTu
+        console.log('first'.soChungTu)
+        toast.success(response.data.DataErrorDescription)
+        setDonePMH(soChungTu)
         loading()
         close()
       } else if (response.data && response.data.DataError === -103) {
