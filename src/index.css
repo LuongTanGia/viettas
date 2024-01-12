@@ -251,6 +251,12 @@ input[type='radio'] {
   display: none;
 }
 
+.highlighted-row,
+.highlighted-row .ant-table-cell-fix-right,
+.highlighted-row .ant-table-cell-fix-left {
+  background-color: #d7f4fd;
+}
+
 /* custom input antd */
 .ant-input-number .ant-input-number-input {
   color: black;

@@ -24,7 +24,6 @@ const ModalHH = ({ close, data, onRowCreate, dataThongSo }) => {
     ...record,
   }))
   const handleChoose = (dataRow) => {
-    console.log(dataRow)
     const defaultValues = {
       SoLuong: 1,
       DonGia: 0,
@@ -33,12 +32,10 @@ const ModalHH = ({ close, data, onRowCreate, dataThongSo }) => {
       TienThue: 0,
       ThanhTien: 0,
     }
-    const newRow = { ...dataRow, ...defaultValues }
-    onRowCreate(newRow)
 
-    toast.success('Chọn hàng hóa thành công', {
-      autoClose: 1000,
-    })
+    const newRow = { ...dataRow, ...defaultValues }
+
+    onRowCreate(newRow)
   }
   const columns = [
     {

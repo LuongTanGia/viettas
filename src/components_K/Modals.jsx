@@ -269,14 +269,22 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       if (prevData.some((item) => item.MaHang === newRow.MaHang))
         dataNewRow = prevData.map((item) => {
           if (item.MaHang === newRow.MaHang) {
-            return {
-              ...item,
-              SoLuong: ++item.SoLuong,
-            }
+            // return {
+            //   ...item,
+            //   SoLuong: ++item.SoLuong,
+            // }
+            toast.warning('Hàng hóa đã tồn tại ở bảng chi tiết', {
+              autoClose: 1000,
+            })
           }
           return item
         })
-      else dataNewRow = [...prevData, { ...newRow, DVTDF: newRow.DVT, TyLeCKTT: 0, TienCKTT: 0 }]
+      else {
+        dataNewRow = [...prevData, { ...newRow, DVTDF: newRow.DVT, TyLeCKTT: 0, TienCKTT: 0 }]
+        toast.success('Chọn hàng hóa thành công', {
+          autoClose: 1000,
+        })
+      }
       return dataNewRow
     })
 
@@ -353,10 +361,10 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       if (response.data && response.data.DataError === 0) {
         toast.success(response.data.DataErrorDescription)
         const soChungTu = response.data.DataResults[0].SoChungTu
-        console.log('first'.soChungTu)
+
         toast.success(response.data.DataErrorDescription)
-        setDonePMH(soChungTu)
         loading()
+        setDonePMH(soChungTu)
         close()
       } else if (response.data && response.data.DataError === -103) {
         toast.error(response.data.DataErrorDescription)
@@ -386,8 +394,11 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       const response = await apis.ThemPMH(tokenLogin, { ...formPMH, DataDetails: newData }, selectedDoiTuong, selectedKhoHang)
       // Kiểm tra call api thành công
       if (response.data && response.data.DataError === 0) {
+        const soChungTu = response.data.DataResults[0].SoChungTu
+
         toast.success(response.data.DataErrorDescription)
         loading()
+        setDonePMH(soChungTu)
         setFormPMH(defaultFormCreate)
         setSelectedDoiTuong(dataDoiTuong[0].Ma)
         setDoiTuongInfo({ Ten: '', DiaChi: '' })
@@ -418,6 +429,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       if (response.data && response.data.DataError === 0) {
         toast.success(response.data.DataErrorDescription)
         loading()
+        setDonePMH(dataRecord.SoChungTu)
         close()
       } else if (response.data && response.data.DataError === -103) {
         toast.error(response.data.DataErrorDescription)
@@ -528,6 +540,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       if (response.data && response.data.DataError === 0) {
         toast.success(response.data.DataErrorDescription)
         loading()
+        setDonePMH(dataRecord.SoChungTu)
         close()
       } else if (response.data && response.data.DataError === -104) {
         toast.error(response.data.DataErrorDescription)
@@ -1093,7 +1106,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
               <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
               <label className="text-blue-700 font-semibold uppercase pb-1">Thêm - phiếu mua hàng</label>
             </div>
-            <div className="border w-full h-[90%] rounded-sm text-sm">
+            <div className="border w-full h-[89%] rounded-sm text-sm">
               <div className="flex md:gap-0 lg:gap-1 pl-1 ">
                 {/* thong tin phieu */}
                 <div className="w-[62%]">
@@ -1117,6 +1130,11 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                         }}
                         sx={{
                           '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                          '& .MuiSvgIcon-root': {
+                            width: '16px',
+                            height: '16px',
+                            // padding: '4px',
+                          },
                         }}
                       />
                     </div>
@@ -1237,9 +1255,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                   />
                 </div>
               </div>
-
               {/* table */}
-
               <div className=" pb-0  relative mt-1">
                 <Tooltip
                   placement="topLeft"
@@ -1322,7 +1338,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
               <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
               <label className="text-blue-700 font-semibold uppercase pb-1">sửa - phiếu mua hàng</label>
             </div>
-            <div className=" border w-full h-[90%] rounded-sm text-sm">
+            <div className=" border w-full h-[89%] rounded-sm text-sm">
               <div className="flex  md:gap-0 lg:gap-1 pl-1 ">
                 {/* thong tin phieu */}
                 <div className="w-[62%] ">

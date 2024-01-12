@@ -718,7 +718,7 @@ const PhieuMuaHang = () => {
       <div className="relative px-2 py-1 ">
         <Table
           loading={tableLoad}
-          className="table_pmh setHeight "
+          className="table_pmh setHeight"
           // rowSelection={rowSelection}
           columns={columns}
           dataSource={filteredPMH}
@@ -734,8 +734,8 @@ const PhieuMuaHang = () => {
             onDoubleClick: () => {
               handleView(record)
             },
-            style: { background: record.SoChungTu === donePMH ? '#d7f4fd' : '' },
           })}
+          rowClassName={(record) => (record.SoChungTu === donePMH ? 'highlighted-row' : '')}
           // Bảng Tổng
           summary={() => {
             let totalTongThanhTien = 0
