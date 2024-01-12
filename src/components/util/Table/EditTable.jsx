@@ -10,9 +10,12 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
   const EditableContext = React.createContext(null)
   const [dataSource, setDataSource] = useState(param)
   const [newOptions, setNewOptions] = useState(yourMaHangOptions)
-
+  useEffect(() => {
+    setNewOptions(yourMaHangOptions)
+  }, [yourMaHangOptions])
   useEffect(() => {
     setDataSource(param)
+
     const updatePrices = () => {
       setDataSource((prevDataSource) => {
         const newData = prevDataSource?.map((item) => {
@@ -22,6 +25,15 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
               ...item,
               DonGia: matchingHP.GiaBan || 0,
               TienHang: matchingHP.GiaBan * item.SoLuong,
+              TienThue: (matchingHP.GiaBan * item.SoLuong * item.TyLeThue) / 100,
+              ThanhTien: (matchingHP.GiaBan * item.SoLuong * item.TyLeThue) / 100 + matchingHP.GiaBan * item.SoLuong,
+              TienCKTT: (((matchingHP.GiaBan * item.SoLuong * item.TyLeThue) / 100 + matchingHP.GiaBan * item.SoLuong) * item.TyLeCKTT) / 100,
+              TongCong:
+                (matchingHP.GiaBan * item.SoLuong * item.TyLeThue) / 100 +
+                matchingHP.GiaBan * item.SoLuong -
+                (((matchingHP.GiaBan * item.SoLuong * item.TyLeThue) / 100 + matchingHP.GiaBan * item.SoLuong) * item.TyLeCKTT) / 100,
+              // ThanhTien: matchingHP.GiaBan * item.SoLuong,
+              // TongCong: matchingHP.GiaBan * item.SoLuong,
             }
           }
 

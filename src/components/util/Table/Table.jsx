@@ -94,6 +94,7 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
         title: columName[item] || item,
         width: 250,
         dataIndex: item,
+
         key: index,
         sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
         showSorterTooltip: false,
@@ -149,6 +150,7 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
         title: columName[item] || item,
         width: 150,
         dataIndex: item,
+
         key: index,
         align: 'center',
         sorter: (a, b) => {

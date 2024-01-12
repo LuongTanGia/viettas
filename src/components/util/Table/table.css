@@ -96,6 +96,11 @@ tbody tr {
 .ant-table-cell-row-hover {
   background-color: #d7f4fd !important;
 }
+.highlight-row .ant-table-cell-fix-right,
+.highlight-row .ant-table-cell-fix-left {
+  background-color: #d7f4fd !important;
+}
+
 /* tr.highlight-row:hover {
   background-color: #87b4ef !important;
 } */
