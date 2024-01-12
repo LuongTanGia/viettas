@@ -365,7 +365,13 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   const handleCreateAndClose = async () => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
-      const response = await apis.ThemPMH(tokenLogin, { ...formPMH, DataDetails: selectedRowData }, selectedDoiTuong, selectedKhoHang)
+      const newData = selectedRowData.map((item, index) => {
+        return {
+          ...item,
+          STT: index + 1,
+        }
+      })
+      const response = await apis.ThemPMH(tokenLogin, { ...formPMH, DataDetails: newData }, selectedDoiTuong, selectedKhoHang)
       // Kiểm tra call api thành công
       if (response.data && response.data.DataError === 0) {
         toast.success(response.data.DataErrorDescription)
@@ -390,7 +396,13 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   const handleCreate = async () => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
-      const response = await apis.ThemPMH(tokenLogin, { ...formPMH, DataDetails: selectedRowData }, selectedDoiTuong, selectedKhoHang)
+      const newData = selectedRowData.map((item, index) => {
+        return {
+          ...item,
+          STT: index + 1,
+        }
+      })
+      const response = await apis.ThemPMH(tokenLogin, { ...formPMH, DataDetails: newData }, selectedDoiTuong, selectedKhoHang)
       // Kiểm tra call api thành công
       if (response.data && response.data.DataError === 0) {
         toast.success(response.data.DataErrorDescription)
