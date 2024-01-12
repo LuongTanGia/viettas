@@ -1,6 +1,5 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useMemo, useState } from 'react'
-
 import icons from '../untils/icons'
 import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
@@ -9,9 +8,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import logo from '../assets/VTS-iSale.ico'
 import { Select } from 'antd'
 import { Checkbox } from 'antd'
-
 const { Option } = Select
-
 import * as apis from '../apis'
 
 const { MdFilterAlt } = icons
@@ -131,6 +128,16 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, dataPMH }) => {
                         NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
                       })
                     }}
+                    sx={{
+                      '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                      '& .MuiButtonBase-root': {
+                        padding: '4px',
+                      },
+                      '& .MuiSvgIcon-root': {
+                        width: '18px',
+                        height: '18px',
+                      },
+                    }}
                   />
                 </div>
                 <div className="flex gap-x-5 items-center">
@@ -145,6 +152,16 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, dataPMH }) => {
                         ...formPrint,
                         NgayKetThuc: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
                       })
+                    }}
+                    sx={{
+                      '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                      '& .MuiButtonBase-root': {
+                        padding: '4px',
+                      },
+                      '& .MuiSvgIcon-root': {
+                        width: '18px',
+                        height: '18px',
+                      },
                     }}
                   />
                 </div>

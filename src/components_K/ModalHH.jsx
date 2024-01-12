@@ -2,8 +2,6 @@
 import { useState } from 'react'
 import logo from '../assets/VTS-iSale.ico'
 import icons from '../untils/icons'
-import { toast } from 'react-toastify'
-
 import { Table, Checkbox } from 'antd'
 import { formatQuantity } from '../action/Actions'
 import { useSearchHH } from './myComponents/useSearchHH'
@@ -198,10 +196,10 @@ const ModalHH = ({ close, data, onRowCreate, dataThongSo }) => {
               pageSizeOptions: ['50', '100', '1000'],
               // onShowSizeChange: (current, size) => {
               //   console.log(size, '???')
-              //   setPageSize(parseInt(size, 10))
+              //   // setPageSize(parseInt(size, 10))
               //   // setPageSize(size === 'All' ? -1 : parseInt(size, 10))
               // },
-              // pageSize,
+              // // pageSize,
               onShowSizeChange: (current, size) => {
                 console.log(size, ':', current, ':')
               },

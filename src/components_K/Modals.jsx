@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-no-undef */
 /* eslint-disable react/prop-types */
 import { useEffect, useMemo, useState } from 'react'
 import icons from '../untils/icons'
@@ -647,6 +646,16 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                           NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
                         })
                       }}
+                      sx={{
+                        '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                        '& .MuiButtonBase-root': {
+                          padding: '4px',
+                        },
+                        '& .MuiSvgIcon-root': {
+                          width: '18px',
+                          height: '18px',
+                        },
+                      }}
                     />
                   </div>
                   <div className="flex gap-x-5 items-center ">
@@ -661,6 +670,16 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                           ...formPrint,
                           NgayKetThuc: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
                         })
+                      }}
+                      sx={{
+                        '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                        '& .MuiButtonBase-root': {
+                          padding: '4px',
+                        },
+                        '& .MuiSvgIcon-root': {
+                          width: '18px',
+                          height: '18px',
+                        },
                       }}
                     />
                   </div>
@@ -701,26 +720,6 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                 </div>
                 {/* liên */}
                 <div className="flex justify-center  gap-6 mt-4">
-                  {/* <div className="">
-                    <input id="lien1" type="checkbox" checked={checkboxValues.checkbox1} onChange={() => handleLien('checkbox1')} />
-                    <label className="pl-2 " htmlFor="lien1">
-                      Liên 1
-                    </label>
-                  </div>
-
-                  <div>
-                    <input id="lien2" type="checkbox" checked={checkboxValues.checkbox2} onChange={() => handleLien('checkbox2')} />
-                    <label className="pl-2" htmlFor="lien2">
-                      Liên 2
-                    </label>
-                  </div>
-
-                  <div>
-                    <input id="lien3" type="checkbox" checked={checkboxValues.checkbox3} onChange={() => handleLien('checkbox3')} />
-                    <label className="pl-2" htmlFor="lien3">
-                      Liên 3
-                    </label>
-                  </div> */}
                   {/*  */}
                   <div>
                     <Checkbox
@@ -806,6 +805,16 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                           NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
                         })
                       }}
+                      sx={{
+                        '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                        '& .MuiButtonBase-root': {
+                          padding: '4px',
+                        },
+                        '& .MuiSvgIcon-root': {
+                          width: '18px',
+                          height: '18px',
+                        },
+                      }}
                     />
                   </div>
                   <div className="flex gap-x-5 items-center ">
@@ -820,6 +829,16 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                           ...formPrint,
                           NgayKetThuc: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
                         })
+                      }}
+                      sx={{
+                        '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                        '& .MuiButtonBase-root': {
+                          padding: '4px',
+                        },
+                        '& .MuiSvgIcon-root': {
+                          width: '18px',
+                          height: '18px',
+                        },
                       }}
                     />
                   </div>
@@ -958,43 +977,57 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                     <div className="flex justify-between items-center ">
                       <div className="flex items-center px-1  ">
                         <label className="md:w-[134px] lg:w-[104px]">Người tạo</label>
-                        <input
-                          disabled
-                          type="text"
-                          className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px] truncate"
-                          value={dataThongTin?.NguoiTao}
-                          readOnly
-                        />
+                        <Tooltip title={dataThongTin?.NguoiTao} color="blue">
+                          <input
+                            disabled
+                            type="text"
+                            className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px] truncate"
+                            value={dataThongTin?.NguoiTao}
+                            readOnly
+                          />
+                        </Tooltip>
                       </div>
 
                       <div className="flex items-center p-1">
                         <label className="w-[30px] pr-1">Lúc</label>
-                        <input
-                          disabled
-                          type="text"
-                          className="w-full text-center border border-gray-300 outline-none px-2 rounded-[4px] h-[24px] "
-                          value={dataThongTin?.NgayTao && moment(dataThongTin.NgayTao).isValid() ? moment(dataThongTin.NgayTao).format('DD/MM/YYYY hh:mm:ss') : ''}
-                        />
+                        <Tooltip
+                          title={dataThongTin?.NgayTao && moment(dataThongTin.NgayTao).isValid() ? moment(dataThongTin.NgayTao).format('DD/MM/YYYY hh:mm:ss') : ''}
+                          color="blue"
+                        >
+                          <input
+                            disabled
+                            type="text"
+                            className="w-full text-center border border-gray-300 outline-none px-2 rounded-[4px] h-[24px] truncate "
+                            value={dataThongTin?.NgayTao && moment(dataThongTin.NgayTao).isValid() ? moment(dataThongTin.NgayTao).format('DD/MM/YYYY hh:mm:ss') : ''}
+                          />
+                        </Tooltip>
                       </div>
                     </div>
                     <div className="flex justify-between items-center ">
                       <div className="flex items-center p-1  ">
                         <label className="md:w-[134px] lg:w-[104px]">Sửa cuối</label>
-                        <input
-                          disabled
-                          type="text"
-                          className="w-full  border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]  truncate"
-                          value={dataThongTin?.NguoiSuaCuoi}
-                        />
+                        <Tooltip title={dataThongTin?.NguoiSuaCuoi} color="blue">
+                          <input
+                            disabled
+                            type="text"
+                            className="w-full  border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]  truncate"
+                            value={dataThongTin?.NguoiSuaCuoi}
+                          />
+                        </Tooltip>
                       </div>
                       <div className="flex items-center p-1 ">
                         <label className="w-[30px] pr-1">Lúc</label>
-                        <input
-                          disabled
-                          type="text"
-                          className="w-full text-center border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]"
-                          value={dataThongTin?.NgaySuaCuoi && moment(dataThongTin.NgaySuaCuoi).isValid() ? moment(dataThongTin.NgaySuaCuoi).format('DD/MM/YYYY hh:mm:ss') : ''}
-                        />
+                        <Tooltip
+                          title={dataThongTin?.NgaySuaCuoi && moment(dataThongTin.NgaySuaCuoi).isValid() ? moment(dataThongTin.NgaySuaCuoi).format('DD/MM/YYYY hh:mm:ss') : ''}
+                          color="blue"
+                        >
+                          <input
+                            disabled
+                            type="text"
+                            className="w-full text-center border border-gray-300 outline-none px-2 rounded-[4px] h-[24px] truncate"
+                            value={dataThongTin?.NgaySuaCuoi && moment(dataThongTin.NgaySuaCuoi).isValid() ? moment(dataThongTin.NgaySuaCuoi).format('DD/MM/YYYY hh:mm:ss') : ''}
+                          />
+                        </Tooltip>
                       </div>
                     </div>
                   </div>
@@ -1130,10 +1163,12 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                         }}
                         sx={{
                           '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                          '& .MuiButtonBase-root': {
+                            padding: '4px',
+                          },
                           '& .MuiSvgIcon-root': {
-                            width: '16px',
-                            height: '16px',
-                            // padding: '4px',
+                            width: '18px',
+                            height: '18px',
                           },
                         }}
                       />
@@ -1374,6 +1409,13 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                         }}
                         sx={{
                           '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                          '& .MuiButtonBase-root': {
+                            padding: '4px',
+                          },
+                          '& .MuiSvgIcon-root': {
+                            width: '18px',
+                            height: '18px',
+                          },
                         }}
                       />
                     </div>
@@ -1428,27 +1470,34 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                     <div className="flex justify-between items-center ">
                       <div className="flex items-center p-1  ">
                         <label className="md:w-[134px] lg:w-[104px]">Người tạo</label>
-                        <input disabled value={dataThongTin?.NguoiTao} type="text" className=" w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" />
+                        <Tooltip title={dataThongTin?.NguoiTao} color="blue">
+                          <input disabled value={dataThongTin?.NguoiTao} type="text" className=" w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px] truncate" />
+                        </Tooltip>
                       </div>
 
                       <div className="flex items-center p-1">
                         <label className="w-[30px] pr-1">Lúc</label>
-                        <input
-                          disabled
-                          value={dataThongTin?.NgayTao && moment(dataThongTin.NgayTao).isValid() ? moment(dataThongTin.NgayTao).format('DD/MM/YYYY hh:mm:ss') : ''}
-                          type="text"
-                          className=" w-full  border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]"
-                        />
+                        <Tooltip
+                          title={dataThongTin?.NgayTao && moment(dataThongTin.NgayTao).isValid() ? moment(dataThongTin.NgayTao).format('DD/MM/YYYY hh:mm:ss') : ''}
+                          color="blue"
+                        >
+                          <input
+                            disabled
+                            value={dataThongTin?.NgayTao && moment(dataThongTin.NgayTao).isValid() ? moment(dataThongTin.NgayTao).format('DD/MM/YYYY hh:mm:ss') : ''}
+                            type="text"
+                            className=" w-full  border border-gray-300 outline-none px-2 rounded-[4px] h-[24px] truncate"
+                          />
+                        </Tooltip>
                       </div>
                     </div>
                     <div className="flex justify-between items-center ">
                       <div className="flex items-center p-1  ">
                         <label className="md:w-[134px] lg:w-[104px]">Sửa cuối</label>
-                        <input disabled type="text" className=" w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" />
+                        <input disabled type="text" className=" w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px] truncate" />
                       </div>
                       <div className="flex items-center p-1 ">
                         <label className="w-[30px] pr-1">Lúc</label>
-                        <input disabled type="text" className=" w-full  border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" />
+                        <input disabled type="text" className=" w-full  border border-gray-300 outline-none px-2 rounded-[4px] h-[24px] truncate" />
                       </div>
                     </div>
                   </div>

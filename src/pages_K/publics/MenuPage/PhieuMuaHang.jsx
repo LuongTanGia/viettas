@@ -1,8 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 import { Table, Checkbox, Tooltip } from 'antd'
-
 import moment from 'moment'
-
 import icons from '../../../untils/icons'
 import { toast } from 'react-toastify'
 import * as apis from '../../../apis'
@@ -18,7 +16,6 @@ const { IoAddCircleOutline, TiPrinter, MdDelete, GiPayMoney, BsSearch, TfiMoreAl
 const PhieuMuaHang = () => {
   const optionContainerRef = useRef(null)
   const [isLoading, setIsLoading] = useState(false)
-
   const [tableLoad, setTableLoad] = useState(true)
   const [isShowModal, setIsShowModal] = useState(false)
   const [isShowSearch, setIsShowSearch] = useState(false)
@@ -670,6 +667,13 @@ const PhieuMuaHang = () => {
               }}
               sx={{
                 '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                '& .MuiButtonBase-root': {
+                  padding: '4px',
+                },
+                '& .MuiSvgIcon-root': {
+                  width: '18px',
+                  height: '18px',
+                },
               }}
             />
           </div>
@@ -688,6 +692,13 @@ const PhieuMuaHang = () => {
               }}
               sx={{
                 '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                '& .MuiButtonBase-root': {
+                  padding: '4px',
+                },
+                '& .MuiSvgIcon-root': {
+                  width: '18px',
+                  height: '18px',
+                },
               }}
             />
           </div>
