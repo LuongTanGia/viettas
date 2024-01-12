@@ -116,6 +116,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
     setDataListHP(result_listHp)
     // setSelectDataOption(result_listHp)
   }
+  console.log(dataListHP)
   const handleChangeInput_kho = async (value) => {
     setForm({ ...form, MaKho: value })
     const result_listHp = await DANHSACHHANGHOA_PBS(API.DANHSACHHANGHOA_PBS, token, form)
