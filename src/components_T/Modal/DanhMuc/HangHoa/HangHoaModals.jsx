@@ -11,7 +11,7 @@ import logo from '../../../../assets/VTS-iSale.ico'
 import { RETOKEN } from '../../../../action/Actions'
 import ActionButton from '../../../../components/util/Button/ActionButton'
 
-const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) => {
+const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, targetRow }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const [dataView, setDataView] = useState({})
   const [nhomHang, setNhomHang] = useState([])
@@ -321,6 +321,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) 
         isSave ? '' : close()
         loadingData()
         toast.success('Thêm sản phẩm thành công', { autoClose: 1000 })
+        targetRow(response.data.DataResults[0].Ma)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         handleCreate()
@@ -381,15 +382,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData }) 
         toast.success('Sửa thành công', { autoClose: 1000 })
         loadingData()
         close()
-        console.log({
-          Ma: hangHoaForm.MaHang,
-          Data: {
-            ...hangHoaForm,
-            Barcodes: dataView.Barcodes,
-            HangHoa_CTs: dataView.HangHoa_CTs,
-            MaVach: `${hangHoaForm.MaVach}${lastNumber13Main}`,
-          },
-        })
+        targetRow(getMaHang)
       } else if ((dataUpdate.data && dataUpdate.data.DataError === -107) || (dataUpdate.data && dataUpdate.data.DataError === -108)) {
         await RETOKEN()
         handleUpdate()

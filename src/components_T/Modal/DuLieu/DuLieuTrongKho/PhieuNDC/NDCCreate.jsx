@@ -31,7 +31,6 @@ const NDCCreate = ({ close, loadingData }) => {
     },
     [selectedRowData],
   )
-  console.log(selectedRowData)
   const innitProduct = {
     SoChungTu: '',
     NgayCTu: '',
@@ -163,10 +162,12 @@ const NDCCreate = ({ close, loadingData }) => {
   }
   const handleCreate = async (e, isSave = true) => {
     e.preventDefault()
+    console.log({ ...NDCForm, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss') })
     try {
       const response = await categoryAPI.NDCCreate({ ...NDCForm, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss') }, TokenAccess)
       if (response.data.DataError == 0) {
-        isSave ? '' : close() && loadingData()
+        isSave ? '' : close()
+        loadingData()
         toast.success('Tạo thành công')
       } else {
         console.log(NDCForm)
@@ -194,8 +195,7 @@ const NDCCreate = ({ close, loadingData }) => {
       toast.warning('Hàng hóa đã được chọn', { autoClose: 1000 })
     }
   }
-
-  // const isAdd = useMemo(() => selectedRowData.map((item) => item.MaHang).includes(''), [selectedRowData])
+  const isAdd = useMemo(() => selectedRowData.map((item) => item.MaHang).includes(''), [selectedRowData])
   const addHangHoaCT = () => {
     if (selectedRowData.map((item) => item.MaHang).includes('')) return
     const addHHCT = Array.isArray(NDCForm.DataDetails) ? [...NDCForm.DataDetails] : []
@@ -442,11 +442,11 @@ const NDCCreate = ({ close, loadingData }) => {
                       <table className="barcodeList">
                         <thead>
                           <tr>
-                            <th>STT</th>
-                            <th>Mã hàng</th>
+                            <th className="w-[5rem]">STT</th>
+                            <th className="w-[10rem]">Mã hàng</th>
                             <th>Tên hàng</th>
-                            <th>Số lượng</th>
-                            <th className={`${selectedRowData?.length > 9 ? 'w-[3.5rem]' : 'w-[5rem] '}`}></th>
+                            <th className="w-[20rem]">Số lượng</th>
+                            <th className={`${selectedRowData?.length > 9 ? 'w-[3.5rem]' : 'w-[5.5rem] '}`}></th>
                           </tr>
                         </thead>
                         <tbody className="">
@@ -512,11 +512,11 @@ const NDCCreate = ({ close, loadingData }) => {
                       </table>
                     </div>
                     <FloatButton
-                      type="primary"
+                      type={isAdd ? 'default' : 'primary'}
                       className={`${selectedRowData?.length > 9 ? 'nDC_Edit top-[10px] right-[35px]' : 'top-[10px] right-[35px]'}  absolute bg-transparent w-[30px] h-[30px]`}
                       icon={<IoMdAddCircle />}
                       onClick={addHangHoaCT}
-                      tooltip={<div>Bấm vào đây để thêm hàng hoặc nhấn F9!</div>}
+                      tooltip={isAdd ? <div>Vui lòng chọn tên hàng!</div> : <div>Bấm vào đây để thêm hàng hoặc nhấn F9!</div>}
                     />
                   </div>
                 </div>

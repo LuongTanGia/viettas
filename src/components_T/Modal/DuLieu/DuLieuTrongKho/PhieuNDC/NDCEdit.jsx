@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 import logo from '../../../../../assets/VTS-iSale.ico'
 import categoryAPI from '../../../../../API/linkAPI'
 import { RETOKEN } from '../../../../../action/Actions'
@@ -25,10 +25,14 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
   const [dataNDCView, setDataNDCView] = useState('')
   const [setSearchHangHoa, filteredHangHoa] = useSearch(dataHangHoa)
   const [selectedRowData, setSelectedRowData] = useState([])
-  const [valueDate, setValueDate] = useState(dayjs(new Date()))
   const [dataThongSo, setDataThongSo] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-
+  const currentRowData = useCallback(
+    (mahang) => {
+      return selectedRowData?.map((item) => item.MaHang).filter((item) => item !== '' && item !== mahang)
+    },
+    [selectedRowData],
+  )
   const innitProduct = {
     SoChungTu: '',
     NgayCTu: '',
@@ -106,7 +110,6 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
       console.log(error)
     }
   }
-
   useEffect(() => {
     if (dataNDCView?.DataDetails) {
       setSelectedRowData([...dataNDCView.DataDetails])
@@ -129,6 +132,7 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
       }),
     }))
   }, [selectedRowData])
+
   const handleSearch = (event) => {
     setSearchHangHoa(event.target.value)
   }
@@ -195,6 +199,7 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
   }
   const handleEdit = async (e) => {
     e.preventDefault()
+    console.log({ SoChungTu: dataNDC?.SoChungTu, Data: { ...NDCForm } })
     try {
       const response = await categoryAPI.NDCEdit({ SoChungTu: dataNDC?.SoChungTu, Data: { ...NDCForm } }, TokenAccess)
       if (response.data.DataError == 0) {
@@ -203,11 +208,19 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
         close()
       } else {
         console.log('sai', NDCForm)
-        toast.error('Sửa thất bại')
+        console.log(response.data)
+        toast.error(response.data.DataErrorDescription)
       }
     } catch (error) {
       console.log(error)
     }
+  }
+  const isAdd = useMemo(() => selectedRowData.map((item) => item.MaHang).includes(''), [selectedRowData])
+  const addHangHoaCT = () => {
+    if (selectedRowData.map((item) => item.MaHang).includes('')) return
+    const addHHCT = Array.isArray(NDCForm.DataDetails) ? [...NDCForm.DataDetails] : []
+
+    setSelectedRowData([...addHHCT, { MaHang: '', TenHang: '', DonGia: 0, SoLuong: 1 }])
   }
   const removeRow = (index) => {
     const updatedBarcodes = [...NDCForm.DataDetails]
@@ -333,7 +346,6 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
       ),
     },
   ]
-  console.log(selectedRowData)
   return (
     <>
       {!isLoading ? (
@@ -468,21 +480,21 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
                   </div>
                   <div className="border-2 p-2 rounded m-1 flex flex-col gap-2 min-h-[26rem] items-start relative">
                     <FloatButton
-                      type="primary"
+                      type={isAdd ? 'default' : 'primary'}
                       className={`${selectedRowData?.length > 9 ? 'nDC_Edit top-[10px] right-[35px]' : 'top-[10px] right-[35px]'}  absolute bg-transparent w-[30px] h-[30px]`}
                       icon={<IoMdAddCircle />}
-                      // onClick={addHangHoaCT}
-                      tooltip={<div>Bấm vào đây để thêm hàng hoặc nhấn F9!</div>}
+                      onClick={addHangHoaCT}
+                      tooltip={isAdd ? <div>Vui lòng chọn tên hàng!</div> : <div>Bấm vào đây để thêm hàng hoặc nhấn F9!</div>}
                     />
                     <div className="w-full max-h-[25.25rem] overflow-y-auto">
                       <table className="barcodeList ">
                         <thead>
                           <tr>
-                            <th>STT</th>
-                            <th>Mã hàng</th>
+                            <th className="w-[5rem]">STT</th>
+                            <th className="w-[10rem]">Mã hàng</th>
                             <th>Tên hàng</th>
-                            <th>Số lượng</th>
-                            <th className={`${selectedRowData?.length > 9 ? 'w-[3.5rem]' : 'w-[5rem] '}`}></th>
+                            <th className="w-[20rem]">Số lượng</th>
+                            <th className={`${selectedRowData?.length > 9 ? 'w-[3.5rem]' : 'w-[5.5rem] '}`}></th>
                           </tr>
                         </thead>
                         <tbody>
@@ -506,13 +518,17 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
                                     }}
                                     onChange={(value) => handleChange(index, 'TenHang', value)}
                                   >
-                                    {dataHangHoa?.map((hangHoa, index) => (
-                                      <>
-                                        <Select.Option key={index} title={hangHoa.MaHang} value={hangHoa.MaHang} className="flex text-start max-w-[25rem]">
-                                          <p className="text-start truncate">{hangHoa.TenHang}</p>
-                                        </Select.Option>
-                                      </>
-                                    ))}
+                                    {dataHangHoa
+                                      ?.filter((row) => !currentRowData(item.MaHang).includes(row?.MaHang))
+                                      ?.map((hangHoa, index) => (
+                                        <>
+                                          <Select.Option key={index} value={hangHoa.MaHang} className="flex text-start  ">
+                                            <p className="text-start truncate">
+                                              {hangHoa.MaHang}-{hangHoa.TenHang}
+                                            </p>
+                                          </Select.Option>
+                                        </>
+                                      ))}
                                   </Select>
                                 </div>
                               </td>

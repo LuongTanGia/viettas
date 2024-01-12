@@ -149,7 +149,6 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
     } else if (typeAction === 'edit') {
       const data = { ...form, DataDetails: dataChitiet }
       const res = await SUAPHIEUBANHANG(API.SUAPHIEUBANHANG, token, { SoChungTu: data.SoChungTu, Data: data })
-
       setMaHang(data.SoChungTu)
       if (res.DataError === 0) {
         console.log('sua')
