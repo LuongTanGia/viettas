@@ -346,7 +346,7 @@ function PhieuBanHang() {
                     <div>
                       <Checkbox.Group
                         style={{
-                          width: '430px',
+                          width: '470px',
                           background: 'white',
                           padding: 10,
                           borderRadius: 10,
@@ -360,7 +360,7 @@ function PhieuBanHang() {
                           {options.map((item) => (
                             <Col span={8} key={item}>
                               <Checkbox value={item} checked={true}>
-                                {item}
+                                {nameColumsPhieuBanHang[item]}
                               </Checkbox>
                             </Col>
                           ))}
