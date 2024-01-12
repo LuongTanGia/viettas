@@ -45,10 +45,11 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
     )
   }
   // Hàm để tùy chỉnh kích thước drop-down
-  const dropdownRender = (menu) => {
-    return <div style={{ minHeight: '400px', overflowY: 'auto' }}>{menu}</div>
-  }
+  // const dropdownRender = (menu) => {
+  //   return <div style={{ minHeight: '400px', overflowY: 'auto' }}>{menu}</div>
+  // }
   const handleSave = (row) => {
+    console.log(row)
     setDataSource((prevDataSource) => {
       const newData = [...prevDataSource]
       const index = newData.findIndex((item) => item.key === row.key)

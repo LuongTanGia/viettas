@@ -19,6 +19,10 @@ const ModalHH = ({ close, data, onRowCreate, dataThongSo }) => {
   //   setSelectedRow(dataRow.MaHang)
   // }
 
+  const dataTable = filteredPMH?.map((record, index) => ({
+    key: index,
+    ...record,
+  }))
   const handleChoose = (dataRow) => {
     const defaultValues = {
       SoLuong: 1,
@@ -182,7 +186,7 @@ const ModalHH = ({ close, data, onRowCreate, dataThongSo }) => {
             className="table_HH"
             columns={columns}
             // dataSource={pageSize === 'All' ? data : data.slice(0, pageSize)}
-            dataSource={filteredPMH}
+            dataSource={dataTable}
             size="small"
             scroll={{
               // x: 1390,
