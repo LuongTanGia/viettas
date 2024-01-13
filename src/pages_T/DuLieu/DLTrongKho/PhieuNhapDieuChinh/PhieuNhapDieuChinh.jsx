@@ -439,6 +439,13 @@ const PhieuNhapDieuChinh = () => {
                       maxDate={dayjs(khoanNgayTo)}
                       sx={{
                         '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                        '& .MuiButtonBase-root': {
+                          padding: '4px',
+                        },
+                        '& .MuiSvgIcon-root': {
+                          width: '18px',
+                          height: '18px',
+                        },
                       }}
                       defaultValue={dayjs(khoanNgayFrom, 'YYYY-MM-DD')}
                       onChange={(values) => {
@@ -455,6 +462,13 @@ const PhieuNhapDieuChinh = () => {
                       defaultValue={dayjs(khoanNgayTo, 'YYYY-MM-DD')}
                       sx={{
                         '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                        '& .MuiButtonBase-root': {
+                          padding: '4px',
+                        },
+                        '& .MuiSvgIcon-root': {
+                          width: '18px',
+                          height: '18px',
+                        },
                       }}
                       onChange={(values) => {
                         setKhoanNgayTo(values ? dayjs(values).format('YYYY-MM-DDTHH:mm:ss') : '')

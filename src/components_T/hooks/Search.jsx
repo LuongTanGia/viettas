@@ -49,6 +49,8 @@ export const useSearch = (data) => {
           ThongTinKho,
           SoMatHang,
           GhiChu,
+          NhomHang,
+          SoLuongTon,
         } = item || {}
         return (
           // HangHoa
@@ -91,7 +93,9 @@ export const useSearch = (data) => {
           (NgayCTu?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (ThongTinKho || '').toLowerCase().includes(search.toLowerCase()) ||
           (SoMatHang?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
-          (GhiChu || '').toLowerCase().includes(search.toLowerCase())
+          (GhiChu || '').toLowerCase().includes(search.toLowerCase()) ||
+          (NhomHang || '').toLowerCase().includes(search.toLowerCase()) ||
+          (SoLuongTon?.toString() || '').toLowerCase().includes(search.toLowerCase())
         )
       })
     else return []

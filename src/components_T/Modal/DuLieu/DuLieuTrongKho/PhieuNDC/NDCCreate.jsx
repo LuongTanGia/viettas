@@ -7,20 +7,21 @@ import { IoMdClose, IoMdAddCircle } from 'react-icons/io'
 import { Checkbox, Table, Tooltip, Select, InputNumber, FloatButton } from 'antd'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import dayjs from 'dayjs'
+import './style/NDC.css'
 import logo from '../../../../../assets/VTS-iSale.ico'
 import categoryAPI from '../../../../../API/linkAPI'
 import { RETOKEN } from '../../../../../action/Actions'
 import { useSearch } from '../../../../hooks/Search'
 import ActionButton from '../../../../../components/util/Button/ActionButton'
-import './style/NDC.css'
 import SimpleBackdrop from '../../../../../components/util/Loading/LoadingPage'
+import HighlightedCell from '../../../../hooks/HighlightedCell'
 
 const NDCCreate = ({ close, loadingData }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const [dataKhoHang, setDataKhoHang] = useState('')
   const [isShowModal, setIsShowModal] = useState(false)
   const [dataHangHoa, setDataHangHoa] = useState('')
-  const [setSearchHangHoa, filteredHangHoa] = useSearch(dataHangHoa)
+  const [setSearchHangHoa, filteredHangHoa, searchHangHoa] = useSearch(dataHangHoa)
   const [selectedRowData, setSelectedRowData] = useState([])
   const [valueDate, setValueDate] = useState(dayjs(new Date()))
   const [dataThongSo, setDataThongSo] = useState('')
@@ -226,6 +227,11 @@ const NDCCreate = ({ close, loadingData }) => {
       showSorterTooltip: false,
       align: 'center',
       sorter: (a, b) => a.MaHang.localeCompare(b.MaHang),
+      render: (text) => (
+        <span className="flex justify-center">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </span>
+      ),
     },
     {
       title: 'Tên nhóm',
@@ -245,7 +251,7 @@ const NDCCreate = ({ close, loadingData }) => {
               textAlign: 'start',
             }}
           >
-            {text}
+            <HighlightedCell text={text} search={searchHangHoa} />
           </div>
         </Tooltip>
       ),
@@ -269,7 +275,7 @@ const NDCCreate = ({ close, loadingData }) => {
               textAlign: 'start',
             }}
           >
-            {text}
+            <HighlightedCell text={text} search={searchHangHoa} />
           </div>
         </Tooltip>
       ),
@@ -282,6 +288,11 @@ const NDCCreate = ({ close, loadingData }) => {
       align: 'center',
       width: 120,
       sorter: (a, b) => a.DVT.localeCompare(b.DVT),
+      render: (text) => (
+        <span className="flex justify-center">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </span>
+      ),
     },
     {
       title: 'Lắp ráp',
@@ -321,7 +332,7 @@ const NDCCreate = ({ close, loadingData }) => {
       align: 'center',
       render: (text) => (
         <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 || text === null ? 'text-gray-300' : ''}`}>
-          {formatThapPhan(text, dataThongSo.SOLESOLUONG)}
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </span>
       ),
     },
@@ -371,6 +382,13 @@ const NDCCreate = ({ close, loadingData }) => {
                             }}
                             sx={{
                               '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                              '& .MuiButtonBase-root': {
+                                padding: '4px',
+                              },
+                              '& .MuiSvgIcon-root': {
+                                width: '18px',
+                                height: '18px',
+                              },
                             }}
                           />
                         </div>
@@ -549,6 +567,7 @@ const NDCCreate = ({ close, loadingData }) => {
                         <FaSearch className="absolute left-[0.5rem] top-2.5 hover:text-red-400 cursor-pointer" />
                         <input
                           type="text"
+                          value={searchHangHoa}
                           placeholder="Nhập ký tự bạn cần tìm"
                           onChange={handleSearch}
                           className="px-[2rem] py-1 w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[1px] hover:border-blue-500 outline-none text-[1rem]  "
