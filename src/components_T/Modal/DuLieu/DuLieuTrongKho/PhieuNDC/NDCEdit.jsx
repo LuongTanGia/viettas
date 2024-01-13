@@ -16,6 +16,7 @@ import { IoMdClose, IoMdAddCircle } from 'react-icons/io'
 import moment from 'moment'
 import ActionButton from '../../../../../components/util/Button/ActionButton'
 import SimpleBackdrop from '../../../../../components/util/Loading/LoadingPage'
+import HighlightedCell from '../../../../hooks/HighlightedCell'
 
 const NDCEdit = ({ close, dataNDC, loadingData }) => {
   const TokenAccess = localStorage.getItem('TKN')
@@ -23,7 +24,7 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
   const [isShowModal, setIsShowModal] = useState(false)
   const [dataHangHoa, setDataHangHoa] = useState('')
   const [dataNDCView, setDataNDCView] = useState('')
-  const [setSearchHangHoa, filteredHangHoa] = useSearch(dataHangHoa)
+  const [setSearchHangHoa, filteredHangHoa, searchHangHoa] = useSearch(dataHangHoa)
   const [selectedRowData, setSelectedRowData] = useState([])
   const [dataThongSo, setDataThongSo] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -235,7 +236,6 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
     {
       title: 'STT',
       render: (text, record, index) => index + 1,
-      fixed: 'left',
       width: 80,
       align: 'center',
     },
@@ -244,15 +244,20 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
       dataIndex: 'MaHang',
       key: 'MaHang',
       width: 150,
-      align: 'center',
       showSorterTooltip: false,
+      align: 'center',
       sorter: (a, b) => a.MaHang.localeCompare(b.MaHang),
+      render: (text) => (
+        <span className="flex justify-center">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </span>
+      ),
     },
     {
       title: 'Tên nhóm',
       dataIndex: 'NhomHang',
       key: 'NhomHang',
-      width: 250,
+      width: 200,
       showSorterTooltip: false,
       align: 'center',
       sorter: (a, b) => a.NhomHang.localeCompare(b.NhomHang),
@@ -266,7 +271,7 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
               textAlign: 'start',
             }}
           >
-            {text}
+            <HighlightedCell text={text} search={searchHangHoa} />
           </div>
         </Tooltip>
       ),
@@ -275,6 +280,7 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
       title: 'Tên hàng',
       dataIndex: 'TenHang',
       key: 'TenHang',
+      width: 250,
       showSorterTooltip: false,
       align: 'center',
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
@@ -289,7 +295,7 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
               textAlign: 'start',
             }}
           >
-            {text}
+            <HighlightedCell text={text} search={searchHangHoa} />
           </div>
         </Tooltip>
       ),
@@ -298,10 +304,15 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
       title: 'Đơn vị tính',
       dataIndex: 'DVT',
       key: 'DVT',
+      showSorterTooltip: false,
       align: 'center',
       width: 120,
-      showSorterTooltip: false,
       sorter: (a, b) => a.DVT.localeCompare(b.DVT),
+      render: (text) => (
+        <span className="flex justify-center">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </span>
+      ),
     },
     {
       title: 'Lắp ráp',
@@ -336,12 +347,12 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
       dataIndex: 'SoLuongTon',
       key: 'SoLuongTon',
       width: 150,
+      showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongTon - b.SoLuongTon,
       align: 'center',
-      showSorterTooltip: false,
       render: (text) => (
         <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 || text === null ? 'text-gray-300' : ''}`}>
-          {formatThapPhan(text, dataThongSo.SOLESOLUONG)}
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </span>
       ),
     },
@@ -388,11 +399,17 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
                             value={dayjs(NDCForm?.NgayCTu) || ''}
                             onChange={(values) => {
                               const newDate = dayjs(values).format('YYYY-MM-DDTHH:mm:ss')
-                              // setValueDate(dayjs(values))
                               setNDCForm({ ...NDCForm, NgayCTu: newDate })
                             }}
                             sx={{
                               '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                              '& .MuiButtonBase-root': {
+                                padding: '4px',
+                              },
+                              '& .MuiSvgIcon-root': {
+                                width: '18px',
+                                height: '18px',
+                              },
                             }}
                           />
                         </div>
@@ -581,6 +598,7 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
                       <div className="flex w-[20rem] overflow-hidden  relative ">
                         <FaSearch className="absolute left-[0.5rem] top-2.5 hover:text-red-400 cursor-pointer" />
                         <input
+                          value={searchHangHoa}
                           type="text"
                           placeholder="Nhập ký tự bạn cần tìm"
                           onChange={handleSearch}
