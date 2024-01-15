@@ -9,7 +9,7 @@ const { Text } = Typography
 import { toast } from 'react-toastify'
 import dayjs from 'dayjs'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
-import { MdFilterListAlt } from 'react-icons/md'
+import { MdFilterAlt } from 'react-icons/md'
 import { RETOKEN } from '../../action/Actions'
 import ActionButton from '../../components/util/Button/ActionButton'
 import HighlightedCell from '../../components_T/hooks/HighlightedCell'
@@ -594,7 +594,7 @@ const NhapXuatTonKho = () => {
                     <ActionButton
                       type="submit"
                       title={'Lọc'}
-                      icon={<MdFilterListAlt className="w-6 h-6" />}
+                      icon={<MdFilterAlt className="w-6 h-6" />}
                       color={'slate-50'}
                       background={'blue-500'}
                       color_hover={'blue-500'}

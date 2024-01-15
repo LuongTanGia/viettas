@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback, useMemo } from 'react'
 import { FaSearch } from 'react-icons/fa'
 import { toast } from 'react-toastify'
 import { IoMdClose, IoMdAddCircle } from 'react-icons/io'
+import { MdPrint } from 'react-icons/md'
 import { Checkbox, Table, Tooltip, Select, InputNumber, FloatButton } from 'antd'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import dayjs from 'dayjs'
@@ -15,6 +16,7 @@ import { useSearch } from '../../../../hooks/Search'
 import ActionButton from '../../../../../components/util/Button/ActionButton'
 import SimpleBackdrop from '../../../../../components/util/Loading/LoadingPage'
 import HighlightedCell from '../../../../hooks/HighlightedCell'
+import NDCPrint from './NDCPrint'
 
 const NDCCreate = ({ close, loadingData }) => {
   const TokenAccess = localStorage.getItem('TKN')
@@ -26,6 +28,9 @@ const NDCCreate = ({ close, loadingData }) => {
   const [valueDate, setValueDate] = useState(dayjs(new Date()))
   const [dataThongSo, setDataThongSo] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [actionType, setActionType] = useState('')
+  const [SoCTu, setSoCTu] = useState('')
+
   const currentRowData = useCallback(
     (mahang) => {
       return selectedRowData?.map((item) => item.MaHang).filter((item) => item !== '' && item !== mahang)
@@ -161,15 +166,13 @@ const NDCCreate = ({ close, loadingData }) => {
       setNDCForm({ ...NDCForm, DataDetails: selectedRowData })
     }
   }
-  const handleCreate = async (e, isSave = true) => {
+  const handleCreate = async (e, isSave = true, isPrint = true) => {
     e.preventDefault()
-    console.log({ ...NDCForm, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss') })
     try {
       const response = await categoryAPI.NDCCreate({ ...NDCForm, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss') }, TokenAccess)
       if (response.data.DataError == 0) {
-        isSave ? '' : close()
-        loadingData()
-        toast.success('Tạo thành công')
+        isPrint ? handlePrint() : isSave ? '' : (close(), loadingData(), toast.success('Tạo thành công'))
+        setSoCTu(response.data.DataResults[0].SoChungTu)
       } else {
         console.log(NDCForm)
         toast.error('Tạo thất bại')
@@ -177,6 +180,10 @@ const NDCCreate = ({ close, loadingData }) => {
     } catch (error) {
       console.log(error)
     }
+  }
+  const handlePrint = () => {
+    setIsShowModal(true)
+    setActionType('print')
   }
   const handleChange = (index, key, newValue) => {
     const newDataList = [...NDCForm.DataDetails]
@@ -337,6 +344,7 @@ const NDCCreate = ({ close, loadingData }) => {
       ),
     },
   ]
+
   return (
     <>
       {!isLoading ? (
@@ -538,68 +546,104 @@ const NDCCreate = ({ close, loadingData }) => {
                     />
                   </div>
                 </div>
-                <div className="flex gap-2 justify-end">
-                  <ActionButton handleAction={handleCreate} title={'Lưu'} color={'slate-50'} background={'blue-500'} color_hover={'blue-500'} bg_hover={'white'} />
-                  <ActionButton
-                    handleAction={(e) => handleCreate(e, false)}
-                    title={'Lưu & Đóng'}
-                    color={'slate-50'}
-                    background={'blue-500'}
-                    color_hover={'blue-500'}
-                    bg_hover={'white'}
-                  />
-                  <ActionButton handleAction={close} title={'Đóng'} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
+                <div className="flex justify-between">
+                  <div className="flex gap-2 justify-start">
+                    <ActionButton
+                      handleAction={
+                        isAdd
+                          ? ''
+                          : (e) => {
+                              handleCreate(e, true, true)
+                            }
+                      }
+                      title={'In Phiếu'}
+                      icon={<MdPrint className="w-6 h-6" />}
+                      color={'slate-50'}
+                      background={isAdd ? 'gray-500' : 'purple-500'}
+                      color_hover={isAdd ? 'gray-500' : 'purple-500'}
+                      bg_hover={isAdd ? 'gray-500' : 'white'}
+                    />
+                  </div>
+                  <div className="flex gap-2 justify-end">
+                    <ActionButton
+                      handleAction={isAdd ? '' : (e) => handleCreate(e, true, false)}
+                      title={'Lưu'}
+                      color={'slate-50'}
+                      background={isAdd ? 'gray-500' : 'blue-500'}
+                      color_hover={isAdd ? 'gray-500' : 'blue-500'}
+                      bg_hover={isAdd ? 'gray-500' : 'slate-50'}
+                    />
+                    <ActionButton
+                      handleAction={isAdd ? '' : (e) => handleCreate(e, false, false)}
+                      title={'Lưu & Đóng'}
+                      color={'slate-50'}
+                      background={isAdd ? 'gray-500' : 'blue-500'}
+                      color_hover={isAdd ? 'gray-500' : 'blue-500'}
+                      bg_hover={isAdd ? 'gray-500' : 'slate-50'}
+                    />
+                    <ActionButton handleAction={close} title={'Đóng'} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
           <div>
-            {isShowModal && (
-              <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col xl:w-[87vw] lg:w-[95vw] md:w-[95vw] min-h-[8rem] bg-white  p-2 rounded-xl shadow-custom overflow-hidden z-10">
-                <div className="flex flex-col gap-2 p-2 ">
-                  <div className="flex items-center gap-2">
-                    <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
-                    <p className="text-blue-700 font-semibold uppercase">Danh Sách Hàng Hóa - Phiếu Nhập Điều Chỉnh</p>
-                  </div>
-                  <div className="border-2">
-                    <div className=" p-2 rounded m-1 flex flex-col gap-2 max-h-[35rem]">
-                      <div className="flex w-[20rem] overflow-hidden  relative ">
-                        <FaSearch className="absolute left-[0.5rem] top-2.5 hover:text-red-400 cursor-pointer" />
-                        <input
-                          type="text"
-                          value={searchHangHoa}
-                          placeholder="Nhập ký tự bạn cần tìm"
-                          onChange={handleSearch}
-                          className="px-[2rem] py-1 w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[1px] hover:border-blue-500 outline-none text-[1rem]  "
+            {isShowModal &&
+              (actionType === 'print' ? (
+                <NDCPrint close={() => setIsShowModal(false)} dataPrint={{ ...NDCForm, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss'), SoChungTu: SoCTu }} />
+              ) : (
+                <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col xl:w-[87vw] lg:w-[95vw] md:w-[95vw] min-h-[8rem] bg-white  p-2 rounded-xl shadow-custom overflow-hidden z-10">
+                  <div className="flex flex-col gap-2 p-2 ">
+                    <div className="flex items-center gap-2">
+                      <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
+                      <p className="text-blue-700 font-semibold uppercase">Danh Sách Hàng Hóa - Phiếu Nhập Điều Chỉnh</p>
+                    </div>
+                    <div className="border-2">
+                      <div className=" p-2 rounded m-1 flex flex-col gap-2 max-h-[35rem]">
+                        <div className="flex w-[20rem] overflow-hidden  relative ">
+                          <FaSearch className="absolute left-[0.5rem] top-2.5 hover:text-red-400 cursor-pointer" />
+                          <input
+                            type="text"
+                            value={searchHangHoa}
+                            placeholder="Nhập ký tự bạn cần tìm"
+                            onChange={handleSearch}
+                            className="px-[2rem] py-1 w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[1px] hover:border-blue-500 outline-none text-[1rem]  "
+                          />
+                        </div>
+                        <Table
+                          className=" "
+                          columns={title}
+                          dataSource={filteredHangHoa}
+                          onRow={(record) => ({
+                            onDoubleClick: () => {
+                              handleChoose(record)
+                            },
+                          })}
+                          size="small"
+                          scroll={{
+                            x: 1100,
+                            y: 420,
+                          }}
+                          style={{
+                            whiteSpace: 'nowrap',
+                            fontSize: '24px',
+                          }}
                         />
                       </div>
-                      <Table
-                        className=" "
-                        columns={title}
-                        dataSource={filteredHangHoa}
-                        onRow={(record) => ({
-                          onDoubleClick: () => {
-                            handleChoose(record)
-                          },
-                        })}
-                        size="small"
-                        scroll={{
-                          x: 1100,
-                          y: 420,
-                        }}
-                        style={{
-                          whiteSpace: 'nowrap',
-                          fontSize: '24px',
-                        }}
+                    </div>
+                    <div className="flex gap-2 justify-end">
+                      <ActionButton
+                        handleAction={() => setIsShowModal(false)}
+                        title={'Đóng'}
+                        color={'slate-50'}
+                        background={'red-500'}
+                        color_hover={'red-500'}
+                        bg_hover={'white'}
                       />
                     </div>
                   </div>
-                  <div className="flex gap-2 justify-end">
-                    <ActionButton handleAction={() => setIsShowModal(false)} title={'Đóng'} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
-                  </div>
                 </div>
-              </div>
-            )}
+              ))}
           </div>
         </>
       )}

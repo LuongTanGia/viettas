@@ -7,7 +7,7 @@ import { FaSearch } from 'react-icons/fa'
 import { useSearch } from '../../../../components_T/hooks/Search'
 import { toast } from 'react-toastify'
 import { IoMdAddCircleOutline } from 'react-icons/io'
-import { MdEdit, MdDelete, MdPrint, MdFilterListAlt } from 'react-icons/md'
+import { MdEdit, MdDelete, MdPrint, MdFilterAlt } from 'react-icons/md'
 import categoryAPI from '../../../../API/linkAPI'
 import dayjs from 'dayjs'
 import { RETOKEN } from '../../../../action/Actions'
@@ -479,7 +479,7 @@ const PhieuNhapDieuChinh = () => {
                 <ActionButton
                   handleAction={getDataNDC}
                   title={'Lọc'}
-                  icon={<MdFilterListAlt className="w-6 h-6" />}
+                  icon={<MdFilterAlt className="w-6 h-6" />}
                   color={'slate-50'}
                   background={'blue-500'}
                   color_hover={'blue-500'}
@@ -509,6 +509,7 @@ const PhieuNhapDieuChinh = () => {
             </div>
             <div>
               <Table
+                loading={!isLoading}
                 className="table_DMHangHoa setHeight"
                 columns={titles}
                 dataSource={filteredHangHoa}
