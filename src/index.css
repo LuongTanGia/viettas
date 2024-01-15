@@ -202,7 +202,7 @@ a.nav-link span {
 }
 
 .DatePicker_NDCKho .css-o9k5xi-MuiInputBase-root-MuiOutlinedInput-root {
-  height: 30px;
+  height: 25px;
   width: 170px;
 }
 
@@ -326,4 +326,9 @@ input[type='radio'] {
 }
 .ant-input-number-handler-wrap {
   display: none !important;
+}
+.highlighted-row,
+.highlighted-row .ant-table-cell-fix-right,
+.highlighted-row .ant-table-cell-fix-left {
+  background-color: #d7f4fd;
 }

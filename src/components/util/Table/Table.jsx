@@ -12,8 +12,7 @@ import { bool } from 'prop-types'
 
 const { Text } = Typography
 
-function Tables({ loadingSearch, param, columName, height, handleView, handleEdit, typeTable, handleAddData, handleDelete, handleChangePhieuThu, selectMH, textSearch }) {
-  const [hiden, setHiden] = useState([])
+function Tables({ hiden, loadingSearch, param, columName, height, handleView, handleEdit, typeTable, handleAddData, handleDelete, handleChangePhieuThu, selectMH, textSearch }) {
   const [soLuong, setSoLuong] = useState(1)
 
   const DataColumns = param ? param[0] : []
@@ -47,7 +46,7 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
     )
   }
 
-  const listColumns = keysOnly?.filter((value) => !hiden.includes(value))
+  const listColumns = keysOnly?.filter((value) => !hiden?.includes(value))
   const newColumns = listColumns.map((item, index) => {
     if (item === 'DiaChi') {
       return {
@@ -386,27 +385,14 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
   const onChangeInphutSL = (value) => {
     setSoLuong(value)
   }
+
   return (
     <>
-      {/* <Button onClick={handleToggleSelect} className="mr-4 ">
-        Ẩn/hiện cột
-      </Button>
-      {selectVisible && (
-        <Select
-          mode="tags"
-          style={{ width: 500 }}
-          placeholder="Chọn Cột Muốn Ẩn"
-          onChange={handleChange}
-          options={options}
-          optionRender={(option) => <Space>{option.data.label}</Space>}
-          value={hiden}
-        />
-      )} */}
       {typeTable !== 'listHelper' ? null : (
-        <>
-          <Text>Nhập số lượng cần thêm vào chi tiết :</Text>
-          <InputNumber min={1} max={999} onChange={onChangeInphutSL} />
-        </>
+        <div className="pb-2 flex gap-2">
+          <Text strong>Nhập số lượng cần thêm vào chi tiết :</Text>
+          <InputNumber min={1} max={999} onChange={onChangeInphutSL} size="small" />
+        </div>
       )}
       <Form form={form} component={false}>
         {typeTable !== 'listHelper' ? (
@@ -488,7 +474,14 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
                   )
                 : null
             }
-            pagination={{ defaultPageSize: 50, showSizeChanger: true, pageSizeOptions: ['50', '100', '1000'] }}
+            pagination={{
+              defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+              showSizeChanger: true,
+              pageSizeOptions: ['50', '100', '1000'],
+              onShowSizeChange: (current, size) => {
+                localStorage.setItem('pageSize', size)
+              },
+            }}
           />
         ) : (
           <Table
@@ -537,7 +530,14 @@ function Tables({ loadingSearch, param, columName, height, handleView, handleEdi
                   }
                 : null
             }
-            pagination={{ defaultPageSize: 50, showSizeChanger: true, pageSizeOptions: ['50', '100', '1000'] }}
+            pagination={{
+              defaultPageSize: 50,
+              showSizeChanger: true,
+              pageSizeOptions: ['50', '100', '1000'],
+              onShowSizeChange: (current, size) => {
+                console.log(size, current, '???')
+              },
+            }}
           />
         )}
       </Form>

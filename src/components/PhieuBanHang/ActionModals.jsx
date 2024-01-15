@@ -17,6 +17,7 @@ import { Select } from 'antd'
 import ActionButton from '../util/Button/ActionButton'
 import { nameColumsPhieuBanHangChiTiet } from '../util/Table/ColumnName'
 import { IoMdAddCircle } from 'react-icons/io'
+import { PrinterOutlined } from '@ant-design/icons'
 
 const { Option } = Select
 
@@ -35,7 +36,7 @@ const initState = {
 }
 
 // eslint-disable-next-line react/prop-types
-function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }) {
+function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, handleShowPrint, handleShowPrint_kho }) {
   // yourMaHangOptions, yourTenHangOptions
   // const [yourMaHangOptions, setYourMaHangOptions] = useState([])
   // const [yourTenHangOptions, setYourTenHangOptions] = useState([])
@@ -116,7 +117,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
     setDataListHP(result_listHp)
     // setSelectDataOption(result_listHp)
   }
-  console.log(dataListHP)
+
   const handleChangeInput_kho = async (value) => {
     setForm({ ...form, MaKho: value })
     const result_listHp = await DANHSACHHANGHOA_PBS(API.DANHSACHHANGHOA_PBS, token, form)
@@ -162,7 +163,6 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
       })
       const data = { ...form, DataDetails: newData }
       const res = await SUAPHIEUBANHANG(API.SUAPHIEUBANHANG, token, { SoChungTu: data.SoChungTu, Data: data })
-
       setMaHang(data.SoChungTu)
       if (res.DataError === 0) {
         console.log('sua')
@@ -416,14 +416,36 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
                 ) : null
               ) : null}
             </div>
-            <div className=" w-full flex justify-end  gap-2 ">
-              {typeAction === 'edit' || typeAction === 'view' ? null : (
-                <ActionButton color={'slate-50'} background={'blue-500'} bg_hover={'white'} color_hover={'blue-500'} title={'Lưu'} handleAction={handleSubmit} />
-              )}
-              {typeAction === 'view' ? null : (
-                <ActionButton color={'slate-50'} background={'blue-500'} bg_hover={'white'} color_hover={'blue-500'} title={'Lưu & Đóng'} handleAction={handleSubmitAndClose} />
-              )}
-              <ActionButton color={'slate-50'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} title={'Đóng'} handleAction={handleClose} />
+            <div className=" w-full flex justify-between  gap-2 ">
+              <div className="w-full flex justify-start  gap-2">
+                <ActionButton
+                  icon={<PrinterOutlined />}
+                  color={'slate-50'}
+                  title={'In Phiếu'}
+                  background={'purple-500'}
+                  bg_hover={'white'}
+                  color_hover={'purple-500'}
+                  handleAction={handleShowPrint}
+                />
+                <ActionButton
+                  icon={<PrinterOutlined />}
+                  color={'slate-50'}
+                  title={'In Phiếu Kho'}
+                  background={'purple-500'}
+                  bg_hover={'white'}
+                  color_hover={'purple-500'}
+                  handleAction={handleShowPrint_kho}
+                />
+              </div>
+              <div className="w-full flex justify-end  gap-2">
+                {typeAction === 'edit' || typeAction === 'view' ? null : (
+                  <ActionButton color={'slate-50'} background={'blue-500'} bg_hover={'white'} color_hover={'blue-500'} title={'Lưu'} handleAction={handleSubmit} />
+                )}
+                {typeAction === 'view' ? null : (
+                  <ActionButton color={'slate-50'} background={'blue-500'} bg_hover={'white'} color_hover={'blue-500'} title={'Lưu & Đóng'} handleAction={handleSubmitAndClose} />
+                )}
+                <ActionButton color={'slate-50'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} title={'Đóng'} handleAction={handleClose} />
+              </div>
             </div>
           </div>
         </div>

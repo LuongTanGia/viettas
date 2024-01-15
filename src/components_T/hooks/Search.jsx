@@ -60,8 +60,8 @@ export const useSearch = (data) => {
           (MaVach || '').toLowerCase().includes(search.toLowerCase()) ||
           (NguoiTao || '').toLowerCase().includes(search.toLowerCase()) ||
           (NguoiSuaCuoi || '').toLowerCase().includes(search.toLowerCase()) ||
-          (moment(NgayTao).format('DD/MM/YYYY') || '').toLowerCase().includes(search.toLowerCase()) ||
-          (moment(NgaySuaCuoi).format('DD/MM/YYYY') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (moment(NgayTao).format('DD/MM/YYYY HH:mm:ss') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (moment(NgaySuaCuoi).format('DD/MM/YYYY HH:mm:ss') || '').toLowerCase().includes(search.toLowerCase()) ||
           (GiaBanLe?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (BangGiaSi?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (BangGiaSi_Min?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
@@ -87,11 +87,11 @@ export const useSearch = (data) => {
           (SoLuongTonCK?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (SoLuongXuat?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           // NDC
-          (SoChungTu?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (SoChungTu || '').toLowerCase().includes(search.toLowerCase()) ||
           (NgayCTu?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
-          (ThongTinKho?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (ThongTinKho || '').toLowerCase().includes(search.toLowerCase()) ||
           (SoMatHang?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
-          (GhiChu?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase())
+          (GhiChu || '').toLowerCase().includes(search.toLowerCase())
         )
       })
     else return []

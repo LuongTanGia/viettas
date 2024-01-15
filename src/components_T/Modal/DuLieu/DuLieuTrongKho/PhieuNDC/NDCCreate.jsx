@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 import { FaSearch } from 'react-icons/fa'
 import { toast } from 'react-toastify'
 import { IoMdClose, IoMdAddCircle } from 'react-icons/io'
@@ -12,7 +12,7 @@ import categoryAPI from '../../../../../API/linkAPI'
 import { RETOKEN } from '../../../../../action/Actions'
 import { useSearch } from '../../../../hooks/Search'
 import ActionButton from '../../../../../components/util/Button/ActionButton'
-import './style/NDCCreate.css'
+import './style/NDC.css'
 import SimpleBackdrop from '../../../../../components/util/Loading/LoadingPage'
 
 const NDCCreate = ({ close, loadingData }) => {
@@ -25,7 +25,12 @@ const NDCCreate = ({ close, loadingData }) => {
   const [valueDate, setValueDate] = useState(dayjs(new Date()))
   const [dataThongSo, setDataThongSo] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-
+  const currentRowData = useCallback(
+    (mahang) => {
+      return selectedRowData?.map((item) => item.MaHang).filter((item) => item !== '' && item !== mahang)
+    },
+    [selectedRowData],
+  )
   const innitProduct = {
     SoChungTu: '',
     NgayCTu: '',
@@ -157,10 +162,12 @@ const NDCCreate = ({ close, loadingData }) => {
   }
   const handleCreate = async (e, isSave = true) => {
     e.preventDefault()
+    console.log({ ...NDCForm, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss') })
     try {
       const response = await categoryAPI.NDCCreate({ ...NDCForm, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss') }, TokenAccess)
       if (response.data.DataError == 0) {
-        isSave ? '' : close() && loadingData()
+        isSave ? '' : close()
+        loadingData()
         toast.success('Tạo thành công')
       } else {
         console.log(NDCForm)
@@ -188,9 +195,12 @@ const NDCCreate = ({ close, loadingData }) => {
       toast.warning('Hàng hóa đã được chọn', { autoClose: 1000 })
     }
   }
+  const isAdd = useMemo(() => selectedRowData.map((item) => item.MaHang).includes(''), [selectedRowData])
   const addHangHoaCT = () => {
-    // const addHHCT = Array.isArray(NDCForm.DataDetails) ? [...NDCForm.DataDetails] : []
-    // setSelectedRowData([...addHHCT, { MaHang: '', TenHang: '', DonGia: 0, SoLuong: 1 }])
+    if (selectedRowData.map((item) => item.MaHang).includes('')) return
+    const addHHCT = Array.isArray(NDCForm.DataDetails) ? [...NDCForm.DataDetails] : []
+
+    setSelectedRowData([...addHHCT, { MaHang: '', TenHang: '', DonGia: 0, SoLuong: 1 }])
   }
   const removeRow = (index) => {
     const updatedBarcodes = [...NDCForm.DataDetails]
@@ -403,7 +413,7 @@ const NDCCreate = ({ close, loadingData }) => {
                       <div className="flex gap-1">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap">Người sửa</label>
-                          <input className="px-2  2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border-[0.125rem] outline-none text-[1rem]" readOnly />
+                          <input className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border-[0.125rem] outline-none text-[1rem]" readOnly />
                         </div>
                         <div className="flex gap-1 items-center">
                           <label>Lúc</label>
@@ -432,11 +442,11 @@ const NDCCreate = ({ close, loadingData }) => {
                       <table className="barcodeList">
                         <thead>
                           <tr>
-                            <th className="w-[3rem]">STT</th>
-                            <th className="w-[8rem]">Mã hàng</th>
-                            <th className="w-[22rem]">Tên hàng</th>
-                            <th className="w-[10rem]">Số lượng</th>
-                            <th className={`${selectedRowData?.length > 9 ? 'xl:w-[3.5rem] lg:w-[4.5rem]' : ' lg:w-[6rem]'}`}></th>
+                            <th className="w-[5rem]">STT</th>
+                            <th className="w-[10rem]">Mã hàng</th>
+                            <th>Tên hàng</th>
+                            <th className="w-[20rem]">Số lượng</th>
+                            <th className={`${selectedRowData?.length > 9 ? 'w-[3.5rem]' : 'w-[5.5rem] '}`}></th>
                           </tr>
                         </thead>
                         <tbody className="">
@@ -460,13 +470,17 @@ const NDCCreate = ({ close, loadingData }) => {
                                     }}
                                     onChange={(value) => handleChange(index, 'TenHang', value)}
                                   >
-                                    {dataHangHoa?.map((hangHoa) => (
-                                      <>
-                                        <Select.Option key={hangHoa.MaHang} title={hangHoa.MaHang} value={hangHoa.MaHang} className="flex text-start ">
-                                          <p className="text-start truncate">{hangHoa.TenHang}</p>
-                                        </Select.Option>
-                                      </>
-                                    ))}
+                                    {dataHangHoa
+                                      ?.filter((row) => !currentRowData(item.MaHang).includes(row?.MaHang))
+                                      ?.map((hangHoa) => (
+                                        <>
+                                          <Select.Option key={hangHoa.MaHang} title={hangHoa.MaHang} value={hangHoa.MaHang} className="flex text-start ">
+                                            <p className="text-start truncate">
+                                              {hangHoa.MaHang}-{hangHoa.TenHang}
+                                            </p>
+                                          </Select.Option>
+                                        </>
+                                      ))}
                                   </Select>
                                 </div>
                               </td>
@@ -498,14 +512,11 @@ const NDCCreate = ({ close, loadingData }) => {
                       </table>
                     </div>
                     <FloatButton
-                      className={`${
-                        selectedRowData?.length > 9
-                          ? 'lg:top-[10px] lg:right-[50px] md:right-[30px] md:top-[10px]'
-                          : 'xl:right-[60px] lg:top-[10px] lg:right-[51px] md:right-[15px] md:top-[10px]'
-                      } z-3 opacity-50 bg-transparent w-[30px] h-[30px]`}
+                      type={isAdd ? 'default' : 'primary'}
+                      className={`${selectedRowData?.length > 9 ? 'nDC_Edit top-[10px] right-[35px]' : 'top-[10px] right-[35px]'}  absolute bg-transparent w-[30px] h-[30px]`}
                       icon={<IoMdAddCircle />}
                       onClick={addHangHoaCT}
-                      tooltip={<div>Bấm vào đây để thêm hàng hoặc nhấn F9!</div>}
+                      tooltip={isAdd ? <div>Vui lòng chọn tên hàng!</div> : <div>Bấm vào đây để thêm hàng hoặc nhấn F9!</div>}
                     />
                   </div>
                 </div>
@@ -526,7 +537,7 @@ const NDCCreate = ({ close, loadingData }) => {
           </div>
           <div>
             {isShowModal && (
-              <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col max-w-[80rem] min-h-[8rem] bg-white  p-2 rounded-xl shadow-custom overflow-hidden z-10">
+              <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col xl:w-[87vw] lg:w-[95vw] md:w-[95vw] min-h-[8rem] bg-white  p-2 rounded-xl shadow-custom overflow-hidden z-10">
                 <div className="flex flex-col gap-2 p-2 ">
                   <div className="flex items-center gap-2">
                     <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />

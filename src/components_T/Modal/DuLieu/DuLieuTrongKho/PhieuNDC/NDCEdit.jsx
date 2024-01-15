@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
+import { useEffect, useState, useCallback, useMemo } from 'react'
 import logo from '../../../../../assets/VTS-iSale.ico'
-import { useEffect, useState } from 'react'
 import categoryAPI from '../../../../../API/linkAPI'
 import { RETOKEN } from '../../../../../action/Actions'
-import './style/NDCCreate.css'
+import './style/NDC.css'
 import { useSearch } from '../../../../hooks/Search'
 import { Checkbox, FloatButton, InputNumber, Select, Table, Tooltip } from 'antd'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
@@ -25,10 +25,14 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
   const [dataNDCView, setDataNDCView] = useState('')
   const [setSearchHangHoa, filteredHangHoa] = useSearch(dataHangHoa)
   const [selectedRowData, setSelectedRowData] = useState([])
-  const [valueDate, setValueDate] = useState(dayjs(new Date()))
   const [dataThongSo, setDataThongSo] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-
+  const currentRowData = useCallback(
+    (mahang) => {
+      return selectedRowData?.map((item) => item.MaHang).filter((item) => item !== '' && item !== mahang)
+    },
+    [selectedRowData],
+  )
   const innitProduct = {
     SoChungTu: '',
     NgayCTu: '',
@@ -106,7 +110,6 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
       console.log(error)
     }
   }
-
   useEffect(() => {
     if (dataNDCView?.DataDetails) {
       setSelectedRowData([...dataNDCView.DataDetails])
@@ -129,6 +132,7 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
       }),
     }))
   }, [selectedRowData])
+
   const handleSearch = (event) => {
     setSearchHangHoa(event.target.value)
   }
@@ -195,6 +199,7 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
   }
   const handleEdit = async (e) => {
     e.preventDefault()
+    console.log({ SoChungTu: dataNDC?.SoChungTu, Data: { ...NDCForm } })
     try {
       const response = await categoryAPI.NDCEdit({ SoChungTu: dataNDC?.SoChungTu, Data: { ...NDCForm } }, TokenAccess)
       if (response.data.DataError == 0) {
@@ -203,11 +208,19 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
         close()
       } else {
         console.log('sai', NDCForm)
-        toast.error('Sửa thất bại')
+        console.log(response.data)
+        toast.error(response.data.DataErrorDescription)
       }
     } catch (error) {
       console.log(error)
     }
+  }
+  const isAdd = useMemo(() => selectedRowData.map((item) => item.MaHang).includes(''), [selectedRowData])
+  const addHangHoaCT = () => {
+    if (selectedRowData.map((item) => item.MaHang).includes('')) return
+    const addHHCT = Array.isArray(NDCForm.DataDetails) ? [...NDCForm.DataDetails] : []
+
+    setSelectedRowData([...addHHCT, { MaHang: '', TenHang: '', DonGia: 0, SoLuong: 1 }])
   }
   const removeRow = (index) => {
     const updatedBarcodes = [...NDCForm.DataDetails]
@@ -333,7 +346,6 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
       ),
     },
   ]
-  console.log(selectedRowData)
   return (
     <>
       {!isLoading ? (
@@ -342,14 +354,14 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
         <>
           <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10">
             <div className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"></div>
-            <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col min-w-[40rem] min-h-[8rem] bg-white  p-2 rounded shadow-custom overflow-hidden">
-              <form className="flex flex-col gap-2 p-2 max-w-[70rem]" onSubmit={handleEdit}>
+            <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col bg-white p-2 rounded shadow-custom overflow-hidden">
+              <form className="flex flex-col gap-2 py-1 px-2 xl:w-[80vw] lg:w-[90vw] md:w-[95vw]" onSubmit={handleEdit}>
                 <div className="flex gap-2">
                   <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
                   <p className="text-blue-700 font-semibold uppercase">Sửa - Phiếu Nhập Điều Chỉnh</p>
                 </div>
                 <div className="flex flex-col gap-2 border-2 px-1 py-2.5">
-                  <div className="flex items-center gap-2">
+                  <div className="grid grid-cols-2 items-center gap-2">
                     <div className="flex flex-col gap-3">
                       <div className="flex gap-2">
                         <div className="flex items-center gap-1">
@@ -417,7 +429,7 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
                           <input
                             title={dataNDCView.NguoiTao}
                             value={dataNDCView.NguoiTao}
-                            className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] rounded resize-none border-[0.125rem] outline-none text-[1rem] overflow-ellipsis"
+                            className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] rounded resize-none border-[0.125rem] outline-none text-[1rem] overflow-ellipsis truncate"
                             readOnly
                           />
                         </div>
@@ -425,7 +437,7 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
                           <label>Lúc</label>
                           <input
                             value={moment(dataNDCView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
-                            className="px-2 w-full rounded resize-none border-[0.125rem] outline-none text-[1rem]"
+                            className="px-2 w-full rounded resize-none border-[0.125rem] outline-none text-[1rem] truncate"
                             readOnly
                           />
                         </div>
@@ -436,7 +448,7 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
                           <input
                             title={dataNDCView.NguoiSuaCuoi}
                             value={dataNDCView.NguoiSuaCuoi || ''}
-                            className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] rounded resize-none border-[0.125rem] outline-none text-[1rem] overflow-ellipsis"
+                            className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] rounded resize-none border-[0.125rem] outline-none text-[1rem] overflow-ellipsis truncate"
                             readOnly
                           />
                         </div>
@@ -444,7 +456,7 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
                           <label>Lúc</label>
                           <input
                             value={dataNDCView?.NgaySuaCuoi ? moment(dataNDCView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                            className="px-2 w-full rounded resize-none border-[0.125rem] outline-none text-[1rem]"
+                            className="px-2 w-full rounded resize-none border-[0.125rem] outline-none text-[1rem] truncate"
                             readOnly
                           />
                         </div>
@@ -466,16 +478,23 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
                       }
                     />
                   </div>
-                  <div className="border-2 p-2 rounded m-1 flex flex-col gap-2 min-h-[26rem] items-start relative ">
+                  <div className="border-2 p-2 rounded m-1 flex flex-col gap-2 min-h-[26rem] items-start relative">
+                    <FloatButton
+                      type={isAdd ? 'default' : 'primary'}
+                      className={`${selectedRowData?.length > 9 ? 'nDC_Edit top-[10px] right-[35px]' : 'top-[10px] right-[35px]'}  absolute bg-transparent w-[30px] h-[30px]`}
+                      icon={<IoMdAddCircle />}
+                      onClick={addHangHoaCT}
+                      tooltip={isAdd ? <div>Vui lòng chọn tên hàng!</div> : <div>Bấm vào đây để thêm hàng hoặc nhấn F9!</div>}
+                    />
                     <div className="w-full max-h-[25.25rem] overflow-y-auto">
                       <table className="barcodeList ">
                         <thead>
                           <tr>
-                            <th className="w-[3rem]">STT</th>
-                            <th className="w-[8rem]">Mã hàng</th>
-                            <th className="w-[22rem]">Tên hàng</th>
-                            <th className="w-[10rem]">Số lượng</th>
-                            <th className={`${selectedRowData?.length > 9 ? 'w-[3.5rem]' : 'w-[5rem]'}`}></th>
+                            <th className="w-[5rem]">STT</th>
+                            <th className="w-[10rem]">Mã hàng</th>
+                            <th>Tên hàng</th>
+                            <th className="w-[20rem]">Số lượng</th>
+                            <th className={`${selectedRowData?.length > 9 ? 'w-[3.5rem]' : 'w-[5.5rem] '}`}></th>
                           </tr>
                         </thead>
                         <tbody>
@@ -490,7 +509,7 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
                               <td>
                                 <div>
                                   <Select
-                                    className="max-w-[22rem] text-start"
+                                    className="text-start"
                                     showSearch
                                     size="small"
                                     value={item.TenHang || ''}
@@ -499,13 +518,17 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
                                     }}
                                     onChange={(value) => handleChange(index, 'TenHang', value)}
                                   >
-                                    {dataHangHoa?.map((hangHoa, index) => (
-                                      <>
-                                        <Select.Option key={index} title={hangHoa.MaHang} value={hangHoa.MaHang} className="flex text-start max-w-[25rem]">
-                                          <p className="text-start truncate">{hangHoa.TenHang}</p>
-                                        </Select.Option>
-                                      </>
-                                    ))}
+                                    {dataHangHoa
+                                      ?.filter((row) => !currentRowData(item.MaHang).includes(row?.MaHang))
+                                      ?.map((hangHoa, index) => (
+                                        <>
+                                          <Select.Option key={index} value={hangHoa.MaHang} className="flex text-start  ">
+                                            <p className="text-start truncate">
+                                              {hangHoa.MaHang}-{hangHoa.TenHang}
+                                            </p>
+                                          </Select.Option>
+                                        </>
+                                      ))}
                                   </Select>
                                 </div>
                               </td>
@@ -536,16 +559,6 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
                         </tbody>
                       </table>
                     </div>
-                    <FloatButton
-                      className="z-3 opacity-50 bg-transparent w-[30px] h-[30px]"
-                      style={{
-                        right: 50,
-                        top: 10,
-                      }}
-                      icon={<IoMdAddCircle />}
-                      // onClick={addHangHoaCT}
-                      tooltip={<div>Bấm vào đây để thêm hàng hoặc nhấn F9!</div>}
-                    />
                   </div>
                 </div>
                 <div className="flex gap-2 justify-end">
@@ -557,7 +570,7 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
           </div>
           <div>
             {isShowModal && (
-              <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col max-w-[80rem] min-h-[8rem] bg-white  p-2 rounded-xl shadow-custom overflow-hidden z-10">
+              <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col xl:w-[87vw] lg:w-[95vw] md:w-[95vw]  bg-white  p-2 rounded-xl shadow-custom overflow-hidden z-10">
                 <div className="flex flex-col gap-2 p-2">
                   <div className="flex items-center gap-2">
                     <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
