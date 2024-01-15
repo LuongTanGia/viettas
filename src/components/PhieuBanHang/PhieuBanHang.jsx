@@ -1,6 +1,6 @@
 import Table from '../util/Table/Table'
 import LoadingPage from '../util/Loading/LoadingPage'
-import { FileAddOutlined, PrinterOutlined } from '@ant-design/icons'
+import { PrinterOutlined } from '@ant-design/icons'
 import { nameColumsPhieuBanHang } from '../util/Table/ColumnName'
 import ActionModals from './ActionModals'
 import { useEffect, useRef, useState } from 'react'
@@ -19,6 +19,7 @@ import { TfiMoreAlt } from 'react-icons/tfi'
 import { MdFilterAlt } from 'react-icons/md'
 import { RiFileExcel2Fill } from 'react-icons/ri'
 import { Input, Button, Spin } from 'antd'
+import { IoAddCircleOutline } from 'react-icons/io5'
 
 function PhieuBanHang() {
   const optionContainerRef = useRef(null)
@@ -43,6 +44,7 @@ function PhieuBanHang() {
   const [selectMH, setSelectMH] = useState()
   const [isShowOption, setIsShowOption] = useState(false)
   const [dataDate, setDataDate] = useState({})
+  const [soChungTuPrint, setSoChungTuPrint] = useState()
 
   const [hiden, setHiden] = useState([])
   const [checkedList, setcheckedList] = useState([])
@@ -139,6 +141,7 @@ function PhieuBanHang() {
   }, [isShowOption])
   const handleView = async (record) => {
     await THONGTINPHIEU(API.CHITIETPBS, token, record?.SoChungTu, dispatch)
+
     setIsShow(true)
     setType('view')
     setDataRecord(record)
@@ -146,6 +149,7 @@ function PhieuBanHang() {
 
   const handleEdit = async (record) => {
     await THONGTINPHIEU(API.CHITIETPBS, token, record?.SoChungTu, dispatch)
+
     setIsShow(true)
     setType('edit')
     setDataRecord(record)
@@ -166,6 +170,7 @@ function PhieuBanHang() {
   }
   const handleCloseAction = () => {
     setIsShowPrint(false)
+    setDataDate({})
     setDataRecord([])
   }
 
@@ -212,6 +217,21 @@ function PhieuBanHang() {
     setIsShowPrint(!isShowPrint)
     setModelType('PhieuKho')
   }
+
+  const handleShowPrint_action = (value, soCT) => {
+    setSoChungTuPrint(soCT)
+    setDataDate({ ...dataDate, NgayBatDau: value, NgayKetThuc: value })
+    setIsShowPrint(!isShowPrint)
+    setModelType('')
+  }
+
+  const handleShowPrint_kho_action = (value, soCT) => {
+    setSoChungTuPrint(soCT)
+    setDataDate({ ...dataDate, NgayBatDau: value, NgayKetThuc: value })
+    setIsShowPrint(!isShowPrint)
+    setModelType('PhieuKho')
+  }
+
   const handleSearch = async () => {
     setLoadingSearch(true)
     const searchData = {
@@ -440,7 +460,7 @@ function PhieuBanHang() {
             color={'slate-50'}
             title={'Thêm Phiếu'}
             background={'blue-500'}
-            icon={<FileAddOutlined />}
+            icon={<IoAddCircleOutline />}
             bg_hover={'white'}
             color_hover={'blue-500'}
             handleAction={handleCreate}
@@ -470,11 +490,11 @@ function PhieuBanHang() {
         dataRecord={dataRecord}
         typeAction={type}
         setMaHang={setMaHang}
-        handleShowPrint={handleShowPrint}
-        handleShowPrint_kho={handleShowPrint_kho}
+        handleShowPrint_action={handleShowPrint_action}
+        handleShowPrint_kho_action={handleShowPrint_kho_action}
       />
       <Model isShow={isShowDelete} handleClose={handleClose} record={dataRecord} ActionDelete={ActionDelete} typeModel={typeModel} ActionPay={ActionPay} />
-      <ModelPrint isShowModel={isShowPrint} handleCloseAction={handleCloseAction} data={dataDate} modelType={modelType} />
+      <ModelPrint selectMH={selectMH} soChungTuPrint={soChungTuPrint} isShowModel={isShowPrint} handleCloseAction={handleCloseAction} data={dataDate} modelType={modelType} />
     </>
   )
 }

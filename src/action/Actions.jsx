@@ -340,6 +340,7 @@ export const THONGTINPHIEU = async (API, token, maphieu, dispatch) => {
       }
     }
     dispatch(PBSSlice.actions.data_chitiet(response.data))
+    return response.data
   } catch (error) {
     console.error('Error adding user:', error)
   }
@@ -637,7 +638,7 @@ export const LISTCHUNGTU = async (API, token, data) => {
       }
 
       if (response.data) {
-        toast.success(response.data.DataErrorDescription)
+        // toast.success(response.data.DataErrorDescription)
       } else {
         toast.error('DataResults is undefined or null.')
       }
