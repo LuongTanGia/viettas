@@ -12,11 +12,10 @@ import { Checkbox } from 'antd'
 const { Option } = Select
 const { MdFilterAlt } = icons
 
-const ModalOnlyPrint = ({ close, dataThongTin, dataPMH }) => {
+const ModalOnlyPrint = ({ close, dataThongTin, dataPMH, actionType, close2, SctCreate }) => {
   const [selectedSctBD, setSelectedSctBD] = useState()
   const [selectedSctKT, setSelectedSctKT] = useState()
   const [newDataPMH, setNewDataPMH] = useState()
-
   const startDate = dayjs(dataThongTin.NgayCTu).format('YYYY-MM-DDTHH:mm:ss')
   const endDate = dayjs(dataThongTin.NgayCTu).format('YYYY-MM-DDTHH:mm:ss')
 
@@ -34,10 +33,7 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH }) => {
     setNewDataPMH(dataPMHByDate)
   }, [dataPMHByDate])
 
-  const [formPrint, setFormPrint] = useState({
-    NgayBatDau: startDate,
-    NgayKetThuc: endDate,
-  })
+  const [formPrint, setFormPrint] = useState({ NgayBatDau: startDate, NgayKetThuc: endDate })
 
   const [checkboxValues, setCheckboxValues] = useState({
     checkbox1: true,
@@ -46,9 +42,24 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH }) => {
   })
 
   useEffect(() => {
-    if (dataThongTin) setSelectedSctBD(dataThongTin.SoChungTu)
-    if (dataThongTin) setSelectedSctKT(dataThongTin.SoChungTu)
-  }, [dataThongTin])
+    if (actionType === 'edit') {
+      setFormPrint({ NgayBatDau: startDate, NgayKetThuc: endDate })
+    }
+    if (actionType === 'create') {
+      setFormPrint({ NgayBatDau: dayjs(), NgayKetThuc: dayjs() })
+    }
+  }, [dataThongTin, actionType])
+
+  useEffect(() => {
+    if (dataThongTin && actionType !== 'create') {
+      setSelectedSctBD(dataThongTin.SoChungTu)
+      setSelectedSctKT(dataThongTin.SoChungTu)
+    }
+    if (actionType == 'create') {
+      setSelectedSctBD(SctCreate)
+      setSelectedSctKT(SctCreate)
+    }
+  }, [dataThongTin, SctCreate])
 
   const calculateTotal = () => {
     let total = 0
@@ -113,8 +124,8 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH }) => {
                   <DatePicker
                     className="DatePicker_PMH"
                     format="DD/MM/YYYY"
-                    maxDate={dayjs(formPrint.NgayKetThuc)}
-                    defaultValue={dayjs(dataThongTin?.NgayCTu)}
+                    maxDate={actionType !== 'create' && dayjs(formPrint.NgayKetThuc)}
+                    defaultValue={actionType === 'create' ? dayjs() : dayjs(dataThongTin?.NgayCTu)}
                     onChange={(newDate) => {
                       setFormPrint({
                         ...formPrint,
@@ -138,8 +149,8 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH }) => {
                   <DatePicker
                     className="DatePicker_PMH"
                     format="DD/MM/YYYY"
-                    minDate={dayjs(formPrint.NgayBatDau)}
-                    defaultValue={dayjs(dataThongTin?.NgayCTu)}
+                    minDate={actionType !== 'create' && dayjs(formPrint.NgayBatDau)}
+                    defaultValue={actionType === 'create' ? dayjs() : dayjs(dataThongTin?.NgayCTu)}
                     onChange={(newDate) => {
                       setFormPrint({
                         ...formPrint,
@@ -173,7 +184,7 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH }) => {
                 <div className="flex ">
                   <label className="px-[22px]">Số chứng từ</label>
 
-                  <Select showSearch optionFilterProp="children" onChange={(value) => setSelectedSctBD(value)} style={{ width: '154px' }} value={selectedSctBD}>
+                  <Select size="small" showSearch optionFilterProp="children" onChange={(value) => setSelectedSctBD(value)} style={{ width: '154px' }} value={selectedSctBD}>
                     {newDataPMH?.map((item) => (
                       <Option key={item.SoChungTu} value={item.SoChungTu}>
                         {item.SoChungTu}
@@ -185,7 +196,7 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH }) => {
                 <div className="flex ">
                   <label className="px-[16px]">Đến</label>
 
-                  <Select showSearch optionFilterProp="children" onChange={(value) => setSelectedSctKT(value)} style={{ width: '154px' }} value={selectedSctKT}>
+                  <Select size="small" showSearch optionFilterProp="children" onChange={(value) => setSelectedSctKT(value)} style={{ width: '154px' }} value={selectedSctKT}>
                     {newDataPMH?.map((item) => (
                       <Option key={item.SoChungTu} value={item.SoChungTu}>
                         {item.SoChungTu}
@@ -196,20 +207,6 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH }) => {
               </div>
               {/* liên */}
               <div className="flex justify-center items-center gap-6 mt-4">
-                {/* <div>
-                  <input id="lien1" type="checkbox" checked={checkboxValues.checkbox1} onChange={() => handleLien('checkbox1')} />
-                  <label htmlFor="lien1">Liên 1</label>
-                </div>
-
-                <div>
-                  <input id="lien2" type="checkbox" checked={checkboxValues.checkbox2} onChange={() => handleLien('checkbox2')} />
-                  <label htmlFor="lien2">Liên 2</label>
-                </div>
-
-                <div>
-                  <input id="lien3" type="checkbox" checked={checkboxValues.checkbox3} onChange={() => handleLien('checkbox3')} />
-                  <label htmlFor="lien3">Liên 3</label>
-                </div> */}
                 <div>
                   <Checkbox
                     value="checkbox1"
@@ -255,20 +252,41 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH }) => {
               </div>
             </div>
           </div>
-          <div className="flex justify-end pt-2 gap-2">
-            <button
-              onClick={handleOnlyPrint}
-              className="active:scale-[.98] active:duration-75  border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main rounded-md px-2 py-1  w-[80px] "
-            >
-              Xác nhận
-            </button>
-            <button
-              onClick={() => close()}
-              className="active:scale-[.98] active:duration-75 border-2 border-rose-500 text-slate-50 text-text-main font-bold  bg-rose-500 hover:bg-white hover:text-rose-500  rounded-md px-2 py-1 w-[80px] "
-            >
-              Đóng
-            </button>
-          </div>
+          {actionType === 'edit' ? (
+            <div className="flex justify-end pt-2 gap-2">
+              <button
+                onClick={() => {
+                  handleOnlyPrint(), close2()
+                }}
+                className="active:scale-[.98] active:duration-75  border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main rounded-md px-2 py-1  w-[80px] "
+              >
+                Xác nhận
+              </button>
+              <button
+                onClick={() => {
+                  close(), close2()
+                }}
+                className="active:scale-[.98] active:duration-75 border-2 border-rose-500 text-slate-50 text-text-main font-bold  bg-rose-500 hover:bg-white hover:text-rose-500  rounded-md px-2 py-1 w-[80px] "
+              >
+                Đóng
+              </button>
+            </div>
+          ) : (
+            <div className="flex justify-end pt-2 gap-2">
+              <button
+                onClick={handleOnlyPrint}
+                className="active:scale-[.98] active:duration-75  border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main rounded-md px-2 py-1  w-[80px] "
+              >
+                Xác nhận
+              </button>
+              <button
+                onClick={() => close()}
+                className="active:scale-[.98] active:duration-75 border-2 border-rose-500 text-slate-50 text-text-main font-bold  bg-rose-500 hover:bg-white hover:text-rose-500  rounded-md px-2 py-1 w-[80px] "
+              >
+                Đóng
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

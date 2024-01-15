@@ -158,7 +158,6 @@ const PhieuMuaHang = () => {
 
   const getDSPMH = async () => {
     try {
-      // setTableLoad(true)
       const tokenLogin = localStorage.getItem('TKN')
 
       const response = await apis.DanhSachPMH(tokenLogin, formKhoanNgay)

@@ -13,7 +13,7 @@ import * as apis from '../apis'
 
 const { MdFilterAlt } = icons
 
-const ModalOnlyPrintWareHouse = ({ close, dataThongTin, dataPMH }) => {
+const ModalOnlyPrintWareHouse = ({ close, dataThongTin, dataPMH, actionType, close2, SctCreate }) => {
   const [selectedSctBD, setSelectedSctBD] = useState()
   const [selectedSctKT, setSelectedSctKT] = useState()
   const [newDataPMH, setNewDataPMH] = useState()
@@ -46,9 +46,15 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, dataPMH }) => {
   })
 
   useEffect(() => {
-    if (dataThongTin) setSelectedSctBD(dataThongTin.SoChungTu)
-    if (dataThongTin) setSelectedSctKT(dataThongTin.SoChungTu)
-  }, [dataThongTin])
+    if (dataThongTin && actionType !== 'create') {
+      setSelectedSctBD(dataThongTin.SoChungTu)
+      setSelectedSctKT(dataThongTin.SoChungTu)
+    }
+    if (actionType == 'create') {
+      setSelectedSctBD(SctCreate)
+      setSelectedSctKT(SctCreate)
+    }
+  }, [dataThongTin, SctCreate])
 
   const calculateTotal = () => {
     let total = 0
@@ -177,20 +183,10 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, dataPMH }) => {
                 </button>
               </div>
               <div className="flex  mt-4">
-                {/* <div className="flex ">
-                  <label className="px-4">Số chứng từ</label>
-                  <select className=" bg-white border outline-none border-gray-300  " value={selectedSctBD} onChange={(e) => setSelectedSctBD(e.target.value)}>
-                    {newDataPMH?.map((item) => (
-                      <option key={item.SoChungTu} value={item.SoChungTu}>
-                        {item.SoChungTu}
-                      </option>
-                    ))}
-                  </select>
-                </div> */}
                 <div className="flex ">
                   <label className="px-[22px]">Số chứng từ</label>
 
-                  <Select showSearch optionFilterProp="children" onChange={(value) => setSelectedSctBD(value)} style={{ width: '154px' }} value={selectedSctBD}>
+                  <Select size="small" showSearch optionFilterProp="children" onChange={(value) => setSelectedSctBD(value)} style={{ width: '154px' }} value={selectedSctBD}>
                     {newDataPMH?.map((item) => (
                       <Option key={item.SoChungTu} value={item.SoChungTu}>
                         {item.SoChungTu}
@@ -198,20 +194,11 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, dataPMH }) => {
                     ))}
                   </Select>
                 </div>
-                {/* <div className="flex ">
-                  <label className="px-4">Đến</label>
-                  <select className=" bg-white border outline-none border-gray-300  " value={selectedSctKT} onChange={(e) => setSelectedSctKT(e.target.value)}>
-                    {newDataPMH?.map((item) => (
-                      <option key={item.SoChungTu} value={item.SoChungTu}>
-                        {item.SoChungTu}
-                      </option>
-                    ))}
-                  </select>
-                </div> */}
+
                 <div className="flex ">
                   <label className="px-[16px]">Đến</label>
 
-                  <Select showSearch optionFilterProp="children" onChange={(value) => setSelectedSctKT(value)} style={{ width: '154px' }} value={selectedSctKT}>
+                  <Select size="small" showSearch optionFilterProp="children" onChange={(value) => setSelectedSctKT(value)} style={{ width: '154px' }} value={selectedSctKT}>
                     {newDataPMH?.map((item) => (
                       <Option key={item.SoChungTu} value={item.SoChungTu}>
                         {item.SoChungTu}
@@ -263,20 +250,41 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, dataPMH }) => {
               </div>
             </div>
           </div>
-          <div className="flex justify-end pt-2 gap-2">
-            <button
-              onClick={handleOnlyPrintWareHouse}
-              className="active:scale-[.98] active:duration-75  border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main rounded-md px-2 py-1  w-[80px] "
-            >
-              Xác nhận
-            </button>
-            <button
-              onClick={() => close()}
-              className="active:scale-[.98] active:duration-75 border-2 border-rose-500 text-slate-50 text-text-main font-bold  bg-rose-500 hover:bg-white hover:text-rose-500  rounded-md px-2 py-1 w-[80px] "
-            >
-              Đóng
-            </button>
-          </div>
+          {actionType === 'edit' ? (
+            <div className="flex justify-end pt-2 gap-2">
+              <button
+                onClick={() => {
+                  handleOnlyPrintWareHouse(), close2()
+                }}
+                className="active:scale-[.98] active:duration-75  border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main rounded-md px-2 py-1  w-[80px] "
+              >
+                Xác nhận
+              </button>
+              <button
+                onClick={() => {
+                  close(), close2()
+                }}
+                className="active:scale-[.98] active:duration-75 border-2 border-rose-500 text-slate-50 text-text-main font-bold  bg-rose-500 hover:bg-white hover:text-rose-500  rounded-md px-2 py-1 w-[80px] "
+              >
+                Đóng
+              </button>
+            </div>
+          ) : (
+            <div className="flex justify-end pt-2 gap-2">
+              <button
+                onClick={handleOnlyPrintWareHouse}
+                className="active:scale-[.98] active:duration-75  border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main rounded-md px-2 py-1  w-[80px] "
+              >
+                Xác nhận
+              </button>
+              <button
+                onClick={() => close()}
+                className="active:scale-[.98] active:duration-75 border-2 border-rose-500 text-slate-50 text-text-main font-bold  bg-rose-500 hover:bg-white hover:text-rose-500  rounded-md px-2 py-1 w-[80px] "
+              >
+                Đóng
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
