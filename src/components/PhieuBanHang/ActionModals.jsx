@@ -6,10 +6,10 @@ import { useEffect, useState } from 'react'
 import { chiTietPBS } from '../../redux/selector'
 import './phieubanhang.css'
 import dayjs from 'dayjs'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import TableEdit from '../util/Table/EditTable'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
-import { DANHSACHDOITUONG, DANHSACHKHOHANG, THEMPHIEUBANHANG, SUAPHIEUBANHANG, DANHSACHHANGHOA_PBS } from '../../action/Actions'
+import { DANHSACHDOITUONG, DANHSACHKHOHANG, THEMPHIEUBANHANG, SUAPHIEUBANHANG, DANHSACHHANGHOA_PBS, THONGTINPHIEU } from '../../action/Actions'
 import API from '../../API/API'
 import ListHelper_HangHoa from './ListHelper_HangHoa'
 import { toast } from 'react-toastify'
@@ -36,11 +36,12 @@ const initState = {
 }
 
 // eslint-disable-next-line react/prop-types
-function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, handleShowPrint, handleShowPrint_kho }) {
+function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, handleShowPrint_action, handleShowPrint_kho_action }) {
   // yourMaHangOptions, yourTenHangOptions
   // const [yourMaHangOptions, setYourMaHangOptions] = useState([])
   // const [yourTenHangOptions, setYourTenHangOptions] = useState([])
-
+  const dispatch = useDispatch()
+  const [reloadComponent, setReloadComponent] = useState(false)
   const token = window.localStorage.getItem('TKN')
   const [isModalOpen, setIsModalOpen] = useState(isShow)
   const [Dates, setDates] = useState({ NgayCTu: dayjs(new Date()), DaoHan: dayjs(new Date()) })
@@ -48,6 +49,8 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
   const [listDoiTuong, setListDoiTuong] = useState([])
   const [listKhoHang, setListKhoHang] = useState([])
   const [showPopup, setShowPopup] = useState(false)
+  // const [loadingTable, setloadingTable] = useState(false)
+
   const [dataChitiet, setDataChitiet] = useState([])
   const [dataListHP, setDataListHP] = useState([])
 
@@ -71,7 +74,8 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
       }
     }
     loadData()
-  }, [isShow, dataRecord, token, form?.DataDetails])
+    setReloadComponent(false)
+  }, [isShow, dataRecord, token, form?.DataDetails, reloadComponent])
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -106,7 +110,6 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
   // Action Sửa
   const handleChangeInput_other = (e) => {
     const { name, value } = e.target
-
     setForm({ ...form, [name]: value })
   }
   const handleChangeInput = async (value) => {
@@ -168,6 +171,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
         console.log('sua')
       }
     }
+    setReloadComponent(true)
   }
   const handleSubmitAndClose = async () => {
     if (typeAction === 'create') {
@@ -198,6 +202,32 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
       if (res.DataError === 0) {
         handleClose()
       }
+    }
+  }
+  const Print = async () => {
+    if (typeAction === 'view') {
+      handleShowPrint_action(form?.NgayCTu, form?.SoChungTu)
+    } else {
+      handleSubmit()
+      handleShowPrint_action(form?.NgayCTu, form?.SoChungTu)
+
+      setReloadComponent(true)
+      const x = await THONGTINPHIEU(API.CHITIETPBS, token, form?.SoChungTu, dispatch)
+      setForm(x.DataResult)
+    }
+  }
+
+  const Print_kho = async () => {
+    if (typeAction === 'view') {
+      handleShowPrint_kho_action(form?.NgayCTu, form?.SoChungTu)
+    } else {
+      handleSubmit()
+
+      handleShowPrint_kho_action(form?.NgayCTu, form?.SoChungTu)
+
+      setReloadComponent(true)
+      const x = await THONGTINPHIEU(API.CHITIETPBS, token, form?.SoChungTu, dispatch)
+      setForm(x.DataResult)
     }
   }
 
@@ -390,6 +420,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                     <TableEdit
                       listHP={dataListHP}
                       typeTable={'create'}
+                      typeAction={typeAction}
                       tableName={'BanHang'}
                       param={dataChitiet}
                       columName={nameColumsPhieuBanHangChiTiet}
@@ -425,7 +456,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                   background={'purple-500'}
                   bg_hover={'white'}
                   color_hover={'purple-500'}
-                  handleAction={handleShowPrint}
+                  handleAction={Print}
                 />
                 <ActionButton
                   icon={<PrinterOutlined />}
@@ -434,7 +465,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                   background={'purple-500'}
                   bg_hover={'white'}
                   color_hover={'purple-500'}
-                  handleAction={handleShowPrint_kho}
+                  handleAction={Print_kho}
                 />
               </div>
               <div className="w-full flex justify-end  gap-2">

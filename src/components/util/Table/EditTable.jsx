@@ -6,7 +6,7 @@ import BtnAction from './BtnAction'
 
 const { Option } = Select
 const { Text } = Typography
-const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOptions, ColumnTable, columName, typeTable, listHP, tableName, typeAction }) => {
+const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourTenHangOptions, ColumnTable, columName, typeTable, listHP, tableName }) => {
   const EditableContext = React.createContext(null)
   const [dataSource, setDataSource] = useState(param)
   const [newOptions, setNewOptions] = useState(yourMaHangOptions)
