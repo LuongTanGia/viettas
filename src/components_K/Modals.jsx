@@ -30,6 +30,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   const [selectedSctBD, setSelectedSctBD] = useState()
   const [selectedSctKT, setSelectedSctKT] = useState()
   const [newDataPMH, setNewDataPMH] = useState(dataPMH)
+  const [SctCreate, setSctCreate] = useState(null)
 
   const isAdd = useMemo(() => selectedRowData.map((item) => item.MaHang).includes('Chọn mã hàng'), [selectedRowData])
 
@@ -244,8 +245,10 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   }, [dataKhoHang, dataThongTin])
 
   useEffect(() => {
-    if (dataPMH) setSelectedSctBD(dataPMH[0].SoChungTu)
-    if (dataPMH) setSelectedSctKT(dataPMH[0].SoChungTu)
+    if (dataPMH && actionType !== 'create') {
+      setSelectedSctBD(dataPMH[0].SoChungTu)
+      setSelectedSctKT(dataPMH[0].SoChungTu)
+    }
   }, [dataPMH])
 
   const handleAddInList = async () => {
@@ -398,6 +401,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
         toast.success(response.data.DataErrorDescription)
         loading()
         setDonePMH(soChungTu)
+        setSctCreate(soChungTu)
         setFormPMH(defaultFormCreate)
         setSelectedDoiTuong(dataDoiTuong[0].Ma)
         setDoiTuongInfo({ Ten: '', DiaChi: '' })
@@ -515,6 +519,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
         // toast.success(response.data.DataErrorDescription)
         loading()
         setDonePMH(dataRecord.SoChungTu)
+        setSelectedRowData([])
       } else if (response.data && response.data.DataError === -103) {
         toast.error(response.data.DataErrorDescription)
       } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
@@ -1198,6 +1203,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                 </Tooltip>
                 <TableEdit
                   typeTable="create"
+                  typeAction="create"
                   className="table_cre"
                   tableName="MuaHang"
                   param={selectedRowData}
@@ -1225,7 +1231,10 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                   <div>In phiếu</div>
                 </button>
                 <button
-                  onClick={() => setIsShowModalOnlyPrintWareHouse(true)}
+                  // onClick={() => setIsShowModalOnlyPrintWareHouse(true)}
+                  onClick={() => {
+                    handleCreate(), setIsShowModalOnlyPrintWareHouse(true)
+                  }}
                   className="flex items-center  py-1 px-2  rounded-md  border-2 border-purple-500 text-slate-50 text-text-main font-bold  bg-purple-500 hover:bg-white hover:text-purple-500 "
                 >
                   <div className="pr-1">
@@ -1471,7 +1480,11 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                   <div>In phiếu</div>
                 </button>
                 <button
-                  onClick={() => setIsShowModalOnlyPrintWareHouse(true)}
+                  // onClick={() => setIsShowModalOnlyPrintWareHouse(true)}
+                  onClick={() => {
+                    handlePrintOnLy(dataRecord)
+                    setIsShowModalOnlyPrintWareHouse(true)
+                  }}
                   className="flex items-center  py-1 px-2  rounded-md  border-2 border-purple-500 text-slate-50 text-text-main font-bold  bg-purple-500 hover:bg-white hover:text-purple-500 "
                 >
                   <div className="pr-1">
@@ -1533,7 +1546,16 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       </div>
 
       {isShowModalHH && <ModalHH close={() => setIsShowModalHH(false)} data={dataHangHoa} onRowCreate={handleAddRow} dataThongSo={dataThongSo} controlDate={controlDate} />}
-      {isShowModalOnlyPrint && <ModalOnlyPrint close={() => setIsShowModalOnlyPrint(false)} dataThongTin={dataThongTin} dataPMH={dataPMH} actionType={actionType} />}
+      {isShowModalOnlyPrint && (
+        <ModalOnlyPrint
+          close={() => setIsShowModalOnlyPrint(false)}
+          dataThongTin={dataThongTin}
+          dataPMH={dataPMH}
+          actionType={actionType}
+          close2={() => close()}
+          SctCreate={SctCreate}
+        />
+      )}
       {isShowModalOnlyPrintWareHouse && (
         <ModalOnlyPrintWareHouse
           close={() => setIsShowModalOnlyPrintWareHouse(false)}
@@ -1541,6 +1563,8 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
           dataPMH={dataPMH}
           controlDate={controlDate}
           actionType={actionType}
+          close2={() => close()}
+          SctCreate={SctCreate}
         />
       )}
     </div>

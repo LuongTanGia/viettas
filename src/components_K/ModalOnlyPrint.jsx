@@ -12,11 +12,10 @@ import { Checkbox } from 'antd'
 const { Option } = Select
 const { MdFilterAlt } = icons
 
-const ModalOnlyPrint = ({ close, dataThongTin, dataPMH, actionType }) => {
+const ModalOnlyPrint = ({ close, dataThongTin, dataPMH, actionType, close2, SctCreate }) => {
   const [selectedSctBD, setSelectedSctBD] = useState()
   const [selectedSctKT, setSelectedSctKT] = useState()
   const [newDataPMH, setNewDataPMH] = useState()
-
   const startDate = dayjs(dataThongTin.NgayCTu).format('YYYY-MM-DDTHH:mm:ss')
   const endDate = dayjs(dataThongTin.NgayCTu).format('YYYY-MM-DDTHH:mm:ss')
 
@@ -52,11 +51,15 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH, actionType }) => {
   }, [dataThongTin, actionType])
 
   useEffect(() => {
-    if (dataThongTin) {
+    if (dataThongTin && actionType !== 'create') {
       setSelectedSctBD(dataThongTin.SoChungTu)
       setSelectedSctKT(dataThongTin.SoChungTu)
     }
-  }, [dataThongTin])
+    if (actionType == 'create') {
+      setSelectedSctBD(SctCreate)
+      setSelectedSctKT(SctCreate)
+    }
+  }, [dataThongTin, SctCreate])
 
   const calculateTotal = () => {
     let total = 0
@@ -249,20 +252,41 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH, actionType }) => {
               </div>
             </div>
           </div>
-          <div className="flex justify-end pt-2 gap-2">
-            <button
-              onClick={handleOnlyPrint}
-              className="active:scale-[.98] active:duration-75  border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main rounded-md px-2 py-1  w-[80px] "
-            >
-              Xác nhận
-            </button>
-            <button
-              onClick={() => close()}
-              className="active:scale-[.98] active:duration-75 border-2 border-rose-500 text-slate-50 text-text-main font-bold  bg-rose-500 hover:bg-white hover:text-rose-500  rounded-md px-2 py-1 w-[80px] "
-            >
-              Đóng
-            </button>
-          </div>
+          {actionType === 'edit' ? (
+            <div className="flex justify-end pt-2 gap-2">
+              <button
+                onClick={() => {
+                  handleOnlyPrint(), close2()
+                }}
+                className="active:scale-[.98] active:duration-75  border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main rounded-md px-2 py-1  w-[80px] "
+              >
+                Xác nhận
+              </button>
+              <button
+                onClick={() => {
+                  close(), close2()
+                }}
+                className="active:scale-[.98] active:duration-75 border-2 border-rose-500 text-slate-50 text-text-main font-bold  bg-rose-500 hover:bg-white hover:text-rose-500  rounded-md px-2 py-1 w-[80px] "
+              >
+                Đóng
+              </button>
+            </div>
+          ) : (
+            <div className="flex justify-end pt-2 gap-2">
+              <button
+                onClick={handleOnlyPrint}
+                className="active:scale-[.98] active:duration-75  border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main rounded-md px-2 py-1  w-[80px] "
+              >
+                Xác nhận
+              </button>
+              <button
+                onClick={() => close()}
+                className="active:scale-[.98] active:duration-75 border-2 border-rose-500 text-slate-50 text-text-main font-bold  bg-rose-500 hover:bg-white hover:text-rose-500  rounded-md px-2 py-1 w-[80px] "
+              >
+                Đóng
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
