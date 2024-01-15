@@ -177,20 +177,10 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, dataPMH }) => {
                 </button>
               </div>
               <div className="flex  mt-4">
-                {/* <div className="flex ">
-                  <label className="px-4">Số chứng từ</label>
-                  <select className=" bg-white border outline-none border-gray-300  " value={selectedSctBD} onChange={(e) => setSelectedSctBD(e.target.value)}>
-                    {newDataPMH?.map((item) => (
-                      <option key={item.SoChungTu} value={item.SoChungTu}>
-                        {item.SoChungTu}
-                      </option>
-                    ))}
-                  </select>
-                </div> */}
                 <div className="flex ">
                   <label className="px-[22px]">Số chứng từ</label>
 
-                  <Select showSearch optionFilterProp="children" onChange={(value) => setSelectedSctBD(value)} style={{ width: '154px' }} value={selectedSctBD}>
+                  <Select size="small" showSearch optionFilterProp="children" onChange={(value) => setSelectedSctBD(value)} style={{ width: '154px' }} value={selectedSctBD}>
                     {newDataPMH?.map((item) => (
                       <Option key={item.SoChungTu} value={item.SoChungTu}>
                         {item.SoChungTu}
@@ -198,20 +188,11 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, dataPMH }) => {
                     ))}
                   </Select>
                 </div>
-                {/* <div className="flex ">
-                  <label className="px-4">Đến</label>
-                  <select className=" bg-white border outline-none border-gray-300  " value={selectedSctKT} onChange={(e) => setSelectedSctKT(e.target.value)}>
-                    {newDataPMH?.map((item) => (
-                      <option key={item.SoChungTu} value={item.SoChungTu}>
-                        {item.SoChungTu}
-                      </option>
-                    ))}
-                  </select>
-                </div> */}
+
                 <div className="flex ">
                   <label className="px-[16px]">Đến</label>
 
-                  <Select showSearch optionFilterProp="children" onChange={(value) => setSelectedSctKT(value)} style={{ width: '154px' }} value={selectedSctKT}>
+                  <Select size="small" showSearch optionFilterProp="children" onChange={(value) => setSelectedSctKT(value)} style={{ width: '154px' }} value={selectedSctKT}>
                     {newDataPMH?.map((item) => (
                       <Option key={item.SoChungTu} value={item.SoChungTu}>
                         {item.SoChungTu}

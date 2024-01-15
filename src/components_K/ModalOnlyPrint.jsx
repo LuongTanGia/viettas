@@ -12,7 +12,7 @@ import { Checkbox } from 'antd'
 const { Option } = Select
 const { MdFilterAlt } = icons
 
-const ModalOnlyPrint = ({ close, dataThongTin, dataPMH }) => {
+const ModalOnlyPrint = ({ close, dataThongTin, dataPMH, actionType }) => {
   const [selectedSctBD, setSelectedSctBD] = useState()
   const [selectedSctKT, setSelectedSctKT] = useState()
   const [newDataPMH, setNewDataPMH] = useState()
@@ -34,10 +34,7 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH }) => {
     setNewDataPMH(dataPMHByDate)
   }, [dataPMHByDate])
 
-  const [formPrint, setFormPrint] = useState({
-    NgayBatDau: startDate,
-    NgayKetThuc: endDate,
-  })
+  const [formPrint, setFormPrint] = useState({ NgayBatDau: startDate, NgayKetThuc: endDate })
 
   const [checkboxValues, setCheckboxValues] = useState({
     checkbox1: true,
@@ -46,8 +43,19 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH }) => {
   })
 
   useEffect(() => {
-    if (dataThongTin) setSelectedSctBD(dataThongTin.SoChungTu)
-    if (dataThongTin) setSelectedSctKT(dataThongTin.SoChungTu)
+    if (actionType === 'edit') {
+      setFormPrint({ NgayBatDau: startDate, NgayKetThuc: endDate })
+    }
+    if (actionType === 'create') {
+      setFormPrint({ NgayBatDau: dayjs(), NgayKetThuc: dayjs() })
+    }
+  }, [dataThongTin, actionType])
+
+  useEffect(() => {
+    if (dataThongTin) {
+      setSelectedSctBD(dataThongTin.SoChungTu)
+      setSelectedSctKT(dataThongTin.SoChungTu)
+    }
   }, [dataThongTin])
 
   const calculateTotal = () => {
@@ -113,8 +121,8 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH }) => {
                   <DatePicker
                     className="DatePicker_PMH"
                     format="DD/MM/YYYY"
-                    maxDate={dayjs(formPrint.NgayKetThuc)}
-                    defaultValue={dayjs(dataThongTin?.NgayCTu)}
+                    maxDate={actionType !== 'create' && dayjs(formPrint.NgayKetThuc)}
+                    defaultValue={actionType === 'create' ? dayjs() : dayjs(dataThongTin?.NgayCTu)}
                     onChange={(newDate) => {
                       setFormPrint({
                         ...formPrint,
@@ -138,8 +146,8 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH }) => {
                   <DatePicker
                     className="DatePicker_PMH"
                     format="DD/MM/YYYY"
-                    minDate={dayjs(formPrint.NgayBatDau)}
-                    defaultValue={dayjs(dataThongTin?.NgayCTu)}
+                    minDate={actionType !== 'create' && dayjs(formPrint.NgayBatDau)}
+                    defaultValue={actionType === 'create' ? dayjs() : dayjs(dataThongTin?.NgayCTu)}
                     onChange={(newDate) => {
                       setFormPrint({
                         ...formPrint,
@@ -173,7 +181,7 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH }) => {
                 <div className="flex ">
                   <label className="px-[22px]">Số chứng từ</label>
 
-                  <Select showSearch optionFilterProp="children" onChange={(value) => setSelectedSctBD(value)} style={{ width: '154px' }} value={selectedSctBD}>
+                  <Select size="small" showSearch optionFilterProp="children" onChange={(value) => setSelectedSctBD(value)} style={{ width: '154px' }} value={selectedSctBD}>
                     {newDataPMH?.map((item) => (
                       <Option key={item.SoChungTu} value={item.SoChungTu}>
                         {item.SoChungTu}
@@ -185,7 +193,7 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH }) => {
                 <div className="flex ">
                   <label className="px-[16px]">Đến</label>
 
-                  <Select showSearch optionFilterProp="children" onChange={(value) => setSelectedSctKT(value)} style={{ width: '154px' }} value={selectedSctKT}>
+                  <Select size="small" showSearch optionFilterProp="children" onChange={(value) => setSelectedSctKT(value)} style={{ width: '154px' }} value={selectedSctKT}>
                     {newDataPMH?.map((item) => (
                       <Option key={item.SoChungTu} value={item.SoChungTu}>
                         {item.SoChungTu}
@@ -196,20 +204,6 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH }) => {
               </div>
               {/* liên */}
               <div className="flex justify-center items-center gap-6 mt-4">
-                {/* <div>
-                  <input id="lien1" type="checkbox" checked={checkboxValues.checkbox1} onChange={() => handleLien('checkbox1')} />
-                  <label htmlFor="lien1">Liên 1</label>
-                </div>
-
-                <div>
-                  <input id="lien2" type="checkbox" checked={checkboxValues.checkbox2} onChange={() => handleLien('checkbox2')} />
-                  <label htmlFor="lien2">Liên 2</label>
-                </div>
-
-                <div>
-                  <input id="lien3" type="checkbox" checked={checkboxValues.checkbox3} onChange={() => handleLien('checkbox3')} />
-                  <label htmlFor="lien3">Liên 3</label>
-                </div> */}
                 <div>
                   <Checkbox
                     value="checkbox1"

@@ -429,6 +429,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
         toast.success(response.data.DataErrorDescription)
         loading()
         setDonePMH(dataRecord.SoChungTu)
+
         close()
       } else if (response.data && response.data.DataError === -103) {
         toast.error(response.data.DataErrorDescription)
@@ -499,6 +500,35 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
         // toast.error(response.data.DataErrorDescription)
         console.log(response.data.DataErrorDescription)
       }
+    } catch (error) {
+      console.error('Error while saving data:', error)
+    }
+  }
+
+  const handlePrintOnLy = async () => {
+    try {
+      const tokenLogin = localStorage.getItem('TKN')
+      const response = await apis.SuaPMH(tokenLogin, dataRecord.SoChungTu, { ...formPMHEdit, DataDetails: selectedRowData }, selectedDoiTuong, selectedKhoHang)
+
+      // Kiểm tra call api thành công
+      if (response.data && response.data.DataError === 0) {
+        // toast.success(response.data.DataErrorDescription)
+        loading()
+        setDonePMH(dataRecord.SoChungTu)
+      } else if (response.data && response.data.DataError === -103) {
+        toast.error(response.data.DataErrorDescription)
+      } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+        // toast.warning(response.data.DataErrorDescription)
+        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        await RETOKEN()
+        handleEdit()
+      } else {
+        toast.error(response.data.DataErrorDescription)
+        // console.log(response.data.DataErrorDescription)
+      }
+
+      // close()
     } catch (error) {
       console.error('Error while saving data:', error)
     }
@@ -603,31 +633,22 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   return (
     <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
       <div className="p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
-        {actionType === 'delete' && (
+        {(actionType === 'delete' || actionType === 'pay') && (
           <div className=" flex justify-between items-center ">
             <label>
-              Bạn có chắc muốn xóa phiếu
+              {`${actionType === 'delete' ? 'Bạn có chắc muốn xóa phiếu' : 'Bạn có chắc muốn lập phiếu chi'}`}
               <span className="font-bold mx-1"> {dataRecord.SoChungTu}</span>
               không ?
             </label>
             <div></div>
           </div>
         )}
-        {actionType === 'pay' && (
-          <div className=" flex justify-between items-center ">
-            <label>
-              Bạn có chắc muốn lập phiếu chi
-              <span className="font-bold mx-1"> {dataRecord.SoChungTu}</span>
-              không ?
-            </label>
-            <div></div>
-          </div>
-        )}
-        {actionType === 'print' && (
+
+        {(actionType === 'print' || actionType === 'printWareHouse') && (
           <div className=" h-[244px]">
             <div className="flex gap-2">
               <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
-              <label className="text-blue-700 font-semibold uppercase pb-1">In - phiếu mua hàng</label>
+              <label className="text-blue-700 font-semibold uppercase pb-1">{`${actionType === 'print' ? 'In - phiếu mua hàng' : 'In - phiếu mua hàng (kho)'}`}</label>
             </div>
             <div className="border-2 my-1">
               <div className="p-4 ">
@@ -749,30 +770,41 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                       Liên 2
                     </Checkbox>
                   </div>
-                  <div>
-                    <Checkbox
-                      value="checkbox3"
-                      checked={checkboxValues.checkbox3}
-                      onChange={(e) =>
-                        setCheckboxValues((prevValues) => ({
-                          ...prevValues,
-                          [e.target.value]: !prevValues[e.target.value],
-                        }))
-                      }
-                    >
-                      Liên 3
-                    </Checkbox>
-                  </div>
+                  {actionType === 'print' && (
+                    <div>
+                      <Checkbox
+                        value="checkbox3"
+                        checked={checkboxValues.checkbox3}
+                        onChange={(e) =>
+                          setCheckboxValues((prevValues) => ({
+                            ...prevValues,
+                            [e.target.value]: !prevValues[e.target.value],
+                          }))
+                        }
+                      >
+                        Liên 3
+                      </Checkbox>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
             <div className="flex justify-end pt-2 gap-2">
-              <button
-                onClick={handlePrint}
-                className="active:scale-[.98] active:duration-75  border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main rounded-md px-2 py-1  w-[80px] "
-              >
-                Xác nhận
-              </button>
+              {actionType === 'print' ? (
+                <button
+                  onClick={handlePrint}
+                  className="active:scale-[.98] active:duration-75  border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main rounded-md px-2 py-1  w-[80px] "
+                >
+                  Xác nhận
+                </button>
+              ) : (
+                <button
+                  onClick={handlePrintWareHouse}
+                  className="active:scale-[.98] active:duration-75  border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main rounded-md px-2 py-1  w-[80px] "
+                >
+                  Xác nhận
+                </button>
+              )}
               <button
                 onClick={() => close()}
                 className="active:scale-[.98] active:duration-75  border-2 border-rose-500 text-slate-50 text-text-main font-bold  bg-rose-500 hover:bg-white hover:text-rose-500 rounded-md px-2 py-1 w-[80px] "
@@ -782,151 +814,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
             </div>
           </div>
         )}
-        {actionType === 'printWareHouse' && (
-          <div className="h-[244px] ">
-            <div className="flex gap-2">
-              <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
-              <label className="text-blue-700 font-semibold uppercase pb-1">In - phiếu mua hàng (Kho)</label>
-            </div>
-            <div className="border-2  my-1">
-              <div className="p-4">
-                <div className="flex justify-center items-center  gap-3 pl-[74px]">
-                  {/* DatePicker */}
-                  <div className="flex gap-x-5 items-center">
-                    <label htmlFor="">Ngày</label>
-                    <DatePicker
-                      className="DatePicker_PMH"
-                      format="DD/MM/YYYY"
-                      maxDate={dayjs(controlDate.NgayKetThuc)}
-                      defaultValue={dayjs(controlDate.NgayBatDau)}
-                      onChange={(newDate) => {
-                        setFormPrint({
-                          ...formPrint,
-                          NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
-                        })
-                      }}
-                      sx={{
-                        '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                        '& .MuiButtonBase-root': {
-                          padding: '4px',
-                        },
-                        '& .MuiSvgIcon-root': {
-                          width: '18px',
-                          height: '18px',
-                        },
-                      }}
-                    />
-                  </div>
-                  <div className="flex gap-x-5 items-center ">
-                    <label htmlFor="">Đến</label>
-                    <DatePicker
-                      className="DatePicker_PMH"
-                      format="DD/MM/YYYY"
-                      minDate={dayjs(controlDate.NgayBatDau)}
-                      defaultValue={dayjs(controlDate.NgayKetThuc)}
-                      onChange={(newDate) => {
-                        setFormPrint({
-                          ...formPrint,
-                          NgayKetThuc: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
-                        })
-                      }}
-                      sx={{
-                        '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                        '& .MuiButtonBase-root': {
-                          padding: '4px',
-                        },
-                        '& .MuiSvgIcon-root': {
-                          width: '18px',
-                          height: '18px',
-                        },
-                      }}
-                    />
-                  </div>
 
-                  <button
-                    className="flex items-center gap-x-1 mx-2 py-1 px-2 rounded-md   border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main"
-                    onClick={handleFilterPrint}
-                  >
-                    <span>
-                      <MdFilterAlt />
-                    </span>
-                    <span>Lọc</span>
-                  </button>
-                </div>
-                <div className="flex  mt-4 ">
-                  <div className="flex ">
-                    <label className="px-[22px]">Số chứng từ</label>
-
-                    <Select size="small" showSearch optionFilterProp="children" onChange={(value) => setSelectedSctBD(value)} style={{ width: '154px' }} value={selectedSctBD}>
-                      {newDataPMH?.map((item) => (
-                        <Option key={item.SoChungTu} value={item.SoChungTu}>
-                          {item.SoChungTu}
-                        </Option>
-                      ))}
-                    </Select>
-                  </div>
-
-                  <div className="flex ">
-                    <label className="px-[16px]">Đến</label>
-
-                    <Select size="small" showSearch optionFilterProp="children" onChange={(value) => setSelectedSctKT(value)} style={{ width: '154px' }} value={selectedSctKT}>
-                      {newDataPMH?.map((item) => (
-                        <Option key={item.SoChungTu} value={item.SoChungTu}>
-                          {item.SoChungTu}
-                        </Option>
-                      ))}
-                    </Select>
-                  </div>
-                </div>
-                {/* liên */}
-                <div className="flex justify-center items-center gap-6 mt-4">
-                  <div>
-                    <Checkbox
-                      value="checkbox1"
-                      checked={checkboxValues.checkbox1}
-                      onChange={(e) =>
-                        setCheckboxValues((prevValues) => ({
-                          ...prevValues,
-                          [e.target.value]: !prevValues[e.target.value],
-                        }))
-                      }
-                    >
-                      Liên 1
-                    </Checkbox>
-                  </div>
-                  <div>
-                    <Checkbox
-                      value="checkbox2"
-                      checked={checkboxValues.checkbox2}
-                      onChange={(e) =>
-                        setCheckboxValues((prevValues) => ({
-                          ...prevValues,
-                          [e.target.value]: !prevValues[e.target.value],
-                        }))
-                      }
-                    >
-                      Liên 2
-                    </Checkbox>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="flex justify-end pt-2 gap-2">
-              <button
-                onClick={handlePrintWareHouse}
-                className="active:scale-[.98] active:duration-75  border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main rounded-md px-2 py-1  w-[80px] "
-              >
-                Xác nhận
-              </button>
-              <button
-                onClick={() => close()}
-                className="active:scale-[.98] active:duration-75 border-2 border-rose-500 text-slate-50 text-text-main font-bold  bg-rose-500 hover:bg-white hover:text-rose-500  rounded-md px-2 py-1 w-[80px] "
-              >
-                Đóng
-              </button>
-            </div>
-          </div>
-        )}
         {actionType === 'view' && (
           <div className=" w-[90vw] h-[600px] ">
             <div className="flex gap-2">
@@ -1323,27 +1211,30 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
             </div>
             {/* button  */}
             <div className="flex justify-between items-center">
-              <div className="flex gap-x-3 py-2">
-                {/* <button
-                  onClick={() => setIsShowModalOnlyPrint(true)}
-                  className="flex items-center  py-1 px-2  rounded-md border-dashed border border-gray-500  text-sm hover:text-sky-500  hover:border-sky-500 "
+              <div className="flex gap-x-3 pt-3">
+                <button
+                  // onClick={() => setIsShowModalOnlyPrint(true)}
+                  onClick={() => {
+                    handleCreate(), setIsShowModalOnlyPrint(true)
+                  }}
+                  className="flex items-center  py-1 px-2  rounded-md  border-2 border-purple-500 text-slate-50 text-text-main font-bold  bg-purple-500 hover:bg-white hover:text-purple-500 "
                 >
                   <div className="pr-1">
                     <TiPrinter size={20} />
                   </div>
                   <div>In phiếu</div>
-                  
                 </button>
                 <button
                   onClick={() => setIsShowModalOnlyPrintWareHouse(true)}
-                  className="flex items-center  py-1 px-2  rounded-md border-dashed border border-gray-500  text-sm hover:text-sky-500  hover:border-sky-500 "
+                  className="flex items-center  py-1 px-2  rounded-md  border-2 border-purple-500 text-slate-50 text-text-main font-bold  bg-purple-500 hover:bg-white hover:text-purple-500 "
                 >
                   <div className="pr-1">
                     <TiPrinter size={20} />
                   </div>
                   <div>In phiếu kho</div>
-                </button> */}
+                </button>
               </div>
+
               <div className="flex justify-end items-center gap-3  pt-3">
                 <button
                   onClick={handleCreate}
@@ -1567,7 +1458,11 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
             <div className="flex justify-between items-center">
               <div className="flex gap-x-3 pt-3">
                 <button
-                  onClick={() => setIsShowModalOnlyPrint(true)}
+                  // onClick={(() => handleEdit(dataRecord), setIsShowModalOnlyPrint(true))}
+                  onClick={() => {
+                    handlePrintOnLy(dataRecord)
+                    setIsShowModalOnlyPrint(true)
+                  }}
                   className="flex items-center  py-1 px-2  rounded-md  border-2 border-purple-500 text-slate-50 text-text-main font-bold  bg-purple-500 hover:bg-white hover:text-purple-500 "
                 >
                   <div className="pr-1">
@@ -1638,9 +1533,15 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       </div>
 
       {isShowModalHH && <ModalHH close={() => setIsShowModalHH(false)} data={dataHangHoa} onRowCreate={handleAddRow} dataThongSo={dataThongSo} controlDate={controlDate} />}
-      {isShowModalOnlyPrint && <ModalOnlyPrint close={() => setIsShowModalOnlyPrint(false)} dataThongTin={dataThongTin} dataPMH={dataPMH} />}
+      {isShowModalOnlyPrint && <ModalOnlyPrint close={() => setIsShowModalOnlyPrint(false)} dataThongTin={dataThongTin} dataPMH={dataPMH} actionType={actionType} />}
       {isShowModalOnlyPrintWareHouse && (
-        <ModalOnlyPrintWareHouse close={() => setIsShowModalOnlyPrintWareHouse(false)} dataThongTin={dataThongTin} dataPMH={dataPMH} controlDate={controlDate} />
+        <ModalOnlyPrintWareHouse
+          close={() => setIsShowModalOnlyPrintWareHouse(false)}
+          dataThongTin={dataThongTin}
+          dataPMH={dataPMH}
+          controlDate={controlDate}
+          actionType={actionType}
+        />
       )}
     </div>
   )
