@@ -7,7 +7,7 @@ import { FaSearch } from 'react-icons/fa'
 import { useSearch } from '../../../../components_T/hooks/Search'
 import { toast } from 'react-toastify'
 import { IoMdAddCircleOutline } from 'react-icons/io'
-import { MdEdit, MdDelete, MdPrint, MdFilterListAlt } from 'react-icons/md'
+import { MdEdit, MdDelete, MdPrint, MdFilterAlt } from 'react-icons/md'
 import categoryAPI from '../../../../API/linkAPI'
 import dayjs from 'dayjs'
 import { RETOKEN } from '../../../../action/Actions'
@@ -439,6 +439,13 @@ const PhieuNhapDieuChinh = () => {
                       maxDate={dayjs(khoanNgayTo)}
                       sx={{
                         '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                        '& .MuiButtonBase-root': {
+                          padding: '4px',
+                        },
+                        '& .MuiSvgIcon-root': {
+                          width: '18px',
+                          height: '18px',
+                        },
                       }}
                       defaultValue={dayjs(khoanNgayFrom, 'YYYY-MM-DD')}
                       onChange={(values) => {
@@ -455,6 +462,13 @@ const PhieuNhapDieuChinh = () => {
                       defaultValue={dayjs(khoanNgayTo, 'YYYY-MM-DD')}
                       sx={{
                         '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                        '& .MuiButtonBase-root': {
+                          padding: '4px',
+                        },
+                        '& .MuiSvgIcon-root': {
+                          width: '18px',
+                          height: '18px',
+                        },
                       }}
                       onChange={(values) => {
                         setKhoanNgayTo(values ? dayjs(values).format('YYYY-MM-DDTHH:mm:ss') : '')
@@ -465,7 +479,7 @@ const PhieuNhapDieuChinh = () => {
                 <ActionButton
                   handleAction={getDataNDC}
                   title={'Lọc'}
-                  icon={<MdFilterListAlt className="w-6 h-6" />}
+                  icon={<MdFilterAlt className="w-6 h-6" />}
                   color={'slate-50'}
                   background={'blue-500'}
                   color_hover={'blue-500'}
@@ -495,6 +509,7 @@ const PhieuNhapDieuChinh = () => {
             </div>
             <div>
               <Table
+                loading={!isLoading}
                 className="table_DMHangHoa setHeight"
                 columns={titles}
                 dataSource={filteredHangHoa}

@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-function ActionButton({ handleAction, title, icon, color, background, color_hover, bg_hover }) {
+function ActionButton({ handleAction, title, icon, color, background, color_hover, bg_hover, disabled }) {
   return (
     <div className="flex justify-end">
       <button
