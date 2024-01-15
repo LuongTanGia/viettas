@@ -451,7 +451,15 @@ function PhieuBanHang() {
             />
           </div>
           <div className="flex items-center">
-            <ActionButton icon={<MdFilterAlt />} color={'slate-50'} title={'Lọc'} background={'blue-500'} bg_hover={'white'} color_hover={'blue-500'} handleAction={handleSearch} />
+            <ActionButton
+              icon={<MdFilterAlt size={20} />}
+              color={'slate-50'}
+              title={'Lọc'}
+              background={'blue-500'}
+              bg_hover={'white'}
+              color_hover={'blue-500'}
+              handleAction={handleSearch}
+            />
           </div>
         </div>
 
@@ -460,7 +468,7 @@ function PhieuBanHang() {
             color={'slate-50'}
             title={'Thêm Phiếu'}
             background={'blue-500'}
-            icon={<IoAddCircleOutline />}
+            icon={<IoAddCircleOutline size={20} />}
             bg_hover={'white'}
             color_hover={'blue-500'}
             handleAction={handleCreate}
