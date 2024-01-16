@@ -388,12 +388,12 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
 
   return (
     <>
-      {typeTable !== 'listHelper' ? null : (
+      {/* {typeTable !== 'listHelper' ? null : (
         <div className="pb-2 flex gap-2">
           <Text strong>Nhập số lượng cần thêm vào chi tiết :</Text>
           <InputNumber min={1} max={999} onChange={onChangeInphutSL} size="small" />
         </div>
-      )}
+      )} */}
       <Form form={form} component={false}>
         {typeTable !== 'listHelper' ? (
           <Table

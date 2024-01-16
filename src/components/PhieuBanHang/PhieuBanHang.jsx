@@ -112,7 +112,7 @@ function PhieuBanHang() {
       if (filteredDataRes === -1) {
         setData([])
       } else {
-        const newData = filteredDataRes.filter((record) => {
+        const newData = filteredDataRes?.filter((record) => {
           return Object.keys(record).some((key) => isMatch(record[key], searchText))
         })
 

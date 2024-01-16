@@ -98,14 +98,12 @@ export const LOGIN = async (API1, API2, TKN, RemoteDB, data, dispatch) => {
       window.localStorage.setItem('User', response.data.MappingUser)
 
       dispatch(loginSlice.actions.login(response.data))
-      toast.error(response.data.DataErrorDescription)
 
       return 1
     } else {
       dispatch(loginSlice.actions.login([]))
     }
     if (response.data.DataError !== 0) {
-      toast.error(response.data.DataErrorDescription)
       await DANHSACHDULIEU(API2, data)
     }
   } catch (error) {

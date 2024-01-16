@@ -294,7 +294,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                       <Select
                         className="w-full outline-none"
                         value={`${form?.MaDoiTuong} - ${form?.TenDoiTuong} - ${form?.DiaChi}`}
-                        disabled={typeAction === 'view' || typeAction === 'edit'}
+                        disabled={typeAction === 'view'}
                         onChange={handleChangeInput}
                         showSearch
                       >
