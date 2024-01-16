@@ -27,7 +27,7 @@ function DoughNut() {
     }
 
     loadData()
-  }, [token, tokenRF, dataChart])
+  }, [token, tokenRF])
 
   const Labels = dataChart?.map((result) => result.DataName)
   const dataChart_list = dataChart?.map((result) => result.DataValue)
