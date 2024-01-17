@@ -224,7 +224,12 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
       align: 'center',
       sorter: (a, b) => {
         const keywords = ['Tong', 'Gia', 'Tien', 'TLCK', 'So', 'Thue']
-        const includesKeyword = keywords.some((keyword) => item.includes(keyword))
+        const soCT = ['SoChungTu']
+        const includesKeyword = soCT.some((keyword) => item.includes(keyword))
+        const soCT_includes = keywords.some((keyword) => item.includes(keyword))
+        if (soCT_includes && a[item] !== undefined && b[item] !== undefined) {
+          return parseInt(a[item].split('.')[1]) - parseInt(b[item].split('.')[1])
+        }
         if (includesKeyword && a[item] !== undefined && b[item] !== undefined) {
           return Number(a[item]) - Number(b[item])
         } else if (includesKeyword && a[item] !== undefined) {

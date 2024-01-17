@@ -1,30 +1,32 @@
 /* eslint-disable react/prop-types */
+import { useEffect, useState } from 'react'
+import dayjs from 'dayjs'
+import { toast } from 'react-toastify'
+import { MdFilterAlt } from 'react-icons/md'
+import { Select, Checkbox } from 'antd'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import { RETOKEN } from '../../../../../action/Actions'
 import categoryAPI from '../../../../../API/linkAPI'
 import logo from '../../../../../assets/VTS-iSale.ico'
-import dayjs from 'dayjs'
-import { RETOKEN } from '../../../../../action/Actions'
-import { toast } from 'react-toastify'
-import { DatePicker } from '@mui/x-date-pickers/DatePicker'
-import { useEffect, useState } from 'react'
-import { Select, Checkbox } from 'antd'
 import ActionButton from '../../../../../components/util/Button/ActionButton'
 import SimpleBackdrop from '../../../../../components/util/Loading/LoadingPage'
 
-const NDCPrint = ({ close, loadingData, dataPrint }) => {
+const NDCPrint = ({ close, dataPrint }) => {
   const TokenAccess = localStorage.getItem('TKN')
-  const [khoanNgayFrom, setKhoanNgayFrom] = useState('')
-  const [khoanNgayTo, setKhoanNgayTo] = useState('')
+  const [khoanNgayFrom, setKhoanNgayFrom] = useState()
+  const [khoanNgayTo, setKhoanNgayTo] = useState()
   const [isLoading, setIsLoading] = useState(false)
   const [dataListChungTu, setDataListChungTu] = useState('')
   const [selectedNhomFrom, setSelectedNhomFrom] = useState([])
   const [selectedNhomTo, setSelectedNhomTo] = useState([])
+
   const [checkboxValues, setCheckboxValues] = useState({
     checkbox1: true,
     checkbox2: false,
     checkbox3: false,
   })
   useEffect(() => {
-    getListChungTu()
+    getTimeSetting()
   }, [isLoading])
   const calculateTotal = () => {
     let total = 0
@@ -74,27 +76,25 @@ const NDCPrint = ({ close, loadingData, dataPrint }) => {
       console.log(error)
     }
   }
-  // const getTimeSetting = async () => {
-  //   try {
-  //     const response = await categoryAPI.KhoanNgay(TokenAccess)
-  //     if (response.data.DataError == 0) {
-  //       console.log(response.data)
-  //       setKhoanNgayFrom(response.data.NgayBatDau)
-  //       setKhoanNgayTo(response.data.NgayKetThuc)
-  //       setIsLoading(true)
-  //     } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-  //       await RETOKEN()
-  //       getTimeSetting()
-  //     } else {
-  //       console.log(response.data)
-  //     }
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-  // }
+  const getTimeSetting = async () => {
+    try {
+      const response = await categoryAPI.KhoanNgay(TokenAccess)
+      if (response.data.DataError == 0) {
+        setKhoanNgayFrom(dayjs(response.data.NgayBatDau).format('YYYY-MM-DDTHH:mm:ss'))
+        setKhoanNgayTo(dayjs(response.data.NgayKetThuc).format('YYYY-MM-DDTHH:mm:ss'))
+        setIsLoading(true)
+      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        await RETOKEN()
+        getTimeSetting()
+      } else {
+        console.log(response.data)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
   const getListChungTu = async () => {
     try {
-      // console.log('1', khoanNgayFrom, '2', khoanNgayTo)
       const response = await categoryAPI.ListChungTuNDC({ NgayBatDau: khoanNgayFrom, NgayKetThuc: khoanNgayTo }, TokenAccess)
       if (response.data.DataError == 0) {
         setDataListChungTu(response.data.DataResults)
@@ -107,7 +107,6 @@ const NDCPrint = ({ close, loadingData, dataPrint }) => {
       console.log(error)
     }
   }
-  console.log(dataPrint)
   return (
     <>
       {!isLoading ? (
@@ -122,51 +121,57 @@ const NDCPrint = ({ close, loadingData, dataPrint }) => {
                 <p className="text-blue-700 font-semibold uppercase">In - Phiếu Nhập Điều Chỉnh</p>
               </div>
               <div className="flex flex-col gap-4 border-2 p-3">
-                <div className="DatePicker_NDCKho flex justify-center gap-8">
-                  <div className="DatePicker_NDCKho flex items-center gap-2">
-                    <label>Từ</label>
-                    <DatePicker
-                      className=""
-                      format="DD/MM/YYYY"
-                      maxDate={dayjs(khoanNgayTo)}
-                      defaultValue={dataPrint ? dayjs(dataPrint.NgayCTu, 'YYYY-MM-DD') : dayjs(khoanNgayFrom, 'YYYY-MM-DD')}
-                      sx={{
-                        '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                        '& .MuiButtonBase-root': {
-                          padding: '4px',
-                        },
-                        '& .MuiSvgIcon-root': {
-                          width: '18px',
-                          height: '18px',
-                        },
-                      }}
-                      onChange={(values) => {
-                        setKhoanNgayFrom(values ? dayjs(values).format('YYYY-MM-DDTHH:mm:ss') : '')
-                      }}
-                    />
+                <div className="flex gap-2 justify-center">
+                  <div className="DatePicker_NDCKho flex justify-center gap-2">
+                    <div className="DatePicker_NDCKho flex items-center gap-2">
+                      <label>Từ</label>
+                      <DatePicker
+                        className=""
+                        format="DD/MM/YYYY"
+                        maxDate={dayjs(khoanNgayTo)}
+                        defaultValue={dataPrint ? dayjs(dataPrint.NgayCTu, 'YYYY-MM-DD') : dayjs(khoanNgayFrom, 'YYYY-MM-DD')}
+                        sx={{
+                          '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                          '& .MuiButtonBase-root': {
+                            padding: '4px',
+                          },
+                          '& .MuiSvgIcon-root': {
+                            width: '18px',
+                            height: '18px',
+                          },
+                        }}
+                        onChange={(values) => {
+                          setKhoanNgayFrom(values ? dayjs(values).format('YYYY-MM-DDTHH:mm:ss') : '')
+                        }}
+                      />
+                    </div>
+                    <div className=" flex items-center gap-2 ">
+                      <label>Đến</label>
+                      <DatePicker
+                        className="DatePicker_NDCKho"
+                        format="DD/MM/YYYY"
+                        minDate={dayjs(khoanNgayFrom)}
+                        defaultValue={dataPrint ? dayjs(dataPrint.NgayCTu, 'YYYY-MM-DD') : dayjs(khoanNgayTo, 'YYYY-MM-DD')}
+                        sx={{
+                          '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                          '& .MuiButtonBase-root': {
+                            padding: '4px',
+                          },
+                          '& .MuiSvgIcon-root': {
+                            width: '18px',
+                            height: '18px',
+                          },
+                        }}
+                        onChange={(values) => {
+                          setKhoanNgayTo(values ? dayjs(values).format('YYYY-MM-DDTHH:mm:ss') : '')
+                        }}
+                      />
+                    </div>
                   </div>
-                  <div className=" flex items-center gap-2 ">
-                    <label>Đến</label>
-                    <DatePicker
-                      className="DatePicker_NDCKho"
-                      format="DD/MM/YYYY"
-                      minDate={dayjs(khoanNgayFrom)}
-                      defaultValue={dataPrint ? dayjs(dataPrint.NgayCTu, 'YYYY-MM-DD') : dayjs(khoanNgayTo, 'YYYY-MM-DD')}
-                      sx={{
-                        '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                        '& .MuiButtonBase-root': {
-                          padding: '4px',
-                        },
-                        '& .MuiSvgIcon-root': {
-                          width: '18px',
-                          height: '18px',
-                        },
-                      }}
-                      onChange={(values) => {
-                        setKhoanNgayTo(values ? dayjs(values).format('YYYY-MM-DDTHH:mm:ss') : '')
-                      }}
-                    />
-                  </div>
+                  <button onClick={getListChungTu} className=" flex px-2 py-1 bg-blue-500 text-slate-50 rounded items-center">
+                    <MdFilterAlt className="w-5 h-5" />
+                    Lọc
+                  </button>
                 </div>
                 <div className="flex gap-2">
                   <div className="flex gap-2 items-center">
@@ -181,13 +186,14 @@ const NDCPrint = ({ close, loadingData, dataPrint }) => {
                         width: '200px',
                       }}
                     >
-                      {dataListChungTu?.map((item, index) => {
-                        return (
-                          <Select.Option key={index} value={item.SoChungTu} title={item.SoChungTu}>
-                            <p className="truncate">{item.SoChungTu}</p>
-                          </Select.Option>
-                        )
-                      })}
+                      {dataListChungTu &&
+                        dataListChungTu?.map((item, index) => {
+                          return (
+                            <Select.Option key={index} value={item.SoChungTu} title={item.SoChungTu}>
+                              <p className="truncate">{item.SoChungTu}</p>
+                            </Select.Option>
+                          )
+                        })}
                     </Select>
                   </div>
                   <div className="flex gap-2 items-center">
@@ -202,13 +208,14 @@ const NDCPrint = ({ close, loadingData, dataPrint }) => {
                         width: '200px',
                       }}
                     >
-                      {dataListChungTu?.map((item, index) => {
-                        return (
-                          <Select.Option key={index} value={item.SoChungTu} title={item.SoChungTu}>
-                            <p className="truncate">{item.SoChungTu}</p>
-                          </Select.Option>
-                        )
-                      })}
+                      {dataListChungTu &&
+                        dataListChungTu?.map((item, index) => {
+                          return (
+                            <Select.Option key={index} value={item.SoChungTu} title={item.SoChungTu}>
+                              <p className="truncate">{item.SoChungTu}</p>
+                            </Select.Option>
+                          )
+                        })}
                     </Select>
                   </div>
                 </div>

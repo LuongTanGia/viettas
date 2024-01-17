@@ -174,8 +174,8 @@ const NDCCreate = ({ close, loadingData }) => {
         isPrint ? handlePrint() : isSave ? '' : (close(), loadingData(), toast.success('Tạo thành công'))
         setSoCTu(response.data.DataResults[0].SoChungTu)
       } else {
-        console.log(NDCForm)
-        toast.error('Tạo thất bại')
+        console.log(response.data)
+        isPrint ? toast.error('In thất bại') : toast.error('Tạo thất bại')
       }
     } catch (error) {
       console.log(error)
@@ -611,7 +611,6 @@ const NDCCreate = ({ close, loadingData }) => {
                           />
                         </div>
                         <Table
-                          className=" "
                           columns={title}
                           dataSource={filteredHangHoa}
                           onRow={(record) => ({
@@ -619,6 +618,14 @@ const NDCCreate = ({ close, loadingData }) => {
                               handleChoose(record)
                             },
                           })}
+                          pagination={{
+                            defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                            showSizeChanger: true,
+                            pageSizeOptions: ['50', '100', '1000'],
+                            onShowSizeChange: (current, size) => {
+                              localStorage.setItem('pageSize', size)
+                            },
+                          }}
                           size="small"
                           scroll={{
                             x: 1100,

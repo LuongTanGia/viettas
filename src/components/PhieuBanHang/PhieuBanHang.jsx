@@ -124,7 +124,7 @@ function PhieuBanHang() {
     }
 
     getListData()
-  }, [dataRecord, token, dispatch, searchText, dataDate, selectMH])
+  }, [])
 
   useEffect(() => {
     const handleClickOutside = (event) => {

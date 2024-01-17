@@ -6,7 +6,7 @@ import Cookies from 'js-cookie'
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Footer from '../Footer/Footer'
-import { DANHSACHCHUCNANG, DANHSACHHANGHOA, KHOANNGAY, DATATONGHOP, DATADULIEU, CallBackAPI } from '../../action/Actions'
+import { DANHSACHCHUCNANG, DATATONGHOP, DATADULIEU, CallBackAPI } from '../../action/Actions'
 import API from '../../API/API'
 import { useDispatch, useSelector } from 'react-redux'
 import { khoanNgaySelect } from '../../redux/selector'
@@ -18,7 +18,7 @@ function Home({ handleToggleSidebar, isSidebarVisible }) {
   const [dataLoaded, setDataLoaded] = useState(false)
   const [isCookie, setIsCookie] = useState(user)
   const token = localStorage.getItem('TKN')
-  const tokenRF = localStorage.getItem('RTKN')
+
   const KhoanNgay = useSelector(khoanNgaySelect)
   const sidebarRef = useRef(null)
   const [isClosingSidebarFromHeader, setIsClosingSidebarFromHeader] = useState(false)
@@ -26,8 +26,6 @@ function Home({ handleToggleSidebar, isSidebarVisible }) {
   useEffect(() => {
     const loadData = async () => {
       await DANHSACHCHUCNANG(API.DANHSACHCHUCNANG, token, dispatch)
-      await DANHSACHHANGHOA(API.DANHSACHHANGHOA, token, dispatch)
-      await KHOANNGAY(API.KHOANNGAY, token, dispatch)
       await DATATONGHOP(API.TONGHOP, token, KhoanNgay, dispatch)
       await DATADULIEU(API.DANHSACHHANGHOA, token, dispatch)
 
@@ -42,7 +40,7 @@ function Home({ handleToggleSidebar, isSidebarVisible }) {
     ThongSo()
 
     loadData()
-  }, [token, tokenRF])
+  }, [])
 
   useEffect(() => {
     // Đảm bảo là chỉ khi thanh bên không hiển thị mới thực hiện đoạn mã xử lý sự kiện.

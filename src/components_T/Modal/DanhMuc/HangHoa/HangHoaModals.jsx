@@ -1,12 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
+import { useEffect, useState } from 'react'
 import { IoMdClose, IoMdAddCircle } from 'react-icons/io'
-import categoryAPI from '../../../../API/linkAPI'
 import { toast } from 'react-toastify'
-import { useEffect, useState, useCallback } from 'react'
+import { Checkbox, Select, Space, InputNumber, FloatButton } from 'antd'
 import './HangHoaModals.css'
 import moment from 'moment'
-import { Checkbox, Select, Space, InputNumber, FloatButton } from 'antd'
+import categoryAPI from '../../../../API/linkAPI'
 import logo from '../../../../assets/VTS-iSale.ico'
 import { RETOKEN } from '../../../../action/Actions'
 import ActionButton from '../../../../components/util/Button/ActionButton'
@@ -62,10 +62,8 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
   const [hangHoaForm, setHangHoaForm] = useState(() => {
     return getMaHang ? { ...getMaHang, MaVach: getMaHang?.MaVach } : initProduct
   })
+
   useEffect(() => {
-    getNhomHang()
-    getDVT()
-    getHangHoaCT()
     getThongSo()
     handleView()
     if (type === 'create') {
@@ -73,53 +71,31 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
     }
   }, [type, getMaHang, isLoading, hangHoaForm.Barcodes])
 
+  useEffect(() => {
+    const getHangHoaCT = async () => {
+      try {
+        const dataHHCT = await categoryAPI.ListHangHoaCT(TokenAccess)
+        if (dataHHCT.data.DataError == 0) {
+          setHangHoaCT(dataHHCT.data.DataResults)
+        }
+        const dataNH = await categoryAPI.ListNhomHang(TokenAccess)
+        if (dataNH.data.DataError == 0) {
+          setNhomHang(dataNH.data.DataResults)
+        }
+        const dataDVT = await categoryAPI.ListDVT(TokenAccess)
+        if (dataDVT.data.DataError == 0) {
+          setDVTQuyDoi(dataDVT.data.DataResults)
+          setDVTKho(dataDVT.data.DataResults)
+        }
+        setIsLoading(true)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    getHangHoaCT()
+  }, [])
+
   // functions
-  const getNhomHang = async () => {
-    try {
-      const dataNH = await categoryAPI.ListNhomHang(TokenAccess)
-      if (dataNH.data.DataError == 0) {
-        setNhomHang(dataNH.data.DataResults)
-      } else if ((dataNH.data && dataNH.data.DataError === -107) || (dataNH.data && dataNH.data.DataError === -108)) {
-        await RETOKEN()
-        getNhomHang()
-      } else {
-        console.log(dataNH.data)
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
-  const getDVT = async () => {
-    try {
-      const dataDVT = await categoryAPI.ListDVT(TokenAccess)
-      if (dataDVT.data.DataError == 0) {
-        setDVTQuyDoi(dataDVT.data.DataResults)
-        setDVTKho(dataDVT.data.DataResults)
-      } else if ((dataDVT.data && dataDVT.data.DataError === -107) || (dataDVT.data && dataDVT.data.DataError === -108)) {
-        await RETOKEN()
-        getDVT()
-      } else {
-        console.log(dataDVT.data)
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
-  const getHangHoaCT = async () => {
-    try {
-      const dataHHCT = await categoryAPI.ListHangHoaCT(TokenAccess)
-      if (dataHHCT.data.DataError == 0) {
-        setHangHoaCT(dataHHCT.data.DataResults)
-      } else if ((dataHHCT.data && dataHHCT.data.DataError === -107) || (dataHHCT.data && dataHHCT.data.DataError === -108)) {
-        await RETOKEN()
-        getHangHoaCT()
-      } else {
-        console.log(dataHHCT.data)
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
   const getMaVach13 = async (number) => {
     try {
       const response = await categoryAPI.GetBarCode13(
@@ -496,6 +472,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
       console.log(error)
     }
   }
+  console.log(HangHoaCT)
   return (
     <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10">
       <div className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"></div>
@@ -1117,9 +1094,9 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
                                       }}
                                       onChange={(value) => handleChangeHHCT(index, 'MaHangChiTiet', value)}
                                     >
-                                      {HangHoaCT?.map((hangHoa) => (
+                                      {HangHoaCT?.map((hangHoa, index) => (
                                         <>
-                                          <Select.Option key={hangHoa.TenHang} value={hangHoa.MaHang} className="flex items-center ">
+                                          <Select.Option key={index} value={hangHoa.MaHang} className="flex items-center ">
                                             <p className="text-start truncate">
                                               {hangHoa.MaHang} - {hangHoa.TenHang}
                                             </p>
@@ -1605,9 +1582,9 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
                                       }}
                                       onChange={(value) => handleChangeHHCT(index, 'MaHangChiTiet', value)}
                                     >
-                                      {HangHoaCT?.map((hangHoa) => (
+                                      {HangHoaCT?.map((hangHoa, index) => (
                                         <>
-                                          <Select.Option key={hangHoa.TenHang} value={hangHoa.MaHang} className="flex items-center">
+                                          <Select.Option key={index} value={hangHoa.MaHang} className="flex items-center">
                                             <p className="text-start truncate">
                                               {hangHoa.MaHang} - {hangHoa.TenHang}
                                             </p>
@@ -1784,10 +1761,16 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
                   <Select
                     allowClear
                     filterOption
-                    disabled={selectedBarCodeFrom?.length > 0 || selectedBarCodeTo?.length > 0 || selectedBarCodeList?.length > 0 || selectednhomList?.length > 0}
+                    // disabled={selectedBarCodeFrom?.length > 0 || selectedBarCodeTo?.length > 0 || selectedBarCodeList?.length > 0 || selectednhomList?.length > 0}
                     placeholder="Chọn nhóm"
                     value={selectednhomFrom}
-                    onChange={(value) => setSelectednhomFrom(value)}
+                    onChange={(value) => {
+                      setSelectednhomFrom(value)
+                      selectednhomTo == null ? setSelectednhomTo(value) : ''
+                      if (selectednhomTo !== null && nhomHang.findIndex((item) => item.Ma === value) > nhomHang.findIndex((item) => item.Ma === selectednhomTo)) {
+                        setSelectednhomTo(value)
+                      }
+                    }}
                     style={{
                       width: '200px',
                     }}
@@ -1806,10 +1789,16 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
                   <Select
                     allowClear
                     filterOption
-                    disabled={selectedBarCodeFrom?.length > 0 || selectedBarCodeTo?.length > 0 || selectedBarCodeList?.length > 0 || selectednhomList?.length > 0}
+                    // disabled={selectedBarCodeFrom?.length > 0 || selectedBarCodeTo?.length > 0 || selectedBarCodeList?.length > 0 || selectednhomList?.length > 0}
                     placeholder="Chọn nhóm"
                     value={selectednhomTo}
-                    onChange={(value) => setSelectednhomTo(value)}
+                    onChange={(value) => {
+                      setSelectednhomTo(value)
+                      selectednhomFrom == null ? setSelectednhomFrom(value) : ''
+                      if (selectednhomFrom !== null && nhomHang.findIndex((item) => item.Ma === value) < nhomHang.findIndex((item) => item.Ma === selectednhomFrom)) {
+                        setSelectednhomFrom(value)
+                      }
+                    }}
                     style={{
                       width: '200px',
                     }}
@@ -1824,18 +1813,19 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
                   </Select>
                 </div>
                 <div className="col-span-2 flex gap-1 items-center whitespace-nowrap">
-                  <div>Gộp Nhóm</div>
+                  <div>Chọn</div>
                   <Select
                     mode="multiple"
                     maxTagCount={2}
                     filterOption
-                    disabled={
-                      selectedBarCodeFrom?.length > 0 ||
-                      selectedBarCodeTo?.length > 0 ||
-                      selectedBarCodeList?.length > 0 ||
-                      selectednhomFrom?.length > 0 ||
-                      selectednhomTo?.length > 0
-                    }
+                    allowClear
+                    // disabled={
+                    //   selectedBarCodeFrom?.length > 0 ||
+                    //   selectedBarCodeTo?.length > 0 ||
+                    //   selectedBarCodeList?.length > 0 ||
+                    //   selectednhomFrom?.length > 0 ||
+                    //   selectednhomTo?.length > 0
+                    // }
                     placeholder="Danh sách nhóm"
                     value={selectednhomList}
                     onChange={(value) => setSelectednhomList(value)}
@@ -1845,8 +1835,8 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
                   >
                     {nhomHang?.map((item) => {
                       return (
-                        <Select.Option key={item.Ma} value={item.Ma} title={item.ThongTinNhomHang}>
-                          <p className="truncate">{item.Ma}</p>
+                        <Select.Option key={item.Ma} value={item.Ma}>
+                          <p className="truncate">{item.ThongTinNhomHang}</p>
                         </Select.Option>
                       )
                     })}
@@ -1860,10 +1850,19 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
                   <Select
                     allowClear
                     filterOption
-                    disabled={selectednhomFrom?.length > 0 || selectednhomTo?.length > 0 || selectednhomList?.length > 0 || selectedBarCodeList?.length > 0}
+                    // disabled={selectednhomFrom?.length > 0 || selectednhomTo?.length > 0 || selectednhomList?.length > 0 || selectedBarCodeList?.length > 0}
                     placeholder="Chọn mã hàng"
                     value={selectedBarCodeFrom}
-                    onChange={(value) => setSelectedBarCodeFrom(value)}
+                    onChange={(value) => {
+                      setSelectedBarCodeFrom(value)
+                      selectedBarCodeTo == null ? setSelectedBarCodeTo(value) : ''
+                      if (
+                        selectedBarCodeTo !== null &&
+                        getDataHangHoa?.findIndex((item) => item.MaHang === value) > getDataHangHoa?.findIndex((item) => item.MaHang === selectedBarCodeTo)
+                      ) {
+                        setSelectedBarCodeTo(value)
+                      }
+                    }}
                     style={{
                       width: '200px',
                     }}
@@ -1882,10 +1881,19 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
                   <Select
                     allowClear
                     filterOption
-                    disabled={selectednhomFrom?.length > 0 || selectednhomTo?.length > 0 || selectednhomList?.length > 0 || selectedBarCodeList?.length > 0}
+                    // disabled={selectednhomFrom?.length > 0 || selectednhomTo?.length > 0 || selectednhomList?.length > 0 || selectedBarCodeList?.length > 0}
                     placeholder="Chọn mã hàng"
                     value={selectedBarCodeTo}
-                    onChange={(value) => setSelectedBarCodeTo(value)}
+                    onChange={(value) => {
+                      setSelectedBarCodeTo(value)
+                      selectedBarCodeFrom == null ? setSelectedBarCodeFrom(value) : ''
+                      if (
+                        selectedBarCodeFrom !== null &&
+                        getDataHangHoa?.findIndex((item) => item.MaHang === value) < getDataHangHoa?.findIndex((item) => item.MaHang === selectedBarCodeFrom)
+                      ) {
+                        setSelectedBarCodeFrom(value)
+                      }
+                    }}
                     style={{
                       width: '200px',
                     }}
@@ -1900,26 +1908,28 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
                   </Select>
                 </div>
                 <div className="flex items-center gap-1 col-span-2 whitespace-nowrap">
-                  <div>Gộp Mã</div>
+                  <div>Chọn</div>
                   <Select
                     mode="multiple"
                     maxTagCount={2}
                     allowClear
-                    disabled={
-                      selectednhomFrom?.length > 0 || selectednhomTo?.length > 0 || selectednhomList?.length > 0 || selectedBarCodeFrom?.length > 0 || selectedBarCodeTo?.length > 0
-                    }
+                    // disabled={
+                    //   selectednhomFrom?.length > 0 || selectednhomTo?.length > 0 || selectednhomList?.length > 0 || selectedBarCodeFrom?.length > 0 || selectedBarCodeTo?.length > 0
+                    // }
                     filterOption
                     placeholder="Chọn mã hàng"
                     value={selectedBarCodeList}
                     onChange={(value) => setSelectedBarCodeList(value)}
                     style={{
-                      width: '370px',
+                      width: '400px',
                     }}
                   >
                     {getDataHangHoa?.map((item, index) => {
                       return (
-                        <Select.Option key={index} value={item.MaHang} title={item.TenHang}>
-                          <p className="truncate">{item.MaHang}</p>
+                        <Select.Option key={index} value={item.MaHang}>
+                          <p className="truncate">
+                            {item.MaHang}-{item.TenHang}
+                          </p>
                         </Select.Option>
                       )
                     })}

@@ -230,6 +230,31 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
       setForm(x.DataResult)
     }
   }
+  const addRecord = () => {
+    setDataChitiet([
+      ...dataChitiet,
+      {
+        DonGia: 0,
+        GiaBan: 0,
+
+        MaHang: 'Chọn mã',
+
+        SoLuong: 1,
+
+        TenHang: 'Chọn tên',
+        ThanhTien: 0,
+        TienCKTT: 0,
+        TienHang: 0,
+        TienThue: 0,
+
+        TongCong: 133000,
+        TyLeCKTT: 0,
+        TyLeThue: 0,
+        key: dataListHP.length + dataChitiet.length,
+      },
+    ])
+    console.log(dataChitiet)
+  }
 
   return (
     <>
@@ -345,7 +370,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                             readOnly
                             type="text"
                             className="w-full   outline-none px-2  text-center"
-                            value={dayjs(form?.NgayTao || new Date()).format('DD/MM/YYYY hh:mm:ss')}
+                            value={form?.NgayTao ? dayjs(form?.NgayTao).format('DD/MM/YYYY hh:mm:ss') : ''}
                           />
                         </div>
                       </div>
@@ -360,7 +385,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                             readOnly
                             type="text"
                             className="w-full outline-none px-2 text-center"
-                            value={dayjs(form?.NgaySuaCuoi || new Date()).format('DD/MM/YYYY hh:mm:ss')}
+                            value={form?.NgaySuaCuo ? dayjs(form?.NgaySuaCuoi).format('DD/MM/YYYY hh:mm:ss') : ''}
                           />
                         </div>
                       </div>
@@ -413,7 +438,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                     }}
                     type="primary"
                     icon={<IoMdAddCircle />}
-                    // onClick={}
+                    onClick={addRecord}
                     tooltip={<div>Bấm vào đây để thêm hàng hoặc F9 để chọn từ danh sách !</div>}
                   />
                   {data_chitiet ? (

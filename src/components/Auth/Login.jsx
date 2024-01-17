@@ -64,8 +64,6 @@ const App = () => {
     } catch (error) {
       console.log('')
     }
-
-    console.log(data)
   }
 
   const [isLoggedIn, setIsLoggedIn] = useState(false)
