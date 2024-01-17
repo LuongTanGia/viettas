@@ -28,6 +28,7 @@ const PhieuMuaHang = () => {
   const [actionType, setActionType] = useState('')
   const [formKhoanNgay, setFormKhoanNgay] = useState([])
   const [dataThongSo, setDataThongSo] = useState()
+  // const [dataChucNang, setDataChucNang] = useState()
   const [setSearchPMH, filteredPMH, searchPMH] = useSearch(data)
   const [donePMH, setDonePMH] = useState(null)
 
@@ -46,48 +47,53 @@ const PhieuMuaHang = () => {
     }
   }, [isShowOption])
 
+  // get helper
   useEffect(() => {
     const fetchData = async () => {
       try {
         const tokenLogin = localStorage.getItem('TKN')
+        if (actionType === 'create' || actionType === 'edit') {
+          const responseKH = await apis.ListHelperKhoHang(tokenLogin)
+          if (responseKH.data && responseKH.data.DataError === 0) {
+            setDataKhoHang(responseKH.data.DataResults)
+          } else if (responseKH.data.DataError === -1 || responseKH.data.DataError === -2 || responseKH.data.DataError === -3) {
+            toast.warning(responseKH.data.DataErrorDescription)
+          } else if (responseKH.data.DataError === -107 || responseKH.data.DataError === -108) {
+            await RETOKEN()
+            fetchData()
+          } else {
+            toast.error(responseKH.data.DataErrorDescription)
+          }
+          const responseDT = await apis.ListHelperDoiTuong(tokenLogin)
+          if (responseDT.data && responseDT.data.DataError === 0) {
+            setDataDoiTuong(responseDT.data.DataResults)
+          } else if (responseDT.data && responseDT.data.DataError === -103) {
+            toast.error(responseDT.data.DataErrorDescription)
 
-        const responseKH = await apis.ListHelperKhoHang(tokenLogin)
-        if (responseKH.data && responseKH.data.DataError === 0) setDataKhoHang(responseKH.data.DataResults)
-        else if (
-          (responseKH.data && responseKH.data.DataError === -100) ||
-          responseKH.data.DataError === -101 ||
-          responseKH.data.DataError === -107 ||
-          responseKH.data.DataError === -108 ||
-          responseKH.data.DataError === -110
-        ) {
-          await RETOKEN()
-          fetchData()
+            toast.error('hi')
+          } else if (responseDT.data && responseDT.data.DataError === -104) {
+            toast.error(responseDT.data.DataErrorDescription)
+          } else if (responseDT.data.DataError === -1 || responseDT.data.DataError === -2 || responseDT.data.DataError === -3) {
+            toast.warning(responseDT.data.DataErrorDescription)
+          } else if (responseDT.data.DataError === -107 || responseDT.data.DataError === -108) {
+            await RETOKEN()
+            fetchData()
+          } else {
+            toast.error(responseDT.data.DataErrorDescription)
+          }
         }
-        const responseDT = await apis.ListHelperDoiTuong(tokenLogin)
-        if (responseDT.data && responseDT.data.DataError === 0) {
-          setDataDoiTuong(responseDT.data.DataResults)
-        } else if (
-          (responseKH.data && responseKH.data.DataError === -100) ||
-          responseKH.data.DataError === -101 ||
-          responseKH.data.DataError === -107 ||
-          responseKH.data.DataError === -108 ||
-          responseKH.data.DataError === -110
-        ) {
-          await RETOKEN()
-          fetchData()
-        }
-        const responseTT = await apis.ThongTinPMH(tokenLogin, dataRecord.SoChungTu)
-        if (responseTT.data && responseTT.data.DataError === 0) {
-          setDataThongTin(responseTT.data.DataResult)
-        } else if (
-          (responseKH.data && responseKH.data.DataError === -100) ||
-          responseKH.data.DataError === -101 ||
-          responseKH.data.DataError === -107 ||
-          responseKH.data.DataError === -108 ||
-          responseKH.data.DataError === -110
-        ) {
-          await RETOKEN()
-          fetchData()
+        if (actionType !== 'create') {
+          const responseTT = await apis.ThongTinPMH(tokenLogin, dataRecord.SoChungTu)
+          if (responseTT.data && responseTT.data.DataError === 0) {
+            setDataThongTin(responseTT.data.DataResult)
+          } else if (responseTT.data.DataError === -1 || responseTT.data.DataError === -2 || responseTT.data.DataError === -3) {
+            toast.warning(responseTT.data.DataErrorDescription)
+          } else if (responseTT.data.DataError === -107 || responseTT.data.DataError === -108) {
+            await RETOKEN()
+            fetchData()
+          } else {
+            toast.error(responseTT.data.DataErrorDescription)
+          }
         }
       } catch (error) {
         console.error('Lấy data thất bại', error)
@@ -107,6 +113,7 @@ const PhieuMuaHang = () => {
     }
   }, [dataRecord, dataThongTin])
 
+  // get Khoảng ngày
   useEffect(() => {
     const getKhoanNgay = async () => {
       try {
@@ -117,9 +124,13 @@ const PhieuMuaHang = () => {
           setFormKhoanNgay(response.data)
 
           setIsLoading(true)
+        } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
+          toast.warning(response.data.DataErrorDescription)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
           getKhoanNgay()
+        } else {
+          toast.error(response.data.DataErrorDescription)
         }
       } catch (error) {
         console.error('Kiểm tra token thất bại', error)
@@ -129,6 +140,7 @@ const PhieuMuaHang = () => {
     getKhoanNgay()
   }, [])
 
+  // get thông số
   useEffect(() => {
     const getThongSo = async () => {
       try {
@@ -140,9 +152,11 @@ const PhieuMuaHang = () => {
           setIsLoading(true)
         } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
           toast.warning(response.data.DataErrorDescription)
-        } else {
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
           getThongSo()
+        } else {
+          toast.error(response.data.DataErrorDescription)
         }
       } catch (error) {
         console.error('Kiểm tra token thất bại', error)
@@ -151,6 +165,32 @@ const PhieuMuaHang = () => {
     }
     getThongSo()
   }, [])
+
+  // get danh sach chức năng
+  // useEffect(() => {
+  //   const getDSChucNang = async () => {
+  //     try {
+  //       const tokenLogin = localStorage.getItem('TKN')
+  //       const response = await apis.DSChucNang(tokenLogin)
+
+  //       if (response.data && response.data.DataError === 0) {
+  //         setDataChucNang(response.data.DataResults)
+  //       } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
+  //         toast.warning(response.data.DataErrorDescription)
+  //       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+  //         await RETOKEN()
+  //         getDSChucNang()
+  //       } else {
+  //         toast.error(response.data.DataErrorDescription)
+  //       }
+  //     } catch (error) {
+  //       console.error('Kiểm tra token thất bại', error)
+  //       setIsLoading(true)
+  //     }
+  //   }
+  //   getDSChucNang()
+  // }, [])
+  // console.log(dataChucNang)
 
   useEffect(() => {
     getDSPMH()
@@ -165,13 +205,15 @@ const PhieuMuaHang = () => {
       if (response.data && response.data.DataError === 0) {
         setData(response.data.DataResults)
         setTableLoad(false)
-      } else if (response.data && response.data.DataError === -104) {
-        toast.error(response.data.DataErrorDescription)
-        setData(response.data.DataResults)
-        setTableLoad(false)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         getDSPMH()
+        setTableLoad(false)
+      } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
+        toast.warning(response.data.DataErrorDescription)
+        setTableLoad(false)
+      } else {
+        toast.error(response.data.DataErrorDescription)
         setTableLoad(false)
       }
     } catch (error) {
@@ -498,7 +540,7 @@ const PhieuMuaHang = () => {
     },
     {
       title: 'Chức năng',
-      key: 'operation',
+      key: 'ChucNang',
       fixed: 'right',
       width: 120,
       align: 'center',
@@ -539,6 +581,18 @@ const PhieuMuaHang = () => {
       },
     },
   ]
+
+  const defaultCheckedList = columns.map((item) => item.key)
+  const [checkedList, setCheckedList] = useState(defaultCheckedList)
+  const options = columns.map(({ key, title }) => ({
+    label: title,
+    value: key,
+  }))
+  const newColumns = columns.map((item) => ({
+    ...item,
+    hidden: checkedList.includes(item.key),
+  }))
+  console.log('defaultCheckedList', newColumns)
 
   const handleDelete = (record) => {
     setActionType('delete')
@@ -635,15 +689,17 @@ const PhieuMuaHang = () => {
                 </div>
                 <div>In phiếu</div>
               </button>
-              <button
-                onClick={handlePrintWareHouse}
-                className="flex items-center  py-1 px-2  rounded-md border-2 border-purple-500  text-slate-50 text-base bg-purple-500 hover:bg-white hover:text-purple-500  "
-              >
-                <div className="pr-1">
-                  <TiPrinter size={20} />
-                </div>
-                <div>In phiếu Kho</div>
-              </button>
+              {dataThongSo?.ALLOW_INPHIEUKHO_DAUVAODAURA === true && (
+                <button
+                  onClick={handlePrintWareHouse}
+                  className="flex items-center  py-1 px-2  rounded-md border-2 border-purple-500  text-slate-50 text-base bg-purple-500 hover:bg-white hover:text-purple-500  "
+                >
+                  <div className="pr-1">
+                    <TiPrinter size={20} />
+                  </div>
+                  <div>In phiếu Kho</div>
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -725,12 +781,19 @@ const PhieuMuaHang = () => {
           </button>
         </div>
       </div>
+      <Checkbox.Group
+        value={checkedList}
+        options={options}
+        onChange={(value) => {
+          setCheckedList(value)
+        }}
+      />
       <div className="relative px-2 py-1 ">
         <Table
           loading={tableLoad}
           className="table_pmh setHeight"
           // rowSelection={rowSelection}
-          columns={columns}
+          columns={newColumns.filter((column) => !column.hidden)}
           dataSource={filteredPMH}
           size="small"
           scroll={{

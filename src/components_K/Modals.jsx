@@ -368,16 +368,13 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
         loading()
         setDonePMH(soChungTu)
         close()
-      } else if (response.data && response.data.DataError === -103) {
-        toast.error(response.data.DataErrorDescription)
       } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
         toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         handleCreateAndClose()
       } else {
-        // toast.error(response.data.DataErrorDescription)
-        console.log(response.data.DataErrorDescription)
+        toast.error(response.data.DataErrorDescription)
       }
     } catch (error) {
       console.error('Error while saving data:', error)
@@ -407,16 +404,13 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
         setDoiTuongInfo({ Ten: '', DiaChi: '' })
         setSelectedKhoHang(dataKhoHang[0].MaKho)
         setSelectedRowData([])
-      } else if (response.data && response.data.DataError === -103) {
-        toast.error(response.data.DataErrorDescription)
       } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
         toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         handleCreate()
       } else {
-        // toast.error(response.data.DataErrorDescription)
-        console.log(response.data.DataErrorDescription)
+        toast.error(response.data.DataErrorDescription)
       }
     } catch (error) {
       console.error('Error while saving data:', error)
@@ -435,17 +429,13 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
         setDonePMH(dataRecord.SoChungTu)
 
         close()
-      } else if (response.data && response.data.DataError === -103) {
-        toast.error(response.data.DataErrorDescription)
       } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-        // toast.warning(response.data.DataErrorDescription)
         toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         handleEdit()
       } else {
         toast.error(response.data.DataErrorDescription)
-        // console.log(response.data.DataErrorDescription)
       }
 
       // close()
@@ -462,18 +452,13 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       if (response.data && response.data.DataError === 0) {
         toast.success(response.data.DataErrorDescription)
         loading()
-      } else if (response.data && response.data.DataError === -104) {
-        toast.error(response.data.DataErrorDescription)
-      } else if (response.data && response.data.DataError === -103) {
-        toast.error(response.data.DataErrorDescription)
       } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
         toast.warning(response.data.DataErrorDescription)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         handleDelete()
       } else {
-        // toast.error(response.data.DataErrorDescription)
-        console.log(response.data.DataErrorDescription)
+        toast.error(response.data.DataErrorDescription)
       }
       close()
     } catch (error) {
@@ -484,25 +469,18 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   const handlePrint = async () => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
-
       const lien = calculateTotal()
-
       const response = await apis.InPMH(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
       // Kiểm tra call api thành công
       if (response.data && response.data.DataError === 0) {
         base64ToPDF(response.data.DataResults)
-      } else if (response.data && response.data.DataError === -104) {
-        toast.error(response.data.DataErrorDescription)
-      } else if (response.data && response.data.DataError === -103) {
-        toast.error(response.data.DataErrorDescription)
       } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
         toast.warning(response.data.DataErrorDescription)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         handlePrint()
       } else {
-        // toast.error(response.data.DataErrorDescription)
-        console.log(response.data.DataErrorDescription)
+        toast.error(response.data.DataErrorDescription)
       }
     } catch (error) {
       console.error('Error while saving data:', error)
@@ -516,23 +494,17 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
 
       // Kiểm tra call api thành công
       if (response.data && response.data.DataError === 0) {
-        // toast.success(response.data.DataErrorDescription)
         loading()
         setDonePMH(dataRecord.SoChungTu)
         setSelectedRowData([])
-      } else if (response.data && response.data.DataError === -103) {
-        toast.error(response.data.DataErrorDescription)
       } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-        // toast.warning(response.data.DataErrorDescription)
         toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         handleEdit()
       } else {
         toast.error(response.data.DataErrorDescription)
-        // console.log(response.data.DataErrorDescription)
       }
-
       // close()
     } catch (error) {
       console.error('Error while saving data:', error)
@@ -548,18 +520,13 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       // Kiểm tra call api thành công
       if (response.data && response.data.DataError === 0) {
         base64ToPDF(response.data.DataResults)
-      } else if (response.data && response.data.DataError === -104) {
-        toast.error(response.data.DataErrorDescription)
-      } else if (response.data && response.data.DataError === -103) {
-        toast.error(response.data.DataErrorDescription)
       } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
         toast.warning(response.data.DataErrorDescription)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         handlePrintWareHouse()
       } else {
-        // toast.error(response.data.DataErrorDescription)
-        console.log(response.data.DataErrorDescription)
+        toast.error(response.data.DataErrorDescription)
       }
     } catch (error) {
       console.error('Error while saving data:', error)
@@ -576,18 +543,13 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
         loading()
         setDonePMH(dataRecord.SoChungTu)
         close()
-      } else if (response.data && response.data.DataError === -104) {
-        toast.error(response.data.DataErrorDescription)
-      } else if (response.data && response.data.DataError === -103) {
-        toast.error(response.data.DataErrorDescription)
       } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
         toast.warning(response.data.DataErrorDescription)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         handlePay()
       } else {
-        // toast.error(response.data.DataErrorDescription)
-        console.log(response.data.DataErrorDescription)
+        toast.error(response.data.DataErrorDescription)
       }
     } catch (error) {
       console.error('Error while saving data:', error)
@@ -1007,15 +969,17 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                   </div>
                   <div>In phiếu</div>
                 </button>
-                <button
-                  onClick={() => setIsShowModalOnlyPrintWareHouse(true)}
-                  className="flex items-center  py-1 px-2  rounded-md  border-2 border-purple-500 text-slate-50 text-text-main font-bold  bg-purple-500 hover:bg-white hover:text-purple-500"
-                >
-                  <div className="pr-1">
-                    <TiPrinter size={20} />
-                  </div>
-                  <div>In phiếu kho</div>
-                </button>
+                {dataThongSo?.ALLOW_INPHIEUKHO_DAUVAODAURA === true && (
+                  <button
+                    onClick={() => setIsShowModalOnlyPrintWareHouse(true)}
+                    className="flex items-center  py-1 px-2  rounded-md  border-2 border-purple-500 text-slate-50 text-text-main font-bold  bg-purple-500 hover:bg-white hover:text-purple-500"
+                  >
+                    <div className="pr-1">
+                      <TiPrinter size={20} />
+                    </div>
+                    <div>In phiếu kho</div>
+                  </button>
+                )}
               </div>
               <button
                 onClick={() => close()}
@@ -1230,18 +1194,20 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                   </div>
                   <div>In phiếu</div>
                 </button>
-                <button
-                  // onClick={() => setIsShowModalOnlyPrintWareHouse(true)}
-                  onClick={() => {
-                    handleCreate(), setIsShowModalOnlyPrintWareHouse(true)
-                  }}
-                  className="flex items-center  py-1 px-2  rounded-md  border-2 border-purple-500 text-slate-50 text-text-main font-bold  bg-purple-500 hover:bg-white hover:text-purple-500 "
-                >
-                  <div className="pr-1">
-                    <TiPrinter size={20} />
-                  </div>
-                  <div>In phiếu kho</div>
-                </button>
+                {dataThongSo?.ALLOW_INPHIEUKHO_DAUVAODAURA === true && (
+                  <button
+                    // onClick={() => setIsShowModalOnlyPrintWareHouse(true)}
+                    onClick={() => {
+                      handleCreate(), setIsShowModalOnlyPrintWareHouse(true)
+                    }}
+                    className="flex items-center  py-1 px-2  rounded-md  border-2 border-purple-500 text-slate-50 text-text-main font-bold  bg-purple-500 hover:bg-white hover:text-purple-500 "
+                  >
+                    <div className="pr-1">
+                      <TiPrinter size={20} />
+                    </div>
+                    <div>In phiếu kho</div>
+                  </button>
+                )}
               </div>
 
               <div className="flex justify-end items-center gap-3  pt-3">
@@ -1479,19 +1445,21 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                   </div>
                   <div>In phiếu</div>
                 </button>
-                <button
-                  // onClick={() => setIsShowModalOnlyPrintWareHouse(true)}
-                  onClick={() => {
-                    handlePrintOnLy(dataRecord)
-                    setIsShowModalOnlyPrintWareHouse(true)
-                  }}
-                  className="flex items-center  py-1 px-2  rounded-md  border-2 border-purple-500 text-slate-50 text-text-main font-bold  bg-purple-500 hover:bg-white hover:text-purple-500 "
-                >
-                  <div className="pr-1">
-                    <TiPrinter size={20} />
-                  </div>
-                  <div>In phiếu kho</div>
-                </button>
+                {dataThongSo?.ALLOW_INPHIEUKHO_DAUVAODAURA === true && (
+                  <button
+                    // onClick={() => setIsShowModalOnlyPrintWareHouse(true)}
+                    onClick={() => {
+                      handlePrintOnLy(dataRecord)
+                      setIsShowModalOnlyPrintWareHouse(true)
+                    }}
+                    className="flex items-center  py-1 px-2  rounded-md  border-2 border-purple-500 text-slate-50 text-text-main font-bold  bg-purple-500 hover:bg-white hover:text-purple-500 "
+                  >
+                    <div className="pr-1">
+                      <TiPrinter size={20} />
+                    </div>
+                    <div>In phiếu kho</div>
+                  </button>
+                )}
               </div>
               <div className="flex justify-end items-center gap-x-3  pt-3">
                 <button

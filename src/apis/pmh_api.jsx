@@ -48,6 +48,7 @@ export const ListHelperKhoHang = (token) =>
         headers: {
           Authorization: `Bearer ${token}`,
         },
+        data: {},
       })
       resolve(response)
     } catch (error) {
@@ -64,6 +65,7 @@ export const ListHelperDoiTuong = (token) =>
         headers: {
           Authorization: `Bearer ${token}`,
         },
+        data: {},
       })
       resolve(response)
     } catch (error) {
@@ -247,6 +249,23 @@ export const ThongSo = (token) =>
     try {
       const response = await axios({
         url: '/settings/GiaTriHeThong/ThongSo',
+        method: 'post',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        data: {},
+      })
+      resolve(response)
+    } catch (error) {
+      reject(error)
+    }
+  })
+
+export const DSChucNang = (token) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const response = await axios({
+        url: '/settings/GiaTriHeThong/DanhSachChucNang',
         method: 'post',
         headers: {
           Authorization: `Bearer ${token}`,

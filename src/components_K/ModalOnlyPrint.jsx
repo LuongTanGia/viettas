@@ -100,7 +100,6 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH, actionType, close2, SctC
       } else {
         toast.error(response.data.DataErrorDescription)
       }
-
       close()
     } catch (error) {
       console.error('Error while saving data:', error)
