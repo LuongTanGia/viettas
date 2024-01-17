@@ -27,8 +27,7 @@ function DoughNut() {
     }
 
     loadData()
-  }, [token, tokenRF, dataChart])
-
+  }, [token, tokenRF])
   const Labels = dataChart?.map((result) => result.DataName)
   const dataChart_list = dataChart?.map((result) => result.DataValue)
   const backgroundColor_list = ['#FF0000', '#C850C0', '#FC00FF', '#97D9E1', '#85FFBD', '#FBAB7E', '#F7CE68', '#8BC6EC', '#00DBDE']

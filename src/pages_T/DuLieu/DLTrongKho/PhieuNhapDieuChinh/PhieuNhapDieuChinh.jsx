@@ -454,7 +454,7 @@ const PhieuNhapDieuChinh = () => {
                     />
                   </div>
                   <div className=" flex items-center gap-1 ">
-                    <label>-</label>
+                    <label>Đến</label>
                     <DatePicker
                       className="DatePicker_NXTKho"
                       format="DD/MM/YYYY"
@@ -513,7 +513,14 @@ const PhieuNhapDieuChinh = () => {
                 className="table_DMHangHoa setHeight"
                 columns={titles}
                 dataSource={filteredHangHoa}
-                pagination={{ defaultPageSize: 50, showSizeChanger: true, pageSizeOptions: ['10', '20', '50', '100', '1000'] }}
+                pagination={{
+                  defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                  showSizeChanger: true,
+                  pageSizeOptions: ['50', '100', '1000'],
+                  onShowSizeChange: (current, size) => {
+                    localStorage.setItem('pageSize', size)
+                  },
+                }}
                 onRow={(record) => ({
                   onDoubleClick: () => {
                     handleView(record)

@@ -1,22 +1,23 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from 'react'
-import { useSearch } from '../../components_T/hooks/Search'
-import { Checkbox, Input, Table, Tooltip, Typography } from 'antd'
+import { Button, Checkbox, Col, Input, Row, Spin, Table, Tooltip, Typography } from 'antd'
 const { Text } = Typography
-import HangHoaModals from '../../components_T/Modal/DanhMuc/HangHoa/HangHoaModals'
-import categoryAPI from '../../API/linkAPI'
 import moment from 'moment'
 import { toast } from 'react-toastify'
-import { FaSearch } from 'react-icons/fa'
+import { FaSearch, FaEyeSlash, FaEye } from 'react-icons/fa'
+import { CiBarcode } from 'react-icons/ci'
+import { TfiMoreAlt } from 'react-icons/tfi'
+import { RETOKEN } from '../../action/Actions'
+import { GrStatusUnknown } from 'react-icons/gr'
 import { IoMdAddCircleOutline } from 'react-icons/io'
 import { MdEdit, MdDelete, MdOutlineGroupAdd } from 'react-icons/md'
-import { TfiMoreAlt } from 'react-icons/tfi'
-import { GrStatusUnknown } from 'react-icons/gr'
-import { CiBarcode } from 'react-icons/ci'
-import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
-import { RETOKEN } from '../../action/Actions'
+import categoryAPI from '../../API/linkAPI'
+import { useSearch } from '../../components_T/hooks/Search'
 import ActionButton from '../../components/util/Button/ActionButton'
+import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
 import HighlightedCell from '../../components_T/hooks/HighlightedCell'
+import { nameColumsHangHoa } from '../../components/util/Table/ColumnName'
+import HangHoaModals from '../../components_T/Modal/DanhMuc/HangHoa/HangHoaModals'
 
 const HangHoa = () => {
   const TokenAccess = localStorage.getItem('TKN')
@@ -32,6 +33,11 @@ const HangHoa = () => {
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [dataThongSo, setDataThongSo] = useState('')
   const [targetRow, setTargetRow] = useState(null)
+  // Ẩn cột
+  const [hiddenRow, setHiddenRow] = useState([])
+  const [checkedList, setcheckedList] = useState([])
+  const [selectVisible, setSelectVisible] = useState(false)
+  const [options, setOptions] = useState()
 
   const getListHangHoa = async () => {
     try {
@@ -66,6 +72,15 @@ const HangHoa = () => {
       document.removeEventListener('click', handleClickOutside)
     }
   }, [])
+
+  useEffect(() => {
+    setHiddenRow(JSON.parse(localStorage.getItem('hidenColumns')))
+    setcheckedList(JSON.parse(localStorage.getItem('hidenColumns')))
+    const key = Object.keys(dataHangHoa ? dataHangHoa[0] : {}).filter(
+      (key) => key !== 'CoThue' && key !== 'TyLeThue' && key !== 'Nhom' && key !== 'TyLeQuyDoi' && key !== 'DienGiaiHangHoa' && key !== 'DVTQuyDoi',
+    )
+    setOptions(key)
+  }, [selectVisible])
 
   const handleLoading = () => {
     setIsLoading(false)
@@ -213,6 +228,16 @@ const HangHoa = () => {
     const newSelectedRowKeys = isSelected ? selectedRowKeys.filter((key) => key !== record.key) : [...selectedRowKeys, record.key]
     setSelectedRowKeys(newSelectedRowKeys)
   }
+  const handleHidden = () => {
+    setSelectVisible(!selectVisible)
+  }
+  const onChange = (checkedValues) => {
+    setcheckedList(checkedValues)
+    localStorage.setItem('hidenColumns', JSON.stringify(checkedValues))
+  }
+  const onClickSubmit = () => {
+    setHiddenRow(checkedList)
+  }
   const titles = [
     {
       title: 'STT',
@@ -356,7 +381,7 @@ const HangHoa = () => {
       ),
     },
     {
-      title: 'Bảng số giá',
+      title: 'Số bảng giá',
       dataIndex: 'BangGiaSi',
       key: 'BangGiaSi',
       width: 120,
@@ -524,6 +549,7 @@ const HangHoa = () => {
       },
     },
   ]
+  const newTitles = titles.filter((item) => !hiddenRow?.includes(item.dataIndex))
   return (
     <>
       {!isLoading ? (
@@ -556,16 +582,58 @@ const HangHoa = () => {
                   <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
                 </div>
                 {isShowOption && (
-                  <div className="absolute flex flex-col gap-4 bg-slate-100 p-3 top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom ">
-                    <ActionButton
-                      handleAction={() => handlePrintBar()}
-                      title={'In Theo Số Tem'}
-                      icon={<CiBarcode className="w-6 h-6" />}
-                      color={'slate-50'}
-                      background={'purple-500'}
-                      color_hover={'purple-500'}
-                      bg_hover={'white'}
-                    />
+                  <div className="absolute flex flex-col gap-2 bg-slate-200 p-3 top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom">
+                    <div className={`flex ${selectVisible ? '' : 'flex-col'} items-center gap-2`}>
+                      <ActionButton
+                        handleAction={() => handlePrintBar()}
+                        title={'In Theo Số Tem'}
+                        icon={<CiBarcode className="w-6 h-6" />}
+                        color={'slate-50'}
+                        background={'purple-500'}
+                        color_hover={'purple-500'}
+                        bg_hover={'white'}
+                      />
+                      <ActionButton
+                        handleAction={() => handleHidden()}
+                        title={'Ẩn Cột'}
+                        icon={selectVisible ? <FaEyeSlash className="w-5 h-5" /> : <FaEye className="w-5 h-5" />}
+                        color={'slate-50'}
+                        background={'red-500'}
+                        color_hover={'red-500'}
+                        bg_hover={'white'}
+                      />
+                    </div>
+                    <div>
+                      {selectVisible && (
+                        <div>
+                          <Checkbox.Group
+                            style={{
+                              width: '470px',
+                              background: 'white',
+                              padding: 10,
+                              borderRadius: 10,
+                              boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+                            }}
+                            className="flex flex-col"
+                            defaultValue={checkedList}
+                            onChange={onChange}
+                          >
+                            <Row>
+                              {options.map((item) => (
+                                <Col span={8} key={item}>
+                                  <Checkbox value={item} checked={true}>
+                                    {nameColumsHangHoa[item]}
+                                  </Checkbox>
+                                </Col>
+                              ))}
+                            </Row>
+                            <Button className="mt-2 w-full" onClick={onClickSubmit}>
+                              Xác Nhận
+                            </Button>
+                          </Checkbox.Group>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>
@@ -636,7 +704,7 @@ const HangHoa = () => {
                 })}
                 rowClassName={(record) => (record.MaHang === targetRow ? 'highlighted-row' : '')}
                 className="setHeight"
-                columns={titles}
+                columns={newTitles}
                 dataSource={filteredHangHoa.map((item, index) => ({
                   ...item,
                   modifiedIndex: index + 1,
@@ -646,7 +714,14 @@ const HangHoa = () => {
                   x: 3000,
                   y: 400,
                 }}
-                pagination={{ defaultPageSize: 50, showSizeChanger: true, pageSizeOptions: ['10', '20', '50', '100', '1000'] }}
+                pagination={{
+                  defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                  showSizeChanger: true,
+                  pageSizeOptions: ['50', '100', '1000'],
+                  onShowSizeChange: (current, size) => {
+                    localStorage.setItem('pageSize', size)
+                  },
+                }}
                 style={{
                   whiteSpace: 'nowrap',
                   fontSize: '24px',
@@ -656,7 +731,7 @@ const HangHoa = () => {
                     <Table.Summary fixed="bottom">
                       <Table.Summary.Row>
                         <Table.Summary.Cell className=" bg-gray-100"></Table.Summary.Cell>
-                        {titles
+                        {newTitles
                           .filter((column) => column.render)
                           .map((column) => {
                             const isNumericColumn = typeof filteredHangHoa[0]?.[column.dataIndex] === 'number'

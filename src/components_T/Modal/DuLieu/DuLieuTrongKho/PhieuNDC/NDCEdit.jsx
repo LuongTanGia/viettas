@@ -651,6 +651,14 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
                               handleChoose(record)
                             },
                           })}
+                          pagination={{
+                            defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                            showSizeChanger: true,
+                            pageSizeOptions: ['50', '100', '1000'],
+                            onShowSizeChange: (current, size) => {
+                              localStorage.setItem('pageSize', size)
+                            },
+                          }}
                           size="small"
                           scroll={{
                             x: 1100,
