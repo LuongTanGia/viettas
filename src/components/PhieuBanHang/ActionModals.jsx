@@ -6,10 +6,10 @@ import { useEffect, useState } from 'react'
 import { chiTietPBS } from '../../redux/selector'
 import './phieubanhang.css'
 import dayjs from 'dayjs'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import TableEdit from '../util/Table/EditTable'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
-import { DANHSACHDOITUONG, DANHSACHKHOHANG, THEMPHIEUBANHANG, SUAPHIEUBANHANG, DANHSACHHANGHOA_PBS } from '../../action/Actions'
+import { DANHSACHDOITUONG, DANHSACHKHOHANG, THEMPHIEUBANHANG, SUAPHIEUBANHANG, DANHSACHHANGHOA_PBS, THONGTINPHIEU } from '../../action/Actions'
 import API from '../../API/API'
 import ListHelper_HangHoa from './ListHelper_HangHoa'
 import { toast } from 'react-toastify'
@@ -17,6 +17,7 @@ import { Select } from 'antd'
 import ActionButton from '../util/Button/ActionButton'
 import { nameColumsPhieuBanHangChiTiet } from '../util/Table/ColumnName'
 import { IoMdAddCircle } from 'react-icons/io'
+import { PrinterOutlined } from '@ant-design/icons'
 
 const { Option } = Select
 
@@ -35,11 +36,12 @@ const initState = {
 }
 
 // eslint-disable-next-line react/prop-types
-function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }) {
+function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, handleShowPrint_action, handleShowPrint_kho_action }) {
   // yourMaHangOptions, yourTenHangOptions
   // const [yourMaHangOptions, setYourMaHangOptions] = useState([])
   // const [yourTenHangOptions, setYourTenHangOptions] = useState([])
-
+  const dispatch = useDispatch()
+  const [reloadComponent, setReloadComponent] = useState(false)
   const token = window.localStorage.getItem('TKN')
   const [isModalOpen, setIsModalOpen] = useState(isShow)
   const [Dates, setDates] = useState({ NgayCTu: dayjs(new Date()), DaoHan: dayjs(new Date()) })
@@ -47,6 +49,8 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
   const [listDoiTuong, setListDoiTuong] = useState([])
   const [listKhoHang, setListKhoHang] = useState([])
   const [showPopup, setShowPopup] = useState(false)
+  // const [loadingTable, setloadingTable] = useState(false)
+
   const [dataChitiet, setDataChitiet] = useState([])
   const [dataListHP, setDataListHP] = useState([])
 
@@ -70,7 +74,8 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
       }
     }
     loadData()
-  }, [isShow, dataRecord, token, form?.DataDetails])
+    setReloadComponent(false)
+  }, [isShow, dataRecord, token, form?.DataDetails, reloadComponent])
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -105,7 +110,6 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
   // Action Sửa
   const handleChangeInput_other = (e) => {
     const { name, value } = e.target
-
     setForm({ ...form, [name]: value })
   }
   const handleChangeInput = async (value) => {
@@ -116,7 +120,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
     setDataListHP(result_listHp)
     // setSelectDataOption(result_listHp)
   }
-  console.log(dataListHP)
+
   const handleChangeInput_kho = async (value) => {
     setForm({ ...form, MaKho: value })
     const result_listHp = await DANHSACHHANGHOA_PBS(API.DANHSACHHANGHOA_PBS, token, form)
@@ -162,12 +166,12 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
       })
       const data = { ...form, DataDetails: newData }
       const res = await SUAPHIEUBANHANG(API.SUAPHIEUBANHANG, token, { SoChungTu: data.SoChungTu, Data: data })
-
       setMaHang(data.SoChungTu)
       if (res.DataError === 0) {
         console.log('sua')
       }
     }
+    setReloadComponent(true)
   }
   const handleSubmitAndClose = async () => {
     if (typeAction === 'create') {
@@ -198,6 +202,32 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
       if (res.DataError === 0) {
         handleClose()
       }
+    }
+  }
+  const Print = async () => {
+    if (typeAction === 'view') {
+      handleShowPrint_action(form?.NgayCTu, form?.SoChungTu)
+    } else {
+      handleSubmit()
+      handleShowPrint_action(form?.NgayCTu, form?.SoChungTu)
+
+      setReloadComponent(true)
+      const x = await THONGTINPHIEU(API.CHITIETPBS, token, form?.SoChungTu, dispatch)
+      setForm(x.DataResult)
+    }
+  }
+
+  const Print_kho = async () => {
+    if (typeAction === 'view') {
+      handleShowPrint_kho_action(form?.NgayCTu, form?.SoChungTu)
+    } else {
+      handleSubmit()
+
+      handleShowPrint_kho_action(form?.NgayCTu, form?.SoChungTu)
+
+      setReloadComponent(true)
+      const x = await THONGTINPHIEU(API.CHITIETPBS, token, form?.SoChungTu, dispatch)
+      setForm(x.DataResult)
     }
   }
 
@@ -264,7 +294,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
                       <Select
                         className="w-full outline-none"
                         value={`${form?.MaDoiTuong} - ${form?.TenDoiTuong} - ${form?.DiaChi}`}
-                        disabled={typeAction === 'view' || typeAction === 'edit'}
+                        disabled={typeAction === 'view'}
                         onChange={handleChangeInput}
                         showSearch
                       >
@@ -390,6 +420,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
                     <TableEdit
                       listHP={dataListHP}
                       typeTable={'create'}
+                      typeAction={typeAction}
                       tableName={'BanHang'}
                       param={dataChitiet}
                       columName={nameColumsPhieuBanHangChiTiet}
@@ -416,14 +447,36 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang }
                 ) : null
               ) : null}
             </div>
-            <div className=" w-full flex justify-end  gap-2 ">
-              {typeAction === 'edit' || typeAction === 'view' ? null : (
-                <ActionButton color={'slate-50'} background={'blue-500'} bg_hover={'white'} color_hover={'blue-500'} title={'Lưu'} handleAction={handleSubmit} />
-              )}
-              {typeAction === 'view' ? null : (
-                <ActionButton color={'slate-50'} background={'blue-500'} bg_hover={'white'} color_hover={'blue-500'} title={'Lưu & Đóng'} handleAction={handleSubmitAndClose} />
-              )}
-              <ActionButton color={'slate-50'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} title={'Đóng'} handleAction={handleClose} />
+            <div className=" w-full flex justify-between  gap-2 ">
+              <div className="w-full flex justify-start  gap-2">
+                <ActionButton
+                  icon={<PrinterOutlined />}
+                  color={'slate-50'}
+                  title={'In Phiếu'}
+                  background={'purple-500'}
+                  bg_hover={'white'}
+                  color_hover={'purple-500'}
+                  handleAction={Print}
+                />
+                <ActionButton
+                  icon={<PrinterOutlined />}
+                  color={'slate-50'}
+                  title={'In Phiếu Kho'}
+                  background={'purple-500'}
+                  bg_hover={'white'}
+                  color_hover={'purple-500'}
+                  handleAction={Print_kho}
+                />
+              </div>
+              <div className="w-full flex justify-end  gap-2">
+                {typeAction === 'edit' || typeAction === 'view' ? null : (
+                  <ActionButton color={'slate-50'} background={'blue-500'} bg_hover={'white'} color_hover={'blue-500'} title={'Lưu'} handleAction={handleSubmit} />
+                )}
+                {typeAction === 'view' ? null : (
+                  <ActionButton color={'slate-50'} background={'blue-500'} bg_hover={'white'} color_hover={'blue-500'} title={'Lưu & Đóng'} handleAction={handleSubmitAndClose} />
+                )}
+                <ActionButton color={'slate-50'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} title={'Đóng'} handleAction={handleClose} />
+              </div>
             </div>
           </div>
         </div>

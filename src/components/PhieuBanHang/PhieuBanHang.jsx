@@ -1,6 +1,6 @@
 import Table from '../util/Table/Table'
 import LoadingPage from '../util/Loading/LoadingPage'
-import { FileAddOutlined, PrinterOutlined } from '@ant-design/icons'
+import { PrinterOutlined } from '@ant-design/icons'
 import { nameColumsPhieuBanHang } from '../util/Table/ColumnName'
 import ActionModals from './ActionModals'
 import { useEffect, useRef, useState } from 'react'
@@ -14,10 +14,12 @@ import Model from './Model'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { BsSearch } from 'react-icons/bs'
 import dayjs from 'dayjs'
-
+import { Checkbox, Col, Row } from 'antd'
 import { TfiMoreAlt } from 'react-icons/tfi'
 import { MdFilterAlt } from 'react-icons/md'
 import { RiFileExcel2Fill } from 'react-icons/ri'
+import { Input, Button, Spin } from 'antd'
+import { IoAddCircleOutline } from 'react-icons/io5'
 
 function PhieuBanHang() {
   const optionContainerRef = useRef(null)
@@ -25,9 +27,11 @@ function PhieuBanHang() {
   const dispatch = useDispatch()
   const token = localStorage.getItem('TKN')
   const [dataLoaded, setDataLoaded] = useState(false)
+
   const [searchText, setSearchText] = useState('')
   const [modelType, setModelType] = useState('')
-
+  const [selectVisible, setSelectVisible] = useState(false)
+  const [options, setOptions] = useState()
   const [loadingSearch, setLoadingSearch] = useState(false)
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [data, setData] = useState()
@@ -40,6 +44,12 @@ function PhieuBanHang() {
   const [selectMH, setSelectMH] = useState()
   const [isShowOption, setIsShowOption] = useState(false)
   const [dataDate, setDataDate] = useState({})
+  const [soChungTuPrint, setSoChungTuPrint] = useState()
+
+  const [hiden, setHiden] = useState([])
+  const [checkedList, setcheckedList] = useState([])
+
+  // const [searchTimeout, setSearchTimeout] = useState(null)
 
   const isMatch = (value, searchText) => {
     const stringValue = String(value).toLowerCase()
@@ -63,7 +73,13 @@ function PhieuBanHang() {
 
     return false
   }
+  useEffect(() => {
+    setHiden(JSON.parse(localStorage.getItem('hidenColumns')))
+    setcheckedList(JSON.parse(localStorage.getItem('hidenColumns')))
 
+    const key = Object.keys(data ? data[0] : []).filter((key) => key !== 'MaSoThue')
+    setOptions(key)
+  }, [selectVisible])
   useEffect(() => {
     const getDate = async () => {
       const date = await KHOANNGAY(API.KHOANNGAY, token)
@@ -71,6 +87,17 @@ function PhieuBanHang() {
     }
     getDate()
   }, [])
+  let timerId
+  const handleInputChange = (e) => {
+    const inputValue = e.target.value
+    clearTimeout(timerId)
+
+    timerId = setTimeout(() => {
+      setSearchText(inputValue)
+    }, 700)
+
+    console.log(inputValue)
+  }
   useEffect(() => {
     // setDataDate(dateHT)
     const getListData = async () => {
@@ -85,7 +112,7 @@ function PhieuBanHang() {
       if (filteredDataRes === -1) {
         setData([])
       } else {
-        const newData = filteredDataRes.filter((record) => {
+        const newData = filteredDataRes?.filter((record) => {
           return Object.keys(record).some((key) => isMatch(record[key], searchText))
         })
 
@@ -114,6 +141,7 @@ function PhieuBanHang() {
   }, [isShowOption])
   const handleView = async (record) => {
     await THONGTINPHIEU(API.CHITIETPBS, token, record?.SoChungTu, dispatch)
+
     setIsShow(true)
     setType('view')
     setDataRecord(record)
@@ -121,6 +149,7 @@ function PhieuBanHang() {
 
   const handleEdit = async (record) => {
     await THONGTINPHIEU(API.CHITIETPBS, token, record?.SoChungTu, dispatch)
+
     setIsShow(true)
     setType('edit')
     setDataRecord(record)
@@ -141,6 +170,7 @@ function PhieuBanHang() {
   }
   const handleCloseAction = () => {
     setIsShowPrint(false)
+    setDataDate({})
     setDataRecord([])
   }
 
@@ -187,6 +217,21 @@ function PhieuBanHang() {
     setIsShowPrint(!isShowPrint)
     setModelType('PhieuKho')
   }
+
+  const handleShowPrint_action = (value, soCT) => {
+    setSoChungTuPrint(soCT)
+    setDataDate({ ...dataDate, NgayBatDau: value, NgayKetThuc: value })
+    setIsShowPrint(!isShowPrint)
+    setModelType('')
+  }
+
+  const handleShowPrint_kho_action = (value, soCT) => {
+    setSoChungTuPrint(soCT)
+    setDataDate({ ...dataDate, NgayBatDau: value, NgayKetThuc: value })
+    setIsShowPrint(!isShowPrint)
+    setModelType('PhieuKho')
+  }
+
   const handleSearch = async () => {
     setLoadingSearch(true)
     const searchData = {
@@ -226,6 +271,25 @@ function PhieuBanHang() {
     setDataLoaded(true)
     setLoadingSearch(false)
   }
+  // const [debouncedSearchText] = useDebounce(searchText, 2000); // 2000 milliseconds (2 seconds)
+
+  // useEffect will run after 2 seconds of user inactivity
+
+  const handleShow_hiden = () => {
+    setSelectVisible(!selectVisible)
+  }
+  const onChange = (checkedValues) => {
+    setcheckedList(checkedValues)
+    localStorage.setItem('hidenColumns', JSON.stringify(checkedValues))
+  }
+  const onClickSubmit = () => {
+    // setcheckedList(checkedValues)
+    setLoadingSearch(true)
+    setTimeout(() => {
+      setLoadingSearch(false)
+      setHiden(checkedList)
+    }, 700)
+  }
 
   return (
     <>
@@ -238,51 +302,98 @@ function PhieuBanHang() {
           <div className="flex  ">
             {isShowSearch && (
               <div className={`flex absolute left-[14rem] top-0 transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
-                <input
+                {/* <input
                   type="text"
                   placeholder="Nhập ký tự bạn cần tìm"
                   value={searchText}
                   onChange={(e) => setSearchText(e.target.value)}
                   className={'px-2  w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] '}
-                />
+                /> */}
+                <Input placeholder="Nhập ký tự bạn cần tìm" onChange={handleInputChange} />
               </div>
             )}
           </div>
         </div>
-        <div>
-          <div ref={optionContainerRef}>
+        <div ref={optionContainerRef}>
+          <div>
             <div className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5  " onClick={() => setIsShowOption(!isShowOption)} title="Chức năng khác">
               <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
             </div>
             {isShowOption && (
-              <div className=" absolute flex flex-col gap-2 bg-slate-100 p-3  top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom ">
-                <ActionButton
-                  icon={<RiFileExcel2Fill />}
-                  color={'slate-50'}
-                  title={'Xuất Excel'}
-                  background={'green-500'}
-                  bg_hover={'white'}
-                  color_hover={'green-500'}
-                  handleAction={exportToExcel}
-                />
-                <ActionButton
-                  icon={<PrinterOutlined />}
-                  color={'slate-50'}
-                  title={'In Phiếu'}
-                  background={'purple-500'}
-                  bg_hover={'white'}
-                  color_hover={'purple-500'}
-                  handleAction={handleShowPrint}
-                />
-                <ActionButton
-                  icon={<PrinterOutlined />}
-                  color={'slate-50'}
-                  title={'In Phiếu Kho'}
-                  background={'purple-500'}
-                  bg_hover={'white'}
-                  color_hover={'purple-500'}
-                  handleAction={handleShowPrint_kho}
-                />
+              <div className="absolute  flex flex-col gap-2 bg-slate-100 p-3  top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom ">
+                <div className={`flex flex-grow flex-wrap gap-1 ${!selectVisible ? 'flex-col' : ''}`}>
+                  <ActionButton
+                    icon={<RiFileExcel2Fill />}
+                    color={'slate-50'}
+                    title={'Xuất Excel'}
+                    background={'green-500'}
+                    bg_hover={'white'}
+                    color_hover={'green-500'}
+                    handleAction={exportToExcel}
+                  />
+                  <ActionButton
+                    icon={<PrinterOutlined />}
+                    color={'slate-50'}
+                    title={'In Phiếu'}
+                    background={'purple-500'}
+                    bg_hover={'white'}
+                    color_hover={'purple-500'}
+                    handleAction={handleShowPrint}
+                  />
+                  <ActionButton
+                    icon={<PrinterOutlined />}
+                    color={'slate-50'}
+                    title={'In Phiếu Kho'}
+                    background={'purple-500'}
+                    bg_hover={'white'}
+                    color_hover={'purple-500'}
+                    handleAction={handleShowPrint_kho}
+                  />
+                  <>
+                    <ActionButton
+                      icon={<PrinterOutlined />}
+                      color={'slate-50'}
+                      title={'Ẩn cột'}
+                      background={'red-500'}
+                      bg_hover={'white'}
+                      color_hover={'red-500'}
+                      handleAction={handleShow_hiden}
+                    />
+                  </>
+                </div>
+                <div>
+                  {selectVisible && (
+                    <div>
+                      <Checkbox.Group
+                        style={{
+                          width: '470px',
+                          background: 'white',
+                          padding: 10,
+                          borderRadius: 10,
+                          boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+                        }}
+                        className="flex flex-col"
+                        defaultValue={checkedList}
+                        onChange={onChange}
+                      >
+                        <Row>
+                          {options.map((item) => (
+                            <Col span={8} key={item}>
+                              <Checkbox value={item} checked={true}>
+                                {nameColumsPhieuBanHang[item]}
+                              </Checkbox>
+                            </Col>
+                          ))}
+                        </Row>
+                        <Spin spinning={loadingSearch}>
+                          <Button className="mt-2 w-full" onClick={onClickSubmit}>
+                            Xác Nhận
+                          </Button>
+                        </Spin>
+                      </Checkbox.Group>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>
@@ -296,11 +407,22 @@ function PhieuBanHang() {
               className="DatePicker_PMH max-h-[100px]"
               format="DD/MM/YYYY"
               defaultValue={dayjs(dataDate?.NgayBatDau)}
+              maxDate={dayjs(dataDate.NgayKetThuc)}
               onChange={(newDate) => {
                 setDataDate({
                   ...dataDate,
                   NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
                 })
+              }}
+              sx={{
+                '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                '& .MuiButtonBase-root': {
+                  padding: '4px',
+                },
+                '& .MuiSvgIcon-root': {
+                  width: '18px',
+                  height: '18px',
+                },
               }}
             />
           </div>
@@ -316,10 +438,28 @@ function PhieuBanHang() {
                   NgayKetThuc: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
                 })
               }}
+              sx={{
+                '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                '& .MuiButtonBase-root': {
+                  padding: '4px',
+                },
+                '& .MuiSvgIcon-root': {
+                  width: '18px',
+                  height: '18px',
+                },
+              }}
             />
           </div>
-          <div className=" ">
-            <ActionButton icon={<MdFilterAlt />} color={'slate-50'} title={'Lọc'} background={'blue-500'} bg_hover={'white'} color_hover={'blue-500'} handleAction={handleSearch} />
+          <div className="flex items-center">
+            <ActionButton
+              icon={<MdFilterAlt size={20} />}
+              color={'slate-50'}
+              title={'Lọc'}
+              background={'blue-500'}
+              bg_hover={'white'}
+              color_hover={'blue-500'}
+              handleAction={handleSearch}
+            />
           </div>
         </div>
 
@@ -328,7 +468,7 @@ function PhieuBanHang() {
             color={'slate-50'}
             title={'Thêm Phiếu'}
             background={'blue-500'}
-            icon={<FileAddOutlined />}
+            icon={<IoAddCircleOutline size={20} />}
             bg_hover={'white'}
             color_hover={'blue-500'}
             handleAction={handleCreate}
@@ -349,11 +489,20 @@ function PhieuBanHang() {
           loadingSearch={loadingSearch}
           selectMH={selectMH}
           textSearch={searchText}
+          hiden={hiden}
         />
       </div>
-      <ActionModals isShow={isShow} handleClose={handleClose} dataRecord={dataRecord} typeAction={type} setMaHang={setMaHang} />
+      <ActionModals
+        isShow={isShow}
+        handleClose={handleClose}
+        dataRecord={dataRecord}
+        typeAction={type}
+        setMaHang={setMaHang}
+        handleShowPrint_action={handleShowPrint_action}
+        handleShowPrint_kho_action={handleShowPrint_kho_action}
+      />
       <Model isShow={isShowDelete} handleClose={handleClose} record={dataRecord} ActionDelete={ActionDelete} typeModel={typeModel} ActionPay={ActionPay} />
-      <ModelPrint isShowModel={isShowPrint} handleCloseAction={handleCloseAction} data={dataDate} modelType={modelType} />
+      <ModelPrint selectMH={selectMH} soChungTuPrint={soChungTuPrint} isShowModel={isShowPrint} handleCloseAction={handleCloseAction} data={dataDate} modelType={modelType} />
     </>
   )
 }

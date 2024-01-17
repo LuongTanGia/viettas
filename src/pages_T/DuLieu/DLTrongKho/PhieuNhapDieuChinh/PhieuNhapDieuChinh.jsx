@@ -1,13 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from 'react'
-import { Table, Tooltip, Typography } from 'antd'
+import { Input, Table, Tooltip, Typography } from 'antd'
 const { Text } = Typography
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { FaSearch } from 'react-icons/fa'
 import { useSearch } from '../../../../components_T/hooks/Search'
 import { toast } from 'react-toastify'
 import { IoMdAddCircleOutline } from 'react-icons/io'
-import { MdEdit, MdDelete, MdPrint, MdFilterListAlt } from 'react-icons/md'
+import { MdEdit, MdDelete, MdPrint, MdFilterAlt } from 'react-icons/md'
 import categoryAPI from '../../../../API/linkAPI'
 import dayjs from 'dayjs'
 import { RETOKEN } from '../../../../action/Actions'
@@ -238,7 +238,7 @@ const PhieuNhapDieuChinh = () => {
               textAlign: 'start',
             }}
           >
-            {text}
+            <HighlightedCell text={text} search={searchHangHoa} />
           </div>
         </Tooltip>
       ),
@@ -251,7 +251,11 @@ const PhieuNhapDieuChinh = () => {
       width: 120,
       showSorterTooltip: false,
       sorter: (a, b) => a.SoMatHang - b.SoMatHang,
-      render: (text) => <span className="flex justify-end">{formatCurrency(text)}</span>,
+      render: (text) => (
+        <span className="flex justify-end">
+          <HighlightedCell text={formatCurrency(text)} search={searchHangHoa} />
+        </span>
+      ),
     },
     {
       title: 'Số lượng',
@@ -261,7 +265,11 @@ const PhieuNhapDieuChinh = () => {
       width: 120,
       showSorterTooltip: false,
       sorter: (a, b) => a.TongSoLuong - b.TongSoLuong,
-      render: (text) => <span className="flex justify-end">{formatThapPhan(text, dataThongSo.SOLESOLUONG)}</span>,
+      render: (text) => (
+        <span className="flex justify-end">
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+        </span>
+      ),
     },
     {
       title: 'Ghi chú',
@@ -281,7 +289,7 @@ const PhieuNhapDieuChinh = () => {
               justifyContent: 'start',
             }}
           >
-            {text}
+            <HighlightedCell text={text} search={searchHangHoa} />
           </div>
         </Tooltip>
       ),
@@ -303,7 +311,7 @@ const PhieuNhapDieuChinh = () => {
               cursor: 'pointer',
             }}
           >
-            {text}
+            <HighlightedCell text={text} search={searchHangHoa} />
           </div>
         </Tooltip>
       ),
@@ -319,7 +327,11 @@ const PhieuNhapDieuChinh = () => {
         const dateB = new Date(b.NgayTao)
         return dateA - dateB
       },
-      render: (text) => <span className="flex justify-center">{formatDateTime(text, true)}</span>,
+      render: (text) => (
+        <span className="flex justify-center">
+          <HighlightedCell text={formatDateTime(text, true)} search={searchHangHoa} />
+        </span>
+      ),
     },
     {
       title: 'Người sửa',
@@ -339,7 +351,7 @@ const PhieuNhapDieuChinh = () => {
               cursor: 'pointer',
             }}
           >
-            {text}
+            <HighlightedCell text={text} search={searchHangHoa} />
           </div>
         </Tooltip>
       ),
@@ -403,7 +415,8 @@ const PhieuNhapDieuChinh = () => {
                 <div className="flex relative ">
                   {isShowSearch && (
                     <div className={`flex absolute left-[19rem] -top-8 transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
-                      <input
+                      <Input
+                        size="small"
                         value={searchHangHoa}
                         type="text"
                         placeholder="Nhập ký tự bạn cần tìm"
@@ -426,6 +439,13 @@ const PhieuNhapDieuChinh = () => {
                       maxDate={dayjs(khoanNgayTo)}
                       sx={{
                         '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                        '& .MuiButtonBase-root': {
+                          padding: '4px',
+                        },
+                        '& .MuiSvgIcon-root': {
+                          width: '18px',
+                          height: '18px',
+                        },
                       }}
                       defaultValue={dayjs(khoanNgayFrom, 'YYYY-MM-DD')}
                       onChange={(values) => {
@@ -442,6 +462,13 @@ const PhieuNhapDieuChinh = () => {
                       defaultValue={dayjs(khoanNgayTo, 'YYYY-MM-DD')}
                       sx={{
                         '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                        '& .MuiButtonBase-root': {
+                          padding: '4px',
+                        },
+                        '& .MuiSvgIcon-root': {
+                          width: '18px',
+                          height: '18px',
+                        },
                       }}
                       onChange={(values) => {
                         setKhoanNgayTo(values ? dayjs(values).format('YYYY-MM-DDTHH:mm:ss') : '')
@@ -452,7 +479,7 @@ const PhieuNhapDieuChinh = () => {
                 <ActionButton
                   handleAction={getDataNDC}
                   title={'Lọc'}
-                  icon={<MdFilterListAlt className="w-6 h-6" />}
+                  icon={<MdFilterAlt className="w-6 h-6" />}
                   color={'slate-50'}
                   background={'blue-500'}
                   color_hover={'blue-500'}
@@ -482,6 +509,7 @@ const PhieuNhapDieuChinh = () => {
             </div>
             <div>
               <Table
+                loading={!isLoading}
                 className="table_DMHangHoa setHeight"
                 columns={titles}
                 dataSource={filteredHangHoa}

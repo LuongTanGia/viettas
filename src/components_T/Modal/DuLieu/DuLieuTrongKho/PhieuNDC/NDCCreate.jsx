@@ -1,31 +1,42 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 import { FaSearch } from 'react-icons/fa'
 import { toast } from 'react-toastify'
 import { IoMdClose, IoMdAddCircle } from 'react-icons/io'
+import { MdPrint } from 'react-icons/md'
 import { Checkbox, Table, Tooltip, Select, InputNumber, FloatButton } from 'antd'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import dayjs from 'dayjs'
+import './style/NDC.css'
 import logo from '../../../../../assets/VTS-iSale.ico'
 import categoryAPI from '../../../../../API/linkAPI'
 import { RETOKEN } from '../../../../../action/Actions'
 import { useSearch } from '../../../../hooks/Search'
 import ActionButton from '../../../../../components/util/Button/ActionButton'
-import './style/NDCCreate.css'
 import SimpleBackdrop from '../../../../../components/util/Loading/LoadingPage'
+import HighlightedCell from '../../../../hooks/HighlightedCell'
+import NDCPrint from './NDCPrint'
 
 const NDCCreate = ({ close, loadingData }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const [dataKhoHang, setDataKhoHang] = useState('')
   const [isShowModal, setIsShowModal] = useState(false)
   const [dataHangHoa, setDataHangHoa] = useState('')
-  const [setSearchHangHoa, filteredHangHoa] = useSearch(dataHangHoa)
+  const [setSearchHangHoa, filteredHangHoa, searchHangHoa] = useSearch(dataHangHoa)
   const [selectedRowData, setSelectedRowData] = useState([])
   const [valueDate, setValueDate] = useState(dayjs(new Date()))
   const [dataThongSo, setDataThongSo] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [actionType, setActionType] = useState('')
+  const [SoCTu, setSoCTu] = useState('')
 
+  const currentRowData = useCallback(
+    (mahang) => {
+      return selectedRowData?.map((item) => item.MaHang).filter((item) => item !== '' && item !== mahang)
+    },
+    [selectedRowData],
+  )
   const innitProduct = {
     SoChungTu: '',
     NgayCTu: '',
@@ -155,13 +166,13 @@ const NDCCreate = ({ close, loadingData }) => {
       setNDCForm({ ...NDCForm, DataDetails: selectedRowData })
     }
   }
-  const handleCreate = async (e, isSave = true) => {
+  const handleCreate = async (e, isSave = true, isPrint = true) => {
     e.preventDefault()
     try {
       const response = await categoryAPI.NDCCreate({ ...NDCForm, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss') }, TokenAccess)
       if (response.data.DataError == 0) {
-        isSave ? '' : close() && loadingData()
-        toast.success('Tạo thành công')
+        isPrint ? handlePrint() : isSave ? '' : (close(), loadingData(), toast.success('Tạo thành công'))
+        setSoCTu(response.data.DataResults[0].SoChungTu)
       } else {
         console.log(NDCForm)
         toast.error('Tạo thất bại')
@@ -169,6 +180,10 @@ const NDCCreate = ({ close, loadingData }) => {
     } catch (error) {
       console.log(error)
     }
+  }
+  const handlePrint = () => {
+    setIsShowModal(true)
+    setActionType('print')
   }
   const handleChange = (index, key, newValue) => {
     const newDataList = [...NDCForm.DataDetails]
@@ -188,9 +203,12 @@ const NDCCreate = ({ close, loadingData }) => {
       toast.warning('Hàng hóa đã được chọn', { autoClose: 1000 })
     }
   }
+  const isAdd = useMemo(() => selectedRowData.map((item) => item.MaHang).includes(''), [selectedRowData])
   const addHangHoaCT = () => {
-    // const addHHCT = Array.isArray(NDCForm.DataDetails) ? [...NDCForm.DataDetails] : []
-    // setSelectedRowData([...addHHCT, { MaHang: '', TenHang: '', DonGia: 0, SoLuong: 1 }])
+    if (selectedRowData.map((item) => item.MaHang).includes('')) return
+    const addHHCT = Array.isArray(NDCForm.DataDetails) ? [...NDCForm.DataDetails] : []
+
+    setSelectedRowData([...addHHCT, { MaHang: '', TenHang: '', DonGia: 0, SoLuong: 1 }])
   }
   const removeRow = (index) => {
     const updatedBarcodes = [...NDCForm.DataDetails]
@@ -216,6 +234,11 @@ const NDCCreate = ({ close, loadingData }) => {
       showSorterTooltip: false,
       align: 'center',
       sorter: (a, b) => a.MaHang.localeCompare(b.MaHang),
+      render: (text) => (
+        <span className="flex justify-center">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </span>
+      ),
     },
     {
       title: 'Tên nhóm',
@@ -235,7 +258,7 @@ const NDCCreate = ({ close, loadingData }) => {
               textAlign: 'start',
             }}
           >
-            {text}
+            <HighlightedCell text={text} search={searchHangHoa} />
           </div>
         </Tooltip>
       ),
@@ -259,7 +282,7 @@ const NDCCreate = ({ close, loadingData }) => {
               textAlign: 'start',
             }}
           >
-            {text}
+            <HighlightedCell text={text} search={searchHangHoa} />
           </div>
         </Tooltip>
       ),
@@ -272,6 +295,11 @@ const NDCCreate = ({ close, loadingData }) => {
       align: 'center',
       width: 120,
       sorter: (a, b) => a.DVT.localeCompare(b.DVT),
+      render: (text) => (
+        <span className="flex justify-center">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </span>
+      ),
     },
     {
       title: 'Lắp ráp',
@@ -311,11 +339,12 @@ const NDCCreate = ({ close, loadingData }) => {
       align: 'center',
       render: (text) => (
         <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 || text === null ? 'text-gray-300' : ''}`}>
-          {formatThapPhan(text, dataThongSo.SOLESOLUONG)}
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </span>
       ),
     },
   ]
+
   return (
     <>
       {!isLoading ? (
@@ -361,6 +390,13 @@ const NDCCreate = ({ close, loadingData }) => {
                             }}
                             sx={{
                               '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                              '& .MuiButtonBase-root': {
+                                padding: '4px',
+                              },
+                              '& .MuiSvgIcon-root': {
+                                width: '18px',
+                                height: '18px',
+                              },
                             }}
                           />
                         </div>
@@ -403,7 +439,7 @@ const NDCCreate = ({ close, loadingData }) => {
                       <div className="flex gap-1">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap">Người sửa</label>
-                          <input className="px-2  2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border-[0.125rem] outline-none text-[1rem]" readOnly />
+                          <input className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border-[0.125rem] outline-none text-[1rem]" readOnly />
                         </div>
                         <div className="flex gap-1 items-center">
                           <label>Lúc</label>
@@ -432,11 +468,11 @@ const NDCCreate = ({ close, loadingData }) => {
                       <table className="barcodeList">
                         <thead>
                           <tr>
-                            <th className="w-[3rem]">STT</th>
-                            <th className="w-[8rem]">Mã hàng</th>
-                            <th className="w-[22rem]">Tên hàng</th>
-                            <th className="w-[10rem]">Số lượng</th>
-                            <th className={`${selectedRowData?.length > 9 ? 'xl:w-[3.5rem] lg:w-[4.5rem]' : ' lg:w-[6rem]'}`}></th>
+                            <th className="w-[5rem]">STT</th>
+                            <th className="w-[10rem]">Mã hàng</th>
+                            <th>Tên hàng</th>
+                            <th className="w-[20rem]">Số lượng</th>
+                            <th className={`${selectedRowData?.length > 9 ? 'w-[3.5rem]' : 'w-[5.5rem] '}`}></th>
                           </tr>
                         </thead>
                         <tbody className="">
@@ -460,13 +496,17 @@ const NDCCreate = ({ close, loadingData }) => {
                                     }}
                                     onChange={(value) => handleChange(index, 'TenHang', value)}
                                   >
-                                    {dataHangHoa?.map((hangHoa) => (
-                                      <>
-                                        <Select.Option key={hangHoa.MaHang} title={hangHoa.MaHang} value={hangHoa.MaHang} className="flex text-start ">
-                                          <p className="text-start truncate">{hangHoa.TenHang}</p>
-                                        </Select.Option>
-                                      </>
-                                    ))}
+                                    {dataHangHoa
+                                      ?.filter((row) => !currentRowData(item.MaHang).includes(row?.MaHang))
+                                      ?.map((hangHoa) => (
+                                        <>
+                                          <Select.Option key={hangHoa.MaHang} title={hangHoa.MaHang} value={hangHoa.MaHang} className="flex text-start ">
+                                            <p className="text-start truncate">
+                                              {hangHoa.MaHang}-{hangHoa.TenHang}
+                                            </p>
+                                          </Select.Option>
+                                        </>
+                                      ))}
                                   </Select>
                                 </div>
                               </td>
@@ -498,78 +538,112 @@ const NDCCreate = ({ close, loadingData }) => {
                       </table>
                     </div>
                     <FloatButton
-                      className={`${
-                        selectedRowData?.length > 9
-                          ? 'lg:top-[10px] lg:right-[50px] md:right-[30px] md:top-[10px]'
-                          : 'xl:right-[60px] lg:top-[10px] lg:right-[51px] md:right-[15px] md:top-[10px]'
-                      } z-3 opacity-50 bg-transparent w-[30px] h-[30px]`}
+                      type={isAdd ? 'default' : 'primary'}
+                      className={`${selectedRowData?.length > 9 ? 'nDC_Edit top-[10px] right-[35px]' : 'top-[10px] right-[35px]'}  absolute bg-transparent w-[30px] h-[30px]`}
                       icon={<IoMdAddCircle />}
                       onClick={addHangHoaCT}
-                      tooltip={<div>Bấm vào đây để thêm hàng hoặc nhấn F9!</div>}
+                      tooltip={isAdd ? <div>Vui lòng chọn tên hàng!</div> : <div>Bấm vào đây để thêm hàng hoặc nhấn F9!</div>}
                     />
                   </div>
                 </div>
-                <div className="flex gap-2 justify-end">
-                  <ActionButton handleAction={handleCreate} title={'Lưu'} color={'slate-50'} background={'blue-500'} color_hover={'blue-500'} bg_hover={'white'} />
-                  <ActionButton
-                    handleAction={(e) => handleCreate(e, false)}
-                    title={'Lưu & Đóng'}
-                    color={'slate-50'}
-                    background={'blue-500'}
-                    color_hover={'blue-500'}
-                    bg_hover={'white'}
-                  />
-                  <ActionButton handleAction={close} title={'Đóng'} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
+                <div className="flex justify-between">
+                  <div className="flex gap-2 justify-start">
+                    <ActionButton
+                      handleAction={
+                        isAdd
+                          ? ''
+                          : (e) => {
+                              handleCreate(e, true, true)
+                            }
+                      }
+                      title={'In Phiếu'}
+                      icon={<MdPrint className="w-6 h-6" />}
+                      color={'slate-50'}
+                      background={isAdd ? 'gray-500' : 'purple-500'}
+                      color_hover={isAdd ? 'gray-500' : 'purple-500'}
+                      bg_hover={isAdd ? 'gray-500' : 'white'}
+                    />
+                  </div>
+                  <div className="flex gap-2 justify-end">
+                    <ActionButton
+                      handleAction={isAdd ? '' : (e) => handleCreate(e, true, false)}
+                      title={'Lưu'}
+                      color={'slate-50'}
+                      background={isAdd ? 'gray-500' : 'blue-500'}
+                      color_hover={isAdd ? 'gray-500' : 'blue-500'}
+                      bg_hover={isAdd ? 'gray-500' : 'slate-50'}
+                    />
+                    <ActionButton
+                      handleAction={isAdd ? '' : (e) => handleCreate(e, false, false)}
+                      title={'Lưu & Đóng'}
+                      color={'slate-50'}
+                      background={isAdd ? 'gray-500' : 'blue-500'}
+                      color_hover={isAdd ? 'gray-500' : 'blue-500'}
+                      bg_hover={isAdd ? 'gray-500' : 'slate-50'}
+                    />
+                    <ActionButton handleAction={close} title={'Đóng'} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
           <div>
-            {isShowModal && (
-              <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col max-w-[80rem] min-h-[8rem] bg-white  p-2 rounded-xl shadow-custom overflow-hidden z-10">
-                <div className="flex flex-col gap-2 p-2 ">
-                  <div className="flex items-center gap-2">
-                    <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
-                    <p className="text-blue-700 font-semibold uppercase">Danh Sách Hàng Hóa - Phiếu Nhập Điều Chỉnh</p>
-                  </div>
-                  <div className="border-2">
-                    <div className=" p-2 rounded m-1 flex flex-col gap-2 max-h-[35rem]">
-                      <div className="flex w-[20rem] overflow-hidden  relative ">
-                        <FaSearch className="absolute left-[0.5rem] top-2.5 hover:text-red-400 cursor-pointer" />
-                        <input
-                          type="text"
-                          placeholder="Nhập ký tự bạn cần tìm"
-                          onChange={handleSearch}
-                          className="px-[2rem] py-1 w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[1px] hover:border-blue-500 outline-none text-[1rem]  "
+            {isShowModal &&
+              (actionType === 'print' ? (
+                <NDCPrint close={() => setIsShowModal(false)} dataPrint={{ ...NDCForm, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss'), SoChungTu: SoCTu }} />
+              ) : (
+                <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col xl:w-[87vw] lg:w-[95vw] md:w-[95vw] min-h-[8rem] bg-white  p-2 rounded-xl shadow-custom overflow-hidden z-10">
+                  <div className="flex flex-col gap-2 p-2 ">
+                    <div className="flex items-center gap-2">
+                      <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
+                      <p className="text-blue-700 font-semibold uppercase">Danh Sách Hàng Hóa - Phiếu Nhập Điều Chỉnh</p>
+                    </div>
+                    <div className="border-2">
+                      <div className=" p-2 rounded m-1 flex flex-col gap-2 max-h-[35rem]">
+                        <div className="flex w-[20rem] overflow-hidden  relative ">
+                          <FaSearch className="absolute left-[0.5rem] top-2.5 hover:text-red-400 cursor-pointer" />
+                          <input
+                            type="text"
+                            value={searchHangHoa}
+                            placeholder="Nhập ký tự bạn cần tìm"
+                            onChange={handleSearch}
+                            className="px-[2rem] py-1 w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[1px] hover:border-blue-500 outline-none text-[1rem]  "
+                          />
+                        </div>
+                        <Table
+                          className=" "
+                          columns={title}
+                          dataSource={filteredHangHoa}
+                          onRow={(record) => ({
+                            onDoubleClick: () => {
+                              handleChoose(record)
+                            },
+                          })}
+                          size="small"
+                          scroll={{
+                            x: 1100,
+                            y: 420,
+                          }}
+                          style={{
+                            whiteSpace: 'nowrap',
+                            fontSize: '24px',
+                          }}
                         />
                       </div>
-                      <Table
-                        className=" "
-                        columns={title}
-                        dataSource={filteredHangHoa}
-                        onRow={(record) => ({
-                          onDoubleClick: () => {
-                            handleChoose(record)
-                          },
-                        })}
-                        size="small"
-                        scroll={{
-                          x: 1100,
-                          y: 420,
-                        }}
-                        style={{
-                          whiteSpace: 'nowrap',
-                          fontSize: '24px',
-                        }}
+                    </div>
+                    <div className="flex gap-2 justify-end">
+                      <ActionButton
+                        handleAction={() => setIsShowModal(false)}
+                        title={'Đóng'}
+                        color={'slate-50'}
+                        background={'red-500'}
+                        color_hover={'red-500'}
+                        bg_hover={'white'}
                       />
                     </div>
                   </div>
-                  <div className="flex gap-2 justify-end">
-                    <ActionButton handleAction={() => setIsShowModal(false)} title={'Đóng'} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
-                  </div>
                 </div>
-              </div>
-            )}
+              ))}
           </div>
         </>
       )}

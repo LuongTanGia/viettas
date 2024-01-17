@@ -37,7 +37,12 @@ export const CallBackAPI = async (API, token, data) => {
 }
 const handleTokenRefreshError = () => {
   toast.error('Failed to refresh token!')
-  window.localStorage.clear()
+  window.localStorage.removeItem('firstLogin')
+  window.localStorage.removeItem('TKN')
+  window.localStorage.removeItem('tokenDuLieu')
+  window.localStorage.removeItem('RTKN')
+  window.localStorage.removeItem('userName')
+
   window.location.href = '/login'
 }
 const handleResponseError = () => {
@@ -93,14 +98,12 @@ export const LOGIN = async (API1, API2, TKN, RemoteDB, data, dispatch) => {
       window.localStorage.setItem('User', response.data.MappingUser)
 
       dispatch(loginSlice.actions.login(response.data))
-      toast.error(response.data.DataErrorDescription)
 
       return 1
     } else {
       dispatch(loginSlice.actions.login([]))
     }
     if (response.data.DataError !== 0) {
-      toast.error(response.data.DataErrorDescription)
       await DANHSACHDULIEU(API2, data)
     }
   } catch (error) {
@@ -258,7 +261,12 @@ export const DoanhSoHangHoa_TopChart = async (API, token, data) => {
         await DoanhSoHangHoa_TopChart(API, newToken, data)
       } else if (newToken === 0) {
         toast.error('Failed to refresh token!')
-        window.localStorage.clear()
+        window.localStorage.removeItem('firstLogin')
+        window.localStorage.removeItem('TKN')
+        window.localStorage.removeItem('tokenDuLieu')
+        window.localStorage.removeItem('RTKN')
+        window.localStorage.removeItem('userName')
+
         window.location.href = '/login'
       }
     }
@@ -283,7 +291,12 @@ export const DANHSACHPHIEUBANHANG = async (API, token, data, dispatch) => {
         await DANHSACHPHIEUBANHANG(API, newToken, dispatch)
       } else if (newToken === 0) {
         toast.error('Failed to refresh token!')
-        window.localStorage.clear()
+        window.localStorage.removeItem('firstLogin')
+        window.localStorage.removeItem('TKN')
+        window.localStorage.removeItem('tokenDuLieu')
+        window.localStorage.removeItem('RTKN')
+        window.localStorage.removeItem('userName')
+
         window.location.href = '/login'
       }
     }
@@ -315,11 +328,17 @@ export const THONGTINPHIEU = async (API, token, maphieu, dispatch) => {
         await THONGTINPHIEU(API, newToken, maphieu, dispatch)
       } else if (newToken === 0) {
         toast.error('Failed to refresh token!')
-        window.localStorage.clear()
+        window.localStorage.removeItem('firstLogin')
+        window.localStorage.removeItem('TKN')
+        window.localStorage.removeItem('tokenDuLieu')
+        window.localStorage.removeItem('RTKN')
+        window.localStorage.removeItem('userName')
+
         window.location.href = '/login'
       }
     }
     dispatch(PBSSlice.actions.data_chitiet(response.data))
+    return response.data
   } catch (error) {
     console.error('Error adding user:', error)
   }
@@ -343,7 +362,12 @@ export const DANHSACHDOITUONG = async (API, token, dispatch) => {
         await DANHSACHDOITUONG(API, newToken, dispatch)
       } else if (newToken === 0) {
         toast.error('Failed to refresh token!')
-        window.localStorage.clear()
+        window.localStorage.removeItem('firstLogin')
+        window.localStorage.removeItem('TKN')
+        window.localStorage.removeItem('tokenDuLieu')
+        window.localStorage.removeItem('RTKN')
+        window.localStorage.removeItem('userName')
+
         window.location.href = '/login'
       }
     }
@@ -371,7 +395,12 @@ export const DANHSACHKHOHANG = async (API, token, dispatch) => {
         await DANHSACHKHOHANG(API, newToken, dispatch)
       } else if (newToken === 0) {
         toast.error('Failed to refresh token!')
-        window.localStorage.clear()
+        window.localStorage.removeItem('firstLogin')
+        window.localStorage.removeItem('TKN')
+        window.localStorage.removeItem('tokenDuLieu')
+        window.localStorage.removeItem('RTKN')
+        window.localStorage.removeItem('userName')
+
         window.location.href = '/login'
       }
     }
@@ -397,7 +426,12 @@ export const DANHSACHHANGHOA_PBS = async (API, token, data) => {
           await DANHSACHHANGHOA_PBS(API, newToken, data)
         } else if (newToken === 0) {
           toast.error('Failed to refresh token!')
-          window.localStorage.clear()
+          window.localStorage.removeItem('firstLogin')
+          window.localStorage.removeItem('TKN')
+          window.localStorage.removeItem('tokenDuLieu')
+          window.localStorage.removeItem('RTKN')
+          window.localStorage.removeItem('userName')
+
           window.location.href = '/login'
         }
       }
@@ -431,7 +465,12 @@ export const THEMPHIEUBANHANG = async (API, token, data) => {
           await THEMPHIEUBANHANG(API, newToken, data)
         } else if (newToken === 0) {
           toast.error('Failed to refresh token!')
-          window.localStorage.clear()
+          window.localStorage.removeItem('firstLogin')
+          window.localStorage.removeItem('TKN')
+          window.localStorage.removeItem('tokenDuLieu')
+          window.localStorage.removeItem('RTKN')
+          window.localStorage.removeItem('userName')
+
           window.location.href = '/login'
         }
       }
@@ -468,7 +507,12 @@ export const XOAPHIEUBANHANG = async (API, token, data) => {
           await XOAPHIEUBANHANG(API, newToken, data)
         } else if (newToken === 0) {
           toast.error('Failed to refresh token!')
-          window.localStorage.clear()
+          window.localStorage.removeItem('firstLogin')
+          window.localStorage.removeItem('TKN')
+          window.localStorage.removeItem('tokenDuLieu')
+          window.localStorage.removeItem('RTKN')
+          window.localStorage.removeItem('userName')
+
           window.location.href = '/login'
         }
       }
@@ -502,7 +546,12 @@ export const SUAPHIEUBANHANG = async (API, token, data) => {
           await SUAPHIEUBANHANG(API, newToken, data)
         } else if (newToken === 0) {
           toast.error('Failed to refresh token!')
-          window.localStorage.clear()
+          window.localStorage.removeItem('firstLogin')
+          window.localStorage.removeItem('TKN')
+          window.localStorage.removeItem('tokenDuLieu')
+          window.localStorage.removeItem('RTKN')
+          window.localStorage.removeItem('userName')
+
           window.location.href = '/login'
         }
       }
@@ -537,7 +586,12 @@ export const LAPPHIEUTHU = async (API, token, data) => {
           await LAPPHIEUTHU(API, newToken, data)
         } else if (newToken === 0) {
           toast.error('Failed to refresh token!')
-          window.localStorage.clear()
+          window.localStorage.removeItem('firstLogin')
+          window.localStorage.removeItem('TKN')
+          window.localStorage.removeItem('tokenDuLieu')
+          window.localStorage.removeItem('RTKN')
+          window.localStorage.removeItem('userName')
+
           window.location.href = '/login'
         }
       }
@@ -571,13 +625,18 @@ export const LISTCHUNGTU = async (API, token, data) => {
           await LISTCHUNGTU(API, newToken, data)
         } else if (newToken === 0) {
           toast.error('Failed to refresh token!')
-          window.localStorage.clear()
+          window.localStorage.removeItem('firstLogin')
+          window.localStorage.removeItem('TKN')
+          window.localStorage.removeItem('tokenDuLieu')
+          window.localStorage.removeItem('RTKN')
+          window.localStorage.removeItem('userName')
+
           window.location.href = '/login'
         }
       }
 
       if (response.data) {
-        toast.success(response.data.DataErrorDescription)
+        // toast.success(response.data.DataErrorDescription)
       } else {
         toast.error('DataResults is undefined or null.')
       }
@@ -607,7 +666,12 @@ export const INPHIEUPBS = async (API, token, data) => {
           await INPHIEUPBS(API, newToken, data)
         } else if (newToken === 0) {
           toast.error('Failed to refresh token!')
-          window.localStorage.clear()
+          window.localStorage.removeItem('firstLogin')
+          window.localStorage.removeItem('TKN')
+          window.localStorage.removeItem('tokenDuLieu')
+          window.localStorage.removeItem('RTKN')
+          window.localStorage.removeItem('userName')
+
           window.location.href = '/login'
         }
       }

@@ -9,7 +9,7 @@ const { Text } = Typography
 import { toast } from 'react-toastify'
 import dayjs from 'dayjs'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
-import { MdFilterListAlt } from 'react-icons/md'
+import { MdFilterAlt } from 'react-icons/md'
 import { RETOKEN } from '../../action/Actions'
 import ActionButton from '../../components/util/Button/ActionButton'
 import HighlightedCell from '../../components_T/hooks/HighlightedCell'
@@ -538,7 +538,7 @@ const NhapXuatTonKho = () => {
                 )}
               </div>
             </div>
-            <div className="flex justify-between items-end gap-2">
+            <div className="flex justify-between  gap-2 w-[95vw]">
               <form className="flex flex-col gap-1 items-start" onSubmit={getDataNXT}>
                 <div className="flex gap-2 justify-between">
                   <div className="flex gap-1">
@@ -555,6 +555,13 @@ const NhapXuatTonKho = () => {
                         }}
                         sx={{
                           '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                          '& .MuiButtonBase-root': {
+                            padding: '4px',
+                          },
+                          '& .MuiSvgIcon-root': {
+                            width: '18px',
+                            height: '18px',
+                          },
                         }}
                         slotProps={{ textField: { size: 'small' } }}
                       />
@@ -572,8 +579,12 @@ const NhapXuatTonKho = () => {
                         }}
                         sx={{
                           '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                          '& .MuiInputBase-root.MuiOutlinedInput-input.MuiInputBase-inputSizeSmall': {
-                            padding: '8px 12px',
+                          '& .MuiButtonBase-root': {
+                            padding: '4px',
+                          },
+                          '& .MuiSvgIcon-root': {
+                            width: '18px',
+                            height: '18px',
                           },
                         }}
                       />
@@ -583,7 +594,7 @@ const NhapXuatTonKho = () => {
                     <ActionButton
                       type="submit"
                       title={'Lọc'}
-                      icon={<MdFilterListAlt className="w-6 h-6" />}
+                      icon={<MdFilterAlt className="w-6 h-6" />}
                       color={'slate-50'}
                       background={'blue-500'}
                       color_hover={'blue-500'}
@@ -607,7 +618,7 @@ const NhapXuatTonKho = () => {
                           selectedNhomTo == null ? setSelectedNhomTo(value) : ''
                         }}
                         style={{
-                          width: '180px',
+                          width: '12vw',
                           textOverflow: 'ellipsis',
                         }}
                       >
@@ -634,7 +645,7 @@ const NhapXuatTonKho = () => {
                           selectedNhomFrom == null ? setSelectedNhomFrom(value) : ''
                         }}
                         style={{
-                          width: '180px',
+                          width: '12vw',
                           textOverflow: 'ellipsis',
                         }}
                       >
@@ -651,6 +662,7 @@ const NhapXuatTonKho = () => {
                       <div>Gộp</div>
                       <Select
                         mode="multiple"
+                        allowClear
                         maxTagCount={2}
                         filterOption
                         size="small"
@@ -660,7 +672,7 @@ const NhapXuatTonKho = () => {
                         }
                         value={selectedNhomList}
                         onChange={(value) => setSelectedNhomList(value)}
-                        className="w-[100%] min-w-[360px]"
+                        className="w-[30vw] "
                       >
                         {nhomHangNXT?.map((item) => {
                           return (
@@ -687,7 +699,7 @@ const NhapXuatTonKho = () => {
                           selectedMaTo == null ? setSelectedMaTo(value) : ''
                         }}
                         style={{
-                          width: '180px',
+                          width: '12vw',
                           textOverflow: 'ellipsis',
                         }}
                       >
@@ -714,7 +726,7 @@ const NhapXuatTonKho = () => {
                           selectedMaFrom == null ? setSelectedMaFrom(value) : ''
                         }}
                         style={{
-                          width: '180px',
+                          width: '12vw',
                           textOverflow: 'ellipsis',
                         }}
                       >
@@ -741,7 +753,7 @@ const NhapXuatTonKho = () => {
                         value={selectedMaList}
                         onChange={(value) => setSelectedMaList(value)}
                         placeholder="Chọn mã hàng"
-                        className="w-[100%] min-w-[360px]"
+                        className="w-[30vw] "
                       >
                         {hangHoaNXT?.map((item, index) => {
                           return (
@@ -757,7 +769,7 @@ const NhapXuatTonKho = () => {
                   </div>
                 </div>
               </form>
-              <div className="flex items-center gap-2">
+              <div className="flex items-end ">
                 <Select
                   showSearch
                   allowClear

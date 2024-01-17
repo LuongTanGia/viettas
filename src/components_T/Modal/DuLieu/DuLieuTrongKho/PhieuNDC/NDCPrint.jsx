@@ -10,7 +10,7 @@ import { Select, Checkbox } from 'antd'
 import ActionButton from '../../../../../components/util/Button/ActionButton'
 import SimpleBackdrop from '../../../../../components/util/Loading/LoadingPage'
 
-const NDCPrint = ({ close }) => {
+const NDCPrint = ({ close, loadingData, dataPrint }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const [khoanNgayFrom, setKhoanNgayFrom] = useState('')
   const [khoanNgayTo, setKhoanNgayTo] = useState('')
@@ -26,7 +26,6 @@ const NDCPrint = ({ close }) => {
   useEffect(() => {
     getListChungTu()
   }, [isLoading])
-
   const calculateTotal = () => {
     let total = 0
     if (checkboxValues.checkbox1) total += 1
@@ -36,7 +35,21 @@ const NDCPrint = ({ close }) => {
   const handlePrint = async () => {
     try {
       const response = await categoryAPI.NDCPrint(
-        { NgayBatDau: khoanNgayFrom, NgayKetThuc: khoanNgayTo, SoChungTuBatDau: selectedNhomFrom, SoChungTuKetThuc: selectedNhomTo, SoLien: calculateTotal() },
+        dataPrint
+          ? {
+              NgayBatDau: dayjs(dataPrint.NgayCTu).format('YYYY-MM-DDTHH:mm:ss'),
+              NgayKetThuc: dayjs(dataPrint.NgayCTu).format('YYYY-MM-DDTHH:mm:ss'),
+              SoChungTuBatDau: dataPrint.SoChungTu,
+              SoChungTuKetThuc: dataPrint.SoChungTu,
+              SoLien: calculateTotal(),
+            }
+          : {
+              NgayBatDau: khoanNgayFrom,
+              NgayKetThuc: khoanNgayTo,
+              SoChungTuBatDau: selectedNhomFrom,
+              SoChungTuKetThuc: selectedNhomTo,
+              SoLien: calculateTotal(),
+            },
         TokenAccess,
       )
       if (response.data.DataError == 0) {
@@ -81,7 +94,7 @@ const NDCPrint = ({ close }) => {
   // }
   const getListChungTu = async () => {
     try {
-      console.log('1', khoanNgayFrom, '2', khoanNgayTo)
+      // console.log('1', khoanNgayFrom, '2', khoanNgayTo)
       const response = await categoryAPI.ListChungTuNDC({ NgayBatDau: khoanNgayFrom, NgayKetThuc: khoanNgayTo }, TokenAccess)
       if (response.data.DataError == 0) {
         setDataListChungTu(response.data.DataResults)
@@ -94,6 +107,7 @@ const NDCPrint = ({ close }) => {
       console.log(error)
     }
   }
+  console.log(dataPrint)
   return (
     <>
       {!isLoading ? (
@@ -115,7 +129,17 @@ const NDCPrint = ({ close }) => {
                       className=""
                       format="DD/MM/YYYY"
                       maxDate={dayjs(khoanNgayTo)}
-                      defaultValue={dayjs(khoanNgayFrom, 'YYYY-MM-DD')}
+                      defaultValue={dataPrint ? dayjs(dataPrint.NgayCTu, 'YYYY-MM-DD') : dayjs(khoanNgayFrom, 'YYYY-MM-DD')}
+                      sx={{
+                        '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                        '& .MuiButtonBase-root': {
+                          padding: '4px',
+                        },
+                        '& .MuiSvgIcon-root': {
+                          width: '18px',
+                          height: '18px',
+                        },
+                      }}
                       onChange={(values) => {
                         setKhoanNgayFrom(values ? dayjs(values).format('YYYY-MM-DDTHH:mm:ss') : '')
                       }}
@@ -127,7 +151,17 @@ const NDCPrint = ({ close }) => {
                       className="DatePicker_NDCKho"
                       format="DD/MM/YYYY"
                       minDate={dayjs(khoanNgayFrom)}
-                      defaultValue={dayjs(khoanNgayTo, 'YYYY-MM-DD')}
+                      defaultValue={dataPrint ? dayjs(dataPrint.NgayCTu, 'YYYY-MM-DD') : dayjs(khoanNgayTo, 'YYYY-MM-DD')}
+                      sx={{
+                        '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                        '& .MuiButtonBase-root': {
+                          padding: '4px',
+                        },
+                        '& .MuiSvgIcon-root': {
+                          width: '18px',
+                          height: '18px',
+                        },
+                      }}
                       onChange={(values) => {
                         setKhoanNgayTo(values ? dayjs(values).format('YYYY-MM-DDTHH:mm:ss') : '')
                       }}
@@ -141,7 +175,7 @@ const NDCPrint = ({ close }) => {
                       allowClear
                       showSearch
                       placeholder="Chọn nhóm"
-                      value={selectedNhomFrom}
+                      value={dataPrint ? dataPrint.SoChungTu : selectedNhomFrom}
                       onChange={(value) => setSelectedNhomFrom(value)}
                       style={{
                         width: '200px',
@@ -162,7 +196,7 @@ const NDCPrint = ({ close }) => {
                       allowClear
                       showSearch
                       placeholder="Chọn nhóm"
-                      value={selectedNhomTo}
+                      value={dataPrint ? dataPrint.SoChungTu : selectedNhomTo}
                       onChange={(value) => setSelectedNhomTo(value)}
                       style={{
                         width: '200px',
@@ -204,13 +238,13 @@ const NDCPrint = ({ close }) => {
                         }))
                       }
                     >
-                      Liên 2{' '}
+                      Liên 2
                     </Checkbox>
                   </div>
                 </div>
               </div>
               <div className="flex gap-2 justify-end">
-                <ActionButton handleAction={handlePrint} title={'Xác nhận'} color={'slate-50'} background={'blue-500'} color_hover={'blue-500'} bg_hover={'white'} />
+                <ActionButton handleAction={handlePrint} title={'Xác nhận'} color={'slate-50'} background={'blue-500'} color_hover={'blue-500'} bg_hover={'white'} disable />
                 <ActionButton handleAction={close} title={'Đóng'} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
               </div>
             </div>

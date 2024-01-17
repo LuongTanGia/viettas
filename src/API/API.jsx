@@ -11,6 +11,7 @@ const API = {
   PHIEUMUAHANG: `${BASE_URL}/api/entries/DuLieuPMH/DanhSach`,
   DOIMATKHAU: `${BASE_URL}/api/NguoiDung/DoiMatKhau`,
   DoanhSoHangHoa_TopChart: `${BASE_URL}/api/statistics/DoanhSoHangHoa_TopChart`,
+  DoanhSoNhomHang: `${BASE_URL}/api/statistics/DoanhSoNhomHang`,
 
   //Phiếu Bán Hàng ///api/entries/DuLieuPBS
 

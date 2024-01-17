@@ -1,17 +1,20 @@
 import Tables from '../util/Table/Table'
+import Logo from '../../assets/VTS-iSale.ico'
+
 import { nameColumsHangHoa } from '../util/Table/ColumnName'
 import ActionButton from '../util/Button/ActionButton'
 import { useEffect, useState } from 'react'
 import dayjs from 'dayjs'
 import { DANHSACHHANGHOA_PBS } from '../../action/Actions'
 import API from '../../API/API'
+import { BsSearch } from 'react-icons/bs'
 // eslint-disable-next-line react/prop-types
 function ListHelper_HangHoa({ data, close, handleAddData, form }) {
   const token = localStorage.getItem('TKN')
   const [dataLoaded, setDataLoaded] = useState(false)
   const [searchText, setSearchText] = useState('')
   const [loadingSearch, setLoadingSearch] = useState(false)
-
+  const [isShowSearch, setIsShowSearch] = useState(false)
   const [dataList, setData] = useState(data)
 
   const [dataDate] = useState({
@@ -74,23 +77,40 @@ function ListHelper_HangHoa({ data, close, handleAddData, form }) {
   }
   return (
     <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
-      <div className="  m-6  p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
-        <div className=" w-[90vw] h-[600px] ">
+      <div className="  px-4 pt-4 pm-0 shadow-lg bg-white rounded-md flex flex-col ">
+        <div className=" w-[90vw] h-[590px] ">
           <div className="flex justify-between items-start pb-1">
-            <label className="font-bold ">Danh sách hàng hóa</label>
+            <div className="flex justify-between items-center gap-2 pb-3">
+              <img src={Logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
+              <label className="text-blue-700 uppercase font-semibold ">Danh sách hàng hóa</label>
+              <BsSearch size={18} className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
+
+              {isShowSearch && (
+                <div className={`flex left-[14rem] top-0 transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
+                  {/* <input
+                  type="text"
+                  placeholder="Nhập ký tự bạn cần tìm"
+                  value={searchText}
+                  onChange={(e) => setSearchText(e.target.value)}
+                  className={'px-2  w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] '}
+                /> */}
+                  <input
+                    type="text"
+                    placeholder="Nhập ký tự bạn cần tìm"
+                    value={searchText}
+                    onChange={(e) => setSearchText(e.target.value)}
+                    className={'px-2  w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] '}
+                  />
+                </div>
+              )}
+            </div>
             {/* <button onClick={() => close()} className="text-gray-500 p-1 border hover:border-gray-300 hover:bg-red-600 hover:text-white rounded-full">
               <IoMdClose />
             </button> */}
+            <div className="flex relative"></div>
           </div>
-          <input
-            type="text"
-            placeholder="Nhập ký tự bạn cần tìm"
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            className={'px-2  w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] '}
-          />
           {/* table */}
-          <div className="max-w-[98%]  max-h-[90%] mx-auto bg-white  rounded-md my-3 overflow-y-auto text-sm">
+          <div className=" mx-auto bg-white  rounded-md overflow-y-auto text-sm">
             <Tables
               param={dataList}
               columName={nameColumsHangHoa}
@@ -101,8 +121,8 @@ function ListHelper_HangHoa({ data, close, handleAddData, form }) {
               textSearch={searchText}
             />
           </div>
+          <ActionButton color={'slate-50'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} title={'Đóng'} handleAction={close} />
         </div>
-        <ActionButton color={'slate-50'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} title={'Đóng'} handleAction={close} />
       </div>
     </div>
   )

@@ -6,10 +6,11 @@ import BtnAction from './BtnAction'
 
 const { Option } = Select
 const { Text } = Typography
-const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOptions, ColumnTable, columName, typeTable, listHP, tableName, typeAction }) => {
+const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourTenHangOptions, ColumnTable, columName, typeTable, listHP, tableName }) => {
   const EditableContext = React.createContext(null)
   const [dataSource, setDataSource] = useState(param)
   const [newOptions, setNewOptions] = useState(yourMaHangOptions)
+  const ThongSo = JSON.parse(localStorage.getItem('ThongSo'))
   useEffect(() => {
     setNewOptions(yourMaHangOptions)
   }, [yourMaHangOptions])
@@ -23,17 +24,17 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
           if (matchingHP) {
             return {
               ...item,
+
               DonGia: matchingHP.GiaBan || 0,
               TienHang: matchingHP.GiaBan * item.SoLuong,
               TienThue: (matchingHP.GiaBan * item.SoLuong * item.TyLeThue) / 100,
               ThanhTien: (matchingHP.GiaBan * item.SoLuong * item.TyLeThue) / 100 + matchingHP.GiaBan * item.SoLuong,
-              TienCKTT: (((matchingHP.GiaBan * item.SoLuong * item.TyLeThue) / 100 + matchingHP.GiaBan * item.SoLuong) * item.TyLeCKTT) / 100,
+              // TienCKTT: (((matchingHP.GiaBan * item.SoLuong * item.TyLeThue) / 100 + matchingHP.GiaBan * item.SoLuong) * item.TyLeCKTT) / 100,
+
               TongCong:
                 (matchingHP.GiaBan * item.SoLuong * item.TyLeThue) / 100 +
                 matchingHP.GiaBan * item.SoLuong -
                 (((matchingHP.GiaBan * item.SoLuong * item.TyLeThue) / 100 + matchingHP.GiaBan * item.SoLuong) * item.TyLeCKTT) / 100,
-              // ThanhTien: matchingHP.GiaBan * item.SoLuong,
-              // TongCong: matchingHP.GiaBan * item.SoLuong,
             }
           }
 
@@ -60,8 +61,8 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
   // const dropdownRender = (menu) => {
   //   return <div style={{ minHeight: '400px', overflowY: 'auto' }}>{menu}</div>
   // }
+
   const handleSave = (row) => {
-    console.log(row)
     setDataSource((prevDataSource) => {
       const newData = [...prevDataSource]
       const index = newData.findIndex((item) => (typeAction === 'create' ? item.key === row.key : item.STT === row.STT))
@@ -84,8 +85,12 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
           updatedRow.TienThue = parseFloat(updatedRow.TienThue)
           updatedRow.ThanhTien = (updatedRow.TienHang + (updatedRow.TienHang * updatedRow.TyLeThue) / 100).toFixed(ThongSo.SOLESOTIEN)
           updatedRow.ThanhTien = parseFloat(updatedRow.ThanhTien)
+
           updatedRow.TienCKTT = ((updatedRow.ThanhTien * updatedRow.TyLeCKTT) / 100).toFixed(ThongSo.SOLESOTIEN)
           updatedRow.TienCKTT = parseFloat(updatedRow.TienCKTT)
+          // updatedRow.TyLeCKTT = ((updatedRow.TienCKTT * 100) / updatedRow.ThanhTien).toFixed(ThongSo.SOLETYLE)
+          // updatedRow.TyLeCKTT = parseFloat(updatedRow.TyLeCKTT)
+          // console.log(updatedRow.TyLeCKTT)
           updatedRow.TongCong = (updatedRow.ThanhTien - updatedRow.TienCKTT).toFixed(ThongSo.SOLESOTIEN)
           updatedRow.TongCong = parseFloat(updatedRow.TongCong)
 
@@ -142,7 +147,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
             MaHang: selectedOption.MaHang || record.MaHang,
             DonGia: GiaBan || record.DonGia,
             SoLuong: record.SoLuong || values.SoLuong || 1,
-            TyLeCKTT: 0,
+            TyLeCKTT: record.TyLeCKTT,
             TonKho: selectedOption.TonKho || true,
             TienThue: selectedOption.TienThue || record.TienThue,
             DVT: selectedOption.DVT || record.DVT,
@@ -153,11 +158,32 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
             DVTQuyDoi: selectedOption.DVTQuyDoi,
             TongCong: GiaBan * record.SoLuong || record.SoLuong * record.DonGia,
             DVTDF: selectedOption.DVT || record.DVT,
-            // TienCKTT: 0,
             // TongCong: selectedOption.DonGia || undefined,
           }
           //
           handleSave(updatedRow)
+        } else if (dataIndex === 'TyLeCKTT') {
+          const updatedRow = {
+            ...record,
+            ...values,
+            TienCKTT: (record.ThanhTien * values.TyLeCKTT) / 100,
+          }
+          console.log(updatedRow)
+          handleSave(updatedRow)
+        } else if (dataIndex === 'TienCKTT') {
+          if (ThongSo.ALLOW_SUACHIETKHAUTHANHTOAN) {
+            handleSave({
+              ...record,
+              ...values,
+              TyLeCKTT: (values.TienCKTT * 100) / record.ThanhTien,
+            })
+          } else {
+            handleSave({
+              ...record,
+              ...values,
+              TienCKTT: (record.ThanhTien * record.TyLeCKTT) / 100,
+            })
+          }
         } else {
           handleSave({
             ...record,
@@ -262,8 +288,22 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
                 return isNaN(parsedValue) ? null : parseFloat(parsedValue.toFixed(ThongSo.SOLETYLE))
               }}
             />
+          ) : dataIndex === 'TienThue' || dataIndex === 'TienCKTT' ? (
+            <InputNumber
+              ref={inputRef}
+              onPressEnter={save}
+              onBlur={save}
+              max={999999999999}
+              min={0}
+              style={{ width: '100%' }}
+              formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              parser={(value) => {
+                const parsedValue = parseFloat(value.replace(/\$\s?|(,*)/g, ''))
+                return isNaN(parsedValue) ? null : parseFloat(parsedValue.toFixed(ThongSo.SOLESOTIEN))
+              }}
+            />
           ) : (
-            <InputNumber ref={inputRef} onPressEnter={save} onBlur={save} max={100} min={0} style={{ width: '100%' }} />
+            <InputNumber ref={inputRef} onPressEnter={save} onBlur={save} max={999999999} min={0} style={{ width: '100%' }} />
           )}
         </Form.Item>
       ) : (
@@ -292,8 +332,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
     })
   }
 
-  const listColumns = ColumnTable ? ColumnTable : []
-  const ThongSo = JSON.parse(localStorage.getItem('ThongSo'))
+  const listColumns = ColumnTable ? ColumnTable.filter((key) => (ThongSo.SUDUNG_CHIETKHAUTHANHTOAN ? ![''].includes(key) : !['TyLeCKTT', 'TienCKTT'].includes(key))) : []
   const newColumns = listColumns.map((item, index) => {
     if (item === 'STT') {
       return {
@@ -438,7 +477,7 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
         width: 200,
         dataIndex: item,
         key: item,
-
+        editable: true,
         render: (text) => {
           const formattedValue =
             text !== 0 ? (
@@ -502,7 +541,8 @@ const EditTable = ({ param, handleEditData, yourMaHangOptions, yourTenHangOption
       dataIndex: 'operation',
       width: 30,
       fixed: 'right',
-      render: (_, record) => (dataSource.length >= 1 ? <BtnAction handleDelete={() => handleDelete(record.MaHang)} record={record} typeTable={'detail'} /> : null),
+      render: (_, record) =>
+        dataSource.length >= 1 && typeAction !== 'view' ? <BtnAction handleDelete={() => handleDelete(record.MaHang)} record={record} typeTable={'detail'} /> : null,
     },
   ]
 

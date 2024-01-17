@@ -22,15 +22,16 @@ function DoughNut() {
   useEffect(() => {
     const loadData = async () => {
       const KhoanNgay = await KHOANNGAY(API.KHOANNGAY, token)
-      const data = await DoanhSoHangHoa_TopChart(API.DoanhSoHangHoa_TopChart, token, KhoanNgay)
+      const data = await DoanhSoHangHoa_TopChart(API.DoanhSoNhomHang, token, KhoanNgay)
       setDataChart(data)
+      console.log(data)
     }
 
     loadData()
   }, [token, tokenRF])
 
-  const Labels = dataChart?.map((result) => result.DataName)
-  const dataChart_list = dataChart?.map((result) => result.DataValue)
+  const Labels = dataChart?.map((result) => result.ThongTinDoiTuong)
+  const dataChart_list = dataChart?.map((result) => result.TyTrong)
   const backgroundColor_list = ['#FF0000', '#C850C0', '#FC00FF', '#97D9E1', '#85FFBD', '#FBAB7E', '#F7CE68', '#8BC6EC', '#00DBDE']
   const data = {
     labels: Labels,
@@ -54,9 +55,9 @@ function DoughNut() {
           {dataChart?.map((item, index) => (
             <div key={index} className="flex items-center justify-center">
               <p className="w-[100%]" style={{ color: backgroundColor_list[index] }}>
-                {item.DataName}
+                {item.ThongTinDoiTuong}
               </p>
-              <RateBar percentage={item.DataPerc} color={backgroundColor_list[index]} title={item.DataName} />
+              <RateBar percentage={item.TyTrong} color={backgroundColor_list[index]} title={item.ThongTinDoiTuong} />
             </div>
           ))}
         </div>
