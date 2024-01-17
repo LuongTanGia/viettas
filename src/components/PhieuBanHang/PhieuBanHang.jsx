@@ -124,7 +124,7 @@ function PhieuBanHang() {
     }
 
     getListData()
-  }, [])
+  }, [searchText, selectMH, isShowDelete])
 
   useEffect(() => {
     const handleClickOutside = (event) => {
