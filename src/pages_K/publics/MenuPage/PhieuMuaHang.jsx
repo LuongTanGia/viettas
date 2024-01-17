@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
-import { Table, Checkbox, Tooltip } from 'antd'
+import { Table, Checkbox, Tooltip, Row, Col, Spin, Button, Typography } from 'antd'
 import moment from 'moment'
 import icons from '../../../untils/icons'
 import { toast } from 'react-toastify'
@@ -11,8 +11,8 @@ import SimpleBackdrop from '../../../components/util/Loading/LoadingPage'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { useSearch } from '../../../components_K/myComponents/useSearch'
 import HighlightedCell from '../../../components_T/hooks/HighlightedCell'
-
-const { IoAddCircleOutline, TiPrinter, MdDelete, GiPayMoney, BsSearch, TfiMoreAlt, MdEdit, MdFilterAlt } = icons
+const { Text } = Typography
+const { IoAddCircleOutline, TiPrinter, MdDelete, GiPayMoney, BsSearch, TfiMoreAlt, MdEdit, MdFilterAlt, FaEyeSlash } = icons
 const PhieuMuaHang = () => {
   const optionContainerRef = useRef(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -31,6 +31,7 @@ const PhieuMuaHang = () => {
   // const [dataChucNang, setDataChucNang] = useState()
   const [setSearchPMH, filteredPMH, searchPMH] = useSearch(data)
   const [donePMH, setDonePMH] = useState(null)
+  const [hideColumns, setHideColumns] = useState(false)
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -377,9 +378,9 @@ const PhieuMuaHang = () => {
       title: 'Tổng mặt hàng',
       dataIndex: 'TongMatHang',
       key: 'TongMatHang',
-      width: 150,
+      width: 200,
       align: 'end',
-      // render: (text) => <div className="">{text} </div>,
+      render: (text) => <div className="">{text} </div>,
 
       sorter: (a, b) => a.TongMatHang - b.TongMatHang,
       showSorterTooltip: false,
@@ -388,7 +389,7 @@ const PhieuMuaHang = () => {
       title: 'Tổng số lượng',
       dataIndex: 'TongSoLuong',
       key: 'TongSoLuong',
-      width: 150,
+      width: 200,
       align: 'end',
       render: (text) => (
         <div className={`flex justify-end w-full h-full    ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
@@ -402,7 +403,7 @@ const PhieuMuaHang = () => {
       title: 'Tổng tiền hàng',
       dataIndex: 'TongTienHang',
       key: 'TongTienHang',
-      width: 150,
+      width: 200,
       align: 'end',
       render: (text) => (
         <div className={`flex justify-end w-full h-full ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
@@ -416,7 +417,7 @@ const PhieuMuaHang = () => {
       title: 'Tổng tiền thuế',
       dataIndex: 'TongTienThue',
       key: 'TongTienThue',
-      width: 150,
+      width: 200,
       align: 'end',
       render: (text) => (
         <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
@@ -430,7 +431,7 @@ const PhieuMuaHang = () => {
       title: 'Tổng thành tiền',
       dataIndex: 'TongThanhTien',
       key: 'TongThanhTien',
-      width: 150,
+      width: 200,
       align: 'end',
       render: (text) => (
         <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
@@ -581,9 +582,12 @@ const PhieuMuaHang = () => {
       },
     },
   ]
+  // const defaultCheckedList = columns.map((item) => item.key)
+  const storedHidenColumns = localStorage.getItem('hidenColumnPMH')
+  const parsedHidenColumns = storedHidenColumns ? JSON.parse(storedHidenColumns) : null
 
-  const defaultCheckedList = columns.map((item) => item.key)
-  const [checkedList, setCheckedList] = useState(defaultCheckedList)
+  const [checkedList, setCheckedList] = useState(Array.isArray(parsedHidenColumns) && parsedHidenColumns.length > 0 ? parsedHidenColumns : [])
+
   const options = columns.map(({ key, title }) => ({
     label: title,
     value: key,
@@ -592,8 +596,11 @@ const PhieuMuaHang = () => {
     ...item,
     hidden: checkedList.includes(item.key),
   }))
-  console.log('defaultCheckedList', newColumns)
+  const newColumnsHide = newColumns.filter((column) => !column.hidden)
 
+  console.log('first', checkedList)
+
+  // *******************************************
   const handleDelete = (record) => {
     setActionType('delete')
     setDataRecord(record)
@@ -680,26 +687,66 @@ const PhieuMuaHang = () => {
           </div>
           {isShowOption && (
             <div className=" absolute flex flex-col gap-2 bg-slate-100 p-3  top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom ">
-              <button
-                onClick={handlePrint}
-                className="flex items-center py-1 px-2 rounded-md border-2 border-purple-500  text-slate-50 text-base bg-purple-500 hover:bg-white hover:text-purple-500 "
-              >
-                <div className="pr-1">
-                  <TiPrinter size={20} />
-                </div>
-                <div>In phiếu</div>
-              </button>
-              {dataThongSo?.ALLOW_INPHIEUKHO_DAUVAODAURA === true && (
+              <div className={`flex flex-grow flex-wrap gap-1 ${!hideColumns ? 'flex-col' : ''}`}>
                 <button
-                  onClick={handlePrintWareHouse}
-                  className="flex items-center  py-1 px-2  rounded-md border-2 border-purple-500  text-slate-50 text-base bg-purple-500 hover:bg-white hover:text-purple-500  "
+                  onClick={handlePrint}
+                  className="flex items-center py-1 px-2 rounded-md border-2 border-purple-500  text-slate-50 text-base bg-purple-500 hover:bg-white hover:text-purple-500 "
                 >
                   <div className="pr-1">
                     <TiPrinter size={20} />
                   </div>
-                  <div>In phiếu Kho</div>
+                  <div>In phiếu</div>
                 </button>
-              )}
+                {dataThongSo?.ALLOW_INPHIEUKHO_DAUVAODAURA === true && (
+                  <button
+                    onClick={handlePrintWareHouse}
+                    className="flex items-center  py-1 px-2  rounded-md border-2 border-purple-500  text-slate-50 text-base bg-purple-500 hover:bg-white hover:text-purple-500  "
+                  >
+                    <div className="pr-1">
+                      <TiPrinter size={20} />
+                    </div>
+                    <div>In phiếu kho</div>
+                  </button>
+                )}
+                <button
+                  onClick={() => setHideColumns(!hideColumns)}
+                  className="flex items-center py-1 px-2 rounded-md border-2 border-red-500  text-slate-50 text-base bg-red-500 hover:bg-white hover:text-red-500 "
+                >
+                  <div className="pr-1">
+                    <FaEyeSlash size={20} />
+                  </div>
+                  <div>Ẩn cột</div>
+                </button>
+              </div>
+              <div>
+                {hideColumns && (
+                  <div>
+                    <Checkbox.Group
+                      style={{
+                        width: '470px',
+                        background: 'white',
+                        padding: 10,
+                        borderRadius: 10,
+                        boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+                      }}
+                      className="flex flex-col"
+                      defaultValue={checkedList}
+                      onChange={(value) => {
+                        setCheckedList(value)
+                        localStorage.setItem('hidenColumnPMH', JSON.stringify(value))
+                      }}
+                    >
+                      <Row>
+                        {options.map((item) => (
+                          <Col span={8} key={item.value}>
+                            <Checkbox value={item.value}>{item.label}</Checkbox>
+                          </Col>
+                        ))}
+                      </Row>
+                    </Checkbox.Group>
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>
@@ -781,19 +828,14 @@ const PhieuMuaHang = () => {
           </button>
         </div>
       </div>
-      <Checkbox.Group
-        value={checkedList}
-        options={options}
-        onChange={(value) => {
-          setCheckedList(value)
-        }}
-      />
+
       <div className="relative px-2 py-1 ">
         <Table
           loading={tableLoad}
           className="table_pmh setHeight"
           // rowSelection={rowSelection}
-          columns={newColumns.filter((column) => !column.hidden)}
+          columns={newColumnsHide}
+          // columns={columns}
           dataSource={filteredPMH}
           size="small"
           scroll={{
@@ -801,7 +843,14 @@ const PhieuMuaHang = () => {
             y: 410,
           }}
           bordered
-          pagination={{ defaultPageSize: 50, showSizeChanger: true, pageSizeOptions: ['50', '100', '1000'] }}
+          pagination={{
+            defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+            showSizeChanger: true,
+            pageSizeOptions: ['50', '100', '1000'],
+            onShowSizeChange: (current, size) => {
+              localStorage.setItem('pageSize', size)
+            },
+          }}
           rowKey={(record) => record.SoChungTu}
           onRow={(record) => ({
             onDoubleClick: () => {
@@ -811,44 +860,43 @@ const PhieuMuaHang = () => {
           rowClassName={(record) => (record.SoChungTu === donePMH ? 'highlighted-row' : '')}
           // Bảng Tổng
           summary={() => {
-            let totalTongThanhTien = 0
-            let totalTongTienThue = 0
-            let totalTongTienHang = 0
-            let totalTongSoLuong = 0
-            let totalTongMatHang = 0
-
-            filteredPMH.forEach(({ TongThanhTien, TongTienThue, TongTienHang, TongSoLuong, TongMatHang }) => {
-              totalTongThanhTien += TongThanhTien
-              totalTongTienThue += TongTienThue
-              totalTongTienHang += TongTienHang
-              totalTongSoLuong += TongSoLuong
-              totalTongMatHang += TongMatHang
-            })
             return (
               <Table.Summary fixed="bottom">
-                <Table.Summary.Row className=" text-end font-bold bg-[#f1f1f1]">
-                  <Table.Summary.Cell className="text-center"></Table.Summary.Cell>
-                  <Table.Summary.Cell></Table.Summary.Cell>
-                  <Table.Summary.Cell index={2}></Table.Summary.Cell>
-                  <Table.Summary.Cell index={3}></Table.Summary.Cell>
-                  <Table.Summary.Cell index={4}></Table.Summary.Cell>
-                  <Table.Summary.Cell index={5}></Table.Summary.Cell>
-                  <Table.Summary.Cell index={6}></Table.Summary.Cell>
-                  <Table.Summary.Cell index={7}></Table.Summary.Cell>
-                  <Table.Summary.Cell index={8}></Table.Summary.Cell>
-                  <Table.Summary.Cell index={9}></Table.Summary.Cell>
-                  <Table.Summary.Cell index={10}>{totalTongMatHang}</Table.Summary.Cell>
-                  <Table.Summary.Cell index={11}>{formatQuantity(totalTongSoLuong, dataThongSo?.SOLESOLUONG)}</Table.Summary.Cell>
-                  <Table.Summary.Cell index={12}>{formatPrice(totalTongTienHang, dataThongSo?.SOLESOTIEN)}</Table.Summary.Cell>
-                  <Table.Summary.Cell index={13}> {formatPrice(totalTongTienThue, dataThongSo?.SOLESOTIEN)}</Table.Summary.Cell>
-                  <Table.Summary.Cell index={14}>{formatPrice(totalTongThanhTien, dataThongSo?.SOLESOTIEN)}</Table.Summary.Cell>
-                  <Table.Summary.Cell index={15}></Table.Summary.Cell>
-                  <Table.Summary.Cell index={16}></Table.Summary.Cell>
-                  <Table.Summary.Cell index={17}></Table.Summary.Cell>
-                  <Table.Summary.Cell index={18}></Table.Summary.Cell>
-                  <Table.Summary.Cell index={19}></Table.Summary.Cell>
-                  <Table.Summary.Cell className="text-center">{filteredPMH.reduce((count, item) => count + (item.TTTienMat ? 1 : 0), 0)}</Table.Summary.Cell>
-                  <Table.Summary.Cell></Table.Summary.Cell>
+                <Table.Summary.Row>
+                  {newColumnsHide
+                    .filter((column) => column.render)
+                    .map((column) => {
+                      const isNumericColumn = typeof filteredPMH[0]?.[column.dataIndex] === 'number'
+
+                      return (
+                        <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                          {isNumericColumn ? (
+                            column.dataIndex === 'TongTienHang' || column.dataIndex === 'TongTienThue' || column.dataIndex === 'TongThanhTien' ? (
+                              <Text strong>
+                                {Number(filteredPMH.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                  minimumFractionDigits: dataThongSo.SOLESOTIEN,
+                                  maximumFractionDigits: dataThongSo.SOLESOTIEN,
+                                })}
+                              </Text>
+                            ) : column.dataIndex === 'TongSoLuong' ? (
+                              <Text strong>
+                                {Number(filteredPMH.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                  minimumFractionDigits: dataThongSo.SOLESOLUONG,
+                                  maximumFractionDigits: dataThongSo.SOLESOLUONG,
+                                })}
+                              </Text>
+                            ) : (
+                              <Text strong>
+                                {Number(filteredPMH.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                  minimumFractionDigits: 0,
+                                  maximumFractionDigits: 0,
+                                })}
+                              </Text>
+                            )
+                          ) : null}
+                        </Table.Summary.Cell>
+                      )
+                    })}
                 </Table.Summary.Row>
               </Table.Summary>
             )

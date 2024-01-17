@@ -41,10 +41,12 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   }
 
   useEffect(() => {
-    window.addEventListener('keydown', handleKeyDown)
+    if (actionType === 'create' || actionType === 'edit') {
+      window.addEventListener('keydown', handleKeyDown)
 
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown)
+      return () => {
+        window.removeEventListener('keydown', handleKeyDown)
+      }
     }
   }, [])
 
