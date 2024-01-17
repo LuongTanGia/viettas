@@ -422,7 +422,13 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   const handleEdit = async (dataRecord) => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
-      const response = await apis.SuaPMH(tokenLogin, dataRecord.SoChungTu, { ...formPMHEdit, DataDetails: selectedRowData }, selectedDoiTuong, selectedKhoHang)
+      const newData = selectedRowData.map((item, index) => {
+        return {
+          ...item,
+          STT: index + 1,
+        }
+      })
+      const response = await apis.SuaPMH(tokenLogin, dataRecord.SoChungTu, { ...formPMHEdit, DataDetails: newData }, selectedDoiTuong, selectedKhoHang)
 
       // Kiểm tra call api thành công
       if (response.data && response.data.DataError === 0) {

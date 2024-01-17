@@ -7,7 +7,6 @@ import { useState, useEffect } from 'react'
 import Cookies from 'js-cookie'
 import { Spin } from 'antd'
 const CollectionCreateForm = ({ isShow, close, data, dataUser }) => {
-  console.log(Cookies.get('remoteDb'))
   const [RemoteDB, setRemoteDB] = useState(Cookies.get('remoteDb'))
   const [isRemoteChanged, setIsRemoteChanged] = useState(Cookies.get('remoteDb') !== undefined ? true : false || false)
   const token = window.localStorage.getItem('tokenDuLieu')

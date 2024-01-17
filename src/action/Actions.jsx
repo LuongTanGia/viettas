@@ -74,6 +74,7 @@ export const RETOKEN = async () => {
   }
 }
 export const DANHSACHDULIEU = async (API, data) => {
+  console.log('DANHSACHDULIEU')
   try {
     const response = await axios.post(API, data)
     window.localStorage.setItem('tokenDuLieu', response.data.TKN)
@@ -87,6 +88,7 @@ export const DANHSACHDULIEU = async (API, data) => {
   }
 }
 export const LOGIN = async (API1, API2, TKN, RemoteDB, data, dispatch) => {
+  console.log('LOGIN')
   try {
     const response = await axios.post(API1, {
       TokenID: TKN,
@@ -170,6 +172,7 @@ export const DANHSACHHANGHOA = async (API, token, dispatch) => {
   }
 }
 export const KHOANNGAY = async (API, token) => {
+  console.log('KHOANNGAY')
   try {
     const response = await axios.post(
       API,
@@ -247,6 +250,8 @@ export const THAYDOIRMATKHAU = async (API, data, token) => {
   }
 }
 export const DoanhSoHangHoa_TopChart = async (API, token, data) => {
+  console.log('DoanhSoHangHoa_TopChart')
+
   try {
     const response = await axios.post(API, data, {
       headers: {

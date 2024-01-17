@@ -17,7 +17,7 @@ export const options = {
 
 function DoughNut() {
   const token = localStorage.getItem('TKN')
-  const tokenRF = localStorage.getItem('RTKN')
+
   const [dataChart, setDataChart] = useState([])
   useEffect(() => {
     const loadData = async () => {
@@ -28,7 +28,7 @@ function DoughNut() {
     }
 
     loadData()
-  }, [token, tokenRF])
+  }, [])
 
   const Labels = dataChart?.map((result) => result.ThongTinDoiTuong)
   const dataChart_list = dataChart?.map((result) => result.TyTrong)
