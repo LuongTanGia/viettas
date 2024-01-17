@@ -83,7 +83,7 @@ const PhieuMuaHang = () => {
             toast.error(responseDT.data.DataErrorDescription)
           }
         }
-        if (actionType !== 'create') {
+        if (actionType === 'view' || actionType === 'edit') {
           const responseTT = await apis.ThongTinPMH(tokenLogin, dataRecord.SoChungTu)
           if (responseTT.data && responseTT.data.DataError === 0) {
             setDataThongTin(responseTT.data.DataResult)
@@ -597,8 +597,6 @@ const PhieuMuaHang = () => {
     hidden: checkedList.includes(item.key),
   }))
   const newColumnsHide = newColumns.filter((column) => !column.hidden)
-
-  console.log('first', checkedList)
 
   // *******************************************
   const handleDelete = (record) => {

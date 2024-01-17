@@ -251,7 +251,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       setSelectedSctBD(dataPMH[0].SoChungTu)
       setSelectedSctKT(dataPMH[0].SoChungTu)
     }
-  }, [dataPMH])
+  }, [dataPMH, actionType])
 
   const handleAddInList = async () => {
     try {
@@ -309,6 +309,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       TyLeThue: 0,
       TienThue: 0,
       ThanhTien: 0,
+      key: selectedRowData.length + dataHangHoa.length,
     }
 
     setSelectedRowData((prevData) => [...prevData, emptyRow])
@@ -809,13 +810,15 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                     <label form="doituong" className="w-[86px]">
                       Đối tượng
                     </label>
-                    <Select disabled showSearch size="small" optionFilterProp="children" style={{ width: '100%' }} value={selectedDoiTuong} readOnly>
-                      {dataDoiTuong?.map((item) => (
-                        <Option key={item.Ma} value={item.Ma}>
-                          {item.Ma} - {item.Ten}
-                        </Option>
-                      ))}
-                    </Select>
+                    <Select
+                      disabled
+                      showSearch
+                      size="small"
+                      optionFilterProp="children"
+                      style={{ width: '100%' }}
+                      value={`${dataThongTin.MaDoiTuong}- ${dataThongTin.TenDoiTuong}`}
+                      readOnly
+                    ></Select>
                   </div>
                   <div className="flex items-center justify-between p-1">
                     <label className="w-[86px]">Tên</label>

@@ -9,16 +9,14 @@ import App from './App.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <Provider store={store}>
-    <React.StrictMode>
-      <GoogleOAuthProvider
-        clientId="587663293191-doosfu353ecu95jivrl4t0gas0dqf4sj.apps.googleusercontent.com"
-        clientSecret="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"
-        callbackURL="/api/oauth/callback/google"
-      >
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <App />
-        </LocalizationProvider>
-      </GoogleOAuthProvider>
-    </React.StrictMode>
+    <GoogleOAuthProvider
+      clientId="587663293191-doosfu353ecu95jivrl4t0gas0dqf4sj.apps.googleusercontent.com"
+      clientSecret="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"
+      callbackURL="/api/oauth/callback/google"
+    >
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <App />
+      </LocalizationProvider>
+    </GoogleOAuthProvider>
   </Provider>,
 )
