@@ -1,17 +1,21 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from 'react'
 import moment from 'moment'
+import { MdPrint } from 'react-icons/md'
 import logo from '../../../../../assets/VTS-iSale.ico'
 import categoryAPI from '../../../../../API/linkAPI'
 import { RETOKEN } from '../../../../../action/Actions'
 import ActionButton from '../../../../../components/util/Button/ActionButton'
 import SimpleBackdrop from '../../../../../components/util/Loading/LoadingPage'
+import NDCPrint from './NDCPrint'
 
 const NCKXem = ({ close, dataNDC }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const [dataNDCView, setDataNDCView] = useState('')
   const [dataThongSo, setDataThongSo] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [actionType, setActionType] = useState('')
+  const [isShowModal, setIsShowModal] = useState(false)
 
   useEffect(() => {
     handleView()
@@ -41,6 +45,10 @@ const NCKXem = ({ close, dataNDC }) => {
     } catch (error) {
       console.error(error)
     }
+  }
+  const handlePrint = () => {
+    setIsShowModal(true)
+    setActionType('print')
   }
   const formatThapPhan = (number, decimalPlaces) => {
     if (typeof number === 'number' && !isNaN(number)) {
@@ -184,12 +192,26 @@ const NCKXem = ({ close, dataNDC }) => {
                     </div>
                   </div>
                 </div>
-                <div className="flex gap-2 justify-end ">
-                  <ActionButton handleAction={close} title={'Đóng'} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
+                <div className="flex justify-between">
+                  <div>
+                    <ActionButton
+                      handleAction={handlePrint}
+                      title={'In Phiếu'}
+                      icon={<MdPrint className="w-6 h-6" />}
+                      color={'slate-50'}
+                      background={'purple-500'}
+                      color_hover={'purple-500'}
+                      bg_hover={'white'}
+                    />
+                  </div>
+                  <div className="flex gap-2 justify-end ">
+                    <ActionButton handleAction={close} title={'Đóng'} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+          <div>{isShowModal && actionType === 'print' ? <NDCPrint close={() => setIsShowModal(false)} dataPrint={dataNDCView} /> : ''}</div>
         </>
       )}
     </>
