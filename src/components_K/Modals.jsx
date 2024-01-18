@@ -366,8 +366,6 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       if (response.data && response.data.DataError === 0) {
         toast.success(response.data.DataErrorDescription)
         const soChungTu = response.data.DataResults[0].SoChungTu
-
-        toast.success(response.data.DataErrorDescription)
         loading()
         setDonePMH(soChungTu)
         close()
