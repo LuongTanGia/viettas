@@ -47,7 +47,6 @@ const NhapXuatTonKho = () => {
     getListHangHoaNXT()
     getListKhoNXT()
     getTimeSetting()
-    getDataNXTFirst()
     getThongSo()
   }, [isLoading])
 
@@ -62,31 +61,38 @@ const NhapXuatTonKho = () => {
       document.removeEventListener('click', handleClickOutside)
     }
   }, [])
-  const getDataNXTFirst = async () => {
-    try {
-      if (isLoading == true) {
-        const response = await categoryAPI.InfoNXTTheoKho(
-          {
-            NgayBatDau: khoanNgayFrom,
-            NgayKetThuc: khoanNgayTo,
-          },
-          TokenAccess,
-        )
-        if (response.data.DataError == 0) {
-          setDataNXT(response.data.DataResults)
-          setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getDataNXTFirst()
-        } else {
-          toast.error(response.data.DataErrorDescription)
+  useEffect(() => {
+    const getDataNXTFirst = async () => {
+      console.log('Lấy data lần đầu')
+      try {
+        if (isLoading == true) {
+          const response = await categoryAPI.InfoNXTTheoKho(
+            {
+              NgayBatDau: khoanNgayFrom,
+              NgayKetThuc: khoanNgayTo,
+            },
+            TokenAccess,
+          )
+          if (response.data.DataError == 0) {
+            setDataNXT(response.data.DataResults)
+            setIsLoading(true)
+          } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+            await RETOKEN()
+            getDataNXTFirst()
+          } else {
+            toast.error(response.data.DataErrorDescription)
+          }
         }
+      } catch (error) {
+        console.log(error)
       }
-    } catch (error) {
-      console.log(error)
     }
-  }
+    getDataNXTFirst()
+  }, [isLoading])
+
   const getDataNXT = async (e) => {
+    console.log('lấy data NXT')
+
     e.preventDefault()
     try {
       const response = await categoryAPI.InfoNXTTheoKho(
@@ -119,6 +125,7 @@ const NhapXuatTonKho = () => {
     }
   }
   const getListNhomHangNXT = async () => {
+    console.log('Nhóm Hàng NXT')
     try {
       const response = await categoryAPI.ListNhomHangNXT(TokenAccess)
       if (response.data.DataError == 0) {
@@ -134,6 +141,7 @@ const NhapXuatTonKho = () => {
     }
   }
   const getListHangHoaNXT = async () => {
+    console.log('Lấy danh sách hàng hóa')
     try {
       const response = await categoryAPI.ListHangHoaNXT(TokenAccess)
       if (response.data.DataError == 0) {
@@ -149,6 +157,7 @@ const NhapXuatTonKho = () => {
     }
   }
   const getListKhoNXT = async () => {
+    console.log('Lấy danh sách kho')
     try {
       const response = await categoryAPI.ListKhoHangNXT(TokenAccess)
       if (response.data.DataError == 0) {
@@ -164,6 +173,7 @@ const NhapXuatTonKho = () => {
     }
   }
   const getTimeSetting = async () => {
+    console.log('Lấy thời gian hệ thống')
     try {
       const response = await categoryAPI.KhoanNgay(TokenAccess)
       if (response.data.DataError == 0) {
@@ -181,6 +191,7 @@ const NhapXuatTonKho = () => {
     }
   }
   const getThongSo = async () => {
+    console.log('THống số')
     try {
       const response = await categoryAPI.ThongSo(TokenAccess)
       if (response.data.DataError == 0) {
@@ -221,7 +232,6 @@ const NhapXuatTonKho = () => {
   const onClickSubmit = () => {
     setHiddenRow(checkedList)
   }
-  console.log(dataNXT)
   const titles = [
     {
       title: 'STT',
