@@ -29,6 +29,7 @@ const HangHoa = () => {
   const [isShowOption, setIsShowOption] = useState(false)
   const showOption = useRef(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [tableLoad, setTableLoad] = useState(true)
   const [selectedRowKeys, setSelectedRowKeys] = useState([])
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [dataThongSo, setDataThongSo] = useState('')
@@ -39,25 +40,16 @@ const HangHoa = () => {
   const [selectVisible, setSelectVisible] = useState(false)
   const [options, setOptions] = useState()
 
-  const getListHangHoa = async () => {
-    try {
-      const response = await categoryAPI.HangHoa(TokenAccess)
-      if (response.data.DataError === 0) {
-        setDataHangHoa(response.data.DataResults)
-        setIsLoading(true)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getListHangHoa()
-      } else {
-        setIsLoading(true)
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
   useEffect(() => {
-    getListHangHoa()
-    getThongSo()
+    if (tableLoad) {
+      getListHangHoa()
+    }
+  }, [tableLoad])
+
+  useEffect(() => {
+    if (!isLoading) {
+      getThongSo()
+    }
   }, [isLoading])
 
   useEffect(() => {
@@ -81,9 +73,45 @@ const HangHoa = () => {
     )
     setOptions(key)
   }, [selectVisible])
+  const getThongSo = async () => {
+    console.log('Thông Số')
+    try {
+      const response = await categoryAPI.ThongSo(TokenAccess)
+      if (response.data.DataError == 0) {
+        setIsLoading(true)
+        setDataThongSo(response.data.DataResult)
+      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        await RETOKEN()
+        getThongSo()
+      } else {
+        console.log('thông số', response.data)
+      }
+    } catch (error) {
+      console.log(error)
+      setIsLoading(true)
+    }
+  }
+  const getListHangHoa = async () => {
+    console.log('HangHoa')
+    try {
+      const response = await categoryAPI.HangHoa(TokenAccess)
+      if (response.data.DataError === 0) {
+        setDataHangHoa(response.data.DataResults)
+        setTableLoad(false)
+      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        console.log('107,108', response.data)
+        await RETOKEN()
+        getListHangHoa()
+      } else {
+        console.log('hàng hóa', response.data)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const handleLoading = () => {
-    setIsLoading(false)
+    setTableLoad(true)
   }
   const handleCreate = () => {
     setActionType('create')
@@ -210,19 +238,6 @@ const HangHoa = () => {
     }
     return ''
   }
-  const getThongSo = async () => {
-    try {
-      const response = await categoryAPI.ThongSo(TokenAccess)
-      if (response.data.DataError == 0) {
-        setDataThongSo(response.data.DataResult)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getThongSo()
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
   const handleRowClick = (record) => {
     const isSelected = selectedRowKeys.includes(record.key)
     const newSelectedRowKeys = isSelected ? selectedRowKeys.filter((key) => key !== record.key) : [...selectedRowKeys, record.key]
@@ -237,6 +252,9 @@ const HangHoa = () => {
   }
   const onClickSubmit = () => {
     setHiddenRow(checkedList)
+  }
+  if (!isLoading) {
+    return <SimpleBackdrop />
   }
   const titles = [
     {
@@ -552,232 +570,227 @@ const HangHoa = () => {
   const newTitles = titles.filter((item) => !hiddenRow?.includes(item.dataIndex))
   return (
     <>
-      {!isLoading ? (
-        <SimpleBackdrop />
-      ) : (
-        <>
-          <div className="flex flex-col gap-1 ">
-            <div className="flex justify-between gap-2 relative" ref={showOption}>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h1 className="text-xl font-black uppercase">Hàng Hóa</h1>
-                  <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
+      <div className="flex flex-col gap-1 ">
+        <div className="flex justify-between gap-2 relative" ref={showOption}>
+          <div>
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl font-black uppercase">Hàng Hóa</h1>
+              <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
+            </div>
+            <div className="flex relative ">
+              {isShowSearch && (
+                <div className={`flex absolute left-[9rem] -top-8 transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
+                  <Input
+                    value={searchHangHoa}
+                    type="text"
+                    placeholder="Nhập ký tự bạn cần tìm"
+                    onChange={handleSearch}
+                    className={'px-2 py-1 w-[20rem] border-slate-200 resize-none rounded-[0.5rem] border-[1px] hover:border-blue-500 outline-none text-[1rem] '}
+                  />
                 </div>
-                <div className="flex relative ">
-                  {isShowSearch && (
-                    <div className={`flex absolute left-[9rem] -top-8 transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
-                      <Input
-                        value={searchHangHoa}
-                        type="text"
-                        placeholder="Nhập ký tự bạn cần tìm"
-                        onChange={handleSearch}
-                        className={'px-2 py-1 w-[20rem] border-slate-200 resize-none rounded-[0.5rem] border-[1px] hover:border-blue-500 outline-none text-[1rem] '}
-                      />
+              )}
+            </div>
+          </div>
+          <div className="flex justify-between">
+            <div className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5  " onClick={() => setIsShowOption(!isShowOption)} title="Chức năng khác">
+              <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
+            </div>
+            {isShowOption && (
+              <div className="absolute flex flex-col gap-2 bg-slate-200 p-3 top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom">
+                <div className={`flex ${selectVisible ? '' : 'flex-col'} items-center gap-2`}>
+                  <ActionButton
+                    handleAction={() => handlePrintBar()}
+                    title={'In Theo Số Tem'}
+                    icon={<CiBarcode className="w-6 h-6" />}
+                    color={'slate-50'}
+                    background={'purple-500'}
+                    color_hover={'purple-500'}
+                    bg_hover={'white'}
+                  />
+                  <ActionButton
+                    handleAction={() => handleHidden()}
+                    title={'Ẩn Cột'}
+                    icon={<FaEyeSlash className="w-5 h-5" />}
+                    color={'slate-50'}
+                    background={'red-500'}
+                    color_hover={'red-500'}
+                    bg_hover={'white'}
+                  />
+                </div>
+                <div>
+                  {selectVisible && (
+                    <div>
+                      <Checkbox.Group
+                        style={{
+                          width: '470px',
+                          background: 'white',
+                          padding: 10,
+                          borderRadius: 10,
+                          boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+                        }}
+                        className="flex flex-col"
+                        defaultValue={checkedList}
+                        onChange={onChange}
+                      >
+                        <Row>
+                          {options.map((item) => (
+                            <Col span={8} key={item}>
+                              <Checkbox value={item} checked={true}>
+                                {nameColumsHangHoa[item]}
+                              </Checkbox>
+                            </Col>
+                          ))}
+                        </Row>
+                        <Button className="mt-2 w-full" onClick={onClickSubmit}>
+                          Xác Nhận
+                        </Button>
+                      </Checkbox.Group>
                     </div>
                   )}
                 </div>
               </div>
-              <div className="flex justify-between">
-                <div className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5  " onClick={() => setIsShowOption(!isShowOption)} title="Chức năng khác">
-                  <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
-                </div>
-                {isShowOption && (
-                  <div className="absolute flex flex-col gap-2 bg-slate-200 p-3 top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom">
-                    <div className={`flex ${selectVisible ? '' : 'flex-col'} items-center gap-2`}>
-                      <ActionButton
-                        handleAction={() => handlePrintBar()}
-                        title={'In Theo Số Tem'}
-                        icon={<CiBarcode className="w-6 h-6" />}
-                        color={'slate-50'}
-                        background={'purple-500'}
-                        color_hover={'purple-500'}
-                        bg_hover={'white'}
-                      />
-                      <ActionButton
-                        handleAction={() => handleHidden()}
-                        title={'Ẩn Cột'}
-                        icon={selectVisible ? <FaEyeSlash className="w-5 h-5" /> : <FaEye className="w-5 h-5" />}
-                        color={'slate-50'}
-                        background={'red-500'}
-                        color_hover={'red-500'}
-                        bg_hover={'white'}
-                      />
-                    </div>
-                    <div>
-                      {selectVisible && (
-                        <div>
-                          <Checkbox.Group
-                            style={{
-                              width: '470px',
-                              background: 'white',
-                              padding: 10,
-                              borderRadius: 10,
-                              boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
-                            }}
-                            className="flex flex-col"
-                            defaultValue={checkedList}
-                            onChange={onChange}
-                          >
-                            <Row>
-                              {options.map((item) => (
-                                <Col span={8} key={item}>
-                                  <Checkbox value={item} checked={true}>
-                                    {nameColumsHangHoa[item]}
-                                  </Checkbox>
-                                </Col>
-                              ))}
-                            </Row>
-                            <Button className="mt-2 w-full" onClick={onClickSubmit}>
-                              Xác Nhận
-                            </Button>
-                          </Checkbox.Group>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="flex justify-end ">
-              <div className="flex gap-2">
-                <ActionButton
-                  handleAction={() => handleCreate()}
-                  title={'Thêm Sản Phẩm'}
-                  icon={<IoMdAddCircleOutline className="w-6 h-6" />}
-                  color={'slate-50'}
-                  background={'blue-500'}
-                  color_hover={'blue-500'}
-                  bg_hover={'white'}
-                />
-                <ActionButton
-                  handleAction={() => handleStatusMany()}
-                  title={'Đổi Trạng Thái'}
-                  icon={<GrStatusUnknown className="w-6 h-6" />}
-                  color={'slate-50'}
-                  background={'blue-500'}
-                  color_hover={'blue-500'}
-                  bg_hover={'white'}
-                />
-                <ActionButton
-                  handleAction={() => handleGroupMany()}
-                  title={'Đổi Nhóm Hàng'}
-                  icon={<MdOutlineGroupAdd className="w-6 h-6" />}
-                  color={'slate-50'}
-                  background={'blue-500'}
-                  color_hover={'blue-500'}
-                  bg_hover={'white'}
-                />
-                <ActionButton
-                  handleAction={() => handlePrintABarcode()}
-                  title={'In Mã Vạch '}
-                  icon={<CiBarcode className="w-6 h-6" />}
-                  color={'slate-50'}
-                  background={'purple-500'}
-                  color_hover={'purple-500'}
-                  bg_hover={'slate-50'}
-                />
-              </div>
-            </div>
-            <div>
-              <Table
-                rowSelection={{
-                  selectedRowKeys,
-                  showSizeChanger: true,
-                  onChange: (selectedKeys) => {
-                    setSelectedRowKeys(selectedKeys)
-                  },
-                }}
-                rowKey={(record) => record.MaHang}
-                onRow={(record) => ({
-                  onClick: () => {
-                    handleRowClick(record)
-                    const selected = selectedRowKeys.includes(record.MaHang)
-                    if (selected) {
-                      setSelectedRowKeys(selectedRowKeys.filter((key) => key !== record.MaHang))
-                    } else {
-                      setSelectedRowKeys([...selectedRowKeys, record.MaHang])
-                    }
-                  },
-                  onDoubleClick: () => {
-                    handleView(record)
-                  },
-                })}
-                rowClassName={(record) => (record.MaHang === targetRow ? 'highlighted-row' : '')}
-                className="setHeight"
-                columns={newTitles}
-                dataSource={filteredHangHoa.map((item, index) => ({
-                  ...item,
-                  modifiedIndex: index + 1,
-                }))}
-                size="small"
-                scroll={{
-                  x: 3000,
-                  y: 400,
-                }}
-                pagination={{
-                  defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                  showSizeChanger: true,
-                  pageSizeOptions: ['50', '100', '1000'],
-                  onShowSizeChange: (current, size) => {
-                    localStorage.setItem('pageSize', size)
-                  },
-                }}
-                style={{
-                  whiteSpace: 'nowrap',
-                  fontSize: '24px',
-                }}
-                summary={() => {
-                  return (
-                    <Table.Summary fixed="bottom">
-                      <Table.Summary.Row>
-                        <Table.Summary.Cell className=" bg-gray-100"></Table.Summary.Cell>
-                        {newTitles
-                          .filter((column) => column.render)
-                          .map((column) => {
-                            const isNumericColumn = typeof filteredHangHoa[0]?.[column.dataIndex] === 'number'
-                            return (
-                              <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
-                                {isNumericColumn ? (
-                                  column.dataIndex === 'GiaBanLe' || column.dataIndex === 'BangGiaSi_Min' || column.dataIndex === 'BangGiaSi_Max' ? (
-                                    <Text strong>
-                                      {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                        minimumFractionDigits: dataThongSo.SOLEDONGIA,
-                                        maximumFractionDigits: dataThongSo.SOLEDONGIA,
-                                      })}
-                                    </Text>
-                                  ) : (
-                                    <Text strong>
-                                      {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                        minimumFractionDigits: 0,
-                                        maximumFractionDigits: 0,
-                                      })}
-                                    </Text>
-                                  )
-                                ) : null}
-                              </Table.Summary.Cell>
-                            )
-                          })}
-                      </Table.Summary.Row>
-                    </Table.Summary>
-                  )
-                }}
-              />
-            </div>
-          </div>
-          <div>
-            {isShowModal && (
-              <HangHoaModals
-                type={actionType}
-                close={() => setIsShowModal(false)}
-                getMaHang={isMaHang}
-                getDataHangHoa={dataHangHoa}
-                loadingData={handleLoading}
-                targetRow={setTargetRow}
-              />
             )}
           </div>
-        </>
-      )}
+        </div>
+        <div className="flex justify-end ">
+          <div className="flex gap-2">
+            <ActionButton
+              handleAction={() => handleCreate()}
+              title={'Thêm Sản Phẩm'}
+              icon={<IoMdAddCircleOutline className="w-6 h-6" />}
+              color={'slate-50'}
+              background={'blue-500'}
+              color_hover={'blue-500'}
+              bg_hover={'white'}
+            />
+            <ActionButton
+              handleAction={() => handleStatusMany()}
+              title={'Đổi Trạng Thái'}
+              icon={<GrStatusUnknown className="w-6 h-6" />}
+              color={'slate-50'}
+              background={'blue-500'}
+              color_hover={'blue-500'}
+              bg_hover={'white'}
+            />
+            <ActionButton
+              handleAction={() => handleGroupMany()}
+              title={'Đổi Nhóm Hàng'}
+              icon={<MdOutlineGroupAdd className="w-6 h-6" />}
+              color={'slate-50'}
+              background={'blue-500'}
+              color_hover={'blue-500'}
+              bg_hover={'white'}
+            />
+            <ActionButton
+              handleAction={() => handlePrintABarcode()}
+              title={'In Mã Vạch '}
+              icon={<CiBarcode className="w-6 h-6" />}
+              color={'slate-50'}
+              background={'purple-500'}
+              color_hover={'purple-500'}
+              bg_hover={'slate-50'}
+            />
+          </div>
+        </div>
+        <div>
+          <Table
+            loading={tableLoad}
+            rowSelection={{
+              selectedRowKeys,
+              showSizeChanger: true,
+              onChange: (selectedKeys) => {
+                setSelectedRowKeys(selectedKeys)
+              },
+            }}
+            rowKey={(record) => record.MaHang}
+            onRow={(record) => ({
+              onClick: () => {
+                handleRowClick(record)
+                const selected = selectedRowKeys.includes(record.MaHang)
+                if (selected) {
+                  setSelectedRowKeys(selectedRowKeys.filter((key) => key !== record.MaHang))
+                } else {
+                  setSelectedRowKeys([...selectedRowKeys, record.MaHang])
+                }
+              },
+              onDoubleClick: () => {
+                handleView(record)
+              },
+            })}
+            rowClassName={(record) => (record.MaHang === targetRow ? 'highlighted-row' : '')}
+            className="setHeight"
+            columns={newTitles}
+            dataSource={filteredHangHoa.map((item, index) => ({
+              ...item,
+              modifiedIndex: index + 1,
+            }))}
+            size="small"
+            scroll={{
+              x: 3000,
+              y: 400,
+            }}
+            pagination={{
+              defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+              showSizeChanger: true,
+              pageSizeOptions: ['50', '100', '1000'],
+              onShowSizeChange: (current, size) => {
+                localStorage.setItem('pageSize', size)
+              },
+            }}
+            style={{
+              whiteSpace: 'nowrap',
+              fontSize: '24px',
+            }}
+            summary={() => {
+              return (
+                <Table.Summary fixed="bottom">
+                  <Table.Summary.Row>
+                    <Table.Summary.Cell className=" bg-gray-100"></Table.Summary.Cell>
+                    {newTitles
+                      .filter((column) => column.render)
+                      .map((column, index) => {
+                        const isNumericColumn = typeof filteredHangHoa[0]?.[column.dataIndex] === 'number'
+                        return (
+                          <Table.Summary.Cell key={`summary-cell-${index + 1}`} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                            {isNumericColumn ? (
+                              column.dataIndex === 'GiaBanLe' || column.dataIndex === 'BangGiaSi_Min' || column.dataIndex === 'BangGiaSi_Max' ? (
+                                <Text strong>
+                                  {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                    minimumFractionDigits: dataThongSo.SOLEDONGIA,
+                                    maximumFractionDigits: dataThongSo.SOLEDONGIA,
+                                  })}
+                                </Text>
+                              ) : (
+                                <Text strong>
+                                  {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                    minimumFractionDigits: 0,
+                                    maximumFractionDigits: 0,
+                                  })}
+                                </Text>
+                              )
+                            ) : null}
+                          </Table.Summary.Cell>
+                        )
+                      })}
+                  </Table.Summary.Row>
+                </Table.Summary>
+              )
+            }}
+          />
+        </div>
+      </div>
+      <div>
+        {isShowModal && (
+          <HangHoaModals
+            type={actionType}
+            close={() => setIsShowModal(false)}
+            getMaHang={isMaHang}
+            getDataHangHoa={dataHangHoa}
+            loadingData={handleLoading}
+            targetRow={setTargetRow}
+          />
+        )}
+      </div>
     </>
   )
 }

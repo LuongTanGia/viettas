@@ -68,6 +68,7 @@ export const RETOKEN = async () => {
     } else if (response.data.DataError === -107 || response.data.DataError === -111) {
       window.location.href = '/login'
       // toast.error(response.data.DataErrorDescription);
+      console.log('Lỗi 107 hoặc 111 -> Ra login')
       return 0
     }
   } catch (error) {
