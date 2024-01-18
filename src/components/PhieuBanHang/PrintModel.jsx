@@ -22,7 +22,7 @@ function ModelPrint({ soChungTuPrint, isShowModel, handleCloseAction, data, mode
 
   const [dateFrom, setDateFrom] = useState(dayjs(data?.NgayBatDau))
   const [dateTo, setDateTo] = useState(dayjs(data?.NgayKetThuc))
-  const [soLien, setSoLien] = useState(1)
+  const [soLien, setSoLien] = useState(0)
   const [loading, setLoading] = useState(true)
   const [dataSoChungTu, setDataSoChungTu] = useState([])
 
@@ -63,7 +63,7 @@ function ModelPrint({ soChungTuPrint, isShowModel, handleCloseAction, data, mode
     }
     if (isShowModel) {
       handleListPhieuThu()
-      setSoLien(1)
+      setSoLien(0)
     }
 
     if (dataSoChungTu < 1) {
@@ -140,7 +140,7 @@ function ModelPrint({ soChungTuPrint, isShowModel, handleCloseAction, data, mode
                   <div className="w-full  flex items-center justify-center gap-2  mt-3">
                     {modelType !== 'PhieuKho' ? (
                       <>
-                        <Checkbox onChange={onChange} className="text-base" value={1} checked={soLien === 1 ? true : false}>
+                        <Checkbox onChange={onChange} className="text-base" value={1}>
                           Liên 1
                         </Checkbox>
                         <Checkbox onChange={onChange} className="text-base" value={2}>

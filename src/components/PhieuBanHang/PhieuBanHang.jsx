@@ -20,6 +20,7 @@ import { MdFilterAlt } from 'react-icons/md'
 import { RiFileExcel2Fill } from 'react-icons/ri'
 import { Input, Button, Spin } from 'antd'
 import { IoAddCircleOutline } from 'react-icons/io5'
+import { FaEye, FaEyeSlash } from 'react-icons/fa'
 
 function PhieuBanHang() {
   const optionContainerRef = useRef(null)
@@ -124,7 +125,7 @@ function PhieuBanHang() {
     }
 
     getListData()
-  }, [])
+  }, [searchText, selectMH, isShowDelete])
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -351,7 +352,7 @@ function PhieuBanHang() {
                   />
                   <>
                     <ActionButton
-                      icon={<PrinterOutlined />}
+                      icon={selectVisible ? <FaEyeSlash className="w-5 h-5" /> : <FaEye className="w-5 h-5" />}
                       color={'slate-50'}
                       title={'Ẩn cột'}
                       background={'red-500'}

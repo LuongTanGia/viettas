@@ -41,7 +41,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
   // const [yourMaHangOptions, setYourMaHangOptions] = useState([])
   // const [yourTenHangOptions, setYourTenHangOptions] = useState([])
   const dispatch = useDispatch()
-  const [reloadComponent, setReloadComponent] = useState(false)
+
   const token = window.localStorage.getItem('TKN')
   const [isModalOpen, setIsModalOpen] = useState(isShow)
   const [Dates, setDates] = useState({ NgayCTu: dayjs(new Date()), DaoHan: dayjs(new Date()) })
@@ -57,13 +57,11 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
   const data_chitiet = useSelector(chiTietPBS)
 
   useEffect(() => {
-    typeAction === 'edit' || typeAction === 'view' ? setForm(data_chitiet.DataResult) : setForm({ ...initState, ...Dates })
-    setDataChitiet(form?.DataDetails)
     const loadData = async () => {
       try {
         const result_listHp = isShow ? await DANHSACHHANGHOA_PBS(API.DANHSACHHANGHOA_PBS, token, form) : null
-        const result_doituong = await DANHSACHDOITUONG(API.DANHSACHDOITUONG_PBS, token)
-        const result_khohang = await DANHSACHKHOHANG(API.DANHSACHKHOHANG_PBS, token)
+        const result_doituong = isShow ? await DANHSACHDOITUONG(API.DANHSACHDOITUONG_PBS, token) : null
+        const result_khohang = isShow ? await DANHSACHKHOHANG(API.DANHSACHKHOHANG_PBS, token) : null
         setDataListHP(result_listHp)
         // setSelectDataOption(result_listHp)
         setListDoiTuong(result_doituong)
@@ -74,9 +72,11 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
       }
     }
     loadData()
-    setReloadComponent(false)
-  }, [isShow, dataRecord, token, form?.DataDetails, reloadComponent])
-
+  }, [isShow])
+  useEffect(() => {
+    typeAction === 'edit' || typeAction === 'view' ? setForm(data_chitiet.DataResult) : setForm({ ...initState, ...Dates })
+    setDataChitiet(form?.DataDetails)
+  }, [dataRecord, form?.DataDetails])
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === 'F9') {
@@ -171,7 +171,6 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
         console.log('sua')
       }
     }
-    setReloadComponent(true)
   }
   const handleSubmitAndClose = async () => {
     if (typeAction === 'create') {
@@ -211,7 +210,6 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
       handleSubmit()
       handleShowPrint_action(form?.NgayCTu, form?.SoChungTu)
 
-      setReloadComponent(true)
       const x = await THONGTINPHIEU(API.CHITIETPBS, token, form?.SoChungTu, dispatch)
       setForm(x.DataResult)
     }
@@ -225,7 +223,6 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
 
       handleShowPrint_kho_action(form?.NgayCTu, form?.SoChungTu)
 
-      setReloadComponent(true)
       const x = await THONGTINPHIEU(API.CHITIETPBS, token, form?.SoChungTu, dispatch)
       setForm(x.DataResult)
     }
