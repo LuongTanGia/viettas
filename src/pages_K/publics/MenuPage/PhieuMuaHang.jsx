@@ -28,97 +28,99 @@ const PhieuMuaHang = () => {
   const [dataDoiTuong, setDataDoiTuong] = useState(null)
   const [actionType, setActionType] = useState('')
   const [formKhoanNgay, setFormKhoanNgay] = useState([])
-  const [dataThongSo, setDataThongSo] = useState()
+  // const [dataThongSo, setDataThongSo] = useState()
   // const [dataChucNang, setDataChucNang] = useState()
   const [setSearchPMH, filteredPMH, searchPMH] = useSearch(data)
   const [donePMH, setDonePMH] = useState(null)
   const [hideColumns, setHideColumns] = useState(false)
+  const ThongSo = localStorage.getItem('ThongSo')
+  const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
 
-  // useEffect(() => {
-  //   console.log('fix')
-  //   const handleClickOutside = (event) => {
-  //     if (optionContainerRef.current && !optionContainerRef.current.contains(event.target)) {
-  //       // Click ngoài phần tử chứa isShowOption, ẩn isShowOption
-  //       setIsShowOption(false)
-  //     }
-  //   }
+  useEffect(() => {
+    console.log('fix')
+    const handleClickOutside = (event) => {
+      if (optionContainerRef.current && !optionContainerRef.current.contains(event.target)) {
+        // Click ngoài phần tử chứa isShowOption, ẩn isShowOption
+        setIsShowOption(false)
+      }
+    }
 
-  //   document.addEventListener('click', handleClickOutside)
+    document.addEventListener('click', handleClickOutside)
 
-  //   return () => {
-  //     document.removeEventListener('click', handleClickOutside)
-  //   }
-  // }, [isShowOption])
+    return () => {
+      document.removeEventListener('click', handleClickOutside)
+    }
+  }, [isShowOption])
 
   // get helper
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       console.log('get helper')
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        console.log('get helper')
 
-  //       const tokenLogin = localStorage.getItem('TKN')
-  //       if (actionType === 'create' || actionType === 'edit') {
-  //         console.log('get helper  KH,DT')
-  //         const responseKH = await apis.ListHelperKhoHang(tokenLogin)
-  //         if (responseKH.data && responseKH.data.DataError === 0) {
-  //           setDataKhoHang(responseKH.data.DataResults)
-  //         } else if (responseKH.data.DataError === -1 || responseKH.data.DataError === -2 || responseKH.data.DataError === -3) {
-  //           toast.warning(responseKH.data.DataErrorDescription)
-  //         } else if (responseKH.data.DataError === -107 || responseKH.data.DataError === -108) {
-  //           await RETOKEN()
-  //           fetchData()
-  //         } else {
-  //           toast.error(responseKH.data.DataErrorDescription)
-  //         }
-  //         const responseDT = await apis.ListHelperDoiTuong(tokenLogin)
-  //         if (responseDT.data && responseDT.data.DataError === 0) {
-  //           setDataDoiTuong(responseDT.data.DataResults)
-  //         } else if (responseDT.data && responseDT.data.DataError === -103) {
-  //           toast.error(responseDT.data.DataErrorDescription)
-  //         } else if (responseDT.data && responseDT.data.DataError === -104) {
-  //           toast.error(responseDT.data.DataErrorDescription)
-  //         } else if (responseDT.data.DataError === -1 || responseDT.data.DataError === -2 || responseDT.data.DataError === -3) {
-  //           toast.warning(responseDT.data.DataErrorDescription)
-  //         } else if (responseDT.data.DataError === -107 || responseDT.data.DataError === -108) {
-  //           await RETOKEN()
-  //           fetchData()
-  //         } else {
-  //           toast.error(responseDT.data.DataErrorDescription)
-  //         }
-  //       }
-  //       if (actionType === 'view' || actionType === 'edit') {
-  //         console.log('get helper tt')
+        const tokenLogin = localStorage.getItem('TKN')
+        if (actionType === 'create' || actionType === 'edit') {
+          console.log('get helper  KH,DT')
+          const responseKH = await apis.ListHelperKhoHang(tokenLogin)
+          if (responseKH.data && responseKH.data.DataError === 0) {
+            setDataKhoHang(responseKH.data.DataResults)
+          } else if (responseKH.data.DataError === -1 || responseKH.data.DataError === -2 || responseKH.data.DataError === -3) {
+            toast.warning(responseKH.data.DataErrorDescription)
+          } else if (responseKH.data.DataError === -107 || responseKH.data.DataError === -108) {
+            await RETOKEN()
+            fetchData()
+          } else {
+            toast.error(responseKH.data.DataErrorDescription)
+          }
+          const responseDT = await apis.ListHelperDoiTuong(tokenLogin)
+          if (responseDT.data && responseDT.data.DataError === 0) {
+            setDataDoiTuong(responseDT.data.DataResults)
+          } else if (responseDT.data && responseDT.data.DataError === -103) {
+            toast.error(responseDT.data.DataErrorDescription)
+          } else if (responseDT.data && responseDT.data.DataError === -104) {
+            toast.error(responseDT.data.DataErrorDescription)
+          } else if (responseDT.data.DataError === -1 || responseDT.data.DataError === -2 || responseDT.data.DataError === -3) {
+            toast.warning(responseDT.data.DataErrorDescription)
+          } else if (responseDT.data.DataError === -107 || responseDT.data.DataError === -108) {
+            await RETOKEN()
+            fetchData()
+          } else {
+            toast.error(responseDT.data.DataErrorDescription)
+          }
+        }
+        if (actionType === 'view' || actionType === 'edit') {
+          console.log('get helper tt')
 
-  //         const responseTT = await apis.ThongTinPMH(tokenLogin, dataRecord.SoChungTu)
-  //         if (responseTT.data && responseTT.data.DataError === 0) {
-  //           setDataThongTin(responseTT.data.DataResult)
-  //         } else if (responseTT.data.DataError === -1 || responseTT.data.DataError === -2 || responseTT.data.DataError === -3) {
-  //           toast.warning(responseTT.data.DataErrorDescription)
-  //         } else if (responseTT.data.DataError === -107 || responseTT.data.DataError === -108) {
-  //           await RETOKEN()
-  //           fetchData()
-  //         } else {
-  //           toast.error(responseTT.data.DataErrorDescription)
-  //         }
-  //       }
-  //     } catch (error) {
-  //       console.error('Lấy data thất bại', error)
-  //       // toast.error('Lấy data thất bại. Vui lòng thử lại sau.')
-  //     }
-  //   }
+          const responseTT = await apis.ThongTinPMH(tokenLogin, dataRecord.SoChungTu)
+          if (responseTT.data && responseTT.data.DataError === 0) {
+            setDataThongTin(responseTT.data.DataResult)
+          } else if (responseTT.data.DataError === -1 || responseTT.data.DataError === -2 || responseTT.data.DataError === -3) {
+            toast.warning(responseTT.data.DataErrorDescription)
+          } else if (responseTT.data.DataError === -107 || responseTT.data.DataError === -108) {
+            await RETOKEN()
+            fetchData()
+          } else {
+            toast.error(responseTT.data.DataErrorDescription)
+          }
+        }
+      } catch (error) {
+        console.error('Lấy data thất bại', error)
+        // toast.error('Lấy data thất bại. Vui lòng thử lại sau.')
+      }
+    }
 
-  //   if (isShowModal) {
-  //     fetchData()
-  //   }
-  // }, [isShowModal])
+    if (isShowModal) {
+      fetchData()
+    }
+  }, [isShowModal])
 
-  // useEffect(() => {
-  //   console.log('fix')
-  //   if (dataThongTin && dataRecord) {
-  //     // Data đã được chuyền vào, dừng loading
-  //     setTableLoad(false)
-  //   }
-  // }, [dataRecord, dataThongTin])
+  useEffect(() => {
+    console.log('fix')
+    if (dataThongTin && dataRecord) {
+      // Data đã được chuyền vào, dừng loading
+      setTableLoad(false)
+    }
+  }, [dataRecord, dataThongTin])
 
   // get Khoảng ngày
   useEffect(() => {
@@ -137,7 +139,7 @@ const PhieuMuaHang = () => {
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
           getKhoanNgay()
-          setIsLoading(false)
+          // setIsLoading(false)
         } else {
           toast.error(response.data.DataErrorDescription)
           setIsLoading(false)
@@ -150,57 +152,6 @@ const PhieuMuaHang = () => {
 
     getKhoanNgay()
   }, [])
-
-  // get thông số
-  useEffect(() => {
-    const getThongSo = async () => {
-      try {
-        console.log('get thongSo')
-        const tokenLogin = localStorage.getItem('TKN')
-        const response = await apis.ThongSo(tokenLogin)
-        if (response.data && response.data.DataError === 0) {
-          setDataThongSo(response.data.DataResult)
-        } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-          toast.warning(response.data.DataErrorDescription)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getThongSo()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
-      } catch (error) {
-        console.error('Kiểm tra token thất bại', error)
-      }
-    }
-
-    getThongSo()
-  }, [])
-
-  // get danh sach chức năng
-  // useEffect(() => {
-  //   const getDSChucNang = async () => {
-  //     try {
-  //       const tokenLogin = localStorage.getItem('TKN')
-  //       const response = await apis.DSChucNang(tokenLogin)
-
-  //       if (response.data && response.data.DataError === 0) {
-  //         setDataChucNang(response.data.DataResults)
-  //       } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-  //         toast.warning(response.data.DataErrorDescription)
-  //       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-  //         await RETOKEN()
-  //         getDSChucNang()
-  //       } else {
-  //         toast.error(response.data.DataErrorDescription)
-  //       }
-  //     } catch (error) {
-  //       console.error('Kiểm tra token thất bại', error)
-  //       setIsLoading(true)
-  //     }
-  //   }
-  //   getDSChucNang()
-  // }, [])
-  // console.log(dataChucNang)
 
   useEffect(() => {
     if (tableLoad) {
@@ -221,7 +172,7 @@ const PhieuMuaHang = () => {
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         getDSPMH()
-        setTableLoad(false)
+        // setTableLoad(false)
       } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
         toast.warning(response.data.DataErrorDescription)
         setTableLoad(false)
@@ -231,6 +182,7 @@ const PhieuMuaHang = () => {
       }
     } catch (error) {
       console.error('Kiểm tra token thất bại', error)
+      setTableLoad(false)
     }
   }
 
@@ -562,7 +514,6 @@ const PhieuMuaHang = () => {
           <>
             <div className=" flex gap-1 items-center justify-center  ">
               <div
-                disabled="true"
                 onClick={() => handlePay(record)}
                 title="Lập phiếu chi"
                 className={`p-[3px] rounded-md text-slate-50 ${
@@ -596,20 +547,20 @@ const PhieuMuaHang = () => {
   ]
   // const defaultCheckedList = columns.map((item) => item.key)
 
-  // const storedHidenColumns = localStorage.getItem('hidenColumnPMH')
-  // const parsedHidenColumns = storedHidenColumns ? JSON.parse(storedHidenColumns) : null
+  const storedHidenColumns = localStorage.getItem('hidenColumnPMH')
+  const parsedHidenColumns = storedHidenColumns ? JSON.parse(storedHidenColumns) : null
 
-  // const [checkedList, setCheckedList] = useState(Array.isArray(parsedHidenColumns) && parsedHidenColumns.length > 0 ? parsedHidenColumns : [])
+  const [checkedList, setCheckedList] = useState(Array.isArray(parsedHidenColumns) && parsedHidenColumns.length > 0 ? parsedHidenColumns : [])
 
-  // const options = columns.map(({ key, title }) => ({
-  //   label: title,
-  //   value: key,
-  // }))
-  // const newColumns = columns.map((item) => ({
-  //   ...item,
-  //   hidden: checkedList.includes(item.key),
-  // }))
-  // const newColumnsHide = newColumns.filter((column) => !column.hidden)
+  const options = columns.map(({ key, title }) => ({
+    label: title,
+    value: key,
+  }))
+  const newColumns = columns.map((item) => ({
+    ...item,
+    hidden: checkedList.includes(item.key),
+  }))
+  const newColumnsHide = newColumns.filter((column) => !column.hidden)
 
   // *******************************************
   const handleDelete = (record) => {
@@ -848,8 +799,8 @@ const PhieuMuaHang = () => {
               loading={tableLoad}
               className="table_pmh setHeight"
               // rowSelection={rowSelection}
-              // columns={newColumnsHide}
-              columns={columns}
+              columns={newColumnsHide}
+              // columns={columns}
               dataSource={filteredPMH}
               size="small"
               scroll={{
@@ -873,48 +824,48 @@ const PhieuMuaHang = () => {
               })}
               rowClassName={(record) => (record.SoChungTu === donePMH ? 'highlighted-row' : '')}
               // Bảng Tổng
-              // summary={() => {
-              //   return (
-              //     <Table.Summary fixed="bottom">
-              //       <Table.Summary.Row>
-              //         {newColumnsHide
-              //           .filter((column) => column.render)
-              //           .map((column) => {
-              //             const isNumericColumn = typeof filteredPMH[0]?.[column.dataIndex] === 'number'
+              summary={() => {
+                return (
+                  <Table.Summary fixed="bottom">
+                    <Table.Summary.Row>
+                      {newColumnsHide
+                        .filter((column) => column.render)
+                        .map((column) => {
+                          const isNumericColumn = typeof filteredPMH[0]?.[column.dataIndex] === 'number'
 
-              //             return (
-              //               <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
-              //                 {isNumericColumn ? (
-              //                   column.dataIndex === 'TongTienHang' || column.dataIndex === 'TongTienThue' || column.dataIndex === 'TongThanhTien' ? (
-              //                     <Text strong>
-              //                       {Number(filteredPMH.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-              //                         minimumFractionDigits: dataThongSo?.SOLESOTIEN,
-              //                         maximumFractionDigits: dataThongSo?.SOLESOTIEN,
-              //                       })}
-              //                     </Text>
-              //                   ) : column.dataIndex === 'TongSoLuong' ? (
-              //                     <Text strong>
-              //                       {Number(filteredPMH.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-              //                         minimumFractionDigits: dataThongSo?.SOLESOLUONG,
-              //                         maximumFractionDigits: dataThongSo?.SOLESOLUONG,
-              //                       })}
-              //                     </Text>
-              //                   ) : (
-              //                     <Text strong>
-              //                       {Number(filteredPMH.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-              //                         minimumFractionDigits: 0,
-              //                         maximumFractionDigits: 0,
-              //                       })}
-              //                     </Text>
-              //                   )
-              //                 ) : null}
-              //               </Table.Summary.Cell>
-              //             )
-              //           })}
-              //       </Table.Summary.Row>
-              //     </Table.Summary>
-              //   )
-              // }}
+                          return (
+                            <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                              {isNumericColumn ? (
+                                column.dataIndex === 'TongTienHang' || column.dataIndex === 'TongTienThue' || column.dataIndex === 'TongThanhTien' ? (
+                                  <Text strong>
+                                    {Number(filteredPMH.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                      minimumFractionDigits: dataThongSo?.SOLESOTIEN,
+                                      maximumFractionDigits: dataThongSo?.SOLESOTIEN,
+                                    })}
+                                  </Text>
+                                ) : column.dataIndex === 'TongSoLuong' ? (
+                                  <Text strong>
+                                    {Number(filteredPMH.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                      minimumFractionDigits: dataThongSo?.SOLESOLUONG,
+                                      maximumFractionDigits: dataThongSo?.SOLESOLUONG,
+                                    })}
+                                  </Text>
+                                ) : (
+                                  <Text strong>
+                                    {Number(filteredPMH.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                      minimumFractionDigits: 0,
+                                      maximumFractionDigits: 0,
+                                    })}
+                                  </Text>
+                                )
+                              ) : null}
+                            </Table.Summary.Cell>
+                          )
+                        })}
+                    </Table.Summary.Row>
+                  </Table.Summary>
+                )
+              }}
             ></Table>
           </div>
 

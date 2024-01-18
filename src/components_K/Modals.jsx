@@ -82,8 +82,10 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   })
 
   useEffect(() => {
-    handleAddInList()
-  }, [selectedKhoHang])
+    if (actionType === 'create' || actionType === 'edit') {
+      handleAddInList()
+    }
+  }, [actionType])
 
   useEffect(() => {
     if (dataThongTin !== null) setFormPMHEdit(dataThongTin)
@@ -261,6 +263,13 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       // Kiểm tra call api thành công
       if (response.data && response.data.DataError === 0) {
         setDataHangHoa(response.data.DataResults)
+      } else if (response.data.DataError === -1 || response.data.DataError === -2 || response.data.DataError === -3) {
+        toast.warning(response.data.DataErrorDescription)
+      } else if (response.data.DataError === -107 || response.data.DataError === -108) {
+        await RETOKEN()
+        handleAddInList()
+      } else {
+        toast.error(response.data.DataErrorDescription)
       }
     } catch (error) {
       console.error('Error while saving data:', error)
@@ -309,6 +318,8 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       TyLeThue: 0,
       TienThue: 0,
       ThanhTien: 0,
+      TyLeCKTT: 0,
+      TienCKTT: 0,
       key: selectedRowData.length + dataHangHoa.length,
     }
 

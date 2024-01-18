@@ -253,7 +253,6 @@ export const ThongSo = (token) =>
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        data: {},
       })
       resolve(response)
     } catch (error) {
