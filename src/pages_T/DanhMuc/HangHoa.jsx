@@ -21,6 +21,8 @@ import HangHoaModals from '../../components_T/Modal/DanhMuc/HangHoa/HangHoaModal
 
 const HangHoa = () => {
   const TokenAccess = localStorage.getItem('TKN')
+  const ThongSo = localStorage.getItem('ThongSo')
+  const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
   const [dataHangHoa, setDataHangHoa] = useState()
   const [setSearchHangHoa, filteredHangHoa, searchHangHoa] = useSearch(dataHangHoa)
   const [isMaHang, setIsMaHang] = useState()
@@ -32,7 +34,6 @@ const HangHoa = () => {
   const [tableLoad, setTableLoad] = useState(true)
   const [selectedRowKeys, setSelectedRowKeys] = useState([])
   const [isShowSearch, setIsShowSearch] = useState(false)
-  const [dataThongSo, setDataThongSo] = useState('')
   const [targetRow, setTargetRow] = useState(null)
   // Ẩn cột
   const [hiddenRow, setHiddenRow] = useState([])
@@ -44,13 +45,7 @@ const HangHoa = () => {
     if (tableLoad) {
       getListHangHoa()
     }
-  }, [tableLoad])
-
-  useEffect(() => {
-    if (!isLoading) {
-      getThongSo()
-    }
-  }, [isLoading])
+  }, [tableLoad, isLoading])
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -73,24 +68,7 @@ const HangHoa = () => {
     )
     setOptions(key)
   }, [selectVisible])
-  const getThongSo = async () => {
-    console.log('Thông Số')
-    try {
-      const response = await categoryAPI.ThongSo(TokenAccess)
-      if (response.data.DataError == 0) {
-        setIsLoading(true)
-        setDataThongSo(response.data.DataResult)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getThongSo()
-      } else {
-        console.log('thông số', response.data)
-      }
-    } catch (error) {
-      console.log(error)
-      setIsLoading(true)
-    }
-  }
+
   const getListHangHoa = async () => {
     console.log('HangHoa')
     try {
@@ -98,18 +76,16 @@ const HangHoa = () => {
       if (response.data.DataError === 0) {
         setDataHangHoa(response.data.DataResults)
         setTableLoad(false)
+        setIsLoading(true)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         console.log('107,108', response.data)
         await RETOKEN()
         getListHangHoa()
-      } else {
-        console.log('hàng hóa', response.data)
       }
     } catch (error) {
       console.log(error)
     }
   }
-
   const handleLoading = () => {
     setTableLoad(true)
   }
@@ -582,7 +558,6 @@ const HangHoa = () => {
                 <div className={`flex absolute left-[9rem] -top-8 transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
                   <Input
                     value={searchHangHoa}
-                    type="text"
                     placeholder="Nhập ký tự bạn cần tìm"
                     onChange={handleSearch}
                     className={'px-2 py-1 w-[20rem] border-slate-200 resize-none rounded-[0.5rem] border-[1px] hover:border-blue-500 outline-none text-[1rem] '}
@@ -745,7 +720,7 @@ const HangHoa = () => {
               return (
                 <Table.Summary fixed="bottom">
                   <Table.Summary.Row>
-                    <Table.Summary.Cell className=" bg-gray-100"></Table.Summary.Cell>
+                    <Table.Summary.Cell className="bg-gray-100"></Table.Summary.Cell>
                     {newTitles
                       .filter((column) => column.render)
                       .map((column, index) => {

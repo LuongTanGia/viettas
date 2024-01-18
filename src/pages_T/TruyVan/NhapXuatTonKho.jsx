@@ -12,12 +12,14 @@ import { useSearch } from '../../components_T/hooks/Search'
 import ActionButton from '../../components/util/Button/ActionButton'
 import HighlightedCell from '../../components_T/hooks/HighlightedCell'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
+import { nameColumsNhapXuatTon } from '../../components/util/Table/ColumnName'
 const { Text } = Typography
 import dayjs from 'dayjs'
-import { nameColumsNhapXuatTon } from '../../components/util/Table/ColumnName'
 
 const NhapXuatTonKho = () => {
   const TokenAccess = localStorage.getItem('TKN')
+  const ThongSo = localStorage.getItem('ThongSo')
+  const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
   const [dataNXT, setDataNXT] = useState('')
   const [setSearchHangHoa, filteredHangHoa, searchHangHoa] = useSearch(dataNXT)
   const [isShowSearch, setIsShowSearch] = useState(false)
@@ -36,19 +38,10 @@ const NhapXuatTonKho = () => {
   const [selectedNhomList, setSelectedNhomList] = useState([])
   const [selectedMaKho, setSelectedMaKho] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [dataThongSo, setDataThongSo] = useState('')
   const [hiddenRow, setHiddenRow] = useState([])
   const [checkedList, setcheckedList] = useState([])
   const [selectVisible, setSelectVisible] = useState(false)
   const [options, setOptions] = useState()
-
-  useEffect(() => {
-    getListNhomHangNXT()
-    getListHangHoaNXT()
-    getListKhoNXT()
-    getTimeSetting()
-    getThongSo()
-  }, [isLoading])
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -61,6 +54,24 @@ const NhapXuatTonKho = () => {
       document.removeEventListener('click', handleClickOutside)
     }
   }, [])
+  useEffect(() => {
+    if (!isLoading) {
+      getListNhomHangNXT()
+    }
+  }, [isLoading])
+
+  useEffect(() => {
+    getListHangHoaNXT()
+  }, [isLoading])
+
+  useEffect(() => {
+    getListKhoNXT()
+  }, [isLoading])
+
+  useEffect(() => {
+    getTimeSetting()
+  }, [isLoading])
+
   useEffect(() => {
     const getDataNXTFirst = async () => {
       console.log('Lấy data lần đầu')
@@ -92,7 +103,6 @@ const NhapXuatTonKho = () => {
 
   const getDataNXT = async (e) => {
     console.log('lấy data NXT')
-
     e.preventDefault()
     try {
       const response = await categoryAPI.InfoNXTTheoKho(
@@ -108,7 +118,6 @@ const NhapXuatTonKho = () => {
         },
         TokenAccess,
       )
-
       if (response.data.DataError == 0) {
         toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
         setDataNXT(response.data.DataResults)
@@ -117,6 +126,7 @@ const NhapXuatTonKho = () => {
         await RETOKEN()
         getDataNXT()
       } else {
+        console.log(response.data)
         toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
         setIsLoading(true)
       }
@@ -185,20 +195,6 @@ const NhapXuatTonKho = () => {
         getTimeSetting()
       } else {
         console.log(response.data)
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
-  const getThongSo = async () => {
-    console.log('THống số')
-    try {
-      const response = await categoryAPI.ThongSo(TokenAccess)
-      if (response.data.DataError == 0) {
-        setDataThongSo(response.data.DataResult)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getThongSo()
       }
     } catch (error) {
       console.log(error)
@@ -921,11 +917,11 @@ const NhapXuatTonKho = () => {
                     <Table.Summary.Row>
                       {newTitles
                         .filter((column) => column.render)
-                        .map((column) => {
+                        .map((column, index) => {
                           const isNumericColumn = typeof filteredHangHoa[0]?.[column.dataIndex] === 'number'
 
                           return (
-                            <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                            <Table.Summary.Cell key={`summary-cell-${index + 1}`} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
                               {isNumericColumn ? (
                                 <Text strong>
                                   {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {

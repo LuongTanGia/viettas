@@ -414,6 +414,8 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         handleStatus()
+      } else {
+        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
       }
     } catch (error) {
       console.error('API call failed:', error)
