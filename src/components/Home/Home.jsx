@@ -27,18 +27,13 @@ function Home({ handleToggleSidebar, isSidebarVisible }) {
     const loadData = async () => {
       await DANHSACHCHUCNANG(API.DANHSACHCHUCNANG, token, dispatch)
       await DATATONGHOP(API.TONGHOP, token, KhoanNgay, dispatch)
-      await DATADULIEU(API.DANHSACHHANGHOA, token, dispatch)
-
       setDataLoaded(true)
     }
-
     const ThongSo = async () => {
       const ThongSo = await CallBackAPI(API.THONGSO, token)
       localStorage.setItem('ThongSo', JSON.stringify(ThongSo))
     }
-
     ThongSo()
-
     loadData()
   }, [])
 

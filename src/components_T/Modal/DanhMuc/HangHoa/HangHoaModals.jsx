@@ -64,8 +64,6 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
   })
 
   useEffect(() => {
-    getThongSo()
-    handleView()
     if (type === 'create') {
       setHangHoaForm({ ...hangHoaForm, TonKho: true, TyLeQuyDoi: 1, HangHoa_CTs: [{ SoLuong: 1, DVT_CTs: '' }] })
     }
@@ -94,9 +92,14 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
     }
     getHangHoaCT()
   }, [])
-
+  useEffect(() => {
+    getThongSo()
+    handleView()
+  }, [])
   // functions
   const getMaVach13 = async (number) => {
+    console.log('Mã vạch modal')
+
     try {
       const response = await categoryAPI.GetBarCode13(
         {
@@ -113,6 +116,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
     }
   }
   const getThongSo = async () => {
+    console.log('Thông số modal')
     try {
       const response = await categoryAPI.ThongSo(TokenAccess)
       if (response.data.DataError == 0) {
@@ -267,6 +271,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
   }
   // Handle CRUD
   const handleCreate = async (e, isSave = true) => {
+    console.log('create')
     if (
       !hangHoaForm?.Nhom?.trim() ||
       !hangHoaForm?.TenHang?.trim() ||
@@ -310,6 +315,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
     }
   }
   const handleView = async () => {
+    console.log('View')
     try {
       const infoHang = await categoryAPI.InfoHangHoa(getMaHang?.MaHang, TokenAccess)
       if (infoHang.data.DataError == 0) {
@@ -324,6 +330,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
     }
   }
   const handleUpdate = async (e) => {
+    console.log('update')
     // if (
     //   !hangHoaForm?.Nhom?.trim() ||
     //   !hangHoaForm?.TenHang?.trim() ||
@@ -370,13 +377,15 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
     }
   }
   const handleDelete = async () => {
+    console.log('delete')
     try {
       const dataDel = await categoryAPI.XoaHangHoa(getMaHang?.MaHang, TokenAccess)
       if (dataDel.data.DataError == 0) {
         toast.success('Xóa sản phẩm thành công', { autoClose: 1000 })
         setIsLoading(false)
         loadingData()
-        close()
+        close(dataDel.data)
+        console.log()
       } else if ((dataDel.data && dataDel.data.DataError === -107) || (dataDel.data && dataDel.data.DataError === -108)) {
         await RETOKEN()
         handleDelete()
@@ -388,6 +397,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
     }
   }
   const handleStatus = async (e) => {
+    console.log('status: ')
     e.preventDefault()
     try {
       const response = await categoryAPI.GanTrangThai(
@@ -404,12 +414,15 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         handleStatus()
+      } else {
+        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
       }
     } catch (error) {
       console.error('API call failed:', error)
     }
   }
   const handleGroup = async (e) => {
+    console.log('group')
     e.preventDefault()
     try {
       const response = await categoryAPI.GanNhom(
@@ -472,7 +485,6 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
       console.log(error)
     }
   }
-  console.log(HangHoaCT)
   return (
     <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10">
       <div className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"></div>
@@ -1515,7 +1527,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
                           className={`${
                             hangHoaForm?.LapRap == true ? 'xl:w-[16vw] lg:w-[14vw] md:w-[10vw]' : 'lg:w-[16vw] md:w-[15vw]'
                           } px-2 rounded  resize-none border-[0.125rem] outline-none text-[1rem] truncate`}
-                          value={dataView.NguoiTao}
+                          value={dataView.NguoiTao || ''}
                           disabled
                         />
                       </div>
@@ -1524,7 +1536,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
                         <input
                           type="text"
                           className="px-2 w-full resize-none border rounded outline-none text-[1rem] truncate"
-                          value={moment(dataView?.NgayTao).format('DD/MM/YYYY HH:mm:ss ')}
+                          value={moment(dataView?.NgayTao).format('DD/MM/YYYY HH:mm:ss ') || ''}
                           disabled
                         />
                       </div>
@@ -1537,7 +1549,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
                           className={`${
                             hangHoaForm?.LapRap == true ? 'xl:w-[16vw] lg:w-[14vw] md:w-[10vw]' : 'lg:w-[16vw] md:w-[15vw]'
                           } px-2 rounded  resize-none border-[0.125rem] outline-none text-[1rem] truncate`}
-                          value={dataView.NguoiSuaCuoi}
+                          value={dataView.NguoiSuaCuoi || ''}
                           disabled
                         />
                       </div>
@@ -1546,7 +1558,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
                         <input
                           type="text"
                           className="px-2 w-full resize-none border rounded outline-none text-[1rem] truncate"
-                          value={dataView?.NgaySuaCuoi ? moment(dataView?.NgaySuaCuoi).format('DD/MM/YYYY HH:mm:ss') : ''}
+                          value={dataView?.NgaySuaCuoi ? moment(dataView?.NgaySuaCuoi).format('DD/MM/YYYY HH:mm:ss') : '' || ''}
                           disabled
                         />
                       </div>
