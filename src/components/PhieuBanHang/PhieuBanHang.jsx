@@ -289,7 +289,7 @@ function PhieuBanHang() {
     setTimeout(() => {
       setLoadingSearch(false)
       setHiden(checkedList)
-    }, 700)
+    }, 1000)
   }
 
   return (

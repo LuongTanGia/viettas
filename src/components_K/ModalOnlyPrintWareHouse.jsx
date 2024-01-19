@@ -5,6 +5,7 @@ import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
 import { base64ToPDF } from '../action/Actions'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import ActionButton from '../components/util/Button/ActionButton'
 import logo from '../assets/VTS-iSale.ico'
 import { Select } from 'antd'
 import { Checkbox } from 'antd'
@@ -171,25 +172,32 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, dataPMH, actionType, clo
                     }}
                   />
                 </div>
-
-                <button
-                  className="flex gap-x-1 items-center mx-2 py-1 px-2  rounded-md   border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main  "
-                  onClick={handleFilterPrint}
-                >
-                  <span>
-                    <MdFilterAlt />
-                  </span>
-                  <span>Lọc</span>
-                </button>
+                <ActionButton
+                  color={'slate-50'}
+                  title={'Lọc'}
+                  icon={<MdFilterAlt size={20} />}
+                  background={'bg-main'}
+                  bg_hover={'white'}
+                  color_hover={'bg-main'}
+                  handleAction={handleFilterPrint}
+                />
               </div>
               <div className="flex  mt-4">
                 <div className="flex ">
                   <label className="px-[22px]">Số chứng từ</label>
 
-                  <Select size="small" showSearch optionFilterProp="children" onChange={(value) => setSelectedSctBD(value)} style={{ width: '154px' }} value={selectedSctBD}>
+                  <Select
+                    size="small"
+                    showSearch
+                    optionFilterProp="children"
+                    onChange={(value) => setSelectedSctBD(value)}
+                    style={{ width: '154px' }}
+                    value={selectedSctBD}
+                    dropdownMatchSelectWidth={false}
+                  >
                     {newDataPMH?.map((item) => (
                       <Option key={item.SoChungTu} value={item.SoChungTu}>
-                        {item.SoChungTu}
+                        {`${item.SoChungTu}_GV`}
                       </Option>
                     ))}
                   </Select>
@@ -198,10 +206,18 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, dataPMH, actionType, clo
                 <div className="flex ">
                   <label className="px-[16px]">Đến</label>
 
-                  <Select size="small" showSearch optionFilterProp="children" onChange={(value) => setSelectedSctKT(value)} style={{ width: '154px' }} value={selectedSctKT}>
+                  <Select
+                    size="small"
+                    showSearch
+                    optionFilterProp="children"
+                    onChange={(value) => setSelectedSctKT(value)}
+                    style={{ width: '154px' }}
+                    value={selectedSctKT}
+                    dropdownMatchSelectWidth={false}
+                  >
                     {newDataPMH?.map((item) => (
                       <Option key={item.SoChungTu} value={item.SoChungTu}>
-                        {item.SoChungTu}
+                        {`${item.SoChungTu}_GV`}
                       </Option>
                     ))}
                   </Select>
@@ -209,16 +225,6 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, dataPMH, actionType, clo
               </div>
               {/* liên */}
               <div className="flex justify-center items-center gap-6 mt-4">
-                {/* <div>
-                  <input id="lien1" type="checkbox" checked={checkboxValues.checkbox1} onChange={() => handleLien('checkbox1')} />
-                  <label htmlFor="lien1">Liên 1</label>
-                </div>
-
-                <div>
-                  <input id="lien2" type="checkbox" checked={checkboxValues.checkbox2} onChange={() => handleLien('checkbox2')} />
-                  <label htmlFor="lien2">Liên 2</label>
-                </div> */}
-
                 <div>
                   <Checkbox
                     value="checkbox1"
@@ -252,37 +258,31 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, dataPMH, actionType, clo
           </div>
           {actionType === 'edit' ? (
             <div className="flex justify-end pt-2 gap-2">
-              <button
-                onClick={() => {
+              <ActionButton
+                color={'slate-50'}
+                title={'Xác nhận'}
+                background={'bg-main'}
+                bg_hover={'white'}
+                color_hover={'bg-main'}
+                handleAction={() => {
                   handleOnlyPrintWareHouse(), close2()
                 }}
-                className="active:scale-[.98] active:duration-75  border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main rounded-md px-2 py-1  w-[80px] "
-              >
-                Xác nhận
-              </button>
-              <button
-                onClick={() => {
+              />
+              <ActionButton
+                color={'slate-50'}
+                title={'Đóng'}
+                background={'red-500'}
+                bg_hover={'white'}
+                color_hover={'red-500'}
+                handleAction={() => {
                   close(), close2()
                 }}
-                className="active:scale-[.98] active:duration-75 border-2 border-rose-500 text-slate-50 text-text-main font-bold  bg-rose-500 hover:bg-white hover:text-rose-500  rounded-md px-2 py-1 w-[80px] "
-              >
-                Đóng
-              </button>
+              />
             </div>
           ) : (
             <div className="flex justify-end pt-2 gap-2">
-              <button
-                onClick={handleOnlyPrintWareHouse}
-                className="active:scale-[.98] active:duration-75  border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main rounded-md px-2 py-1  w-[80px] "
-              >
-                Xác nhận
-              </button>
-              <button
-                onClick={() => close()}
-                className="active:scale-[.98] active:duration-75 border-2 border-rose-500 text-slate-50 text-text-main font-bold  bg-rose-500 hover:bg-white hover:text-rose-500  rounded-md px-2 py-1 w-[80px] "
-              >
-                Đóng
-              </button>
+              <ActionButton color={'slate-50'} title={'Xác nhận'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleOnlyPrintWareHouse} />
+              <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
             </div>
           )}
         </div>

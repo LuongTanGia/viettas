@@ -5,6 +5,7 @@ import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
 import { base64ToPDF } from '../action/Actions'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import ActionButton from '../components/util/Button/ActionButton'
 import { Select } from 'antd'
 import logo from '../assets/VTS-iSale.ico'
 import * as apis from '../apis'
@@ -169,15 +170,15 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH, actionType, close2, SctC
                   />
                 </div>
 
-                <button
-                  className="flex gap-x-1 items-center mx-2 py-1 px-2  rounded-md  border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main "
-                  onClick={handleFilterPrint}
-                >
-                  <span>
-                    <MdFilterAlt />
-                  </span>
-                  <span>Lọc</span>
-                </button>
+                <ActionButton
+                  color={'slate-50'}
+                  title={'Lọc'}
+                  icon={<MdFilterAlt size={20} />}
+                  background={'bg-main'}
+                  bg_hover={'white'}
+                  color_hover={'bg-main'}
+                  handleAction={handleFilterPrint}
+                />
               </div>
               <div className="flex  mt-4 ">
                 <div className="flex ">
@@ -253,37 +254,32 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH, actionType, close2, SctC
           </div>
           {actionType === 'edit' ? (
             <div className="flex justify-end pt-2 gap-2">
-              <button
-                onClick={() => {
+              <ActionButton
+                color={'slate-50'}
+                title={'Xác nhận'}
+                background={'bg-main'}
+                bg_hover={'white'}
+                color_hover={'bg-main'}
+                handleAction={() => {
                   handleOnlyPrint(), close2()
                 }}
-                className="active:scale-[.98] active:duration-75  border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main rounded-md px-2 py-1  w-[80px] "
-              >
-                Xác nhận
-              </button>
-              <button
-                onClick={() => {
+              />
+
+              <ActionButton
+                color={'slate-50'}
+                title={'Đóng'}
+                background={'red-500'}
+                bg_hover={'white'}
+                color_hover={'red-500'}
+                handleAction={() => {
                   close(), close2()
                 }}
-                className="active:scale-[.98] active:duration-75 border-2 border-rose-500 text-slate-50 text-text-main font-bold  bg-rose-500 hover:bg-white hover:text-rose-500  rounded-md px-2 py-1 w-[80px] "
-              >
-                Đóng
-              </button>
+              />
             </div>
           ) : (
             <div className="flex justify-end pt-2 gap-2">
-              <button
-                onClick={handleOnlyPrint}
-                className="active:scale-[.98] active:duration-75  border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main rounded-md px-2 py-1  w-[80px] "
-              >
-                Xác nhận
-              </button>
-              <button
-                onClick={() => close()}
-                className="active:scale-[.98] active:duration-75 border-2 border-rose-500 text-slate-50 text-text-main font-bold  bg-rose-500 hover:bg-white hover:text-rose-500  rounded-md px-2 py-1 w-[80px] "
-              >
-                Đóng
-              </button>
+              <ActionButton color={'slate-50'} title={'Xác nhận'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleOnlyPrint} />
+              <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
             </div>
           )}
         </div>

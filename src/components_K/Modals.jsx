@@ -7,6 +7,7 @@ import dayjs from 'dayjs'
 import ModalHH from './ModalHH'
 import { toast } from 'react-toastify'
 import TableEdit from '../components/util/Table/EditTable'
+import ActionButton from '../components/util/Button/ActionButton'
 import { nameColumsPhieuMuaHang } from '../components/util/Table/ColumnName'
 import { RETOKEN, base64ToPDF, formatPrice, formatQuantity } from '../action/Actions'
 import ModalOnlyPrint from './ModalOnlyPrint'
@@ -90,10 +91,6 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   useEffect(() => {
     if (dataThongTin !== null) setFormPMHEdit(dataThongTin)
   }, [dataThongTin, dataThongTin.DataDetails])
-
-  // useEffect(() => {
-  //   console.log('formEdit', formPMHEdit)
-  // }, [formPMHEdit])
 
   const columns = [
     {
@@ -248,13 +245,19 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
     }
   }, [dataKhoHang, dataThongTin])
 
-  useEffect(() => {
-    if (dataPMH && actionType !== 'create') {
-      setSelectedSctBD(dataPMH[0].SoChungTu)
-      setSelectedSctKT(dataPMH[0].SoChungTu)
-    }
-  }, [dataPMH, actionType])
+  // useEffect(() => {
+  //   if (dataPMH && actionType !== 'create') {
+  //     setSelectedSctBD(dataPMH[0].SoChungTu)
+  //     setSelectedSctKT(dataPMH[0].SoChungTu)
+  //   }
+  // }, [dataPMH, actionType])
 
+  useEffect(() => {
+    if (actionType !== 'create') {
+      setSelectedSctBD('Chọn số chứng từ')
+      setSelectedSctKT('Chọn số chứng từ')
+    }
+  }, [newDataPMH, actionType])
   const handleAddInList = async () => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
@@ -690,7 +693,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                     />
                   </div>
 
-                  <button
+                  {/* <button
                     className="flex gap-x-1 items-center mx-2 py-1 px-2  rounded-md   border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main"
                     onClick={handleFilterPrint}
                   >
@@ -698,32 +701,84 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                       <MdFilterAlt />
                     </span>
                     <span>Lọc</span>
-                  </button>
+                  </button> */}
+                  <ActionButton
+                    color={'slate-50'}
+                    title={'Lọc'}
+                    background={'bg-main'}
+                    bg_hover={'white'}
+                    icon={<MdFilterAlt size={20} />}
+                    color_hover={'bg-main'}
+                    handleAction={handleFilterPrint}
+                  />
                 </div>
-                <div className="flex  mt-4 ">
-                  <div className="flex ">
-                    <label className="px-[22px]">Số chứng từ</label>
+                {actionType === 'print' ? (
+                  <div className="flex  mt-4 ">
+                    <div className="flex ">
+                      <label className="px-[22px]">Số chứng từ</label>
 
-                    <Select size="small" showSearch optionFilterProp="children" onChange={(value) => setSelectedSctBD(value)} style={{ width: '154px' }} value={selectedSctBD}>
-                      {newDataPMH?.map((item) => (
-                        <Option key={item.SoChungTu} value={item.SoChungTu}>
-                          {item.SoChungTu}
-                        </Option>
-                      ))}
-                    </Select>
-                  </div>
-                  <div className="flex ">
-                    <label className="px-[16px]">Đến</label>
+                      <Select size="small" showSearch optionFilterProp="children" onChange={(value) => setSelectedSctBD(value)} style={{ width: '154px' }} value={selectedSctBD}>
+                        {newDataPMH?.map((item) => (
+                          <Option key={item.SoChungTu} value={item.SoChungTu}>
+                            {item.SoChungTu}
+                          </Option>
+                        ))}
+                      </Select>
+                    </div>
+                    <div className="flex ">
+                      <label className="px-[16px]">Đến</label>
 
-                    <Select size="small" showSearch optionFilterProp="children" onChange={(value) => setSelectedSctKT(value)} style={{ width: '154px' }} value={selectedSctKT}>
-                      {newDataPMH?.map((item) => (
-                        <Option key={item.SoChungTu} value={item.SoChungTu}>
-                          {item.SoChungTu}
-                        </Option>
-                      ))}
-                    </Select>
+                      <Select size="small" showSearch optionFilterProp="children" onChange={(value) => setSelectedSctKT(value)} style={{ width: '154px' }} value={selectedSctKT}>
+                        {newDataPMH?.map((item) => (
+                          <Option key={item.SoChungTu} value={item.SoChungTu}>
+                            {item.SoChungTu}
+                          </Option>
+                        ))}
+                      </Select>
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="flex  mt-4 ">
+                    <div className="flex ">
+                      <label className="px-[22px]">Số chứng từ</label>
+
+                      <Select
+                        size="small"
+                        showSearch
+                        optionFilterProp="children"
+                        style={{ width: '154px' }}
+                        value={selectedSctBD}
+                        dropdownMatchSelectWidth={false}
+                        onChange={(value) => setSelectedSctBD(value)}
+                      >
+                        {newDataPMH?.map((item) => (
+                          <Option key={item.SoChungTu} value={item.SoChungTu}>
+                            {`${item.SoChungTu}_GV`}
+                          </Option>
+                        ))}
+                      </Select>
+                    </div>
+                    <div className="flex ">
+                      <label className="px-[16px]">Đến</label>
+
+                      <Select
+                        size="small"
+                        showSearch
+                        optionFilterProp="children"
+                        onChange={(value) => setSelectedSctKT(value)}
+                        style={{ width: '154px' }}
+                        value={selectedSctKT}
+                        dropdownMatchSelectWidth={false}
+                      >
+                        {newDataPMH?.map((item) => (
+                          <Option key={item.SoChungTu} value={item.SoChungTu}>
+                            {`${item.SoChungTu}_GV`}
+                          </Option>
+                        ))}
+                      </Select>
+                    </div>
+                  </div>
+                )}
                 {/* liên */}
                 <div className="flex justify-center  gap-6 mt-4">
                   {/*  */}
@@ -776,26 +831,11 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
             </div>
             <div className="flex justify-end pt-2 gap-2">
               {actionType === 'print' ? (
-                <button
-                  onClick={handlePrint}
-                  className="active:scale-[.98] active:duration-75  border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main rounded-md px-2 py-1  w-[80px] "
-                >
-                  Xác nhận
-                </button>
+                <ActionButton color={'slate-50'} title={'Xác nhận'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handlePrint} />
               ) : (
-                <button
-                  onClick={handlePrintWareHouse}
-                  className="active:scale-[.98] active:duration-75  border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main rounded-md px-2 py-1  w-[80px] "
-                >
-                  Xác nhận
-                </button>
+                <ActionButton color={'slate-50'} title={'Xác nhận'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handlePrintWareHouse} />
               )}
-              <button
-                onClick={() => close()}
-                className="active:scale-[.98] active:duration-75  border-2 border-rose-500 text-slate-50 text-text-main font-bold  bg-rose-500 hover:bg-white hover:text-rose-500 rounded-md px-2 py-1 w-[80px] "
-              >
-                Đóng
-              </button>
+              <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
             </div>
           </div>
         )}
@@ -1202,53 +1242,41 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
             {/* button  */}
             <div className="flex justify-between items-center">
               <div className="flex gap-x-3 pt-3">
-                <button
-                  // onClick={() => setIsShowModalOnlyPrint(true)}
-                  onClick={() => {
+                <ActionButton
+                  color={'slate-50'}
+                  title={'In phiếu'}
+                  background={'purple-500'}
+                  bg_hover={'white'}
+                  color_hover={'purple-500'}
+                  handleAction={() => {
                     handleCreate(), setIsShowModalOnlyPrint(true)
                   }}
-                  className="flex items-center  py-1 px-2  rounded-md  border-2 border-purple-500 text-slate-50 text-text-main font-bold  bg-purple-500 hover:bg-white hover:text-purple-500 "
-                >
-                  <div className="pr-1">
-                    <TiPrinter size={20} />
-                  </div>
-                  <div>In phiếu</div>
-                </button>
+                />
                 {dataThongSo?.ALLOW_INPHIEUKHO_DAUVAODAURA === true && (
-                  <button
-                    // onClick={() => setIsShowModalOnlyPrintWareHouse(true)}
-                    onClick={() => {
+                  <ActionButton
+                    color={'slate-50'}
+                    title={'In phiếu kho'}
+                    background={'purple-500'}
+                    bg_hover={'white'}
+                    color_hover={'purple-500'}
+                    handleAction={() => {
                       handleCreate(), setIsShowModalOnlyPrintWareHouse(true)
                     }}
-                    className="flex items-center  py-1 px-2  rounded-md  border-2 border-purple-500 text-slate-50 text-text-main font-bold  bg-purple-500 hover:bg-white hover:text-purple-500 "
-                  >
-                    <div className="pr-1">
-                      <TiPrinter size={20} />
-                    </div>
-                    <div>In phiếu kho</div>
-                  </button>
+                  />
                 )}
               </div>
 
               <div className="flex justify-end items-center gap-3  pt-3">
-                <button
+                {/* <button
                   onClick={handleCreate}
                   className="active:scale-[.98] active:duration-75   border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main  rounded-md px-2 py-1  w-[80px] "
                 >
                   Lưu
-                </button>
-                <button
-                  onClick={handleCreateAndClose}
-                  className="active:scale-[.98] active:duration-75   border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main  rounded-md px-2 py-1  w-[120px] "
-                >
-                  Lưu & Đóng
-                </button>
-                <button
-                  onClick={() => close()}
-                  className="active:scale-[.98] active:duration-75  border-2 border-rose-500 text-slate-50 text-text-main font-bold  bg-rose-500 hover:bg-white hover:text-rose-500 rounded-md px-2 py-1 w-[80px] "
-                >
-                  Đóng
-                </button>
+                </button> */}
+                <ActionButton color={'slate-50'} title={'Lưu'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleCreate} />
+                <ActionButton color={'slate-50'} title={'Lưu & đóng'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleCreateAndClose} />
+
+                <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
               </div>
             </div>
           </div>
@@ -1452,82 +1480,57 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
             {/* button  */}
             <div className="flex justify-between items-center">
               <div className="flex gap-x-3 pt-3">
-                <button
-                  // onClick={(() => handleEdit(dataRecord), setIsShowModalOnlyPrint(true))}
-                  onClick={() => {
+                <ActionButton
+                  color={'slate-50'}
+                  title={'In phiếu'}
+                  background={'purple-500'}
+                  bg_hover={'white'}
+                  color_hover={'purple-500'}
+                  handleAction={() => {
                     handlePrintOnLy(dataRecord)
                     setIsShowModalOnlyPrint(true)
                   }}
-                  className="flex items-center  py-1 px-2  rounded-md  border-2 border-purple-500 text-slate-50 text-text-main font-bold  bg-purple-500 hover:bg-white hover:text-purple-500 "
-                >
-                  <div className="pr-1">
-                    <TiPrinter size={20} />
-                  </div>
-                  <div>In phiếu</div>
-                </button>
+                />
                 {dataThongSo?.ALLOW_INPHIEUKHO_DAUVAODAURA === true && (
-                  <button
-                    // onClick={() => setIsShowModalOnlyPrintWareHouse(true)}
-                    onClick={() => {
+                  <ActionButton
+                    color={'slate-50'}
+                    title={'In phiếu kho'}
+                    background={'purple-500'}
+                    bg_hover={'white'}
+                    color_hover={'purple-500'}
+                    handleAction={() => {
                       handlePrintOnLy(dataRecord)
                       setIsShowModalOnlyPrintWareHouse(true)
                     }}
-                    className="flex items-center  py-1 px-2  rounded-md  border-2 border-purple-500 text-slate-50 text-text-main font-bold  bg-purple-500 hover:bg-white hover:text-purple-500 "
-                  >
-                    <div className="pr-1">
-                      <TiPrinter size={20} />
-                    </div>
-                    <div>In phiếu kho</div>
-                  </button>
+                  />
                 )}
               </div>
               <div className="flex justify-end items-center gap-x-3  pt-3">
-                <button
-                  onClick={() => handleEdit(dataRecord)}
-                  className="active:scale-[.98] active:duration-75   border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main  rounded-md px-2 py-1  w-[120px]"
-                >
-                  Lưu & Đóng
-                </button>
-                <button
-                  onClick={() => close()}
-                  className="active:scale-[.98] active:duration-75  border-2 border-rose-500 text-slate-50 text-text-main font-bold  bg-rose-500 hover:bg-white hover:text-rose-500 rounded-md px-2 py-1 w-[80px] hover:opacity-80"
-                >
-                  Đóng
-                </button>
+                <ActionButton
+                  color={'slate-50'}
+                  title={'Lưu & đóng'}
+                  background={'bg-main'}
+                  bg_hover={'white'}
+                  color_hover={'bg-main'}
+                  handleAction={() => handleEdit(dataRecord)}
+                />
+
+                <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
               </div>
             </div>
           </div>
         )}
         {actionType === 'delete' ? (
           <div className="flex justify-end mt-4 gap-2">
-            <button
-              onClick={() => handleDelete(dataRecord)}
-              className="active:scale-[.98] active:duration-75 red-500 border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main rounded-md px-2 py-1  w-[80px] "
-            >
-              Xác nhận
-            </button>
-            <button
-              onClick={() => close()}
-              className="active:scale-[.98] active:duration-75  border-2 border-rose-500 text-slate-50 text-text-main font-bold  bg-rose-500 hover:bg-white hover:text-rose-500 rounded-md px-2 py-1 w-[80px] "
-            >
-              Đóng
-            </button>
+            <ActionButton color={'slate-50'} title={'Xác nhận'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={() => handleDelete(dataRecord)} />
+
+            <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
           </div>
         ) : (
           actionType === 'pay' && (
             <div className="flex justify-end mt-4 gap-2">
-              <button
-                onClick={() => handlePay(dataRecord)}
-                className="active:scale-[.98] active:duration-75  border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main rounded-md px-2 py-1  w-[80px] "
-              >
-                Xác nhận
-              </button>
-              <button
-                onClick={() => close()}
-                className="active:scale-[.98] active:duration-75 border-2 border-rose-500 text-slate-50 text-text-main font-bold  bg-rose-500 hover:bg-white hover:text-rose-500  rounded-md px-2 py-1 w-[80px] "
-              >
-                Đóng
-              </button>
+              <ActionButton color={'slate-50'} title={'Xác nhận'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={() => handlePay(dataRecord)} />
+              <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
             </div>
           )
         )}
