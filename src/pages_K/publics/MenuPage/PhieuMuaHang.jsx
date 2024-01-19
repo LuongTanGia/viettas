@@ -620,7 +620,9 @@ const PhieuMuaHang = () => {
   }
 
   const handleSearch = (event) => {
-    setSearchPMH(event.target.value)
+    setTimeout(() => {
+      setSearchPMH(event.target.value)
+    }, 2000)
   }
 
   return (
