@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from 'react'
 import moment from 'moment'
@@ -11,39 +12,32 @@ import NDCPrint from './NDCPrint'
 
 const NCKXem = ({ close, dataNDC }) => {
   const TokenAccess = localStorage.getItem('TKN')
+  const ThongSo = localStorage.getItem('ThongSo')
+  const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
   const [dataNDCView, setDataNDCView] = useState('')
-  const [dataThongSo, setDataThongSo] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [actionType, setActionType] = useState('')
   const [isShowModal, setIsShowModal] = useState(false)
 
   useEffect(() => {
-    handleView()
-    getThongSo()
+    if (!isLoading) {
+      handleView()
+    }
   }, [isLoading])
-  const getThongSo = async () => {
+
+  const handleView = async () => {
     try {
-      const response = await categoryAPI.ThongSo(TokenAccess)
+      const response = await categoryAPI.NDCView(dataNDC?.SoChungTu, TokenAccess)
       if (response.data.DataError == 0) {
-        setDataThongSo(response.data.DataResult)
+        setDataNDCView(response.data.DataResult)
         setIsLoading(true)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
-        getThongSo()
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
-  const handleView = async () => {
-    try {
-      const repsonse = await categoryAPI.NDCView(dataNDC?.SoChungTu, TokenAccess)
-      if (repsonse.data.DataError == 0) {
-        setDataNDCView(repsonse.data.DataResult)
-        setIsLoading(true)
+        handleView()
       }
     } catch (error) {
       console.error(error)
+      setIsLoading(true)
     }
   }
   const handlePrint = () => {

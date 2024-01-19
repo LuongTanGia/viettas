@@ -13,6 +13,8 @@ import ActionButton from '../../../../components/util/Button/ActionButton'
 
 const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, targetRow }) => {
   const TokenAccess = localStorage.getItem('TKN')
+  const ThongSo = localStorage.getItem('ThongSo')
+  const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
   const [dataView, setDataView] = useState({})
   const [nhomHang, setNhomHang] = useState([])
   const [dVTKho, setDVTKho] = useState()
@@ -29,7 +31,6 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
   const [lastNumber13Main, setLastNumber13Main] = useState('')
   const [selectedTem, setSelectedTem] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [dataThongSo, setDataThongSo] = useState('')
   // const currentRowData = useCallback(
   //   (mahang) => {
   //     return selectedRowData.map((item) => item.MaHang).filter((item) => item !== '' && item !== mahang)
@@ -93,7 +94,6 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
     getHangHoaCT()
   }, [])
   useEffect(() => {
-    getThongSo()
     handleView()
   }, [])
   // functions
@@ -111,20 +111,6 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
         return response.data.DataResult
       }
       return 0
-    } catch (error) {
-      console.log(error)
-    }
-  }
-  const getThongSo = async () => {
-    console.log('Thông số modal')
-    try {
-      const response = await categoryAPI.ThongSo(TokenAccess)
-      if (response.data.DataError == 0) {
-        setDataThongSo(response.data.DataResult)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getThongSo()
-      }
     } catch (error) {
       console.log(error)
     }
