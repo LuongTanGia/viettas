@@ -8,6 +8,7 @@ const { Option } = Select
 const { Text } = Typography
 const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourTenHangOptions, ColumnTable, columName, typeTable, listHP, tableName }) => {
   const EditableContext = React.createContext(null)
+  console.log(typeAction)
   const [dataSource, setDataSource] = useState(param)
   const [newOptions, setNewOptions] = useState(yourMaHangOptions)
   const ThongSo = JSON.parse(localStorage.getItem('ThongSo'))
@@ -113,13 +114,13 @@ const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourT
     const form = useContext(EditableContext)
 
     useEffect(() => {
-      if (editing) {
+      if (editing && typeAction !== 'view') {
         inputRef.current.focus()
       }
     }, [editing])
 
     const toggleEdit = () => {
-      setEditing(!editing)
+      setEditing(!editing && typeAction !== 'view')
       form.setFieldsValue({
         [dataIndex]: record[dataIndex],
       })

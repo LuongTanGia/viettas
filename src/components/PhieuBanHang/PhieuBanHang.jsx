@@ -20,7 +20,7 @@ import { MdFilterAlt } from 'react-icons/md'
 import { RiFileExcel2Fill } from 'react-icons/ri'
 import { Input, Button, Spin } from 'antd'
 import { IoAddCircleOutline } from 'react-icons/io5'
-import { FaEye, FaEyeSlash } from 'react-icons/fa'
+import { FaEyeSlash } from 'react-icons/fa'
 
 function PhieuBanHang() {
   const optionContainerRef = useRef(null)
@@ -281,12 +281,12 @@ function PhieuBanHang() {
   }
   const onChange = (checkedValues) => {
     setcheckedList(checkedValues)
-    localStorage.setItem('hidenColumns', JSON.stringify(checkedValues))
   }
   const onClickSubmit = () => {
     // setcheckedList(checkedValues)
     setLoadingSearch(true)
     setTimeout(() => {
+      localStorage.setItem('hidenColumns', JSON.stringify(checkedList))
       setLoadingSearch(false)
       setHiden(checkedList)
     }, 1000)
@@ -352,7 +352,7 @@ function PhieuBanHang() {
                   />
                   <>
                     <ActionButton
-                      icon={selectVisible ? <FaEyeSlash className="w-5 h-5" /> : <FaEye className="w-5 h-5" />}
+                      icon={<FaEyeSlash className="w-5 h-5" />}
                       color={'slate-50'}
                       title={'Ẩn cột'}
                       background={'red-500'}
