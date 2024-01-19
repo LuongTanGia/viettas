@@ -641,7 +641,7 @@ const NhapXuatTonKho = () => {
               </div>
             </div>
             <div className="flex justify-between  gap-2 w-[95vw]">
-              <form className="flex flex-col gap-1 items-start" onSubmit={getDataNXT}>
+              <form className="flex flex-col gap-1 items-start">
                 <div className="flex gap-2 justify-between">
                   <div className="flex gap-1">
                     <div className="flex items-center gap-1">
@@ -694,8 +694,8 @@ const NhapXuatTonKho = () => {
                   </div>
                   <div>
                     <ActionButton
-                      type="submit"
                       title={'Lọc'}
+                      handleAction={getDataNXT}
                       icon={<MdFilterAlt className="w-5 h-5" />}
                       color={'slate-50'}
                       background={'blue-500'}
