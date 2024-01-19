@@ -1,10 +1,11 @@
 import { useEffect, useState, useRef } from 'react'
-import { Table, Checkbox, Tooltip, Row, Col, Spin, Button, Typography } from 'antd'
+import { Table, Checkbox, Tooltip, Row, Col, Typography } from 'antd'
 import moment from 'moment'
 import icons from '../../../untils/icons'
 import { toast } from 'react-toastify'
 import * as apis from '../../../apis'
 import { Modals } from '../../../components_K'
+import ActionButton from '../../../components/util/Button/ActionButton'
 import dayjs from 'dayjs'
 import { RETOKEN, formatPrice, formatQuantity } from '../../../action/Actions'
 import SimpleBackdrop from '../../../components/util/Loading/LoadingPage'
@@ -21,7 +22,7 @@ const PhieuMuaHang = () => {
   const [isShowModal, setIsShowModal] = useState(false)
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [isShowOption, setIsShowOption] = useState(false)
-  const [data, setData] = useState(null)
+  const [data, setData] = useState([])
   const [dataThongTin, setDataThongTin] = useState([])
   const [dataRecord, setDataRecord] = useState(null)
   const [dataKhoHang, setDataKhoHang] = useState(null)
@@ -178,6 +179,7 @@ const PhieuMuaHang = () => {
         setTableLoad(false)
       } else {
         toast.error(response.data.DataErrorDescription)
+        setData([])
         setTableLoad(false)
       }
     } catch (error) {
@@ -618,7 +620,9 @@ const PhieuMuaHang = () => {
   }
 
   const handleSearch = (event) => {
-    setSearchPMH(event.target.value)
+    setTimeout(() => {
+      setSearchPMH(event.target.value)
+    }, 2000)
   }
 
   return (
@@ -769,7 +773,8 @@ const PhieuMuaHang = () => {
                   }}
                 />
               </div>
-              <div className=" ">
+
+              {/* <div className=" ">
                 <button
                   onClick={handleFilterDS}
                   className="flex items-center gap-x-1 py-[2px] px-2 bg-bg-main rounded-md border-2 border-bg-main  text-slate-50 text-base hover:bg-white hover:text-bg-main"
@@ -779,18 +784,27 @@ const PhieuMuaHang = () => {
                   </span>
                   <span>Lọc</span>
                 </button>
-              </div>
+              </div> */}
+              <ActionButton
+                color={'slate-50'}
+                title={'Lọc'}
+                icon={<MdFilterAlt size={20} />}
+                background={'bg-main'}
+                bg_hover={'white'}
+                color_hover={'bg-main'}
+                handleAction={handleFilterDS}
+              />
             </div>
             <div className="flex items-center gap-2">
-              <button
-                onClick={handleCreate}
-                className="flex items-center   py-1 px-2 bg-bg-main rounded-md border-2 border-bg-main  text-slate-50 text-base hover:bg-white hover:text-bg-main w-[130px]"
-              >
-                <div className="pr-1">
-                  <IoAddCircleOutline size={20} />
-                </div>
-                <div>Thêm phiếu</div>
-              </button>
+              <ActionButton
+                color={'slate-50'}
+                title={'Thêm phiếu'}
+                icon={<IoAddCircleOutline size={20} />}
+                background={'bg-main'}
+                bg_hover={'white'}
+                color_hover={'bg-main'}
+                handleAction={handleCreate}
+              />
             </div>
           </div>
 
