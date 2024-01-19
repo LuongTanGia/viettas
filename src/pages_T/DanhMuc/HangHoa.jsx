@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from 'react'
-import { Button, Checkbox, Col, Input, Row, Spin, Table, Tooltip, Typography } from 'antd'
+import { Button, Checkbox, Col, Input, Row, Table, Tooltip, Typography } from 'antd'
 const { Text } = Typography
 import moment from 'moment'
 import { toast } from 'react-toastify'

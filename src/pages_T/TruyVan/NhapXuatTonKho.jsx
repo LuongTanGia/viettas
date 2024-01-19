@@ -42,6 +42,7 @@ const NhapXuatTonKho = () => {
   const [checkedList, setcheckedList] = useState([])
   const [selectVisible, setSelectVisible] = useState(false)
   const [options, setOptions] = useState()
+  const [tableLoad, setTableLoad] = useState(true)
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -61,15 +62,21 @@ const NhapXuatTonKho = () => {
   }, [isLoading])
 
   useEffect(() => {
-    getListHangHoaNXT()
+    if (!isLoading) {
+      getListHangHoaNXT()
+    }
   }, [isLoading])
 
   useEffect(() => {
-    getListKhoNXT()
+    if (!isLoading) {
+      getListKhoNXT()
+    }
   }, [isLoading])
 
   useEffect(() => {
-    getTimeSetting()
+    if (!isLoading) {
+      getTimeSetting()
+    }
   }, [isLoading])
 
   useEffect(() => {
@@ -86,7 +93,7 @@ const NhapXuatTonKho = () => {
           )
           if (response.data.DataError == 0) {
             setDataNXT(response.data.DataResults)
-            setIsLoading(true)
+            setTableLoad(false)
           } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
             await RETOKEN()
             getDataNXTFirst()
@@ -99,7 +106,7 @@ const NhapXuatTonKho = () => {
       }
     }
     getDataNXTFirst()
-  }, [isLoading])
+  }, [isLoading, tableLoad])
 
   const getDataNXT = async (e) => {
     console.log('lấy data NXT')
@@ -121,7 +128,8 @@ const NhapXuatTonKho = () => {
       if (response.data.DataError == 0) {
         toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
         setDataNXT(response.data.DataResults)
-        setIsLoading(true)
+        setTableLoad(false)
+        // setIsLoading(true)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         getDataNXT()
@@ -140,14 +148,17 @@ const NhapXuatTonKho = () => {
       const response = await categoryAPI.ListNhomHangNXT(TokenAccess)
       if (response.data.DataError == 0) {
         setNhomHangNXT(response.data.DataResults)
+        setIsLoading(true)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         getListNhomHangNXT()
       } else {
         console.log(response.data)
+        setIsLoading(true)
       }
     } catch (error) {
       console.log(error)
+      setIsLoading(true)
     }
   }
   const getListHangHoaNXT = async () => {
@@ -156,14 +167,17 @@ const NhapXuatTonKho = () => {
       const response = await categoryAPI.ListHangHoaNXT(TokenAccess)
       if (response.data.DataError == 0) {
         setHangHoaNXT(response.data.DataResults)
+        setIsLoading(true)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         getListHangHoaNXT()
       } else {
         console.log(response.data)
+        setIsLoading(true)
       }
     } catch (error) {
       console.log(error)
+      setIsLoading(true)
     }
   }
   const getListKhoNXT = async () => {
@@ -172,14 +186,17 @@ const NhapXuatTonKho = () => {
       const response = await categoryAPI.ListKhoHangNXT(TokenAccess)
       if (response.data.DataError == 0) {
         setKhoHangNXT(response.data.DataResults)
+        setIsLoading(true)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         getListKhoNXT()
       } else {
         console.log(response.data)
+        setIsLoading(true)
       }
     } catch (error) {
       console.log(error)
+      setIsLoading(true)
     }
   }
   const getTimeSetting = async () => {
@@ -195,9 +212,11 @@ const NhapXuatTonKho = () => {
         getTimeSetting()
       } else {
         console.log(response.data)
+        setIsLoading(true)
       }
     } catch (error) {
       console.log(error)
+      setIsLoading(true)
     }
   }
   const handleSearch = (event) => {
@@ -889,6 +908,7 @@ const NhapXuatTonKho = () => {
           </div>
           <div className="NhapXuatTonKho">
             <Table
+              loading={tableLoad}
               className=" setHeight"
               columns={newTitles}
               dataSource={filteredHangHoa.filter((item) => (selectedMaKho ? item.MaKho === selectedMaKho : true))}
