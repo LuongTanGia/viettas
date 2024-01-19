@@ -26,7 +26,9 @@ const NDCPrint = ({ close, dataPrint }) => {
     checkbox3: false,
   })
   useEffect(() => {
-    getTimeSetting()
+    if (!isLoading) {
+      getTimeSetting()
+    }
   }, [isLoading])
   const calculateTotal = () => {
     let total = 0

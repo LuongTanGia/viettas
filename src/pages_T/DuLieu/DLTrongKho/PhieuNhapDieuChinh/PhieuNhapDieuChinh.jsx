@@ -22,6 +22,8 @@ import SimpleBackdrop from '../../../../components/util/Loading/LoadingPage'
 
 const PhieuNhapDieuChinh = () => {
   const TokenAccess = localStorage.getItem('TKN')
+  const ThongSo = localStorage.getItem('ThongSo')
+  const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
   const [dataNDC, setDataNDC] = useState('')
   const [setSearchHangHoa, filteredHangHoa, searchHangHoa] = useSearch(dataNDC)
   const [isShowSearch, setIsShowSearch] = useState(false)
@@ -30,8 +32,9 @@ const PhieuNhapDieuChinh = () => {
   const [khoanNgayFrom, setKhoanNgayFrom] = useState('')
   const [khoanNgayTo, setKhoanNgayTo] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [tableLoad, setTableLoad] = useState(true)
+
   const [actionType, setActionType] = useState('')
-  const [dataThongSo, setDataThongSo] = useState('')
   const showOption = useRef(null)
 
   function formatDateTime(inputDate, includeTime = false) {
@@ -61,27 +64,15 @@ const PhieuNhapDieuChinh = () => {
     }
     return ''
   }
-  const getDataNDCFirst = async () => {
-    try {
-      if (isLoading == true) {
-        const response = await categoryAPI.GetDataNDC({}, TokenAccess)
-        if (response.data.DataError == 0) {
-          setDataNDC(response.data.DataResults)
-          setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getDataNDCFirst()
-        }
-      }
-    } catch (error) {
-      console.log(error)
+
+  useEffect(() => {
+    if (!isLoading) {
+      getTimeSetting()
     }
-  }
+  }, [isLoading])
+
   useEffect(() => {
     getDataNDCFirst()
-    getTimeSetting()
-    getThongSo()
-    getDataNDC()
   }, [isLoading])
 
   useEffect(() => {
@@ -95,6 +86,24 @@ const PhieuNhapDieuChinh = () => {
       document.removeEventListener('click', handleClickOutside)
     }
   }, [])
+
+  const getDataNDCFirst = async () => {
+    try {
+      if (isLoading == true) {
+        const response = await categoryAPI.GetDataNDC({}, TokenAccess)
+        if (response.data.DataError == 0) {
+          setDataNDC(response.data.DataResults)
+          setTableLoad(false)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          getDataNDCFirst()
+        }
+      }
+    } catch (error) {
+      console.log(error)
+      setTableLoad(false)
+    }
+  }
   const getDataNDC = async () => {
     try {
       const response = await categoryAPI.GetDataNDC(
@@ -106,16 +115,17 @@ const PhieuNhapDieuChinh = () => {
       )
       if (response.data.DataError == 0) {
         setDataNDC(response.data.DataResults)
-        setIsLoading(true)
+        setTableLoad(false)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         getDataNDC()
       } else {
         toast.error(response.data.DataErrorDescription)
-        setIsLoading(true)
+        setTableLoad(false)
       }
     } catch (error) {
       console.log(error)
+      setTableLoad(false)
     }
   }
   const getTimeSetting = async () => {
@@ -130,19 +140,6 @@ const PhieuNhapDieuChinh = () => {
         getTimeSetting()
       } else {
         console.log(response.data)
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
-  const getThongSo = async () => {
-    try {
-      const response = await categoryAPI.ThongSo(TokenAccess)
-      if (response.data.DataError == 0) {
-        setDataThongSo(response.data.DataResult)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getThongSo()
       }
     } catch (error) {
       console.log(error)
@@ -175,7 +172,7 @@ const PhieuNhapDieuChinh = () => {
     setActionType('print')
   }
   const handleLoading = () => {
-    setIsLoading(false)
+    setTableLoad(true)
   }
   const titles = [
     {
@@ -428,7 +425,7 @@ const PhieuNhapDieuChinh = () => {
                 </div>
               </div>
             </div>
-            <div className="flex justify-between">
+            <div className="flex justify-between gap-1">
               <div className="flex items-center gap-2">
                 <div className="flex gap-1">
                   <div className="flex items-center gap-1">
@@ -509,7 +506,7 @@ const PhieuNhapDieuChinh = () => {
             </div>
             <div>
               <Table
-                loading={!isLoading}
+                loading={tableLoad}
                 className="table_DMHangHoa setHeight"
                 columns={titles}
                 dataSource={filteredHangHoa}

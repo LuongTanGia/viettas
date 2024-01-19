@@ -21,6 +21,8 @@ import NDCPrint from './NDCPrint'
 
 const NDCEdit = ({ close, dataNDC, loadingData }) => {
   const TokenAccess = localStorage.getItem('TKN')
+  const ThongSo = localStorage.getItem('ThongSo')
+  const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
   const [dataKhoHang, setDataKhoHang] = useState('')
   const [isShowModal, setIsShowModal] = useState(false)
   const [dataHangHoa, setDataHangHoa] = useState('')
@@ -28,7 +30,6 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
   const [setSearchHangHoa, filteredHangHoa, searchHangHoa] = useSearch(dataHangHoa)
   const [selectedRowData, setSelectedRowData] = useState([])
   const [actionType, setActionType] = useState('')
-  const [dataThongSo, setDataThongSo] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const currentRowData = useCallback(
     (mahang) => {
@@ -59,10 +60,6 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
   })
 
   useEffect(() => {
-    getDataKhoHangNDC()
-    getDataHangHoaNDC()
-    handleView()
-    getThongSo()
     const handleKeyDown = (event) => {
       if (event.keyCode === 120) {
         setIsShowModal(true)
@@ -73,7 +70,39 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
     return () => {
       document.removeEventListener('keydown', handleKeyDown)
     }
+  }, [isShowModal])
+
+  useEffect(() => {
+    if (!isLoading) {
+      getDataKhoHangNDC()
+    }
   }, [isLoading])
+
+  useEffect(() => {
+    if (!isLoading) {
+      getDataHangHoaNDC()
+    }
+  }, [isLoading])
+
+  useEffect(() => {
+    const handleView = async () => {
+      try {
+        const response = await categoryAPI.NDCView(dataNDC?.SoChungTu, TokenAccess)
+        if (response.data.DataError == 0) {
+          setDataNDCView(response.data.DataResult)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleView()
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    if (!isLoading) {
+      handleView()
+    }
+  }, [isLoading])
+
   const getDataHangHoaNDC = async () => {
     try {
       const response = await categoryAPI.ListHangHoaNDC(TokenAccess)
@@ -86,19 +115,7 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
       }
     } catch (error) {
       console.log(error)
-    }
-  }
-  const handleView = async () => {
-    try {
-      const response = await categoryAPI.NDCView(dataNDC?.SoChungTu, TokenAccess)
-      if (response.data.DataError == 0) {
-        setDataNDCView(response.data.DataResult)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        handleView()
-      }
-    } catch (error) {
-      console.error(error)
+      setIsLoading(true)
     }
   }
 
@@ -113,6 +130,7 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
       }
     } catch (error) {
       console.log(error)
+      setIsLoading(true)
     }
   }
   useEffect(() => {
@@ -120,6 +138,7 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
       setSelectedRowData([...dataNDCView.DataDetails])
     }
   }, [dataNDCView])
+
   useEffect(() => {
     setNDCForm((prev) => ({
       ...prev,
@@ -189,21 +208,9 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
       setNDCForm({ ...NDCForm, DataDetails: selectedRowData })
     }
   }
-  const getThongSo = async () => {
-    try {
-      const response = await categoryAPI.ThongSo(TokenAccess)
-      if (response.data.DataError == 0) {
-        setDataThongSo(response.data.DataResult)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getThongSo()
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
   const handlePrint = () => {
-    setIsShowModal(true), setActionType('print')
+    setIsShowModal(true)
+    setActionType('print')
   }
   const handleEdit = async (e, isPrint = true) => {
     e.preventDefault()
