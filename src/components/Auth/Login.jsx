@@ -13,6 +13,10 @@ import './auth.css'
 
 const App = () => {
   const [rememberMe, setRememberMe] = useState(Cookies.get('useCookies') === 'true')
+
+  const infoGoogle = JSON.parse(localStorage.getItem('userInfo'))
+  const GoogleACC = localStorage.getItem('authLogin') || 0
+
   const [isShow, setIsShow] = useState(false)
   const token = window.localStorage.getItem('tokenDuLieu')
   const [loading, setLoading] = useState(false)
@@ -74,11 +78,35 @@ const App = () => {
     return googleUserInfo
   }
   const handleGoogleLogin = async (TokenID) => {
+    console.log(TokenID)
     try {
+      localStorage.setItem('authLogin', TokenID.credential)
       const googleUserInfo = await fetchGoogleUserInfo(TokenID.credential)
       window.localStorage.setItem('userInfo', JSON.stringify(googleUserInfo))
 
       const response = await DANHSACHDULIEU(API.DANHSACHDULIEU, { TokenId: TokenID.credential }, dispatch)
+      setData(response)
+      if (response.DataResults.length === 1) {
+        const remoteDB = response.DataResults[0].RemoteDB
+
+        await LOGIN(API.DANGNHAP, API.DANHSACHDULIEU, response.TKN, remoteDB, {}, dispatch)
+        window.localStorage.setItem('firstLogin', true)
+        window.location.href = '/'
+      } else if (response?.DataResults.length > 1) {
+        setIsLoggedIn(true)
+      }
+    } catch (error) {
+      console.error('Đăng nhập thất bại', error)
+    }
+  }
+
+  const handleReLogin = async () => {
+    try {
+      // localStorage.setItem('authLogin', TokenID.credential)
+      const googleUserInfo = await fetchGoogleUserInfo(localStorage.getItem('authLogin'))
+      window.localStorage.setItem('userInfo', JSON.stringify(googleUserInfo))
+
+      const response = await DANHSACHDULIEU(API.DANHSACHDULIEU, { TokenId: localStorage.getItem('authLogin') }, dispatch)
       setData(response)
       if (response.DataResults.length === 1) {
         const remoteDB = response.DataResults[0].RemoteDB
@@ -99,8 +127,30 @@ const App = () => {
 
   return (
     <div className="flex justify-center items-center h-screen bg-cover" style={{ backgroundImage: `url(${backgroundImg})` }}>
-      <div className="relative w-[500px] p-6 shadow-lg bg-white rounded-md">
+      {rememberMe && GoogleACC !== 0 ? (
+        <div className=" flex flex-col absolute top-10 bg-white w-[400px] rounded-lg right-[-400px] translate-y-6 transition-transform duration-300 ease-in-out slide-in-container">
+          <div className="p-3">
+            <div className="text-base font-semibold text-blue-400 divide-y-4 divide-slate-400/25">Thông Tin đăng nhập</div>
+            <div className="flex justify-around mb-6">
+              <p className="w-[250px]">
+                Bạn đã từng đăng nhập với Gmail <em className="text-blue-800">{infoGoogle?.email} </em>
+              </p>
+              <img src={infoGoogle?.picture} alt="avatar" className="rounded-full w-[40px] h-[40px]" />
+            </div>
+
+            <button
+              onClick={handleReLogin}
+              className="flex justify-center items-center border-2 hover:text-blue-500 border-blue-500 text-zinc-50 text-base font-medium bg-blue-500 hover:bg-white rounded-md px-2 py-1 gap-1 whitespace-nowrap max-h-10"
+            >
+              Tiếp tục đăng nhập
+            </button>
+          </div>
+        </div>
+      ) : null}
+
+      <div className=" w-[500px] p-6 shadow-lg bg-white rounded-md">
         <h1 className="text-center font-semibold text-4xl">Đăng Nhập</h1>
+
         <div className="mt-8">
           <div className="mb-4">
             <label className="text-lg font-medium mb-2">Tài Khoản</label>

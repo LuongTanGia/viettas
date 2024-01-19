@@ -2,3 +2,18 @@
   overflow-y: scroll;
   height: 680px;
 }
+.ant-notification-notice {
+  z-index: 1 !important;
+}
+@keyframes slideIn {
+  from {
+    right: -400px;
+  }
+  to {
+    right: 20px;
+  }
+}
+
+.slide-in-container {
+  animation: slideIn 0.3s forwards;
+}
