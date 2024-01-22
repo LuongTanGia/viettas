@@ -169,7 +169,8 @@ const NDCCreate = ({ close, loadingData }) => {
     try {
       const response = await categoryAPI.NDCCreate({ ...NDCForm, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss') }, TokenAccess)
       if (response.data.DataError == 0) {
-        isPrint ? handlePrint() : isSave ? '' : (close(), loadingData(), toast.success('Tạo thành công'))
+        isPrint ? handlePrint() : isSave ? toast.success('Tạo thành công') : (close(), toast.success('Tạo thành công'))
+        loadingData()
         setSoCTu(response.data.DataResults[0].SoChungTu)
       } else {
         console.log(response.data)
@@ -205,16 +206,15 @@ const NDCCreate = ({ close, loadingData }) => {
   const addHangHoaCT = () => {
     if (selectedRowData.map((item) => item.MaHang).includes('')) return
     const addHHCT = Array.isArray(NDCForm.DataDetails) ? [...NDCForm.DataDetails] : []
-
     setSelectedRowData([...addHHCT, { MaHang: '', TenHang: '', DonGia: 0, SoLuong: 1 }])
   }
   const removeRow = (index) => {
-    const updatedBarcodes = [...NDCForm.DataDetails]
-    updatedBarcodes.splice(index, 1)
-    setSelectedRowData(updatedBarcodes)
+    const updatedRow = [...NDCForm.DataDetails]
+    updatedRow.splice(index, 1)
+    setSelectedRowData(updatedRow)
     setNDCForm({
       ...NDCForm,
-      DataDetails: updatedBarcodes,
+      DataDetails: updatedRow,
     })
   }
   const title = [
@@ -498,7 +498,7 @@ const NDCCreate = ({ close, loadingData }) => {
                                       ?.filter((row) => !currentRowData(item.MaHang).includes(row?.MaHang))
                                       ?.map((hangHoa) => (
                                         <>
-                                          <Select.Option key={hangHoa.MaHang} title={hangHoa.MaHang} value={hangHoa.MaHang} className="flex text-start ">
+                                          <Select.Option key={hangHoa.MaHang} value={hangHoa.MaHang}>
                                             <p className="text-start truncate">
                                               {hangHoa.MaHang}-{hangHoa.TenHang}
                                             </p>
