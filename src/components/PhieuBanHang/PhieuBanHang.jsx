@@ -18,10 +18,10 @@ import dayjs from 'dayjs'
 import { Checkbox, Col, Row } from 'antd'
 import { TfiMoreAlt } from 'react-icons/tfi'
 import { RiFileExcel2Fill } from 'react-icons/ri'
-import { Input, Button, Spin } from 'antd'
+import { Button, Spin, AutoComplete } from 'antd'
 import { IoAddCircleOutline } from 'react-icons/io5'
 import { FaEyeSlash } from 'react-icons/fa'
-
+import { CloseSquareFilled } from '@ant-design/icons'
 function PhieuBanHang() {
   const optionContainerRef = useRef(null)
 
@@ -48,6 +48,8 @@ function PhieuBanHang() {
   const [soChungTuPrint, setSoChungTuPrint] = useState()
 
   const [hiden, setHiden] = useState([])
+  const [arraySearch, setArraySearch] = useState(JSON.parse(localStorage.getItem('arraySearch')) || [])
+
   const [checkedList, setcheckedList] = useState([])
 
   // const [searchTimeout, setSearchTimeout] = useState(null)
@@ -91,10 +93,12 @@ function PhieuBanHang() {
   let timerId
   const handleInputChange = (e) => {
     const inputValue = e.target.value
+    setArraySearch([...arraySearch, inputValue])
     clearTimeout(timerId)
-
     timerId = setTimeout(() => {
       setSearchText(inputValue)
+      const x = new Set(arraySearch.filter((item) => item.trim() !== ''))
+      localStorage.setItem('arraySearch', JSON.stringify([...x]))
     }, 300)
 
     console.log(inputValue)
@@ -296,6 +300,8 @@ function PhieuBanHang() {
       handleSearch()
     }
   }
+  const optionsSearch = arraySearch?.map((item) => ({ value: item }))
+  const listArray = Array.from(new Set((optionsSearch || []).filter((item) => item?.value?.trim() !== ''))).slice(-10)
 
   return (
     <>
@@ -315,7 +321,19 @@ function PhieuBanHang() {
                   onChange={(e) => setSearchText(e.target.value)}
                   className={'px-2  w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] '}
                 /> */}
-                <Input placeholder="Nhập ký tự bạn cần tìm" onPressEnter={handleInputChange} onBlur={handleInputChange} />
+                {/* <Input placeholder="Nhập ký tự bạn cần tìm" onPressEnter={handleInputChange} onBlur={handleInputChange} /> */}
+
+                <AutoComplete
+                  allowClear={{
+                    clearIcon: <CloseSquareFilled />,
+                  }}
+                  options={listArray}
+                  filterOption={(inputValue, option) => option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1}
+                  placeholder="Nhập ký tự bạn cần tìm"
+                  onPressEnter={handleInputChange}
+                  onBlur={handleInputChange}
+                  className="w-full"
+                />
               </div>
             )}
           </div>
