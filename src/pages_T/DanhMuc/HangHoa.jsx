@@ -544,6 +544,7 @@ const HangHoa = () => {
     },
   ]
   const newTitles = titles.filter((item) => !hiddenRow?.includes(item.dataIndex))
+
   return (
     <>
       <div className="flex flex-col gap-1 ">

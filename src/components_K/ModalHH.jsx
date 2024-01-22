@@ -9,16 +9,19 @@ import ActionButton from '../components/util/Button/ActionButton'
 import HighlightedCell from '../components_T/hooks/HighlightedCell'
 
 const { BsSearch } = icons
-const ModalHH = ({ close, data, onRowCreate, dataThongSo }) => {
+const ModalHH = ({ close, data, onRowCreate, dataThongSo, loading, onChangLoading }) => {
   const [isShowSearch, setIsShowSearch] = useState(false)
-  const [setSearchPMH, filteredPMH, searchHH] = useSearchHH(data)
+  const [setSearchHH, filteredHH, searchHH] = useSearchHH(data)
+  const [lastSearchTime, setLastSearchTime] = useState(0)
+  // const [isLoading, setIsLoading] = useState(loading)
+
   // const [pageSize, setPageSize] = useState(50)
 
   // const handleRowClick = (dataRow) => {
   //   setSelectedRow(dataRow.MaHang)
   // }
-
-  const dataTable = filteredPMH?.map((record, index) => ({
+  // console.log('HH', isLoading)
+  const dataTable = filteredHH?.map((record, index) => ({
     key: index,
     ...record,
   }))
@@ -153,8 +156,15 @@ const ModalHH = ({ close, data, onRowCreate, dataThongSo }) => {
   ]
 
   const handleSearch = (event) => {
-    setSearchPMH(event.target.value)
+    const currentTime = new Date().getTime()
+    if (currentTime - lastSearchTime >= 1000) {
+      setSearchHH(event.target.value)
+      setLastSearchTime(currentTime)
+      // setIsLoading(loading)
+      onChangLoading(true)
+    }
   }
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
       <div className="  m-6  p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
@@ -168,11 +178,16 @@ const ModalHH = ({ close, data, onRowCreate, dataThongSo }) => {
           </div>
           <div className="flex  ">
             {isShowSearch && (
-              <div className={`flex absolute left-[17rem] top-5 transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
+              <div className={`flex absolute left-[17rem] top-[23px] transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
                 <input
                   type="text"
                   placeholder="Nhập ký tự bạn cần tìm"
-                  onChange={handleSearch}
+                  onBlur={handleSearch}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handleSearch(e)
+                    }
+                  }}
                   className={'px-2  w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] '}
                 />
               </div>
@@ -181,6 +196,7 @@ const ModalHH = ({ close, data, onRowCreate, dataThongSo }) => {
           {/* table */}
 
           <Table
+            // loading={isLoading}
             className="table_HH"
             columns={columns}
             // dataSource={pageSize === 'All' ? data : data.slice(0, pageSize)}
