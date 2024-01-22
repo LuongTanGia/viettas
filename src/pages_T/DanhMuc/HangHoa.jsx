@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from 'react'
-import { Button, Checkbox, Col, Input, Row, Table, Tooltip, Typography } from 'antd'
+import { Button, Checkbox, Col, Input, Row, Spin, Table, Tooltip, Typography } from 'antd'
 const { Text } = Typography
 import moment from 'moment'
 import { toast } from 'react-toastify'
-import { FaSearch, FaEyeSlash, FaEye } from 'react-icons/fa'
+import { FaSearch, FaEyeSlash } from 'react-icons/fa'
 import { CiBarcode } from 'react-icons/ci'
 import { TfiMoreAlt } from 'react-icons/tfi'
 import { RETOKEN } from '../../action/Actions'
@@ -70,7 +70,6 @@ const HangHoa = () => {
   }, [selectVisible])
 
   const getListHangHoa = async () => {
-    console.log('HangHoa')
     try {
       const response = await categoryAPI.HangHoa(TokenAccess)
       if (response.data.DataError === 0) {
@@ -78,7 +77,6 @@ const HangHoa = () => {
         setTableLoad(false)
         setIsLoading(true)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        console.log('107,108', response.data)
         await RETOKEN()
         getListHangHoa()
       }
@@ -224,10 +222,13 @@ const HangHoa = () => {
   }
   const onChange = (checkedValues) => {
     setcheckedList(checkedValues)
-    localStorage.setItem('hidenColumns', JSON.stringify(checkedValues))
   }
   const onClickSubmit = () => {
-    setHiddenRow(checkedList)
+    setTimeout(() => {
+      setHiddenRow(checkedList)
+      setTableLoad(true)
+      localStorage.setItem('hidenColumns', JSON.stringify(checkedList))
+    }, 1000)
   }
   if (!isLoading) {
     return <SimpleBackdrop />
@@ -261,7 +262,7 @@ const HangHoa = () => {
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text}>
+        <Tooltip title={text} color="blue">
           <div
             style={{
               overflow: 'hidden',
@@ -285,7 +286,7 @@ const HangHoa = () => {
       sorter: (a, b) => a.TenNhom.localeCompare(b.TenNhom),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text}>
+        <Tooltip title={text} color="blue">
           <div
             style={{
               overflow: 'hidden',
@@ -424,7 +425,7 @@ const HangHoa = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.NguoiTao.localeCompare(b.NguoiTao),
       render: (text) => (
-        <Tooltip title={text}>
+        <Tooltip title={text} color="blue">
           <div
             style={{
               overflow: 'hidden',
@@ -459,7 +460,7 @@ const HangHoa = () => {
       showSorterTooltip: false,
       sorter: (a, b) => (a.NguoiSuaCuoi?.toString() || '').localeCompare(b.NguoiSuaCuoi?.toString() || ''),
       render: (text) => (
-        <Tooltip title={text}>
+        <Tooltip title={text} color="blue">
           <div
             style={{
               overflow: 'hidden',
@@ -617,9 +618,11 @@ const HangHoa = () => {
                             </Col>
                           ))}
                         </Row>
-                        <Button className="mt-2 w-full" onClick={onClickSubmit}>
-                          Xác Nhận
-                        </Button>
+                        <Spin spinning={tableLoad}>
+                          <Button className="mt-2 w-full" onClick={onClickSubmit}>
+                            Xác Nhận
+                          </Button>
+                        </Spin>
                       </Checkbox.Group>
                     </div>
                   )}

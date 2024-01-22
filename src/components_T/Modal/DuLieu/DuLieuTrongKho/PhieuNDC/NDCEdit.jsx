@@ -217,7 +217,8 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
     try {
       const response = await categoryAPI.NDCEdit({ SoChungTu: dataNDC?.SoChungTu, Data: { ...NDCForm } }, TokenAccess)
       if (response.data.DataError == 0) {
-        isPrint ? handlePrint() : (close(), loadingData(), toast.success('Sửa thành công'))
+        isPrint ? handlePrint() : (close(), toast.success('Sửa thành công'))
+        loadingData()
       } else {
         console.log('sai', NDCForm)
         toast.error(response.data.DataErrorDescription)

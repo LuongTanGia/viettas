@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState, useRef } from 'react'
-import { Table, Select, Tooltip, Typography, Checkbox, Row, Button, Col } from 'antd'
+import { Table, Select, Tooltip, Typography, Checkbox, Row, Button, Col, Spin } from 'antd'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { toast } from 'react-toastify'
 import { FaSearch, FaEyeSlash, FaEye } from 'react-icons/fa'
@@ -47,6 +47,7 @@ const NhapXuatTonKho = () => {
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (showOption.current && !showOption.current.contains(event.target)) {
+        setIsShowOption(false)
         setIsShowSearch(false)
       }
     }
@@ -81,9 +82,8 @@ const NhapXuatTonKho = () => {
 
   useEffect(() => {
     const getDataNXTFirst = async () => {
-      console.log('Lấy data lần đầu')
       try {
-        if (isLoading == true) {
+        if (isLoading == true && tableLoad == true) {
           const response = await categoryAPI.InfoNXTTheoKho(
             {
               NgayBatDau: khoanNgayFrom,
@@ -93,6 +93,7 @@ const NhapXuatTonKho = () => {
           )
           if (response.data.DataError == 0) {
             setDataNXT(response.data.DataResults)
+            setIsLoading(true)
             setTableLoad(false)
           } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
             await RETOKEN()
@@ -105,12 +106,12 @@ const NhapXuatTonKho = () => {
         console.log(error)
       }
     }
-    getDataNXTFirst()
+    if (tableLoad) {
+      getDataNXTFirst()
+    }
   }, [isLoading, tableLoad])
 
-  const getDataNXT = async (e) => {
-    console.log('lấy data NXT')
-    e.preventDefault()
+  const getDataNXT = async () => {
     try {
       const response = await categoryAPI.InfoNXTTheoKho(
         {
@@ -125,25 +126,37 @@ const NhapXuatTonKho = () => {
         },
         TokenAccess,
       )
+      console.log({
+        NgayBatDau: khoanNgayFrom,
+        NgayKetThuc: khoanNgayTo,
+        CodeValue1From: selectedNhomFrom,
+        CodeValue1To: selectedNhomTo,
+        CodeValue1List: selectedNhomList.join(', '),
+        CodeValue2From: selectedMaFrom,
+        CodeValue2To: selectedMaTo,
+        CodeValue2List: selectedMaList.join(', '),
+      })
       if (response.data.DataError == 0) {
-        toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
         setDataNXT(response.data.DataResults)
         setTableLoad(false)
-        // setIsLoading(true)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         getDataNXT()
       } else {
         console.log(response.data)
         toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
-        setIsLoading(true)
       }
     } catch (error) {
       console.log(error)
     }
   }
+  const handleFilterDS = () => {
+    setTableLoad(true)
+    if (tableLoad) {
+      getDataNXT()
+    }
+  }
   const getListNhomHangNXT = async () => {
-    console.log('Nhóm Hàng NXT')
     try {
       const response = await categoryAPI.ListNhomHangNXT(TokenAccess)
       if (response.data.DataError == 0) {
@@ -162,7 +175,6 @@ const NhapXuatTonKho = () => {
     }
   }
   const getListHangHoaNXT = async () => {
-    console.log('Lấy danh sách hàng hóa')
     try {
       const response = await categoryAPI.ListHangHoaNXT(TokenAccess)
       if (response.data.DataError == 0) {
@@ -181,7 +193,6 @@ const NhapXuatTonKho = () => {
     }
   }
   const getListKhoNXT = async () => {
-    console.log('Lấy danh sách kho')
     try {
       const response = await categoryAPI.ListKhoHangNXT(TokenAccess)
       if (response.data.DataError == 0) {
@@ -200,7 +211,6 @@ const NhapXuatTonKho = () => {
     }
   }
   const getTimeSetting = async () => {
-    console.log('Lấy thời gian hệ thống')
     try {
       const response = await categoryAPI.KhoanNgay(TokenAccess)
       if (response.data.DataError == 0) {
@@ -237,15 +247,19 @@ const NhapXuatTonKho = () => {
     const key = Object.keys(dataNXT ? dataNXT[0] : {}).filter((key) => key !== 'MaNhomHang' && key !== 'MaKho')
     setOptions(key)
   }, [selectVisible])
+
   const handleHidden = () => {
     setSelectVisible(!selectVisible)
   }
   const onChange = (checkedValues) => {
     setcheckedList(checkedValues)
-    localStorage.setItem('hidenColumns', JSON.stringify(checkedValues))
   }
   const onClickSubmit = () => {
-    setHiddenRow(checkedList)
+    setTimeout(() => {
+      setHiddenRow(checkedList)
+      setTableLoad(true)
+      localStorage.setItem('hidenColumns', JSON.stringify(checkedList))
+    }, 1000)
   }
   const titles = [
     {
@@ -595,9 +609,9 @@ const NhapXuatTonKho = () => {
                   <div className="absolute flex flex-col gap-2 bg-slate-200 p-3 top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom  ">
                     <div className={`flex ${selectVisible ? '' : 'flex-col'} items-center gap-2`}>
                       <ActionButton
-                        handleAction={() => handleHidden()}
+                        handleAction={handleHidden}
                         title={'Ẩn Cột'}
-                        icon={selectVisible ? <FaEyeSlash className="w-5 h-5" /> : <FaEye className="w-5 h-5" />}
+                        icon={<FaEyeSlash className="w-5 h-5" />}
                         color={'slate-50'}
                         background={'red-500'}
                         color_hover={'red-500'}
@@ -629,9 +643,11 @@ const NhapXuatTonKho = () => {
                                 </Col>
                               ))}
                             </Row>
-                            <Button className="mt-2 w-full" onClick={onClickSubmit}>
-                              Xác Nhận
-                            </Button>
+                            <Spin spinning={tableLoad}>
+                              <Button className="mt-2 w-full" onClick={onClickSubmit}>
+                                Xác Nhận
+                              </Button>
+                            </Spin>
                           </Checkbox.Group>
                         </div>
                       )}
@@ -695,7 +711,7 @@ const NhapXuatTonKho = () => {
                   <div>
                     <ActionButton
                       title={'Lọc'}
-                      handleAction={getDataNXT}
+                      handleAction={handleFilterDS}
                       icon={<MdFilterAlt className="w-5 h-5" />}
                       color={'slate-50'}
                       background={'blue-500'}
