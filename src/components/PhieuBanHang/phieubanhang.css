@@ -125,3 +125,6 @@
 .ant-float-btn-default {
   position: absolute;
 }
+.phieuKhoLien .ant-row {
+  justify-content: center;
+}

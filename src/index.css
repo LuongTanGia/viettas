@@ -283,11 +283,10 @@ input[type='radio'] {
   border-radius: 0px;
 }
 
-.css-9yxuw4-MuiAutocomplete-root .MuiAutocomplete-inputRoot .MuiAutocomplete-input {
-  height: 13px;
-  font-size: 14px;
+.css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root {
+  height: 24px;
+  width: 150px;
 }
-
 /* end */
 
 #main {

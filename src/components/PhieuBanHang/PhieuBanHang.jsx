@@ -11,12 +11,12 @@ import { toast } from 'react-toastify'
 import ModelPrint from './PrintModel'
 import ActionButton from '../util/Button/ActionButton'
 import Model from './Model'
-import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+// import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import { DateField } from '@mui/x-date-pickers/DateField'
 import { BsSearch } from 'react-icons/bs'
 import dayjs from 'dayjs'
 import { Checkbox, Col, Row } from 'antd'
 import { TfiMoreAlt } from 'react-icons/tfi'
-import { MdFilterAlt } from 'react-icons/md'
 import { RiFileExcel2Fill } from 'react-icons/ri'
 import { Input, Button, Spin } from 'antd'
 import { IoAddCircleOutline } from 'react-icons/io5'
@@ -95,7 +95,7 @@ function PhieuBanHang() {
 
     timerId = setTimeout(() => {
       setSearchText(inputValue)
-    }, 700)
+    }, 300)
 
     console.log(inputValue)
   }
@@ -291,6 +291,11 @@ function PhieuBanHang() {
       setHiden(checkedList)
     }, 1000)
   }
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      handleSearch()
+    }
+  }
 
   return (
     <>
@@ -310,7 +315,7 @@ function PhieuBanHang() {
                   onChange={(e) => setSearchText(e.target.value)}
                   className={'px-2  w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] '}
                 /> */}
-                <Input placeholder="Nhập ký tự bạn cần tìm" onChange={handleInputChange} />
+                <Input placeholder="Nhập ký tự bạn cần tìm" onPressEnter={handleInputChange} onBlur={handleInputChange} />
               </div>
             )}
           </div>
@@ -404,7 +409,10 @@ function PhieuBanHang() {
         <div className="flex gap-3 max-h-[100px]">
           <div className="flex gap-x-2 items-center max-h-[100px]">
             <label htmlFor="">Ngày</label>
-            <DatePicker
+            <DateField
+              onBlur={handleSearch}
+              onKeyDown={handleKeyDown}
+              onPressEnter={handleSearch}
               className="DatePicker_PMH max-h-[100px]"
               format="DD/MM/YYYY"
               defaultValue={dayjs(dataDate?.NgayBatDau)}
@@ -429,7 +437,9 @@ function PhieuBanHang() {
           </div>
           <div className="flex gap-x-2 items-center max-h-[100px]">
             <label htmlFor="">Đến</label>
-            <DatePicker
+            <DateField
+              onBlur={handleSearch}
+              onKeyDown={handleKeyDown}
               className="DatePicker_PMH max-h-[100px]"
               format="DD/MM/YYYY"
               defaultValue={dayjs(dataDate?.NgayKetThuc)}
@@ -449,17 +459,6 @@ function PhieuBanHang() {
                   height: '18px',
                 },
               }}
-            />
-          </div>
-          <div className="flex items-center">
-            <ActionButton
-              icon={<MdFilterAlt size={20} />}
-              color={'slate-50'}
-              title={'Lọc'}
-              background={'blue-500'}
-              bg_hover={'white'}
-              color_hover={'blue-500'}
-              handleAction={handleSearch}
             />
           </div>
         </div>

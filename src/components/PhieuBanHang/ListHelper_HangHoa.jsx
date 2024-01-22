@@ -8,6 +8,7 @@ import dayjs from 'dayjs'
 import { DANHSACHHANGHOA_PBS } from '../../action/Actions'
 import API from '../../API/API'
 import { BsSearch } from 'react-icons/bs'
+import { Input } from 'antd'
 // eslint-disable-next-line react/prop-types
 function ListHelper_HangHoa({ data, close, handleAddData, form }) {
   const token = localStorage.getItem('TKN')
@@ -71,7 +72,7 @@ function ListHelper_HangHoa({ data, close, handleAddData, form }) {
     }
 
     getListData()
-  }, [token, searchText, dataDate])
+  }, [searchText])
   if (!dataLoaded) {
     return <></>
   }
@@ -94,13 +95,7 @@ function ListHelper_HangHoa({ data, close, handleAddData, form }) {
                   onChange={(e) => setSearchText(e.target.value)}
                   className={'px-2  w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] '}
                 /> */}
-                  <input
-                    type="text"
-                    placeholder="Nhập ký tự bạn cần tìm"
-                    value={searchText}
-                    onChange={(e) => setSearchText(e.target.value)}
-                    className={'px-2  w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] '}
-                  />
+                  <Input placeholder="Nhập ký tự bạn cần tìm" onPressEnter={(e) => setSearchText(e.target.value)} onBlur={(e) => setSearchText(e.target.value)} />
                 </div>
               )}
             </div>
