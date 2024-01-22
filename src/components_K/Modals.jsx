@@ -23,7 +23,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   const [isShowModalHH, setIsShowModalHH] = useState(false)
   const [isShowModalOnlyPrint, setIsShowModalOnlyPrint] = useState(false)
   const [isShowModalOnlyPrintWareHouse, setIsShowModalOnlyPrintWareHouse] = useState(false)
-  const [dataHangHoa, setDataHangHoa] = useState(null)
+  const [dataHangHoa, setDataHangHoa] = useState([])
   const [selectedKhoHang, setSelectedKhoHang] = useState()
   const [selectedRowData, setSelectedRowData] = useState([])
   const [selectedDoiTuong, setSelectedDoiTuong] = useState()
@@ -32,6 +32,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   const [selectedSctKT, setSelectedSctKT] = useState()
   const [newDataPMH, setNewDataPMH] = useState(dataPMH)
   const [SctCreate, setSctCreate] = useState(null)
+  const [isLoading, setIsLoading] = useState(true)
 
   const isAdd = useMemo(() => selectedRowData.map((item) => item.MaHang).includes('Chọn mã hàng'), [selectedRowData])
 
@@ -82,11 +83,16 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
     checkbox3: false,
   })
 
+  // get
   useEffect(() => {
     if (actionType === 'create' || actionType === 'edit') {
-      handleAddInList()
+      if (selectedKhoHang && isLoading) {
+        handleAddInList()
+      }
     }
-  }, [actionType])
+  }, [selectedKhoHang, isLoading])
+
+  console.log('modal', isLoading)
 
   useEffect(() => {
     if (dataThongTin !== null) setFormPMHEdit(dataThongTin)
@@ -245,37 +251,35 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
     }
   }, [dataKhoHang, dataThongTin])
 
-  // useEffect(() => {
-  //   if (dataPMH && actionType !== 'create') {
-  //     setSelectedSctBD(dataPMH[0].SoChungTu)
-  //     setSelectedSctKT(dataPMH[0].SoChungTu)
-  //   }
-  // }, [dataPMH, actionType])
-
   useEffect(() => {
     if (actionType !== 'create') {
       setSelectedSctBD('Chọn số chứng từ')
       setSelectedSctKT('Chọn số chứng từ')
     }
   }, [newDataPMH, actionType])
+
   const handleAddInList = async () => {
     try {
+      console.log('get HH')
       const tokenLogin = localStorage.getItem('TKN')
       const response = await apis.ListHelperHH(tokenLogin, selectedKhoHang)
-
       // Kiểm tra call api thành công
       if (response.data && response.data.DataError === 0) {
         setDataHangHoa(response.data.DataResults)
+        setIsLoading(false)
       } else if (response.data.DataError === -1 || response.data.DataError === -2 || response.data.DataError === -3) {
         toast.warning(response.data.DataErrorDescription)
+        setIsLoading(false)
       } else if (response.data.DataError === -107 || response.data.DataError === -108) {
         await RETOKEN()
         handleAddInList()
       } else {
+        setIsLoading(false)
         toast.error(response.data.DataErrorDescription)
       }
     } catch (error) {
       console.error('Error while saving data:', error)
+      setIsLoading(false)
     }
   }
 
@@ -617,7 +621,9 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   const handleEditData = (data) => {
     setSelectedRowData(data)
   }
-
+  const handleChangLoading = (newLoading) => {
+    setIsLoading(newLoading)
+  }
   return (
     <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
       <div className="p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
@@ -1536,7 +1542,17 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
         )}
       </div>
 
-      {isShowModalHH && <ModalHH close={() => setIsShowModalHH(false)} data={dataHangHoa} onRowCreate={handleAddRow} dataThongSo={dataThongSo} controlDate={controlDate} />}
+      {isShowModalHH && (
+        <ModalHH
+          close={() => setIsShowModalHH(false)}
+          data={dataHangHoa}
+          onRowCreate={handleAddRow}
+          dataThongSo={dataThongSo}
+          controlDate={controlDate}
+          loading={isLoading}
+          onChangLoading={handleChangLoading}
+        />
+      )}
       {isShowModalOnlyPrint && (
         <ModalOnlyPrint
           close={() => setIsShowModalOnlyPrint(false)}

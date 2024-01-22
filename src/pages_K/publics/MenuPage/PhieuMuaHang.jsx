@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
-import { Table, Checkbox, Tooltip, Row, Col, Typography } from 'antd'
+import { Table, Checkbox, Tooltip, Row, Col, Typography, Spin } from 'antd'
 import moment from 'moment'
 import icons from '../../../untils/icons'
 import { toast } from 'react-toastify'
@@ -34,11 +34,15 @@ const PhieuMuaHang = () => {
   const [setSearchPMH, filteredPMH, searchPMH] = useSearch(data)
   const [donePMH, setDonePMH] = useState(null)
   const [hideColumns, setHideColumns] = useState(false)
+  const [checkedList, setCheckedList] = useState([])
+  const [confirmed, setConfirmed] = useState(false)
+  const [newColumns, setNewColumns] = useState([])
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
+  const [lastSearchTime, setLastSearchTime] = useState(0)
 
+  // bỏ focus option thì hidden
   useEffect(() => {
-    console.log('fix')
     const handleClickOutside = (event) => {
       if (optionContainerRef.current && !optionContainerRef.current.contains(event.target)) {
         // Click ngoài phần tử chứa isShowOption, ẩn isShowOption
@@ -52,6 +56,27 @@ const PhieuMuaHang = () => {
       document.removeEventListener('click', handleClickOutside)
     }
   }, [isShowOption])
+
+  // hide Columns
+  useEffect(() => {
+    setNewColumns(columns)
+    // Lấy thông tin từ local storage sau khi đăng nhập
+    const storedHiddenColumns = localStorage.getItem('hidenColumnPMH')
+    const parsedHiddenColumns = storedHiddenColumns ? JSON.parse(storedHiddenColumns) : null
+
+    // Áp dụng thông tin đã lưu vào checkedList và setConfirmed để ẩn cột
+    if (Array.isArray(parsedHiddenColumns) && parsedHiddenColumns.length > 0) {
+      setCheckedList(parsedHiddenColumns)
+      setConfirmed(true)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (confirmed) {
+      setCheckedList(JSON.parse(localStorage.getItem('hidenColumnPMH')))
+      setNewColumns(JSON.parse(localStorage.getItem('hidenColumnPMH')))
+    }
+  }, [confirmed])
 
   // get helper
   useEffect(() => {
@@ -154,6 +179,7 @@ const PhieuMuaHang = () => {
     getKhoanNgay()
   }, [])
 
+  //get DSPMH
   useEffect(() => {
     if (tableLoad) {
       getDSPMH()
@@ -547,24 +573,19 @@ const PhieuMuaHang = () => {
       },
     },
   ]
-  // const defaultCheckedList = columns.map((item) => item.key)
-
-  const storedHidenColumns = localStorage.getItem('hidenColumnPMH')
-  const parsedHidenColumns = storedHidenColumns ? JSON.parse(storedHidenColumns) : null
-
-  const [checkedList, setCheckedList] = useState(Array.isArray(parsedHidenColumns) && parsedHidenColumns.length > 0 ? parsedHidenColumns : [])
 
   const options = columns.map(({ key, title }) => ({
     label: title,
     value: key,
   }))
-  const newColumns = columns.map((item) => ({
-    ...item,
-    hidden: checkedList.includes(item.key),
-  }))
-  const newColumnsHide = newColumns.filter((column) => !column.hidden)
 
-  // *******************************************
+  const newColumnsHide = columns.filter((item) => !newColumns.includes(item.dataIndex))
+
+  const handleHideColumns = () => {
+    setNewColumns(checkedList)
+    setConfirmed(true)
+  }
+
   const handleDelete = (record) => {
     setActionType('delete')
     setDataRecord(record)
@@ -607,6 +628,7 @@ const PhieuMuaHang = () => {
     setIsShowModal(true)
   }
   const handleFilterDS = () => {
+    console.log('first')
     setTableLoad(true)
     if (tableLoad) {
       getDSPMH()
@@ -620,9 +642,12 @@ const PhieuMuaHang = () => {
   }
 
   const handleSearch = (event) => {
-    setTimeout(() => {
+    const currentTime = new Date().getTime()
+    if (currentTime - lastSearchTime >= 1000) {
+      setTableLoad(true)
       setSearchPMH(event.target.value)
-    }, 2000)
+      setLastSearchTime(currentTime)
+    }
   }
 
   return (
@@ -644,7 +669,14 @@ const PhieuMuaHang = () => {
                   <input
                     type="text"
                     placeholder="Nhập ký tự bạn cần tìm"
-                    onChange={handleSearch}
+                    // onChange={handleSearch}
+
+                    onBlur={handleSearch}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handleSearch(e)
+                      }
+                    }}
                     className={'px-2  w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] '}
                   />
                 </div>
@@ -712,6 +744,10 @@ const PhieuMuaHang = () => {
                               </Col>
                             ))}
                           </Row>
+
+                          <button onClick={handleHideColumns} className="mt-2 w-full border-[1px] border-gray-400 px-1 py-1 rounded-md hover:text-bg-main hover:border-bg-main">
+                            Xác Nhận
+                          </button>
                         </Checkbox.Group>
                       </div>
                     )}
@@ -746,6 +782,12 @@ const PhieuMuaHang = () => {
                       height: '18px',
                     },
                   }}
+                  // onBlur={handleFilterDS} // Gọi khi DatePicker mất focus
+                  // onKeyDown={(e) => {
+                  //   if (e.key === 'Enter') {
+                  //     handleFilterDS() // Gọi khi nhấn Enter
+                  //   }
+                  // }}
                 />
               </div>
               <div className="flex gap-x-2 items-center">
@@ -774,17 +816,6 @@ const PhieuMuaHang = () => {
                 />
               </div>
 
-              {/* <div className=" ">
-                <button
-                  onClick={handleFilterDS}
-                  className="flex items-center gap-x-1 py-[2px] px-2 bg-bg-main rounded-md border-2 border-bg-main  text-slate-50 text-base hover:bg-white hover:text-bg-main"
-                >
-                  <span>
-                    <MdFilterAlt />
-                  </span>
-                  <span>Lọc</span>
-                </button>
-              </div> */}
               <ActionButton
                 color={'slate-50'}
                 title={'Lọc'}
@@ -814,7 +845,6 @@ const PhieuMuaHang = () => {
               className="table_pmh setHeight"
               // rowSelection={rowSelection}
               columns={newColumnsHide}
-              // columns={columns}
               dataSource={filteredPMH}
               size="small"
               scroll={{
