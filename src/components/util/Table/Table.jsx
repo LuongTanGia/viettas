@@ -228,16 +228,18 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
         const includesKeyword = soCT.some((keyword) => item.includes(keyword))
         const soCT_includes = keywords.some((keyword) => item.includes(keyword))
         if (soCT_includes && a[item] !== undefined && b[item] !== undefined) {
-          return parseInt(a[item].split('.')[1]) - parseInt(b[item].split('.')[1])
+          return a[item] - b[item]
         }
         if (includesKeyword && a[item] !== undefined && b[item] !== undefined) {
-          return Number(a[item]) - Number(b[item])
+          return parseFloat(a[item]) - parseFloat(b[item])
         } else if (includesKeyword && a[item] !== undefined) {
           return -1
         } else if (includesKeyword && b[item] !== undefined) {
           return 1
         } else {
-          return a[item]?.toString().localeCompare(b[item]?.toString()) || 0
+          const aString = a[item]?.toString() || ''
+          const bString = b[item]?.toString() || ''
+          return aString.localeCompare(bString) || 0
         }
       },
       showSorterTooltip: false,

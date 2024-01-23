@@ -277,15 +277,16 @@ input[type='radio'] {
 }
 
 .css-9yxuw4-MuiAutocomplete-root .MuiOutlinedInput-root.MuiInputBase-sizeSmall {
-  padding-top: 0px;
+  padding-top: 100px;
   padding-bottom: 0px;
   height: 24px;
   border-radius: 0px;
 }
 
 .css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root {
+  box-sizing: border-box;
   height: 24px;
-  width: 150px;
+  width: 100%;
 }
 /* end */
 

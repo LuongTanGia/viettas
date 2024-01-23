@@ -15,10 +15,10 @@ import Model from './Model'
 import { DateField } from '@mui/x-date-pickers/DateField'
 import { BsSearch } from 'react-icons/bs'
 import dayjs from 'dayjs'
-import { Checkbox, Col, Row } from 'antd'
+import { Checkbox, Col, Input, Row } from 'antd'
 import { TfiMoreAlt } from 'react-icons/tfi'
 import { RiFileExcel2Fill } from 'react-icons/ri'
-import { Button, Spin, AutoComplete } from 'antd'
+import { Button, Spin } from 'antd'
 import { IoAddCircleOutline } from 'react-icons/io5'
 import { FaEyeSlash } from 'react-icons/fa'
 import { CloseSquareFilled } from '@ant-design/icons'
@@ -28,7 +28,6 @@ function PhieuBanHang() {
   const dispatch = useDispatch()
   const token = localStorage.getItem('TKN')
   const [dataLoaded, setDataLoaded] = useState(false)
-
   const [searchText, setSearchText] = useState('')
   const [modelType, setModelType] = useState('')
   const [selectVisible, setSelectVisible] = useState(false)
@@ -46,11 +45,9 @@ function PhieuBanHang() {
   const [isShowOption, setIsShowOption] = useState(false)
   const [dataDate, setDataDate] = useState({})
   const [soChungTuPrint, setSoChungTuPrint] = useState()
-
   const [hiden, setHiden] = useState([])
-  const [arraySearch, setArraySearch] = useState(JSON.parse(localStorage.getItem('arraySearch')) || [])
-
   const [checkedList, setcheckedList] = useState([])
+  const [searchData, setSearchData] = useState([])
 
   // const [searchTimeout, setSearchTimeout] = useState(null)
 
@@ -62,18 +59,15 @@ function PhieuBanHang() {
     if (stringValue.includes(searchTextLower)) {
       return true
     }
-
     // Check if it's a valid date and matches (formatted or not)
     const isDateTime = dayjs(stringValue).isValid()
     if (isDateTime) {
       const formattedValue = dayjs(stringValue).format('DD/MM/YYYY').toString()
       const formattedSearchText = searchTextLower
-
       if (formattedValue.includes(formattedSearchText)) {
         return true
       }
     }
-
     return false
   }
   useEffect(() => {
@@ -93,24 +87,31 @@ function PhieuBanHang() {
   let timerId
   const handleInputChange = (e) => {
     const inputValue = e.target.value
-    setArraySearch([...arraySearch, inputValue])
+
     clearTimeout(timerId)
     timerId = setTimeout(() => {
       setSearchText(inputValue)
-      const x = new Set(arraySearch.filter((item) => item.trim() !== ''))
-      localStorage.setItem('arraySearch', JSON.stringify([...x]))
     }, 300)
-
-    console.log(inputValue)
   }
+
+  const handleDateChange = () => {
+    clearTimeout(timerId)
+    timerId = setTimeout(() => {
+      setSearchData({
+        ...dataDate,
+        searchText: searchText.trim(),
+      })
+    }, 300)
+  }
+
   useEffect(() => {
     // setDataDate(dateHT)
     const getListData = async () => {
       setLoadingSearch(true)
-      const searchData = {
-        ...dataDate,
-        searchText: searchText.trim(),
-      }
+      // const searchData = {
+      //   ...dataDate,
+      //   searchText: searchText.trim(),
+      // }
 
       const filteredDataRes = await DANHSACHPHIEUBANHANG(API.DANHSACHPBS, token, searchData, dispatch)
 
@@ -129,7 +130,7 @@ function PhieuBanHang() {
     }
 
     getListData()
-  }, [searchText, selectMH, isShowDelete])
+  }, [searchText, selectMH, isShowDelete, searchData.NgayBatDau, searchData.NgayKetThuc])
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -237,45 +238,45 @@ function PhieuBanHang() {
     setModelType('PhieuKho')
   }
 
-  const handleSearch = async () => {
-    setLoadingSearch(true)
-    const searchData = {
-      ...dataDate,
-      searchText: searchText.trim(),
-    }
+  // const handleSearch = async () => {
+  //   setLoadingSearch(true)
+  //   const searchData = {
+  //     ...dataDate,
+  //     searchText: searchText.trim(),
+  //   }
 
-    const filteredDataRes = await DANHSACHPHIEUBANHANG(API.DANHSACHPBS, token, searchData, dispatch)
-    if (filteredDataRes === -1) {
-      setData([])
-    } else {
-      const newData = filteredDataRes.filter((record) => {
-        return Object.keys(record).some((key) => {
-          const stringValue = String(record[key]).toString().toLowerCase()
-          const searchTextLower = searchText.toString().toLowerCase()
-          const isDate = dayjs(searchTextLower, { strict: true }).isValid()
-          const isDateTime = dayjs(stringValue).isValid()
+  //   const filteredDataRes = await DANHSACHPHIEUBANHANG(API.DANHSACHPBS, token, searchData, dispatch)
+  //   if (filteredDataRes === -1) {
+  //     setData([])
+  //   } else {
+  //     const newData = filteredDataRes.filter((record) => {
+  //       return Object.keys(record).some((key) => {
+  //         const stringValue = String(record[key]).toString().toLowerCase()
+  //         const searchTextLower = searchText.toString().toLowerCase()
+  //         const isDate = dayjs(searchTextLower, { strict: true }).isValid()
+  //         const isDateTime = dayjs(stringValue).isValid()
 
-          if (isDate && isDateTime) {
-            const formattedValue = dayjs(stringValue).format('YYYY-MM-DDTHH:mm:ss')
-            const formattedSearchText = dayjs(searchTextLower, { strict: true }).format('YYYY-MM-DDTHH:mm:ss')
+  //         if (isDate && isDateTime) {
+  //           const formattedValue = dayjs(stringValue).format('YYYY-MM-DDTHH:mm:ss')
+  //           const formattedSearchText = dayjs(searchTextLower, { strict: true }).format('YYYY-MM-DDTHH:mm:ss')
 
-            if (formattedValue.startsWith(formattedSearchText)) {
-              return true
-            }
-          } else if (!isDate && stringValue.includes(searchTextLower)) {
-            return true
-          }
+  //           if (formattedValue.startsWith(formattedSearchText)) {
+  //             return true
+  //           }
+  //         } else if (!isDate && stringValue.includes(searchTextLower)) {
+  //           return true
+  //         }
 
-          return false
-        })
-      })
+  //         return false
+  //       })
+  //     })
 
-      setData(newData)
-    }
+  //     setData(newData)
+  //   }
 
-    setDataLoaded(true)
-    setLoadingSearch(false)
-  }
+  //   setDataLoaded(true)
+  //   setLoadingSearch(false)
+  // }
   // const [debouncedSearchText] = useDebounce(searchText, 2000); // 2000 milliseconds (2 seconds)
 
   // useEffect will run after 2 seconds of user inactivity
@@ -297,11 +298,9 @@ function PhieuBanHang() {
   }
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
-      handleSearch()
+      handleDateChange()
     }
   }
-  const optionsSearch = arraySearch?.map((item) => ({ value: item }))
-  const listArray = Array.from(new Set((optionsSearch || []).filter((item) => item?.value?.trim() !== ''))).slice(-10)
 
   return (
     <>
@@ -323,16 +322,13 @@ function PhieuBanHang() {
                 /> */}
                 {/* <Input placeholder="Nhập ký tự bạn cần tìm" onPressEnter={handleInputChange} onBlur={handleInputChange} /> */}
 
-                <AutoComplete
+                <Input
                   allowClear={{
                     clearIcon: <CloseSquareFilled />,
                   }}
-                  options={listArray}
-                  filterOption={(inputValue, option) => option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1}
                   placeholder="Nhập ký tự bạn cần tìm"
                   onPressEnter={handleInputChange}
                   onBlur={handleInputChange}
-                  className="w-full"
                 />
               </div>
             )}
@@ -423,15 +419,14 @@ function PhieuBanHang() {
           </div>
         </div>
       </div>
-      <div className="flex gap-3 mb-1 justify-between max-h-[100px]">
-        <div className="flex gap-3 max-h-[100px]">
-          <div className="flex gap-x-2 items-center max-h-[100px]">
+      <div className="flex gap-3 mb-1 justify-between ">
+        <div className="flex gap-3 ">
+          <div className="flex gap-x-2 items-center max-w-[200px]">
             <label htmlFor="">Ngày</label>
             <DateField
-              onBlur={handleSearch}
+              onBlur={handleDateChange}
               onKeyDown={handleKeyDown}
-              onPressEnter={handleSearch}
-              className="DatePicker_PMH max-h-[100px]"
+              className="DatePicker_PMH min-w-[100px] w-[60%]"
               format="DD/MM/YYYY"
               defaultValue={dayjs(dataDate?.NgayBatDau)}
               maxDate={dayjs(dataDate.NgayKetThuc)}
@@ -453,12 +448,12 @@ function PhieuBanHang() {
               }}
             />
           </div>
-          <div className="flex gap-x-2 items-center max-h-[100px]">
+          <div className="flex gap-x-2 items-center max-w-[200px]">
             <label htmlFor="">Đến</label>
             <DateField
-              onBlur={handleSearch}
+              onBlur={handleDateChange}
               onKeyDown={handleKeyDown}
-              className="DatePicker_PMH max-h-[100px]"
+              className="DatePicker_PMH min-w-[100px] w-[60%]"
               format="DD/MM/YYYY"
               defaultValue={dayjs(dataDate?.NgayKetThuc)}
               onChange={(newDate) => {

@@ -8,7 +8,9 @@ import './phieubanhang.css'
 import dayjs from 'dayjs'
 import { useDispatch, useSelector } from 'react-redux'
 import TableEdit from '../util/Table/EditTable'
-import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+// import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import { DateField } from '@mui/x-date-pickers/DateField'
+
 import { DANHSACHDOITUONG, DANHSACHKHOHANG, THEMPHIEUBANHANG, SUAPHIEUBANHANG, DANHSACHHANGHOA_PBS, THONGTINPHIEU } from '../../action/Actions'
 import API from '../../API/API'
 import ListHelper_HangHoa from './ListHelper_HangHoa'
@@ -278,7 +280,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                         <label htmlFor="" className="pr-1 lg:pr-[30px] lg:pl-[8px]">
                           Ngày
                         </label>
-                        <DatePicker
+                        <DateField
                           className="DatePicker_PMH max-h-[100px]"
                           format="DD/MM/YYYY"
                           defaultValue={typeAction === 'create' ? Dates.NgayCTu : dayjs(form?.NgayCTu)}
