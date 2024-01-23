@@ -45,9 +45,28 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
       </div>
     )
   }
-
+  keysOnly?.unshift('STT')
   const listColumns = keysOnly?.filter((value) => !hiden?.includes(value))
-  const newColumns = listColumns.map((item, index) => {
+  const newColumns = listColumns?.map((item, index) => {
+    if (item === 'STT') {
+      return {
+        title: columName[item] || item,
+        width: 70,
+        dataIndex: 'key',
+        key: index,
+
+        showSorterTooltip: false,
+        align: 'center',
+        ellipsis: {
+          showTitle: false,
+        },
+        render: (text, record, index) => (
+          <Tooltip placement="topLeft" title={index} className="truncate" color="blue">
+            {renderHighlightedCell(index + 1)}
+          </Tooltip>
+        ),
+      }
+    }
     if (item === 'DiaChi') {
       return {
         title: columName[item] || item,
@@ -191,7 +210,7 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
           showTitle: false,
         },
         render: (address) => (
-          <Tooltip placement="topLeft" title={address} className=" truncate" color="blue">
+          <Tooltip placement="Center" title={address} className=" truncate" color="blue">
             {renderHighlightedCell(address)}
           </Tooltip>
         ),
@@ -464,6 +483,10 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
                                         maximumFractionDigits: ThongSo.SOLETYLE,
                                       })}
                                     </Text>
+                                  ) : column.dataIndex === 'key' ? (
+                                    <Text strong className="text-center">
+                                      {data.length}
+                                    </Text>
                                   ) : (
                                     <Text strong>
                                       {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
@@ -472,6 +495,8 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
                                       })}
                                     </Text>
                                   )
+                                ) : column.dataIndex === 'TTTienMat' ? (
+                                  <Text strong>{Object.values(data).filter((value) => value.TTTienMat).length}</Text>
                                 ) : null}
                               </Table.Summary.Cell>
                             )
