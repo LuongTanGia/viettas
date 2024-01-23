@@ -1,21 +1,22 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from 'react'
-import { Button, Checkbox, Col, Input, Row, Spin, Table, Tooltip, Typography } from 'antd'
+import { AutoComplete, Button, Checkbox, Col, Row, Spin, Table, Tooltip, Typography } from 'antd'
 const { Text } = Typography
 import moment from 'moment'
 import { toast } from 'react-toastify'
-import { FaSearch, FaEyeSlash } from 'react-icons/fa'
 import { CiBarcode } from 'react-icons/ci'
 import { TfiMoreAlt } from 'react-icons/tfi'
 import { RETOKEN } from '../../action/Actions'
 import { GrStatusUnknown } from 'react-icons/gr'
 import { IoMdAddCircleOutline } from 'react-icons/io'
+import { CloseSquareFilled } from '@ant-design/icons'
+import { FaSearch, FaEyeSlash } from 'react-icons/fa'
 import { MdEdit, MdDelete, MdOutlineGroupAdd } from 'react-icons/md'
 import categoryAPI from '../../API/linkAPI'
 import { useSearch } from '../../components_T/hooks/Search'
 import ActionButton from '../../components/util/Button/ActionButton'
-import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
 import HighlightedCell from '../../components_T/hooks/HighlightedCell'
+import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
 import { nameColumsHangHoa } from '../../components/util/Table/ColumnName'
 import HangHoaModals from '../../components_T/Modal/DanhMuc/HangHoa/HangHoaModals'
 
@@ -51,7 +52,6 @@ const HangHoa = () => {
     const handleClickOutside = (event) => {
       if (showOption.current && !showOption.current.contains(event.target)) {
         setIsShowOption(false)
-        setIsShowSearch(false)
       }
     }
     document.addEventListener('click', handleClickOutside)
@@ -82,6 +82,7 @@ const HangHoa = () => {
       }
     } catch (error) {
       console.log(error)
+      setTableLoad(false)
     }
   }
   const handleLoading = () => {
@@ -198,7 +199,13 @@ const HangHoa = () => {
     }
   }
   const handleSearch = (event) => {
-    setSearchHangHoa(event.target.value)
+    let timerId
+    clearTimeout(timerId)
+    timerId = setTimeout(() => {
+      setSearchHangHoa(event.target.value)
+      setTableLoad(true)
+    }, 1500)
+    console.log(timerId)
   }
   const formatCurrency = (value) => {
     return Number(value).toLocaleString('en-US')
@@ -548,27 +555,36 @@ const HangHoa = () => {
 
   return (
     <>
-      <div className="flex flex-col gap-1 ">
-        <div className="flex justify-between gap-2 relative" ref={showOption}>
-          <div>
-            <div className="flex items-center gap-2">
+      <div className="flex flex-col gap-0.5">
+        <div className="flex justify-between gap-2 relative">
+          <div className="flex gap-2 items-center">
+            <div className="flex items-center gap-2 mt-1">
               <h1 className="text-xl font-black uppercase">Hàng Hóa</h1>
               <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
             </div>
-            <div className="flex relative ">
+            <div className="flex">
               {isShowSearch && (
-                <div className={`flex absolute left-[9rem] -top-8 transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
-                  <Input
-                    value={searchHangHoa}
+                <div className={`flex transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
+                  <AutoComplete
+                    allowClear={{
+                      clearIcon: <CloseSquareFilled />,
+                    }}
+                    // options={listArray}
+                    filterOption={(inputValue, option) => option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1}
                     placeholder="Nhập ký tự bạn cần tìm"
-                    onChange={handleSearch}
-                    className={'px-2 py-1 w-[20rem] border-slate-200 resize-none rounded-[0.5rem] border-[1px] hover:border-blue-500 outline-none text-[1rem] '}
+                    onBlur={handleSearch}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handleSearch(e)
+                      }
+                    }}
+                    className="w-full"
                   />
                 </div>
               )}
             </div>
           </div>
-          <div className="flex justify-between">
+          <div className="flex justify-between" ref={showOption}>
             <div className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5  " onClick={() => setIsShowOption(!isShowOption)} title="Chức năng khác">
               <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
             </div>
