@@ -4,7 +4,8 @@ import icons from '../untils/icons'
 import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
 import { base64ToPDF } from '../action/Actions'
-import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+// import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import { DateField } from '@mui/x-date-pickers/DateField'
 import ActionButton from '../components/util/Button/ActionButton'
 import { Select } from 'antd'
 import logo from '../assets/VTS-iSale.ico'
@@ -117,11 +118,11 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH, actionType, close2, SctC
           </div>
           <div className="border-2 my-1">
             <div className="p-4">
-              <div className="flex justify-center items-center  gap-3 pl-[74px] ">
+              <div className="flex justify-center items-center  gap-3 pl-[52px] ">
                 {/* DatePicker */}
                 <div className="flex gap-x-5 items-center">
                   <label htmlFor="">Ngày</label>
-                  <DatePicker
+                  <DateField
                     className="DatePicker_PMH"
                     format="DD/MM/YYYY"
                     maxDate={actionType !== 'create' && dayjs(formPrint.NgayKetThuc)}
@@ -146,7 +147,7 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH, actionType, close2, SctC
                 </div>
                 <div className="flex gap-x-5 items-center">
                   <label htmlFor="">Đến</label>
-                  <DatePicker
+                  <DateField
                     className="DatePicker_PMH"
                     format="DD/MM/YYYY"
                     minDate={actionType !== 'create' && dayjs(formPrint.NgayBatDau)}
@@ -167,10 +168,16 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH, actionType, close2, SctC
                         height: '18px',
                       },
                     }}
+                    onBlur={handleFilterPrint}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handleFilterPrint()
+                      }
+                    }}
                   />
                 </div>
 
-                <ActionButton
+                {/* <ActionButton
                   color={'slate-50'}
                   title={'Lọc'}
                   icon={<MdFilterAlt size={20} />}
@@ -178,11 +185,11 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH, actionType, close2, SctC
                   bg_hover={'white'}
                   color_hover={'bg-main'}
                   handleAction={handleFilterPrint}
-                />
+                /> */}
               </div>
               <div className="flex  mt-4 ">
                 <div className="flex ">
-                  <label className="px-[22px]">Số chứng từ</label>
+                  <label className="pr-[22px]">Số chứng từ</label>
 
                   <Select size="small" showSearch optionFilterProp="children" onChange={(value) => setSelectedSctBD(value)} style={{ width: '154px' }} value={selectedSctBD}>
                     {newDataPMH?.map((item) => (
@@ -194,7 +201,7 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH, actionType, close2, SctC
                 </div>
 
                 <div className="flex ">
-                  <label className="px-[16px]">Đến</label>
+                  <label className="pl-[16px] pr-[18px]">Đến</label>
 
                   <Select size="small" showSearch optionFilterProp="children" onChange={(value) => setSelectedSctKT(value)} style={{ width: '154px' }} value={selectedSctKT}>
                     {newDataPMH?.map((item) => (

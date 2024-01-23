@@ -12,6 +12,8 @@ const { BsSearch } = icons
 const ModalHH = ({ close, data, onRowCreate, dataThongSo, loading, onChangLoading }) => {
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [setSearchHH, filteredHH, searchHH] = useSearchHH(data)
+  const [searchValue, setSearchValue] = useState('')
+  const [prevSearchValue, setPrevSearchValue] = useState('')
   const [lastSearchTime, setLastSearchTime] = useState(0)
   // const [isLoading, setIsLoading] = useState(loading)
 
@@ -155,10 +157,10 @@ const ModalHH = ({ close, data, onRowCreate, dataThongSo, loading, onChangLoadin
     },
   ]
 
-  const handleSearch = (event) => {
+  const handleSearch = () => {
     const currentTime = new Date().getTime()
-    if (currentTime - lastSearchTime >= 1000) {
-      setSearchHH(event.target.value)
+    if (currentTime - lastSearchTime >= 1000 && searchValue !== prevSearchValue) {
+      setSearchHH(searchValue)
       setLastSearchTime(currentTime)
       // setIsLoading(loading)
       onChangLoading(true)
@@ -182,12 +184,14 @@ const ModalHH = ({ close, data, onRowCreate, dataThongSo, loading, onChangLoadin
                 <input
                   type="text"
                   placeholder="Nhập ký tự bạn cần tìm"
+                  onChange={(e) => setSearchValue(e.target.value)}
                   onBlur={handleSearch}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
-                      handleSearch(e)
+                      handleSearch()
                     }
                   }}
+                  onFocus={() => setPrevSearchValue(searchValue)}
                   className={'px-2  w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] '}
                 />
               </div>
