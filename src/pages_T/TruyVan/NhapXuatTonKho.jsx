@@ -1,12 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState, useRef } from 'react'
-import { Table, Select, Tooltip, Typography, Checkbox, Row, Button, Col, Spin } from 'antd'
+import { Table, Select, Tooltip, Typography, Checkbox, Row, Button, Col, Spin, AutoComplete } from 'antd'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { toast } from 'react-toastify'
-import { FaSearch, FaEyeSlash, FaEye } from 'react-icons/fa'
 import { MdFilterAlt } from 'react-icons/md'
 import { TfiMoreAlt } from 'react-icons/tfi'
 import categoryAPI from '../../API/linkAPI'
+import { CloseSquareFilled } from '@ant-design/icons'
+import { FaSearch, FaEyeSlash } from 'react-icons/fa'
 import { RETOKEN } from '../../action/Actions'
 import { useSearch } from '../../components_T/hooks/Search'
 import ActionButton from '../../components/util/Button/ActionButton'
@@ -48,7 +49,6 @@ const NhapXuatTonKho = () => {
     const handleClickOutside = (event) => {
       if (showOption.current && !showOption.current.contains(event.target)) {
         setIsShowOption(false)
-        setIsShowSearch(false)
       }
     }
     document.addEventListener('click', handleClickOutside)
@@ -126,16 +126,6 @@ const NhapXuatTonKho = () => {
         },
         TokenAccess,
       )
-      console.log({
-        NgayBatDau: khoanNgayFrom,
-        NgayKetThuc: khoanNgayTo,
-        CodeValue1From: selectedNhomFrom,
-        CodeValue1To: selectedNhomTo,
-        CodeValue1List: selectedNhomList.join(', '),
-        CodeValue2From: selectedMaFrom,
-        CodeValue2To: selectedMaTo,
-        CodeValue2List: selectedMaList.join(', '),
-      })
       if (response.data.DataError == 0) {
         setDataNXT(response.data.DataResults)
         setTableLoad(false)
@@ -231,6 +221,7 @@ const NhapXuatTonKho = () => {
   }
   const handleSearch = (event) => {
     setSearchHangHoa(event.target.value)
+    setTableLoad(true)
   }
   const formatThapPhan = (number, decimalPlaces) => {
     if (typeof number === 'number' && !isNaN(number)) {
@@ -577,31 +568,37 @@ const NhapXuatTonKho = () => {
       {!isLoading ? (
         <SimpleBackdrop />
       ) : (
-        <div className="flex flex-col gap-2">
-          <div className="flex flex-col gap-1">
-            <div className="flex justify-between relative" ref={showOption}>
-              <div>
+        <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-0.5">
+            <div className="flex justify-between">
+              <div className="flex gap-2 items-center py-1">
                 <div className="flex items-center gap-2">
                   <h1 className="text-lg font-bold text-black-600 uppercase">Nhập Xuất Tồn - Theo Kho</h1>
                   <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
                 </div>
                 <div className="flex ">
                   {isShowSearch && (
-                    <div className={`flex absolute left-[18.5rem] -top-1.5 transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
-                      <input
-                        value={searchHangHoa}
-                        type="text"
-                        placeholder="Nhập tên bạn cần tìm"
-                        onChange={handleSearch}
-                        className={
-                          'px-2 py-1 w-[20rem] border-slate-200 resize-none rounded-[0.5rem] border-[1px] hover:border-blue-500 outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis '
-                        }
+                    <div className={`flex transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
+                      <AutoComplete
+                        allowClear={{
+                          clearIcon: <CloseSquareFilled />,
+                        }}
+                        // options={listArray}
+                        filterOption={(inputValue, option) => option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1}
+                        placeholder="Nhập ký tự bạn cần tìm"
+                        onBlur={handleSearch}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            handleSearch(e)
+                          }
+                        }}
+                        className="w-full"
                       />
                     </div>
                   )}
                 </div>
               </div>
-              <div>
+              <div ref={showOption}>
                 <div className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5  " onClick={() => setIsShowOption(!isShowOption)} title="Chức năng khác">
                   <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
                 </div>
@@ -759,7 +756,6 @@ const NhapXuatTonKho = () => {
                         allowClear
                         size="small"
                         placeholder="Chọn nhóm"
-                        // disabled={selectedMaFrom?.length > 0 || selectedMaTo?.length > 0 || selectedMaList?.length > 0 || selectedNhomList?.length > 0}
                         value={selectedNhomTo}
                         onChange={(value) => {
                           setSelectedNhomTo(value)
@@ -791,9 +787,6 @@ const NhapXuatTonKho = () => {
                         filterOption
                         size="small"
                         placeholder="Danh sách nhóm"
-                        // disabled={
-                        //   selectedMaFrom?.length > 0 || selectedMaTo?.length > 0 || selectedMaList?.length > 0 || selectedNhomFrom?.length > 0 || selectedNhomTo?.length > 0
-                        // }
                         value={selectedNhomList}
                         onChange={(value) => setSelectedNhomList(value)}
                         className="w-[30vw] "
@@ -816,7 +809,6 @@ const NhapXuatTonKho = () => {
                         showSearch
                         placeholder="Chọn mã hàng"
                         size="small"
-                        // disabled={selectedNhomFrom?.length > 0 || selectedNhomTo?.length > 0 || selectedNhomList?.length > 0 || selectedMaList?.length > 0}
                         value={selectedMaFrom}
                         onChange={(value) => {
                           setSelectedMaFrom(value)
@@ -845,7 +837,6 @@ const NhapXuatTonKho = () => {
                         allowClear
                         showSearch
                         size="small"
-                        // disabled={selectedNhomFrom?.length > 0 || selectedNhomTo?.length > 0 || selectedNhomList?.length > 0 || selectedMaList?.length > 0}
                         placeholder="Chọn mã hàng"
                         value={selectedMaTo}
                         onChange={(value) => {
@@ -876,9 +867,6 @@ const NhapXuatTonKho = () => {
                         maxTagCount={1}
                         allowClear
                         size="small"
-                        // disabled={
-                        //   selectedNhomFrom?.length > 0 || selectedNhomTo?.length > 0 || selectedNhomList?.length > 0 || selectedMaFrom?.length > 0 || selectedMaTo?.length > 0
-                        // }
                         filterOption
                         value={selectedMaList}
                         onChange={(value) => setSelectedMaList(value)}

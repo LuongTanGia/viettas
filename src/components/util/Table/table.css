@@ -37,7 +37,10 @@
     height: calc(100vh - 400px);
   }
 } */
-
+.h450 .ant-table-container .ant-table-body {
+  max-height: 450px;
+  min-height: 450px;
+}
 .h400 .ant-table-container .ant-table-body {
   max-height: 400px;
   min-height: 400px;
