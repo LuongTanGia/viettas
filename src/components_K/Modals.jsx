@@ -21,7 +21,7 @@ const { Option } = Select
 
 const { TiPrinter, MdFilterAlt, IoMdAddCircle } = icons
 
-const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, dataRecord, data, controlDate, dataThongSo, loading, setDonePMH, namePage, typePage }) => {
+const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, dataRecord, data, controlDate, dataThongSo, loading, setHightLight, namePage, typePage }) => {
   const [isShowModalHH, setIsShowModalHH] = useState(false)
   const [isShowModalOnlyPrint, setIsShowModalOnlyPrint] = useState(false)
   const [isShowModalOnlyPrintWareHouse, setIsShowModalOnlyPrintWareHouse] = useState(false)
@@ -32,7 +32,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   const [doiTuongInfo, setDoiTuongInfo] = useState({ Ten: '', DiaChi: '' })
   const [selectedSctBD, setSelectedSctBD] = useState()
   const [selectedSctKT, setSelectedSctKT] = useState()
-  const [newDataPMH, setNewDataPMH] = useState(data)
+  const [newData, setNewData] = useState(data)
   const [SctCreate, setSctCreate] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
 
@@ -61,7 +61,6 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
 
   const defaultFormCreate = {
     NgayCTu: ngayChungTu,
-    // DaoHan: daoHan,
     TenDoiTuong: '',
     DiaChi: '',
     MaSoThue: '',
@@ -70,9 +69,9 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
     DataDetails: [],
   }
 
-  const [formPMH, setFormPMH] = useState(defaultFormCreate)
+  const [formCreate, setFormCreate] = useState(defaultFormCreate)
 
-  const [formPMHEdit, setFormPMHEdit] = useState({ ...dataThongTin })
+  const [formEdit, setFormEdit] = useState({ ...dataThongTin })
 
   const [formPrint, setFormPrint] = useState({
     NgayBatDau: startDate,
@@ -95,7 +94,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   }, [selectedKhoHang, isLoading])
 
   useEffect(() => {
-    if (dataThongTin !== null) setFormPMHEdit(dataThongTin)
+    if (dataThongTin !== null) setFormEdit(dataThongTin)
   }, [dataThongTin, dataThongTin.DataDetails])
 
   const columns = [
@@ -226,9 +225,16 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
 
   useEffect(() => {
     // if (dataDoiTuong && actionType === 'create') handleDoiTuongFocus(dataDoiTuong[0].Ma)
-    if (dataDoiTuong && actionType === 'create') {
+    if (dataDoiTuong && typePage === 'PMH' && actionType === 'create') {
       // Tìm giá trị có mã là 'NCVL' trong mảng dataDoiTuong
       const ncvlDoiTuong = dataDoiTuong.find((item) => item.Ma === 'NCVL')
+      // Sử dụng 'NCVL' nếu có, ngược lại sử dụng mã đầu tiên trong mảng
+      const defaultMa = ncvlDoiTuong?.Ma || dataDoiTuong[0]?.Ma || ''
+      handleDoiTuongFocus(defaultMa)
+    }
+    if (dataDoiTuong && typePage === 'NTR' && actionType === 'create') {
+      // Tìm giá trị có mã là 'NCVL' trong mảng dataDoiTuong
+      const ncvlDoiTuong = dataDoiTuong.find((item) => item.Ma === 'KHVL')
       // Sử dụng 'NCVL' nếu có, ngược lại sử dụng mã đầu tiên trong mảng
       const defaultMa = ncvlDoiTuong?.Ma || dataDoiTuong[0]?.Ma || ''
       handleDoiTuongFocus(defaultMa)
@@ -256,7 +262,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       setSelectedSctBD('Chọn số chứng từ')
       setSelectedSctKT('Chọn số chứng từ')
     }
-  }, [newDataPMH, actionType])
+  }, [newData, actionType])
 
   const handleAddInList = async () => {
     try {
@@ -325,7 +331,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       return dataNewRow
     })
 
-    setFormPMHEdit((prev) => ({ ...prev, DataDetails: dataNewRow }))
+    setFormEdit((prev) => ({ ...prev, DataDetails: dataNewRow }))
   }
 
   const handleAddEmptyRow = () => {
@@ -348,7 +354,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
     }
 
     setSelectedRowData((prevData) => [...prevData, emptyRow])
-    setFormPMHEdit((prev) => ({ ...prev, DataDetails: emptyRow }))
+    setFormEdit((prev) => ({ ...prev, DataDetails: emptyRow }))
   }
 
   const handleDoiTuongFocus = (selectedValue) => {
@@ -358,59 +364,72 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
     const selectedDoiTuongInfo = dataDoiTuong.find((item) => item.Ma === selectedValue)
     setDoiTuongInfo(selectedDoiTuongInfo || { Ten: '', DiaChi: '' })
     if (actionType === 'create') {
-      setFormPMH({
-        ...formPMH,
+      setFormCreate({
+        ...formCreate,
         TenDoiTuong: selectedDoiTuongInfo.Ten,
         DiaChi: selectedDoiTuongInfo.DiaChi,
       })
     }
-    // if (actionType === 'edit') {
-    //   setFormPMHEdit({
-    //     ...formPMHEdit,
-    //     TenDoiTuong: selectedDoiTuongInfo.Ten,
-    //     DiaChi: selectedDoiTuongInfo.DiaChi,
-    //   })
-    // }
 
     if (actionType === 'edit' && selectedValue !== 'NCVL') {
-      setFormPMHEdit({
-        ...formPMHEdit,
+      setFormEdit({
+        ...formEdit,
         TenDoiTuong: selectedDoiTuongInfo.Ten,
         DiaChi: selectedDoiTuongInfo.DiaChi,
       })
-      // console.log('first1', formPMHEdit)
+      // console.log('first1', formEdit)
     } else if (actionType === 'edit' && selectedValue === 'NCVL') {
-      setFormPMHEdit({
-        ...formPMHEdit,
+      setFormEdit({
+        ...formEdit,
       })
-      // console.log('first2', formPMHEdit)
+      // console.log('first2', formEdit)
     }
   }
 
   const handleCreateAndClose = async () => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
-      const newData = selectedRowData.map((item, index) => {
+      const dataAddSTT = selectedRowData.map((item, index) => {
         return {
           ...item,
           STT: index + 1,
         }
       })
-      const response = await apis.ThemPMH(tokenLogin, { ...formPMH, DataDetails: newData }, selectedDoiTuong, selectedKhoHang)
-      // Kiểm tra call api thành công
-      if (response.data && response.data.DataError === 0) {
-        toast.success(response.data.DataErrorDescription)
-        const soChungTu = response.data.DataResults[0].SoChungTu
-        loading()
-        setDonePMH(soChungTu)
-        close()
-      } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        handleCreateAndClose()
-      } else {
-        toast.error(response.data.DataErrorDescription)
+      if (typePage === 'PMH') {
+        const response = await apis.ThemPMH(tokenLogin, { ...formCreate, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
+
+        if (response.data && response.data.DataError === 0) {
+          toast.success(response.data.DataErrorDescription)
+          const soChungTu = response.data.DataResults[0].SoChungTu
+          loading()
+          setHightLight(soChungTu)
+          close()
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleCreateAndClose()
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
+      }
+      if (typePage === 'NTR') {
+        const response = await apis.ThemNTR(tokenLogin, { ...formCreate, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
+
+        if (response.data && response.data.DataError === 0) {
+          toast.success(response.data.DataErrorDescription)
+          const soChungTu = response.data.DataResults[0].SoChungTu
+          loading()
+          setHightLight(soChungTu)
+          close()
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleCreateAndClose()
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
       }
     } catch (error) {
       console.error('Error while saving data:', error)
@@ -420,33 +439,57 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   const handleCreate = async () => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
-      const newData = selectedRowData.map((item, index) => {
+      const dataAddSTT = selectedRowData.map((item, index) => {
         return {
           ...item,
           STT: index + 1,
         }
       })
-      const response = await apis.ThemPMH(tokenLogin, { ...formPMH, DataDetails: newData }, selectedDoiTuong, selectedKhoHang)
-      // Kiểm tra call api thành công
-      if (response.data && response.data.DataError === 0) {
-        const soChungTu = response.data.DataResults[0].SoChungTu
+      if (typePage === 'PMH') {
+        const response = await apis.ThemPMH(tokenLogin, { ...formCreate, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
+        if (response.data && response.data.DataError === 0) {
+          const soChungTu = response.data.DataResults[0].SoChungTu
 
-        toast.success(response.data.DataErrorDescription)
-        loading()
-        setDonePMH(soChungTu)
-        setSctCreate(soChungTu)
-        setFormPMH(defaultFormCreate)
-        setSelectedDoiTuong(dataDoiTuong[0].Ma)
-        setDoiTuongInfo({ Ten: '', DiaChi: '' })
-        setSelectedKhoHang(dataKhoHang[0].MaKho)
-        setSelectedRowData([])
-      } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        handleCreate()
-      } else {
-        toast.error(response.data.DataErrorDescription)
+          toast.success(response.data.DataErrorDescription)
+          loading()
+          setHightLight(soChungTu)
+          setSctCreate(soChungTu)
+          setFormCreate(defaultFormCreate)
+          setSelectedDoiTuong(dataDoiTuong[0].Ma)
+          setDoiTuongInfo({ Ten: '', DiaChi: '' })
+          setSelectedKhoHang(dataKhoHang[0].MaKho)
+          setSelectedRowData([])
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleCreate()
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
+      }
+      if (typePage === 'NTR') {
+        const response = await apis.ThemNTR(tokenLogin, { ...formCreate, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
+        if (response.data && response.data.DataError === 0) {
+          const soChungTu = response.data.DataResults[0].SoChungTu
+
+          toast.success(response.data.DataErrorDescription)
+          loading()
+          setHightLight(soChungTu)
+          setSctCreate(soChungTu)
+          setFormCreate(defaultFormCreate)
+          setSelectedDoiTuong(dataDoiTuong[0].Ma)
+          setDoiTuongInfo({ Ten: '', DiaChi: '' })
+          setSelectedKhoHang(dataKhoHang[0].MaKho)
+          setSelectedRowData([])
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleCreate()
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
       }
     } catch (error) {
       console.error('Error while saving data:', error)
@@ -456,30 +499,48 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   const handleEdit = async (dataRecord) => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
-      const newData = selectedRowData.map((item, index) => {
+      const dataAddSTT = selectedRowData.map((item, index) => {
         return {
           ...item,
           STT: index + 1,
         }
       })
-      const response = await apis.SuaPMH(tokenLogin, dataRecord.SoChungTu, { ...formPMHEdit, DataDetails: newData }, selectedDoiTuong, selectedKhoHang)
+      if (typePage === 'PMH') {
+        const response = await apis.SuaPMH(tokenLogin, dataRecord.SoChungTu, { ...formEdit, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
 
-      // Kiểm tra call api thành công
-      if (response.data && response.data.DataError === 0) {
-        toast.success(response.data.DataErrorDescription)
-        loading()
-        setDonePMH(dataRecord.SoChungTu)
+        if (response.data && response.data.DataError === 0) {
+          toast.success(response.data.DataErrorDescription)
+          loading()
+          setHightLight(dataRecord.SoChungTu)
 
-        close()
-      } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        handleEdit()
-      } else {
-        toast.error(response.data.DataErrorDescription)
+          close()
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleEdit()
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
       }
+      if (typePage === 'NTR') {
+        const response = await apis.SuaNTR(tokenLogin, dataRecord.SoChungTu, { ...formEdit, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
 
+        if (response.data && response.data.DataError === 0) {
+          toast.success(response.data.DataErrorDescription)
+          loading()
+          setHightLight(dataRecord.SoChungTu)
+
+          close()
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleEdit()
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
+      }
       // close()
     } catch (error) {
       console.error('Error while saving data:', error)
@@ -566,21 +627,37 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   const handlePrintOnLy = async () => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
-      const response = await apis.SuaPMH(tokenLogin, dataRecord.SoChungTu, { ...formPMHEdit, DataDetails: selectedRowData }, selectedDoiTuong, selectedKhoHang)
-
-      // Kiểm tra call api thành công
-      if (response.data && response.data.DataError === 0) {
-        loading()
-        setDonePMH(dataRecord.SoChungTu)
-        setSelectedRowData([])
-      } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        handleEdit()
-      } else {
-        toast.error(response.data.DataErrorDescription)
+      if (typePage === 'PMH') {
+        const response = await apis.SuaPMH(tokenLogin, dataRecord.SoChungTu, { ...formEdit, DataDetails: selectedRowData }, selectedDoiTuong, selectedKhoHang)
+        if (response.data && response.data.DataError === 0) {
+          loading()
+          setHightLight(dataRecord.SoChungTu)
+          setSelectedRowData([])
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleEdit()
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
       }
+      if (typePage === 'NTR') {
+        const response = await apis.SuaNTR(tokenLogin, dataRecord.SoChungTu, { ...formEdit, DataDetails: selectedRowData }, selectedDoiTuong, selectedKhoHang)
+        if (response.data && response.data.DataError === 0) {
+          loading()
+          setHightLight(dataRecord.SoChungTu)
+          setSelectedRowData([])
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleEdit()
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
+      }
+
       // close()
     } catch (error) {
       console.error('Error while saving data:', error)
@@ -591,18 +668,33 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
     try {
       const tokenLogin = localStorage.getItem('TKN')
       const lien = calculateTotal()
-
-      const response = await apis.InPK(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
-      // Kiểm tra call api thành công
-      if (response.data && response.data.DataError === 0) {
-        base64ToPDF(response.data.DataResults)
-      } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-        toast.warning(response.data.DataErrorDescription)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        handlePrintWareHouse()
-      } else {
-        toast.error(response.data.DataErrorDescription)
+      if (typePage === 'PMH') {
+        const response = await apis.InPK(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+        // Kiểm tra call api thành công
+        if (response.data && response.data.DataError === 0) {
+          base64ToPDF(response.data.DataResults)
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(response.data.DataErrorDescription)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handlePrintWareHouse()
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
+      }
+      if (typePage === 'NTR') {
+        const response = await apis.InPKNTR(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+        // Kiểm tra call api thành công
+        if (response.data && response.data.DataError === 0) {
+          base64ToPDF(response.data.DataResults)
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(response.data.DataErrorDescription)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handlePrintWareHouse()
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
       }
     } catch (error) {
       console.error('Error while saving data:', error)
@@ -612,20 +704,40 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   const handlePay = async (dataRecord) => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
-      const response = await apis.LapPhieuChi(tokenLogin, dataRecord.SoChungTu)
-      // Kiểm tra call api thành công
-      if (response.data && response.data.DataError === 0) {
-        toast.success(response.data.DataErrorDescription)
-        loading()
-        setDonePMH(dataRecord.SoChungTu)
-        close()
-      } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-        toast.warning(response.data.DataErrorDescription)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        handlePay()
-      } else {
-        toast.error(response.data.DataErrorDescription)
+
+      if (typePage === 'PMH') {
+        const response = await apis.LapPhieuChi(tokenLogin, dataRecord.SoChungTu)
+        // Kiểm tra call api thành công
+        if (response.data && response.data.DataError === 0) {
+          toast.success(response.data.DataErrorDescription)
+          loading()
+          setHightLight(dataRecord.SoChungTu)
+          close()
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(response.data.DataErrorDescription)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handlePay()
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
+      }
+      if (typePage === 'NTR') {
+        const response = await apis.LapPhieuChiNTR(tokenLogin, dataRecord.SoChungTu)
+        // Kiểm tra call api thành công
+        if (response.data && response.data.DataError === 0) {
+          toast.success(response.data.DataErrorDescription)
+          loading()
+          setHightLight(dataRecord.SoChungTu)
+          close()
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(response.data.DataErrorDescription)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handlePay()
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
       }
     } catch (error) {
       console.error('Error while saving data:', error)
@@ -647,7 +759,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   // }
 
   const handleTienMat = () => {
-    setFormPMH((prevFormPMH) => {
+    setFormCreate((prevFormPMH) => {
       return {
         ...prevFormPMH,
         TTTienMat: !prevFormPMH.TTTienMat,
@@ -666,7 +778,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
         return itemDate >= ngayBD && itemDate <= ngayKT
       }
     })
-    setNewDataPMH(filteredData)
+    setNewData(filteredData)
   }
 
   const handleEditData = (data) => {
@@ -702,7 +814,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                   <div className="flex gap-x-5 items-center">
                     <label htmlFor="">Ngày</label>
                     <DateField
-                      className="DatePicker_PMH"
+                      className="DatePicker_PMH max-w-[154px]"
                       format="DD/MM/YYYY"
                       maxDate={dayjs(controlDate.NgayKetThuc)}
                       defaultValue={dayjs(controlDate.NgayBatDau)}
@@ -733,7 +845,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                   <div className="flex gap-x-5 items-center ">
                     <label htmlFor="">Đến</label>
                     <DateField
-                      className="DatePicker_PMH"
+                      className="DatePicker_PMH max-w-[154px]"
                       format="DD/MM/YYYY"
                       minDate={dayjs(controlDate.NgayBatDau)}
                       defaultValue={dayjs(controlDate.NgayKetThuc)}
@@ -765,10 +877,10 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                 {actionType === 'print' ? (
                   <div className="flex  mt-4 ">
                     <div className="flex ">
-                      <label className="pr-[22px]">Số chứng từ</label>
+                      <label className="pr-[23px]">Số chứng từ</label>
 
                       <Select size="small" showSearch optionFilterProp="children" onChange={(value) => setSelectedSctBD(value)} style={{ width: '154px' }} value={selectedSctBD}>
-                        {newDataPMH?.map((item) => (
+                        {newData?.map((item) => (
                           <Option key={item.SoChungTu} value={item.SoChungTu}>
                             {item.SoChungTu}
                           </Option>
@@ -776,10 +888,10 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                       </Select>
                     </div>
                     <div className="flex ">
-                      <label className="pl-[16px] pr-[18px]">Đến</label>
+                      <label className="pl-[18px] pr-[18px]">Đến</label>
 
                       <Select size="small" showSearch optionFilterProp="children" onChange={(value) => setSelectedSctKT(value)} style={{ width: '154px' }} value={selectedSctKT}>
-                        {newDataPMH?.map((item) => (
+                        {newData?.map((item) => (
                           <Option key={item.SoChungTu} value={item.SoChungTu}>
                             {item.SoChungTu}
                           </Option>
@@ -801,7 +913,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                         dropdownMatchSelectWidth={false}
                         onChange={(value) => setSelectedSctBD(value)}
                       >
-                        {newDataPMH?.map((item) => (
+                        {newData?.map((item) => (
                           <Option key={item.SoChungTu} value={item.SoChungTu}>
                             {`${item.SoChungTu}_GV`}
                           </Option>
@@ -820,7 +932,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                         value={selectedSctKT}
                         dropdownMatchSelectWidth={false}
                       >
-                        {newDataPMH?.map((item) => (
+                        {newData?.map((item) => (
                           <Option key={item.SoChungTu} value={item.SoChungTu}>
                             {`${item.SoChungTu}_GV`}
                           </Option>
@@ -894,7 +1006,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
           <div className=" w-[90vw] h-[600px] ">
             <div className="flex gap-2">
               <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
-              <label className="text-blue-700 font-semibold uppercase pb-1">thông tin - phiếu mua hàng</label>
+              <label className="text-blue-700 font-semibold uppercase pb-1">thông tin - {namePage}</label>
             </div>
             <div className="border w-full h-[90%] rounded-sm text-sm">
               <div className="flex  md:gap-0 lg:gap-1 pl-1">
@@ -1123,8 +1235,8 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                         format="DD/MM/YYYY"
                         defaultValue={dayjs()}
                         onChange={(newDate) => {
-                          setFormPMH({
-                            ...formPMH,
+                          setFormCreate({
+                            ...formCreate,
                             NgayCTu: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
                           })
                         }}
@@ -1142,7 +1254,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                     </div>
 
                     <div className="flex  items-center ">
-                      <Checkbox className="w-full " checked={formPMH.TTTienMat} onChange={handleTienMat}>
+                      <Checkbox className="w-full " checked={formCreate.TTTienMat} onChange={handleTienMat}>
                         Tiền mặt
                       </Checkbox>
                     </div>
@@ -1172,30 +1284,48 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                     <label className="w-[86px]">Tên</label>
                     <input
                       type="text"
-                      className={`w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] h-[24px] ${selectedDoiTuong === 'NCVL' && 'hover:border-[#4897e6]'}`}
-                      value={selectedDoiTuong === 'NCVL' ? formPMH.TenDoiTuong : doiTuongInfo.Ten}
+                      className={`w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] h-[24px] ${
+                        (typePage === 'PMH' && selectedDoiTuong === 'NCVL' && 'hover:border-[#4897e6]') ||
+                        (typePage === 'NTR' && selectedDoiTuong === 'KHVL' && 'hover:border-[#4897e6]')
+                      }`}
+                      value={
+                        typePage === 'NTR' && selectedDoiTuong === 'KHVL'
+                          ? formCreate.TenDoiTuong
+                          : typePage === 'PMH' && selectedDoiTuong === 'NCVL'
+                            ? formCreate.TenDoiTuong
+                            : doiTuongInfo.Ten
+                      }
                       onChange={(e) =>
-                        setFormPMH({
-                          ...formPMH,
+                        setFormCreate({
+                          ...formCreate,
                           TenDoiTuong: e.target.value,
                         })
                       }
-                      disabled={selectedDoiTuong !== 'NCVL'}
+                      disabled={(typePage === 'PMH' && selectedDoiTuong !== 'NCVL') || (typePage === 'NTR' && selectedDoiTuong !== 'KHVL')}
                     />
                   </div>
                   <div className="flex  items-center p-1">
-                    <label className="w-[86px]">Địa chỉ {formPMH.MaDoiTuong}</label>
+                    <label className="w-[86px]">Địa chỉ</label>
                     <input
                       type="text"
-                      className={`w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] h-[24px] ${selectedDoiTuong === 'NCVL' && 'hover:border-[#4897e6]'}`}
-                      value={selectedDoiTuong === 'NCVL' ? formPMH.DiaChi : doiTuongInfo.DiaChi}
+                      className={`w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] h-[24px] ${
+                        (typePage === 'PMH' && selectedDoiTuong === 'NCVL' && 'hover:border-[#4897e6]') ||
+                        (typePage === 'NTR' && selectedDoiTuong === 'KHVL' && 'hover:border-[#4897e6]')
+                      }`}
+                      value={
+                        typePage === 'PMH' && selectedDoiTuong === 'NCVL'
+                          ? formCreate.DiaChi
+                          : typePage === 'NTR' && selectedDoiTuong === 'KHVL'
+                            ? formCreate.DiaChi
+                            : doiTuongInfo.DiaChi
+                      }
                       onChange={(e) =>
-                        setFormPMH({
-                          ...formPMH,
+                        setFormCreate({
+                          ...formCreate,
                           DiaChi: e.target.value,
                         })
                       }
-                      disabled={selectedDoiTuong !== 'NCVL'}
+                      disabled={(typePage === 'PMH' && selectedDoiTuong !== 'NCVL') || (typePage === 'NTR' && selectedDoiTuong !== 'KHVL')}
                     />
                   </div>
                 </div>
@@ -1247,10 +1377,10 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                   <input
                     type="text"
                     className="w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] hover:border-[#4897e6] h-[24px]"
-                    value={formPMH.GhiChu}
+                    value={formCreate.GhiChu}
                     onChange={(e) =>
-                      setFormPMH({
-                        ...formPMH,
+                      setFormCreate({
+                        ...formCreate,
                         GhiChu: e.target.value,
                       })
                     }
@@ -1350,8 +1480,8 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                         className="w-full border border-gray-300 outline-none  px-2   bg-[#fafafa] rounded-[4px] h-[24px]"
                         value={dataThongTin?.SoChungTu}
                         onChange={(e) =>
-                          setFormPMHEdit({
-                            ...formPMHEdit,
+                          setFormEdit({
+                            ...formEdit,
                             SoChungTu: e.target.value,
                           })
                         }
@@ -1362,12 +1492,12 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                     <div className="flex md:px-1 lg:px-4 items-center">
                       <label className="pr-1 lg:pr-[30px] lg:pl-[8px]">Ngày</label>
                       <DatePicker
-                        className="DatePicker_PMH"
+                        className="DatePicker_PMH "
                         format="DD/MM/YYYY"
                         defaultValue={dayjs(dataThongTin.NgayCTu)}
                         onChange={(newDate) => {
-                          setFormPMHEdit({
-                            ...formPMHEdit,
+                          setFormEdit({
+                            ...formEdit,
                             NgayCTu: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
                           })
                         }}
@@ -1400,15 +1530,23 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                     <label className="w-[86px]">Tên</label>
                     <input
                       type="text"
-                      className={`w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] h-[24px] ${selectedDoiTuong === 'NCVL' && 'hover:border-[#4897e6]'}`}
-                      value={selectedDoiTuong === 'NCVL' ? formPMHEdit.TenDoiTuong : doiTuongInfo.Ten}
+                      className={`w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] h-[24px] ${
+                        (typePage === 'PMH' && selectedDoiTuong === 'NCVL') || (typePage === 'NTR' && selectedDoiTuong === 'KHVL' && 'hover:border-[#4897e6]')
+                      }`}
+                      value={
+                        typePage === 'PMH' && selectedDoiTuong === 'NCVL'
+                          ? formEdit.TenDoiTuong
+                          : typePage === 'NTR' && selectedDoiTuong === 'KHVL'
+                            ? formEdit.TenDoiTuong
+                            : doiTuongInfo.Ten
+                      }
                       onChange={(e) =>
-                        setFormPMHEdit({
-                          ...formPMHEdit,
+                        setFormEdit({
+                          ...formEdit,
                           TenDoiTuong: e.target.value,
                         })
                       }
-                      disabled={selectedDoiTuong !== 'NCVL'}
+                      disabled={(typePage === 'PMH' && selectedDoiTuong !== 'NCVL') || (typePage === 'NTR' && selectedDoiTuong !== 'KHVL')}
                     />
                   </div>
                   <div className="flex  items-center  p-1">
@@ -1416,10 +1554,10 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                     <input
                       type="text"
                       className={`w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] h-[24px] ${selectedDoiTuong === 'NCVL' && 'hover:border-[#4897e6]'}`}
-                      value={selectedDoiTuong === 'NCVL' ? formPMHEdit.DiaChi : doiTuongInfo.DiaChi}
+                      value={selectedDoiTuong === 'NCVL' ? formEdit.DiaChi : doiTuongInfo.DiaChi}
                       onChange={(e) =>
-                        setFormPMHEdit({
-                          ...formPMHEdit,
+                        setFormEdit({
+                          ...formEdit,
                           DiaChi: e.target.value,
                         })
                       }
@@ -1489,8 +1627,8 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                     className="w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px]  hover:border-[#4897e6] h-[24px]"
                     defaultValue={dataThongTin.GhiChu}
                     onChange={(e) =>
-                      setFormPMHEdit({
-                        ...formPMHEdit,
+                      setFormEdit({
+                        ...formEdit,
                         GhiChu: e.target.value,
                       })
                     }
@@ -1598,10 +1736,19 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
         />
       )}
       {isShowModalOnlyPrint && (
-        <ModalOnlyPrint close={() => setIsShowModalOnlyPrint(false)} dataThongTin={dataThongTin} data={data} actionType={actionType} close2={() => close()} SctCreate={SctCreate} />
+        <ModalOnlyPrint
+          typePage={typePage}
+          close={() => setIsShowModalOnlyPrint(false)}
+          dataThongTin={dataThongTin}
+          data={data}
+          actionType={actionType}
+          close2={() => close()}
+          SctCreate={SctCreate}
+        />
       )}
       {isShowModalOnlyPrintWareHouse && (
         <ModalOnlyPrintWareHouse
+          typePage={typePage}
           close={() => setIsShowModalOnlyPrintWareHouse(false)}
           dataThongTin={dataThongTin}
           data={data}

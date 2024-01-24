@@ -94,11 +94,11 @@ export const ListHelperHHNTR = (token, MK) =>
     }
   })
 
-export const ThemNTR = (token, formPNTR, MaDoiTuong, MaKho) =>
+export const ThemNTR = (token, formCreate, MaDoiTuong, MaKho) =>
   new Promise(async (resolve, reject) => {
     try {
-      console.log('Data to be sent to API:', {
-        ...formPNTR,
+      console.log('Data to be sent to API 2:', {
+        ...formCreate,
         MaDoiTuong: MaDoiTuong,
         MaKho: MaKho,
       })
@@ -108,7 +108,7 @@ export const ThemNTR = (token, formPNTR, MaDoiTuong, MaKho) =>
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        data: { ...formPNTR, MaDoiTuong: MaDoiTuong, MaKho: MaKho },
+        data: { ...formCreate, MaDoiTuong: MaDoiTuong, MaKho: MaKho },
       })
       resolve(response)
     } catch (error) {

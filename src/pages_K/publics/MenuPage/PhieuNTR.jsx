@@ -34,7 +34,7 @@ const PhieuNTR = () => {
   const [searchValue, setSearchValue] = useState('')
   const [prevSearchValue, setPrevSearchValue] = useState('')
   const [prevdateValue, setPrevDateValue] = useState({})
-  const [donePNTR, setDonePNTR] = useState(null)
+  const [doneNTR, setDoneNTR] = useState(null)
   const [hideColumns, setHideColumns] = useState(false)
   const [checkedList, setCheckedList] = useState([])
   const [confirmed, setConfirmed] = useState(false)
@@ -674,6 +674,7 @@ const PhieuNTR = () => {
                     onBlur={handleSearch}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') {
+                        setPrevSearchValue(searchValue)
                         handleSearch()
                       }
                     }}
@@ -763,7 +764,7 @@ const PhieuNTR = () => {
               <div className="flex gap-x-2 items-center">
                 <label htmlFor="">Ngày</label>
                 <DateField
-                  className="DatePicker_PMH"
+                  className="DatePicker_PMH max-w-[110px]"
                   format="DD/MM/YYYY"
                   defaultValue={dayjs(formKhoanNgay.NgayBatDau)}
                   maxDate={dayjs(formKhoanNgay.NgayKetThuc)}
@@ -786,6 +787,7 @@ const PhieuNTR = () => {
                   onBlur={handleFilterDS}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
+                      setPrevDateValue(formKhoanNgay)
                       handleFilterDS()
                     }
                   }}
@@ -795,7 +797,7 @@ const PhieuNTR = () => {
               <div className="flex gap-x-2 items-center">
                 <label htmlFor="">Đến</label>
                 <DateField
-                  className="DatePicker_PMH"
+                  className="DatePicker_PMH max-w-[110px]"
                   format="DD/MM/YYYY"
                   minDate={dayjs(formKhoanNgay.NgayBatDau)}
                   defaultValue={dayjs(formKhoanNgay.NgayKetThuc)}
@@ -818,6 +820,7 @@ const PhieuNTR = () => {
                   onBlur={handleFilterDS}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
+                      setPrevDateValue(formKhoanNgay)
                       handleFilterDS()
                     }
                   }}
@@ -875,7 +878,7 @@ const PhieuNTR = () => {
                   handleView(record)
                 },
               })}
-              rowClassName={(record) => (record.SoChungTu === donePNTR ? 'highlighted-row' : '')}
+              rowClassName={(record) => (record.SoChungTu === doneNTR ? 'highlighted-row' : '')}
               // Bảng Tổng
               summary={() => {
                 return (
@@ -932,11 +935,11 @@ const PhieuNTR = () => {
               dataThongTin={dataThongTin}
               dataKhoHang={dataKhoHang}
               dataDoiTuong={dataDoiTuong}
-              dataPNTR={data}
+              data={data}
               controlDate={formKhoanNgay}
               dataThongSo={dataThongSo}
               loading={() => setTableLoad(true)}
-              setDonePNTR={setDonePNTR}
+              setHightLight={setDoneNTR}
             />
           )}
         </div>

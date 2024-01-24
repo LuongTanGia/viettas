@@ -679,6 +679,7 @@ const PhieuMuaHang = () => {
                     onBlur={handleSearch}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') {
+                        setPrevSearchValue(searchValue)
                         handleSearch()
                       }
                     }}
@@ -768,7 +769,7 @@ const PhieuMuaHang = () => {
               <div className="flex gap-x-2 items-center">
                 <label htmlFor="">Ngày</label>
                 <DateField
-                  className="DatePicker_PMH"
+                  className="DatePicker_PMH max-w-[110px]"
                   format="DD/MM/YYYY"
                   defaultValue={dayjs(formKhoanNgay.NgayBatDau)}
                   maxDate={dayjs(formKhoanNgay.NgayKetThuc)}
@@ -800,7 +801,7 @@ const PhieuMuaHang = () => {
               <div className="flex gap-x-2 items-center">
                 <label htmlFor="">Đến</label>
                 <DateField
-                  className="DatePicker_PMH"
+                  className="DatePicker_PMH max-w-[110px]"
                   format="DD/MM/YYYY"
                   minDate={dayjs(formKhoanNgay.NgayBatDau)}
                   defaultValue={dayjs(formKhoanNgay.NgayKetThuc)}
@@ -937,11 +938,11 @@ const PhieuMuaHang = () => {
               dataThongTin={dataThongTin}
               dataKhoHang={dataKhoHang}
               dataDoiTuong={dataDoiTuong}
-              dataPMH={data}
+              data={data}
               controlDate={formKhoanNgay}
               dataThongSo={dataThongSo}
               loading={() => setTableLoad(true)}
-              setDonePMH={setDonePMH}
+              setHightLight={setDonePMH}
             />
           )}
         </div>

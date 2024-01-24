@@ -188,6 +188,7 @@ const ModalHH = ({ close, data, onRowCreate, dataThongSo, loading, onChangLoadin
                   onBlur={handleSearch}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
+                      setPrevSearchValue(searchValue)
                       handleSearch()
                     }
                   }}

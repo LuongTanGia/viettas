@@ -12,28 +12,28 @@ import logo from '../assets/VTS-iSale.ico'
 import * as apis from '../apis'
 import { Checkbox } from 'antd'
 const { Option } = Select
-const { MdFilterAlt } = icons
+// const { MdFilterAlt } = icons
 
-const ModalOnlyPrint = ({ close, dataThongTin, dataPMH, actionType, close2, SctCreate }) => {
+const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCreate, typePage }) => {
   const [selectedSctBD, setSelectedSctBD] = useState()
   const [selectedSctKT, setSelectedSctKT] = useState()
   const [newDataPMH, setNewDataPMH] = useState()
   const startDate = dayjs(dataThongTin.NgayCTu).format('YYYY-MM-DDTHH:mm:ss')
   const endDate = dayjs(dataThongTin.NgayCTu).format('YYYY-MM-DDTHH:mm:ss')
 
-  const dataPMHByDate = useMemo(() => {
-    return dataPMH.filter((item) => {
+  const dataByDate = useMemo(() => {
+    return data.filter((item) => {
       const itemDate = new Date(item.NgayCTu)
       const ngaybt = new Date(startDate)
       const ngaykt = new Date(endDate)
 
       return itemDate >= ngaybt && itemDate <= ngaykt
     })
-  }, [dataPMH, startDate, endDate])
+  }, [data, startDate, endDate])
 
   useEffect(() => {
-    setNewDataPMH(dataPMHByDate)
-  }, [dataPMHByDate])
+    setNewDataPMH(dataByDate)
+  }, [dataByDate])
 
   const [formPrint, setFormPrint] = useState({ NgayBatDau: startDate, NgayKetThuc: endDate })
 
@@ -75,7 +75,7 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH, actionType, close2, SctC
     const ngayBD = dayjs(formPrint.NgayBatDau)
     const ngayKT = dayjs(formPrint.NgayKetThuc)
     // Lọc hàng hóa dựa trên ngày bắt đầu và ngày kết thúc
-    const filteredData = dataPMH.filter((item) => {
+    const filteredData = data.filter((item) => {
       const itemDate = dayjs(item.NgayCTu)
 
       if (ngayBD.isValid() && ngayKT.isValid()) {
@@ -89,20 +89,38 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH, actionType, close2, SctC
     try {
       const tokenLogin = localStorage.getItem('TKN')
       const lien = calculateTotal()
-      const response = await apis.InPMH(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
-      // Kiểm tra call api thành công
-      if (response.data && response.data.DataError === 0) {
-        base64ToPDF(response.data.DataResults)
-      } else if (response.data && response.data.DataError === -104) {
-        toast.error(response.data.DataErrorDescription)
-      } else if (response.data && response.data.DataError === -103) {
-        toast.error(response.data.DataErrorDescription)
-      } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-        toast.warning(response.data.DataErrorDescription)
-      } else {
-        toast.error(response.data.DataErrorDescription)
+      if (typePage === 'PMH') {
+        const response = await apis.InPMH(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+        // Kiểm tra call api thành công
+        if (response.data && response.data.DataError === 0) {
+          base64ToPDF(response.data.DataResults)
+        } else if (response.data && response.data.DataError === -104) {
+          toast.error(response.data.DataErrorDescription)
+        } else if (response.data && response.data.DataError === -103) {
+          toast.error(response.data.DataErrorDescription)
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(response.data.DataErrorDescription)
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
       }
-      close()
+      if (typePage === 'NTR') {
+        const response = await apis.InNTR(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+        // Kiểm tra call api thành công
+        if (response.data && response.data.DataError === 0) {
+          base64ToPDF(response.data.DataResults)
+        } else if (response.data && response.data.DataError === -104) {
+          toast.error(response.data.DataErrorDescription)
+        } else if (response.data && response.data.DataError === -103) {
+          toast.error(response.data.DataErrorDescription)
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(response.data.DataErrorDescription)
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
+      }
+
+      // close()
     } catch (error) {
       console.error('Error while saving data:', error)
     }
@@ -123,7 +141,7 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH, actionType, close2, SctC
                 <div className="flex gap-x-5 items-center">
                   <label htmlFor="">Ngày</label>
                   <DateField
-                    className="DatePicker_PMH"
+                    className="DatePicker_PMH max-w-[154px]"
                     format="DD/MM/YYYY"
                     maxDate={actionType !== 'create' && dayjs(formPrint.NgayKetThuc)}
                     defaultValue={actionType === 'create' ? dayjs() : dayjs(dataThongTin?.NgayCTu)}
@@ -148,7 +166,7 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH, actionType, close2, SctC
                 <div className="flex gap-x-5 items-center">
                   <label htmlFor="">Đến</label>
                   <DateField
-                    className="DatePicker_PMH"
+                    className="DatePicker_PMH max-w-[154px]"
                     format="DD/MM/YYYY"
                     minDate={actionType !== 'create' && dayjs(formPrint.NgayBatDau)}
                     defaultValue={actionType === 'create' ? dayjs() : dayjs(dataThongTin?.NgayCTu)}
@@ -189,7 +207,7 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH, actionType, close2, SctC
               </div>
               <div className="flex  mt-4 ">
                 <div className="flex ">
-                  <label className="pr-[22px]">Số chứng từ</label>
+                  <label className="pr-[23px]">Số chứng từ</label>
 
                   <Select size="small" showSearch optionFilterProp="children" onChange={(value) => setSelectedSctBD(value)} style={{ width: '154px' }} value={selectedSctBD}>
                     {newDataPMH?.map((item) => (
@@ -201,7 +219,7 @@ const ModalOnlyPrint = ({ close, dataThongTin, dataPMH, actionType, close2, SctC
                 </div>
 
                 <div className="flex ">
-                  <label className="pl-[16px] pr-[18px]">Đến</label>
+                  <label className="pl-[18px] pr-[18px]">Đến</label>
 
                   <Select size="small" showSearch optionFilterProp="children" onChange={(value) => setSelectedSctKT(value)} style={{ width: '154px' }} value={selectedSctKT}>
                     {newDataPMH?.map((item) => (
