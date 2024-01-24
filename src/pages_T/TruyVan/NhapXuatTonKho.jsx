@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState, useRef } from 'react'
-import { Table, Select, Tooltip, Typography, Checkbox, Row, Button, Col, Spin, AutoComplete } from 'antd'
+import { Table, Select, Tooltip, Typography, Checkbox, Row, Button, Col, Spin, AutoComplete, Input } from 'antd'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { toast } from 'react-toastify'
 import { MdFilterAlt } from 'react-icons/md'
@@ -56,25 +56,101 @@ const NhapXuatTonKho = () => {
       document.removeEventListener('click', handleClickOutside)
     }
   }, [])
+
   useEffect(() => {
+    const getListNhomHangNXT = async () => {
+      try {
+        const response = await categoryAPI.ListNhomHangNXT(TokenAccess)
+        if (response.data.DataError == 0) {
+          setNhomHangNXT(response.data.DataResults)
+          setIsLoading(true)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          getListNhomHangNXT()
+        } else {
+          console.log(response.data)
+          setIsLoading(true)
+        }
+      } catch (error) {
+        console.log(error)
+        setIsLoading(true)
+      }
+    }
     if (!isLoading) {
       getListNhomHangNXT()
     }
   }, [isLoading])
 
   useEffect(() => {
+    const getListHangHoaNXT = async () => {
+      try {
+        const response = await categoryAPI.ListHangHoaNXT(TokenAccess)
+        if (response.data.DataError == 0) {
+          setHangHoaNXT(response.data.DataResults)
+          setIsLoading(true)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          getListHangHoaNXT()
+        } else {
+          console.log(response.data)
+          setIsLoading(true)
+        }
+      } catch (error) {
+        console.log(error)
+        setIsLoading(true)
+      }
+    }
     if (!isLoading) {
       getListHangHoaNXT()
     }
   }, [isLoading])
 
   useEffect(() => {
+    const getListKhoNXT = async () => {
+      try {
+        const response = await categoryAPI.ListKhoHangNXT(TokenAccess)
+        if (response.data.DataError == 0) {
+          setKhoHangNXT(response.data.DataResults)
+          setIsLoading(true)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          getListKhoNXT()
+        } else {
+          console.log(response.data)
+          setIsLoading(true)
+        }
+      } catch (error) {
+        console.log(error)
+        setIsLoading(true)
+      }
+    }
+
     if (!isLoading) {
       getListKhoNXT()
     }
   }, [isLoading])
 
   useEffect(() => {
+    const getTimeSetting = async () => {
+      try {
+        const response = await categoryAPI.KhoanNgay(TokenAccess)
+        if (response.data.DataError == 0) {
+          setKhoanNgayFrom(response.data.NgayBatDau)
+          setKhoanNgayTo(response.data.NgayKetThuc)
+          setIsLoading(true)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          getTimeSetting()
+        } else {
+          console.log(response.data)
+          setIsLoading(true)
+        }
+      } catch (error) {
+        console.log(error)
+        setIsLoading(true)
+      }
+    }
+
     if (!isLoading) {
       getTimeSetting()
     }
@@ -84,6 +160,7 @@ const NhapXuatTonKho = () => {
     const getDataNXTFirst = async () => {
       try {
         if (isLoading == true && tableLoad == true) {
+          setTableLoad(true)
           const response = await categoryAPI.InfoNXTTheoKho(
             {
               NgayBatDau: khoanNgayFrom,
@@ -100,16 +177,17 @@ const NhapXuatTonKho = () => {
             getDataNXTFirst()
           } else {
             toast.error(response.data.DataErrorDescription)
+            setTableLoad(false)
           }
         }
       } catch (error) {
         console.log(error)
       }
     }
-    if (tableLoad) {
+    if (tableLoad || searchHangHoa) {
       getDataNXTFirst()
     }
-  }, [isLoading, tableLoad])
+  }, [searchHangHoa, isLoading, tableLoad])
 
   const getDataNXT = async () => {
     try {
@@ -146,82 +224,13 @@ const NhapXuatTonKho = () => {
       getDataNXT()
     }
   }
-  const getListNhomHangNXT = async () => {
-    try {
-      const response = await categoryAPI.ListNhomHangNXT(TokenAccess)
-      if (response.data.DataError == 0) {
-        setNhomHangNXT(response.data.DataResults)
-        setIsLoading(true)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getListNhomHangNXT()
-      } else {
-        console.log(response.data)
-        setIsLoading(true)
-      }
-    } catch (error) {
-      console.log(error)
-      setIsLoading(true)
-    }
-  }
-  const getListHangHoaNXT = async () => {
-    try {
-      const response = await categoryAPI.ListHangHoaNXT(TokenAccess)
-      if (response.data.DataError == 0) {
-        setHangHoaNXT(response.data.DataResults)
-        setIsLoading(true)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getListHangHoaNXT()
-      } else {
-        console.log(response.data)
-        setIsLoading(true)
-      }
-    } catch (error) {
-      console.log(error)
-      setIsLoading(true)
-    }
-  }
-  const getListKhoNXT = async () => {
-    try {
-      const response = await categoryAPI.ListKhoHangNXT(TokenAccess)
-      if (response.data.DataError == 0) {
-        setKhoHangNXT(response.data.DataResults)
-        setIsLoading(true)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getListKhoNXT()
-      } else {
-        console.log(response.data)
-        setIsLoading(true)
-      }
-    } catch (error) {
-      console.log(error)
-      setIsLoading(true)
-    }
-  }
-  const getTimeSetting = async () => {
-    try {
-      const response = await categoryAPI.KhoanNgay(TokenAccess)
-      if (response.data.DataError == 0) {
-        setKhoanNgayFrom(response.data.NgayBatDau)
-        setKhoanNgayTo(response.data.NgayKetThuc)
-        setIsLoading(true)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getTimeSetting()
-      } else {
-        console.log(response.data)
-        setIsLoading(true)
-      }
-    } catch (error) {
-      console.log(error)
-      setIsLoading(true)
-    }
-  }
+
   const handleSearch = (event) => {
-    setSearchHangHoa(event.target.value)
-    setTableLoad(true)
+    let timerId
+    clearTimeout(timerId)
+    timerId = setTimeout(() => {
+      setSearchHangHoa(event.target.value)
+    }, 300)
   }
   const formatThapPhan = (number, decimalPlaces) => {
     if (typeof number === 'number' && !isNaN(number)) {
@@ -246,9 +255,10 @@ const NhapXuatTonKho = () => {
     setcheckedList(checkedValues)
   }
   const onClickSubmit = () => {
+    setTableLoad(true)
     setTimeout(() => {
       setHiddenRow(checkedList)
-      setTableLoad(true)
+      setTableLoad(false)
       localStorage.setItem('hidenColumns', JSON.stringify(checkedList))
     }, 1000)
   }
@@ -579,19 +589,13 @@ const NhapXuatTonKho = () => {
                 <div className="flex ">
                   {isShowSearch && (
                     <div className={`flex transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
-                      <AutoComplete
+                      <Input
                         allowClear={{
                           clearIcon: <CloseSquareFilled />,
                         }}
-                        // options={listArray}
-                        filterOption={(inputValue, option) => option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1}
                         placeholder="Nhập ký tự bạn cần tìm"
                         onBlur={handleSearch}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            handleSearch(e)
-                          }
-                        }}
+                        onPressEnter={handleSearch}
                         className="w-full"
                       />
                     </div>

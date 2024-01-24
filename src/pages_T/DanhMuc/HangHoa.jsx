@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from 'react'
-import { AutoComplete, Button, Checkbox, Col, Row, Spin, Table, Tooltip, Typography } from 'antd'
+import { Button, Checkbox, Col, Input, Row, Spin, Table, Tooltip, Typography } from 'antd'
 const { Text } = Typography
 import moment from 'moment'
 import { toast } from 'react-toastify'
@@ -9,8 +9,8 @@ import { TfiMoreAlt } from 'react-icons/tfi'
 import { RETOKEN } from '../../action/Actions'
 import { GrStatusUnknown } from 'react-icons/gr'
 import { IoMdAddCircleOutline } from 'react-icons/io'
-import { CloseSquareFilled } from '@ant-design/icons'
 import { FaSearch, FaEyeSlash } from 'react-icons/fa'
+import { CloseSquareFilled } from '@ant-design/icons'
 import { MdEdit, MdDelete, MdOutlineGroupAdd } from 'react-icons/md'
 import categoryAPI from '../../API/linkAPI'
 import { useSearch } from '../../components_T/hooks/Search'
@@ -43,10 +43,10 @@ const HangHoa = () => {
   const [options, setOptions] = useState()
 
   useEffect(() => {
-    if (tableLoad) {
+    if (searchHangHoa || tableLoad) {
       getListHangHoa()
     }
-  }, [tableLoad, isLoading])
+  }, [searchHangHoa])
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -71,6 +71,7 @@ const HangHoa = () => {
 
   const getListHangHoa = async () => {
     try {
+      setTableLoad(true)
       const response = await categoryAPI.HangHoa(TokenAccess)
       if (response.data.DataError === 0) {
         setDataHangHoa(response.data.DataResults)
@@ -203,9 +204,7 @@ const HangHoa = () => {
     clearTimeout(timerId)
     timerId = setTimeout(() => {
       setSearchHangHoa(event.target.value)
-      setTableLoad(true)
-    }, 1500)
-    console.log(timerId)
+    }, 300)
   }
   const formatCurrency = (value) => {
     return Number(value).toLocaleString('en-US')
@@ -231,9 +230,10 @@ const HangHoa = () => {
     setcheckedList(checkedValues)
   }
   const onClickSubmit = () => {
+    setTableLoad(true)
     setTimeout(() => {
       setHiddenRow(checkedList)
-      setTableLoad(true)
+      setTableLoad(false)
       localStorage.setItem('hidenColumns', JSON.stringify(checkedList))
     }, 1000)
   }
@@ -565,19 +565,13 @@ const HangHoa = () => {
             <div className="flex">
               {isShowSearch && (
                 <div className={`flex transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
-                  <AutoComplete
+                  <Input
                     allowClear={{
                       clearIcon: <CloseSquareFilled />,
                     }}
-                    // options={listArray}
-                    filterOption={(inputValue, option) => option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1}
                     placeholder="Nhập ký tự bạn cần tìm"
                     onBlur={handleSearch}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        handleSearch(e)
-                      }
-                    }}
+                    onPressEnter={handleSearch}
                     className="w-full"
                   />
                 </div>

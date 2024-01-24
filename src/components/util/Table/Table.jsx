@@ -319,20 +319,20 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
       ...col,
       onCell: (record) => {
         const cellValue = record[col.dataIndex]
-        let inputType
+        let inputtype
         if (typeof cellValue === 'number') {
-          inputType = 'number'
+          inputtype = 'number'
         } else if (typeof cellValue === 'boolean' && param !== null) {
-          inputType = 'checkbox'
+          inputtype = 'checkbox'
         } else if (col.dataIndex === 'MaHang' || col.dataIndex === 'DVT') {
-          inputType = 'select'
+          inputtype = 'select'
         } else {
-          inputType = 'text'
+          inputtype = 'text'
         }
 
         return {
           record,
-          inputType,
+          inputtype,
           dataIndex: col.dataIndex,
           title: col.title,
           editing: isEditing(record),
@@ -455,13 +455,11 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
                         {/* <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"> {data.length + 1}</Table.Summary.Cell> */}
                         {columns
                           .filter((column) => column.render)
-                          .map((column) => {
+                          .map((column, index) => {
                             const isNumericColumn = typeof data[0]?.[column.dataIndex] === 'number'
-
                             return (
-                              <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                              <Table.Summary.Cell key={`summary-cell-${index + 1}`} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
                                 {isNumericColumn ? (
-                                  // Use conditional rendering based on column.dataIndex
                                   column.dataIndex === 'TongSoLuong' ? (
                                     <Text strong>
                                       {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {

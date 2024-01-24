@@ -37,6 +37,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
   const [lastNumber13Main, setLastNumber13Main] = useState('')
   const [selectedTem, setSelectedTem] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [tableLoad, setTableLoad] = useState(true)
   const [isShowModal, setIsShowModal] = useState(false)
   const [setSearchHangHoa, filteredHangHoa, searchHangHoa] = useSearch(HangHoaCT)
   const [selectedRowData, setSelectedRowData] = useState([])
@@ -67,6 +68,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
     TenHang: '',
     DVTKho: '',
     MaVach: '',
+    SoTem: '',
   })
 
   useEffect(() => {
@@ -92,10 +94,6 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
   useEffect(() => {
     const getListHelper = async () => {
       try {
-        const dataHHCT = await categoryAPI.ListHangHoaCT(TokenAccess)
-        if (dataHHCT.data.DataError == 0) {
-          setHangHoaCT(dataHHCT.data.DataResults)
-        }
         const dataNH = await categoryAPI.ListNhomHang(TokenAccess)
         if (dataNH.data.DataError == 0) {
           setNhomHang(dataNH.data.DataResults)
@@ -114,6 +112,23 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
       getListHelper()
     }
   }, [isLoading])
+
+  useEffect(() => {
+    const getListHHCT = async () => {
+      try {
+        setTableLoad(true)
+        const dataHHCT = await categoryAPI.ListHangHoaCT(TokenAccess)
+        if (dataHHCT.data.DataError == 0) {
+          setHangHoaCT(dataHHCT.data.DataResults)
+          setTableLoad(false)
+        }
+      } catch (error) {
+        console.log(error)
+        setTableLoad(false)
+      }
+    }
+    getListHHCT()
+  }, [searchHangHoa])
 
   useEffect(() => {
     handleView()
@@ -169,7 +184,11 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
     return ''
   }
   const handleSearch = (event) => {
-    setSearchHangHoa(event.target.value)
+    let timerId
+    clearTimeout(timerId)
+    timerId = setTimeout(() => {
+      setSearchHangHoa(event.target.value)
+    }, 300)
   }
   // Table Barcode
   const isAddBarCode = useMemo(() => hangHoaForm.Barcodes?.map((item) => item.MaVach).includes(''), [hangHoaForm.Barcodes])
@@ -335,7 +354,6 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
       type == 'create' ? setHangHoaForm({ ...hangHoaForm, HangHoa_CTs: selectedRowData }) : setDataView({ ...dataView, HangHoa_CTs: selectedRowData })
     }
   }
-
   // Handle CRUD
   const handleCreate = async (isSave = true) => {
     if (
@@ -503,6 +521,12 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
     }
   }
   const handlePrintBar = async () => {
+    if (!selectedTem) {
+      setErrors({
+        SoTem: selectedTem.trim() ? '' : 'Số tem không được trống',
+      })
+      return
+    }
     try {
       const response = await categoryAPI.InMaVach(
         {
@@ -1104,6 +1128,9 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
                               className={`${errors.MaVach ? 'border-red-500' : ''} w-full overflow-hidden whitespace-nowrap`}
                               value={hangHoaForm?.MaVach ? `${hangHoaForm?.MaVach}${lastNumber13Main}` : ''}
                               maxLength={12}
+                              allowClear={{
+                                clearIcon: <CloseSquareFilled />,
+                              }}
                               onChange={(e) => {
                                 const inputValue = e.target.value
                                 const numericValue = inputValue.replace(/[^0-9]/g, '')
@@ -1580,6 +1607,9 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
                               className={`${errors.MaVach ? 'border-red-500' : ''} w-full overflow-hidden whitespace-nowrap`}
                               value={hangHoaForm?.MaVach ? `${hangHoaForm?.MaVach}${lastNumber13Main}` : ''}
                               maxLength={12}
+                              allowClear={{
+                                clearIcon: <CloseSquareFilled />,
+                              }}
                               onChange={(e) => {
                                 const inputValue = e.target.value
                                 const numericValue = inputValue.replace(/[^0-9]/g, '')
@@ -1989,7 +2019,6 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
                         <Select
                           allowClear
                           filterOption
-                          // disabled={selectedBarCodeFrom?.length > 0 || selectedBarCodeTo?.length > 0 || selectedBarCodeList?.length > 0 || selectednhomList?.length > 0}
                           placeholder="Chọn nhóm"
                           value={selectednhomTo}
                           onChange={(value) => {
@@ -2043,7 +2072,6 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
                         <Select
                           allowClear
                           filterOption
-                          // disabled={selectednhomFrom?.length > 0 || selectednhomTo?.length > 0 || selectednhomList?.length > 0 || selectedBarCodeList?.length > 0}
                           placeholder="Chọn mã hàng"
                           value={selectedBarCodeFrom}
                           onChange={(value) => {
@@ -2128,11 +2156,16 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
                     <div className="gap-1 flex items-center">
                       <label className="required whitespace-nowrap">Số tem</label>
                       <InputNumber
+                        placeholder={errors.SoTem && errors.SoTem}
                         min={1}
+                        className={`${errors.SoTem ? 'border-red-500' : ''} w-full overflow-hidden whitespace-nowrap`}
                         max={999999999999}
                         style={{ width: '100%' }}
                         formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                        onChange={(value) => setSelectedTem(value)}
+                        onChange={(value) => {
+                          setSelectedTem(value)
+                          setErrors({ ...errors, SoTem: '' })
+                        }}
                         required
                       />
                     </div>
@@ -2157,19 +2190,13 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
                     </div>
                     <div className="flex w-[20rem] overflow-hidden">
                       {isShowSearch && (
-                        <AutoComplete
+                        <Input
                           allowClear={{
                             clearIcon: <CloseSquareFilled />,
                           }}
-                          // options={listArray}
-                          filterOption={(inputValue, option) => option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1}
                           placeholder="Nhập ký tự bạn cần tìm"
                           onBlur={handleSearch}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                              handleSearch(e)
-                            }
-                          }}
+                          onPressEnter={handleSearch}
                           className="w-full"
                         />
                       )}
@@ -2177,6 +2204,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
                   </div>
                   <div className="p-2 rounded m-1 flex flex-col gap-2 border-2">
                     <Table
+                      loading={tableLoad}
                       className="h450"
                       dataSource={filteredHangHoa}
                       columns={title}

@@ -3,11 +3,12 @@ import { useState, useEffect, useRef } from 'react'
 import { Input, Table, Tooltip, Typography } from 'antd'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 const { Text } = Typography
+import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
 import { FaSearch } from 'react-icons/fa'
+import { TfiMoreAlt } from 'react-icons/tfi'
 import { IoMdAddCircleOutline } from 'react-icons/io'
 import { MdEdit, MdDelete, MdPrint, MdFilterAlt } from 'react-icons/md'
-import dayjs from 'dayjs'
 import categoryAPI from '../../../../API/linkAPI'
 import { RETOKEN } from '../../../../action/Actions'
 import { useSearch } from '../../../../components_T/hooks/Search'
@@ -25,15 +26,15 @@ const PhieuNhapDieuChinh = () => {
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
   const [dataNDC, setDataNDC] = useState('')
+  const [isDataKhoDC, setIsDataKhoDC] = useState('')
   const [setSearchHangHoa, filteredHangHoa, searchHangHoa] = useSearch(dataNDC)
   const [isShowSearch, setIsShowSearch] = useState(false)
+  const [isShowOption, setIsShowOption] = useState(false)
   const [isShowModal, setIsShowModal] = useState(false)
-  const [isDataKhoDC, setIsDataKhoDC] = useState('')
   const [khoanNgayFrom, setKhoanNgayFrom] = useState('')
   const [khoanNgayTo, setKhoanNgayTo] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [tableLoad, setTableLoad] = useState(true)
-
   const [actionType, setActionType] = useState('')
   const showOption = useRef(null)
 
@@ -404,12 +405,12 @@ const PhieuNhapDieuChinh = () => {
         <>
           <div className="flex flex-col gap-1">
             <div className="flex justify-between gap-2">
-              <div ref={showOption}>
+              <div>
                 <div className="flex items-center gap-2">
                   <h1 className="text-lg font-bold uppercase">Phiếu Nhập Kho Điều Chỉnh</h1>
                   <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
                 </div>
-                <div className="flex relative ">
+                <div className="flex relative " ref={showOption}>
                   {isShowSearch && (
                     <div className={`flex absolute left-[19rem] -top-8 transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
                       <Input
@@ -422,6 +423,11 @@ const PhieuNhapDieuChinh = () => {
                       />
                     </div>
                   )}
+                </div>
+              </div>
+              <div>
+                <div className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5  " onClick={() => setIsShowOption(!isShowOption)} title="Chức năng khác">
+                  <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
                 </div>
               </div>
             </div>

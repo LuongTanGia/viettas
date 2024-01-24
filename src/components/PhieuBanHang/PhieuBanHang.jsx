@@ -84,6 +84,7 @@ function PhieuBanHang() {
     }
     getDate()
   }, [])
+
   let timerId
   const handleInputChange = (e) => {
     const inputValue = e.target.value
@@ -91,7 +92,7 @@ function PhieuBanHang() {
     clearTimeout(timerId)
     timerId = setTimeout(() => {
       setSearchText(inputValue)
-    }, 300)
+    }, 1000)
   }
 
   const handleDateChange = () => {
@@ -114,7 +115,6 @@ function PhieuBanHang() {
       // }
 
       const filteredDataRes = await DANHSACHPHIEUBANHANG(API.DANHSACHPBS, token, searchData, dispatch)
-
       if (filteredDataRes === -1) {
         setData([])
       } else {
