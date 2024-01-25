@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
-
 import Logo from '../../assets/img/logo.png'
+import LogoHeader from '../../assets/VTS-iSale.ico'
 import ChangePass from './ChangePass'
 import { useState } from 'react'
 // eslint-disable-next-line react/prop-types
@@ -30,7 +30,7 @@ function Header({ handleToggleSidebar, refs }) {
       <header id="header" className="header fixed-top d-flex align-items-center z-10 h-[50px]" ref={refs}>
         <div className="d-flex align-items-center justify-content-between">
           <Link href="index.html" className="logo d-flex align-items-center justify-content-start">
-            <img src="/VTS-iSale.ico" alt="VTS-iSale" />
+            <img src={LogoHeader} />
             <span className="d-none d-lg-block">VTS - iSale</span>
             <i className="bi bi-list toggle-sidebar-btn" onClick={handleToggleSidebar}></i>
           </Link>
