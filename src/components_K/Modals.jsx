@@ -19,9 +19,24 @@ import logo from '../assets/VTS-iSale.ico'
 import { Table, Select, Tooltip, Checkbox, FloatButton } from 'antd'
 const { Option } = Select
 
-const { TiPrinter, MdFilterAlt, IoMdAddCircle } = icons
+const { TiPrinter, IoMdAddCircle } = icons
 
-const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, dataRecord, data, controlDate, dataThongSo, loading, setHightLight, namePage, typePage }) => {
+const Modals = ({
+  close,
+  actionType,
+  dataThongTin,
+  // dataSuaThongTin,
+  dataKhoHang,
+  dataDoiTuong,
+  dataRecord,
+  data,
+  controlDate,
+  dataThongSo,
+  loading,
+  setHightLight,
+  namePage,
+  typePage,
+}) => {
   const [isShowModalHH, setIsShowModalHH] = useState(false)
   const [isShowModalOnlyPrint, setIsShowModalOnlyPrint] = useState(false)
   const [isShowModalOnlyPrintWareHouse, setIsShowModalOnlyPrintWareHouse] = useState(false)
@@ -35,6 +50,10 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   const [newData, setNewData] = useState(data)
   const [SctCreate, setSctCreate] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [errors, setErrors] = useState({
+    Ten: '',
+    DiaChi: '',
+  })
 
   const isAdd = useMemo(() => selectedRowData.map((item) => item.MaHang).includes('Chọn mã hàng'), [selectedRowData])
   //  show modal HH = F9
@@ -312,21 +331,21 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
       if (prevData.some((item) => item.MaHang === newRow.MaHang))
         dataNewRow = prevData.map((item) => {
           if (item.MaHang === newRow.MaHang) {
-            // return {
-            //   ...item,
-            //   SoLuong: ++item.SoLuong,
-            // }
-            toast.warning('Hàng hóa đã tồn tại ở bảng chi tiết', {
-              autoClose: 1000,
-            })
+            return {
+              ...item,
+              SoLuong: ++item.SoLuong,
+            }
+            // toast.warning('Hàng hóa đã tồn tại ở bảng chi tiết', {
+            //   autoClose: 1000,
+            // })
           }
           return item
         })
       else {
         dataNewRow = [...prevData, { ...newRow, DVTDF: newRow.DVT, TyLeCKTT: 0, TienCKTT: 0 }]
-        toast.success('Chọn hàng hóa thành công', {
-          autoClose: 1000,
-        })
+        // toast.success('Chọn hàng hóa thành công', {
+        //   autoClose: 1000,
+        // })
       }
       return dataNewRow
     })
@@ -369,6 +388,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
         TenDoiTuong: selectedDoiTuongInfo.Ten,
         DiaChi: selectedDoiTuongInfo.DiaChi,
       })
+      setErrors({ Ten: '', DiaChi: '' })
     }
 
     if (actionType === 'edit' && selectedValue !== 'NCVL') {
@@ -381,12 +401,20 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
     } else if (actionType === 'edit' && selectedValue === 'NCVL') {
       setFormEdit({
         ...formEdit,
+        // TenDoiTuong: selectedDoiTuongInfo.Ten,
+        // DiaChi: selectedDoiTuongInfo.DiaChi,
       })
-      // console.log('first2', formEdit)
     }
   }
 
   const handleCreateAndClose = async () => {
+    if (!formCreate?.TenDoiTuong?.trim() || !formCreate?.DiaChi?.trim()) {
+      setErrors({
+        Ten: formCreate?.TenDoiTuong?.trim() ? '' : 'Tên đối tượng không được để trống',
+        DiaChi: formCreate?.DiaChi?.trim() ? '' : 'Địa chỉ không được để trống',
+      })
+      return
+    }
     try {
       const tokenLogin = localStorage.getItem('TKN')
       const dataAddSTT = selectedRowData.map((item, index) => {
@@ -437,6 +465,13 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   }
 
   const handleCreate = async () => {
+    if (!formCreate?.TenDoiTuong?.trim() || !formCreate?.DiaChi?.trim()) {
+      setErrors({
+        Ten: formCreate?.TenDoiTuong?.trim() ? '' : 'Tên đối tượng không được để trống',
+        DiaChi: formCreate?.DiaChi?.trim() ? '' : 'Địa chỉ không được để trống',
+      })
+      return
+    }
     try {
       const tokenLogin = localStorage.getItem('TKN')
       const dataAddSTT = selectedRowData.map((item, index) => {
@@ -497,6 +532,13 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
   }
 
   const handleEdit = async (dataRecord) => {
+    // if (!formEdit?.TenDoiTuong?.trim() || !formEdit?.DiaChi?.trim()) {
+    //   setErrors({
+    //     Ten: formEdit?.TenDoiTuong?.trim() ? '' : 'Tên đối tượng không được để trống',
+    //     DiaChi: formEdit?.DiaChi?.trim() ? '' : 'Địa chỉ không được để trống',
+    //   })
+    //   return
+    // }
     try {
       const tokenLogin = localStorage.getItem('TKN')
       const dataAddSTT = selectedRowData.map((item, index) => {
@@ -1283,11 +1325,16 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                   <div className="flex items-center  p-1">
                     <label className="w-[86px]">Tên</label>
                     <input
+                      placeholder={errors.Ten}
                       type="text"
-                      className={`w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] h-[24px] ${
-                        (typePage === 'PMH' && selectedDoiTuong === 'NCVL' && 'hover:border-[#4897e6]') ||
-                        (typePage === 'NTR' && selectedDoiTuong === 'KHVL' && 'hover:border-[#4897e6]')
-                      }`}
+                      className={`w-full border-[1px] outline-none px-2 rounded-[4px] h-[24px] border-gray-300
+                       ${
+                         (typePage === 'PMH' && selectedDoiTuong === 'NCVL' && 'hover:border-[#4897e6]') ||
+                         (typePage === 'NTR' && selectedDoiTuong === 'KHVL' && 'hover:border-[#4897e6]')
+                       }
+                       ${typePage === 'PMH' && selectedDoiTuong === 'NCVL' && errors.Ten ? 'border-red-500' : ''} 
+                       ${typePage === 'NTR' && selectedDoiTuong === 'KHVL' && errors.Ten ? 'border-red-500' : ''} 
+                        `}
                       value={
                         typePage === 'NTR' && selectedDoiTuong === 'KHVL'
                           ? formCreate.TenDoiTuong
@@ -1295,23 +1342,29 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                             ? formCreate.TenDoiTuong
                             : doiTuongInfo.Ten
                       }
-                      onChange={(e) =>
+                      onChange={(e) => {
                         setFormCreate({
                           ...formCreate,
                           TenDoiTuong: e.target.value,
                         })
-                      }
+                        setErrors({ ...errors, Ten: '' })
+                      }}
                       disabled={(typePage === 'PMH' && selectedDoiTuong !== 'NCVL') || (typePage === 'NTR' && selectedDoiTuong !== 'KHVL')}
                     />
                   </div>
                   <div className="flex  items-center p-1">
                     <label className="w-[86px]">Địa chỉ</label>
                     <input
+                      placeholder={errors.DiaChi}
                       type="text"
-                      className={`w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] h-[24px] ${
-                        (typePage === 'PMH' && selectedDoiTuong === 'NCVL' && 'hover:border-[#4897e6]') ||
-                        (typePage === 'NTR' && selectedDoiTuong === 'KHVL' && 'hover:border-[#4897e6]')
-                      }`}
+                      className={`w-full border-[1px] outline-none px-2 rounded-[4px] h-[24px] border-gray-300
+                       ${
+                         (typePage === 'PMH' && selectedDoiTuong === 'NCVL' && 'hover:border-[#4897e6]') ||
+                         (typePage === 'NTR' && selectedDoiTuong === 'KHVL' && 'hover:border-[#4897e6]')
+                       }
+                       ${typePage === 'PMH' && selectedDoiTuong === 'NCVL' && errors.DiaChi ? 'border-red-500' : ''} 
+                       ${typePage === 'NTR' && selectedDoiTuong === 'KHVL' && errors.DiaChi ? 'border-red-500' : ''} 
+                        `}
                       value={
                         typePage === 'PMH' && selectedDoiTuong === 'NCVL'
                           ? formCreate.DiaChi
@@ -1319,12 +1372,13 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                             ? formCreate.DiaChi
                             : doiTuongInfo.DiaChi
                       }
-                      onChange={(e) =>
+                      onChange={(e) => {
                         setFormCreate({
                           ...formCreate,
                           DiaChi: e.target.value,
                         })
-                      }
+                        setErrors({ ...errors, DiaChi: '' })
+                      }}
                       disabled={(typePage === 'PMH' && selectedDoiTuong !== 'NCVL') || (typePage === 'NTR' && selectedDoiTuong !== 'KHVL')}
                     />
                   </div>
@@ -1529,6 +1583,7 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                   <div className="flex items-center   p-1">
                     <label className="w-[86px]">Tên</label>
                     <input
+                      placeholder={errors.Ten}
                       type="text"
                       className={`w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] h-[24px] ${
                         (typePage === 'PMH' && selectedDoiTuong === 'NCVL') || (typePage === 'NTR' && selectedDoiTuong === 'KHVL' && 'hover:border-[#4897e6]')
@@ -1540,27 +1595,28 @@ const Modals = ({ close, actionType, dataThongTin, dataKhoHang, dataDoiTuong, da
                             ? formEdit.TenDoiTuong
                             : doiTuongInfo.Ten
                       }
-                      onChange={(e) =>
+                      onChange={(e) => {
                         setFormEdit({
                           ...formEdit,
                           TenDoiTuong: e.target.value,
                         })
-                      }
+                      }}
                       disabled={(typePage === 'PMH' && selectedDoiTuong !== 'NCVL') || (typePage === 'NTR' && selectedDoiTuong !== 'KHVL')}
                     />
                   </div>
                   <div className="flex  items-center  p-1">
                     <label className="w-[86px]">Địa chỉ</label>
                     <input
+                      placeholder={errors.DiaChi}
                       type="text"
                       className={`w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] h-[24px] ${selectedDoiTuong === 'NCVL' && 'hover:border-[#4897e6]'}`}
                       value={selectedDoiTuong === 'NCVL' ? formEdit.DiaChi : doiTuongInfo.DiaChi}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         setFormEdit({
                           ...formEdit,
                           DiaChi: e.target.value,
                         })
-                      }
+                      }}
                       disabled={selectedDoiTuong !== 'NCVL'}
                     />
                   </div>

@@ -38,6 +38,24 @@ export const ThongTinPMH = (token, Sct) =>
       reject(error)
     }
   })
+export const ThongTinSuaPMH = (token, Sct) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const response = await axios({
+        url: '/entries/DuLieuPMH/ThongTinSua',
+        method: 'post',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        data: {
+          SoChungTu: Sct,
+        },
+      })
+      resolve(response)
+    } catch (error) {
+      reject(error)
+    }
+  })
 
 export const ListHelperKhoHang = (token) =>
   new Promise(async (resolve, reject) => {

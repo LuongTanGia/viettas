@@ -24,7 +24,8 @@ const PhieuMuaHang = () => {
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [isShowOption, setIsShowOption] = useState(false)
   const [data, setData] = useState([])
-  const [dataThongTin, setDataThongTin] = useState([])
+  const [dataThongTin, setDataThongTin] = useState({})
+  const [dataSuaThongTin, setDataSuaThongTin] = useState({})
   const [dataRecord, setDataRecord] = useState(null)
   const [dataKhoHang, setDataKhoHang] = useState(null)
   const [dataDoiTuong, setDataDoiTuong] = useState(null)
@@ -95,7 +96,7 @@ const PhieuMuaHang = () => {
           if (responseKH.data && responseKH.data.DataError === 0) {
             setDataKhoHang(responseKH.data.DataResults)
           } else if (responseKH.data.DataError === -1 || responseKH.data.DataError === -2 || responseKH.data.DataError === -3) {
-            toast.warning(responseKH.data.DataErrorDescription)
+            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseKH.data.DataErrorDescription}</div>)
           } else if (responseKH.data.DataError === -107 || responseKH.data.DataError === -108) {
             await RETOKEN()
             fetchData()
@@ -125,7 +126,7 @@ const PhieuMuaHang = () => {
           if (responseTT.data && responseTT.data.DataError === 0) {
             setDataThongTin(responseTT.data.DataResult)
           } else if (responseTT.data.DataError === -1 || responseTT.data.DataError === -2 || responseTT.data.DataError === -3) {
-            toast.warning(responseTT.data.DataErrorDescription)
+            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseTT.data.DataErrorDescription}</div>)
           } else if (responseTT.data.DataError === -107 || responseTT.data.DataError === -108) {
             await RETOKEN()
             fetchData()
@@ -133,6 +134,21 @@ const PhieuMuaHang = () => {
             toast.error(responseTT.data.DataErrorDescription)
           }
         }
+        // if (actionType === 'edit') {
+        //   console.log('get helper tt sua')
+
+        //   const responseTTS = await apis.ThongTinSuaPMH(tokenLogin, dataRecord.SoChungTu)
+        //   if (responseTTS.data && responseTTS.data.DataError === 0) {
+        //     setDataSuaThongTin(responseTTS.data.DataResult)
+        //   } else if (responseTTS.data.DataError === -1 || responseTTS.data.DataError === -2 || responseTTS.data.DataError === -3) {
+        //     toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseTTS.data.DataErrorDescription}</div>)
+        //   } else if (responseTTS.data.DataError === -107 || responseTTS.data.DataError === -108) {
+        //     await RETOKEN()
+        //     fetchData()
+        //   } else {
+        //     toast.error(responseTTS.data.DataErrorDescription)
+        //   }
+        // }
       } catch (error) {
         console.error('Lấy data thất bại', error)
         // toast.error('Lấy data thất bại. Vui lòng thử lại sau.')
@@ -150,7 +166,11 @@ const PhieuMuaHang = () => {
       // Data đã được chuyền vào, dừng loading
       setTableLoad(false)
     }
-  }, [dataRecord, dataThongTin])
+    if (dataSuaThongTin && dataRecord) {
+      // Data đã được chuyền vào, dừng loading
+      setTableLoad(false)
+    }
+  }, [dataRecord, dataThongTin, dataSuaThongTin])
 
   // get Khoảng ngày
   useEffect(() => {
@@ -164,7 +184,7 @@ const PhieuMuaHang = () => {
           setFormKhoanNgay(response.data)
           setIsLoading(false)
         } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-          toast.warning(response.data.DataErrorDescription)
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
           setIsLoading(false)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
@@ -205,7 +225,7 @@ const PhieuMuaHang = () => {
         getDSPMH()
         // setTableLoad(false)
       } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        toast.warning(response.data.DataErrorDescription)
+        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
         setTableLoad(false)
       } else {
         toast.error(response.data.DataErrorDescription)
@@ -936,6 +956,7 @@ const PhieuMuaHang = () => {
               actionType={actionType}
               dataRecord={dataRecord}
               dataThongTin={dataThongTin}
+              dataSuaThongTin={dataSuaThongTin}
               dataKhoHang={dataKhoHang}
               dataDoiTuong={dataDoiTuong}
               data={data}
