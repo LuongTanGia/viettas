@@ -1,27 +1,27 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from 'react'
 import { Button, Checkbox, Col, Input, Row, Spin, Table, Tooltip, Typography } from 'antd'
-import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 const { Text } = Typography
 import dayjs from 'dayjs'
-import { toast } from 'react-toastify'
 import { TfiMoreAlt } from 'react-icons/tfi'
+import { DateField } from '@mui/x-date-pickers'
+import { RiFileExcel2Fill } from 'react-icons/ri'
 import { FaSearch, FaEyeSlash } from 'react-icons/fa'
 import { IoMdAddCircleOutline } from 'react-icons/io'
 import { CloseSquareFilled } from '@ant-design/icons'
-import { MdEdit, MdDelete, MdPrint, MdFilterAlt } from 'react-icons/md'
+import { MdEdit, MdDelete, MdPrint } from 'react-icons/md'
 import categoryAPI from '../../../../API/linkAPI'
-import { RETOKEN } from '../../../../action/Actions'
 import { useSearch } from '../../../../components_T/hooks/Search'
+import { RETOKEN, exportToExcel } from '../../../../action/Actions'
 import ActionButton from '../../../../components/util/Button/ActionButton'
 import HighlightedCell from '../../../../components_T/hooks/HighlightedCell'
 import SimpleBackdrop from '../../../../components/util/Loading/LoadingPage'
 import NDCXem from '../../../../components_T/Modal/DuLieu/DuLieuTrongKho/PhieuNDC/NDCXem'
 import NDCXoa from '../../../../components_T/Modal/DuLieu/DuLieuTrongKho/PhieuNDC/NDCXoa'
 import NDCEdit from '../../../../components_T/Modal/DuLieu/DuLieuTrongKho/PhieuNDC/NDCEdit'
+import { nameColumsPhieuNhapDieuChinh } from '../../../../components/util/Table/ColumnName'
 import NDCPrint from '../../../../components_T/Modal/DuLieu/DuLieuTrongKho/PhieuNDC/NDCPrint'
 import NDCCreate from '../../../../components_T/Modal/DuLieu/DuLieuTrongKho/PhieuNDC/NDCCreate'
-import { nameColumsPhieuNhapDieuChinh } from '../../../../components/util/Table/ColumnName'
 
 const PhieuNhapDieuChinh = () => {
   const TokenAccess = localStorage.getItem('TKN')
@@ -43,13 +43,13 @@ const PhieuNhapDieuChinh = () => {
   const [checkedList, setcheckedList] = useState([])
   const [selectVisible, setSelectVisible] = useState(false)
   const [options, setOptions] = useState()
+  const [dateData, setDateData] = useState({})
 
   useEffect(() => {
-    setHiddenRow(JSON.parse(localStorage.getItem('hidenColumns')))
-    setcheckedList(JSON.parse(localStorage.getItem('hidenColumns')))
-    const key = Object.keys(dataNDC ? dataNDC[0] : {}).filter((key) => key)
+    setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
+    setcheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
+    const key = Object.keys(dataNDC ? dataNDC[0] : []).filter((key) => key)
     setOptions(key)
-    console.log(key)
   }, [selectVisible])
 
   function formatDateTime(inputDate, includeTime = false) {
@@ -87,10 +87,8 @@ const PhieuNhapDieuChinh = () => {
   }, [isLoading])
 
   useEffect(() => {
-    if (searchHangHoa || tableLoad) {
-      getDataNDCFirst()
-    }
-  }, [searchHangHoa])
+    getDataNDC()
+  }, [searchHangHoa, isLoading, dateData.NgayBatDau, dateData.NgayKetThuc, tableLoad])
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -104,42 +102,29 @@ const PhieuNhapDieuChinh = () => {
     }
   }, [])
 
-  const getDataNDCFirst = async () => {
+  const getDataNDC = async () => {
     try {
       setTableLoad(true)
       if (isLoading == true) {
-        const response = await categoryAPI.GetDataNDC({}, TokenAccess)
+        const response = await categoryAPI.GetDataNDC(
+          dateData == {}
+            ? {}
+            : {
+                NgayBatDau: dateData.NgayBatDau,
+                NgayKetThuc: dateData.NgayKetThuc,
+              },
+          TokenAccess,
+        )
         if (response.data.DataError == 0) {
           setDataNDC(response.data.DataResults)
           setTableLoad(false)
+        } else if (response.data.DataError == -104) {
+          setDataNDC([])
+          setTableLoad(false)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
-          getDataNDCFirst()
+          getDataNDC()
         }
-      }
-    } catch (error) {
-      console.log(error)
-      setTableLoad(false)
-    }
-  }
-  const getDataNDC = async () => {
-    try {
-      const response = await categoryAPI.GetDataNDC(
-        {
-          NgayBatDau: khoanNgayFrom,
-          NgayKetThuc: khoanNgayTo,
-        },
-        TokenAccess,
-      )
-      if (response.data.DataError == 0) {
-        setDataNDC(response.data.DataResults)
-        setTableLoad(false)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getDataNDC()
-      } else {
-        toast.error(response.data.DataErrorDescription)
-        setTableLoad(false)
       }
     } catch (error) {
       console.log(error)
@@ -163,8 +148,8 @@ const PhieuNhapDieuChinh = () => {
       console.log(error)
     }
   }
+  let timerId
   const handleSearch = (event) => {
-    let timerId
     clearTimeout(timerId)
     timerId = setTimeout(() => {
       setSearchHangHoa(event.target.value)
@@ -207,8 +192,24 @@ const PhieuNhapDieuChinh = () => {
     setTimeout(() => {
       setHiddenRow(checkedList)
       setTableLoad(false)
-      localStorage.setItem('hidenColumns', JSON.stringify(checkedList))
+      localStorage.setItem('hiddenColumns', JSON.stringify(checkedList))
     }, 1000)
+  }
+  const handleDateChange = () => {
+    clearTimeout(timerId)
+    timerId = setTimeout(() => {
+      khoanNgayFrom, khoanNgayTo
+      setDateData({
+        NgayBatDau: khoanNgayFrom,
+        NgayKetThuc: khoanNgayTo,
+      })
+    }, 300)
+  }
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      handleDateChange()
+    }
   }
   const titles = [
     {
@@ -433,7 +434,8 @@ const PhieuNhapDieuChinh = () => {
     },
   ]
   const newTitles = titles.filter((item) => !hiddenRow?.includes(item.dataIndex))
-
+  console.log(dateData)
+  console.log(dataNDC)
   return (
     <>
       {!isLoading ? (
@@ -475,6 +477,15 @@ const PhieuNhapDieuChinh = () => {
                         color={'slate-50'}
                         background={'purple-500'}
                         color_hover={'purple-500'}
+                        bg_hover={'white'}
+                      />
+                      <ActionButton
+                        handleAction={() => exportToExcel()}
+                        title={'Xuất Excel'}
+                        icon={<RiFileExcel2Fill className="w-5 h-5" />}
+                        color={'slate-50'}
+                        background={'green-500'}
+                        color_hover={'green-500'}
                         bg_hover={'white'}
                       />
                       <ActionButton
@@ -529,10 +540,13 @@ const PhieuNhapDieuChinh = () => {
                 <div className="flex gap-1">
                   <div className="flex items-center gap-1">
                     <label>Từ</label>
-                    <DatePicker
-                      className="DatePicker_NXTKho"
+                    <DateField
+                      onBlur={handleDateChange}
+                      onKeyDown={handleKeyDown}
+                      className="DatePicker_NXTKho min-w-[100px] w-[60%]"
                       format="DD/MM/YYYY"
                       maxDate={dayjs(khoanNgayTo)}
+                      defaultValue={dayjs(khoanNgayFrom, 'YYYY-MM-DD')}
                       sx={{
                         '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
                         '& .MuiButtonBase-root': {
@@ -543,16 +557,18 @@ const PhieuNhapDieuChinh = () => {
                           height: '18px',
                         },
                       }}
-                      defaultValue={dayjs(khoanNgayFrom, 'YYYY-MM-DD')}
                       onChange={(values) => {
-                        setKhoanNgayFrom(values ? dayjs(values).format('YYYY-MM-DDTHH:mm:ss') : '')
+                        const selectedDate = values ? dayjs(values).format('YYYY-MM-DDTHH:MM:ss') : ''
+                        setKhoanNgayFrom(selectedDate)
                       }}
                     />
                   </div>
                   <div className=" flex items-center gap-1 ">
                     <label>Đến</label>
-                    <DatePicker
-                      className="DatePicker_NXTKho"
+                    <DateField
+                      onBlur={handleDateChange}
+                      onKeyDown={handleKeyDown}
+                      className="DatePicker_NXTKho min-w-[100px] w-[60%]"
                       format="DD/MM/YYYY"
                       minDate={dayjs(khoanNgayFrom)}
                       defaultValue={dayjs(khoanNgayTo, 'YYYY-MM-DD')}
@@ -567,20 +583,12 @@ const PhieuNhapDieuChinh = () => {
                         },
                       }}
                       onChange={(values) => {
-                        setKhoanNgayTo(values ? dayjs(values).format('YYYY-MM-DDTHH:mm:ss') : '')
+                        const selectedDate = values ? dayjs(values).format('YYYY-MM-DDTHH:MM:ss') : ''
+                        setKhoanNgayTo(selectedDate)
                       }}
                     />
                   </div>
                 </div>
-                <ActionButton
-                  handleAction={getDataNDC}
-                  title={'Lọc'}
-                  icon={<MdFilterAlt className="w-6 h-6" />}
-                  color={'slate-50'}
-                  background={'blue-500'}
-                  color_hover={'blue-500'}
-                  bg_hover={'white'}
-                />
               </div>
               <div className="flex items-center gap-2">
                 <ActionButton
@@ -594,7 +602,7 @@ const PhieuNhapDieuChinh = () => {
                 />
               </div>
             </div>
-            <div>
+            <div id="my-table">
               <Table
                 loading={tableLoad}
                 className="table_DMHangHoa setHeight"

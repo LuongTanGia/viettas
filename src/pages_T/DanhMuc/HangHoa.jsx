@@ -6,7 +6,7 @@ import moment from 'moment'
 import { toast } from 'react-toastify'
 import { CiBarcode } from 'react-icons/ci'
 import { TfiMoreAlt } from 'react-icons/tfi'
-import { RETOKEN } from '../../action/Actions'
+import { RETOKEN, exportToExcel } from '../../action/Actions'
 import { GrStatusUnknown } from 'react-icons/gr'
 import { IoMdAddCircleOutline } from 'react-icons/io'
 import { FaSearch, FaEyeSlash } from 'react-icons/fa'
@@ -19,6 +19,7 @@ import HighlightedCell from '../../components_T/hooks/HighlightedCell'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
 import { nameColumsHangHoa } from '../../components/util/Table/ColumnName'
 import HangHoaModals from '../../components_T/Modal/DanhMuc/HangHoa/HangHoaModals'
+import { RiFileExcel2Fill } from 'react-icons/ri'
 
 const HangHoa = () => {
   const TokenAccess = localStorage.getItem('TKN')
@@ -61,8 +62,8 @@ const HangHoa = () => {
   }, [])
 
   useEffect(() => {
-    setHiddenRow(JSON.parse(localStorage.getItem('hidenColumns')))
-    setcheckedList(JSON.parse(localStorage.getItem('hidenColumns')))
+    setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
+    setcheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
     const key = Object.keys(dataHangHoa ? dataHangHoa[0] : {}).filter(
       (key) => key !== 'CoThue' && key !== 'TyLeThue' && key !== 'Nhom' && key !== 'TyLeQuyDoi' && key !== 'DienGiaiHangHoa' && key !== 'DVTQuyDoi',
     )
@@ -72,6 +73,7 @@ const HangHoa = () => {
   const getListHangHoa = async () => {
     try {
       setTableLoad(true)
+
       const response = await categoryAPI.HangHoa(TokenAccess)
       if (response.data.DataError === 0) {
         setDataHangHoa(response.data.DataResults)
@@ -234,7 +236,7 @@ const HangHoa = () => {
     setTimeout(() => {
       setHiddenRow(checkedList)
       setTableLoad(false)
-      localStorage.setItem('hidenColumns', JSON.stringify(checkedList))
+      localStorage.setItem('hiddenColumns', JSON.stringify(checkedList))
     }, 1000)
   }
   if (!isLoading) {
@@ -595,6 +597,15 @@ const HangHoa = () => {
                     bg_hover={'white'}
                   />
                   <ActionButton
+                    handleAction={() => exportToExcel()}
+                    title={'Xuất Excel'}
+                    icon={<RiFileExcel2Fill className="w-5 h-5" />}
+                    color={'slate-50'}
+                    background={'green-500'}
+                    color_hover={'green-500'}
+                    bg_hover={'white'}
+                  />
+                  <ActionButton
                     handleAction={() => handleHidden()}
                     title={'Ẩn Cột'}
                     icon={<FaEyeSlash className="w-5 h-5" />}
@@ -681,7 +692,7 @@ const HangHoa = () => {
             />
           </div>
         </div>
-        <div>
+        <div id="my-table">
           <Table
             loading={tableLoad}
             rowSelection={{
@@ -775,7 +786,7 @@ const HangHoa = () => {
             close={() => setIsShowModal(false)}
             getMaHang={isMaHang}
             getDataHangHoa={dataHangHoa}
-            loadingData={handleLoading}
+            loadingData={() => handleLoading()}
             targetRow={setTargetRow}
           />
         )}

@@ -464,7 +464,6 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
         setIsLoading(false)
         loadingData()
         close(dataDel.data)
-        console.log()
       } else if ((dataDel.data && dataDel.data.DataError === -107) || (dataDel.data && dataDel.data.DataError === -108)) {
         await RETOKEN()
         handleDelete()

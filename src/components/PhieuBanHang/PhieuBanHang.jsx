@@ -71,8 +71,8 @@ function PhieuBanHang() {
     return false
   }
   useEffect(() => {
-    setHiden(JSON.parse(localStorage.getItem('hidenColumns')))
-    setcheckedList(JSON.parse(localStorage.getItem('hidenColumns')))
+    setHiden(JSON.parse(localStorage.getItem('hiddenColumns')))
+    setcheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
 
     const key = Object.keys(data ? data[0] : []).filter((key) => key !== 'MaSoThue')
     setOptions(key)
@@ -128,7 +128,7 @@ function PhieuBanHang() {
       setDataLoaded(true)
       setLoadingSearch(false)
     }
-
+    console.log()
     getListData()
   }, [searchText, selectMH, isShowDelete, searchData.NgayBatDau, searchData.NgayKetThuc])
 
@@ -291,7 +291,7 @@ function PhieuBanHang() {
     // setcheckedList(checkedValues)
     setLoadingSearch(true)
     setTimeout(() => {
-      localStorage.setItem('hidenColumns', JSON.stringify(checkedList))
+      localStorage.setItem('hiddenColumns', JSON.stringify(checkedList))
       setLoadingSearch(false)
       setHiden(checkedList)
     }, 1000)

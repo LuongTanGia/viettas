@@ -6,7 +6,6 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { FaSearch } from 'react-icons/fa'
 import { toast } from 'react-toastify'
 import { IoMdClose, IoMdAddCircle } from 'react-icons/io'
-import { MdPrint } from 'react-icons/md'
 import dayjs from 'dayjs'
 import moment from 'moment'
 import './style/NDC.css'
@@ -599,7 +598,6 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
                             }
                       }
                       title={'In Phiếu'}
-                      icon={<MdPrint className="w-6 h-6" />}
                       color={'slate-50'}
                       background={isAdd ? 'gray-500' : 'purple-500'}
                       color_hover={isAdd ? 'gray-500' : 'purple-500'}

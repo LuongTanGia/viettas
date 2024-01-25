@@ -4,7 +4,6 @@ import { useEffect, useState, useCallback, useMemo } from 'react'
 import { FaSearch } from 'react-icons/fa'
 import { toast } from 'react-toastify'
 import { IoMdClose, IoMdAddCircle } from 'react-icons/io'
-import { MdPrint } from 'react-icons/md'
 import { Checkbox, Table, Tooltip, Select, InputNumber, FloatButton } from 'antd'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import dayjs from 'dayjs'
@@ -59,36 +58,7 @@ const NDCCreate = ({ close, loadingData }) => {
   const [NDCForm, setNDCForm] = useState(() => {
     return innitProduct
   })
-  const getDataKhoHangNDC = async () => {
-    try {
-      const response = await categoryAPI.ListKhoHangNDC(TokenAccess)
-      if (response.data.DataError == 0) {
-        setDataKhoHang(response.data.DataResults)
-        setIsLoading(true)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getDataKhoHangNDC()
-      }
-    } catch (error) {
-      console.log(error)
-      setIsLoading(true)
-    }
-  }
-  const getDataHangHoaNDC = async () => {
-    try {
-      const response = await categoryAPI.ListHangHoaNDC(TokenAccess)
-      if (response.data.DataError == 0) {
-        setDataHangHoa(response.data.DataResults)
-        setIsLoading(true)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getDataHangHoaNDC()
-      }
-    } catch (error) {
-      console.log(error)
-      setIsLoading(true)
-    }
-  }
+
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.keyCode === 120) {
@@ -102,12 +72,42 @@ const NDCCreate = ({ close, loadingData }) => {
   }, [isShowModal])
 
   useEffect(() => {
+    const getDataKhoHangNDC = async () => {
+      try {
+        const response = await categoryAPI.ListKhoHangNDC(TokenAccess)
+        if (response.data.DataError == 0) {
+          setDataKhoHang(response.data.DataResults)
+          setIsLoading(true)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          getDataKhoHangNDC()
+        }
+      } catch (error) {
+        console.log(error)
+        setIsLoading(true)
+      }
+    }
     if (!isLoading) {
       getDataKhoHangNDC()
     }
   }, [isLoading])
 
   useEffect(() => {
+    const getDataHangHoaNDC = async () => {
+      try {
+        const response = await categoryAPI.ListHangHoaNDC(TokenAccess)
+        if (response.data.DataError == 0) {
+          setDataHangHoa(response.data.DataResults)
+          setIsLoading(true)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          getDataHangHoaNDC()
+        }
+      } catch (error) {
+        console.log(error)
+        setIsLoading(true)
+      }
+    }
     if (!isLoading) {
       getDataHangHoaNDC()
     }
@@ -164,8 +164,7 @@ const NDCCreate = ({ close, loadingData }) => {
       setNDCForm({ ...NDCForm, DataDetails: selectedRowData })
     }
   }
-  const handleCreate = async (e, isSave = true, isPrint = true) => {
-    e.preventDefault()
+  const handleCreate = async (isSave = true, isPrint = true) => {
     try {
       const response = await categoryAPI.NDCCreate({ ...NDCForm, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss') }, TokenAccess)
       if (response.data.DataError == 0) {
@@ -550,12 +549,11 @@ const NDCCreate = ({ close, loadingData }) => {
                       handleAction={
                         isAdd
                           ? ''
-                          : (e) => {
-                              handleCreate(e, true, true)
+                          : () => {
+                              handleCreate(true, true)
                             }
                       }
                       title={'In Phiếu'}
-                      icon={<MdPrint className="w-6 h-6" />}
                       color={'slate-50'}
                       background={isAdd ? 'gray-500' : 'purple-500'}
                       color_hover={isAdd ? 'gray-500' : 'purple-500'}
@@ -564,7 +562,7 @@ const NDCCreate = ({ close, loadingData }) => {
                   </div>
                   <div className="flex gap-2 justify-end">
                     <ActionButton
-                      handleAction={isAdd ? '' : (e) => handleCreate(e, true, false)}
+                      handleAction={isAdd ? '' : () => handleCreate(true, false)}
                       title={'Lưu'}
                       color={'slate-50'}
                       background={isAdd ? 'gray-500' : 'blue-500'}
@@ -572,7 +570,7 @@ const NDCCreate = ({ close, loadingData }) => {
                       bg_hover={isAdd ? 'gray-500' : 'slate-50'}
                     />
                     <ActionButton
-                      handleAction={isAdd ? '' : (e) => handleCreate(e, false, false)}
+                      handleAction={isAdd ? '' : () => handleCreate(false, false)}
                       title={'Lưu & Đóng'}
                       color={'slate-50'}
                       background={isAdd ? 'gray-500' : 'blue-500'}
