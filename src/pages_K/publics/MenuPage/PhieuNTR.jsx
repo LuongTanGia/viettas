@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
-import { Table, Checkbox, Tooltip, Row, Col, Typography } from 'antd'
+import { Table, Checkbox, Tooltip, Row, Col, Typography, Input } from 'antd'
 import moment from 'moment'
 import icons from '../../../untils/icons'
 import { toast } from 'react-toastify'
@@ -14,6 +14,7 @@ import { DateField } from '@mui/x-date-pickers/DateField'
 import { useSearch } from '../../../components_K/myComponents/useSearch'
 import HighlightedCell from '../../../components_T/hooks/HighlightedCell'
 import { exportToExcel } from '../../../action/Actions'
+import { CloseSquareFilled } from '@ant-design/icons'
 
 const { Text } = Typography
 const { IoAddCircleOutline, TiPrinter, MdDelete, GiPayMoney, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill } = icons
@@ -642,11 +643,11 @@ const PhieuNTR = () => {
     setIsShowModal(true)
   }
 
-  const handleSearch = () => {
+  const handleSearch = (e) => {
     const currentTime = new Date().getTime()
-    if (currentTime - lastSearchTime >= 1000 && searchValue !== prevSearchValue) {
+    if (currentTime - lastSearchTime >= 1000 && e !== prevSearchValue) {
       setTableLoad(true)
-      setSearchPNTR(searchValue)
+      setSearchPNTR(e)
       setLastSearchTime(currentTime)
     }
   }
@@ -667,20 +668,17 @@ const PhieuNTR = () => {
             <div className="flex  ">
               {isShowSearch && (
                 <div className={`flex absolute left-[23rem] -top-[2px] transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
-                  <input
-                    type="text"
-                    placeholder="Nhập ký tự bạn cần tìm"
-                    // onChange={handleSearch}
-                    onChange={(e) => setSearchValue(e.target.value)}
-                    onBlur={handleSearch}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        setPrevSearchValue(searchValue)
-                        handleSearch()
-                      }
+                  <Input
+                    allowClear={{
+                      clearIcon: <CloseSquareFilled />,
                     }}
-                    onFocus={() => setPrevSearchValue(searchValue)}
-                    className={'px-2  w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] '}
+                    placeholder="Nhập ký tự bạn cần tìm"
+                    onPressEnter={(e) => {
+                      setPrevSearchValue(e.target.value)
+                      handleSearch(e.target.value)
+                    }}
+                    onBlur={(e) => handleSearch(e.target.value)}
+                    onFocus={(e) => setPrevSearchValue(e.target.value)}
                   />
                 </div>
               )}

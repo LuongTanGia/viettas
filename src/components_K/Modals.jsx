@@ -482,6 +482,7 @@ const Modals = ({
         Ten: formCreate?.TenDoiTuong?.trim() ? '' : 'Tên đối tượng không được để trống',
         DiaChi: formCreate?.DiaChi?.trim() ? '' : 'Địa chỉ không được để trống',
       })
+
       return
     }
     try {
@@ -841,6 +842,15 @@ const Modals = ({
   const handleChangLoading = (newLoading) => {
     setIsLoading(newLoading)
   }
+  const handlePrintModal = () => {
+    if (!formCreate?.TenDoiTuong?.trim() || !formCreate?.DiaChi?.trim()) return
+    setIsShowModalOnlyPrint(true)
+  }
+  const handlePrintWareHouseModal = () => {
+    if (!formCreate?.TenDoiTuong?.trim() || !formCreate?.DiaChi?.trim()) return
+    setIsShowModalOnlyPrintWareHouse(true)
+  }
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
       <div className="p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
@@ -1284,8 +1294,8 @@ const Modals = ({
                     {/* DatePicker */}
                     <div className="flex md:px-1 lg:px-4 items-center">
                       <label className="pr-1 lg:pr-[30px] lg:pl-[8px]">Ngày</label>
-                      <DatePicker
-                        // className="DatePicker_PMH "
+                      <DateField
+                        className="DatePicker_PMH max-w-[110px]"
                         format="DD/MM/YYYY"
                         defaultValue={dayjs()}
                         onChange={(newDate) => {
@@ -1495,7 +1505,7 @@ const Modals = ({
                   bg_hover={'white'}
                   color_hover={'purple-500'}
                   handleAction={() => {
-                    handleCreate(), setIsShowModalOnlyPrint(true)
+                    handleCreate(), handlePrintModal()
                   }}
                 />
                 {dataThongSo?.ALLOW_INPHIEUKHO_DAUVAODAURA === true && (
@@ -1506,7 +1516,7 @@ const Modals = ({
                     bg_hover={'white'}
                     color_hover={'purple-500'}
                     handleAction={() => {
-                      handleCreate(), setIsShowModalOnlyPrintWareHouse(true)
+                      handleCreate(), handlePrintWareHouseModal()
                     }}
                   />
                 )}
@@ -1557,8 +1567,8 @@ const Modals = ({
                     {/* DatePicker */}
                     <div className="flex md:px-1 lg:px-4 items-center">
                       <label className="pr-1 lg:pr-[30px] lg:pl-[8px]">Ngày</label>
-                      <DatePicker
-                        className="DatePicker_PMH "
+                      <DateField
+                        className="DatePicker_PMH  max-w-[110px]"
                         format="DD/MM/YYYY"
                         defaultValue={dayjs(dataThongTin.NgayCTu)}
                         onChange={(newDate) => {

@@ -669,33 +669,14 @@ const PhieuMuaHang = () => {
     }
   }
 
-  let timerId
-  let currentInputValue = ''
-
-  const handleInputChange = (e) => {
-    const inputValue = e.target.value
-
-    // Kiểm tra xem giá trị có thay đổi không
-    if (inputValue !== currentInputValue) {
-      currentInputValue = inputValue
-
-      // Thực hiện tìm kiếm sau 300 milliseconds
-      clearTimeout(timerId)
-      timerId = setTimeout(() => {
-        setTableLoad(true)
-        setSearchPMH(inputValue)
-      }, 300)
+  const handleSearch = (e) => {
+    const currentTime = new Date().getTime()
+    if (currentTime - lastSearchTime >= 1000 && e !== prevSearchValue) {
+      setTableLoad(true)
+      setSearchPMH(e)
+      setLastSearchTime(currentTime)
     }
   }
-
-  // const handleSearch = () => {
-  //   const currentTime = new Date().getTime()
-  //   if (currentTime - lastSearchTime >= 1000 && searchValue !== prevSearchValue) {
-  //     setTableLoad(true)
-  //     setSearchPMH(searchValue)
-  //     setLastSearchTime(currentTime)
-  //   }
-  // }
 
   return (
     <>
@@ -713,30 +694,17 @@ const PhieuMuaHang = () => {
             <div className="flex  ">
               {isShowSearch && (
                 <div className={`flex absolute left-[14rem] -top-[2px] transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
-                  {/* <input
-                    type="text"
-                    placeholder="Nhập ký tự bạn cần tìm"
-                    // onChange={handleSearch}
-                    onChange={(e) => {
-                      setSearchValue(e.target.value)
-                    }}
-                    onBlur={handleSearch}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        setPrevSearchValue(searchValue)
-                        handleSearch()
-                      }
-                    }}
-                    onFocus={() => setPrevSearchValue(searchValue)}
-                    className={'px-2  w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] '}
-                  /> */}
                   <Input
                     allowClear={{
                       clearIcon: <CloseSquareFilled />,
                     }}
                     placeholder="Nhập ký tự bạn cần tìm"
-                    onPressEnter={handleInputChange}
-                    onBlur={handleInputChange}
+                    onPressEnter={(e) => {
+                      setPrevSearchValue(e.target.value)
+                      handleSearch(e.target.value)
+                    }}
+                    onBlur={(e) => handleSearch(e.target.value)}
+                    onFocus={(e) => setPrevSearchValue(e.target.value)}
                   />
                 </div>
               )}
