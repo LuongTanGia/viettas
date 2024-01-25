@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState, useRef } from 'react'
-import { Table, Select, Tooltip, Typography, Checkbox, Row, Button, Col, Spin, AutoComplete, Input } from 'antd'
+import { Table, Select, Tooltip, Typography, Checkbox, Row, Button, Col, Spin, Input } from 'antd'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { toast } from 'react-toastify'
 import { MdFilterAlt } from 'react-icons/md'
@@ -8,7 +8,7 @@ import { TfiMoreAlt } from 'react-icons/tfi'
 import categoryAPI from '../../API/linkAPI'
 import { CloseSquareFilled } from '@ant-design/icons'
 import { FaSearch, FaEyeSlash } from 'react-icons/fa'
-import { RETOKEN } from '../../action/Actions'
+import { RETOKEN, exportToExcel } from '../../action/Actions'
 import { useSearch } from '../../components_T/hooks/Search'
 import ActionButton from '../../components/util/Button/ActionButton'
 import HighlightedCell from '../../components_T/hooks/HighlightedCell'
@@ -16,6 +16,7 @@ import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
 import { nameColumsNhapXuatTon } from '../../components/util/Table/ColumnName'
 const { Text } = Typography
 import dayjs from 'dayjs'
+import { RiFileExcel2Fill } from 'react-icons/ri'
 
 const NhapXuatTonKho = () => {
   const TokenAccess = localStorage.getItem('TKN')
@@ -159,8 +160,8 @@ const NhapXuatTonKho = () => {
   useEffect(() => {
     const getDataNXTFirst = async () => {
       try {
-        if (isLoading == true && tableLoad == true) {
-          setTableLoad(true)
+        setTableLoad(true)
+        if (isLoading == true) {
           const response = await categoryAPI.InfoNXTTheoKho(
             {
               NgayBatDau: khoanNgayFrom,
@@ -184,10 +185,10 @@ const NhapXuatTonKho = () => {
         console.log(error)
       }
     }
-    if (tableLoad || searchHangHoa) {
+    if (searchHangHoa || isLoading) {
       getDataNXTFirst()
     }
-  }, [searchHangHoa, isLoading, tableLoad])
+  }, [searchHangHoa, isLoading])
 
   const getDataNXT = async () => {
     try {
@@ -220,7 +221,7 @@ const NhapXuatTonKho = () => {
   }
   const handleFilterDS = () => {
     setTableLoad(true)
-    if (tableLoad) {
+    if (!tableLoad) {
       getDataNXT()
     }
   }
@@ -242,8 +243,8 @@ const NhapXuatTonKho = () => {
     return ''
   }
   useEffect(() => {
-    setHiddenRow(JSON.parse(localStorage.getItem('hidenColumns')))
-    setcheckedList(JSON.parse(localStorage.getItem('hidenColumns')))
+    setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
+    setcheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
     const key = Object.keys(dataNXT ? dataNXT[0] : {}).filter((key) => key !== 'MaNhomHang' && key !== 'MaKho')
     setOptions(key)
   }, [selectVisible])
@@ -259,7 +260,7 @@ const NhapXuatTonKho = () => {
     setTimeout(() => {
       setHiddenRow(checkedList)
       setTableLoad(false)
-      localStorage.setItem('hidenColumns', JSON.stringify(checkedList))
+      localStorage.setItem('hiddenColumns', JSON.stringify(checkedList))
     }, 1000)
   }
   const titles = [
@@ -607,7 +608,7 @@ const NhapXuatTonKho = () => {
                   <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
                 </div>
                 {isShowOption && (
-                  <div className="absolute flex flex-col gap-2 bg-slate-200 p-3 top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom  ">
+                  <div className="absolute   flex flex-col gap-2 bg-slate-200 p-3 top-16 right-[4.5%] rounded-lg z-10 duration-500 shadow-custom  ">
                     <div className={`flex ${selectVisible ? '' : 'flex-col'} items-center gap-2`}>
                       <ActionButton
                         handleAction={handleHidden}
@@ -616,6 +617,15 @@ const NhapXuatTonKho = () => {
                         color={'slate-50'}
                         background={'red-500'}
                         color_hover={'red-500'}
+                        bg_hover={'white'}
+                      />
+                      <ActionButton
+                        handleAction={() => exportToExcel()}
+                        title={'Xuất Excel'}
+                        icon={<RiFileExcel2Fill className="w-5 h-5" />}
+                        color={'slate-50'}
+                        background={'green-500'}
+                        color_hover={'green-500'}
                         bg_hover={'white'}
                       />
                     </div>
@@ -711,7 +721,7 @@ const NhapXuatTonKho = () => {
                   </div>
                   <div>
                     <ActionButton
-                      title={'Lọc'}
+                      title={'Xem Dữ Liệu'}
                       handleAction={handleFilterDS}
                       icon={<MdFilterAlt className="w-5 h-5" />}
                       color={'slate-50'}
@@ -914,7 +924,7 @@ const NhapXuatTonKho = () => {
               </div>
             </div>
           </div>
-          <div className="NhapXuatTonKho">
+          <div className="NhapXuatTonKho" id="my-table">
             <Table
               loading={tableLoad}
               className=" setHeight"
