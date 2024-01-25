@@ -7,6 +7,7 @@ import { formatQuantity } from '../action/Actions'
 import { useSearchHH } from './myComponents/useSearchHH'
 import ActionButton from '../components/util/Button/ActionButton'
 import HighlightedCell from '../components_T/hooks/HighlightedCell'
+import { toast } from 'react-toastify'
 
 const { BsSearch } = icons
 const ModalHH = ({ close, data, onRowCreate, dataThongSo, loading, onChangLoading }) => {
@@ -40,6 +41,9 @@ const ModalHH = ({ close, data, onRowCreate, dataThongSo, loading, onChangLoadin
     const newRow = { ...dataRow, ...defaultValues }
 
     onRowCreate(newRow)
+    toast.success('Chọn hàng hóa thành công', {
+      autoClose: 1000,
+    })
   }
   const columns = [
     {
