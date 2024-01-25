@@ -1,13 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from 'react'
-import { Input, Table, Tooltip, Typography } from 'antd'
+import { Button, Checkbox, Col, Input, Row, Spin, Table, Tooltip, Typography } from 'antd'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 const { Text } = Typography
 import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
-import { FaSearch } from 'react-icons/fa'
 import { TfiMoreAlt } from 'react-icons/tfi'
+import { FaSearch, FaEyeSlash } from 'react-icons/fa'
 import { IoMdAddCircleOutline } from 'react-icons/io'
+import { CloseSquareFilled } from '@ant-design/icons'
 import { MdEdit, MdDelete, MdPrint, MdFilterAlt } from 'react-icons/md'
 import categoryAPI from '../../../../API/linkAPI'
 import { RETOKEN } from '../../../../action/Actions'
@@ -20,6 +21,7 @@ import NDCXoa from '../../../../components_T/Modal/DuLieu/DuLieuTrongKho/PhieuND
 import NDCEdit from '../../../../components_T/Modal/DuLieu/DuLieuTrongKho/PhieuNDC/NDCEdit'
 import NDCPrint from '../../../../components_T/Modal/DuLieu/DuLieuTrongKho/PhieuNDC/NDCPrint'
 import NDCCreate from '../../../../components_T/Modal/DuLieu/DuLieuTrongKho/PhieuNDC/NDCCreate'
+import { nameColumsPhieuNhapDieuChinh } from '../../../../components/util/Table/ColumnName'
 
 const PhieuNhapDieuChinh = () => {
   const TokenAccess = localStorage.getItem('TKN')
@@ -37,6 +39,18 @@ const PhieuNhapDieuChinh = () => {
   const [tableLoad, setTableLoad] = useState(true)
   const [actionType, setActionType] = useState('')
   const showOption = useRef(null)
+  const [hiddenRow, setHiddenRow] = useState([])
+  const [checkedList, setcheckedList] = useState([])
+  const [selectVisible, setSelectVisible] = useState(false)
+  const [options, setOptions] = useState()
+
+  useEffect(() => {
+    setHiddenRow(JSON.parse(localStorage.getItem('hidenColumns')))
+    setcheckedList(JSON.parse(localStorage.getItem('hidenColumns')))
+    const key = Object.keys(dataNDC ? dataNDC[0] : {}).filter((key) => key)
+    setOptions(key)
+    console.log(key)
+  }, [selectVisible])
 
   function formatDateTime(inputDate, includeTime = false) {
     const date = new Date(inputDate)
@@ -73,13 +87,15 @@ const PhieuNhapDieuChinh = () => {
   }, [isLoading])
 
   useEffect(() => {
-    getDataNDCFirst()
-  }, [isLoading])
+    if (searchHangHoa || tableLoad) {
+      getDataNDCFirst()
+    }
+  }, [searchHangHoa])
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (showOption.current && !showOption.current.contains(event.target)) {
-        setIsShowSearch(false)
+        setIsShowOption(false)
       }
     }
     document.addEventListener('click', handleClickOutside)
@@ -90,6 +106,7 @@ const PhieuNhapDieuChinh = () => {
 
   const getDataNDCFirst = async () => {
     try {
+      setTableLoad(true)
       if (isLoading == true) {
         const response = await categoryAPI.GetDataNDC({}, TokenAccess)
         if (response.data.DataError == 0) {
@@ -147,7 +164,11 @@ const PhieuNhapDieuChinh = () => {
     }
   }
   const handleSearch = (event) => {
-    setSearchHangHoa(event.target.value)
+    let timerId
+    clearTimeout(timerId)
+    timerId = setTimeout(() => {
+      setSearchHangHoa(event.target.value)
+    }, 300)
   }
   const handleCreate = () => {
     setIsShowModal(true)
@@ -174,6 +195,20 @@ const PhieuNhapDieuChinh = () => {
   }
   const handleLoading = () => {
     setTableLoad(true)
+  }
+  const handleHidden = () => {
+    setSelectVisible(!selectVisible)
+  }
+  const onChange = (checkedValues) => {
+    setcheckedList(checkedValues)
+  }
+  const onClickSubmit = () => {
+    setTableLoad(true)
+    setTimeout(() => {
+      setHiddenRow(checkedList)
+      setTableLoad(false)
+      localStorage.setItem('hidenColumns', JSON.stringify(checkedList))
+    }, 1000)
   }
   const titles = [
     {
@@ -397,6 +432,8 @@ const PhieuNhapDieuChinh = () => {
       },
     },
   ]
+  const newTitles = titles.filter((item) => !hiddenRow?.includes(item.dataIndex))
+
   return (
     <>
       {!isLoading ? (
@@ -404,31 +441,87 @@ const PhieuNhapDieuChinh = () => {
       ) : (
         <>
           <div className="flex flex-col gap-1">
-            <div className="flex justify-between gap-2">
-              <div>
-                <div className="flex items-center gap-2">
+            <div className="flex justify-between gap-2  relative">
+              <div className="flex gap-1 ">
+                <div className="flex items-center gap-2 py-0.5">
                   <h1 className="text-lg font-bold uppercase">Phiếu Nhập Kho Điều Chỉnh</h1>
                   <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
                 </div>
-                <div className="flex relative " ref={showOption}>
-                  {isShowSearch && (
-                    <div className={`flex absolute left-[19rem] -top-8 transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
-                      <Input
-                        size="small"
-                        value={searchHangHoa}
-                        type="text"
-                        placeholder="Nhập ký tự bạn cần tìm"
-                        onChange={handleSearch}
-                        className={'px-2 py-1 w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[1px] hover:border-blue-500 outline-none text-[1rem] '}
-                      />
-                    </div>
-                  )}
-                </div>
+                {isShowSearch && (
+                  <div className={`flex transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
+                    <Input
+                      allowClear={{
+                        clearIcon: <CloseSquareFilled />,
+                      }}
+                      placeholder="Nhập ký tự bạn cần tìm"
+                      onBlur={handleSearch}
+                      onPressEnter={handleSearch}
+                      className="w-full"
+                    />
+                  </div>
+                )}
               </div>
-              <div>
+              <div className="flex" ref={showOption}>
                 <div className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5  " onClick={() => setIsShowOption(!isShowOption)} title="Chức năng khác">
                   <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
                 </div>
+                {isShowOption && (
+                  <div className="absolute flex flex-col gap-2 bg-slate-200 p-3 top-[12] right-[2.5%] rounded-lg z-10 duration-500 shadow-custom">
+                    <div className={`flex ${selectVisible ? '' : 'flex-col'} items-center gap-2`}>
+                      <ActionButton
+                        handleAction={handlePrint}
+                        title={'In Phiếu'}
+                        icon={<MdPrint className="w-6 h-6" />}
+                        color={'slate-50'}
+                        background={'purple-500'}
+                        color_hover={'purple-500'}
+                        bg_hover={'white'}
+                      />
+                      <ActionButton
+                        handleAction={() => handleHidden()}
+                        title={'Ẩn Cột'}
+                        icon={<FaEyeSlash className="w-5 h-5" />}
+                        color={'slate-50'}
+                        background={'red-500'}
+                        color_hover={'red-500'}
+                        bg_hover={'white'}
+                      />
+                    </div>
+                    <div>
+                      {selectVisible && (
+                        <div>
+                          <Checkbox.Group
+                            style={{
+                              width: '500px',
+                              background: 'white',
+                              padding: 10,
+                              borderRadius: 10,
+                              boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+                            }}
+                            className="flex flex-col"
+                            defaultValue={checkedList}
+                            onChange={onChange}
+                          >
+                            <Row>
+                              {options.map((item) => (
+                                <Col span={8} key={item}>
+                                  <Checkbox value={item} checked={true}>
+                                    {nameColumsPhieuNhapDieuChinh[item]}
+                                  </Checkbox>
+                                </Col>
+                              ))}
+                            </Row>
+                            <Spin spinning={tableLoad}>
+                              <Button className="mt-2 w-full" onClick={onClickSubmit}>
+                                Xác Nhận
+                              </Button>
+                            </Spin>
+                          </Checkbox.Group>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
             <div className="flex justify-between gap-1">
@@ -499,22 +592,13 @@ const PhieuNhapDieuChinh = () => {
                   color_hover={'blue-500'}
                   bg_hover={'white'}
                 />
-                <ActionButton
-                  handleAction={handlePrint}
-                  title={'In Phiếu'}
-                  icon={<MdPrint className="w-6 h-6" />}
-                  color={'slate-50'}
-                  background={'purple-500'}
-                  color_hover={'purple-500'}
-                  bg_hover={'white'}
-                />
               </div>
             </div>
             <div>
               <Table
                 loading={tableLoad}
                 className="table_DMHangHoa setHeight"
-                columns={titles}
+                columns={newTitles}
                 dataSource={filteredHangHoa}
                 pagination={{
                   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
@@ -542,13 +626,13 @@ const PhieuNhapDieuChinh = () => {
                   return (
                     <Table.Summary fixed="bottom">
                       <Table.Summary.Row>
-                        {titles
+                        {newTitles
                           .filter((column) => column.render)
-                          .map((column) => {
+                          .map((column, index) => {
                             const isNumericColumn = typeof filteredHangHoa[0]?.[column.dataIndex] === 'number'
 
                             return (
-                              <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                              <Table.Summary.Cell key={`summary-cell-${index + 1}`} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
                                 {isNumericColumn ? (
                                   column.dataIndex === 'SoMatHang' ? (
                                     <Text strong>

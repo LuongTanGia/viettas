@@ -581,8 +581,8 @@ const NhapXuatTonKho = () => {
         <div className="flex flex-col gap-1">
           <div className="flex flex-col gap-0.5">
             <div className="flex justify-between">
-              <div className="flex gap-2 items-center py-1">
-                <div className="flex items-center gap-2">
+              <div className="flex gap-2 items-center ">
+                <div className="flex items-center gap-2 py-1">
                   <h1 className="text-lg font-bold text-black-600 uppercase">Nhập Xuất Tồn - Theo Kho</h1>
                   <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
                 </div>
