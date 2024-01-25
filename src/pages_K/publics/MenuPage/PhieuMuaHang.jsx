@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
-import { Table, Checkbox, Tooltip, Row, Col, Typography } from 'antd'
+import { Table, Checkbox, Tooltip, Row, Col, Typography, Input } from 'antd'
 import moment from 'moment'
 import icons from '../../../untils/icons'
 import { toast } from 'react-toastify'
@@ -13,9 +13,11 @@ import SimpleBackdrop from '../../../components/util/Loading/LoadingPage'
 import { DateField } from '@mui/x-date-pickers/DateField'
 import { useSearch } from '../../../components_K/myComponents/useSearch'
 import HighlightedCell from '../../../components_T/hooks/HighlightedCell'
+import { exportToExcel } from '../../../action/Actions'
+import { CloseSquareFilled } from '@ant-design/icons'
 
 const { Text } = Typography
-const { IoAddCircleOutline, TiPrinter, MdDelete, GiPayMoney, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash } = icons
+const { IoAddCircleOutline, TiPrinter, MdDelete, GiPayMoney, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill } = icons
 const PhieuMuaHang = () => {
   const optionContainerRef = useRef(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -666,14 +668,34 @@ const PhieuMuaHang = () => {
       setLastSearchTime(currentTime)
     }
   }
-  const handleSearch = () => {
-    const currentTime = new Date().getTime()
-    if (currentTime - lastSearchTime >= 1000 && searchValue !== prevSearchValue) {
-      setTableLoad(true)
-      setSearchPMH(searchValue)
-      setLastSearchTime(currentTime)
+
+  let timerId
+  let currentInputValue = ''
+
+  const handleInputChange = (e) => {
+    const inputValue = e.target.value
+
+    // Kiểm tra xem giá trị có thay đổi không
+    if (inputValue !== currentInputValue) {
+      currentInputValue = inputValue
+
+      // Thực hiện tìm kiếm sau 300 milliseconds
+      clearTimeout(timerId)
+      timerId = setTimeout(() => {
+        setTableLoad(true)
+        setSearchPMH(inputValue)
+      }, 300)
     }
   }
+
+  // const handleSearch = () => {
+  //   const currentTime = new Date().getTime()
+  //   if (currentTime - lastSearchTime >= 1000 && searchValue !== prevSearchValue) {
+  //     setTableLoad(true)
+  //     setSearchPMH(searchValue)
+  //     setLastSearchTime(currentTime)
+  //   }
+  // }
 
   return (
     <>
@@ -691,11 +713,13 @@ const PhieuMuaHang = () => {
             <div className="flex  ">
               {isShowSearch && (
                 <div className={`flex absolute left-[14rem] -top-[2px] transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
-                  <input
+                  {/* <input
                     type="text"
                     placeholder="Nhập ký tự bạn cần tìm"
                     // onChange={handleSearch}
-                    onChange={(e) => setSearchValue(e.target.value)}
+                    onChange={(e) => {
+                      setSearchValue(e.target.value)
+                    }}
                     onBlur={handleSearch}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') {
@@ -705,6 +729,14 @@ const PhieuMuaHang = () => {
                     }}
                     onFocus={() => setPrevSearchValue(searchValue)}
                     className={'px-2  w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] '}
+                  /> */}
+                  <Input
+                    allowClear={{
+                      clearIcon: <CloseSquareFilled />,
+                    }}
+                    placeholder="Nhập ký tự bạn cần tìm"
+                    onPressEnter={handleInputChange}
+                    onBlur={handleInputChange}
                   />
                 </div>
               )}
@@ -716,6 +748,15 @@ const PhieuMuaHang = () => {
               {isShowOption && (
                 <div className=" absolute flex flex-col gap-2 bg-slate-100 p-3  top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom ">
                   <div className={`flex flex-grow flex-wrap gap-1 ${!hideColumns ? 'flex-col' : ''}`}>
+                    <button
+                      onClick={exportToExcel}
+                      className="flex items-center py-1 px-2 rounded-md border-2 border-green-500  text-slate-50 text-base bg-green-500 hover:bg-white hover:text-green-500 "
+                    >
+                      <div className="pr-1">
+                        <RiFileExcel2Fill size={20} />
+                      </div>
+                      <div>Xuất excel</div>
+                    </button>
                     <button
                       onClick={handlePrint}
                       className="flex items-center py-1 px-2 rounded-md border-2 border-purple-500  text-slate-50 text-base bg-purple-500 hover:bg-white hover:text-purple-500 "
@@ -874,7 +915,7 @@ const PhieuMuaHang = () => {
             </div>
           </div>
 
-          <div className="relative px-2 py-1 ">
+          <div id="my-table" className="relative px-2 py-1 ">
             <Table
               loading={tableLoad}
               className="table_pmh setHeight"

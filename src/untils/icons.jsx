@@ -17,7 +17,7 @@ import { GiPayMoney } from 'react-icons/gi'
 import { GiReceiveMoney } from 'react-icons/gi'
 import { BsSearch } from 'react-icons/bs'
 import { TfiMoreAlt } from 'react-icons/tfi'
-
+import { RiFileExcel2Fill } from 'react-icons/ri'
 import { IoMdAddCircle } from 'react-icons/io'
 
 const icons = {
@@ -54,5 +54,6 @@ const icons = {
   MdFilterAlt,
   IoMdAddCircle,
   FaEyeSlash,
+  RiFileExcel2Fill,
 }
 export default icons

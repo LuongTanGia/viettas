@@ -13,9 +13,10 @@ import SimpleBackdrop from '../../../components/util/Loading/LoadingPage'
 import { DateField } from '@mui/x-date-pickers/DateField'
 import { useSearch } from '../../../components_K/myComponents/useSearch'
 import HighlightedCell from '../../../components_T/hooks/HighlightedCell'
+import { exportToExcel } from '../../../action/Actions'
 
 const { Text } = Typography
-const { IoAddCircleOutline, TiPrinter, MdDelete, GiPayMoney, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash } = icons
+const { IoAddCircleOutline, TiPrinter, MdDelete, GiPayMoney, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill } = icons
 const PhieuNTR = () => {
   const optionContainerRef = useRef(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -692,6 +693,15 @@ const PhieuNTR = () => {
                 <div className=" absolute flex flex-col gap-2 bg-slate-100 p-3  top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom ">
                   <div className={`flex flex-grow flex-wrap gap-1 ${!hideColumns ? 'flex-col' : ''}`}>
                     <button
+                      onClick={exportToExcel}
+                      className="flex items-center py-1 px-2 rounded-md border-2 border-green-500  text-slate-50 text-base bg-green-500 hover:bg-white hover:text-green-500 "
+                    >
+                      <div className="pr-1">
+                        <RiFileExcel2Fill size={20} />
+                      </div>
+                      <div>Xuất excel</div>
+                    </button>
+                    <button
                       onClick={handlePrint}
                       className="flex items-center py-1 px-2 rounded-md border-2 border-purple-500  text-slate-50 text-base bg-purple-500 hover:bg-white hover:text-purple-500 "
                     >
@@ -851,7 +861,7 @@ const PhieuNTR = () => {
             </div>
           </div>
 
-          <div className="relative px-2 py-1 ">
+          <div id="my-table" className="relative px-2 py-1 ">
             <Table
               loading={tableLoad}
               className="table_pmh setHeight"
