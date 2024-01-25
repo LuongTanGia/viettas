@@ -390,20 +390,32 @@ const Modals = ({
       })
       setErrors({ Ten: '', DiaChi: '' })
     }
-
-    if (actionType === 'edit' && selectedValue !== 'NCVL') {
-      setFormEdit({
-        ...formEdit,
-        TenDoiTuong: selectedDoiTuongInfo.Ten,
-        DiaChi: selectedDoiTuongInfo.DiaChi,
-      })
-      // console.log('first1', formEdit)
-    } else if (actionType === 'edit' && selectedValue === 'NCVL') {
-      setFormEdit({
-        ...formEdit,
-        // TenDoiTuong: selectedDoiTuongInfo.Ten,
-        // DiaChi: selectedDoiTuongInfo.DiaChi,
-      })
+    if (typePage === 'PMH') {
+      if (actionType === 'edit' && selectedValue !== 'NCVL') {
+        setFormEdit({
+          ...formEdit,
+          TenDoiTuong: selectedDoiTuongInfo.Ten,
+          DiaChi: selectedDoiTuongInfo.DiaChi,
+        })
+      } else if (actionType === 'edit' && selectedValue === 'NCVL') {
+        setFormEdit({
+          ...formEdit,
+        })
+        setErrors({ Ten: '', DiaChi: '' })
+      }
+    }
+    if (typePage === 'NTR') {
+      if (actionType === 'edit' && selectedValue !== 'KHVL') {
+        setFormEdit({
+          ...formEdit,
+          TenDoiTuong: selectedDoiTuongInfo.Ten,
+          DiaChi: selectedDoiTuongInfo.DiaChi,
+        })
+      } else if (actionType === 'edit' && selectedValue === 'KHVL') {
+        setFormEdit({
+          ...formEdit,
+        })
+      }
     }
   }
 
@@ -470,6 +482,7 @@ const Modals = ({
         Ten: formCreate?.TenDoiTuong?.trim() ? '' : 'Tên đối tượng không được để trống',
         DiaChi: formCreate?.DiaChi?.trim() ? '' : 'Địa chỉ không được để trống',
       })
+
       return
     }
     try {
@@ -532,13 +545,13 @@ const Modals = ({
   }
 
   const handleEdit = async (dataRecord) => {
-    // if (!formEdit?.TenDoiTuong?.trim() || !formEdit?.DiaChi?.trim()) {
-    //   setErrors({
-    //     Ten: formEdit?.TenDoiTuong?.trim() ? '' : 'Tên đối tượng không được để trống',
-    //     DiaChi: formEdit?.DiaChi?.trim() ? '' : 'Địa chỉ không được để trống',
-    //   })
-    //   return
-    // }
+    if (!formEdit?.TenDoiTuong?.trim() || !formEdit?.DiaChi?.trim()) {
+      setErrors({
+        Ten: formEdit?.TenDoiTuong?.trim() ? '' : 'Tên đối tượng không được để trống',
+        DiaChi: formEdit?.DiaChi?.trim() ? '' : 'Địa chỉ không được để trống',
+      })
+      return
+    }
     try {
       const tokenLogin = localStorage.getItem('TKN')
       const dataAddSTT = selectedRowData.map((item, index) => {
@@ -829,6 +842,15 @@ const Modals = ({
   const handleChangLoading = (newLoading) => {
     setIsLoading(newLoading)
   }
+  const handlePrintModal = () => {
+    if (!formCreate?.TenDoiTuong?.trim() || !formCreate?.DiaChi?.trim()) return
+    setIsShowModalOnlyPrint(true)
+  }
+  const handlePrintWareHouseModal = () => {
+    if (!formCreate?.TenDoiTuong?.trim() || !formCreate?.DiaChi?.trim()) return
+    setIsShowModalOnlyPrintWareHouse(true)
+  }
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
       <div className="p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
@@ -1272,8 +1294,8 @@ const Modals = ({
                     {/* DatePicker */}
                     <div className="flex md:px-1 lg:px-4 items-center">
                       <label className="pr-1 lg:pr-[30px] lg:pl-[8px]">Ngày</label>
-                      <DatePicker
-                        // className="DatePicker_PMH "
+                      <DateField
+                        className="DatePicker_PMH max-w-[110px]"
                         format="DD/MM/YYYY"
                         defaultValue={dayjs()}
                         onChange={(newDate) => {
@@ -1483,7 +1505,7 @@ const Modals = ({
                   bg_hover={'white'}
                   color_hover={'purple-500'}
                   handleAction={() => {
-                    handleCreate(), setIsShowModalOnlyPrint(true)
+                    handleCreate(), handlePrintModal()
                   }}
                 />
                 {dataThongSo?.ALLOW_INPHIEUKHO_DAUVAODAURA === true && (
@@ -1494,7 +1516,7 @@ const Modals = ({
                     bg_hover={'white'}
                     color_hover={'purple-500'}
                     handleAction={() => {
-                      handleCreate(), setIsShowModalOnlyPrintWareHouse(true)
+                      handleCreate(), handlePrintWareHouseModal()
                     }}
                   />
                 )}
@@ -1545,8 +1567,8 @@ const Modals = ({
                     {/* DatePicker */}
                     <div className="flex md:px-1 lg:px-4 items-center">
                       <label className="pr-1 lg:pr-[30px] lg:pl-[8px]">Ngày</label>
-                      <DatePicker
-                        className="DatePicker_PMH "
+                      <DateField
+                        className="DatePicker_PMH  max-w-[110px]"
                         format="DD/MM/YYYY"
                         defaultValue={dayjs(dataThongTin.NgayCTu)}
                         onChange={(newDate) => {
@@ -1585,9 +1607,14 @@ const Modals = ({
                     <input
                       placeholder={errors.Ten}
                       type="text"
-                      className={`w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] h-[24px] ${
-                        (typePage === 'PMH' && selectedDoiTuong === 'NCVL') || (typePage === 'NTR' && selectedDoiTuong === 'KHVL' && 'hover:border-[#4897e6]')
-                      }`}
+                      className={`w-full border-[1px] outline-none px-2 rounded-[4px] h-[24px] border-gray-300
+                       ${
+                         (typePage === 'PMH' && selectedDoiTuong === 'NCVL' && 'hover:border-[#4897e6]') ||
+                         (typePage === 'NTR' && selectedDoiTuong === 'KHVL' && 'hover:border-[#4897e6]')
+                       }
+                       ${typePage === 'PMH' && selectedDoiTuong === 'NCVL' && errors.Ten ? 'border-red-500' : ''} 
+                       ${typePage === 'NTR' && selectedDoiTuong === 'KHVL' && errors.Ten ? 'border-red-500' : ''} 
+                        `}
                       value={
                         typePage === 'PMH' && selectedDoiTuong === 'NCVL'
                           ? formEdit.TenDoiTuong
@@ -1596,10 +1623,13 @@ const Modals = ({
                             : doiTuongInfo.Ten
                       }
                       onChange={(e) => {
-                        setFormEdit({
-                          ...formEdit,
-                          TenDoiTuong: e.target.value,
-                        })
+                        {
+                          setFormEdit({
+                            ...formEdit,
+                            TenDoiTuong: e.target.value,
+                          })
+                          setErrors({ ...errors, Ten: '' })
+                        }
                       }}
                       disabled={(typePage === 'PMH' && selectedDoiTuong !== 'NCVL') || (typePage === 'NTR' && selectedDoiTuong !== 'KHVL')}
                     />
@@ -1609,13 +1639,29 @@ const Modals = ({
                     <input
                       placeholder={errors.DiaChi}
                       type="text"
-                      className={`w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] h-[24px] ${selectedDoiTuong === 'NCVL' && 'hover:border-[#4897e6]'}`}
-                      value={selectedDoiTuong === 'NCVL' ? formEdit.DiaChi : doiTuongInfo.DiaChi}
+                      className={`w-full border-[1px] outline-none px-2 rounded-[4px] h-[24px] border-gray-300
+                       ${
+                         (typePage === 'PMH' && selectedDoiTuong === 'NCVL' && 'hover:border-[#4897e6]') ||
+                         (typePage === 'NTR' && selectedDoiTuong === 'KHVL' && 'hover:border-[#4897e6]')
+                       }
+                       ${typePage === 'PMH' && selectedDoiTuong === 'NCVL' && errors.DiaChi ? 'border-red-500' : ''} 
+                       ${typePage === 'NTR' && selectedDoiTuong === 'KHVL' && errors.DiaChi ? 'border-red-500' : ''} 
+                        `}
+                      value={
+                        typePage === 'PMH' && selectedDoiTuong === 'NCVL'
+                          ? formEdit.DiaChi
+                          : typePage === 'NTR' && selectedDoiTuong === 'KHVL'
+                            ? formEdit.DiaChi
+                            : doiTuongInfo.DiaChi
+                      }
                       onChange={(e) => {
-                        setFormEdit({
-                          ...formEdit,
-                          DiaChi: e.target.value,
-                        })
+                        {
+                          setFormEdit({
+                            ...formEdit,
+                            DiaChi: e.target.value,
+                          })
+                          setErrors({ ...errors, DiaChi: '' })
+                        }
                       }}
                       disabled={selectedDoiTuong !== 'NCVL'}
                     />

@@ -2,28 +2,25 @@
 import { useState } from 'react'
 import logo from '../assets/VTS-iSale.ico'
 import icons from '../untils/icons'
-import { Table, Checkbox } from 'antd'
+import { Table, Checkbox, Input } from 'antd'
 import { formatQuantity } from '../action/Actions'
 import { useSearchHH } from './myComponents/useSearchHH'
 import ActionButton from '../components/util/Button/ActionButton'
 import HighlightedCell from '../components_T/hooks/HighlightedCell'
 import { toast } from 'react-toastify'
+import { CloseSquareFilled } from '@ant-design/icons'
 
 const { BsSearch } = icons
-const ModalHH = ({ close, data, onRowCreate, dataThongSo, loading, onChangLoading }) => {
+const ModalHH = ({ close, data, onRowCreate, dataThongSo, onChangLoading }) => {
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [setSearchHH, filteredHH, searchHH] = useSearchHH(data)
-  const [searchValue, setSearchValue] = useState('')
+
   const [prevSearchValue, setPrevSearchValue] = useState('')
   const [lastSearchTime, setLastSearchTime] = useState(0)
-  // const [isLoading, setIsLoading] = useState(loading)
+  // const [isLoading, setIsLoading] = useState(false)
 
   // const [pageSize, setPageSize] = useState(50)
 
-  // const handleRowClick = (dataRow) => {
-  //   setSelectedRow(dataRow.MaHang)
-  // }
-  // console.log('HH', isLoading)
   const dataTable = filteredHH?.map((record, index) => ({
     key: index,
     ...record,
@@ -161,12 +158,12 @@ const ModalHH = ({ close, data, onRowCreate, dataThongSo, loading, onChangLoadin
     },
   ]
 
-  const handleSearch = () => {
+  const handleSearch = (e) => {
     const currentTime = new Date().getTime()
-    if (currentTime - lastSearchTime >= 1000 && searchValue !== prevSearchValue) {
-      setSearchHH(searchValue)
+    if (currentTime - lastSearchTime >= 1000 && e !== prevSearchValue) {
+      setSearchHH(e)
       setLastSearchTime(currentTime)
-      // setIsLoading(loading)
+      // setIsLoading(true)
       onChangLoading(true)
     }
   }
@@ -182,22 +179,20 @@ const ModalHH = ({ close, data, onRowCreate, dataThongSo, loading, onChangLoadin
               <BsSearch size={16} className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
             </div>
           </div>
-          <div className="flex  ">
+          <div className="flex mt-1 ">
             {isShowSearch && (
-              <div className={`flex absolute left-[17rem] top-[23px] transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
-                <input
-                  type="text"
-                  placeholder="Nhập ký tự bạn cần tìm"
-                  onChange={(e) => setSearchValue(e.target.value)}
-                  onBlur={handleSearch}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      setPrevSearchValue(searchValue)
-                      handleSearch()
-                    }
+              <div className={`flex absolute left-[17rem] top-[18px] transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
+                <Input
+                  allowClear={{
+                    clearIcon: <CloseSquareFilled />,
                   }}
-                  onFocus={() => setPrevSearchValue(searchValue)}
-                  className={'px-2  w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] '}
+                  placeholder="Nhập ký tự bạn cần tìm"
+                  onPressEnter={(e) => {
+                    setPrevSearchValue(e.target.value)
+                    handleSearch(e.target.value)
+                  }}
+                  onBlur={(e) => handleSearch(e.target.value)}
+                  onFocus={(e) => setPrevSearchValue(e.target.value)}
                 />
               </div>
             )}
