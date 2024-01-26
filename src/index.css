@@ -224,6 +224,10 @@ input[type='radio'] {
   text-align: right;
   padding: 0 1.5rem;
 }
+/* Fix text-color input*/
+input.ant-input.ant-input-sm {
+  color: black;
+}
 
 /* K custom antd and MUI */
 /* start */

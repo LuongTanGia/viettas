@@ -4,7 +4,7 @@ import { toast } from 'react-toastify'
 import logo from '../../../../../assets/VTS-iSale.ico'
 import ActionButton from '../../../../../components/util/Button/ActionButton'
 
-const NCKXoa = ({ close, dataNDC, loadingData }) => {
+const NCKXoa = ({ close, dataNDC, loadingData, targetRow }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const handleDelete = async () => {
     try {
@@ -13,6 +13,7 @@ const NCKXoa = ({ close, dataNDC, loadingData }) => {
         loadingData()
         close()
         toast.success(response.data.DataErrorDescription)
+        targetRow([])
       }
     } catch (error) {
       console.log(error)

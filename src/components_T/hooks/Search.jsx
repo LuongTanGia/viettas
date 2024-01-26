@@ -4,6 +4,7 @@ import moment from 'moment'
 
 export const useSearch = (data) => {
   const [search, setSearch] = useState('')
+
   const filteredData = useMemo(() => {
     if (data)
       return data.filter((item) => {

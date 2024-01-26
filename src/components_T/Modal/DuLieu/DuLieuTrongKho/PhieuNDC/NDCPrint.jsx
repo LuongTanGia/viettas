@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from 'react'
 import dayjs from 'dayjs'
@@ -5,7 +6,7 @@ import { toast } from 'react-toastify'
 import { MdFilterAlt } from 'react-icons/md'
 import { Select, Checkbox } from 'antd'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
-import { RETOKEN } from '../../../../../action/Actions'
+import { RETOKEN, base64ToPDF } from '../../../../../action/Actions'
 import categoryAPI from '../../../../../API/linkAPI'
 import logo from '../../../../../assets/VTS-iSale.ico'
 import ActionButton from '../../../../../components/util/Button/ActionButton'
@@ -19,17 +20,22 @@ const NDCPrint = ({ close, dataPrint }) => {
   const [dataListChungTu, setDataListChungTu] = useState('')
   const [selectedNhomFrom, setSelectedNhomFrom] = useState([])
   const [selectedNhomTo, setSelectedNhomTo] = useState([])
-
   const [checkboxValues, setCheckboxValues] = useState({
     checkbox1: true,
     checkbox2: false,
     checkbox3: false,
   })
+  const [errors, setErrors] = useState({
+    SoChungTuBatDau: '',
+    SoChungTuKetThuc: '',
+  })
+
   useEffect(() => {
     if (!isLoading) {
       getTimeSetting()
     }
   }, [isLoading])
+
   const calculateTotal = () => {
     let total = 0
     if (checkboxValues.checkbox1) total += 1
@@ -37,6 +43,13 @@ const NDCPrint = ({ close, dataPrint }) => {
     return total
   }
   const handlePrint = async () => {
+    if (selectedNhomFrom == [] || selectedNhomTo == []) {
+      setErrors({
+        SoChungTuBatDau: selectedNhomFrom == [] ? '' : 'Số chứng từ không được trống',
+        SoChungTuKetThuc: selectedNhomTo == [] ? '' : 'Số chứng từ không được trống',
+      })
+      return
+    }
     try {
       const response = await categoryAPI.NDCPrint(
         dataPrint
@@ -57,22 +70,16 @@ const NDCPrint = ({ close, dataPrint }) => {
         TokenAccess,
       )
       if (response.data.DataError == 0) {
-        const decodedData = atob(response.data.DataResults)
-        const arrayBuffer = new ArrayBuffer(decodedData.length)
-        const uint8Array = new Uint8Array(arrayBuffer)
-        for (let i = 0; i < decodedData.length; i++) {
-          uint8Array[i] = decodedData.charCodeAt(i)
-        }
-        const blob = new Blob([arrayBuffer], {
-          type: 'application/pdf',
-        })
-        const dataUrl = URL.createObjectURL(blob)
-        const newWindow = window.open(dataUrl, '_blank')
-        newWindow.onload = function () {
-          newWindow.print()
-        }
+        base64ToPDF(response.data.DataResults)
       } else {
         toast.error(response.data.DataErrorDescription)
+        console.log({
+          NgayBatDau: khoanNgayFrom,
+          NgayKetThuc: khoanNgayTo,
+          SoChungTuBatDau: selectedNhomFrom,
+          SoChungTuKetThuc: selectedNhomTo,
+          SoLien: calculateTotal(),
+        })
       }
     } catch (error) {
       console.log(error)
@@ -181,9 +188,14 @@ const NDCPrint = ({ close, dataPrint }) => {
                     <Select
                       allowClear
                       showSearch
-                      placeholder="Chọn nhóm"
+                      required
+                      status={errors.SoChungTuBatDau ? 'error' : ''}
                       value={dataPrint ? dataPrint.SoChungTu : selectedNhomFrom}
-                      onChange={(value) => setSelectedNhomFrom(value)}
+                      placeholder={errors?.SoChungTuBatDau ? errors?.SoChungTuBatDau : 'Chọn nhóm'}
+                      onChange={(value) => {
+                        setSelectedNhomFrom(value)
+                        setErrors({ ...errors, SoChungTuBatDau: '' })
+                      }}
                       style={{
                         width: '200px',
                       }}
@@ -203,9 +215,14 @@ const NDCPrint = ({ close, dataPrint }) => {
                     <Select
                       allowClear
                       showSearch
-                      placeholder="Chọn nhóm"
+                      required
+                      placeholder={errors?.SoChungTuKetThuc ? errors?.SoChungTuKetThuc : 'Chọn nhóm'}
+                      status={errors.SoChungTuKetThuc ? 'error' : ''}
                       value={dataPrint ? dataPrint.SoChungTu : selectedNhomTo}
-                      onChange={(value) => setSelectedNhomTo(value)}
+                      onChange={(value) => {
+                        setSelectedNhomTo(value)
+                        setErrors({ ...errors, SoChungTuKetThuc: '' })
+                      }}
                       style={{
                         width: '200px',
                       }}
