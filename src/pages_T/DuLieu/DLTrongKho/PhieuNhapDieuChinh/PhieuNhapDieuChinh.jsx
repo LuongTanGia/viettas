@@ -44,6 +44,7 @@ const PhieuNhapDieuChinh = () => {
   const [selectVisible, setSelectVisible] = useState(false)
   const [options, setOptions] = useState()
   const [dateData, setDateData] = useState({})
+  const [targetRow, setTargetRow] = useState(null)
 
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
@@ -88,7 +89,7 @@ const PhieuNhapDieuChinh = () => {
 
   useEffect(() => {
     getDataNDC()
-  }, [searchHangHoa, isLoading, dateData.NgayBatDau, dateData.NgayKetThuc, tableLoad])
+  }, [searchHangHoa, isLoading, targetRow, dateData.NgayBatDau, dateData.NgayKetThuc])
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -205,7 +206,6 @@ const PhieuNhapDieuChinh = () => {
       })
     }, 300)
   }
-
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
       handleDateChange()
@@ -434,8 +434,7 @@ const PhieuNhapDieuChinh = () => {
     },
   ]
   const newTitles = titles.filter((item) => !hiddenRow?.includes(item.dataIndex))
-  console.log(dateData)
-  console.log(dataNDC)
+
   return (
     <>
       {!isLoading ? (
@@ -621,6 +620,7 @@ const PhieuNhapDieuChinh = () => {
                     handleView(record)
                   },
                 })}
+                rowClassName={(record) => (record.SoChungTu === targetRow ? 'highlighted-row' : '')}
                 size="small"
                 scroll={{
                   x: 2000,
@@ -671,13 +671,13 @@ const PhieuNhapDieuChinh = () => {
           <div>
             {isShowModal &&
               (actionType == 'create' ? (
-                <NDCCreate close={() => setIsShowModal(false)} loadingData={handleLoading} />
+                <NDCCreate close={() => setIsShowModal(false)} loadingData={handleLoading} targetRow={setTargetRow} />
               ) : actionType == 'view' ? (
                 <NDCXem close={() => setIsShowModal(false)} dataNDC={isDataKhoDC} />
               ) : actionType == 'edit' ? (
-                <NDCEdit close={() => setIsShowModal(false)} dataNDC={isDataKhoDC} loadingData={handleLoading} />
+                <NDCEdit close={() => setIsShowModal(false)} dataNDC={isDataKhoDC} loadingData={handleLoading} targetRow={setTargetRow} />
               ) : actionType == 'delete' ? (
-                <NDCXoa close={() => setIsShowModal(false)} dataNDC={isDataKhoDC} loadingData={handleLoading} />
+                <NDCXoa close={() => setIsShowModal(false)} dataNDC={isDataKhoDC} loadingData={handleLoading} targetRow={setTargetRow} />
               ) : actionType == 'print' ? (
                 <NDCPrint close={() => setIsShowModal(false)} />
               ) : null)}

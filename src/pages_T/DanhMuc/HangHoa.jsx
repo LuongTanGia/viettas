@@ -6,8 +6,8 @@ import moment from 'moment'
 import { toast } from 'react-toastify'
 import { CiBarcode } from 'react-icons/ci'
 import { TfiMoreAlt } from 'react-icons/tfi'
-import { RETOKEN, exportToExcel } from '../../action/Actions'
 import { GrStatusUnknown } from 'react-icons/gr'
+import { RiFileExcel2Fill } from 'react-icons/ri'
 import { IoMdAddCircleOutline } from 'react-icons/io'
 import { FaSearch, FaEyeSlash } from 'react-icons/fa'
 import { CloseSquareFilled } from '@ant-design/icons'
@@ -18,8 +18,8 @@ import ActionButton from '../../components/util/Button/ActionButton'
 import HighlightedCell from '../../components_T/hooks/HighlightedCell'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
 import { nameColumsHangHoa } from '../../components/util/Table/ColumnName'
+import { RETOKEN, base64ToPDF, exportToExcel } from '../../action/Actions'
 import HangHoaModals from '../../components_T/Modal/DanhMuc/HangHoa/HangHoaModals'
-import { RiFileExcel2Fill } from 'react-icons/ri'
 
 const HangHoa = () => {
   const TokenAccess = localStorage.getItem('TKN')
@@ -44,10 +44,8 @@ const HangHoa = () => {
   const [options, setOptions] = useState()
 
   useEffect(() => {
-    if (searchHangHoa || tableLoad) {
-      getListHangHoa()
-    }
-  }, [searchHangHoa])
+    getListHangHoa()
+  }, [searchHangHoa, targetRow])
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -73,7 +71,6 @@ const HangHoa = () => {
   const getListHangHoa = async () => {
     try {
       setTableLoad(true)
-
       const response = await categoryAPI.HangHoa(TokenAccess)
       if (response.data.DataError === 0) {
         setDataHangHoa(response.data.DataResults)
@@ -147,20 +144,7 @@ const HangHoa = () => {
           TokenAccess,
         )
         if (response.data.DataError === 0) {
-          const decodedData = atob(response.data.DataResults)
-          const arrayBuffer = new ArrayBuffer(decodedData.length)
-          const uint8Array = new Uint8Array(arrayBuffer)
-          for (let i = 0; i < decodedData.length; i++) {
-            uint8Array[i] = decodedData.charCodeAt(i)
-          }
-          const blob = new Blob([arrayBuffer], {
-            type: 'application/pdf',
-          })
-          const dataUrl = URL.createObjectURL(blob)
-          const newWindow = window.open(dataUrl, '_blank')
-          newWindow.onload = function () {
-            newWindow.print()
-          }
+          base64ToPDF(response.data.DataResults)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
           handlePrintABarcode()
@@ -176,20 +160,7 @@ const HangHoa = () => {
           TokenAccess,
         )
         if (response.data.DataError === 0) {
-          const decodedData = atob(response.data.DataResults)
-          const arrayBuffer = new ArrayBuffer(decodedData.length)
-          const uint8Array = new Uint8Array(arrayBuffer)
-          for (let i = 0; i < decodedData.length; i++) {
-            uint8Array[i] = decodedData.charCodeAt(i)
-          }
-          const blob = new Blob([arrayBuffer], {
-            type: 'application/pdf',
-          })
-          const dataUrl = URL.createObjectURL(blob)
-          const newWindow = window.open(dataUrl, '_blank')
-          newWindow.onload = function () {
-            newWindow.print()
-          }
+          base64ToPDF(response.data.DataResults)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
           handlePrintABarcode()

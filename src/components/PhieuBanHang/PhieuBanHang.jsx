@@ -130,7 +130,7 @@ function PhieuBanHang() {
     }
     console.log()
     getListData()
-  }, [searchText, selectMH, isShowDelete, searchData.NgayBatDau, searchData.NgayKetThuc])
+  }, [searchText, selectMH, searchData.NgayBatDau, searchData.NgayKetThuc])
 
   useEffect(() => {
     const handleClickOutside = (event) => {

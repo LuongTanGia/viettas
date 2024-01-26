@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import { useEffect, useState, useCallback, useMemo } from 'react'
@@ -17,7 +18,7 @@ import SimpleBackdrop from '../../../../../components/util/Loading/LoadingPage'
 import HighlightedCell from '../../../../hooks/HighlightedCell'
 import NDCPrint from './NDCPrint'
 
-const NDCCreate = ({ close, loadingData }) => {
+const NDCCreate = ({ close, loadingData, targetRow }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
@@ -30,6 +31,7 @@ const NDCCreate = ({ close, loadingData }) => {
   const [isLoading, setIsLoading] = useState(false)
   const [actionType, setActionType] = useState('')
   const [SoCTu, setSoCTu] = useState('')
+  const [targetRowModals, setTargetRowModals] = useState([])
 
   const currentRowData = useCallback(
     (mahang) => {
@@ -59,6 +61,10 @@ const NDCCreate = ({ close, loadingData }) => {
     return innitProduct
   })
 
+  const [errors, setErrors] = useState({
+    MaKho: '',
+  })
+
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.keyCode === 120) {
@@ -70,6 +76,12 @@ const NDCCreate = ({ close, loadingData }) => {
       document.removeEventListener('keydown', handleKeyDown)
     }
   }, [isShowModal])
+
+  useEffect(() => {
+    if (targetRow !== null) {
+      setTargetRowModals(targetRow)
+    }
+  }, [targetRow])
 
   useEffect(() => {
     const getDataKhoHangNDC = async () => {
@@ -165,15 +177,21 @@ const NDCCreate = ({ close, loadingData }) => {
     }
   }
   const handleCreate = async (isSave = true, isPrint = true) => {
+    if (!NDCForm?.MaKho) {
+      setErrors({
+        MaKho: NDCForm?.MaKho ? '' : 'Kho không được trống',
+      })
+      return
+    }
     try {
       const response = await categoryAPI.NDCCreate({ ...NDCForm, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss') }, TokenAccess)
       if (response.data.DataError == 0) {
         isPrint ? handlePrint() : isSave ? toast.success('Tạo thành công') : (close(), toast.success('Tạo thành công'))
         loadingData()
         setSoCTu(response.data.DataResults[0].SoChungTu)
+        targetRow(response.data.DataResults[0].SoChungTu)
       } else {
-        console.log(response.data)
-        isPrint ? toast.error('In thất bại') : toast.error('Tạo thất bại')
+        isPrint ? toast.error(response.data) : toast.error(response.data)
       }
     } catch (error) {
       console.log(error)
@@ -403,13 +421,17 @@ const NDCCreate = ({ close, loadingData }) => {
                         <Select
                           style={{ width: '100%' }}
                           showSearch
+                          required
                           size="small"
-                          value={NDCForm?.MaKho || ''}
+                          value={NDCForm?.MaKho}
+                          placeholder={errors?.MaKho ? errors?.MaKho : ''}
+                          status={errors.MaKho ? 'error' : ''}
                           onChange={(value) => {
                             setNDCForm({
                               ...NDCForm,
                               MaKho: value,
                             })
+                            setErrors({ ...errors, MaKho: '' })
                           }}
                         >
                           {dataKhoHang &&
