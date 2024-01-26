@@ -7,6 +7,7 @@ import DKSD from '../FAQ/DKSD'
 // import Home from "../Home/Home";
 import Phieumuahang from '../../pages_K/publics/MenuPage/PhieuMuaHang'
 import PhieuNTR from '../../pages_K/publics/MenuPage/PhieuNTR'
+import PhieuChiTien from '../../pages_K/publics/MenuPage/PhieuChiTien'
 import HangHoa from '../../pages_T/DanhMuc/HangHoa'
 import NhapXuatTonKho from '../../pages_T/TruyVan/NhapXuatTonKho'
 import PhieuBanHang from '../PhieuBanHang/PhieuBanHang'
@@ -27,6 +28,7 @@ function MainPage({ isSidebarVisible }) {
           <Route path="/DuLieuDR/DuLieu_PBS" element={<PhieuBanHang />} />
           <Route path="/DuLieuTK/DuLieu_NDC" element={<PhieuNhapDieuChinh />} />
 
+          <Route path="/DuLieuTC/DuLieu_PCT" element={<PhieuChiTien />} />
           <Route path="*" element={<ErrorPage />} />
         </Routes>
       </main>

@@ -420,11 +420,13 @@ const Modals = ({
   }
 
   const handleCreateAndClose = async () => {
-    if (!formCreate?.TenDoiTuong?.trim() || !formCreate?.DiaChi?.trim()) {
-      setErrors({
-        Ten: formCreate?.TenDoiTuong?.trim() ? '' : 'Tên đối tượng không được để trống',
-        DiaChi: formCreate?.DiaChi?.trim() ? '' : 'Địa chỉ không được để trống',
-      })
+    if (selectedDoiTuong === 'NCVL' || selectedDoiTuong === 'KHVL') {
+      if (!formCreate?.TenDoiTuong?.trim() || !formCreate?.DiaChi?.trim()) {
+        setErrors({
+          Ten: formCreate?.TenDoiTuong?.trim() ? '' : 'Tên đối tượng không được để trống',
+          DiaChi: formCreate?.DiaChi?.trim() ? '' : 'Địa chỉ không được để trống',
+        })
+      }
       return
     }
     try {
@@ -477,12 +479,13 @@ const Modals = ({
   }
 
   const handleCreate = async () => {
-    if (!formCreate?.TenDoiTuong?.trim() || !formCreate?.DiaChi?.trim()) {
-      setErrors({
-        Ten: formCreate?.TenDoiTuong?.trim() ? '' : 'Tên đối tượng không được để trống',
-        DiaChi: formCreate?.DiaChi?.trim() ? '' : 'Địa chỉ không được để trống',
-      })
-
+    if (selectedDoiTuong === 'NCVL' || selectedDoiTuong === 'KHVL') {
+      if (!formCreate?.TenDoiTuong?.trim() || !formCreate?.DiaChi?.trim()) {
+        setErrors({
+          Ten: formCreate?.TenDoiTuong?.trim() ? '' : 'Tên đối tượng không được để trống',
+          DiaChi: formCreate?.DiaChi?.trim() ? '' : 'Địa chỉ không được để trống',
+        })
+      }
       return
     }
     try {
@@ -545,11 +548,13 @@ const Modals = ({
   }
 
   const handleEdit = async (dataRecord) => {
-    if (!formEdit?.TenDoiTuong?.trim() || !formEdit?.DiaChi?.trim()) {
-      setErrors({
-        Ten: formEdit?.TenDoiTuong?.trim() ? '' : 'Tên đối tượng không được để trống',
-        DiaChi: formEdit?.DiaChi?.trim() ? '' : 'Địa chỉ không được để trống',
-      })
+    if (selectedDoiTuong === 'NCVL' || selectedDoiTuong === 'KHVL') {
+      if (!formEdit?.TenDoiTuong?.trim() || !formEdit?.DiaChi?.trim()) {
+        setErrors({
+          Ten: formEdit?.TenDoiTuong?.trim() ? '' : 'Tên đối tượng không được để trống',
+          DiaChi: formEdit?.DiaChi?.trim() ? '' : 'Địa chỉ không được để trống',
+        })
+      }
       return
     }
     try {
