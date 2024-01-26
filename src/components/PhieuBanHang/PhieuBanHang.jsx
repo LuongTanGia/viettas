@@ -313,15 +313,6 @@ function PhieuBanHang() {
           <div className="flex  ">
             {isShowSearch && (
               <div className={`flex absolute left-[14rem] top-0 transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
-                {/* <input
-                  type="text"
-                  placeholder="Nhập ký tự bạn cần tìm"
-                  value={searchText}
-                  onChange={(e) => setSearchText(e.target.value)}
-                  className={'px-2  w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] '}
-                /> */}
-                {/* <Input placeholder="Nhập ký tự bạn cần tìm" onPressEnter={handleInputChange} onBlur={handleInputChange} /> */}
-
                 <Input
                   allowClear={{
                     clearIcon: <CloseSquareFilled />,

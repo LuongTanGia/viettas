@@ -36,7 +36,7 @@ const PhieuMuaHang = () => {
   // const [dataThongSo, setDataThongSo] = useState()
   // const [dataChucNang, setDataChucNang] = useState()
   const [setSearchPMH, filteredPMH, searchPMH] = useSearch(data)
-  const [searchValue, setSearchValue] = useState('')
+
   const [prevSearchValue, setPrevSearchValue] = useState('')
   const [prevdateValue, setPrevDateValue] = useState({})
   const [donePMH, setDonePMH] = useState(null)
@@ -677,6 +677,17 @@ const PhieuMuaHang = () => {
       setLastSearchTime(currentTime)
     }
   }
+
+  // const updateEndDate = (newStartDate) => {
+  //   // Kiểm tra xem ngày bắt đầu có lớn hơn ngày kết thúc hay không
+  //   if (formKhoanNgay.NgayKetThuc && moment(newStartDate).isAfter(formKhoanNgay.NgayKetThuc)) {
+  //     // Nếu có, cập nhật ngày kết thúc thành ngày bắt đầu
+  //     setFormKhoanNgay({
+  //       ...formKhoanNgay,
+  //       NgayKetThuc: dayjs(newStartDate).format('YYYY-MM-DDTHH:mm:ss'),
+  //     })
+  //   }
+  // }
 
   return (
     <>
