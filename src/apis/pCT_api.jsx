@@ -56,14 +56,45 @@ export const ThongTinSuaPCT = (token, Sct) =>
       reject(error)
     }
   })
+export const ListHelperDoiTuongPCT = (token) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const response = await axios({
+        url: '/entries/DuLieuPCT/ListHelper_DoiTuong',
+        method: 'post',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        data: {},
+      })
+      resolve(response)
+    } catch (error) {
+      reject(error)
+    }
+  })
 
-export const ThemPCT = (token, formPCT, MaDoiTuong, MaKho) =>
+export const ListHelperHangMucPCT = (token) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const response = await axios({
+        url: '/entries/DuLieuPCT/ListHelper_HangMuc',
+        method: 'post',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        data: {},
+      })
+      resolve(response)
+    } catch (error) {
+      reject(error)
+    }
+  })
+
+export const ThemPCT = (token, formCreate) =>
   new Promise(async (resolve, reject) => {
     try {
       console.log('Data to be sent to API:', {
-        ...formPCT,
-        MaDoiTuong: MaDoiTuong,
-        MaKho: MaKho,
+        formCreate,
       })
       const response = await axios({
         url: '/entries/DuLieuPCT/Them',
@@ -71,7 +102,7 @@ export const ThemPCT = (token, formPCT, MaDoiTuong, MaKho) =>
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        data: { ...formPCT, MaDoiTuong: MaDoiTuong, MaKho: MaKho },
+        data: formCreate,
       })
       resolve(response)
     } catch (error) {
@@ -154,24 +185,6 @@ export const InPCT = (token, formPrint, SctBD, SctKT, SoLien) =>
           SoChungTuketThuc: SctKT,
           SoLien: SoLien,
         },
-      })
-      resolve(response)
-    } catch (error) {
-      reject(error)
-    }
-  })
-
-export const LapPhieuChi = (token, Sct) =>
-  new Promise(async (resolve, reject) => {
-    try {
-      console.log('Data to be sent to API:', Sct)
-      const response = await axios({
-        url: '/entries/DuLieuPCT/LapPhieuChi',
-        method: 'post',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        data: { SoChungTu: Sct },
       })
       resolve(response)
     } catch (error) {
