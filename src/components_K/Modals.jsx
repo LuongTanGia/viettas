@@ -12,7 +12,6 @@ import { nameColumsPhieuMuaHang } from '../components/util/Table/ColumnName'
 import { RETOKEN, base64ToPDF, formatPrice, formatQuantity } from '../action/Actions'
 import ModalOnlyPrint from './ModalOnlyPrint'
 import ModalOnlyPrintWareHouse from './ModalOnlyPrintWareHouse'
-import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { DateField } from '@mui/x-date-pickers/DateField'
 
 import logo from '../assets/VTS-iSale.ico'
@@ -1089,7 +1088,7 @@ const Modals = ({
                     {/* DatePicker */}
                     <div className="flex md:px-1 lg:px-4 items-center">
                       <label className="pr-1 lg:pr-[30px] lg:pl-[8px]">Ngày</label>
-                      <DatePicker className="DatePicker_PMH" format="DD/MM/YYYY" value={dayjs(dataThongTin?.NgayCTu)} disabled />
+                      <DateField className="DatePicker_PMH" format="DD/MM/YYYY" value={dayjs(dataThongTin?.NgayCTu)} disabled />
                     </div>
                   </div>
                   <div className="p-1 flex justify-between items-center">

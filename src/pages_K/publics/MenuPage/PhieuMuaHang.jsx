@@ -669,12 +669,10 @@ const PhieuMuaHang = () => {
     }
   }
 
-  const handleSearch = (e) => {
-    const currentTime = new Date().getTime()
-    if (currentTime - lastSearchTime >= 1000 && e !== prevSearchValue) {
+  const handleSearch = (newSearch) => {
+    if (newSearch !== prevSearchValue) {
       setTableLoad(true)
-      setSearchPMH(e)
-      setLastSearchTime(currentTime)
+      setSearchPMH(newSearch)
     }
   }
 

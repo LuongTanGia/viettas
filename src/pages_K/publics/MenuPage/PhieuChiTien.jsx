@@ -29,8 +29,8 @@ const PhieuChiTien = () => {
   const [data, setData] = useState([])
   const [dataThongTin, setDataThongTin] = useState([])
   const [dataRecord, setDataRecord] = useState(null)
-  const [dataKhoHang, setDataKhoHang] = useState(null)
-  const [dataDoiTuong, setDataDoiTuong] = useState(null)
+  const [dataHangMuc, setDataHangMuc] = useState([])
+  const [dataDoiTuong, setDataDoiTuong] = useState([])
   const [actionType, setActionType] = useState('')
   const [formKhoanNgay, setFormKhoanNgay] = useState([])
   const [setSearchPCT, filteredPCT, searchPCT] = useSearch(data)
@@ -91,19 +91,18 @@ const PhieuChiTien = () => {
 
         const tokenLogin = localStorage.getItem('TKN')
         if (actionType === 'create' || actionType === 'edit') {
-          console.log('get helper  KH,DT')
-          const responseKH = await apis.ListHelperKhoHangNTR(tokenLogin)
-          if (responseKH.data && responseKH.data.DataError === 0) {
-            setDataKhoHang(responseKH.data.DataResults)
-          } else if (responseKH.data.DataError === -1 || responseKH.data.DataError === -2 || responseKH.data.DataError === -3) {
-            toast.warning(responseKH.data.DataErrorDescription)
-          } else if (responseKH.data.DataError === -107 || responseKH.data.DataError === -108) {
+          const responseHM = await apis.ListHelperHangMucPCT(tokenLogin)
+          if (responseHM.data && responseHM.data.DataError === 0) {
+            setDataHangMuc(responseHM.data.DataResults)
+          } else if (responseHM.data.DataError === -1 || responseHM.data.DataError === -2 || responseHM.data.DataError === -3) {
+            toast.warning(responseHM.data.DataErrorDescription)
+          } else if (responseHM.data.DataError === -107 || responseHM.data.DataError === -108) {
             await RETOKEN()
             fetchData()
           } else {
-            toast.error(responseKH.data.DataErrorDescription)
+            toast.error(responseHM.data.DataErrorDescription)
           }
-          const responseDT = await apis.ListHelperDoiTuongNTR(tokenLogin)
+          const responseDT = await apis.ListHelperDoiTuongPCT(tokenLogin)
           if (responseDT.data && responseDT.data.DataError === 0) {
             setDataDoiTuong(responseDT.data.DataResults)
           } else if (responseDT.data && responseDT.data.DataError === -103) {
@@ -119,21 +118,20 @@ const PhieuChiTien = () => {
             toast.error(responseDT.data.DataErrorDescription)
           }
         }
-        if (actionType === 'view' || actionType === 'edit') {
-          console.log('get helper tt')
-
-          const responseTT = await apis.ThongTinNTR(tokenLogin, dataRecord.SoChungTu)
-          if (responseTT.data && responseTT.data.DataError === 0) {
-            setDataThongTin(responseTT.data.DataResult)
-          } else if (responseTT.data.DataError === -1 || responseTT.data.DataError === -2 || responseTT.data.DataError === -3) {
-            toast.warning(responseTT.data.DataErrorDescription)
-          } else if (responseTT.data.DataError === -107 || responseTT.data.DataError === -108) {
-            await RETOKEN()
-            fetchData()
-          } else {
-            toast.error(responseTT.data.DataErrorDescription)
-          }
-        }
+        // if (actionType === 'view') {
+        //   console.log('get helper tt')
+        //   const responseTT = await apis.ThongTinPCT(tokenLogin, dataRecord.SoChungTu)
+        //   if (responseTT.data && responseTT.data.DataError === 0) {
+        //     setDataThongTin(responseTT.data.DataResult)
+        //   } else if (responseTT.data.DataError === -1 || responseTT.data.DataError === -2 || responseTT.data.DataError === -3) {
+        //     toast.warning(responseTT.data.DataErrorDescription)
+        //   } else if (responseTT.data.DataError === -107 || responseTT.data.DataError === -108) {
+        //     await RETOKEN()
+        //     fetchData()
+        //   } else {
+        //     toast.error(responseTT.data.DataErrorDescription)
+        //   }
+        // }
       } catch (error) {
         console.error('Lấy data thất bại', error)
         // toast.error('Lấy data thất bại. Vui lòng thử lại sau.')
@@ -346,7 +344,7 @@ const PhieuChiTien = () => {
       align: 'end',
       render: (text) => (
         <div className={`flex justify-end w-full h-full    ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatQuantity(text, dataThongSo?.SOLESOLUONG)} search={searchPCT} />
+          <HighlightedCell text={formatQuantity(text, dataThongSo?.SOLESOTIEN)} search={searchPCT} />
         </div>
       ),
       sorter: (a, b) => a.SoTien - b.SoTien,
@@ -820,15 +818,15 @@ const PhieuChiTien = () => {
               typePage={'NTR'}
               close={() => setIsShowModal(false)}
               actionType={actionType}
-              // dataRecord={dataRecord}
-              // dataThongTin={dataThongTin}
-              // dataKhoHang={dataKhoHang}
-              // dataDoiTuong={dataDoiTuong}
-              // data={data}
-              // controlDate={formKhoanNgay}
-              // dataThongSo={dataThongSo}
-              // loading={() => setTableLoad(true)}
-              // setHightLight={setDoneNTR}
+              dataRecord={dataRecord}
+              dataThongTin={dataThongTin}
+              dataHangMuc={dataHangMuc}
+              dataDoiTuong={dataDoiTuong}
+              data={data}
+              controlDate={formKhoanNgay}
+              dataThongSo={dataThongSo}
+              loading={() => setTableLoad(true)}
+              setHightLight={setDoneNTR}
             />
           )}
         </div>
