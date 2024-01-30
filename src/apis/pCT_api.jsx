@@ -110,21 +110,12 @@ export const ThemPCT = (token, formCreate) =>
     }
   })
 
-export const SuaPCT = (token, Sct, formPCTEdit, MaDoiTuong, MaKho) =>
+export const SuaPCT = (token, Sct, formPCTEdit) =>
   new Promise(async (resolve, reject) => {
     try {
       console.log('Data to be sent to API:', {
         SoChungTu: Sct,
-        Data: {
-          ...formPCTEdit,
-          // ...formPCTEdit,
-          // DataDetails: formPCTEdit?.DataDetails?.map((item, index) => ({
-          //   ...item,
-          //   STT: index + 1,
-          // })),
-          MaDoiTuong: MaDoiTuong,
-          MaKho: MaKho,
-        },
+        Data: formPCTEdit,
       })
       const response = await axios({
         url: '/entries/DuLieuPCT/Sua',
@@ -134,11 +125,7 @@ export const SuaPCT = (token, Sct, formPCTEdit, MaDoiTuong, MaKho) =>
         },
         data: {
           SoChungTu: Sct,
-          Data: {
-            ...formPCTEdit,
-            MaDoiTuong: MaDoiTuong,
-            MaKho: MaKho,
-          },
+          Data: formPCTEdit,
         },
       })
       resolve(response)

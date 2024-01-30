@@ -260,10 +260,6 @@ input.ant-input.ant-input-sm {
 }
 
 /* custom input antd */
-.ant-input-number .ant-input-number-input {
-  color: black;
-  text-align: center;
-}
 
 /* .ant-table-cell-fix-left-last {
   background-color: #f1f1f1;
