@@ -36,7 +36,7 @@ const HangHoa = () => {
   const [tableLoad, setTableLoad] = useState(true)
   const [selectedRowKeys, setSelectedRowKeys] = useState([])
   const [isShowSearch, setIsShowSearch] = useState(false)
-  const [targetRow, setTargetRow] = useState(null)
+  const [targetRow, setTargetRow] = useState()
   // Ẩn cột
   const [hiddenRow, setHiddenRow] = useState([])
   const [checkedList, setcheckedList] = useState([])
@@ -758,7 +758,7 @@ const HangHoa = () => {
             getMaHang={isMaHang}
             getDataHangHoa={dataHangHoa}
             loadingData={() => handleLoading()}
-            targetRow={setTargetRow}
+            setTargetRow={setTargetRow}
           />
         )}
       </div>

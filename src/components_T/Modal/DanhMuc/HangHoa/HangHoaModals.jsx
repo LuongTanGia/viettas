@@ -18,7 +18,7 @@ import { RETOKEN, base64ToPDF } from '../../../../action/Actions'
 import ActionButton from '../../../../components/util/Button/ActionButton'
 import SimpleBackdrop from '../../../../components/util/Loading/LoadingPage'
 
-const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, targetRow }) => {
+const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, setTargetRow }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
@@ -43,9 +43,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
   const [setSearchHangHoa, filteredHangHoa, searchHangHoa] = useSearch(HangHoaCT)
   const [selectedRowData, setSelectedRowData] = useState([])
   const [isShowSearch, setIsShowSearch] = useState(false)
-  const [targetRowModals, setTargetRowModals] = useState([])
 
-  console.log(targetRow)
   const initProduct = {
     Nhom: '',
     MaHang: '',
@@ -73,11 +71,10 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
     MaVach: '',
     SoTem: '',
   })
-  useEffect(() => {
-    if (targetRow !== null) {
-      setTargetRowModals(targetRow)
-    }
-  }, [targetRow])
+
+  // useEffect(() => {
+  //   setTargetRow([])
+  // }, [])
 
   useEffect(() => {
     if (type === 'create' || type === 'edit') {
@@ -393,7 +390,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
         isSave ? (setHangHoaForm({ TonKho: true, LapRap: false, TyLeQuyDoi: 1 }), setSelectedRowData([])) : close()
         loadingData()
         toast.success('Thêm sản phẩm thành công', { autoClose: 1000 })
-        targetRow(response.data.DataResults[0].Ma)
+        setTargetRow(response.data.DataResults[0].Ma)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         handleCreate()
@@ -453,7 +450,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
         toast.success('Sửa thành công', { autoClose: 1000 })
         loadingData()
         close()
-        targetRow(getMaHang?.MaHang)
+        setTargetRow(getMaHang?.MaHang)
       } else if ((dataUpdate.data && dataUpdate.data.DataError === -107) || (dataUpdate.data && dataUpdate.data.DataError === -108)) {
         await RETOKEN()
         handleUpdate()
@@ -471,7 +468,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
         toast.success('Xóa sản phẩm thành công', { autoClose: 1000 })
         loadingData()
         close()
-        targetRow([])
+        setTargetRow([])
       } else if ((dataDel.data && dataDel.data.DataError === -107) || (dataDel.data && dataDel.data.DataError === -108)) {
         await RETOKEN()
         handleDelete()
@@ -495,7 +492,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
         toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
         loadingData()
         close()
-        targetRow(getMaHang)
+        setTargetRow(getMaHang)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         handleStatus()
@@ -520,7 +517,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
         toast.success('Thay đổi nhóm thành công', { autoClose: 1000 })
         loadingData()
         close()
-        targetRow(getMaHang)
+        setTargetRow(getMaHang)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         handleGroup()
