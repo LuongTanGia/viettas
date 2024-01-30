@@ -24,7 +24,6 @@ function DoughNut() {
       const KhoanNgay = await KHOANNGAY(API.KHOANNGAY, token)
       const data = await DoanhSoHangHoa_TopChart(API.DoanhSoNhomHang, token, KhoanNgay)
       setDataChart(data)
-      console.log(data)
     }
 
     loadData()

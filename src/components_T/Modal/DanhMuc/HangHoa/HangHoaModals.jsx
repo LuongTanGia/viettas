@@ -72,9 +72,9 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
     SoTem: '',
   })
 
-  // useEffect(() => {
-  //   setTargetRow([])
-  // }, [])
+  useEffect(() => {
+    setTargetRow([])
+  }, [])
 
   useEffect(() => {
     if (type === 'create' || type === 'edit') {

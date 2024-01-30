@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from 'react'
 import { Button, Checkbox, Col, Input, Row, Spin, Table, Tooltip, Typography } from 'antd'
@@ -21,7 +22,7 @@ import { nameColumsHangHoa } from '../../components/util/Table/ColumnName'
 import { RETOKEN, base64ToPDF, exportToExcel } from '../../action/Actions'
 import HangHoaModals from '../../components_T/Modal/DanhMuc/HangHoa/HangHoaModals'
 
-const HangHoa = () => {
+const HangHoa = ({ dataCRUD }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
@@ -36,7 +37,7 @@ const HangHoa = () => {
   const [tableLoad, setTableLoad] = useState(true)
   const [selectedRowKeys, setSelectedRowKeys] = useState([])
   const [isShowSearch, setIsShowSearch] = useState(false)
-  const [targetRow, setTargetRow] = useState()
+  const [targetRow, setTargetRow] = useState([])
   // Ẩn cột
   const [hiddenRow, setHiddenRow] = useState([])
   const [checkedList, setcheckedList] = useState([])
@@ -91,7 +92,6 @@ const HangHoa = () => {
   const handleCreate = () => {
     setActionType('create')
     setIsShowModal(true)
-    getListHangHoa()
     setIsMaHang([])
   }
   const handleDelete = (record) => {
@@ -199,6 +199,7 @@ const HangHoa = () => {
   const handleHidden = () => {
     setSelectVisible(!selectVisible)
   }
+
   const onChange = (checkedValues) => {
     setcheckedList(checkedValues)
   }
@@ -497,22 +498,23 @@ const HangHoa = () => {
           <>
             <div className=" flex gap-1 items-center justify-center ">
               <div
-                onClick={() => handleUpdate(record)}
+                onClick={() => (dataCRUD?.EDIT == false ? '' : handleUpdate(record))}
                 title="Sửa"
-                className="p-[4px] border-2 rounded text-slate-50 border-yellow-400 bg-yellow-400 hover:bg-white hover:text-yellow-400 cursor-pointer"
+                className={`${
+                  dataCRUD?.EDIT == false ? 'border-gray-500 bg-gray-500  hover:text-gray-500' : 'border-yellow-400 bg-yellow-400 hover:text-yellow-400'
+                } ' p-[4px] border-2 rounded text-slate-50 hover:bg-white cursor-pointer'`}
               >
                 <MdEdit />
               </div>
               <div
                 onClick={() => handlePrintABarcode(record)}
-                title="Sửa"
+                title="In"
                 className="p-[4px] border-2 rounded text-slate-50 border-purple-500 bg-purple-500 hover:bg-white hover:text-purple-500 cursor-pointer"
               >
                 <CiBarcode />
               </div>
-
               <div
-                onClick={() => handleDelete(record)}
+                onClick={() => (dataCRUD.DEL == false ? '' : handleDelete(record))}
                 title="Xóa"
                 className="p-[4px] border-2 border-red-500 rounded text-slate-50 bg-red-500  hover:bg-white hover:text-red-500  cursor-pointer "
               >
@@ -568,13 +570,13 @@ const HangHoa = () => {
                     bg_hover={'white'}
                   />
                   <ActionButton
-                    handleAction={() => exportToExcel()}
+                    handleAction={() => (dataCRUD?.EXCEL == false ? '' : exportToExcel())}
                     title={'Xuất Excel'}
                     icon={<RiFileExcel2Fill className="w-5 h-5" />}
                     color={'slate-50'}
-                    background={'green-500'}
-                    color_hover={'green-500'}
-                    bg_hover={'white'}
+                    background={dataCRUD?.EXCEL == false ? 'gray-500' : 'green-500'}
+                    color_hover={dataCRUD?.EXCEL == false ? 'gray-500' : 'green-500'}
+                    bg_hover={dataCRUD?.EXCEL == false ? 'gray-500' : 'white'}
                   />
                   <ActionButton
                     handleAction={() => handleHidden()}
@@ -626,13 +628,13 @@ const HangHoa = () => {
         <div className="flex justify-end ">
           <div className="flex gap-2">
             <ActionButton
-              handleAction={() => handleCreate()}
+              handleAction={() => (dataCRUD?.ADD == false ? '' : handleCreate())}
               title={'Thêm Sản Phẩm'}
               icon={<IoMdAddCircleOutline className="w-6 h-6" />}
               color={'slate-50'}
-              background={'blue-500'}
-              color_hover={'blue-500'}
-              bg_hover={'white'}
+              background={dataCRUD?.ADD == false ? 'gray-500' : 'blue-500'}
+              color_hover={dataCRUD?.ADD == false ? 'gray-500' : 'blue-500'}
+              bg_hover={dataCRUD?.ADD == false ? 'gray-500' : 'white'}
             />
             <ActionButton
               handleAction={() => handleStatusMany()}

@@ -13,7 +13,7 @@ import NhapXuatTonKho from '../../pages_T/TruyVan/NhapXuatTonKho'
 import PhieuBanHang from '../PhieuBanHang/PhieuBanHang'
 import PhieuNhapDieuChinh from '../../pages_T/DuLieu/DLTrongKho/PhieuNhapDieuChinh/PhieuNhapDieuChinh'
 // eslint-disable-next-line react/prop-types
-function MainPage({ isSidebarVisible }) {
+function MainPage({ isSidebarVisible, dataCRUD }) {
   return (
     <>
       <main id="main" className={isSidebarVisible ? 'main' : 'main show_main'}>
@@ -21,14 +21,13 @@ function MainPage({ isSidebarVisible }) {
           <Route path="/" element={<DashBoar />} />
           <Route path="/FAQ" element={<FAQ />} />
           <Route path="/DKSD" element={<DKSD />} />
-          <Route path="/DanhMuc_HangHoa" element={<HangHoa />} />
-          <Route path="/TruyVan_CanDoiNXT_TheoKho" element={<NhapXuatTonKho />} />
-          <Route path="/DuLieuDV/DuLieu_PMH" element={<Phieumuahang />} />
-          <Route path="/DuLieuDV/DuLieu_NTR" element={<PhieuNTR />} />
-          <Route path="/DuLieuDR/DuLieu_PBS" element={<PhieuBanHang />} />
-          <Route path="/DuLieuTK/DuLieu_NDC" element={<PhieuNhapDieuChinh />} />
-
-          <Route path="/DuLieuTC/DuLieu_PCT" element={<PhieuChiTien />} />
+          <Route path="/DanhMuc_HangHoa" element={<HangHoa dataCRUD={dataCRUD} />} />
+          <Route path="/TruyVan_CanDoiNXT_TheoKho" element={<NhapXuatTonKho dataCRUD={dataCRUD} />} />
+          <Route path="/DuLieuDV/DuLieu_PMH" element={<Phieumuahang dataCRUD={dataCRUD} />} />
+          <Route path="/DuLieuDV/DuLieu_NTR" element={<PhieuNTR dataCRUD={dataCRUD} />} />
+          <Route path="/DuLieuDR/DuLieu_PBS" element={<PhieuBanHang dataCRUD={dataCRUD} />} />
+          <Route path="/DuLieuTK/DuLieu_NDC" element={<PhieuNhapDieuChinh dataCRUD={dataCRUD} />} />
+          <Route path="/DuLieuTC/DuLieu_PCT" element={<PhieuChiTien dataCRUD={dataCRUD} />} />
           <Route path="*" element={<ErrorPage />} />
         </Routes>
       </main>

@@ -3,12 +3,11 @@
 import { useEffect, useState } from 'react'
 import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
-import { MdFilterAlt } from 'react-icons/md'
 import { Select, Checkbox } from 'antd'
-import { DatePicker } from '@mui/x-date-pickers/DatePicker'
-import { RETOKEN, base64ToPDF } from '../../../../../action/Actions'
+import { DateField } from '@mui/x-date-pickers'
 import categoryAPI from '../../../../../API/linkAPI'
 import logo from '../../../../../assets/VTS-iSale.ico'
+import { RETOKEN, base64ToPDF } from '../../../../../action/Actions'
 import ActionButton from '../../../../../components/util/Button/ActionButton'
 import SimpleBackdrop from '../../../../../components/util/Loading/LoadingPage'
 
@@ -20,6 +19,7 @@ const NDCPrint = ({ close, dataPrint }) => {
   const [dataListChungTu, setDataListChungTu] = useState('')
   const [selectedNhomFrom, setSelectedNhomFrom] = useState([])
   const [selectedNhomTo, setSelectedNhomTo] = useState([])
+  const [dateData, setDateData] = useState({})
   const [checkboxValues, setCheckboxValues] = useState({
     checkbox1: true,
     checkbox2: false,
@@ -31,10 +31,47 @@ const NDCPrint = ({ close, dataPrint }) => {
   })
 
   useEffect(() => {
+    const getTimeSetting = async () => {
+      try {
+        const response = await categoryAPI.KhoanNgay(TokenAccess)
+        if (response.data.DataError == 0) {
+          setKhoanNgayFrom(dayjs(response.data.NgayBatDau).format('YYYY-MM-DDTHH:mm:ss'))
+          setKhoanNgayTo(dayjs(response.data.NgayKetThuc).format('YYYY-MM-DDTHH:mm:ss'))
+          setIsLoading(true)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          getTimeSetting()
+        } else {
+          console.log(response.data)
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
     if (!isLoading) {
       getTimeSetting()
     }
   }, [isLoading])
+
+  useEffect(() => {
+    const getListChungTu = async () => {
+      try {
+        if (isLoading == true) {
+          const response = await categoryAPI.ListChungTuNDC({ NgayBatDau: dateData.NgayBatDau, NgayKetThuc: dateData.NgayKetThuc }, TokenAccess)
+          if (response.data.DataError == 0) {
+            setDataListChungTu(response.data.DataResults)
+            setIsLoading(true)
+          } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+            await RETOKEN()
+            getListChungTu()
+          }
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    getListChungTu()
+  }, [dateData.NgayBatDau, dateData.NgayKetThuc])
 
   const calculateTotal = () => {
     let total = 0
@@ -85,37 +122,23 @@ const NDCPrint = ({ close, dataPrint }) => {
       console.log(error)
     }
   }
-  const getTimeSetting = async () => {
-    try {
-      const response = await categoryAPI.KhoanNgay(TokenAccess)
-      if (response.data.DataError == 0) {
-        setKhoanNgayFrom(dayjs(response.data.NgayBatDau).format('YYYY-MM-DDTHH:mm:ss'))
-        setKhoanNgayTo(dayjs(response.data.NgayKetThuc).format('YYYY-MM-DDTHH:mm:ss'))
-        setIsLoading(true)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getTimeSetting()
-      } else {
-        console.log(response.data)
-      }
-    } catch (error) {
-      console.log(error)
+  const handleDateChange = () => {
+    let timerId
+    clearTimeout(timerId)
+    timerId = setTimeout(() => {
+      khoanNgayFrom, khoanNgayTo
+      setDateData({
+        NgayBatDau: khoanNgayFrom,
+        NgayKetThuc: khoanNgayTo,
+      })
+    }, 300)
+  }
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      handleDateChange()
     }
   }
-  const getListChungTu = async () => {
-    try {
-      const response = await categoryAPI.ListChungTuNDC({ NgayBatDau: khoanNgayFrom, NgayKetThuc: khoanNgayTo }, TokenAccess)
-      if (response.data.DataError == 0) {
-        setDataListChungTu(response.data.DataResults)
-        setIsLoading(true)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getListChungTu()
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
+
   return (
     <>
       {!isLoading ? (
@@ -130,12 +153,14 @@ const NDCPrint = ({ close, dataPrint }) => {
                 <p className="text-blue-700 font-semibold uppercase">In - Phiếu Nhập Điều Chỉnh</p>
               </div>
               <div className="flex flex-col gap-4 border-2 p-3">
-                <div className="flex gap-2 justify-center">
+                <div className="flex justify-center">
                   <div className="DatePicker_NDCKho flex justify-center gap-2">
                     <div className="DatePicker_NDCKho flex items-center gap-2">
                       <label>Từ</label>
-                      <DatePicker
-                        className=""
+                      <DateField
+                        className="min-w-[100px] w-[60%]"
+                        onBlur={handleDateChange}
+                        onKeyDown={handleKeyDown}
                         format="DD/MM/YYYY"
                         maxDate={dayjs(khoanNgayTo)}
                         defaultValue={dataPrint ? dayjs(dataPrint.NgayCTu, 'YYYY-MM-DD') : dayjs(khoanNgayFrom, 'YYYY-MM-DD')}
@@ -156,8 +181,10 @@ const NDCPrint = ({ close, dataPrint }) => {
                     </div>
                     <div className=" flex items-center gap-2 ">
                       <label>Đến</label>
-                      <DatePicker
-                        className="DatePicker_NDCKho"
+                      <DateField
+                        onBlur={handleDateChange}
+                        onKeyDown={handleKeyDown}
+                        className="min-w-[100px] w-[60%]"
                         format="DD/MM/YYYY"
                         minDate={dayjs(khoanNgayFrom)}
                         defaultValue={dataPrint ? dayjs(dataPrint.NgayCTu, 'YYYY-MM-DD') : dayjs(khoanNgayTo, 'YYYY-MM-DD')}
@@ -177,10 +204,6 @@ const NDCPrint = ({ close, dataPrint }) => {
                       />
                     </div>
                   </div>
-                  <button onClick={getListChungTu} className=" flex px-2 py-1 bg-blue-500 text-slate-50 rounded items-center">
-                    <MdFilterAlt className="w-5 h-5" />
-                    Lọc
-                  </button>
                 </div>
                 <div className="flex gap-2">
                   <div className="flex gap-2 items-center">
