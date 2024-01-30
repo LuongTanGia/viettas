@@ -18,7 +18,7 @@ import SimpleBackdrop from '../../../../../components/util/Loading/LoadingPage'
 import HighlightedCell from '../../../../hooks/HighlightedCell'
 import NDCPrint from './NDCPrint'
 
-const NDCCreate = ({ close, loadingData, targetRow }) => {
+const NDCCreate = ({ close, loadingData, setTargetRow }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
@@ -66,6 +66,10 @@ const NDCCreate = ({ close, loadingData, targetRow }) => {
   })
 
   useEffect(() => {
+    setTargetRow([])
+  }, [])
+
+  useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.keyCode === 120) {
         setIsShowModal(true)
@@ -78,10 +82,8 @@ const NDCCreate = ({ close, loadingData, targetRow }) => {
   }, [isShowModal])
 
   useEffect(() => {
-    if (targetRow !== null) {
-      setTargetRowModals(targetRow)
-    }
-  }, [targetRow])
+    setTargetRow([])
+  }, [])
 
   useEffect(() => {
     const getDataKhoHangNDC = async () => {
@@ -189,7 +191,7 @@ const NDCCreate = ({ close, loadingData, targetRow }) => {
         isPrint ? handlePrint() : isSave ? toast.success('Tạo thành công') : (close(), toast.success('Tạo thành công'))
         loadingData()
         setSoCTu(response.data.DataResults[0].SoChungTu)
-        targetRow(response.data.DataResults[0].SoChungTu)
+        setTargetRow(response.data.DataResults[0].SoChungTu)
       } else {
         isPrint ? toast.error(response.data) : toast.error(response.data)
       }

@@ -145,9 +145,9 @@ function PhieuBanHang() {
       document.removeEventListener('click', handleClickOutside)
     }
   }, [isShowOption])
+
   const handleView = async (record) => {
     await THONGTINPHIEU(API.CHITIETPBS, token, record?.SoChungTu, dispatch)
-
     setIsShow(true)
     setType('view')
     setDataRecord(record)

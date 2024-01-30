@@ -18,7 +18,7 @@ const { Text } = Typography
 import dayjs from 'dayjs'
 import { RiFileExcel2Fill } from 'react-icons/ri'
 
-const NhapXuatTonKho = () => {
+const NhapXuatTonKho = (dataCRUD) => {
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
@@ -46,6 +46,7 @@ const NhapXuatTonKho = () => {
   const [options, setOptions] = useState()
   const [tableLoad, setTableLoad] = useState(true)
 
+  console.log(dataCRUD)
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (showOption.current && !showOption.current.contains(event.target)) {

@@ -44,7 +44,7 @@ const PhieuNhapDieuChinh = () => {
   const [selectVisible, setSelectVisible] = useState(false)
   const [options, setOptions] = useState()
   const [dateData, setDateData] = useState({})
-  const [targetRow, setTargetRow] = useState(null)
+  const [targetRow, setTargetRow] = useState([])
 
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
@@ -82,12 +82,58 @@ const PhieuNhapDieuChinh = () => {
   }
 
   useEffect(() => {
+    const getTimeSetting = async () => {
+      try {
+        const response = await categoryAPI.KhoanNgay(TokenAccess)
+        if (response.data.DataError == 0) {
+          setKhoanNgayFrom(response.data.NgayBatDau)
+          setKhoanNgayTo(response.data.NgayKetThuc)
+          setIsLoading(true)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          getTimeSetting()
+        } else {
+          console.log(response.data)
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
     if (!isLoading) {
       getTimeSetting()
     }
   }, [isLoading])
 
   useEffect(() => {
+    const getDataNDC = async () => {
+      try {
+        setTableLoad(true)
+        if (isLoading == true) {
+          const response = await categoryAPI.GetDataNDC(
+            dateData == {}
+              ? {}
+              : {
+                  NgayBatDau: dateData.NgayBatDau,
+                  NgayKetThuc: dateData.NgayKetThuc,
+                },
+            TokenAccess,
+          )
+          if (response.data.DataError == 0) {
+            setDataNDC(response.data.DataResults)
+            setTableLoad(false)
+          } else if (response.data.DataError == -104) {
+            setDataNDC([])
+            setTableLoad(false)
+          } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+            await RETOKEN()
+            getDataNDC()
+          }
+        }
+      } catch (error) {
+        console.log(error)
+        setTableLoad(false)
+      }
+    }
     getDataNDC()
   }, [searchHangHoa, isLoading, targetRow, dateData.NgayBatDau, dateData.NgayKetThuc])
 
@@ -103,52 +149,6 @@ const PhieuNhapDieuChinh = () => {
     }
   }, [])
 
-  const getDataNDC = async () => {
-    try {
-      setTableLoad(true)
-      if (isLoading == true) {
-        const response = await categoryAPI.GetDataNDC(
-          dateData == {}
-            ? {}
-            : {
-                NgayBatDau: dateData.NgayBatDau,
-                NgayKetThuc: dateData.NgayKetThuc,
-              },
-          TokenAccess,
-        )
-        if (response.data.DataError == 0) {
-          setDataNDC(response.data.DataResults)
-          setTableLoad(false)
-        } else if (response.data.DataError == -104) {
-          setDataNDC([])
-          setTableLoad(false)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getDataNDC()
-        }
-      }
-    } catch (error) {
-      console.log(error)
-      setTableLoad(false)
-    }
-  }
-  const getTimeSetting = async () => {
-    try {
-      const response = await categoryAPI.KhoanNgay(TokenAccess)
-      if (response.data.DataError == 0) {
-        setKhoanNgayFrom(response.data.NgayBatDau)
-        setKhoanNgayTo(response.data.NgayKetThuc)
-        setIsLoading(true)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getTimeSetting()
-      } else {
-        console.log(response.data)
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
   let timerId
   const handleSearch = (event) => {
     clearTimeout(timerId)
@@ -671,13 +671,13 @@ const PhieuNhapDieuChinh = () => {
           <div>
             {isShowModal &&
               (actionType == 'create' ? (
-                <NDCCreate close={() => setIsShowModal(false)} loadingData={handleLoading} targetRow={setTargetRow} />
+                <NDCCreate close={() => setIsShowModal(false)} loadingData={handleLoading} setTargetRow={setTargetRow} />
               ) : actionType == 'view' ? (
                 <NDCXem close={() => setIsShowModal(false)} dataNDC={isDataKhoDC} />
               ) : actionType == 'edit' ? (
-                <NDCEdit close={() => setIsShowModal(false)} dataNDC={isDataKhoDC} loadingData={handleLoading} targetRow={setTargetRow} />
+                <NDCEdit close={() => setIsShowModal(false)} dataNDC={isDataKhoDC} loadingData={handleLoading} setTargetRow={setTargetRow} />
               ) : actionType == 'delete' ? (
-                <NDCXoa close={() => setIsShowModal(false)} dataNDC={isDataKhoDC} loadingData={handleLoading} targetRow={setTargetRow} />
+                <NDCXoa close={() => setIsShowModal(false)} dataNDC={isDataKhoDC} loadingData={handleLoading} setTargetRow={setTargetRow} />
               ) : actionType == 'print' ? (
                 <NDCPrint close={() => setIsShowModal(false)} />
               ) : null)}

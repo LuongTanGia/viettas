@@ -19,7 +19,7 @@ import SimpleBackdrop from '../../../../../components/util/Loading/LoadingPage'
 import HighlightedCell from '../../../../hooks/HighlightedCell'
 import NDCPrint from './NDCPrint'
 
-const NDCEdit = ({ close, dataNDC, loadingData, targetRow }) => {
+const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
@@ -77,10 +77,8 @@ const NDCEdit = ({ close, dataNDC, loadingData, targetRow }) => {
   }, [isShowModal])
 
   useEffect(() => {
-    if (targetRow !== null) {
-      setTargetRowModals(targetRow)
-    }
-  }, [targetRow])
+    setTargetRow([])
+  }, [])
 
   useEffect(() => {
     const getDataKhoHangNDC = async () => {
@@ -233,7 +231,7 @@ const NDCEdit = ({ close, dataNDC, loadingData, targetRow }) => {
       if (response.data.DataError == 0) {
         isPrint ? handlePrint() : (close(), toast.success('Sửa thành công'))
         loadingData()
-        targetRow(dataNDC?.SoChungTu)
+        setTargetRow(dataNDC?.SoChungTu)
       } else {
         console.log('sai', NDCForm)
         toast.error(response.data.DataErrorDescription)
