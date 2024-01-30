@@ -18,8 +18,8 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
   const [selectedSctBD, setSelectedSctBD] = useState()
   const [selectedSctKT, setSelectedSctKT] = useState()
   const [newDataPMH, setNewDataPMH] = useState()
-  const startDate = dayjs(dataThongTin.NgayCTu).format('YYYY-MM-DDTHH:mm:ss')
-  const endDate = dayjs(dataThongTin.NgayCTu).format('YYYY-MM-DDTHH:mm:ss')
+  const startDate = dayjs(dataThongTin?.NgayCTu).format('YYYY-MM-DDTHH:mm:ss')
+  const endDate = dayjs(dataThongTin?.NgayCTu).format('YYYY-MM-DDTHH:mm:ss')
 
   const dataByDate = useMemo(() => {
     return data.filter((item) => {
@@ -119,7 +119,21 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
           toast.error(response.data.DataErrorDescription)
         }
       }
-
+      if (typePage === 'PCT') {
+        const response = await apis.InPCT(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+        // Kiểm tra call api thành công
+        if (response.data && response.data.DataError === 0) {
+          base64ToPDF(response.data.DataResults)
+        } else if (response.data && response.data.DataError === -104) {
+          toast.error(response.data.DataErrorDescription)
+        } else if (response.data && response.data.DataError === -103) {
+          toast.error(response.data.DataErrorDescription)
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(response.data.DataErrorDescription)
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
+      }
       // close()
     } catch (error) {
       console.error('Error while saving data:', error)
