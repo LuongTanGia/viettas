@@ -178,3 +178,19 @@ export const InPCT = (token, formPrint, SctBD, SctKT, SoLien) =>
       reject(error)
     }
   })
+export const FilterPrint = (token, formPrint) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const response = await axios({
+        url: '/entries/DuLieuPCT/ListHelper_ChungTuTheoNgay',
+        method: 'post',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        data: formPrint,
+      })
+      resolve(response)
+    } catch (error) {
+      reject(error)
+    }
+  })

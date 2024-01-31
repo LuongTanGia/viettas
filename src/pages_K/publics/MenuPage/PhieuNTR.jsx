@@ -21,19 +21,20 @@ const { IoAddCircleOutline, TiPrinter, MdDelete, GiPayMoney, BsSearch, TfiMoreAl
 const PhieuNTR = () => {
   const optionContainerRef = useRef(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [isLoadingModal, setIsLoadingModal] = useState(true)
   const [tableLoad, setTableLoad] = useState(true)
   const [isShowModal, setIsShowModal] = useState(false)
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [isShowOption, setIsShowOption] = useState(false)
   const [data, setData] = useState([])
   const [dataThongTin, setDataThongTin] = useState([])
+  const [dataThongTinSua, setDataThongTinSua] = useState([])
   const [dataRecord, setDataRecord] = useState(null)
   const [dataKhoHang, setDataKhoHang] = useState(null)
   const [dataDoiTuong, setDataDoiTuong] = useState(null)
   const [actionType, setActionType] = useState('')
   const [formKhoanNgay, setFormKhoanNgay] = useState([])
   const [setSearchPNTR, filteredPNTR, searchPNTR] = useSearch(data)
-
   const [prevSearchValue, setPrevSearchValue] = useState('')
   const [prevdateValue, setPrevDateValue] = useState({})
   const [doneNTR, setDoneNTR] = useState(null)
@@ -84,6 +85,7 @@ const PhieuNTR = () => {
 
   // get helper
   useEffect(() => {
+    setIsLoadingModal(true)
     const fetchData = async () => {
       try {
         console.log('get helper')
@@ -94,47 +96,78 @@ const PhieuNTR = () => {
           const responseKH = await apis.ListHelperKhoHangNTR(tokenLogin)
           if (responseKH.data && responseKH.data.DataError === 0) {
             setDataKhoHang(responseKH.data.DataResults)
+            setIsLoadingModal(false)
           } else if (responseKH.data.DataError === -1 || responseKH.data.DataError === -2 || responseKH.data.DataError === -3) {
             toast.warning(responseKH.data.DataErrorDescription)
+            setIsLoadingModal(false)
           } else if (responseKH.data.DataError === -107 || responseKH.data.DataError === -108) {
             await RETOKEN()
             fetchData()
           } else {
             toast.error(responseKH.data.DataErrorDescription)
+            setIsLoadingModal(false)
           }
           const responseDT = await apis.ListHelperDoiTuongNTR(tokenLogin)
           if (responseDT.data && responseDT.data.DataError === 0) {
             setDataDoiTuong(responseDT.data.DataResults)
+            setIsLoadingModal(false)
           } else if (responseDT.data && responseDT.data.DataError === -103) {
             toast.error(responseDT.data.DataErrorDescription)
+            setIsLoadingModal(false)
           } else if (responseDT.data && responseDT.data.DataError === -104) {
             toast.error(responseDT.data.DataErrorDescription)
+            setIsLoadingModal(false)
           } else if (responseDT.data.DataError === -1 || responseDT.data.DataError === -2 || responseDT.data.DataError === -3) {
             toast.warning(responseDT.data.DataErrorDescription)
+            setIsLoadingModal(false)
           } else if (responseDT.data.DataError === -107 || responseDT.data.DataError === -108) {
             await RETOKEN()
             fetchData()
           } else {
             toast.error(responseDT.data.DataErrorDescription)
+            setIsLoadingModal(false)
           }
         }
-        if (actionType === 'view' || actionType === 'edit') {
+        if (actionType === 'view') {
           console.log('get helper tt')
-
           const responseTT = await apis.ThongTinNTR(tokenLogin, dataRecord.SoChungTu)
           if (responseTT.data && responseTT.data.DataError === 0) {
             setDataThongTin(responseTT.data.DataResult)
+            setIsLoadingModal(false)
           } else if (responseTT.data.DataError === -1 || responseTT.data.DataError === -2 || responseTT.data.DataError === -3) {
             toast.warning(responseTT.data.DataErrorDescription)
+            setIsLoadingModal(false)
           } else if (responseTT.data.DataError === -107 || responseTT.data.DataError === -108) {
             await RETOKEN()
             fetchData()
           } else {
             toast.error(responseTT.data.DataErrorDescription)
+            setIsLoadingModal(false)
+          }
+        }
+        if (actionType === 'edit') {
+          console.log('get helper tt sua')
+          const responseTTS = await apis.ThongTinSuaNTR(tokenLogin, dataRecord.SoChungTu)
+          if (responseTTS.data && responseTTS.data.DataError === 0) {
+            setDataThongTinSua(responseTTS.data.DataResult)
+            setIsLoadingModal(false)
+          } else if (responseTTS.data.DataError === -1 || responseTTS.data.DataError === -2 || responseTTS.data.DataError === -3) {
+            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseTTS.data.DataErrorDescription}</div>)
+            setIsLoadingModal(false)
+            setIsShowModal(false)
+          } else if (responseTTS.data.DataError === -107 || responseTTS.data.DataError === -108) {
+            await RETOKEN()
+            fetchData()
+          } else {
+            setIsLoadingModal(false)
+            setIsShowModal(false)
+            toast.error(responseTTS.data.DataErrorDescription)
           }
         }
       } catch (error) {
         console.error('Lấy data thất bại', error)
+        setIsLoadingModal(false)
+        setIsShowModal(false)
         // toast.error('Lấy data thất bại. Vui lòng thử lại sau.')
       }
     }
@@ -608,7 +641,7 @@ const PhieuNTR = () => {
     } else {
       setActionType('edit')
       setDataRecord(record)
-      setDataThongTin(record)
+      setDataThongTinSua(record)
       setIsShowModal(true)
     }
   }
@@ -941,9 +974,11 @@ const PhieuNTR = () => {
               actionType={actionType}
               dataRecord={dataRecord}
               dataThongTin={dataThongTin}
+              dataThongTinSua={dataThongTinSua}
               dataKhoHang={dataKhoHang}
               dataDoiTuong={dataDoiTuong}
               data={data}
+              isLoadingModal={isLoadingModal}
               controlDate={formKhoanNgay}
               dataThongSo={dataThongSo}
               loading={() => setTableLoad(true)}

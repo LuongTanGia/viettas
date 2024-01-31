@@ -22,12 +22,13 @@ const PhieuMuaHang = () => {
   const optionContainerRef = useRef(null)
   const [isLoading, setIsLoading] = useState(true)
   const [tableLoad, setTableLoad] = useState(true)
+  const [isLoadingModal, setIsLoadingModal] = useState(true)
   const [isShowModal, setIsShowModal] = useState(false)
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [isShowOption, setIsShowOption] = useState(false)
   const [data, setData] = useState([])
   const [dataThongTin, setDataThongTin] = useState({})
-  const [dataSuaThongTin, setDataSuaThongTin] = useState({})
+  const [dataThongTinSua, setDataThongTinSua] = useState({})
   const [dataRecord, setDataRecord] = useState(null)
   const [dataKhoHang, setDataKhoHang] = useState(null)
   const [dataDoiTuong, setDataDoiTuong] = useState(null)
@@ -87,6 +88,7 @@ const PhieuMuaHang = () => {
 
   // get helper
   useEffect(() => {
+    setIsLoadingModal(true)
     const fetchData = async () => {
       try {
         console.log('get helper')
@@ -97,62 +99,82 @@ const PhieuMuaHang = () => {
           const responseKH = await apis.ListHelperKhoHang(tokenLogin)
           if (responseKH.data && responseKH.data.DataError === 0) {
             setDataKhoHang(responseKH.data.DataResults)
+            setIsLoadingModal(false)
           } else if (responseKH.data.DataError === -1 || responseKH.data.DataError === -2 || responseKH.data.DataError === -3) {
             toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseKH.data.DataErrorDescription}</div>)
+            setIsLoadingModal(false)
           } else if (responseKH.data.DataError === -107 || responseKH.data.DataError === -108) {
             await RETOKEN()
             fetchData()
           } else {
             toast.error(responseKH.data.DataErrorDescription)
+            setIsLoadingModal(false)
           }
           const responseDT = await apis.ListHelperDoiTuong(tokenLogin)
           if (responseDT.data && responseDT.data.DataError === 0) {
             setDataDoiTuong(responseDT.data.DataResults)
+            setIsLoadingModal(false)
           } else if (responseDT.data && responseDT.data.DataError === -103) {
             toast.error(responseDT.data.DataErrorDescription)
+            setIsLoadingModal(false)
           } else if (responseDT.data && responseDT.data.DataError === -104) {
             toast.error(responseDT.data.DataErrorDescription)
+            setIsLoadingModal(false)
           } else if (responseDT.data.DataError === -1 || responseDT.data.DataError === -2 || responseDT.data.DataError === -3) {
             toast.warning(responseDT.data.DataErrorDescription)
+            setIsLoadingModal(false)
           } else if (responseDT.data.DataError === -107 || responseDT.data.DataError === -108) {
             await RETOKEN()
             fetchData()
           } else {
             toast.error(responseDT.data.DataErrorDescription)
+            setIsLoadingModal(false)
           }
         }
-        if (actionType === 'view' || actionType === 'edit') {
+        if (actionType === 'view') {
           console.log('get helper tt')
 
           const responseTT = await apis.ThongTinPMH(tokenLogin, dataRecord.SoChungTu)
           if (responseTT.data && responseTT.data.DataError === 0) {
             setDataThongTin(responseTT.data.DataResult)
+            setIsLoadingModal(false)
           } else if (responseTT.data.DataError === -1 || responseTT.data.DataError === -2 || responseTT.data.DataError === -3) {
             toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseTT.data.DataErrorDescription}</div>)
+            setIsLoadingModal(false)
           } else if (responseTT.data.DataError === -107 || responseTT.data.DataError === -108) {
             await RETOKEN()
             fetchData()
           } else {
             toast.error(responseTT.data.DataErrorDescription)
+            setIsLoadingModal(false)
           }
         }
-        // if (actionType === 'edit') {
-        //   console.log('get helper tt sua')
 
-        //   const responseTTS = await apis.ThongTinSuaPMH(tokenLogin, dataRecord.SoChungTu)
-        //   if (responseTTS.data && responseTTS.data.DataError === 0) {
-        //     setDataSuaThongTin(responseTTS.data.DataResult)
-        //   } else if (responseTTS.data.DataError === -1 || responseTTS.data.DataError === -2 || responseTTS.data.DataError === -3) {
-        //     toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseTTS.data.DataErrorDescription}</div>)
-        //   } else if (responseTTS.data.DataError === -107 || responseTTS.data.DataError === -108) {
-        //     await RETOKEN()
-        //     fetchData()
-        //   } else {
-        //     toast.error(responseTTS.data.DataErrorDescription)
-        //   }
-        // }
+        if (actionType === 'edit') {
+          console.log('get helper tt sua')
+          const responseTTS = await apis.ThongTinSuaPMH(tokenLogin, dataRecord.SoChungTu)
+          if (responseTTS.data && responseTTS.data.DataError === 0) {
+            setDataThongTinSua(responseTTS.data.DataResult)
+            console.log(responseTTS.data.DataResult)
+            setIsLoadingModal(false)
+          } else if (responseTTS.data.DataError === -1 || responseTTS.data.DataError === -2 || responseTTS.data.DataError === -3) {
+            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseTTS.data.DataErrorDescription}</div>)
+            setIsLoadingModal(false)
+            setIsShowModal(false)
+          } else if (responseTTS.data.DataError === -107 || responseTTS.data.DataError === -108) {
+            await RETOKEN()
+            fetchData()
+          } else {
+            setIsLoadingModal(false)
+            toast.error(responseTTS.data.DataErrorDescription)
+            setIsShowModal(false)
+          }
+        }
       } catch (error) {
         console.error('Lấy data thất bại', error)
+        setIsLoadingModal(false)
+        setIsShowModal(false)
+
         // toast.error('Lấy data thất bại. Vui lòng thử lại sau.')
       }
     }
@@ -162,17 +184,17 @@ const PhieuMuaHang = () => {
     }
   }, [isShowModal])
 
-  useEffect(() => {
-    console.log('fix')
-    if (dataThongTin && dataRecord) {
-      // Data đã được chuyền vào, dừng loading
-      setTableLoad(false)
-    }
-    if (dataSuaThongTin && dataRecord) {
-      // Data đã được chuyền vào, dừng loading
-      setTableLoad(false)
-    }
-  }, [dataRecord, dataThongTin, dataSuaThongTin])
+  // useEffect(() => {
+  //   console.log('fix')
+  //   if (dataThongTin && dataRecord) {
+  //     // Data đã được chuyền vào, dừng loading
+  //     setTableLoad(false)
+  //   }
+  //   if (dataThongTinSua && dataRecord) {
+  //     // Data đã được chuyền vào, dừng loading
+  //     setTableLoad(false)
+  //   }
+  // }, [dataRecord, dataThongTin, dataThongTinSua])
 
   // get Khoảng ngày
   useEffect(() => {
@@ -632,7 +654,7 @@ const PhieuMuaHang = () => {
     } else {
       setActionType('edit')
       setDataRecord(record)
-      setDataThongTin(record)
+      setDataThongTinSua(record)
       setIsShowModal(true)
     }
   }
@@ -652,6 +674,7 @@ const PhieuMuaHang = () => {
     setActionType('printWareHouse')
     setDataRecord(record)
     setIsShowModal(true)
+    setIsLoadingModal(false)
   }
 
   const handlePay = (record) => {
@@ -974,10 +997,11 @@ const PhieuMuaHang = () => {
               actionType={actionType}
               dataRecord={dataRecord}
               dataThongTin={dataThongTin}
-              dataSuaThongTin={dataSuaThongTin}
+              dataThongTinSua={dataThongTinSua}
               dataKhoHang={dataKhoHang}
               dataDoiTuong={dataDoiTuong}
               data={data}
+              isLoadingModal={isLoadingModal}
               controlDate={formKhoanNgay}
               dataThongSo={dataThongSo}
               loading={() => setTableLoad(true)}

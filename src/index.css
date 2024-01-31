@@ -260,6 +260,9 @@ input[type='radio'] {
 /* .ant-table-cell-fix-left-last {
   background-color: #f1f1f1;
 } */
+/* .Spin_modal .ant-spin-container {
+  padding: 16px !important;
+} */
 
 .ant-table-fixed-right {
   background-color: #f1f1f1;

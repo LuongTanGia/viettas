@@ -28,7 +28,7 @@ const PhieuChiTien = () => {
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [isShowOption, setIsShowOption] = useState(false)
   const [data, setData] = useState([])
-  const [dataThongTin, setDataThongTin] = useState([])
+  // const [dataThongTin, setDataThongTin] = useState([])
   const [dataThongTinSua, setDataThongTinSua] = useState([])
   const [dataRecord, setDataRecord] = useState(null)
   const [dataHangMuc, setDataHangMuc] = useState([])
@@ -158,14 +158,6 @@ const PhieuChiTien = () => {
       fetchData()
     }
   }, [isShowModal])
-
-  useEffect(() => {
-    console.log('fix')
-    if (dataThongTin && dataRecord) {
-      // Data đã được chuyền vào, dừng loading
-      setTableLoad(false)
-    }
-  }, [dataRecord, dataThongTin])
 
   // get Khoảng ngày
   useEffect(() => {
@@ -552,12 +544,6 @@ const PhieuChiTien = () => {
       setLastSearchTime(currentTime)
     }
   }
-  // const handlePay = (record) => {
-  //   if (record.TTTienMat) return
-  //   setActionType('pay')
-  //   setDataRecord(record)
-  //   setIsShowModal(true)
-  // }
 
   const handleSearch = (e) => {
     const currentTime = new Date().getTime()
@@ -688,6 +674,14 @@ const PhieuChiTien = () => {
                       NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
                     })
                   }}
+                  onBlur={handleFilterDS}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      setPrevDateValue(formKhoanNgay)
+                      handleFilterDS()
+                    }
+                  }}
+                  onFocus={() => setPrevDateValue(formKhoanNgay)}
                   sx={{
                     '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
                     '& .MuiButtonBase-root': {
@@ -698,14 +692,6 @@ const PhieuChiTien = () => {
                       height: '18px',
                     },
                   }}
-                  onBlur={handleFilterDS}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      setPrevDateValue(formKhoanNgay)
-                      handleFilterDS()
-                    }
-                  }}
-                  onFocus={() => setPrevDateValue(formKhoanNgay)}
                 />
               </div>
               <div className="flex gap-x-2 items-center">
@@ -829,7 +815,7 @@ const PhieuChiTien = () => {
               close={() => setIsShowModal(false)}
               actionType={actionType}
               dataRecord={dataRecord}
-              dataThongTin={dataThongTin}
+              // dataThongTin={dataThongTin}
               dataThongTinSua={dataThongTinSua}
               dataHangMuc={dataHangMuc}
               dataDoiTuong={dataDoiTuong}
