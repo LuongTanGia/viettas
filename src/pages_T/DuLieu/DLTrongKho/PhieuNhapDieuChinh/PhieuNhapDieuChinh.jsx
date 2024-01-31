@@ -1,8 +1,10 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from 'react'
 import { Button, Checkbox, Col, Input, Row, Spin, Table, Tooltip, Typography } from 'antd'
 const { Text } = Typography
 import dayjs from 'dayjs'
+import { CgCloseO } from 'react-icons/cg'
 import { TfiMoreAlt } from 'react-icons/tfi'
 import { DateField } from '@mui/x-date-pickers'
 import { RiFileExcel2Fill } from 'react-icons/ri'
@@ -23,7 +25,7 @@ import { nameColumsPhieuNhapDieuChinh } from '../../../../components/util/Table/
 import NDCPrint from '../../../../components_T/Modal/DuLieu/DuLieuTrongKho/PhieuNDC/NDCPrint'
 import NDCCreate from '../../../../components_T/Modal/DuLieu/DuLieuTrongKho/PhieuNDC/NDCCreate'
 
-const PhieuNhapDieuChinh = () => {
+const PhieuNhapDieuChinh = ({ dataCRUD }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
@@ -33,6 +35,7 @@ const PhieuNhapDieuChinh = () => {
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [isShowOption, setIsShowOption] = useState(false)
   const [isShowModal, setIsShowModal] = useState(false)
+  const [isShowNotify, setIsShowNotify] = useState(false)
   const [khoanNgayFrom, setKhoanNgayFrom] = useState('')
   const [khoanNgayTo, setKhoanNgayTo] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -45,6 +48,7 @@ const PhieuNhapDieuChinh = () => {
   const [options, setOptions] = useState()
   const [dateData, setDateData] = useState({})
   const [targetRow, setTargetRow] = useState([])
+  const [dateChange, setDateChange] = useState(false)
 
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
@@ -52,6 +56,12 @@ const PhieuNhapDieuChinh = () => {
     const key = Object.keys(dataNDC ? dataNDC[0] : []).filter((key) => key)
     setOptions(key)
   }, [selectVisible])
+
+  useEffect(() => {
+    if (dataCRUD.VIEW == false) {
+      setIsShowNotify(true)
+    }
+  }, [])
 
   function formatDateTime(inputDate, includeTime = false) {
     const date = new Date(inputDate)
@@ -206,6 +216,29 @@ const PhieuNhapDieuChinh = () => {
       })
     }, 300)
   }
+
+  // const handleDateChange = () => {
+  //   clearTimeout(timerId)
+  //   timerId = setTimeout(() => {
+  //     if (!dateChange && khoanNgayFrom.isAfter(khoanNgayTo)) {
+  //       setDateData({
+  //         NgayBatDau: khoanNgayFrom,
+  //         NgayKetThuc: khoanNgayFrom,
+  //       })
+  //     } else if (dateChange && khoanNgayFrom.isAfter(khoanNgayTo)) {
+  //       setDateData({
+  //         NgayBatDau: khoanNgayTo,
+  //         NgayKetThuc: khoanNgayTo,
+  //       })
+  //     } else {
+  //       setDateData({
+  //         NgayBatDau: khoanNgayFrom,
+  //         NgayKetThuc: khoanNgayTo,
+  //       })
+  //     }
+  //   }, 300)
+  // }
+
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
       handleDateChange()
@@ -414,16 +447,20 @@ const PhieuNhapDieuChinh = () => {
           <>
             <div className="flex gap-2 items-center justify-center">
               <div
-                className="p-[4px] border-2 rounded cursor-pointer hover:bg-slate-50 hover:text-yellow-400 border-yellow-400 bg-yellow-400 text-slate-50 "
+                className={`${
+                  dataCRUD?.EDIT == false ? 'border-gray-500 bg-gray-500  hover:text-gray-500' : 'border-yellow-400 bg-yellow-400 hover:text-yellow-400'
+                }' p-[4px] border-2 rounded text-slate-50 hover:bg-white cursor-pointer'`}
                 title="Sửa"
-                onClick={() => handleEdit(record)}
+                onClick={() => (dataCRUD?.EDIT == false ? '' : handleEdit(record))}
               >
                 <MdEdit />
               </div>
               <div
-                className="p-[4px] border-2 rounded cursor-pointer hover:bg-slate-50 hover:text-red-500 border-red-500 bg-red-500 text-slate-50 "
+                className={`${
+                  dataCRUD?.EDIT == false ? 'border-gray-500 bg-gray-500  hover:text-gray-500' : 'border-red-500 bg-red-500 hover:text-red-500'
+                } ' p-[4px] border-2 rounded text-slate-50 hover:bg-white cursor-pointer'`}
                 title="Xóa"
-                onClick={() => handleDelete(record)}
+                onClick={() => (dataCRUD.DEL == false ? '' : handleDelete(record))}
               >
                 <MdDelete />
               </div>
@@ -437,251 +474,299 @@ const PhieuNhapDieuChinh = () => {
 
   return (
     <>
-      {!isLoading ? (
-        <SimpleBackdrop />
-      ) : (
+      {dataCRUD.VIEW == false ? (
         <>
-          <div className="flex flex-col gap-1">
-            <div className="flex justify-between gap-2  relative">
-              <div className="flex gap-1 ">
-                <div className="flex items-center gap-2 py-0.5">
-                  <h1 className="text-lg font-bold uppercase">Phiếu Nhập Kho Điều Chỉnh</h1>
-                  <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
-                </div>
-                {isShowSearch && (
-                  <div className={`flex transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
-                    <Input
-                      allowClear={{
-                        clearIcon: <CloseSquareFilled />,
-                      }}
-                      placeholder="Nhập ký tự bạn cần tìm"
-                      onBlur={handleSearch}
-                      onPressEnter={handleSearch}
-                      className="w-full"
-                    />
-                  </div>
-                )}
-              </div>
-              <div className="flex" ref={showOption}>
-                <div className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5  " onClick={() => setIsShowOption(!isShowOption)} title="Chức năng khác">
-                  <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
-                </div>
-                {isShowOption && (
-                  <div className="absolute flex flex-col gap-2 bg-slate-200 p-3 top-[12] right-[2.5%] rounded-lg z-10 duration-500 shadow-custom">
-                    <div className={`flex ${selectVisible ? '' : 'flex-col'} items-center gap-2`}>
+          {isShowNotify && (
+            <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10">
+              <div className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"></div>
+              <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col bg-white px-2 rounded shadow-custom overflow-hidden">
+                <div className="flex flex-col gap-2 p-2 justify-between ">
+                  <div className="flex flex-col gap-2 p-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex gap-2">
+                        <p className="text-blue-700 font-semibold uppercase">Kiểm tra quyền hạn người dùng</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2 border-2 p-3 items-center">
+                      <div>
+                        <CgCloseO className="w-8 h-8 text-red-500" />
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <p className="whitespace-nowrap">Bạn không có quyền thực hiện chức năng này!</p>
+                        <p className="whitespace-nowrap">
+                          Vui lòng liên hệ <span className="font-bold">Người Quản Trị</span> để được cấp quyền
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2 justify-end">
                       <ActionButton
-                        handleAction={handlePrint}
-                        title={'In Phiếu'}
-                        icon={<MdPrint className="w-6 h-6" />}
-                        color={'slate-50'}
-                        background={'purple-500'}
-                        color_hover={'purple-500'}
-                        bg_hover={'white'}
-                      />
-                      <ActionButton
-                        handleAction={() => exportToExcel()}
-                        title={'Xuất Excel'}
-                        icon={<RiFileExcel2Fill className="w-5 h-5" />}
-                        color={'slate-50'}
-                        background={'green-500'}
-                        color_hover={'green-500'}
-                        bg_hover={'white'}
-                      />
-                      <ActionButton
-                        handleAction={() => handleHidden()}
-                        title={'Ẩn Cột'}
-                        icon={<FaEyeSlash className="w-5 h-5" />}
+                        handleAction={() => setIsShowNotify(false)}
+                        title={'Đóng'}
                         color={'slate-50'}
                         background={'red-500'}
                         color_hover={'red-500'}
                         bg_hover={'white'}
                       />
                     </div>
-                    <div>
-                      {selectVisible && (
-                        <div>
-                          <Checkbox.Group
-                            style={{
-                              width: '500px',
-                              background: 'white',
-                              padding: 10,
-                              borderRadius: 10,
-                              boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
-                            }}
-                            className="flex flex-col"
-                            defaultValue={checkedList}
-                            onChange={onChange}
-                          >
-                            <Row>
-                              {options.map((item) => (
-                                <Col span={8} key={item}>
-                                  <Checkbox value={item} checked={true}>
-                                    {nameColumsPhieuNhapDieuChinh[item]}
-                                  </Checkbox>
-                                </Col>
-                              ))}
-                            </Row>
-                            <Spin spinning={tableLoad}>
-                              <Button className="mt-2 w-full" onClick={onClickSubmit}>
-                                Xác Nhận
-                              </Button>
-                            </Spin>
-                          </Checkbox.Group>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="flex justify-between gap-1">
-              <div className="flex items-center gap-2">
-                <div className="flex gap-1">
-                  <div className="flex items-center gap-1">
-                    <label>Từ</label>
-                    <DateField
-                      onBlur={handleDateChange}
-                      onKeyDown={handleKeyDown}
-                      className="DatePicker_NXTKho min-w-[100px] w-[60%]"
-                      format="DD/MM/YYYY"
-                      maxDate={dayjs(khoanNgayTo)}
-                      defaultValue={dayjs(khoanNgayFrom, 'YYYY-MM-DD')}
-                      sx={{
-                        '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                        '& .MuiButtonBase-root': {
-                          padding: '4px',
-                        },
-                        '& .MuiSvgIcon-root': {
-                          width: '18px',
-                          height: '18px',
-                        },
-                      }}
-                      onChange={(values) => {
-                        const selectedDate = values ? dayjs(values).format('YYYY-MM-DDTHH:MM:ss') : ''
-                        setKhoanNgayFrom(selectedDate)
-                      }}
-                    />
-                  </div>
-                  <div className=" flex items-center gap-1 ">
-                    <label>Đến</label>
-                    <DateField
-                      onBlur={handleDateChange}
-                      onKeyDown={handleKeyDown}
-                      className="DatePicker_NXTKho min-w-[100px] w-[60%]"
-                      format="DD/MM/YYYY"
-                      minDate={dayjs(khoanNgayFrom)}
-                      defaultValue={dayjs(khoanNgayTo, 'YYYY-MM-DD')}
-                      sx={{
-                        '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                        '& .MuiButtonBase-root': {
-                          padding: '4px',
-                        },
-                        '& .MuiSvgIcon-root': {
-                          width: '18px',
-                          height: '18px',
-                        },
-                      }}
-                      onChange={(values) => {
-                        const selectedDate = values ? dayjs(values).format('YYYY-MM-DDTHH:MM:ss') : ''
-                        setKhoanNgayTo(selectedDate)
-                      }}
-                    />
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <ActionButton
-                  handleAction={handleCreate}
-                  title={'Thêm Sản Phẩm'}
-                  icon={<IoMdAddCircleOutline className="w-6 h-6" />}
-                  color={'slate-50'}
-                  background={'blue-500'}
-                  color_hover={'blue-500'}
-                  bg_hover={'white'}
-                />
-              </div>
             </div>
-            <div id="my-table">
-              <Table
-                loading={tableLoad}
-                className="table_DMHangHoa setHeight"
-                columns={newTitles}
-                dataSource={filteredHangHoa}
-                pagination={{
-                  defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                  showSizeChanger: true,
-                  pageSizeOptions: ['50', '100', '1000'],
-                  onShowSizeChange: (current, size) => {
-                    localStorage.setItem('pageSize', size)
-                  },
-                }}
-                onRow={(record) => ({
-                  onDoubleClick: () => {
-                    handleView(record)
-                  },
-                })}
-                rowClassName={(record) => (record.SoChungTu === targetRow ? 'highlighted-row' : '')}
-                size="small"
-                scroll={{
-                  x: 2000,
-                  y: 400,
-                }}
-                style={{
-                  whiteSpace: 'nowrap',
-                  fontSize: '24px',
-                }}
-                summary={() => {
-                  return (
-                    <Table.Summary fixed="bottom">
-                      <Table.Summary.Row>
-                        {newTitles
-                          .filter((column) => column.render)
-                          .map((column, index) => {
-                            const isNumericColumn = typeof filteredHangHoa[0]?.[column.dataIndex] === 'number'
+          )}
+        </>
+      ) : (
+        <>
+          {!isLoading ? (
+            <SimpleBackdrop />
+          ) : (
+            <>
+              <div className="flex flex-col gap-1">
+                <div className="flex justify-between gap-2  relative">
+                  <div className="flex gap-1 ">
+                    <div className="flex items-center gap-2 py-0.5">
+                      <h1 className="text-lg font-bold uppercase">Phiếu Nhập Kho Điều Chỉnh</h1>
+                      <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
+                    </div>
+                    {isShowSearch && (
+                      <div className={`flex transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
+                        <Input
+                          allowClear={{
+                            clearIcon: <CloseSquareFilled />,
+                          }}
+                          placeholder="Nhập ký tự bạn cần tìm"
+                          onBlur={handleSearch}
+                          onPressEnter={handleSearch}
+                          className="w-full"
+                        />
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex" ref={showOption}>
+                    <div
+                      className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5  "
+                      onClick={() => setIsShowOption(!isShowOption)}
+                      title="Chức năng khác"
+                    >
+                      <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
+                    </div>
+                    {isShowOption && (
+                      <div className="absolute flex flex-col gap-2 bg-slate-200 p-3 top-[12] right-[2.5%] rounded-lg z-10 duration-500 shadow-custom">
+                        <div className={`flex ${selectVisible ? '' : 'flex-col'} items-center gap-2`}>
+                          <ActionButton
+                            handleAction={handlePrint}
+                            title={'In Phiếu'}
+                            icon={<MdPrint className="w-6 h-6" />}
+                            color={'slate-50'}
+                            background={'purple-500'}
+                            color_hover={'purple-500'}
+                            bg_hover={'white'}
+                          />
+                          <ActionButton
+                            handleAction={() => (dataCRUD?.EXCEL == false ? '' : exportToExcel())}
+                            title={'Xuất Excel'}
+                            icon={<RiFileExcel2Fill className="w-5 h-5" />}
+                            color={'slate-50'}
+                            background={dataCRUD?.EXCEL == false ? 'gray-500' : 'green-500'}
+                            color_hover={dataCRUD?.EXCEL == false ? 'gray-500' : 'green-500'}
+                            bg_hover={'white'}
+                          />
+                          <ActionButton
+                            handleAction={() => handleHidden()}
+                            title={'Ẩn Cột'}
+                            icon={<FaEyeSlash className="w-5 h-5" />}
+                            color={'slate-50'}
+                            background={'red-500'}
+                            color_hover={'red-500'}
+                            bg_hover={'white'}
+                          />
+                        </div>
+                        <div>
+                          {selectVisible && (
+                            <div>
+                              <Checkbox.Group
+                                style={{
+                                  width: '500px',
+                                  background: 'white',
+                                  padding: 10,
+                                  borderRadius: 10,
+                                  boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+                                }}
+                                className="flex flex-col"
+                                defaultValue={checkedList}
+                                onChange={onChange}
+                              >
+                                <Row>
+                                  {options.map((item) => (
+                                    <Col span={8} key={item}>
+                                      <Checkbox value={item} checked={true}>
+                                        {nameColumsPhieuNhapDieuChinh[item]}
+                                      </Checkbox>
+                                    </Col>
+                                  ))}
+                                </Row>
+                                <Spin spinning={tableLoad}>
+                                  <Button className="mt-2 w-full" onClick={onClickSubmit}>
+                                    Xác Nhận
+                                  </Button>
+                                </Spin>
+                              </Checkbox.Group>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="flex justify-between gap-1">
+                  <div className="flex items-center gap-2">
+                    <div className="flex gap-1">
+                      <div className="flex items-center gap-1">
+                        <label>Từ</label>
+                        <DateField
+                          onBlur={handleDateChange}
+                          onKeyDown={handleKeyDown}
+                          className="DatePicker_NXTKho min-w-[100px] w-[60%]"
+                          format="DD/MM/YYYY"
+                          maxDate={dayjs(khoanNgayTo)}
+                          defaultValue={dayjs(khoanNgayFrom, 'YYYY-MM-DD')}
+                          sx={{
+                            '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                            '& .MuiButtonBase-root': {
+                              padding: '4px',
+                            },
+                            '& .MuiSvgIcon-root': {
+                              width: '18px',
+                              height: '18px',
+                            },
+                          }}
+                          onChange={(values) => {
+                            setKhoanNgayFrom(values ? dayjs(values).format('YYYY-MM-DDTHH:MM:ss') : '')
+                            setDateChange(true)
+                          }}
+                        />
+                      </div>
+                      <div className=" flex items-center gap-1 ">
+                        <label>Đến</label>
+                        <DateField
+                          onBlur={handleDateChange}
+                          onKeyDown={handleKeyDown}
+                          className="DatePicker_NXTKho min-w-[100px] w-[60%]"
+                          format="DD/MM/YYYY"
+                          minDate={dayjs(khoanNgayFrom)}
+                          defaultValue={dayjs(khoanNgayTo, 'YYYY-MM-DD')}
+                          sx={{
+                            '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                            '& .MuiButtonBase-root': {
+                              padding: '4px',
+                            },
+                            '& .MuiSvgIcon-root': {
+                              width: '18px',
+                              height: '18px',
+                            },
+                          }}
+                          onChange={(values) => {
+                            setKhoanNgayTo(values ? dayjs(values).format('YYYY-MM-DDTHH:MM:ss') : '')
+                            setDateChange(false)
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <ActionButton
+                      handleAction={() => (dataCRUD?.ADD == false ? '' : handleCreate())}
+                      title={'Thêm Sản Phẩm'}
+                      icon={<IoMdAddCircleOutline className="w-6 h-6" />}
+                      color={'slate-50'}
+                      background={dataCRUD?.ADD == false ? 'gray-500' : 'blue-500'}
+                      color_hover={dataCRUD?.ADD == false ? 'gray-500' : 'blue-500'}
+                      bg_hover={'white'}
+                    />
+                  </div>
+                </div>
+                <div id="my-table">
+                  <Table
+                    loading={tableLoad}
+                    className="table_DMHangHoa setHeight"
+                    columns={newTitles}
+                    dataSource={filteredHangHoa}
+                    pagination={{
+                      defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                      showSizeChanger: true,
+                      pageSizeOptions: ['50', '100', '1000'],
+                      onShowSizeChange: (current, size) => {
+                        localStorage.setItem('pageSize', size)
+                      },
+                    }}
+                    onRow={(record) => ({
+                      onDoubleClick: () => {
+                        handleView(record)
+                      },
+                    })}
+                    rowClassName={(record) => (record.SoChungTu === targetRow ? 'highlighted-row' : '')}
+                    size="small"
+                    scroll={{
+                      x: 2000,
+                      y: 400,
+                    }}
+                    style={{
+                      whiteSpace: 'nowrap',
+                      fontSize: '24px',
+                    }}
+                    summary={() => {
+                      return (
+                        <Table.Summary fixed="bottom">
+                          <Table.Summary.Row>
+                            {newTitles
+                              .filter((column) => column.render)
+                              .map((column, index) => {
+                                const isNumericColumn = typeof filteredHangHoa[0]?.[column.dataIndex] === 'number'
 
-                            return (
-                              <Table.Summary.Cell key={`summary-cell-${index + 1}`} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
-                                {isNumericColumn ? (
-                                  column.dataIndex === 'SoMatHang' ? (
-                                    <Text strong>
-                                      {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                        minimumFractionDigits: 0,
-                                        maximumFractionDigits: 0,
-                                      })}
-                                    </Text>
-                                  ) : (
-                                    <Text strong>
-                                      {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                        minimumFractionDigits: dataThongSo.SOLESOLUONG,
-                                        maximumFractionDigits: dataThongSo.SOLESOLUONG,
-                                      })}
-                                    </Text>
-                                  )
-                                ) : null}
-                              </Table.Summary.Cell>
-                            )
-                          })}
-                      </Table.Summary.Row>
-                    </Table.Summary>
-                  )
-                }}
-              />
-            </div>
-          </div>
-          <div>
-            {isShowModal &&
-              (actionType == 'create' ? (
-                <NDCCreate close={() => setIsShowModal(false)} loadingData={handleLoading} setTargetRow={setTargetRow} />
-              ) : actionType == 'view' ? (
-                <NDCXem close={() => setIsShowModal(false)} dataNDC={isDataKhoDC} />
-              ) : actionType == 'edit' ? (
-                <NDCEdit close={() => setIsShowModal(false)} dataNDC={isDataKhoDC} loadingData={handleLoading} setTargetRow={setTargetRow} />
-              ) : actionType == 'delete' ? (
-                <NDCXoa close={() => setIsShowModal(false)} dataNDC={isDataKhoDC} loadingData={handleLoading} setTargetRow={setTargetRow} />
-              ) : actionType == 'print' ? (
-                <NDCPrint close={() => setIsShowModal(false)} />
-              ) : null)}
-          </div>
+                                return (
+                                  <Table.Summary.Cell key={`summary-cell-${index + 1}`} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                                    {isNumericColumn ? (
+                                      column.dataIndex === 'SoMatHang' ? (
+                                        <Text strong>
+                                          {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                            minimumFractionDigits: 0,
+                                            maximumFractionDigits: 0,
+                                          })}
+                                        </Text>
+                                      ) : (
+                                        <Text strong>
+                                          {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                            minimumFractionDigits: dataThongSo.SOLESOLUONG,
+                                            maximumFractionDigits: dataThongSo.SOLESOLUONG,
+                                          })}
+                                        </Text>
+                                      )
+                                    ) : null}
+                                  </Table.Summary.Cell>
+                                )
+                              })}
+                          </Table.Summary.Row>
+                        </Table.Summary>
+                      )
+                    }}
+                  />
+                </div>
+              </div>
+              <div>
+                {isShowModal &&
+                  (actionType == 'create' ? (
+                    <NDCCreate close={() => setIsShowModal(false)} loadingData={handleLoading} setTargetRow={setTargetRow} />
+                  ) : actionType == 'view' ? (
+                    <NDCXem close={() => setIsShowModal(false)} dataNDC={isDataKhoDC} />
+                  ) : actionType == 'edit' ? (
+                    <NDCEdit close={() => setIsShowModal(false)} dataNDC={isDataKhoDC} loadingData={handleLoading} setTargetRow={setTargetRow} />
+                  ) : actionType == 'delete' ? (
+                    <NDCXoa close={() => setIsShowModal(false)} dataNDC={isDataKhoDC} loadingData={handleLoading} setTargetRow={setTargetRow} />
+                  ) : actionType == 'print' ? (
+                    <NDCPrint close={() => setIsShowModal(false)} />
+                  ) : null)}
+              </div>
+            </>
+          )}
         </>
       )}
     </>
