@@ -39,6 +39,25 @@ export const ThongTinNTR = (token, Sct) =>
     }
   })
 
+export const ThongTinSuaNTR = (token, Sct) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const response = await axios({
+        url: '/entries/DuLieuNTR/ThongTinSua',
+        method: 'post',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        data: {
+          SoChungTu: Sct,
+        },
+      })
+      resolve(response)
+    } catch (error) {
+      reject(error)
+    }
+  })
+
 export const ListHelperKhoHangNTR = (token) =>
   new Promise(async (resolve, reject) => {
     try {

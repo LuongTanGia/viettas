@@ -42,7 +42,7 @@ const ModalPCT = ({
     Ten: '',
     DiaChi: '',
     GhiChu: '',
-    SoTien: 0,
+    SoTien: '',
   })
 
   const ngayChungTu = dayjs().format('YYYY-MM-DDTHH:mm:ss')
@@ -71,9 +71,9 @@ const ModalPCT = ({
   })
 
   //  set value default
-  useEffect(() => {
-    if (dataThongTinSua !== null) setFormEdit({ ...dataThongTinSua })
-  }, [dataThongTinSua])
+  // useEffect(() => {
+  //   if (dataThongTinSua !== null) setFormEdit({ ...dataThongTinSua })
+  // }, [dataThongTinSua])
 
   useEffect(() => {
     if (dataHangMuc && actionType === 'create') {
@@ -103,7 +103,6 @@ const ModalPCT = ({
   }, [newData, actionType])
 
   const handleDoiTuongFocus = (selectedValue) => {
-    setFormCreate({ ...formCreate, MaDoiTuong: selectedValue })
     // Tìm thông tin đối tượng tương ứng và cập nhật state
     const selectedDoiTuongInfo = dataDoiTuong.find((item) => item.Ma === selectedValue)
     setDoiTuongInfo(selectedDoiTuongInfo || { Ten: '', DiaChi: '' })
@@ -117,7 +116,7 @@ const ModalPCT = ({
       setErrors({ Ten: '', DiaChi: '' })
     }
 
-    if (actionType === 'edit' && (selectedValue === 'NCVL' || selectedValue === 'KHVL')) {
+    if ((actionType === 'edit' && selectedValue === 'KHVL') || (actionType === 'edit' && selectedValue === 'NCVL')) {
       setFormEdit({
         ...formEdit,
         MaDoiTuong: selectedValue,
@@ -134,28 +133,26 @@ const ModalPCT = ({
   }
 
   const handleCreateAndClose = async () => {
-    if (!formCreate?.TenDoiTuong?.trim() || !formCreate?.DiaChi?.trim() || !formCreate?.GhiChu?.trim() || formCreate?.SoTien === 0) {
+    if (formCreate.MaDoiTuong === 'NCVL' || formCreate.MaDoiTuong === 'KHVL') {
+      if (!formCreate?.TenDoiTuong?.trim() || !formCreate?.DiaChi?.trim() || !formCreate?.GhiChu?.trim() || formCreate?.SoTien === null || formCreate?.SoTien === 0) {
+        setErrors({
+          ...errors,
+          Ten: formCreate?.TenDoiTuong?.trim() ? '' : 'Tên không được để trống',
+          DiaChi: formCreate?.DiaChi?.trim() ? '' : 'Địa chỉ không được để trống',
+          GhiChu: formCreate?.GhiChu?.trim() ? '' : 'Ghi chú không được để trống',
+          SoTien: formCreate?.SoTien === null ? null : formCreate?.SoTien === 0 && 0,
+        })
+        return
+      }
+    }
+    if (!formCreate?.GhiChu?.trim() || formCreate?.SoTien === null || formCreate?.SoTien === 0) {
       setErrors({
         ...errors,
         GhiChu: formCreate?.GhiChu?.trim() ? '' : 'Ghi chú không được để trống',
-        SoTien: formCreate?.SoTien !== 0 ? 0 : 'Số Tiền không được để trống hoặc bằng 0',
-        // Ten: formCreate?.TenDoiTuong?.trim() ? '' : 'Tên không được để trống',
-        // DiaChi: formCreate?.DiaChi?.trim() ? '' : 'Địa chỉ không được để trống',
+        SoTien: formCreate?.SoTien === null ? null : formCreate?.SoTien === 0 && 0,
       })
-      if (formCreate.MaDoiTuong === 'NCVL' || formCreate.MaDoiTuong === 'KHVL') {
-        if (!formCreate?.TenDoiTuong?.trim() || !formCreate?.DiaChi?.trim() || !formCreate?.GhiChu?.trim() || formCreate?.SoTien === 0) {
-          setErrors({
-            ...errors,
-            Ten: formCreate?.TenDoiTuong?.trim() ? '' : 'Tên không được để trống',
-            DiaChi: formCreate?.DiaChi?.trim() ? '' : 'Địa chỉ không được để trống',
-            GhiChu: formCreate?.GhiChu?.trim() ? '' : 'Ghi chú không được để trống',
-            SoTien: formCreate?.SoTien !== 0 ? 0 : 'Số tiền không được để trống hoặc bằng 0',
-          })
-        }
-      }
       return
     }
-
     try {
       const tokenLogin = localStorage.getItem('TKN')
       const response = await apis.ThemPCT(tokenLogin, formCreate)
@@ -179,25 +176,24 @@ const ModalPCT = ({
   }
 
   const handleCreate = async () => {
-    if (!formCreate?.TenDoiTuong?.trim() || !formCreate?.DiaChi?.trim() || !formCreate?.GhiChu?.trim() || formCreate?.SoTien === 0) {
+    if (formCreate.MaDoiTuong === 'NCVL' || formCreate.MaDoiTuong === 'KHVL') {
+      if (!formCreate?.TenDoiTuong?.trim() || !formCreate?.DiaChi?.trim() || !formCreate?.GhiChu?.trim() || formCreate?.SoTien === null || formCreate?.SoTien === 0) {
+        setErrors({
+          ...errors,
+          Ten: formCreate?.TenDoiTuong?.trim() ? '' : 'Tên không được để trống',
+          DiaChi: formCreate?.DiaChi?.trim() ? '' : 'Địa chỉ không được để trống',
+          GhiChu: formCreate?.GhiChu?.trim() ? '' : 'Ghi chú không được để trống',
+          SoTien: formCreate?.SoTien === null ? null : formCreate?.SoTien === 0 && 0,
+        })
+        return
+      }
+    }
+    if (!formCreate?.GhiChu?.trim() || formCreate?.SoTien === null || formCreate?.SoTien === 0) {
       setErrors({
         ...errors,
         GhiChu: formCreate?.GhiChu?.trim() ? '' : 'Ghi chú không được để trống',
-        SoTien: formCreate?.SoTien !== 0 ? 0 : 'Số Tiền không được để trống hoặc bằng 0',
-        // Ten: formCreate?.TenDoiTuong?.trim() ? '' : 'Tên không được để trống',
-        // DiaChi: formCreate?.DiaChi?.trim() ? '' : 'Địa chỉ không được để trống',
+        SoTien: formCreate?.SoTien === null ? null : formCreate?.SoTien === 0 && 0,
       })
-      if (formCreate.MaDoiTuong === 'NCVL' || formCreate.MaDoiTuong === 'KHVL') {
-        if (!formCreate?.TenDoiTuong?.trim() || !formCreate?.DiaChi?.trim() || !formCreate?.GhiChu?.trim() || formCreate?.SoTien === 0) {
-          setErrors({
-            ...errors,
-            Ten: formCreate?.TenDoiTuong?.trim() ? '' : 'Tên không được để trống',
-            DiaChi: formCreate?.DiaChi?.trim() ? '' : 'Địa chỉ không được để trống',
-            GhiChu: formCreate?.GhiChu?.trim() ? '' : 'Ghi chú không được để trống',
-            SoTien: formCreate?.SoTien !== 0 ? 0 : 'Số tiền không được để trống hoặc bằng 0',
-          })
-        }
-      }
       return
     }
 
@@ -226,6 +222,26 @@ const ModalPCT = ({
   }
 
   const handleEdit = async (dataRecord) => {
+    if (formEdit.MaDoiTuong === 'NCVL' || formEdit.MaDoiTuong === 'KHVL') {
+      if (!formEdit?.TenDoiTuong?.trim() || !formEdit?.DiaChi?.trim() || !formEdit?.GhiChu?.trim() || formEdit?.SoTien === null || formEdit?.SoTien === 0) {
+        setErrors({
+          ...errors,
+          Ten: formEdit?.TenDoiTuong?.trim() ? '' : 'Tên không được để trống',
+          DiaChi: formEdit?.DiaChi?.trim() ? '' : 'Địa chỉ không được để trống',
+          GhiChu: formEdit?.GhiChu?.trim() ? '' : 'Ghi chú không được để trống',
+          SoTien: formEdit?.SoTien === null ? null : formEdit?.SoTien === 0 && 0,
+        })
+        return
+      }
+    }
+    if (!formEdit?.GhiChu?.trim() || formEdit?.SoTien === null || formEdit?.SoTien === 0) {
+      setErrors({
+        ...errors,
+        GhiChu: formEdit?.GhiChu?.trim() ? '' : 'Ghi chú không được để trống',
+        SoTien: formEdit?.SoTien === null ? null : formEdit?.SoTien === 0 && 0,
+      })
+      return
+    }
     try {
       const tokenLogin = localStorage.getItem('TKN')
 
@@ -323,6 +339,10 @@ const ModalPCT = ({
     })
     setNewData(filteredData)
   }
+
+  // console.log('form', formCreate.SoTien)
+  console.log('formEdit', formEdit.SoTien)
+  console.log('err', errors.SoTien)
   return (
     <>
       <div className=" fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
@@ -354,6 +374,7 @@ const ModalPCT = ({
                 <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
                 <label className="text-blue-700 font-semibold uppercase pb-1">In - ${namePage} </label>
               </div>
+
               <div className="border-2 my-1">
                 <div className="p-4 ">
                   <div className=" flex justify-center items-center  gap-3 pl-[52px]">
@@ -497,6 +518,7 @@ const ModalPCT = ({
                   </div>
                 </div>
               </div>
+
               <div className="flex justify-end pt-2 gap-2">
                 <ActionButton color={'slate-50'} title={'Xác nhận'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handlePrint} />
 
@@ -687,12 +709,7 @@ const ModalPCT = ({
                         <div className="grid grid-cols-3  gap-2 items-center">
                           <div className="flex items-center gap-1 whitespace-nowrap">
                             <label className="required  min-w-[90px]  flex justify-end">Số phiếu chi</label>
-                            <input
-                              // value={dataRecord.SoChungTu}
-                              type="text"
-                              className="h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300  outline-none  truncate"
-                              disabled
-                            />
+                            <input type="text" className="h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300  outline-none  truncate" disabled />
                           </div>
                           <div className="flex items-center gap-1 whitespace-nowrap">
                             <label className="required  min-w-[90px] text-sm flex justify-end">Ngày</label>
@@ -720,12 +737,7 @@ const ModalPCT = ({
                           </div>
                           <div className="flex items-center gap-1 whitespace-nowrap">
                             <label className="  min-w-[90px] text-sm flex justify-end">C.từ góc</label>
-                            <input
-                              type="text"
-                              // value={dataRecord?.SoThamChieu || ''}
-                              className="h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate"
-                              disabled
-                            />
+                            <input type="text" className="h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate" disabled />
                           </div>
                         </div>
                         <div className="flex items-center gap-1">
@@ -805,10 +817,10 @@ const ModalPCT = ({
                           />
                         </div>
                         <div className="flex items-center gap-1 whitespace-nowrap  ">
-                          <label className="required min-w-[90px] text-sm flex justify-end">Số tiền</label>
+                          <label className="required min-w-[90px] text-sm flex justify-end">Số tiền </label>
                           <InputNumber
                             className={`w-[40%]   font-medium
-                                       ${errors.SoTien ? 'border-red-500' : ''} `}
+                                       ${errors.SoTien || errors.SoTien === 0 || errors.SoTien === null ? 'border-red-500' : ''} `}
                             placeholder={errors.SoTien}
                             size="small"
                             value={formCreate.SoTien}
@@ -819,7 +831,7 @@ const ModalPCT = ({
                                 ...formCreate,
                                 SoTien: e,
                               })
-                              setErrors({ ...errors, SoTien: 0 })
+                              setErrors({ ...errors, SoTien: formCreate.SoTien })
                             }}
                           />
                         </div>
@@ -1054,9 +1066,9 @@ const ModalPCT = ({
                           <label className="required min-w-[90px] text-sm flex justify-end">Số tiền</label>
 
                           <InputNumber
-                            className="w-[40%]"
+                            className={`w-[40%] ${errors.SoTien || errors.SoTien === 0 || errors.SoTien === null ? 'border-red-500' : ''} `}
                             size="small"
-                            defaultValue={formatPrice(dataThongTinSua?.SoTien, dataThongSo?.SOLESOTIEN)}
+                            value={formEdit.SoTien}
                             formatter={(value) => ` ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                             parser={(value) => value.replace(/\$\s?|(,*)/g, '')}
                             onChange={(e) => {
@@ -1064,7 +1076,7 @@ const ModalPCT = ({
                                 ...formEdit,
                                 SoTien: e,
                               })
-                              setErrors({ ...errors, SoTien: '' })
+                              setErrors({ ...errors, SoTien: formEdit.SoTien })
                             }}
                           />
                         </div>
@@ -1118,6 +1130,7 @@ const ModalPCT = ({
                               <Tooltip color="blue">
                                 <input
                                   disabled
+                                  value={dataThongTinSua?.NguoiSuaCuoi}
                                   type="text"
                                   className="h-[24px] w-[20vw] lg:w-[18vw] md:w-[15vw] px-2 rounded-[4px] resize-none border-[1px] border-gray-300 outline-none truncate"
                                 />
@@ -1129,7 +1142,11 @@ const ModalPCT = ({
                                 <input
                                   disabled
                                   type="text"
-                                  // value={dataRecord?.NgaySuaCuoi && dayjs(dataRecord.NgaySuaCuoi).isValid() ? dayjs(dataRecord.NgaySuaCuoi).format('DD/MM/YYYY hh:mm:ss') : ''}
+                                  value={
+                                    dataThongTinSua?.NgaySuaCuoi && dayjs(dataThongTinSua.NgaySuaCuoi).isValid()
+                                      ? dayjs(dataThongTinSua.NgaySuaCuoi).format('DD/MM/YYYY hh:mm:ss')
+                                      : ''
+                                  }
                                   className="px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none text-center truncate"
                                 />
                               </Tooltip>
