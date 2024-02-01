@@ -676,25 +676,15 @@ const PhieuChiTien = () => {
                   format="DD/MM/YYYY"
                   defaultValue={dayjs(formKhoanNgay.NgayBatDau)}
                   maxDate={dayjs(formKhoanNgay.NgayKetThuc)}
-                  // onChange={(newDate) => {
-                  //   setFormKhoanNgay({
-                  //     ...formKhoanNgay,
-                  //     NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
-                  //   })
-                  // }}
-                  onBlur={(e) => {
+                  onChange={(newDate) => {
                     setFormKhoanNgay({
                       ...formKhoanNgay,
-                      NgayBatDau: dayjs(e.target.value).format('YYYY-MM-DDTHH:mm:ss'),
+                      NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
                     })
-                    handleFilterDS()
                   }}
-                  onKeyDown={(newDate) => {
-                    if (newDate.key === 'Enter') {
-                      setFormKhoanNgay({
-                        ...formKhoanNgay,
-                        NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
-                      })
+                  onBlur={handleFilterDS}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
                       setPrevDateValue(formKhoanNgay)
                       handleFilterDS()
                     }
