@@ -22,6 +22,7 @@ const { IoAddCircleOutline, TiPrinter, MdDelete, BsSearch, TfiMoreAlt, MdEdit, F
 const PhieuChiTien = () => {
   const optionContainerRef = useRef(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [isLoadingEdit, setIsLoadingEdit] = useState(true)
   const [isLoadingModal, setIsLoadingModal] = useState(true)
   const [tableLoad, setTableLoad] = useState(true)
   const [isShowModal, setIsShowModal] = useState(false)
@@ -88,6 +89,7 @@ const PhieuChiTien = () => {
   // get helper
   useEffect(() => {
     setIsLoadingModal(true)
+    setIsLoadingEdit(true)
     const fetchData = async () => {
       try {
         console.log('get helper')
@@ -135,9 +137,11 @@ const PhieuChiTien = () => {
           if (responseTT.data && responseTT.data.DataError === 0) {
             setDataThongTinSua(responseTT.data.DataResult)
             setIsLoadingModal(false)
+            setIsLoadingEdit(false)
           } else if (responseTT.data.DataError === -1 || responseTT.data.DataError === -2 || responseTT.data.DataError === -3) {
             setIsShowModal(false)
             setIsLoadingModal(false)
+            setIsLoadingEdit(false)
             toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseTT.data.DataErrorDescription}</div>)
           } else if (responseTT.data.DataError === -107 || responseTT.data.DataError === -108) {
             await RETOKEN()
@@ -145,11 +149,15 @@ const PhieuChiTien = () => {
           } else {
             setIsShowModal(false)
             setIsLoadingModal(false)
+            setIsLoadingEdit(false)
             toast.error(responseTT.data.DataErrorDescription)
           }
         }
       } catch (error) {
         console.error('Lấy data thất bại', error)
+        setIsShowModal(false)
+        setIsLoadingModal(false)
+        setIsLoadingEdit(false)
         // toast.error('Lấy data thất bại. Vui lòng thử lại sau.')
       }
     }
@@ -553,7 +561,7 @@ const PhieuChiTien = () => {
       setLastSearchTime(currentTime)
     }
   }
-
+  console.log('first', formKhoanNgay)
   return (
     <>
       {isLoading ? (
@@ -668,15 +676,25 @@ const PhieuChiTien = () => {
                   format="DD/MM/YYYY"
                   defaultValue={dayjs(formKhoanNgay.NgayBatDau)}
                   maxDate={dayjs(formKhoanNgay.NgayKetThuc)}
-                  onChange={(newDate) => {
+                  // onChange={(newDate) => {
+                  //   setFormKhoanNgay({
+                  //     ...formKhoanNgay,
+                  //     NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                  //   })
+                  // }}
+                  onBlur={(e) => {
                     setFormKhoanNgay({
                       ...formKhoanNgay,
-                      NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                      NgayBatDau: dayjs(e.target.value).format('YYYY-MM-DDTHH:mm:ss'),
                     })
+                    handleFilterDS()
                   }}
-                  onBlur={handleFilterDS}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
+                  onKeyDown={(newDate) => {
+                    if (newDate.key === 'Enter') {
+                      setFormKhoanNgay({
+                        ...formKhoanNgay,
+                        NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                      })
                       setPrevDateValue(formKhoanNgay)
                       handleFilterDS()
                     }
@@ -824,6 +842,7 @@ const PhieuChiTien = () => {
               dataThongSo={dataThongSo}
               loading={() => setTableLoad(true)}
               isLoadingModal={isLoadingModal}
+              isLoadingEdit={isLoadingEdit}
               setHightLight={setDoneNTR}
             />
           )}

@@ -399,7 +399,7 @@ const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourT
     if (item === 'SoLuong') {
       return {
         title: columName[item] || item,
-        width: 150,
+        width: 200,
         dataIndex: item,
         editable: true,
         key: item,

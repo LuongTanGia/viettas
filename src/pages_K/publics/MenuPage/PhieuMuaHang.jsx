@@ -22,6 +22,7 @@ const PhieuMuaHang = () => {
   const optionContainerRef = useRef(null)
   const [isLoading, setIsLoading] = useState(true)
   const [tableLoad, setTableLoad] = useState(true)
+  const [isLoadingEdit, setIsLoadingEdit] = useState(true)
   const [isLoadingModal, setIsLoadingModal] = useState(true)
   const [isShowModal, setIsShowModal] = useState(false)
   const [isShowSearch, setIsShowSearch] = useState(false)
@@ -89,6 +90,7 @@ const PhieuMuaHang = () => {
   // get helper
   useEffect(() => {
     setIsLoadingModal(true)
+    setIsLoadingEdit(true)
     const fetchData = async () => {
       try {
         console.log('get helper')
@@ -155,25 +157,29 @@ const PhieuMuaHang = () => {
           const responseTTS = await apis.ThongTinSuaPMH(tokenLogin, dataRecord.SoChungTu)
           if (responseTTS.data && responseTTS.data.DataError === 0) {
             setDataThongTinSua(responseTTS.data.DataResult)
-            console.log(responseTTS.data.DataResult)
+            setIsLoadingEdit(false)
             setIsLoadingModal(false)
           } else if (responseTTS.data.DataError === -1 || responseTTS.data.DataError === -2 || responseTTS.data.DataError === -3) {
             toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseTTS.data.DataErrorDescription}</div>)
             setIsLoadingModal(false)
+            setIsLoadingEdit(false)
+
             setIsShowModal(false)
           } else if (responseTTS.data.DataError === -107 || responseTTS.data.DataError === -108) {
             await RETOKEN()
             fetchData()
           } else {
-            setIsLoadingModal(false)
             toast.error(responseTTS.data.DataErrorDescription)
+            setIsLoadingModal(false)
             setIsShowModal(false)
+            setIsLoadingEdit(false)
           }
         }
       } catch (error) {
         console.error('Lấy data thất bại', error)
         setIsLoadingModal(false)
         setIsShowModal(false)
+        setIsLoadingEdit(false)
 
         // toast.error('Lấy data thất bại. Vui lòng thử lại sau.')
       }
@@ -183,18 +189,6 @@ const PhieuMuaHang = () => {
       fetchData()
     }
   }, [isShowModal])
-
-  // useEffect(() => {
-  //   console.log('fix')
-  //   if (dataThongTin && dataRecord) {
-  //     // Data đã được chuyền vào, dừng loading
-  //     setTableLoad(false)
-  //   }
-  //   if (dataThongTinSua && dataRecord) {
-  //     // Data đã được chuyền vào, dừng loading
-  //     setTableLoad(false)
-  //   }
-  // }, [dataRecord, dataThongTin, dataThongTinSua])
 
   // get Khoảng ngày
   useEffect(() => {
@@ -1002,6 +996,7 @@ const PhieuMuaHang = () => {
               dataDoiTuong={dataDoiTuong}
               data={data}
               isLoadingModal={isLoadingModal}
+              isLoadingEdit={isLoadingEdit}
               controlDate={formKhoanNgay}
               dataThongSo={dataThongSo}
               loading={() => setTableLoad(true)}
