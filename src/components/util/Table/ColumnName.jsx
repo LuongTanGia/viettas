@@ -150,4 +150,5 @@ export const nameColumsPhieuNhapDieuChinh = {
   NgayTao: 'Ngày Tạo',
   NguoiSuaCuoi: 'Người Sửa Cuối',
   NgaySuaCuoi: 'Ngày Sửa Cuối',
+  TongTriGiaKho: 'Tổng Trị Giá',
 }

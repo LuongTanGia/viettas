@@ -19,8 +19,10 @@ import ActionButton from '../../components/util/Button/ActionButton'
 import HighlightedCell from '../../components_T/hooks/HighlightedCell'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
 import { nameColumsNhapXuatTon } from '../../components/util/Table/ColumnName'
+import { useNavigate } from 'react-router-dom'
 
-const NhapXuatTonKho = ({ dataCRUD }) => {
+const NhapXuatTonKho = ({ path }) => {
+  const navigate = useNavigate()
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
@@ -48,6 +50,40 @@ const NhapXuatTonKho = ({ dataCRUD }) => {
   const [selectVisible, setSelectVisible] = useState(false)
   const [options, setOptions] = useState()
   const [tableLoad, setTableLoad] = useState(true)
+  const [dataCRUD, setDataCRUD] = useState()
+
+  useEffect(() => {
+    const getDataNXTFirst = async () => {
+      try {
+        setTableLoad(true)
+        if (isLoading == true) {
+          const response = await categoryAPI.InfoNXTTheoKho(
+            {
+              NgayBatDau: khoanNgayFrom,
+              NgayKetThuc: khoanNgayTo,
+            },
+            TokenAccess,
+          )
+          if (response.data.DataError == 0) {
+            setDataNXT(response.data.DataResults)
+            setIsLoading(true)
+            setTableLoad(false)
+          } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+            await RETOKEN()
+            getDataNXTFirst()
+          } else {
+            console.log(response.data)
+            setTableLoad(false)
+          }
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    if (searchHangHoa || isLoading) {
+      getDataNXTFirst()
+    }
+  }, [searchHangHoa, isLoading])
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -62,11 +98,30 @@ const NhapXuatTonKho = ({ dataCRUD }) => {
   }, [])
 
   useEffect(() => {
-    if (dataCRUD.VIEW == false) {
+    if (dataCRUD?.VIEW == false) {
       setIsShowNotify(true)
     }
+  }, [dataCRUD])
+
+  useEffect(() => {
+    getDataQuyenHan(path)
   }, [])
 
+  const getDataQuyenHan = async (path) => {
+    try {
+      const response = await categoryAPI.QuyenHan(path, TokenAccess)
+      if (response.data.DataError === 0) {
+        setDataCRUD(response.data)
+        setIsLoading(true)
+      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        await RETOKEN()
+        getDataQuyenHan()
+      }
+    } catch (error) {
+      console.log(error)
+      setIsLoading(true)
+    }
+  }
   useEffect(() => {
     const getListNhomHangNXT = async () => {
       try {
@@ -166,39 +221,6 @@ const NhapXuatTonKho = ({ dataCRUD }) => {
     }
   }, [isLoading])
 
-  useEffect(() => {
-    const getDataNXTFirst = async () => {
-      try {
-        setTableLoad(true)
-        if (isLoading == true) {
-          const response = await categoryAPI.InfoNXTTheoKho(
-            {
-              NgayBatDau: khoanNgayFrom,
-              NgayKetThuc: khoanNgayTo,
-            },
-            TokenAccess,
-          )
-          if (response.data.DataError == 0) {
-            setDataNXT(response.data.DataResults)
-            setIsLoading(true)
-            setTableLoad(false)
-          } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-            await RETOKEN()
-            getDataNXTFirst()
-          } else {
-            console.log(response.data)
-            setTableLoad(false)
-          }
-        }
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    if (searchHangHoa || isLoading) {
-      getDataNXTFirst()
-    }
-  }, [searchHangHoa, isLoading])
-
   const getDataNXT = async () => {
     try {
       const response = await categoryAPI.InfoNXTTheoKho(
@@ -250,6 +272,7 @@ const NhapXuatTonKho = ({ dataCRUD }) => {
     }
     return ''
   }
+
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
     setcheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
@@ -581,10 +604,9 @@ const NhapXuatTonKho = ({ dataCRUD }) => {
     },
   ]
   const newTitles = titles.filter((item) => !hiddenRow?.includes(item.dataIndex))
-  console.log(dataCRUD.VIEW)
   return (
     <>
-      {dataCRUD.VIEW == false ? (
+      {dataCRUD?.VIEW == false ? (
         <>
           {isShowNotify && (
             <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10">
@@ -610,7 +632,10 @@ const NhapXuatTonKho = ({ dataCRUD }) => {
                     </div>
                     <div className="flex gap-2 justify-end">
                       <ActionButton
-                        handleAction={() => setIsShowNotify(false)}
+                        handleAction={() => {
+                          setIsShowNotify(false)
+                          navigate('/')
+                        }}
                         title={'Đóng'}
                         color={'slate-50'}
                         background={'red-500'}
@@ -669,7 +694,7 @@ const NhapXuatTonKho = ({ dataCRUD }) => {
                             title={'Xuất Excel'}
                             icon={<RiFileExcel2Fill className="w-5 h-5" />}
                             color={'slate-50'}
-                            background={dataCRUD?.EXCEL == false ? 'gray-500' : 'green-500'}
+                            background={dataCRUD?.EXCEL == false ? 'gray-400' : 'green-500'}
                             color_hover={dataCRUD?.EXCEL == false ? 'gray-500' : 'green-500'}
                             bg_hover={'white'}
                           />
@@ -795,7 +820,6 @@ const NhapXuatTonKho = ({ dataCRUD }) => {
                             allowClear
                             placeholder="Chọn nhóm"
                             value={selectedNhomFrom}
-                            // disabled={selectedMaFrom?.length > 0 || selectedMaTo?.length > 0 || selectedMaList?.length > 0 || selectedNhomList?.length > 0}
                             onChange={(value) => {
                               setSelectedNhomFrom(value)
                               selectedNhomTo == null ? setSelectedNhomTo(value) : ''
@@ -984,7 +1008,7 @@ const NhapXuatTonKho = ({ dataCRUD }) => {
               <div className="NhapXuatTonKho" id="my-table">
                 <Table
                   loading={tableLoad}
-                  className=" setHeight"
+                  className="setHeight"
                   columns={newTitles}
                   dataSource={filteredHangHoa.filter((item) => (selectedMaKho ? item.MaKho === selectedMaKho : true))}
                   size="small"

@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/exhaustive-deps */
+import { useNavigate } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
 import { Button, Checkbox, Col, Input, Row, Spin, Table, Tooltip, Typography } from 'antd'
 const { Text } = Typography
@@ -23,7 +24,8 @@ import { nameColumsHangHoa } from '../../components/util/Table/ColumnName'
 import { RETOKEN, base64ToPDF, exportToExcel } from '../../action/Actions'
 import HangHoaModals from '../../components_T/Modal/DanhMuc/HangHoa/HangHoaModals'
 
-const HangHoa = ({ dataCRUD }) => {
+const HangHoa = ({ path }) => {
+  const navigate = useNavigate()
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
@@ -40,6 +42,7 @@ const HangHoa = ({ dataCRUD }) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([])
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [targetRow, setTargetRow] = useState([])
+  const [dataCRUD, setDataCRUD] = useState()
   // Ẩn cột
   const [hiddenRow, setHiddenRow] = useState([])
   const [checkedList, setcheckedList] = useState([])
@@ -51,11 +54,30 @@ const HangHoa = ({ dataCRUD }) => {
   }, [searchHangHoa, targetRow])
 
   useEffect(() => {
-    if (dataCRUD.VIEW == false) {
+    if (dataCRUD?.VIEW == false) {
       setIsShowNotify(true)
     }
+  }, [dataCRUD])
+
+  useEffect(() => {
+    getDataQuyenHan(path)
   }, [])
 
+  const getDataQuyenHan = async (path) => {
+    try {
+      const response = await categoryAPI.QuyenHan(path, TokenAccess)
+      if (response.data.DataError === 0) {
+        setDataCRUD(response.data)
+        setIsLoading(true)
+      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        await RETOKEN()
+        getDataQuyenHan()
+      }
+    } catch (error) {
+      console.log(error)
+      setIsLoading(true)
+    }
+  }
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (showOption.current && !showOption.current.contains(event.target)) {
@@ -218,7 +240,6 @@ const HangHoa = ({ dataCRUD }) => {
       localStorage.setItem('hiddenColumns', JSON.stringify(checkedList))
     }, 1000)
   }
-
   const titles = [
     {
       title: 'STT',
@@ -493,7 +514,7 @@ const HangHoa = ({ dataCRUD }) => {
       render: (text, record) => <Checkbox className="justify-center" id={`NA_${record.key}`} checked={text} />,
     },
     {
-      title: 'Action',
+      title: ' ',
       key: 'operation',
       fixed: 'right',
       width: 120,
@@ -519,10 +540,10 @@ const HangHoa = ({ dataCRUD }) => {
                 <CiBarcode />
               </div>
               <div
-                onClick={() => (dataCRUD.DEL == false ? '' : handleDelete(record))}
+                onClick={() => (dataCRUD?.DEL == false ? '' : handleDelete(record))}
                 title="Xóa"
                 className={`${
-                  dataCRUD?.EDIT == false ? 'border-gray-400 bg-gray-400  hover:text-gray-500' : 'border-red-500 bg-red-500 hover:text-red-500'
+                  dataCRUD?.DEL == false ? 'border-gray-400 bg-gray-400 hover:text-gray-500' : 'border-red-500 bg-red-500 hover:text-red-500'
                 } ' p-[4px] border-2 rounded text-slate-50 hover:bg-white cursor-pointer'`}
               >
                 <MdDelete />
@@ -534,9 +555,10 @@ const HangHoa = ({ dataCRUD }) => {
     },
   ]
   const newTitles = titles.filter((item) => !hiddenRow?.includes(item.dataIndex))
+
   return (
     <>
-      {dataCRUD.VIEW == false ? (
+      {dataCRUD?.VIEW == false ? (
         <>
           {isShowNotify && (
             <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10">
@@ -562,7 +584,10 @@ const HangHoa = ({ dataCRUD }) => {
                     </div>
                     <div className="flex gap-2 justify-end">
                       <ActionButton
-                        handleAction={() => setIsShowNotify(false)}
+                        handleAction={() => {
+                          setIsShowNotify(false)
+                          navigate('/')
+                        }}
                         title={'Đóng'}
                         color={'slate-50'}
                         background={'red-500'}

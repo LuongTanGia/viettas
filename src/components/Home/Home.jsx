@@ -21,13 +21,6 @@ function Home({ handleToggleSidebar, isSidebarVisible }) {
   const KhoanNgay = useSelector(khoanNgaySelect)
   const sidebarRef = useRef(null)
   const [isClosingSidebarFromHeader, setIsClosingSidebarFromHeader] = useState(false)
-  const [dataCRUD, setDataCRUD] = useState(() => {
-    const storedData = localStorage.getItem('dataCRUD')
-    return storedData ? JSON.parse(storedData) : null
-  })
-  // const [path, setPath] = useState(() => {
-  //   return localStorage.getItem('path') || '/default-route'
-  // })
 
   useEffect(() => {
     const loadData = async () => {
@@ -66,13 +59,6 @@ function Home({ handleToggleSidebar, isSidebarVisible }) {
     }
   }, [isSidebarVisible, handleToggleSidebar, sidebarRef, isClosingSidebarFromHeader])
 
-  const updateDataCRUD = (newData, path) => {
-    setDataCRUD(newData)
-    // setPath(path)
-    localStorage.setItem('dataCRUD', JSON.stringify(newData))
-    localStorage.setItem('path', path)
-  }
-
   if (!dataLoaded) {
     return <LoadingPage />
   }
@@ -86,9 +72,9 @@ function Home({ handleToggleSidebar, isSidebarVisible }) {
         }}
       />
       <div className={isSidebarVisible ? 'toggle-sidebar' : 'mainSider'} ref={sidebarRef}>
-        <SiderMenu refs={sidebarRef} updateDataCRUD={updateDataCRUD} />
+        <SiderMenu refs={sidebarRef} />
       </div>
-      <MainPage isSidebarVisible={isSidebarVisible} dataCRUD={dataCRUD} />
+      <MainPage isSidebarVisible={isSidebarVisible} />
       <Footer />
       {isCookie === 'true' ? (
         <div className="card cook_tag">
