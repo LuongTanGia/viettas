@@ -96,8 +96,9 @@ const PhieuNhapDieuChinh = ({ dataCRUD }) => {
       try {
         const response = await categoryAPI.KhoanNgay(TokenAccess)
         if (response.data.DataError == 0) {
-          setKhoanNgayFrom(response.data.NgayBatDau)
-          setKhoanNgayTo(response.data.NgayKetThuc)
+          setDateData(response.data)
+          setKhoanNgayFrom(dayjs(response.data.NgayBatDau))
+          setKhoanNgayTo(dayjs(response.data.NgayKetThuc))
           setIsLoading(true)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
@@ -113,6 +114,10 @@ const PhieuNhapDieuChinh = ({ dataCRUD }) => {
       getTimeSetting()
     }
   }, [isLoading])
+  useEffect(() => {
+    setKhoanNgayFrom(dayjs(dateData?.NgayBatDau))
+    setKhoanNgayTo(dayjs(dateData?.NgayKetThuc))
+  }, [dateData?.NgayBatDau, dateData?.NgayKetThuc])
 
   useEffect(() => {
     const getDataNDC = async () => {
@@ -206,44 +211,55 @@ const PhieuNhapDieuChinh = ({ dataCRUD }) => {
       localStorage.setItem('hiddenColumns', JSON.stringify(checkedList))
     }, 1000)
   }
-  const handleDateChange = () => {
-    clearTimeout(timerId)
-    timerId = setTimeout(() => {
-      khoanNgayFrom, khoanNgayTo
-      setDateData({
-        NgayBatDau: khoanNgayFrom,
-        NgayKetThuc: khoanNgayTo,
-      })
-    }, 300)
-  }
-
   // const handleDateChange = () => {
   //   clearTimeout(timerId)
   //   timerId = setTimeout(() => {
-  //     if (!dateChange && khoanNgayFrom.isAfter(khoanNgayTo)) {
-  //       setDateData({
-  //         NgayBatDau: khoanNgayFrom,
-  //         NgayKetThuc: khoanNgayFrom,
-  //       })
-  //     } else if (dateChange && khoanNgayFrom.isAfter(khoanNgayTo)) {
-  //       setDateData({
-  //         NgayBatDau: khoanNgayTo,
-  //         NgayKetThuc: khoanNgayTo,
-  //       })
-  //     } else {
-  //       setDateData({
-  //         NgayBatDau: khoanNgayFrom,
-  //         NgayKetThuc: khoanNgayTo,
-  //       })
-  //     }
+  //     khoanNgayFrom, khoanNgayTo
+  //     setDateData({
+  //       NgayBatDau: khoanNgayFrom,
+  //       NgayKetThuc: khoanNgayTo,
+  //     })
   //   }, 300)
   // }
+
+  const handleDateChange = () => {
+    clearTimeout(timerId)
+    console.log(khoanNgayFrom, khoanNgayTo, 'dataaaaaaa')
+    timerId = setTimeout(() => {
+      if (
+        !dateChange &&
+        khoanNgayFrom &&
+        khoanNgayTo &&
+        typeof khoanNgayFrom.isAfter === 'function' &&
+        typeof khoanNgayTo.isAfter === 'function' &&
+        khoanNgayFrom.isAfter(khoanNgayTo)
+      ) {
+        setDateData({
+          NgayBatDau: dayjs(khoanNgayFrom).format('YYYY-MM-DD'),
+          NgayKetThuc: dayjs(khoanNgayFrom).format('YYYY-MM-DD'),
+        })
+
+        return
+      } else if (dateChange && khoanNgayFrom && khoanNgayTo && khoanNgayFrom.isAfter(khoanNgayTo)) {
+        setDateData({
+          NgayBatDau: dayjs(khoanNgayTo).format('YYYY-MM-DD'),
+          NgayKetThuc: dayjs(khoanNgayTo).format('YYYY-MM-DD'),
+        })
+      } else {
+        setDateData({
+          NgayBatDau: dayjs(khoanNgayFrom).format('YYYY-MM-DD'),
+          NgayKetThuc: dayjs(khoanNgayTo).format('YYYY-MM-DD'),
+        })
+      }
+    }, 300)
+  }
 
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
       handleDateChange()
     }
   }
+  console.log(dateData)
   const titles = [
     {
       title: 'STT',
@@ -627,8 +643,9 @@ const PhieuNhapDieuChinh = ({ dataCRUD }) => {
                           onKeyDown={handleKeyDown}
                           className="DatePicker_NXTKho min-w-[100px] w-[60%]"
                           format="DD/MM/YYYY"
-                          maxDate={dayjs(khoanNgayTo)}
-                          defaultValue={dayjs(khoanNgayFrom, 'YYYY-MM-DD')}
+                          // maxDate={dayjs(khoanNgayTo)}
+                          // defaultValue={dayjs(khoanNgayFrom, 'YYYY-MM-DD')}
+                          value={khoanNgayFrom}
                           sx={{
                             '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
                             '& .MuiButtonBase-root': {
@@ -640,8 +657,8 @@ const PhieuNhapDieuChinh = ({ dataCRUD }) => {
                             },
                           }}
                           onChange={(values) => {
-                            setKhoanNgayFrom(values ? dayjs(values).format('YYYY-MM-DDTHH:MM:ss') : '')
-                            setDateChange(true)
+                            setKhoanNgayFrom(values)
+                            setDateChange(false)
                           }}
                         />
                       </div>
@@ -652,8 +669,9 @@ const PhieuNhapDieuChinh = ({ dataCRUD }) => {
                           onKeyDown={handleKeyDown}
                           className="DatePicker_NXTKho min-w-[100px] w-[60%]"
                           format="DD/MM/YYYY"
-                          minDate={dayjs(khoanNgayFrom)}
-                          defaultValue={dayjs(khoanNgayTo, 'YYYY-MM-DD')}
+                          // minDate={dayjs(khoanNgayFrom)}
+                          // defaultValue={dayjs(khoanNgayTo, 'YYYY-MM-DD')}
+                          value={khoanNgayTo}
                           sx={{
                             '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
                             '& .MuiButtonBase-root': {
@@ -665,8 +683,8 @@ const PhieuNhapDieuChinh = ({ dataCRUD }) => {
                             },
                           }}
                           onChange={(values) => {
-                            setKhoanNgayTo(values ? dayjs(values).format('YYYY-MM-DDTHH:MM:ss') : '')
-                            setDateChange(false)
+                            setKhoanNgayTo(values)
+                            setDateChange(true)
                           }}
                         />
                       </div>
