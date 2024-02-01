@@ -6,7 +6,7 @@ import Cookies from 'js-cookie'
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Footer from '../Footer/Footer'
-import { DANHSACHCHUCNANG, DATATONGHOP, DATADULIEU, CallBackAPI } from '../../action/Actions'
+import { DANHSACHCHUCNANG, DATATONGHOP, CallBackAPI } from '../../action/Actions'
 import API from '../../API/API'
 import { useDispatch, useSelector } from 'react-redux'
 import { khoanNgaySelect } from '../../redux/selector'
@@ -18,7 +18,6 @@ function Home({ handleToggleSidebar, isSidebarVisible }) {
   const [dataLoaded, setDataLoaded] = useState(false)
   const [isCookie, setIsCookie] = useState(user)
   const token = localStorage.getItem('TKN')
-
   const KhoanNgay = useSelector(khoanNgaySelect)
   const sidebarRef = useRef(null)
   const [isClosingSidebarFromHeader, setIsClosingSidebarFromHeader] = useState(false)
@@ -38,36 +37,27 @@ function Home({ handleToggleSidebar, isSidebarVisible }) {
   }, [])
 
   useEffect(() => {
-    // Đảm bảo là chỉ khi thanh bên không hiển thị mới thực hiện đoạn mã xử lý sự kiện.
     if (!isSidebarVisible) {
       const handleDocumentClick = (event) => {
-        // Kiểm tra xem thanh bên không hiển thị và click không nằm trong thanh bên.
         if (!isSidebarVisible && sidebarRef.current && !sidebarRef.current.contains(event.target)) {
-          handleToggleSidebar() // Gọi hàm để chuyển đổi trạng thái của thanh bên.
+          handleToggleSidebar()
         }
       }
-
       const handleHeaderCloseSidebar = () => {
-        // Hàm này được gọi khi đóng thanh bên từ phần header.
         document.removeEventListener('click', handleDocumentClick)
       }
-
       if (isClosingSidebarFromHeader) {
         document.addEventListener('click', handleHeaderCloseSidebar)
       } else {
         document.removeEventListener('click', handleHeaderCloseSidebar)
       }
-
-      // Thêm bộ lắng nghe sự kiện cho sự kiện click trên toàn trang để đóng thanh bên.
       document.addEventListener('click', handleDocumentClick)
-
-      // Hàm dọn dẹp để gỡ bỏ bộ lắng nghe sự kiện khi thành phần bị unmount hoặc có sự thay đổi trong các dependencies.
       return () => {
         document.removeEventListener('click', handleHeaderCloseSidebar)
         document.removeEventListener('click', handleDocumentClick)
       }
     }
-  }, [isSidebarVisible, handleToggleSidebar, sidebarRef, isClosingSidebarFromHeader /* Thêm một giá trị động vào đây */])
+  }, [isSidebarVisible, handleToggleSidebar, sidebarRef, isClosingSidebarFromHeader])
 
   if (!dataLoaded) {
     return <LoadingPage />

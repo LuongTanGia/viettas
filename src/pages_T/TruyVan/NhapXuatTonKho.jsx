@@ -1,24 +1,28 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState, useRef } from 'react'
-import { Table, Select, Tooltip, Typography, Checkbox, Row, Button, Col, Spin, Input } from 'antd'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import { Table, Select, Tooltip, Typography, Checkbox, Row, Button, Col, Spin, Input } from 'antd'
+const { Text } = Typography
+import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
+import { CgCloseO } from 'react-icons/cg'
 import { MdFilterAlt } from 'react-icons/md'
 import { TfiMoreAlt } from 'react-icons/tfi'
-import categoryAPI from '../../API/linkAPI'
+import { RiFileExcel2Fill } from 'react-icons/ri'
 import { CloseSquareFilled } from '@ant-design/icons'
 import { FaSearch, FaEyeSlash } from 'react-icons/fa'
-import { RETOKEN, exportToExcel } from '../../action/Actions'
+import categoryAPI from '../../API/linkAPI'
 import { useSearch } from '../../components_T/hooks/Search'
+import { RETOKEN, exportToExcel } from '../../action/Actions'
 import ActionButton from '../../components/util/Button/ActionButton'
 import HighlightedCell from '../../components_T/hooks/HighlightedCell'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
 import { nameColumsNhapXuatTon } from '../../components/util/Table/ColumnName'
-const { Text } = Typography
-import dayjs from 'dayjs'
-import { RiFileExcel2Fill } from 'react-icons/ri'
+import { useNavigate } from 'react-router-dom'
 
-const NhapXuatTonKho = () => {
+const NhapXuatTonKho = ({ path }) => {
+  const navigate = useNavigate()
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
@@ -26,6 +30,7 @@ const NhapXuatTonKho = () => {
   const [setSearchHangHoa, filteredHangHoa, searchHangHoa] = useSearch(dataNXT)
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [isShowOption, setIsShowOption] = useState(false)
+  const [isShowNotify, setIsShowNotify] = useState(false)
   const showOption = useRef(null)
   const [nhomHangNXT, setNhomHangNXT] = useState([])
   const [hangHoaNXT, setHangHoaNXT] = useState([])
@@ -45,6 +50,40 @@ const NhapXuatTonKho = () => {
   const [selectVisible, setSelectVisible] = useState(false)
   const [options, setOptions] = useState()
   const [tableLoad, setTableLoad] = useState(true)
+  const [dataCRUD, setDataCRUD] = useState()
+
+  useEffect(() => {
+    const getDataNXTFirst = async () => {
+      try {
+        setTableLoad(true)
+        if (isLoading == true) {
+          const response = await categoryAPI.InfoNXTTheoKho(
+            {
+              NgayBatDau: khoanNgayFrom,
+              NgayKetThuc: khoanNgayTo,
+            },
+            TokenAccess,
+          )
+          if (response.data.DataError == 0) {
+            setDataNXT(response.data.DataResults)
+            setIsLoading(true)
+            setTableLoad(false)
+          } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+            await RETOKEN()
+            getDataNXTFirst()
+          } else {
+            console.log(response.data)
+            setTableLoad(false)
+          }
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    if (searchHangHoa || isLoading) {
+      getDataNXTFirst()
+    }
+  }, [searchHangHoa, isLoading])
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -58,6 +97,31 @@ const NhapXuatTonKho = () => {
     }
   }, [])
 
+  useEffect(() => {
+    if (dataCRUD?.VIEW == false) {
+      setIsShowNotify(true)
+    }
+  }, [dataCRUD])
+
+  useEffect(() => {
+    getDataQuyenHan(path)
+  }, [])
+
+  const getDataQuyenHan = async (path) => {
+    try {
+      const response = await categoryAPI.QuyenHan(path, TokenAccess)
+      if (response.data.DataError === 0) {
+        setDataCRUD(response.data)
+        setIsLoading(true)
+      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        await RETOKEN()
+        getDataQuyenHan()
+      }
+    } catch (error) {
+      console.log(error)
+      setIsLoading(true)
+    }
+  }
   useEffect(() => {
     const getListNhomHangNXT = async () => {
       try {
@@ -157,39 +221,6 @@ const NhapXuatTonKho = () => {
     }
   }, [isLoading])
 
-  useEffect(() => {
-    const getDataNXTFirst = async () => {
-      try {
-        setTableLoad(true)
-        if (isLoading == true) {
-          const response = await categoryAPI.InfoNXTTheoKho(
-            {
-              NgayBatDau: khoanNgayFrom,
-              NgayKetThuc: khoanNgayTo,
-            },
-            TokenAccess,
-          )
-          if (response.data.DataError == 0) {
-            setDataNXT(response.data.DataResults)
-            setIsLoading(true)
-            setTableLoad(false)
-          } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-            await RETOKEN()
-            getDataNXTFirst()
-          } else {
-            toast.error(response.data.DataErrorDescription)
-            setTableLoad(false)
-          }
-        }
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    if (searchHangHoa || isLoading) {
-      getDataNXTFirst()
-    }
-  }, [searchHangHoa, isLoading])
-
   const getDataNXT = async () => {
     try {
       const response = await categoryAPI.InfoNXTTheoKho(
@@ -225,7 +256,6 @@ const NhapXuatTonKho = () => {
       getDataNXT()
     }
   }
-
   const handleSearch = (event) => {
     let timerId
     clearTimeout(timerId)
@@ -242,6 +272,7 @@ const NhapXuatTonKho = () => {
     }
     return ''
   }
+
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
     setcheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
@@ -573,411 +604,463 @@ const NhapXuatTonKho = () => {
     },
   ]
   const newTitles = titles.filter((item) => !hiddenRow?.includes(item.dataIndex))
-
   return (
     <>
-      {!isLoading ? (
-        <SimpleBackdrop />
-      ) : (
-        <div className="flex flex-col gap-1">
-          <div className="flex flex-col gap-0.5">
-            <div className="flex justify-between">
-              <div className="flex gap-2 items-center ">
-                <div className="flex items-center gap-2 py-1">
-                  <h1 className="text-lg font-bold text-black-600 uppercase">Nhập Xuất Tồn - Theo Kho</h1>
-                  <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
-                </div>
-                <div className="flex ">
-                  {isShowSearch && (
-                    <div className={`flex transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
-                      <Input
-                        allowClear={{
-                          clearIcon: <CloseSquareFilled />,
-                        }}
-                        placeholder="Nhập ký tự bạn cần tìm"
-                        onBlur={handleSearch}
-                        onPressEnter={handleSearch}
-                        className="w-full"
-                      />
+      {dataCRUD?.VIEW == false ? (
+        <>
+          {isShowNotify && (
+            <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10">
+              <div className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"></div>
+              <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col bg-white px-2 rounded shadow-custom overflow-hidden">
+                <div className="flex flex-col gap-2 p-2 justify-between ">
+                  <div className="flex flex-col gap-2 p-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex gap-2">
+                        <p className="text-blue-700 font-semibold uppercase">Kiểm tra quyền hạn người dùng</p>
+                      </div>
                     </div>
-                  )}
-                </div>
-              </div>
-              <div ref={showOption}>
-                <div className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5  " onClick={() => setIsShowOption(!isShowOption)} title="Chức năng khác">
-                  <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
-                </div>
-                {isShowOption && (
-                  <div className="absolute   flex flex-col gap-2 bg-slate-200 p-3 top-16 right-[4.5%] rounded-lg z-10 duration-500 shadow-custom  ">
-                    <div className={`flex ${selectVisible ? '' : 'flex-col'} items-center gap-2`}>
+                    <div className="flex gap-2 border-2 p-3 items-center">
+                      <div>
+                        <CgCloseO className="w-8 h-8 text-red-500" />
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <p className="whitespace-nowrap">Bạn không có quyền thực hiện chức năng này!</p>
+                        <p className="whitespace-nowrap">
+                          Vui lòng liên hệ <span className="font-bold">Người Quản Trị</span> để được cấp quyền
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2 justify-end">
                       <ActionButton
-                        handleAction={handleHidden}
-                        title={'Ẩn Cột'}
-                        icon={<FaEyeSlash className="w-5 h-5" />}
+                        handleAction={() => {
+                          setIsShowNotify(false)
+                          navigate('/')
+                        }}
+                        title={'Đóng'}
                         color={'slate-50'}
                         background={'red-500'}
                         color_hover={'red-500'}
                         bg_hover={'white'}
                       />
-                      <ActionButton
-                        handleAction={() => exportToExcel()}
-                        title={'Xuất Excel'}
-                        icon={<RiFileExcel2Fill className="w-5 h-5" />}
-                        color={'slate-50'}
-                        background={'green-500'}
-                        color_hover={'green-500'}
-                        bg_hover={'white'}
-                      />
                     </div>
-                    <div>
-                      {selectVisible && (
-                        <div>
-                          <Checkbox.Group
-                            style={{
-                              width: '580px',
-                              background: 'white',
-                              padding: 10,
-                              borderRadius: 10,
-                              boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
-                              whiteSpace: 'nowrap',
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </>
+      ) : (
+        <>
+          {!isLoading ? (
+            <SimpleBackdrop />
+          ) : (
+            <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-0.5">
+                <div className="flex justify-between">
+                  <div className="flex gap-2 items-center ">
+                    <div className="flex items-center gap-2 py-1">
+                      <h1 className="text-lg font-bold text-black-600 uppercase">Nhập Xuất Tồn - Theo Kho</h1>
+                      <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
+                    </div>
+                    <div className="flex ">
+                      {isShowSearch && (
+                        <div className={`flex transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
+                          <Input
+                            allowClear={{
+                              clearIcon: <CloseSquareFilled />,
                             }}
-                            className="flex flex-col"
-                            defaultValue={checkedList}
-                            onChange={onChange}
-                          >
-                            <Row>
-                              {options.map((item) => (
-                                <Col span={8} key={item}>
-                                  <Checkbox value={item} checked={true}>
-                                    {nameColumsNhapXuatTon[item]}
-                                  </Checkbox>
-                                </Col>
-                              ))}
-                            </Row>
-                            <Spin spinning={tableLoad}>
-                              <Button className="mt-2 w-full" onClick={onClickSubmit}>
-                                Xác Nhận
-                              </Button>
-                            </Spin>
-                          </Checkbox.Group>
+                            placeholder="Nhập ký tự bạn cần tìm"
+                            onBlur={handleSearch}
+                            onPressEnter={handleSearch}
+                            className="w-full"
+                          />
                         </div>
                       )}
                     </div>
                   </div>
-                )}
+                  <div ref={showOption}>
+                    <div
+                      className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5  "
+                      onClick={() => setIsShowOption(!isShowOption)}
+                      title="Chức năng khác"
+                    >
+                      <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
+                    </div>
+                    {isShowOption && (
+                      <div className="absolute   flex flex-col gap-2 bg-slate-200 p-3 top-16 right-[4.5%] rounded-lg z-10 duration-500 shadow-custom  ">
+                        <div className={`flex ${selectVisible ? '' : 'flex-col'} items-center gap-2`}>
+                          <ActionButton
+                            handleAction={() => (dataCRUD?.EXCEL == false ? '' : exportToExcel())}
+                            title={'Xuất Excel'}
+                            icon={<RiFileExcel2Fill className="w-5 h-5" />}
+                            color={'slate-50'}
+                            background={dataCRUD?.EXCEL == false ? 'gray-400' : 'green-500'}
+                            color_hover={dataCRUD?.EXCEL == false ? 'gray-500' : 'green-500'}
+                            bg_hover={'white'}
+                          />
+                          <ActionButton
+                            handleAction={handleHidden}
+                            title={'Ẩn Cột'}
+                            icon={<FaEyeSlash className="w-5 h-5" />}
+                            color={'slate-50'}
+                            background={'red-500'}
+                            color_hover={'red-500'}
+                            bg_hover={'white'}
+                          />
+                        </div>
+                        <div>
+                          {selectVisible && (
+                            <div>
+                              <Checkbox.Group
+                                style={{
+                                  width: '580px',
+                                  background: 'white',
+                                  padding: 10,
+                                  borderRadius: 10,
+                                  boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+                                  whiteSpace: 'nowrap',
+                                }}
+                                className="flex flex-col"
+                                defaultValue={checkedList}
+                                onChange={onChange}
+                              >
+                                <Row>
+                                  {options.map((item) => (
+                                    <Col span={8} key={item}>
+                                      <Checkbox value={item} checked={true}>
+                                        {nameColumsNhapXuatTon[item]}
+                                      </Checkbox>
+                                    </Col>
+                                  ))}
+                                </Row>
+                                <Spin spinning={tableLoad}>
+                                  <Button className="mt-2 w-full" onClick={onClickSubmit}>
+                                    Xác Nhận
+                                  </Button>
+                                </Spin>
+                              </Checkbox.Group>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="flex justify-between  gap-2 w-[95vw]">
+                  <form className="flex flex-col gap-1 items-start">
+                    <div className="flex gap-2 justify-between">
+                      <div className="flex gap-1">
+                        <div className="flex items-center gap-1">
+                          <label>Từ</label>
+                          <DatePicker
+                            showSearch
+                            className="DatePicker_NXTKho"
+                            format="DD/MM/YYYY"
+                            maxDate={dayjs(khoanNgayTo)}
+                            defaultValue={dayjs(khoanNgayFrom, 'YYYY-MM-DD')}
+                            onChange={(values) => {
+                              setKhoanNgayFrom(values ? dayjs(values).format('YYYY-MM-DDTHH:mm:ss') : '')
+                            }}
+                            sx={{
+                              '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                              '& .MuiButtonBase-root': {
+                                padding: '4px',
+                              },
+                              '& .MuiSvgIcon-root': {
+                                width: '18px',
+                                height: '18px',
+                              },
+                            }}
+                            slotProps={{ textField: { size: 'small' } }}
+                          />
+                        </div>
+                        <div className=" flex items-center gap-1 ">
+                          <label>Đến</label>
+                          <DatePicker
+                            slotProps={{ textField: { size: 'small' } }}
+                            className="DatePicker_NXTKho"
+                            format="DD/MM/YYYY"
+                            minDate={dayjs(khoanNgayFrom)}
+                            defaultValue={dayjs(khoanNgayTo, 'YYYY-MM-DD')}
+                            onChange={(values) => {
+                              setKhoanNgayTo(values ? dayjs(values).format('YYYY-MM-DDTHH:mm:ss') : '')
+                            }}
+                            sx={{
+                              '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                              '& .MuiButtonBase-root': {
+                                padding: '4px',
+                              },
+                              '& .MuiSvgIcon-root': {
+                                width: '18px',
+                                height: '18px',
+                              },
+                            }}
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <ActionButton
+                          title={'Xem Dữ Liệu'}
+                          handleAction={handleFilterDS}
+                          icon={<MdFilterAlt className="w-5 h-5" />}
+                          color={'slate-50'}
+                          background={'blue-500'}
+                          color_hover={'blue-500'}
+                          bg_hover={'white'}
+                        />
+                      </div>
+                    </div>
+                    <div className=" flex flex-col gap-2">
+                      <div className="flex gap-1">
+                        <div className="flex gap-1 items-center">
+                          <div>Từ</div>
+                          <Select
+                            showSearch
+                            size="small"
+                            allowClear
+                            placeholder="Chọn nhóm"
+                            value={selectedNhomFrom}
+                            onChange={(value) => {
+                              setSelectedNhomFrom(value)
+                              selectedNhomTo == null ? setSelectedNhomTo(value) : ''
+                              if (selectedNhomTo !== null && nhomHangNXT.findIndex((item) => item.Ma === value) > nhomHangNXT.findIndex((item) => item.Ma === selectedNhomTo)) {
+                                setSelectedNhomTo(value)
+                              }
+                            }}
+                            style={{
+                              width: '12vw',
+                              textOverflow: 'ellipsis',
+                            }}
+                          >
+                            {nhomHangNXT?.map((item, index) => {
+                              return (
+                                <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomHang}>
+                                  <p className="truncate">{item.Ma}</p>
+                                </Select.Option>
+                              )
+                            })}
+                          </Select>
+                        </div>
+                        <div className="flex gap-1 items-center">
+                          <div>Đến</div>
+                          <Select
+                            showSearch
+                            allowClear
+                            size="small"
+                            placeholder="Chọn nhóm"
+                            value={selectedNhomTo}
+                            onChange={(value) => {
+                              setSelectedNhomTo(value)
+                              if (selectedNhomFrom !== null && nhomHangNXT.findIndex((item) => item.Ma === value) < nhomHangNXT.findIndex((item) => item.Ma === selectedNhomFrom)) {
+                                setSelectedNhomFrom(value)
+                              }
+                              selectedNhomFrom == null ? setSelectedNhomFrom(value) : ''
+                            }}
+                            style={{
+                              width: '12vw',
+                              textOverflow: 'ellipsis',
+                            }}
+                          >
+                            {nhomHangNXT?.map((item, index) => {
+                              return (
+                                <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomHang}>
+                                  <p className="truncate">{item.Ma}</p>
+                                </Select.Option>
+                              )
+                            })}
+                          </Select>
+                        </div>
+                        <div className="flex gap-1 items-center">
+                          <div>Chọn</div>
+                          <Select
+                            mode="multiple"
+                            allowClear
+                            maxTagCount={1}
+                            filterOption
+                            size="small"
+                            placeholder="Danh sách nhóm"
+                            value={selectedNhomList}
+                            onChange={(value) => setSelectedNhomList(value)}
+                            className="w-[30vw] "
+                          >
+                            {nhomHangNXT?.map((item) => {
+                              return (
+                                <Select.Option key={item.Ma} value={item.Ma} title={item.ThongTinNhomHang}>
+                                  <p className="truncate">{item.ThongTinNhomHang}</p>
+                                </Select.Option>
+                              )
+                            })}
+                          </Select>
+                        </div>
+                      </div>
+                      <div className="flex gap-1">
+                        <div className="flex gap-1 items-center">
+                          <div>Từ</div>
+                          <Select
+                            allowClear
+                            showSearch
+                            placeholder="Chọn mã hàng"
+                            size="small"
+                            value={selectedMaFrom}
+                            onChange={(value) => {
+                              setSelectedMaFrom(value)
+                              selectedMaTo == null ? setSelectedMaTo(value) : ''
+                              if (selectedMaTo !== null && hangHoaNXT.findIndex((item) => item.MaHang === value) > hangHoaNXT.findIndex((item) => item.MaHang === selectedMaTo)) {
+                                setSelectedMaTo(value)
+                              }
+                            }}
+                            style={{
+                              width: '12vw',
+                              textOverflow: 'ellipsis',
+                            }}
+                          >
+                            {hangHoaNXT?.map((item, index) => {
+                              return (
+                                <Select.Option key={index} value={item.MaHang} title={item.TenHang}>
+                                  <p className="truncate">{item.MaHang}</p>
+                                </Select.Option>
+                              )
+                            })}
+                          </Select>
+                        </div>
+                        <div className="flex gap-1 items-center">
+                          <div>Đến</div>
+                          <Select
+                            allowClear
+                            showSearch
+                            size="small"
+                            placeholder="Chọn mã hàng"
+                            value={selectedMaTo}
+                            onChange={(value) => {
+                              setSelectedMaTo(value)
+                              selectedMaFrom == null ? setSelectedMaFrom(value) : ''
+                              if (
+                                selectedMaFrom !== null &&
+                                hangHoaNXT.findIndex((item) => item.MaHang === value) < hangHoaNXT.findIndex((item) => item.MaHang === selectedMaFrom)
+                              ) {
+                                setSelectedMaFrom(value)
+                              }
+                            }}
+                            style={{
+                              width: '12vw',
+                              textOverflow: 'ellipsis',
+                            }}
+                          >
+                            {hangHoaNXT?.map((item, index) => {
+                              return (
+                                <Select.Option key={index} value={item.MaHang} title={item.TenHang}>
+                                  <p className="truncate">{item.MaHang}</p>
+                                </Select.Option>
+                              )
+                            })}
+                          </Select>
+                        </div>
+                        <div className="flex items-center gap-1 col-span-2">
+                          <div>Chọn</div>
+                          <Select
+                            mode="multiple"
+                            maxTagCount={1}
+                            allowClear
+                            size="small"
+                            filterOption
+                            value={selectedMaList}
+                            onChange={(value) => setSelectedMaList(value)}
+                            placeholder="Chọn mã hàng"
+                            className="w-[30vw] truncate "
+                          >
+                            {hangHoaNXT?.map((item, index) => {
+                              return (
+                                <Select.Option key={index} value={item.MaHang} title={item.TenHang}>
+                                  <p className="truncate">
+                                    {item.MaHang}-{item.TenHang}
+                                  </p>
+                                </Select.Option>
+                              )
+                            })}
+                          </Select>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                  <div className="flex items-end ">
+                    <Select
+                      showSearch
+                      allowClear
+                      size="small"
+                      placeholder="Lọc Kho"
+                      value={selectedMaKho}
+                      onChange={(value) => setSelectedMaKho(value)}
+                      style={{
+                        width: '160px',
+                      }}
+                    >
+                      {khoHangNXT?.map((item, index) => {
+                        return (
+                          <Select.Option key={index} value={item.MaKho} title={item.TenKho} className="py-8">
+                            <p> {item.ThongTinKho}</p>
+                          </Select.Option>
+                        )
+                      })}
+                    </Select>
+                  </div>
+                </div>
               </div>
-            </div>
-            <div className="flex justify-between  gap-2 w-[95vw]">
-              <form className="flex flex-col gap-1 items-start">
-                <div className="flex gap-2 justify-between">
-                  <div className="flex gap-1">
-                    <div className="flex items-center gap-1">
-                      <label>Từ</label>
-                      <DatePicker
-                        showSearch
-                        className="DatePicker_NXTKho"
-                        format="DD/MM/YYYY"
-                        maxDate={dayjs(khoanNgayTo)}
-                        defaultValue={dayjs(khoanNgayFrom, 'YYYY-MM-DD')}
-                        onChange={(values) => {
-                          setKhoanNgayFrom(values ? dayjs(values).format('YYYY-MM-DDTHH:mm:ss') : '')
-                        }}
-                        sx={{
-                          '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                          '& .MuiButtonBase-root': {
-                            padding: '4px',
-                          },
-                          '& .MuiSvgIcon-root': {
-                            width: '18px',
-                            height: '18px',
-                          },
-                        }}
-                        slotProps={{ textField: { size: 'small' } }}
-                      />
-                    </div>
-                    <div className=" flex items-center gap-1 ">
-                      <label>Đến</label>
-                      <DatePicker
-                        slotProps={{ textField: { size: 'small' } }}
-                        className="DatePicker_NXTKho"
-                        format="DD/MM/YYYY"
-                        minDate={dayjs(khoanNgayFrom)}
-                        defaultValue={dayjs(khoanNgayTo, 'YYYY-MM-DD')}
-                        onChange={(values) => {
-                          setKhoanNgayTo(values ? dayjs(values).format('YYYY-MM-DDTHH:mm:ss') : '')
-                        }}
-                        sx={{
-                          '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                          '& .MuiButtonBase-root': {
-                            padding: '4px',
-                          },
-                          '& .MuiSvgIcon-root': {
-                            width: '18px',
-                            height: '18px',
-                          },
-                        }}
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <ActionButton
-                      title={'Xem Dữ Liệu'}
-                      handleAction={handleFilterDS}
-                      icon={<MdFilterAlt className="w-5 h-5" />}
-                      color={'slate-50'}
-                      background={'blue-500'}
-                      color_hover={'blue-500'}
-                      bg_hover={'white'}
-                    />
-                  </div>
-                </div>
-                <div className=" flex flex-col gap-2">
-                  <div className="flex gap-1">
-                    <div className="flex gap-1 items-center">
-                      <div>Từ</div>
-                      <Select
-                        showSearch
-                        size="small"
-                        allowClear
-                        placeholder="Chọn nhóm"
-                        value={selectedNhomFrom}
-                        // disabled={selectedMaFrom?.length > 0 || selectedMaTo?.length > 0 || selectedMaList?.length > 0 || selectedNhomList?.length > 0}
-                        onChange={(value) => {
-                          setSelectedNhomFrom(value)
-                          selectedNhomTo == null ? setSelectedNhomTo(value) : ''
-                          if (selectedNhomTo !== null && nhomHangNXT.findIndex((item) => item.Ma === value) > nhomHangNXT.findIndex((item) => item.Ma === selectedNhomTo)) {
-                            setSelectedNhomTo(value)
-                          }
-                        }}
-                        style={{
-                          width: '12vw',
-                          textOverflow: 'ellipsis',
-                        }}
-                      >
-                        {nhomHangNXT?.map((item, index) => {
-                          return (
-                            <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomHang}>
-                              <p className="truncate">{item.Ma}</p>
-                            </Select.Option>
-                          )
-                        })}
-                      </Select>
-                    </div>
-                    <div className="flex gap-1 items-center">
-                      <div>Đến</div>
-                      <Select
-                        showSearch
-                        allowClear
-                        size="small"
-                        placeholder="Chọn nhóm"
-                        value={selectedNhomTo}
-                        onChange={(value) => {
-                          setSelectedNhomTo(value)
-                          if (selectedNhomFrom !== null && nhomHangNXT.findIndex((item) => item.Ma === value) < nhomHangNXT.findIndex((item) => item.Ma === selectedNhomFrom)) {
-                            setSelectedNhomFrom(value)
-                          }
-                          selectedNhomFrom == null ? setSelectedNhomFrom(value) : ''
-                        }}
-                        style={{
-                          width: '12vw',
-                          textOverflow: 'ellipsis',
-                        }}
-                      >
-                        {nhomHangNXT?.map((item, index) => {
-                          return (
-                            <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomHang}>
-                              <p className="truncate">{item.Ma}</p>
-                            </Select.Option>
-                          )
-                        })}
-                      </Select>
-                    </div>
-                    <div className="flex gap-1 items-center">
-                      <div>Chọn</div>
-                      <Select
-                        mode="multiple"
-                        allowClear
-                        maxTagCount={1}
-                        filterOption
-                        size="small"
-                        placeholder="Danh sách nhóm"
-                        value={selectedNhomList}
-                        onChange={(value) => setSelectedNhomList(value)}
-                        className="w-[30vw] "
-                      >
-                        {nhomHangNXT?.map((item) => {
-                          return (
-                            <Select.Option key={item.Ma} value={item.Ma} title={item.ThongTinNhomHang}>
-                              <p className="truncate">{item.ThongTinNhomHang}</p>
-                            </Select.Option>
-                          )
-                        })}
-                      </Select>
-                    </div>
-                  </div>
-                  <div className="flex gap-1">
-                    <div className="flex gap-1 items-center">
-                      <div>Từ</div>
-                      <Select
-                        allowClear
-                        showSearch
-                        placeholder="Chọn mã hàng"
-                        size="small"
-                        value={selectedMaFrom}
-                        onChange={(value) => {
-                          setSelectedMaFrom(value)
-                          selectedMaTo == null ? setSelectedMaTo(value) : ''
-                          if (selectedMaTo !== null && hangHoaNXT.findIndex((item) => item.MaHang === value) > hangHoaNXT.findIndex((item) => item.MaHang === selectedMaTo)) {
-                            setSelectedMaTo(value)
-                          }
-                        }}
-                        style={{
-                          width: '12vw',
-                          textOverflow: 'ellipsis',
-                        }}
-                      >
-                        {hangHoaNXT?.map((item, index) => {
-                          return (
-                            <Select.Option key={index} value={item.MaHang} title={item.TenHang}>
-                              <p className="truncate">{item.MaHang}</p>
-                            </Select.Option>
-                          )
-                        })}
-                      </Select>
-                    </div>
-                    <div className="flex gap-1 items-center">
-                      <div>Đến</div>
-                      <Select
-                        allowClear
-                        showSearch
-                        size="small"
-                        placeholder="Chọn mã hàng"
-                        value={selectedMaTo}
-                        onChange={(value) => {
-                          setSelectedMaTo(value)
-                          selectedMaFrom == null ? setSelectedMaFrom(value) : ''
-                          if (selectedMaFrom !== null && hangHoaNXT.findIndex((item) => item.MaHang === value) < hangHoaNXT.findIndex((item) => item.MaHang === selectedMaFrom)) {
-                            setSelectedMaFrom(value)
-                          }
-                        }}
-                        style={{
-                          width: '12vw',
-                          textOverflow: 'ellipsis',
-                        }}
-                      >
-                        {hangHoaNXT?.map((item, index) => {
-                          return (
-                            <Select.Option key={index} value={item.MaHang} title={item.TenHang}>
-                              <p className="truncate">{item.MaHang}</p>
-                            </Select.Option>
-                          )
-                        })}
-                      </Select>
-                    </div>
-                    <div className="flex items-center gap-1 col-span-2">
-                      <div>Chọn</div>
-                      <Select
-                        mode="multiple"
-                        maxTagCount={1}
-                        allowClear
-                        size="small"
-                        filterOption
-                        value={selectedMaList}
-                        onChange={(value) => setSelectedMaList(value)}
-                        placeholder="Chọn mã hàng"
-                        className="w-[30vw] truncate "
-                      >
-                        {hangHoaNXT?.map((item, index) => {
-                          return (
-                            <Select.Option key={index} value={item.MaHang} title={item.TenHang}>
-                              <p className="truncate">
-                                {item.MaHang}-{item.TenHang}
-                              </p>
-                            </Select.Option>
-                          )
-                        })}
-                      </Select>
-                    </div>
-                  </div>
-                </div>
-              </form>
-              <div className="flex items-end ">
-                <Select
-                  showSearch
-                  allowClear
+              <div className="NhapXuatTonKho" id="my-table">
+                <Table
+                  loading={tableLoad}
+                  className="setHeight"
+                  columns={newTitles}
+                  dataSource={filteredHangHoa.filter((item) => (selectedMaKho ? item.MaKho === selectedMaKho : true))}
                   size="small"
-                  placeholder="Lọc Kho"
-                  value={selectedMaKho}
-                  onChange={(value) => setSelectedMaKho(value)}
-                  style={{
-                    width: '160px',
+                  scroll={{
+                    x: 3300,
+                    y: 300,
                   }}
-                >
-                  {khoHangNXT?.map((item, index) => {
+                  pagination={{
+                    defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                    showSizeChanger: true,
+                    pageSizeOptions: ['50', '100', '1000'],
+                    onShowSizeChange: (current, size) => {
+                      localStorage.setItem('pageSize', size)
+                    },
+                  }}
+                  bordered
+                  style={{
+                    whiteSpace: 'nowrap',
+                    fontSize: '24px',
+                    borderRadius: '10px',
+                  }}
+                  summary={() => {
                     return (
-                      <Select.Option key={index} value={item.MaKho} title={item.TenKho} className="py-8">
-                        <p> {item.ThongTinKho}</p>
-                      </Select.Option>
+                      <Table.Summary fixed="bottom">
+                        <Table.Summary.Row>
+                          {newTitles
+                            .filter((column) => column.render)
+                            .map((column, index) => {
+                              const isNumericColumn = typeof filteredHangHoa[0]?.[column.dataIndex] === 'number'
+
+                              return (
+                                <Table.Summary.Cell key={`summary-cell-${index + 1}`} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                                  {isNumericColumn ? (
+                                    <Text strong>
+                                      {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                        minimumFractionDigits: dataThongSo.SOLESOLUONG,
+                                        maximumFractionDigits: dataThongSo.SOLESOLUONG,
+                                      })}
+                                    </Text>
+                                  ) : null}
+                                </Table.Summary.Cell>
+                              )
+                            })}
+                        </Table.Summary.Row>
+                      </Table.Summary>
                     )
-                  })}
-                </Select>
+                  }}
+                />
               </div>
             </div>
-          </div>
-          <div className="NhapXuatTonKho" id="my-table">
-            <Table
-              loading={tableLoad}
-              className=" setHeight"
-              columns={newTitles}
-              dataSource={filteredHangHoa.filter((item) => (selectedMaKho ? item.MaKho === selectedMaKho : true))}
-              size="small"
-              scroll={{
-                x: 3300,
-                y: 300,
-              }}
-              pagination={{
-                defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                showSizeChanger: true,
-                pageSizeOptions: ['50', '100', '1000'],
-                onShowSizeChange: (current, size) => {
-                  localStorage.setItem('pageSize', size)
-                },
-              }}
-              bordered
-              style={{
-                whiteSpace: 'nowrap',
-                fontSize: '24px',
-                borderRadius: '10px',
-              }}
-              summary={() => {
-                return (
-                  <Table.Summary fixed="bottom">
-                    <Table.Summary.Row>
-                      {newTitles
-                        .filter((column) => column.render)
-                        .map((column, index) => {
-                          const isNumericColumn = typeof filteredHangHoa[0]?.[column.dataIndex] === 'number'
-
-                          return (
-                            <Table.Summary.Cell key={`summary-cell-${index + 1}`} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
-                              {isNumericColumn ? (
-                                <Text strong>
-                                  {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                    minimumFractionDigits: dataThongSo.SOLESOLUONG,
-                                    maximumFractionDigits: dataThongSo.SOLESOLUONG,
-                                  })}
-                                </Text>
-                              ) : null}
-                            </Table.Summary.Cell>
-                          )
-                        })}
-                    </Table.Summary.Row>
-                  </Table.Summary>
-                )
-              }}
-            />
-          </div>
-        </div>
+          )}
+        </>
       )}
     </>
   )

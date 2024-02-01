@@ -1,13 +1,13 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from 'react'
 import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
-import { MdFilterAlt } from 'react-icons/md'
 import { Select, Checkbox } from 'antd'
-import { DatePicker } from '@mui/x-date-pickers/DatePicker'
-import { RETOKEN } from '../../../../../action/Actions'
+import { DateField } from '@mui/x-date-pickers'
 import categoryAPI from '../../../../../API/linkAPI'
 import logo from '../../../../../assets/VTS-iSale.ico'
+import { RETOKEN, base64ToPDF } from '../../../../../action/Actions'
 import ActionButton from '../../../../../components/util/Button/ActionButton'
 import SimpleBackdrop from '../../../../../components/util/Loading/LoadingPage'
 
@@ -19,17 +19,60 @@ const NDCPrint = ({ close, dataPrint }) => {
   const [dataListChungTu, setDataListChungTu] = useState('')
   const [selectedNhomFrom, setSelectedNhomFrom] = useState([])
   const [selectedNhomTo, setSelectedNhomTo] = useState([])
-
+  const [dateData, setDateData] = useState({})
   const [checkboxValues, setCheckboxValues] = useState({
     checkbox1: true,
     checkbox2: false,
     checkbox3: false,
   })
+  const [errors, setErrors] = useState({
+    SoChungTuBatDau: '',
+    SoChungTuKetThuc: '',
+  })
+
   useEffect(() => {
+    const getTimeSetting = async () => {
+      try {
+        const response = await categoryAPI.KhoanNgay(TokenAccess)
+        if (response.data.DataError == 0) {
+          setKhoanNgayFrom(dayjs(response.data.NgayBatDau).format('YYYY-MM-DDTHH:mm:ss'))
+          setKhoanNgayTo(dayjs(response.data.NgayKetThuc).format('YYYY-MM-DDTHH:mm:ss'))
+          setIsLoading(true)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          getTimeSetting()
+        } else {
+          console.log(response.data)
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
     if (!isLoading) {
       getTimeSetting()
     }
   }, [isLoading])
+
+  useEffect(() => {
+    const getListChungTu = async () => {
+      try {
+        if (isLoading == true) {
+          const response = await categoryAPI.ListChungTuNDC({ NgayBatDau: dateData.NgayBatDau, NgayKetThuc: dateData.NgayKetThuc }, TokenAccess)
+          if (response.data.DataError == 0) {
+            setDataListChungTu(response.data.DataResults)
+            setIsLoading(true)
+          } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+            await RETOKEN()
+            getListChungTu()
+          }
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    getListChungTu()
+  }, [dateData.NgayBatDau, dateData.NgayKetThuc])
+
   const calculateTotal = () => {
     let total = 0
     if (checkboxValues.checkbox1) total += 1
@@ -37,6 +80,13 @@ const NDCPrint = ({ close, dataPrint }) => {
     return total
   }
   const handlePrint = async () => {
+    if (selectedNhomFrom == [] || selectedNhomTo == []) {
+      setErrors({
+        SoChungTuBatDau: selectedNhomFrom == [] ? '' : 'Số chứng từ không được trống',
+        SoChungTuKetThuc: selectedNhomTo == [] ? '' : 'Số chứng từ không được trống',
+      })
+      return
+    }
     try {
       const response = await categoryAPI.NDCPrint(
         dataPrint
@@ -57,58 +107,38 @@ const NDCPrint = ({ close, dataPrint }) => {
         TokenAccess,
       )
       if (response.data.DataError == 0) {
-        const decodedData = atob(response.data.DataResults)
-        const arrayBuffer = new ArrayBuffer(decodedData.length)
-        const uint8Array = new Uint8Array(arrayBuffer)
-        for (let i = 0; i < decodedData.length; i++) {
-          uint8Array[i] = decodedData.charCodeAt(i)
-        }
-        const blob = new Blob([arrayBuffer], {
-          type: 'application/pdf',
-        })
-        const dataUrl = URL.createObjectURL(blob)
-        const newWindow = window.open(dataUrl, '_blank')
-        newWindow.onload = function () {
-          newWindow.print()
-        }
+        base64ToPDF(response.data.DataResults)
       } else {
         toast.error(response.data.DataErrorDescription)
+        console.log({
+          NgayBatDau: khoanNgayFrom,
+          NgayKetThuc: khoanNgayTo,
+          SoChungTuBatDau: selectedNhomFrom,
+          SoChungTuKetThuc: selectedNhomTo,
+          SoLien: calculateTotal(),
+        })
       }
     } catch (error) {
       console.log(error)
     }
   }
-  const getTimeSetting = async () => {
-    try {
-      const response = await categoryAPI.KhoanNgay(TokenAccess)
-      if (response.data.DataError == 0) {
-        setKhoanNgayFrom(dayjs(response.data.NgayBatDau).format('YYYY-MM-DDTHH:mm:ss'))
-        setKhoanNgayTo(dayjs(response.data.NgayKetThuc).format('YYYY-MM-DDTHH:mm:ss'))
-        setIsLoading(true)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getTimeSetting()
-      } else {
-        console.log(response.data)
-      }
-    } catch (error) {
-      console.log(error)
+  const handleDateChange = () => {
+    let timerId
+    clearTimeout(timerId)
+    timerId = setTimeout(() => {
+      khoanNgayFrom, khoanNgayTo
+      setDateData({
+        NgayBatDau: khoanNgayFrom,
+        NgayKetThuc: khoanNgayTo,
+      })
+    }, 300)
+  }
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      handleDateChange()
     }
   }
-  const getListChungTu = async () => {
-    try {
-      const response = await categoryAPI.ListChungTuNDC({ NgayBatDau: khoanNgayFrom, NgayKetThuc: khoanNgayTo }, TokenAccess)
-      if (response.data.DataError == 0) {
-        setDataListChungTu(response.data.DataResults)
-        setIsLoading(true)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getListChungTu()
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
+
   return (
     <>
       {!isLoading ? (
@@ -123,12 +153,14 @@ const NDCPrint = ({ close, dataPrint }) => {
                 <p className="text-blue-700 font-semibold uppercase">In - Phiếu Nhập Điều Chỉnh</p>
               </div>
               <div className="flex flex-col gap-4 border-2 p-3">
-                <div className="flex gap-2 justify-center">
+                <div className="flex justify-center">
                   <div className="DatePicker_NDCKho flex justify-center gap-2">
                     <div className="DatePicker_NDCKho flex items-center gap-2">
                       <label>Từ</label>
-                      <DatePicker
-                        className=""
+                      <DateField
+                        className="min-w-[100px] w-[60%]"
+                        onBlur={handleDateChange}
+                        onKeyDown={handleKeyDown}
                         format="DD/MM/YYYY"
                         maxDate={dayjs(khoanNgayTo)}
                         defaultValue={dataPrint ? dayjs(dataPrint.NgayCTu, 'YYYY-MM-DD') : dayjs(khoanNgayFrom, 'YYYY-MM-DD')}
@@ -149,8 +181,10 @@ const NDCPrint = ({ close, dataPrint }) => {
                     </div>
                     <div className=" flex items-center gap-2 ">
                       <label>Đến</label>
-                      <DatePicker
-                        className="DatePicker_NDCKho"
+                      <DateField
+                        onBlur={handleDateChange}
+                        onKeyDown={handleKeyDown}
+                        className="min-w-[100px] w-[60%]"
                         format="DD/MM/YYYY"
                         minDate={dayjs(khoanNgayFrom)}
                         defaultValue={dataPrint ? dayjs(dataPrint.NgayCTu, 'YYYY-MM-DD') : dayjs(khoanNgayTo, 'YYYY-MM-DD')}
@@ -170,10 +204,6 @@ const NDCPrint = ({ close, dataPrint }) => {
                       />
                     </div>
                   </div>
-                  <button onClick={getListChungTu} className=" flex px-2 py-1 bg-blue-500 text-slate-50 rounded items-center">
-                    <MdFilterAlt className="w-5 h-5" />
-                    Lọc
-                  </button>
                 </div>
                 <div className="flex gap-2">
                   <div className="flex gap-2 items-center">
@@ -181,9 +211,14 @@ const NDCPrint = ({ close, dataPrint }) => {
                     <Select
                       allowClear
                       showSearch
-                      placeholder="Chọn nhóm"
+                      required
+                      status={errors.SoChungTuBatDau ? 'error' : ''}
                       value={dataPrint ? dataPrint.SoChungTu : selectedNhomFrom}
-                      onChange={(value) => setSelectedNhomFrom(value)}
+                      placeholder={errors?.SoChungTuBatDau ? errors?.SoChungTuBatDau : 'Chọn nhóm'}
+                      onChange={(value) => {
+                        setSelectedNhomFrom(value)
+                        setErrors({ ...errors, SoChungTuBatDau: '' })
+                      }}
                       style={{
                         width: '200px',
                       }}
@@ -203,9 +238,14 @@ const NDCPrint = ({ close, dataPrint }) => {
                     <Select
                       allowClear
                       showSearch
-                      placeholder="Chọn nhóm"
+                      required
+                      placeholder={errors?.SoChungTuKetThuc ? errors?.SoChungTuKetThuc : 'Chọn nhóm'}
+                      status={errors.SoChungTuKetThuc ? 'error' : ''}
                       value={dataPrint ? dataPrint.SoChungTu : selectedNhomTo}
-                      onChange={(value) => setSelectedNhomTo(value)}
+                      onChange={(value) => {
+                        setSelectedNhomTo(value)
+                        setErrors({ ...errors, SoChungTuKetThuc: '' })
+                      }}
                       style={{
                         width: '200px',
                       }}

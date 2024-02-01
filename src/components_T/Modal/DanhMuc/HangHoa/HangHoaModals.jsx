@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import { useEffect, useState, useCallback, useMemo } from 'react'
@@ -6,18 +7,18 @@ import { FaSearch } from 'react-icons/fa'
 import { MdDelete } from 'react-icons/md'
 import { IoMdAddCircle } from 'react-icons/io'
 import { CloseSquareFilled } from '@ant-design/icons'
-import { Checkbox, Select, Space, InputNumber, FloatButton, Input, Tooltip, Table, AutoComplete } from 'antd'
-import './HangHoaModals.css'
+import { Checkbox, Select, Space, InputNumber, FloatButton, Input, Tooltip, Table } from 'antd'
 import moment from 'moment'
+import './HangHoaModals.css'
 import { useSearch } from '../../../hooks/Search'
 import categoryAPI from '../../../../API/linkAPI'
 import logo from '../../../../assets/VTS-iSale.ico'
-import { RETOKEN } from '../../../../action/Actions'
 import HighlightedCell from '../../../hooks/HighlightedCell'
+import { RETOKEN, base64ToPDF } from '../../../../action/Actions'
 import ActionButton from '../../../../components/util/Button/ActionButton'
 import SimpleBackdrop from '../../../../components/util/Loading/LoadingPage'
 
-const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, targetRow }) => {
+const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, setTargetRow }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
@@ -70,6 +71,10 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
     MaVach: '',
     SoTem: '',
   })
+
+  useEffect(() => {
+    setTargetRow([])
+  }, [])
 
   useEffect(() => {
     if (type === 'create' || type === 'edit') {
@@ -385,7 +390,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
         isSave ? (setHangHoaForm({ TonKho: true, LapRap: false, TyLeQuyDoi: 1 }), setSelectedRowData([])) : close()
         loadingData()
         toast.success('Thêm sản phẩm thành công', { autoClose: 1000 })
-        targetRow(response.data.DataResults[0].Ma)
+        setTargetRow(response.data.DataResults[0].Ma)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         handleCreate()
@@ -420,10 +425,10 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
       (dataThongSo.SUDUNG_MAHANGHOATUDONG ? null : !hangHoaForm?.MaHang?.trim())
     ) {
       setErrors({
-        Nhom: hangHoaForm?.Nhom?.trim() ? '' : '*Nhóm không được trống',
-        TenHang: hangHoaForm?.TenHang?.trim() ? '' : '*Tên hàng không được trống',
-        DVTKho: hangHoaForm?.DVTKho?.trim() ? '' : '*Đơn vị tính không được trống',
-        MaVach: hangHoaForm?.MaVach?.trim() ? '' : '*Mã vạch không được trống',
+        Nhom: hangHoaForm?.Nhom?.trim() ? '' : 'Nhóm không được trống',
+        TenHang: hangHoaForm?.TenHang?.trim() ? '' : 'Tên hàng không được trống',
+        DVTKho: hangHoaForm?.DVTKho?.trim() ? '' : 'Đơn vị tính không được trống',
+        MaVach: hangHoaForm?.MaVach?.trim() ? '' : 'Mã vạch không được trống',
         MaHang: dataThongSo.SUDUNG_MAHANGHOATUDONG ? null : hangHoaForm?.MaHang?.trim() ? '' : '*Mã hàng không được trống',
       })
       return
@@ -445,7 +450,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
         toast.success('Sửa thành công', { autoClose: 1000 })
         loadingData()
         close()
-        targetRow(getMaHang.MaHang)
+        setTargetRow(getMaHang?.MaHang)
       } else if ((dataUpdate.data && dataUpdate.data.DataError === -107) || (dataUpdate.data && dataUpdate.data.DataError === -108)) {
         await RETOKEN()
         handleUpdate()
@@ -461,9 +466,9 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
       const dataDel = await categoryAPI.XoaHangHoa(getMaHang?.MaHang, TokenAccess)
       if (dataDel.data.DataError == 0) {
         toast.success('Xóa sản phẩm thành công', { autoClose: 1000 })
-        setIsLoading(false)
         loadingData()
-        close(dataDel.data)
+        close()
+        setTargetRow([])
       } else if ((dataDel.data && dataDel.data.DataError === -107) || (dataDel.data && dataDel.data.DataError === -108)) {
         await RETOKEN()
         handleDelete()
@@ -487,7 +492,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
         toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
         loadingData()
         close()
-        targetRow(getMaHang.Ma)
+        setTargetRow(getMaHang)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         handleStatus()
@@ -500,6 +505,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
   }
   const handleGroup = async () => {
     try {
+      console.log(getMaHang)
       const response = await categoryAPI.GanNhom(
         {
           DanhSachMa: getMaHang?.map((item) => ({ Ma: item })),
@@ -507,10 +513,11 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
         },
         TokenAccess,
       )
-      if (response.data.DataError == 0) {
+      if (response.data.DataError === 0) {
         toast.success('Thay đổi nhóm thành công', { autoClose: 1000 })
         loadingData()
         close()
+        setTargetRow(getMaHang)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         handleGroup()
@@ -540,20 +547,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, ta
         TokenAccess,
       )
       if (response.data.DataError === 0) {
-        const decodedData = atob(response.data.DataResults)
-        const arrayBuffer = new ArrayBuffer(decodedData.length)
-        const uint8Array = new Uint8Array(arrayBuffer)
-        for (let i = 0; i < decodedData.length; i++) {
-          uint8Array[i] = decodedData.charCodeAt(i)
-        }
-        const blob = new Blob([arrayBuffer], {
-          type: 'application/pdf',
-        })
-        const dataUrl = URL.createObjectURL(blob)
-        const newWindow = window.open(dataUrl, '_blank')
-        newWindow.onload = function () {
-          newWindow.print()
-        }
+        base64ToPDF(response.data.DataResults)
         close()
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()

@@ -16,7 +16,8 @@ function Header({ handleToggleSidebar, refs }) {
     window.localStorage.removeItem('tokenDuLieu')
     window.localStorage.removeItem('RTKN')
     window.localStorage.removeItem('userName')
-
+    window.localStorage.removeItem('path')
+    window.localStorage.removeItem('dataCRUD')
     window.location.href = '/login'
   }
   const handeleChange = () => {

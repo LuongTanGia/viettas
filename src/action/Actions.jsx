@@ -55,7 +55,6 @@ const handleError = (error) => {
 //------------------------------------------------------------------------------
 export const RETOKEN = async () => {
   const token = window.localStorage.getItem('RTKN')
-  console.log('RETOKEN')
 
   try {
     const response = await axios.post('https://isalewebapi.viettassaigon.vn/api/Auth/RefreshToken', {
@@ -68,7 +67,7 @@ export const RETOKEN = async () => {
     } else if (response.data.DataError === -107 || response.data.DataError === -111) {
       window.location.href = '/login'
       // toast.error(response.data.DataErrorDescription);
-      console.log('Lỗi 107 hoặc 111 -> Ra login')
+
       return 0
     }
   } catch (error) {
@@ -76,7 +75,6 @@ export const RETOKEN = async () => {
   }
 }
 export const DANHSACHDULIEU = async (API, data) => {
-  console.log('DANHSACHDULIEU')
   try {
     const response = await axios.post(API, data)
     window.localStorage.setItem('tokenDuLieu', response.data.TKN)
@@ -90,7 +88,6 @@ export const DANHSACHDULIEU = async (API, data) => {
   }
 }
 export const LOGIN = async (API1, API2, TKN, RemoteDB, data, dispatch) => {
-  console.log('LOGIN')
   try {
     const response = await axios.post(API1, {
       TokenID: TKN,
@@ -115,8 +112,6 @@ export const LOGIN = async (API1, API2, TKN, RemoteDB, data, dispatch) => {
   }
 }
 export const DANHSACHCHUCNANG = async (API, token, dispatch) => {
-  console.log('DANHSACHCHUCNANG')
-
   try {
     const response = await axios.post(
       API,
@@ -145,8 +140,6 @@ export const DANHSACHCHUCNANG = async (API, token, dispatch) => {
   }
 }
 export const DANHSACHHANGHOA = async (API, token, dispatch) => {
-  console.log('DANHSACHHANGHOA')
-
   try {
     const response = await axios.post(
       API,
@@ -178,7 +171,6 @@ export const DANHSACHHANGHOA = async (API, token, dispatch) => {
   }
 }
 export const KHOANNGAY = async (API, token) => {
-  console.log('KHOANNGAY')
   try {
     const response = await axios.post(
       API,
@@ -196,7 +188,6 @@ export const KHOANNGAY = async (API, token) => {
   }
 }
 export const DATATONGHOP = async (API, token, KhoanNgay, dispatch) => {
-  console.log('DATATONGHOP')
   try {
     const response = await axios.post(API, KhoanNgay, {
       headers: {
@@ -221,8 +212,6 @@ export const DATATONGHOP = async (API, token, KhoanNgay, dispatch) => {
   }
 }
 export const DATADULIEU = async (API, token, dispatch) => {
-  console.log('DATADULIEU')
-
   try {
     const response = await axios.post(
       API,
@@ -259,8 +248,6 @@ export const THAYDOIRMATKHAU = async (API, data, token) => {
   }
 }
 export const DoanhSoHangHoa_TopChart = async (API, token, data) => {
-  console.log('DoanhSoHangHoa_TopChart')
-
   try {
     const response = await axios.post(API, data, {
       headers: {
@@ -291,8 +278,6 @@ export const DoanhSoHangHoa_TopChart = async (API, token, data) => {
 }
 ////Phiếu mua hàng
 export const DANHSACHPHIEUBANHANG = async (API, token, data, dispatch) => {
-  console.log('DANHSACHPHIEUBANHANG')
-
   try {
     const response = await axios.post(API, data, {
       headers: {
@@ -326,7 +311,6 @@ export const DANHSACHPHIEUBANHANG = async (API, token, data, dispatch) => {
   }
 }
 export const THONGTINPHIEU = async (API, token, maphieu, dispatch) => {
-  console.log('THONGTINPHIEU')
   try {
     const response = await axios.post(
       API,
@@ -361,8 +345,6 @@ export const THONGTINPHIEU = async (API, token, maphieu, dispatch) => {
   }
 }
 export const DANHSACHDOITUONG = async (API, token, dispatch) => {
-  console.log('DANHSACHDOITUONG')
-
   try {
     const response = await axios.post(
       API,
@@ -396,8 +378,6 @@ export const DANHSACHDOITUONG = async (API, token, dispatch) => {
   }
 }
 export const DANHSACHKHOHANG = async (API, token, dispatch) => {
-  console.log('DANHSACHKHOHANG')
-
   try {
     const response = await axios.post(
       API,
@@ -431,7 +411,6 @@ export const DANHSACHKHOHANG = async (API, token, dispatch) => {
   }
 }
 export const DANHSACHHANGHOA_PBS = async (API, token, data) => {
-  console.log('DANHSACHHANGHOA_PBS')
   try {
     const response = await axios.post(API, data, {
       headers: {
@@ -471,8 +450,6 @@ export const DANHSACHHANGHOA_PBS = async (API, token, data) => {
   }
 }
 export const THEMPHIEUBANHANG = async (API, token, data) => {
-  console.log('THEMPHIEUBANHANG')
-
   try {
     const response = await axios.post(API, data, {
       headers: {
@@ -513,8 +490,6 @@ export const THEMPHIEUBANHANG = async (API, token, data) => {
   }
 }
 export const XOAPHIEUBANHANG = async (API, token, data) => {
-  console.log('XOAPHIEUBANHANG')
-
   try {
     const response = await axios.post(API, data, {
       headers: {
@@ -556,8 +531,6 @@ export const XOAPHIEUBANHANG = async (API, token, data) => {
   }
 }
 export const SUAPHIEUBANHANG = async (API, token, data) => {
-  console.log('SUAPHIEUBANHANG')
-
   try {
     const response = await axios.post(API, data, {
       headers: {
@@ -598,8 +571,6 @@ export const SUAPHIEUBANHANG = async (API, token, data) => {
   }
 }
 export const LAPPHIEUTHU = async (API, token, data) => {
-  console.log('LAPPHIEUTHU')
-
   try {
     const response = await axios.post(API, data, {
       headers: {
@@ -639,8 +610,6 @@ export const LAPPHIEUTHU = async (API, token, data) => {
   }
 }
 export const LISTCHUNGTU = async (API, token, data) => {
-  console.log('LISTCHUNGTU')
-
   try {
     const response = await axios.post(API, data, {
       headers: {
@@ -682,8 +651,6 @@ export const LISTCHUNGTU = async (API, token, data) => {
   }
 }
 export const INPHIEUPBS = async (API, token, data) => {
-  console.log('INPHIEUPBS')
-
   try {
     const response = await axios.post(API, data, {
       headers: {

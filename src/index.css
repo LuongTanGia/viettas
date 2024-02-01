@@ -224,6 +224,10 @@ input[type='radio'] {
   text-align: right;
   padding: 0 1.5rem;
 }
+/* Fix text-color input*/
+input.ant-input.ant-input-sm {
+  color: black;
+}
 
 /* K custom antd and MUI */
 /* start */
@@ -283,6 +287,17 @@ input[type='radio'] {
 }
 
 .css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root {
+  box-sizing: border-box;
+  height: 24px;
+  width: 100%;
+}
+
+.MuiFormControl-root.css-1vh79n6 .css-1v4ccyo {
+  box-sizing: border-box;
+  height: 24px;
+  width: 100%;
+}
+.MuiFormControl-root.css-1vh79n6 {
   box-sizing: border-box;
   height: 24px;
   width: 100%;

@@ -4,6 +4,7 @@ import moment from 'moment'
 
 export const useSearch = (data) => {
   const [search, setSearch] = useState('')
+
   const filteredData = useMemo(() => {
     if (data)
       return data.filter((item) => {
@@ -50,7 +51,8 @@ export const useSearch = (data) => {
           SoMatHang,
           GhiChu,
           NhomHang,
-          SoLuongTon,
+          TongSoLuong,
+          TongTriGiaKho,
         } = item || {}
         return (
           // HangHoa
@@ -94,8 +96,9 @@ export const useSearch = (data) => {
           (ThongTinKho || '').toLowerCase().includes(search.toLowerCase()) ||
           (SoMatHang?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (GhiChu || '').toLowerCase().includes(search.toLowerCase()) ||
+          (TongTriGiaKho?.toString() || '').toLowerCase().includes(search.toLowerCase()) ||
           (NhomHang || '').toLowerCase().includes(search.toLowerCase()) ||
-          (SoLuongTon?.toString() || '').toLowerCase().includes(search.toLowerCase())
+          (TongSoLuong?.toString() || '').toLowerCase().includes(search.toLowerCase())
         )
       })
     else return []

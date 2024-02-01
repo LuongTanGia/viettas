@@ -130,7 +130,7 @@ function PhieuBanHang() {
     }
     console.log()
     getListData()
-  }, [searchText, selectMH, isShowDelete, searchData.NgayBatDau, searchData.NgayKetThuc])
+  }, [searchText, selectMH, searchData.NgayBatDau, searchData.NgayKetThuc])
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -145,9 +145,9 @@ function PhieuBanHang() {
       document.removeEventListener('click', handleClickOutside)
     }
   }, [isShowOption])
+
   const handleView = async (record) => {
     await THONGTINPHIEU(API.CHITIETPBS, token, record?.SoChungTu, dispatch)
-
     setIsShow(true)
     setType('view')
     setDataRecord(record)

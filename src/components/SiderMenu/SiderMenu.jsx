@@ -39,7 +39,6 @@ const SiderMenu = ({ refs }) => {
             </li>
           </ul>
         </li>
-        {/* sidebar data */}
         {data.DataResults
           ? data.DataResults.map(
               (item, index) =>

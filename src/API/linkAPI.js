@@ -231,6 +231,13 @@ const categoryAPI = {
     }
     return axiosClient.post(url, {}, { headers })
   },
+  QuyenHan(Ma, accessToken) {
+    const url = '/settings/GiaTriHeThong/ChucNang_QuyenHan'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, { Ma }, { headers })
+  },
 }
 
 export default categoryAPI

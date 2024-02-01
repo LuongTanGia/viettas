@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import { useEffect, useState, useCallback, useMemo } from 'react'
@@ -18,7 +19,7 @@ import SimpleBackdrop from '../../../../../components/util/Loading/LoadingPage'
 import HighlightedCell from '../../../../hooks/HighlightedCell'
 import NDCPrint from './NDCPrint'
 
-const NDCEdit = ({ close, dataNDC, loadingData }) => {
+const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
@@ -30,6 +31,8 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
   const [selectedRowData, setSelectedRowData] = useState([])
   const [actionType, setActionType] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [targetRowModals, setTargetRowModals] = useState([])
+
   const currentRowData = useCallback(
     (mahang) => {
       return selectedRowData?.map((item) => item.MaHang).filter((item) => item !== '' && item !== mahang)
@@ -57,7 +60,9 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
   const [NDCForm, setNDCForm] = useState(() => {
     return dataNDC ? { ...dataNDC } : innitProduct
   })
-
+  const [errors, setErrors] = useState({
+    MaKho: '',
+  })
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.keyCode === 120) {
@@ -72,12 +77,45 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
   }, [isShowModal])
 
   useEffect(() => {
+    setTargetRow([])
+  }, [])
+
+  useEffect(() => {
+    const getDataKhoHangNDC = async () => {
+      try {
+        const response = await categoryAPI.ListKhoHangNDC(TokenAccess)
+        if (response.data.DataError == 0) {
+          setDataKhoHang(response.data.DataResults)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          getDataKhoHangNDC()
+        }
+      } catch (error) {
+        console.log(error)
+        setIsLoading(true)
+      }
+    }
     if (!isLoading) {
       getDataKhoHangNDC()
     }
   }, [isLoading])
 
   useEffect(() => {
+    const getDataHangHoaNDC = async () => {
+      try {
+        const response = await categoryAPI.ListHangHoaNDC(TokenAccess)
+        if (response.data.DataError == 0) {
+          setIsLoading(true)
+          setDataHangHoa(response.data.DataResults)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          getDataHangHoaNDC()
+        }
+      } catch (error) {
+        console.log(error)
+        setIsLoading(true)
+      }
+    }
     if (!isLoading) {
       getDataHangHoaNDC()
     }
@@ -102,36 +140,6 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
     }
   }, [isLoading])
 
-  const getDataHangHoaNDC = async () => {
-    try {
-      const response = await categoryAPI.ListHangHoaNDC(TokenAccess)
-      if (response.data.DataError == 0) {
-        setIsLoading(true)
-        setDataHangHoa(response.data.DataResults)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getDataHangHoaNDC()
-      }
-    } catch (error) {
-      console.log(error)
-      setIsLoading(true)
-    }
-  }
-
-  const getDataKhoHangNDC = async () => {
-    try {
-      const response = await categoryAPI.ListKhoHangNDC(TokenAccess)
-      if (response.data.DataError == 0) {
-        setDataKhoHang(response.data.DataResults)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getDataKhoHangNDC()
-      }
-    } catch (error) {
-      console.log(error)
-      setIsLoading(true)
-    }
-  }
   useEffect(() => {
     if (dataNDCView?.DataDetails) {
       setSelectedRowData([...dataNDCView.DataDetails])
@@ -211,13 +219,19 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
     setIsShowModal(true)
     setActionType('print')
   }
-  const handleEdit = async (e, isPrint = true) => {
-    e.preventDefault()
+  const handleEdit = async (isPrint = true) => {
+    if (!NDCForm?.MaKho?.trim()) {
+      setErrors({
+        MaKho: NDCForm?.MaKho?.trim() ? '' : 'Kho không được trống',
+      })
+      return
+    }
     try {
       const response = await categoryAPI.NDCEdit({ SoChungTu: dataNDC?.SoChungTu, Data: { ...NDCForm } }, TokenAccess)
       if (response.data.DataError == 0) {
         isPrint ? handlePrint() : (close(), toast.success('Sửa thành công'))
         loadingData()
+        setTargetRow(dataNDC?.SoChungTu)
       } else {
         console.log('sai', NDCForm)
         toast.error(response.data.DataErrorDescription)
@@ -429,13 +443,17 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
                           style={{ width: '100%' }}
                           type="text"
                           showSearch
+                          required
+                          placeholder={errors?.MaKho ? errors.MaKho : ''}
                           size="small"
+                          status={errors.MaKho ? 'error' : ''}
                           value={NDCForm?.MaKho || ''}
                           onChange={(value) => {
                             setNDCForm({
                               ...NDCForm,
                               MaKho: value,
                             })
+                            setErrors({ ...errors, MaKho: '' })
                           }}
                         >
                           {dataKhoHang &&
@@ -593,8 +611,8 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
                       handleAction={
                         isAdd
                           ? ''
-                          : (e) => {
-                              handleEdit(e, true)
+                          : () => {
+                              handleEdit(true)
                             }
                       }
                       title={'In Phiếu'}
@@ -609,8 +627,8 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
                       handleAction={
                         isAdd
                           ? ''
-                          : (e) => {
-                              handleEdit(e, false)
+                          : () => {
+                              handleEdit(false)
                             }
                       }
                       title={'Xác nhận'}
@@ -638,7 +656,7 @@ const NDCEdit = ({ close, dataNDC, loadingData }) => {
                     </div>
                     <div className="border-2">
                       <div className=" p-2 rounded m-1 flex flex-col gap-2 max-h-[35rem]  ">
-                        <div className="flex w-[20rem] overflow-hidden  relative ">
+                        <div className="flex w-[20rem] overflow-hidden">
                           <FaSearch className="absolute left-[0.5rem] top-2.5 hover:text-red-400 cursor-pointer" />
                           <input
                             value={searchHangHoa}
