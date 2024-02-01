@@ -5,13 +5,10 @@ import { useSelector } from 'react-redux'
 import { dataSelector } from '../../redux/selector'
 import './SiderMenu.css' // Import the CSS file for styling
 
-const SiderMenu = ({ refs, updateDataCRUD }) => {
+const SiderMenu = ({ refs }) => {
   const data = useSelector(dataSelector)
   const [string] = useState([])
 
-  const handleGetData = (item, path) => {
-    updateDataCRUD(item, path)
-  }
   return (
     <aside id="sidebar" className="sidebar" ref={refs}>
       <ul className="sidebar-nav" id="sidebar-nav">
@@ -63,7 +60,6 @@ const SiderMenu = ({ refs, updateDataCRUD }) => {
                                   // className="nav-link collapsed"
                                   // data-bs-target={`#${chir_data.MaChucNang}-nav`}
                                   // data-bs-toggle="collapse"
-                                  onClick={() => handleGetData(chir_data, `/${string.includes(chir_data.MaChucNang) ? '' : chir_data.MaChucNang}`)}
                                 >
                                   <i className="bi bi-circle"></i>
                                   {chir_data.TenChucNang}
@@ -88,12 +84,7 @@ const SiderMenu = ({ refs, updateDataCRUD }) => {
                                 chir_data_2.NhomChucNang === chir_data.MaChucNang
                                   ? string.push(chir_data.MaChucNang) && (
                                       <li key={chir_data_2.MaChucNang} className="submenu-item_2">
-                                        <Link
-                                          className="lastTitle"
-                                          to={`/${chir_data.MaChucNang}/${chir_data_2.MaChucNang}`}
-                                          title={chir_data_2.TenChucNang}
-                                          onClick={() => handleGetData(chir_data_2, `/${chir_data.MaChucNang}/${chir_data_2.MaChucNang}`)}
-                                        >
+                                        <Link className="lastTitle" to={`/${chir_data.MaChucNang}/${chir_data_2.MaChucNang}`} title={chir_data_2.TenChucNang}>
                                           <i className="bi bi-circle-fill"></i>
                                           {chir_data_2.TenChucNang}
                                         </Link>

@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/exhaustive-deps */
+import { useNavigate } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
 import { Button, Checkbox, Col, Input, Row, Spin, Table, Tooltip, Typography } from 'antd'
 const { Text } = Typography
@@ -25,7 +26,8 @@ import { nameColumsPhieuNhapDieuChinh } from '../../../../components/util/Table/
 import NDCPrint from '../../../../components_T/Modal/DuLieu/DuLieuTrongKho/PhieuNDC/NDCPrint'
 import NDCCreate from '../../../../components_T/Modal/DuLieu/DuLieuTrongKho/PhieuNDC/NDCCreate'
 
-const PhieuNhapDieuChinh = ({ dataCRUD }) => {
+const PhieuNhapDieuChinh = ({ path }) => {
+  const navigate = useNavigate()
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
@@ -49,6 +51,7 @@ const PhieuNhapDieuChinh = ({ dataCRUD }) => {
   const [dateData, setDateData] = useState({})
   const [targetRow, setTargetRow] = useState([])
   const [dateChange, setDateChange] = useState(false)
+  const [dataCRUD, setDataCRUD] = useState()
 
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
@@ -56,12 +59,6 @@ const PhieuNhapDieuChinh = ({ dataCRUD }) => {
     const key = Object.keys(dataNDC ? dataNDC[0] : []).filter((key) => key)
     setOptions(key)
   }, [selectVisible])
-
-  useEffect(() => {
-    if (dataCRUD.VIEW == false) {
-      setIsShowNotify(true)
-    }
-  }, [])
 
   function formatDateTime(inputDate, includeTime = false) {
     const date = new Date(inputDate)
@@ -114,6 +111,7 @@ const PhieuNhapDieuChinh = ({ dataCRUD }) => {
       getTimeSetting()
     }
   }, [isLoading])
+
   useEffect(() => {
     setKhoanNgayFrom(dayjs(dateData?.NgayBatDau))
     setKhoanNgayTo(dayjs(dateData?.NgayKetThuc))
@@ -164,6 +162,31 @@ const PhieuNhapDieuChinh = ({ dataCRUD }) => {
     }
   }, [])
 
+  useEffect(() => {
+    if (dataCRUD?.VIEW == false) {
+      setIsShowNotify(true)
+    }
+  }, [dataCRUD])
+
+  useEffect(() => {
+    getDataQuyenHan(path)
+  }, [])
+
+  const getDataQuyenHan = async (path) => {
+    try {
+      const response = await categoryAPI.QuyenHan(path, TokenAccess)
+      if (response.data.DataError === 0) {
+        setDataCRUD(response.data)
+        setIsLoading(true)
+      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        await RETOKEN()
+        getDataQuyenHan()
+      }
+    } catch (error) {
+      console.log(error)
+      setIsLoading(true)
+    }
+  }
   let timerId
   const handleSearch = (event) => {
     clearTimeout(timerId)
@@ -211,17 +234,6 @@ const PhieuNhapDieuChinh = ({ dataCRUD }) => {
       localStorage.setItem('hiddenColumns', JSON.stringify(checkedList))
     }, 1000)
   }
-  // const handleDateChange = () => {
-  //   clearTimeout(timerId)
-  //   timerId = setTimeout(() => {
-  //     khoanNgayFrom, khoanNgayTo
-  //     setDateData({
-  //       NgayBatDau: khoanNgayFrom,
-  //       NgayKetThuc: khoanNgayTo,
-  //     })
-  //   }, 300)
-  // }
-
   const handleDateChange = () => {
     clearTimeout(timerId)
     console.log(khoanNgayFrom, khoanNgayTo, 'dataaaaaaa')
@@ -253,13 +265,11 @@ const PhieuNhapDieuChinh = ({ dataCRUD }) => {
       }
     }, 300)
   }
-
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
       handleDateChange()
     }
   }
-  console.log(dateData)
   const titles = [
     {
       title: 'STT',
@@ -311,7 +321,7 @@ const PhieuNhapDieuChinh = ({ dataCRUD }) => {
       showSorterTooltip: false,
       sorter: (a, b) => a.ThongTinKho.localeCompare(b.ThongTinKho),
       render: (text) => (
-        <Tooltip title={text}>
+        <Tooltip title={text} color="blue">
           <div
             style={{
               overflow: 'hidden',
@@ -335,7 +345,7 @@ const PhieuNhapDieuChinh = ({ dataCRUD }) => {
       showSorterTooltip: false,
       sorter: (a, b) => a.SoMatHang - b.SoMatHang,
       render: (text) => (
-        <span className="flex justify-end">
+        <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 || text === null ? 'text-gray-300' : ''}`}>
           <HighlightedCell text={formatCurrency(text)} search={searchHangHoa} />
         </span>
       ),
@@ -349,10 +359,28 @@ const PhieuNhapDieuChinh = ({ dataCRUD }) => {
       showSorterTooltip: false,
       sorter: (a, b) => a.TongSoLuong - b.TongSoLuong,
       render: (text) => (
-        <span className="flex justify-end">
+        <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 || text === null ? 'text-gray-300' : ''}`}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </span>
       ),
+    },
+    {
+      ...(dataThongSo.HIENTHIGIATRIKHO === true
+        ? {
+            title: 'Trị Giá',
+            dataIndex: 'TongTriGiaKho',
+            key: 'TongTriGiaKho',
+            align: 'center',
+            width: 120,
+            showSorterTooltip: false,
+            sorter: (a, b) => a.TongSoLuong - b.TongSoLuong,
+            render: (text) => (
+              <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 || text === null ? 'text-gray-300' : ''}`}>
+                <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOTIEN)} search={searchHangHoa} />
+              </span>
+            ),
+          }
+        : null),
     },
     {
       title: 'Ghi chú',
@@ -362,7 +390,7 @@ const PhieuNhapDieuChinh = ({ dataCRUD }) => {
       align: 'center',
       sorter: (a, b) => (a.GhiChu?.toString() || '').localeCompare(b.GhiChu?.toString() || ''),
       render: (text) => (
-        <Tooltip title={text}>
+        <Tooltip title={text} color="blue">
           <div
             style={{
               overflow: 'hidden',
@@ -385,7 +413,7 @@ const PhieuNhapDieuChinh = ({ dataCRUD }) => {
       showSorterTooltip: false,
       sorter: (a, b) => a.NguoiTao.localeCompare(b.NguoiTao),
       render: (text) => (
-        <Tooltip title={text}>
+        <Tooltip title={text} color="blue">
           <div
             style={{
               overflow: 'hidden',
@@ -425,7 +453,7 @@ const PhieuNhapDieuChinh = ({ dataCRUD }) => {
       sorter: (a, b) => (a.NguoiSuaCuoi?.toString() || '').localeCompare(b.NguoiSuaCuoi?.toString() || ''),
 
       render: (text) => (
-        <Tooltip title={text}>
+        <Tooltip title={text} color="blue">
           <div
             style={{
               overflow: 'hidden',
@@ -453,7 +481,7 @@ const PhieuNhapDieuChinh = ({ dataCRUD }) => {
       render: (text) => <span className="flex justify-center">{formatDateTime(text, true)}</span>,
     },
     {
-      title: 'Action',
+      title: ' ',
       key: 'operation',
       fixed: 'right',
       width: 100,
@@ -464,8 +492,8 @@ const PhieuNhapDieuChinh = ({ dataCRUD }) => {
             <div className="flex gap-2 items-center justify-center">
               <div
                 className={`${
-                  dataCRUD?.EDIT == false ? 'border-gray-500 bg-gray-500  hover:text-gray-500' : 'border-yellow-400 bg-yellow-400 hover:text-yellow-400'
-                }' p-[4px] border-2 rounded text-slate-50 hover:bg-white cursor-pointer'`}
+                  dataCRUD?.EDIT == false ? 'border-gray-400 bg-gray-400 hover:text-gray-500' : 'border-yellow-400 bg-yellow-400 hover:text-yellow-400'
+                } ' p-[4px] border-2 rounded text-slate-50 hover:bg-white cursor-pointer'`}
                 title="Sửa"
                 onClick={() => (dataCRUD?.EDIT == false ? '' : handleEdit(record))}
               >
@@ -473,10 +501,10 @@ const PhieuNhapDieuChinh = ({ dataCRUD }) => {
               </div>
               <div
                 className={`${
-                  dataCRUD?.EDIT == false ? 'border-gray-500 bg-gray-500  hover:text-gray-500' : 'border-red-500 bg-red-500 hover:text-red-500'
+                  dataCRUD?.DEL == false ? 'border-gray-400 bg-gray-400 hover:text-gray-500' : 'border-red-500 bg-red-500 hover:text-red-500'
                 } ' p-[4px] border-2 rounded text-slate-50 hover:bg-white cursor-pointer'`}
                 title="Xóa"
-                onClick={() => (dataCRUD.DEL == false ? '' : handleDelete(record))}
+                onClick={() => (dataCRUD?.DEL == false ? '' : handleDelete(record))}
               >
                 <MdDelete />
               </div>
@@ -487,10 +515,9 @@ const PhieuNhapDieuChinh = ({ dataCRUD }) => {
     },
   ]
   const newTitles = titles.filter((item) => !hiddenRow?.includes(item.dataIndex))
-
   return (
     <>
-      {dataCRUD.VIEW == false ? (
+      {dataCRUD?.VIEW == false ? (
         <>
           {isShowNotify && (
             <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10">
@@ -516,7 +543,10 @@ const PhieuNhapDieuChinh = ({ dataCRUD }) => {
                     </div>
                     <div className="flex gap-2 justify-end">
                       <ActionButton
-                        handleAction={() => setIsShowNotify(false)}
+                        handleAction={() => {
+                          setIsShowNotify(false)
+                          navigate('/')
+                        }}
                         title={'Đóng'}
                         color={'slate-50'}
                         background={'red-500'}
@@ -582,7 +612,7 @@ const PhieuNhapDieuChinh = ({ dataCRUD }) => {
                             title={'Xuất Excel'}
                             icon={<RiFileExcel2Fill className="w-5 h-5" />}
                             color={'slate-50'}
-                            background={dataCRUD?.EXCEL == false ? 'gray-500' : 'green-500'}
+                            background={dataCRUD?.EXCEL == false ? 'gray-400' : 'green-500'}
                             color_hover={dataCRUD?.EXCEL == false ? 'gray-500' : 'green-500'}
                             bg_hover={'white'}
                           />
@@ -643,8 +673,6 @@ const PhieuNhapDieuChinh = ({ dataCRUD }) => {
                           onKeyDown={handleKeyDown}
                           className="DatePicker_NXTKho min-w-[100px] w-[60%]"
                           format="DD/MM/YYYY"
-                          // maxDate={dayjs(khoanNgayTo)}
-                          // defaultValue={dayjs(khoanNgayFrom, 'YYYY-MM-DD')}
                           value={khoanNgayFrom}
                           sx={{
                             '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
@@ -669,8 +697,6 @@ const PhieuNhapDieuChinh = ({ dataCRUD }) => {
                           onKeyDown={handleKeyDown}
                           className="DatePicker_NXTKho min-w-[100px] w-[60%]"
                           format="DD/MM/YYYY"
-                          // minDate={dayjs(khoanNgayFrom)}
-                          // defaultValue={dayjs(khoanNgayTo, 'YYYY-MM-DD')}
                           value={khoanNgayTo}
                           sx={{
                             '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
@@ -696,7 +722,7 @@ const PhieuNhapDieuChinh = ({ dataCRUD }) => {
                       title={'Thêm Sản Phẩm'}
                       icon={<IoMdAddCircleOutline className="w-6 h-6" />}
                       color={'slate-50'}
-                      background={dataCRUD?.ADD == false ? 'gray-500' : 'blue-500'}
+                      background={dataCRUD?.ADD == false ? 'gray-400' : 'blue-500'}
                       color_hover={dataCRUD?.ADD == false ? 'gray-500' : 'blue-500'}
                       bg_hover={'white'}
                     />
@@ -748,6 +774,13 @@ const PhieuNhapDieuChinh = ({ dataCRUD }) => {
                                           {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                             minimumFractionDigits: 0,
                                             maximumFractionDigits: 0,
+                                          })}
+                                        </Text>
+                                      ) : column.dataIndex === 'TongTriGiaKho' ? (
+                                        <Text strong>
+                                          {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                            minimumFractionDigits: dataThongSo.SOLESOTIEN,
+                                            maximumFractionDigits: dataThongSo.SOLESOTIEN,
                                           })}
                                         </Text>
                                       ) : (
