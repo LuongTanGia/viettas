@@ -2,26 +2,27 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import { useEffect, useState, useCallback, useMemo } from 'react'
-import { FaSearch } from 'react-icons/fa'
 import { toast } from 'react-toastify'
+import { FaSearch } from 'react-icons/fa'
 import { IoMdClose, IoMdAddCircle } from 'react-icons/io'
-import { Checkbox, Table, Tooltip, Select, InputNumber, FloatButton } from 'antd'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import { Checkbox, Table, Tooltip, Select, InputNumber, FloatButton } from 'antd'
 import dayjs from 'dayjs'
 import './style/NDC.css'
-import logo from '../../../../../assets/VTS-iSale.ico'
-import categoryAPI from '../../../../../API/linkAPI'
-import { RETOKEN } from '../../../../../action/Actions'
-import { useSearch } from '../../../../hooks/Search'
-import ActionButton from '../../../../util/Button/ActionButton'
-import SimpleBackdrop from '../../../../util/Loading/LoadingPage'
-import HighlightedCell from '../../../../hooks/HighlightedCell'
 import NDCPrint from './NDCPrint'
+import categoryAPI from '../../../../../API/linkAPI'
+import { useSearch } from '../../../../hooks/Search'
+import logo from '../../../../../assets/VTS-iSale.ico'
+import { RETOKEN } from '../../../../../action/Actions'
+import ActionButton from '../../../../util/Button/ActionButton'
+import HighlightedCell from '../../../../hooks/HighlightedCell'
+import SimpleBackdrop from '../../../../util/Loading/LoadingPage'
 
 const NDCCreate = ({ close, loadingData, setTargetRow }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
+  const [SoCTu, setSoCTu] = useState('')
   const [dataKhoHang, setDataKhoHang] = useState('')
   const [isShowModal, setIsShowModal] = useState(false)
   const [dataHangHoa, setDataHangHoa] = useState('')
@@ -30,8 +31,7 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
   const [valueDate, setValueDate] = useState(dayjs(new Date()))
   const [isLoading, setIsLoading] = useState(false)
   const [actionType, setActionType] = useState('')
-  const [SoCTu, setSoCTu] = useState('')
-  const [targetRowModals, setTargetRowModals] = useState([])
+  const [isShowSearch, setIsShowSearch] = useState(false)
 
   const currentRowData = useCallback(
     (mahang) => {
@@ -80,10 +80,6 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
       document.removeEventListener('keydown', handleKeyDown)
     }
   }, [isShowModal])
-
-  useEffect(() => {
-    setTargetRow([])
-  }, [])
 
   useEffect(() => {
     const getDataKhoHangNDC = async () => {
@@ -266,7 +262,7 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
       align: 'center',
       sorter: (a, b) => a.NhomHang.localeCompare(b.NhomHang),
       render: (text) => (
-        <Tooltip title={text}>
+        <Tooltip title={text} color="blue">
           <div
             style={{
               overflow: 'hidden',
@@ -289,7 +285,7 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
       align: 'center',
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       render: (text) => (
-        <Tooltip title={text}>
+        <Tooltip title={text} color="blue">
           <div
             style={{
               overflow: 'hidden',
@@ -381,7 +377,7 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                     <div className="flex flex-col gap-3">
                       <div className="flex gap-2">
                         <div className="flex items-center gap-1">
-                          <label className="required whitespace-nowrap min-w-[100px] flex justify-end">Số chứng từ</label>
+                          <label className="text-sm  required whitespace-nowrap min-w-[100px] flex justify-end">Số chứng từ</label>
                           <input
                             type="text"
                             className="px-2 w-full resize-none rounded border outline-none text-[1rem]"
@@ -397,7 +393,7 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                           />
                         </div>
                         <div className="flex items-center gap-1">
-                          <label className="required whitespace-nowrap">Ngày c.từ</label>
+                          <label className="required whitespace-nowrap text-sm">Ngày c.từ</label>
                           <DatePicker
                             className="DatePicker_NDCKho"
                             format="DD/MM/YYYY"
@@ -419,7 +415,7 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                         </div>
                       </div>
                       <div className="flex items-center gap-1">
-                        <label className="required whitespace-nowrap min-w-[100px] flex justify-end">Kho hàng</label>
+                        <label className="text-sm required whitespace-nowrap min-w-[100px] flex justify-end">Kho hàng</label>
                         <Select
                           style={{ width: '100%' }}
                           showSearch
@@ -449,28 +445,28 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                       <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
                       <div className="flex gap-1">
                         <div className="flex gap-1 items-center">
-                          <label className="whitespace-nowrap">Người tạo</label>
+                          <label className="whitespace-nowrap text-sm">Người tạo</label>
                           <input className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border-[0.125rem] outline-none text-[1rem]" readOnly />
                         </div>
                         <div className="flex gap-1 items-center">
-                          <label>Lúc</label>
+                          <label className="text-sm">Lúc</label>
                           <input className="px-2 w-full resize-none rounded border-[0.125rem] outline-none text-[1rem]" readOnly />
                         </div>
                       </div>
                       <div className="flex gap-1">
                         <div className="flex gap-1 items-center">
-                          <label className="whitespace-nowrap">Người sửa</label>
+                          <label className="whitespace-nowraptext-sm text-sm">Người sửa</label>
                           <input className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border-[0.125rem] outline-none text-[1rem]" readOnly />
                         </div>
                         <div className="flex gap-1 items-center">
-                          <label>Lúc</label>
+                          <label className="text-sm">Lúc</label>
                           <input className="px-2 w-full resize-none rounded border-[0.125rem] outline-none text-[1rem]" readOnly />
                         </div>
                       </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
-                    <label className="whitespace-nowrap min-w-[100px]  flex justify-end">Ghi chú</label>
+                    <label className="whitespace-nowrap min-w-[100px] text-sm flex justify-end">Ghi chú</label>
                     <input
                       type="text"
                       className="px-2 w-[70rem] resize-none rounded border-[1px] hover:border-blue-500 outline-none text-[1rem]"
@@ -591,7 +587,7 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                       color={'slate-50'}
                       background={isAdd ? 'gray-500' : 'blue-500'}
                       color_hover={isAdd ? 'gray-500' : 'blue-500'}
-                      bg_hover={isAdd ? 'gray-500' : 'slate-50'}
+                      bg_hover={isAdd ? 'gray-500' : 'white'}
                     />
                     <ActionButton
                       handleAction={isAdd ? '' : () => handleCreate(false, false)}
@@ -599,7 +595,7 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                       color={'slate-50'}
                       background={isAdd ? 'gray-500' : 'blue-500'}
                       color_hover={isAdd ? 'gray-500' : 'blue-500'}
-                      bg_hover={isAdd ? 'gray-500' : 'slate-50'}
+                      bg_hover={isAdd ? 'gray-500' : 'white'}
                     />
                     <ActionButton handleAction={close} title={'Đóng'} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
                   </div>
@@ -615,49 +611,51 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                 <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col xl:w-[87vw] lg:w-[95vw] md:w-[95vw] min-h-[8rem] bg-white  p-2 rounded-xl shadow-custom overflow-hidden z-10">
                   <div className="flex flex-col gap-2 p-2 ">
                     <div className="flex items-center gap-2">
-                      <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
-                      <p className="text-blue-700 font-semibold uppercase">Danh Sách Hàng Hóa - Phiếu Nhập Điều Chỉnh</p>
-                    </div>
-                    <div className="border-2">
-                      <div className=" p-2 rounded m-1 flex flex-col gap-2 max-h-[35rem]">
-                        <div className="flex w-[20rem] overflow-hidden  relative ">
-                          <FaSearch className="absolute left-[0.5rem] top-2.5 hover:text-red-400 cursor-pointer" />
+                      <div className="flex items-center gap-2 py-1">
+                        <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
+                        <p className="text-blue-700 font-semibold uppercase">Danh Sách Hàng Hóa - Phiếu Nhập Điều Chỉnh</p>
+                        <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
+                      </div>
+                      <div className="flex w-[20rem] overflow-hidden">
+                        {isShowSearch && (
                           <input
                             type="text"
                             value={searchHangHoa}
                             placeholder="Nhập ký tự bạn cần tìm"
                             onChange={handleSearch}
-                            className="px-[2rem] py-1 w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[1px] hover:border-blue-500 outline-none text-[1rem]  "
+                            className="px-2 py-0.5 w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[1px] hover:border-blue-500 outline-none text-[1rem]  "
                           />
-                        </div>
-                        <Table
-                          bordered
-                          columns={title}
-                          dataSource={filteredHangHoa}
-                          onRow={(record) => ({
-                            onDoubleClick: () => {
-                              handleChoose(record)
-                            },
-                          })}
-                          pagination={{
-                            defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                            showSizeChanger: true,
-                            pageSizeOptions: ['50', '100', '1000'],
-                            onShowSizeChange: (current, size) => {
-                              localStorage.setItem('pageSize', size)
-                            },
-                          }}
-                          size="small"
-                          scroll={{
-                            x: 1100,
-                            y: 420,
-                          }}
-                          style={{
-                            whiteSpace: 'nowrap',
-                            fontSize: '24px',
-                          }}
-                        />
+                        )}
                       </div>
+                    </div>
+                    <div className="border-2 p-2 rounded m-1 flex flex-col gap-2 max-h-[35rem]">
+                      <Table
+                        bordered
+                        columns={title}
+                        dataSource={filteredHangHoa}
+                        onRow={(record) => ({
+                          onDoubleClick: () => {
+                            handleChoose(record)
+                          },
+                        })}
+                        pagination={{
+                          defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                          showSizeChanger: true,
+                          pageSizeOptions: ['50', '100', '1000'],
+                          onShowSizeChange: (current, size) => {
+                            localStorage.setItem('pageSize', size)
+                          },
+                        }}
+                        size="small"
+                        scroll={{
+                          x: 1100,
+                          y: 420,
+                        }}
+                        style={{
+                          whiteSpace: 'nowrap',
+                          fontSize: '24px',
+                        }}
+                      />
                     </div>
                     <div className="flex gap-2 justify-end">
                       <ActionButton

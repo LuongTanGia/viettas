@@ -13,13 +13,18 @@ import { FaSearch, FaEyeSlash } from 'react-icons/fa'
 import { IoMdAddCircleOutline } from 'react-icons/io'
 import { CloseSquareFilled } from '@ant-design/icons'
 import { MdEdit, MdDelete, MdPrint } from 'react-icons/md'
-import { useSearch } from '../../../../components/hooks/Search'
 import categoryAPI from '../../../../API/linkAPI'
+import { useSearch } from '../../../../components/hooks/Search'
 import { RETOKEN, exportToExcel } from '../../../../action/Actions'
 import HighlightedCell from '../../../../components/hooks/HighlightedCell'
 import ActionButton from '../../../../components/util/Button/ActionButton'
 import SimpleBackdrop from '../../../../components/util/Loading/LoadingPage'
 import { nameColumsPhieuLapRap } from '../../../../components/util/Table/ColumnName'
+import PLRView from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuLapRap/PLRView'
+import PLREdit from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuLapRap/PLREdit'
+import PLRPrint from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuLapRap/PLRPrint'
+import PLRCreate from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuLapRap/PLRCreate'
+import PLRDelete from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuLapRap/PLRDelete'
 
 const PhieuLapRap = ({ path }) => {
   const navigate = useNavigate()
@@ -78,6 +83,18 @@ const PhieuLapRap = ({ path }) => {
       }
     }
     getDataQuyenHan(path)
+  }, [])
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showOption.current && !showOption.current.contains(event.target)) {
+        setIsShowOption(false)
+      }
+    }
+    document.addEventListener('click', handleClickOutside)
+    return () => {
+      document.removeEventListener('click', handleClickOutside)
+    }
   }, [])
 
   useEffect(() => {
@@ -765,20 +782,20 @@ const PhieuLapRap = ({ path }) => {
                   />
                 </div>
               </div>
-              {/* <div>
+              <div>
                 {isShowModal &&
                   (actionType == 'create' ? (
-                    <NDCCreate close={() => setIsShowModal(false)} loadingData={handleLoading} setTargetRow={setTargetRow} />
+                    <PLRCreate close={() => setIsShowModal(false)} loadingData={handleLoading} setTargetRow={setTargetRow} />
                   ) : actionType == 'view' ? (
-                    <NDCXem close={() => setIsShowModal(false)} dataNDC={isDataKhoDC} />
+                    <PLRView close={() => setIsShowModal(false)} dataNDC={isDataKhoLR} />
                   ) : actionType == 'edit' ? (
-                    <NDCEdit close={() => setIsShowModal(false)} dataNDC={isDataKhoDC} loadingData={handleLoading} setTargetRow={setTargetRow} />
+                    <PLREdit close={() => setIsShowModal(false)} dataNDC={isDataKhoLR} loadingData={handleLoading} setTargetRow={setTargetRow} />
                   ) : actionType == 'delete' ? (
-                    <NDCXoa close={() => setIsShowModal(false)} dataNDC={isDataKhoDC} loadingData={handleLoading} setTargetRow={setTargetRow} />
+                    <PLRDelete close={() => setIsShowModal(false)} dataNDC={isDataKhoLR} loadingData={handleLoading} setTargetRow={setTargetRow} />
                   ) : actionType == 'print' ? (
-                    <NDCPrint close={() => setIsShowModal(false)} />
+                    <PLRPrint close={() => setIsShowModal(false)} />
                   ) : null)}
-              </div> */}
+              </div>
             </>
           )}
         </>
