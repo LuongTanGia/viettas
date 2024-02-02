@@ -98,6 +98,10 @@ const Modals = ({
     NgayBatDau: startDate,
     NgayKetThuc: endDate,
   })
+  const [formPrintFilter, setFormPrintFilter] = useState({
+    NgayBatDau: startDate,
+    NgayKetThuc: endDate,
+  })
 
   const [checkboxValues, setCheckboxValues] = useState({
     checkbox1: true,
@@ -825,13 +829,6 @@ const Modals = ({
     return total
   }
 
-  // const handleLien = (checkboxName) => {
-  //   setCheckboxValues((prevValues) => ({
-  //     ...prevValues,
-  //     [checkboxName]: !prevValues[checkboxName],
-  //   }))
-  // }
-
   const handleTienMat = () => {
     setFormCreate((prevFormPMH) => {
       return {
@@ -841,18 +838,66 @@ const Modals = ({
     })
   }
 
-  const handleFilterPrint = () => {
-    const ngayBD = dayjs(formPrint.NgayBatDau)
-    const ngayKT = dayjs(formPrint.NgayKetThuc)
-    // Lọc hàng hóa dựa trên ngày bắt đầu và ngày kết thúc
-    const filteredData = data.filter((item) => {
-      const itemDate = dayjs(item.NgayCTu)
+  useEffect(() => {
+    const handleFilterPrint = () => {
+      console.log('formPrint', formPrintFilter)
+      const ngayBD = dayjs(formPrintFilter.NgayBatDau)
+      const ngayKT = dayjs(formPrintFilter.NgayKetThuc)
 
-      if (ngayBD.isValid() && ngayKT.isValid()) {
-        return itemDate >= ngayBD && itemDate <= ngayKT
-      }
-    })
-    setNewData(filteredData)
+      // Lọc hàng hóa dựa trên ngày bắt đầu và ngày kết thúc
+      const filteredData = data.filter((item) => {
+        const itemDate = dayjs(item.NgayCTu)
+
+        if (ngayBD.isValid() && ngayKT.isValid()) {
+          return itemDate >= ngayBD && itemDate <= ngayKT
+        }
+      })
+      setNewData(filteredData)
+    }
+
+    handleFilterPrint()
+  }, [formPrintFilter?.NgayKetThuc, formPrintFilter?.NgayBatDau])
+
+  const handleStartDateChange = (newDate) => {
+    const startDate = newDate
+    const endDate = formPrint.NgayKetThuc
+
+    if (dayjs(startDate).isAfter(dayjs(endDate))) {
+      // Nếu ngày bắt đầu lớn hơn ngày kết thúc, cập nhật ngày kết thúc
+      setFormPrint({
+        ...formPrint,
+        NgayBatDau: startDate,
+        NgayKetThuc: startDate,
+      })
+      setFormPrintFilter({ ...formPrintFilter, NgayBatDau: startDate, NgayKetThuc: startDate })
+    } else {
+      setFormPrint({
+        ...formPrint,
+        NgayBatDau: startDate,
+      })
+      setFormPrintFilter({ ...formPrintFilter, NgayBatDau: startDate })
+    }
+  }
+
+  const handleEndDateChange = (newDate) => {
+    const startDate = formPrint.NgayBatDau
+    const endDate = dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss')
+
+    if (dayjs(startDate).isAfter(dayjs(endDate))) {
+      // Nếu ngày kết thúc nhỏ hơn ngày bắt đầu, cập nhật ngày bắt đầu
+      setFormPrint({
+        ...formPrint,
+        NgayBatDau: endDate,
+        NgayKetThuc: endDate,
+      })
+      setFormPrintFilter({ ...formPrintFilter, NgayBatDau: endDate, NgayKetThuc: endDate })
+    } else {
+      setFormPrint({
+        ...formPrint,
+        NgayKetThuc: endDate,
+      })
+      setFormPrintFilter({ ...formPrintFilter, NgayKetThuc: endDate })
+    }
   }
 
   const handleEditData = (data) => {
@@ -900,13 +945,21 @@ const Modals = ({
                       <DateField
                         className="DatePicker_PMH max-w-[154px]"
                         format="DD/MM/YYYY"
-                        maxDate={dayjs(controlDate.NgayKetThuc)}
-                        defaultValue={dayjs(controlDate.NgayBatDau)}
+                        // maxDate={dayjs(controlDate.NgayKetThuc)}
+                        value={dayjs(formPrint.NgayBatDau)}
                         onChange={(newDate) => {
                           setFormPrint({
                             ...formPrint,
                             NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
                           })
+                        }}
+                        onBlur={() => {
+                          handleStartDateChange(formPrint.NgayBatDau)
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            handleStartDateChange(formPrint.NgayBatDau)
+                          }
                         }}
                         sx={{
                           '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
@@ -917,12 +970,6 @@ const Modals = ({
                             width: '18px',
                             height: '18px',
                           },
-                        }}
-                        onBlur={handleFilterPrint}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            handleFilterPrint()
-                          }
                         }}
                       />
                     </div>
@@ -931,13 +978,21 @@ const Modals = ({
                       <DateField
                         className="DatePicker_PMH max-w-[154px]"
                         format="DD/MM/YYYY"
-                        minDate={dayjs(controlDate.NgayBatDau)}
-                        defaultValue={dayjs(controlDate.NgayKetThuc)}
+                        // minDate={dayjs(controlDate.NgayBatDau)}
+                        value={dayjs(formPrint.NgayKetThuc)}
                         onChange={(newDate) => {
                           setFormPrint({
                             ...formPrint,
                             NgayKetThuc: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
                           })
+                        }}
+                        onBlur={() => {
+                          handleEndDateChange(formPrint.NgayKetThuc)
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            handleEndDateChange(formPrint.NgayKetThuc)
+                          }
                         }}
                         sx={{
                           '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
@@ -948,12 +1003,6 @@ const Modals = ({
                             width: '18px',
                             height: '18px',
                           },
-                        }}
-                        onBlur={handleFilterPrint}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            handleFilterPrint()
-                          }
                         }}
                       />
                     </div>
@@ -1896,7 +1945,7 @@ const Modals = ({
           <ModalOnlyPrint
             typePage={typePage}
             close={() => setIsShowModalOnlyPrint(false)}
-            dataThongTin={dataThongTin}
+            dataThongTin={dataThongTinSua}
             data={data}
             actionType={actionType}
             close2={() => close()}
@@ -1907,7 +1956,7 @@ const Modals = ({
           <ModalOnlyPrintWareHouse
             typePage={typePage}
             close={() => setIsShowModalOnlyPrintWareHouse(false)}
-            dataThongTin={dataThongTin}
+            dataThongTin={dataThongTinSua}
             data={data}
             controlDate={controlDate}
             actionType={actionType}

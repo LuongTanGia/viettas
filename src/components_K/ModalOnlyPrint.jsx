@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useMemo, useState } from 'react'
-import icons from '../untils/icons'
+
 import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
 import { base64ToPDF } from '../action/Actions'
@@ -8,6 +8,7 @@ import { base64ToPDF } from '../action/Actions'
 import { DateField } from '@mui/x-date-pickers/DateField'
 import ActionButton from '../components/util/Button/ActionButton'
 import { Select } from 'antd'
+import { RETOKEN } from '../action/Actions'
 import logo from '../assets/VTS-iSale.ico'
 import * as apis from '../apis'
 import { Checkbox } from 'antd'
@@ -36,7 +37,10 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
   }, [dataByDate])
 
   const [formPrint, setFormPrint] = useState({ NgayBatDau: startDate, NgayKetThuc: endDate })
-
+  const [formPrintFilter, setFormPrintFilter] = useState({
+    NgayBatDau: startDate,
+    NgayKetThuc: endDate,
+  })
   const [checkboxValues, setCheckboxValues] = useState({
     checkbox1: true,
     checkbox2: false,
@@ -71,18 +75,67 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
     return total
   }
 
-  const handleFilterPrint = () => {
-    const ngayBD = dayjs(formPrint.NgayBatDau)
-    const ngayKT = dayjs(formPrint.NgayKetThuc)
-    // Lọc hàng hóa dựa trên ngày bắt đầu và ngày kết thúc
-    const filteredData = data.filter((item) => {
-      const itemDate = dayjs(item.NgayCTu)
+  useEffect(() => {
+    const handleFilterPrint = () => {
+      console.log('formPrint', formPrintFilter)
+      const ngayBD = dayjs(formPrintFilter.NgayBatDau)
+      const ngayKT = dayjs(formPrintFilter.NgayKetThuc)
+      // console.log('formPrint22222222', formPrint)
 
-      if (ngayBD.isValid() && ngayKT.isValid()) {
-        return itemDate >= ngayBD && itemDate <= ngayKT
-      }
-    })
-    setNewDataPMH(filteredData)
+      // Lọc hàng hóa dựa trên ngày bắt đầu và ngày kết thúc
+      const filteredData = data.filter((item) => {
+        const itemDate = dayjs(item.NgayCTu)
+
+        if (ngayBD.isValid() && ngayKT.isValid()) {
+          return itemDate >= ngayBD && itemDate <= ngayKT
+        }
+      })
+      setNewDataPMH(filteredData)
+    }
+
+    handleFilterPrint()
+  }, [formPrintFilter?.NgayKetThuc, formPrintFilter?.NgayBatDau])
+
+  const handleStartDateChange = (newDate) => {
+    const startDate = newDate
+    const endDate = formPrint.NgayKetThuc
+
+    if (dayjs(startDate).isAfter(dayjs(endDate))) {
+      // Nếu ngày bắt đầu lớn hơn ngày kết thúc, cập nhật ngày kết thúc
+      setFormPrint({
+        ...formPrint,
+        NgayBatDau: startDate,
+        NgayKetThuc: startDate,
+      })
+      setFormPrintFilter({ ...formPrintFilter, NgayBatDau: startDate, NgayKetThuc: startDate })
+    } else {
+      setFormPrint({
+        ...formPrint,
+        NgayBatDau: startDate,
+      })
+      setFormPrintFilter({ ...formPrintFilter, NgayBatDau: startDate })
+    }
+  }
+
+  const handleEndDateChange = (newDate) => {
+    const startDate = formPrint.NgayBatDau
+    const endDate = dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss')
+
+    if (dayjs(startDate).isAfter(dayjs(endDate))) {
+      // Nếu ngày kết thúc nhỏ hơn ngày bắt đầu, cập nhật ngày bắt đầu
+      setFormPrint({
+        ...formPrint,
+        NgayBatDau: endDate,
+        NgayKetThuc: endDate,
+      })
+      setFormPrintFilter({ ...formPrintFilter, NgayBatDau: endDate, NgayKetThuc: endDate })
+    } else {
+      setFormPrint({
+        ...formPrint,
+        NgayKetThuc: endDate,
+      })
+      setFormPrintFilter({ ...formPrintFilter, NgayKetThuc: endDate })
+    }
   }
 
   const handleOnlyPrint = async () => {
@@ -94,11 +147,10 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
         // Kiểm tra call api thành công
         if (response.data && response.data.DataError === 0) {
           base64ToPDF(response.data.DataResults)
-        } else if (response.data && response.data.DataError === -104) {
-          toast.error(response.data.DataErrorDescription)
-        } else if (response.data && response.data.DataError === -103) {
-          toast.error(response.data.DataErrorDescription)
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleOnlyPrint()
+        } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
           toast.warning(response.data.DataErrorDescription)
         } else {
           toast.error(response.data.DataErrorDescription)
@@ -109,11 +161,10 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
         // Kiểm tra call api thành công
         if (response.data && response.data.DataError === 0) {
           base64ToPDF(response.data.DataResults)
-        } else if (response.data && response.data.DataError === -104) {
-          toast.error(response.data.DataErrorDescription)
-        } else if (response.data && response.data.DataError === -103) {
-          toast.error(response.data.DataErrorDescription)
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleOnlyPrint()
+        } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
           toast.warning(response.data.DataErrorDescription)
         } else {
           toast.error(response.data.DataErrorDescription)
@@ -124,17 +175,15 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
         // Kiểm tra call api thành công
         if (response.data && response.data.DataError === 0) {
           base64ToPDF(response.data.DataResults)
-        } else if (response.data && response.data.DataError === -104) {
-          toast.error(response.data.DataErrorDescription)
-        } else if (response.data && response.data.DataError === -103) {
-          toast.error(response.data.DataErrorDescription)
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleOnlyPrint()
+        } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
           toast.warning(response.data.DataErrorDescription)
         } else {
           toast.error(response.data.DataErrorDescription)
         }
       }
-      // close()
     } catch (error) {
       console.error('Error while saving data:', error)
     }
@@ -157,13 +206,21 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
                   <DateField
                     className="DatePicker_PMH max-w-[154px]"
                     format="DD/MM/YYYY"
-                    maxDate={actionType !== 'create' && dayjs(formPrint.NgayKetThuc)}
-                    defaultValue={actionType === 'create' ? dayjs() : dayjs(dataThongTin?.NgayCTu)}
+                    // maxDate={actionType !== 'create' && dayjs(formPrint.NgayKetThuc)}
+                    value={actionType === 'create' ? dayjs() : dayjs(formPrint.NgayBatDau)}
                     onChange={(newDate) => {
                       setFormPrint({
                         ...formPrint,
                         NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
                       })
+                    }}
+                    onBlur={() => {
+                      handleStartDateChange(formPrint.NgayBatDau)
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handleStartDateChange(formPrint.NgayBatDau)
+                      }
                     }}
                     sx={{
                       '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
@@ -182,13 +239,21 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
                   <DateField
                     className="DatePicker_PMH max-w-[154px]"
                     format="DD/MM/YYYY"
-                    minDate={actionType !== 'create' && dayjs(formPrint.NgayBatDau)}
-                    defaultValue={actionType === 'create' ? dayjs() : dayjs(dataThongTin?.NgayCTu)}
+                    // minDate={actionType !== 'create' && dayjs(formPrint.NgayBatDau)}
+                    value={actionType === 'create' ? dayjs() : dayjs(formPrint.NgayKetThuc)}
                     onChange={(newDate) => {
                       setFormPrint({
                         ...formPrint,
                         NgayKetThuc: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
                       })
+                    }}
+                    onBlur={() => {
+                      handleEndDateChange(formPrint.NgayKetThuc)
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handleEndDateChange(formPrint.NgayKetThuc)
+                      }
                     }}
                     sx={{
                       '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
@@ -199,12 +264,6 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
                         width: '18px',
                         height: '18px',
                       },
-                    }}
-                    onBlur={handleFilterPrint}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        handleFilterPrint()
-                      }
                     }}
                   />
                 </div>

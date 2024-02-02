@@ -1,12 +1,12 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useMemo, useState } from 'react'
-import icons from '../untils/icons'
+
 import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
 import { base64ToPDF } from '../action/Actions'
 // import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { DateField } from '@mui/x-date-pickers/DateField'
-
+import { RETOKEN } from '../action/Actions'
 import ActionButton from '../components/util/Button/ActionButton'
 import logo from '../assets/VTS-iSale.ico'
 import { Select } from 'antd'
@@ -14,15 +14,13 @@ import { Checkbox } from 'antd'
 const { Option } = Select
 import * as apis from '../apis'
 
-const { MdFilterAlt } = icons
-
 const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2, SctCreate, typePage }) => {
   const [selectedSctBD, setSelectedSctBD] = useState()
   const [selectedSctKT, setSelectedSctKT] = useState()
   const [newDataPMH, setNewDataPMH] = useState()
 
-  const startDate = dayjs(dataThongTin.NgayCTu).format('YYYY-MM-DDTHH:mm:ss')
-  const endDate = dayjs(dataThongTin.NgayCTu).format('YYYY-MM-DDTHH:mm:ss')
+  const startDate = dayjs(dataThongTin?.NgayCTu).format('YYYY-MM-DDTHH:mm:ss')
+  const endDate = dayjs(dataThongTin?.NgayCTu).format('YYYY-MM-DDTHH:mm:ss')
 
   const dataByDate = useMemo(() => {
     return data.filter((item) => {
@@ -42,7 +40,10 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
     NgayBatDau: startDate,
     NgayKetThuc: endDate,
   })
-
+  const [formPrintFilter, setFormPrintFilter] = useState({
+    NgayBatDau: startDate,
+    NgayKetThuc: endDate,
+  })
   const [checkboxValues, setCheckboxValues] = useState({
     checkbox1: true,
     checkbox2: false,
@@ -67,26 +68,68 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
     return total
   }
 
-  const handleFilterPrint = () => {
-    const ngayBD = dayjs(formPrint.NgayBatDau)
-    const ngayKT = dayjs(formPrint.NgayKetThuc)
-    // Lọc hàng hóa dựa trên ngày bắt đầu và ngày kết thúc
-    const filteredData = data.filter((item) => {
-      const itemDate = dayjs(item.NgayCTu)
+  useEffect(() => {
+    const handleFilterPrint = () => {
+      console.log('formPrint', formPrintFilter)
+      const ngayBD = dayjs(formPrintFilter.NgayBatDau)
+      const ngayKT = dayjs(formPrintFilter.NgayKetThuc)
+      // console.log('formPrint22222222', formPrint)
 
-      if (ngayBD.isValid() && ngayKT.isValid()) {
-        return itemDate >= ngayBD && itemDate <= ngayKT
-      }
-    })
-    setNewDataPMH(filteredData)
+      // Lọc hàng hóa dựa trên ngày bắt đầu và ngày kết thúc
+      const filteredData = data.filter((item) => {
+        const itemDate = dayjs(item.NgayCTu)
+
+        if (ngayBD.isValid() && ngayKT.isValid()) {
+          return itemDate >= ngayBD && itemDate <= ngayKT
+        }
+      })
+      setNewDataPMH(filteredData)
+    }
+
+    handleFilterPrint()
+  }, [formPrintFilter?.NgayKetThuc, formPrintFilter?.NgayBatDau])
+
+  const handleStartDateChange = (newDate) => {
+    const startDate = newDate
+    const endDate = formPrint.NgayKetThuc
+
+    if (dayjs(startDate).isAfter(dayjs(endDate))) {
+      // Nếu ngày bắt đầu lớn hơn ngày kết thúc, cập nhật ngày kết thúc
+      setFormPrint({
+        ...formPrint,
+        NgayBatDau: startDate,
+        NgayKetThuc: startDate,
+      })
+      setFormPrintFilter({ ...formPrintFilter, NgayBatDau: startDate, NgayKetThuc: startDate })
+    } else {
+      setFormPrint({
+        ...formPrint,
+        NgayBatDau: startDate,
+      })
+      setFormPrintFilter({ ...formPrintFilter, NgayBatDau: startDate })
+    }
   }
 
-  // const handleLien = (checkboxName) => {
-  //   setCheckboxValues((prevValues) => ({
-  //     ...prevValues,
-  //     [checkboxName]: !prevValues[checkboxName],
-  //   }))
-  // }
+  const handleEndDateChange = (newDate) => {
+    const startDate = formPrint.NgayBatDau
+    const endDate = dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss')
+
+    if (dayjs(startDate).isAfter(dayjs(endDate))) {
+      // Nếu ngày kết thúc nhỏ hơn ngày bắt đầu, cập nhật ngày bắt đầu
+      setFormPrint({
+        ...formPrint,
+        NgayBatDau: endDate,
+        NgayKetThuc: endDate,
+      })
+      setFormPrintFilter({ ...formPrintFilter, NgayBatDau: endDate, NgayKetThuc: endDate })
+    } else {
+      setFormPrint({
+        ...formPrint,
+        NgayKetThuc: endDate,
+      })
+      setFormPrintFilter({ ...formPrintFilter, NgayKetThuc: endDate })
+    }
+  }
 
   const handleOnlyPrintWareHouse = async () => {
     try {
@@ -97,11 +140,10 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
         // Kiểm tra call api thành công
         if (response.data && response.data.DataError === 0) {
           base64ToPDF(response.data.DataResults)
-        } else if (response.data && response.data.DataError === -104) {
-          toast.error(response.data.DataErrorDescription)
-        } else if (response.data && response.data.DataError === -103) {
-          toast.error(response.data.DataErrorDescription)
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleOnlyPrintWareHouse()
+        } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
           toast.warning(response.data.DataErrorDescription)
         } else {
           toast.error(response.data.DataErrorDescription)
@@ -112,11 +154,10 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
         // Kiểm tra call api thành công
         if (response.data && response.data.DataError === 0) {
           base64ToPDF(response.data.DataResults)
-        } else if (response.data && response.data.DataError === -104) {
-          toast.error(response.data.DataErrorDescription)
-        } else if (response.data && response.data.DataError === -103) {
-          toast.error(response.data.DataErrorDescription)
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleOnlyPrintWareHouse()
+        } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
           toast.warning(response.data.DataErrorDescription)
         } else {
           toast.error(response.data.DataErrorDescription)
@@ -146,13 +187,21 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
                   <DateField
                     className="DatePicker_PMH max-w-[154px]"
                     format="DD/MM/YYYY"
-                    maxDate={dayjs(formPrint.NgayKetThuc)}
-                    defaultValue={dayjs(dataThongTin?.NgayCTu)}
+                    // maxDate={dayjs(formPrint.NgayKetThuc)}
+                    value={dayjs(formPrint.NgayBatDau)}
                     onChange={(newDate) => {
                       setFormPrint({
                         ...formPrint,
                         NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
                       })
+                    }}
+                    onBlur={() => {
+                      handleStartDateChange(formPrint.NgayBatDau)
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handleStartDateChange(formPrint.NgayBatDau)
+                      }
                     }}
                     sx={{
                       '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
@@ -163,12 +212,6 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
                         width: '18px',
                         height: '18px',
                       },
-                    }}
-                    onBlur={handleFilterPrint}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        handleFilterPrint()
-                      }
                     }}
                   />
                 </div>
@@ -177,13 +220,20 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
                   <DateField
                     className="DatePicker_PMH max-w-[154px]"
                     format="DD/MM/YYYY"
-                    minDate={dayjs(formPrint.NgayBatDau)}
-                    defaultValue={dayjs(dataThongTin?.NgayCTu)}
+                    value={dayjs(formPrint.NgayKetThuc)}
                     onChange={(newDate) => {
                       setFormPrint({
                         ...formPrint,
                         NgayKetThuc: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
                       })
+                    }}
+                    onBlur={() => {
+                      handleEndDateChange(formPrint.NgayKetThuc)
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handleEndDateChange(formPrint.NgayKetThuc)
+                      }
                     }}
                     sx={{
                       '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
@@ -194,12 +244,6 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
                         width: '18px',
                         height: '18px',
                       },
-                    }}
-                    onBlur={handleFilterPrint}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        handleFilterPrint()
-                      }
                     }}
                   />
                 </div>

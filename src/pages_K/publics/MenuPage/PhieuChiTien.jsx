@@ -553,6 +553,44 @@ const PhieuChiTien = () => {
     }
   }
 
+  const handleStartDateChange = (newDate) => {
+    const startDate = newDate
+    const endDate = formKhoanNgay.NgayKetThuc
+
+    if (dayjs(startDate).isAfter(dayjs(endDate))) {
+      // Nếu ngày bắt đầu lớn hơn ngày kết thúc, cập nhật ngày kết thúc
+      setFormKhoanNgay({
+        ...formKhoanNgay,
+        NgayBatDau: startDate,
+        NgayKetThuc: startDate,
+      })
+    } else {
+      setFormKhoanNgay({
+        ...formKhoanNgay,
+        NgayBatDau: startDate,
+      })
+    }
+  }
+
+  const handleEndDateChange = (newDate) => {
+    const startDate = formKhoanNgay.NgayBatDau
+    const endDate = dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss')
+
+    if (dayjs(startDate).isAfter(dayjs(endDate))) {
+      // Nếu ngày kết thúc nhỏ hơn ngày bắt đầu, cập nhật ngày bắt đầu
+      setFormKhoanNgay({
+        ...formKhoanNgay,
+        NgayBatDau: endDate,
+        NgayKetThuc: endDate,
+      })
+    } else {
+      setFormKhoanNgay({
+        ...formKhoanNgay,
+        NgayKetThuc: endDate,
+      })
+    }
+  }
+
   const handleSearch = (e) => {
     const currentTime = new Date().getTime()
     if (currentTime - lastSearchTime >= 1000 && e !== prevSearchValue) {
@@ -561,7 +599,7 @@ const PhieuChiTien = () => {
       setLastSearchTime(currentTime)
     }
   }
-  console.log('first', formKhoanNgay)
+
   return (
     <>
       {isLoading ? (
@@ -674,17 +712,22 @@ const PhieuChiTien = () => {
                 <DateField
                   className="DatePicker_PMH max-w-[110px]"
                   format="DD/MM/YYYY"
-                  defaultValue={dayjs(formKhoanNgay.NgayBatDau)}
-                  maxDate={dayjs(formKhoanNgay.NgayKetThuc)}
+                  value={dayjs(formKhoanNgay.NgayBatDau)}
+                  // maxDate={dayjs(formKhoanNgay.NgayKetThuc)}
                   onChange={(newDate) => {
                     setFormKhoanNgay({
                       ...formKhoanNgay,
                       NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
                     })
                   }}
-                  onBlur={handleFilterDS}
+                  onBlur={() => {
+                    handleStartDateChange(formKhoanNgay.NgayBatDau)
+                    handleFilterDS()
+                  }}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
+                      handleStartDateChange(formKhoanNgay.NgayBatDau)
+
                       setPrevDateValue(formKhoanNgay)
                       handleFilterDS()
                     }
@@ -707,14 +750,26 @@ const PhieuChiTien = () => {
                 <DateField
                   className="DatePicker_PMH max-w-[110px]"
                   format="DD/MM/YYYY"
-                  minDate={dayjs(formKhoanNgay.NgayBatDau)}
-                  defaultValue={dayjs(formKhoanNgay.NgayKetThuc)}
+                  // minDate={dayjs(formKhoanNgay.NgayBatDau)}
+                  value={dayjs(formKhoanNgay.NgayKetThuc)}
                   onChange={(newDate) => {
                     setFormKhoanNgay({
                       ...formKhoanNgay,
                       NgayKetThuc: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
                     })
                   }}
+                  onBlur={() => {
+                    handleEndDateChange(formKhoanNgay.NgayKetThuc)
+                    handleFilterDS()
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handleEndDateChange(formKhoanNgay.NgayKetThuc)
+                      setPrevDateValue(formKhoanNgay)
+                      handleFilterDS()
+                    }
+                  }}
+                  onFocus={() => setPrevDateValue(formKhoanNgay)}
                   sx={{
                     '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
                     '& .MuiButtonBase-root': {
@@ -725,14 +780,6 @@ const PhieuChiTien = () => {
                       height: '18px',
                     },
                   }}
-                  onBlur={handleFilterDS}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      setPrevDateValue(formKhoanNgay)
-                      handleFilterDS()
-                    }
-                  }}
-                  onFocus={() => setPrevDateValue(formKhoanNgay)}
                 />
               </div>
             </div>
