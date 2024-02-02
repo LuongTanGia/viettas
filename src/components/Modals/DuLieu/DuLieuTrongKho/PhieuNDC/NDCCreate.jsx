@@ -13,8 +13,8 @@ import logo from '../../../../../assets/VTS-iSale.ico'
 import categoryAPI from '../../../../../API/linkAPI'
 import { RETOKEN } from '../../../../../action/Actions'
 import { useSearch } from '../../../../hooks/Search'
-import ActionButton from '../../../../../components/util/Button/ActionButton'
-import SimpleBackdrop from '../../../../../components/util/Loading/LoadingPage'
+import ActionButton from '../../../../util/Button/ActionButton'
+import SimpleBackdrop from '../../../../util/Loading/LoadingPage'
 import HighlightedCell from '../../../../hooks/HighlightedCell'
 import NDCPrint from './NDCPrint'
 
@@ -631,6 +631,7 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                           />
                         </div>
                         <Table
+                          bordered
                           columns={title}
                           dataSource={filteredHangHoa}
                           onRow={(record) => ({

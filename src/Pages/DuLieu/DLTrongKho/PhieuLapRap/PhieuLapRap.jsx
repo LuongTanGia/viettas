@@ -13,27 +13,22 @@ import { FaSearch, FaEyeSlash } from 'react-icons/fa'
 import { IoMdAddCircleOutline } from 'react-icons/io'
 import { CloseSquareFilled } from '@ant-design/icons'
 import { MdEdit, MdDelete, MdPrint } from 'react-icons/md'
+import { useSearch } from '../../../../components/hooks/Search'
 import categoryAPI from '../../../../API/linkAPI'
-import { useSearch } from '../../../../components_T/hooks/Search'
 import { RETOKEN, exportToExcel } from '../../../../action/Actions'
+import HighlightedCell from '../../../../components/hooks/HighlightedCell'
 import ActionButton from '../../../../components/util/Button/ActionButton'
-import HighlightedCell from '../../../../components_T/hooks/HighlightedCell'
 import SimpleBackdrop from '../../../../components/util/Loading/LoadingPage'
-import NDCXem from '../../../../components_T/Modal/DuLieu/DuLieuTrongKho/PhieuNDC/NDCXem'
-import NDCXoa from '../../../../components_T/Modal/DuLieu/DuLieuTrongKho/PhieuNDC/NDCXoa'
-import NDCEdit from '../../../../components_T/Modal/DuLieu/DuLieuTrongKho/PhieuNDC/NDCEdit'
-import { nameColumsPhieuNhapDieuChinh } from '../../../../components/util/Table/ColumnName'
-import NDCPrint from '../../../../components_T/Modal/DuLieu/DuLieuTrongKho/PhieuNDC/NDCPrint'
-import NDCCreate from '../../../../components_T/Modal/DuLieu/DuLieuTrongKho/PhieuNDC/NDCCreate'
+import { nameColumsPhieuLapRap } from '../../../../components/util/Table/ColumnName'
 
-const PhieuNhapDieuChinh = ({ path }) => {
+const PhieuLapRap = ({ path }) => {
   const navigate = useNavigate()
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
-  const [dataNDC, setDataNDC] = useState('')
-  const [isDataKhoDC, setIsDataKhoDC] = useState('')
-  const [setSearchHangHoa, filteredHangHoa, searchHangHoa] = useSearch(dataNDC)
+  const [dataPLR, setDataPLR] = useState('')
+  const [isDataKhoLR, setIsDataKhoLR] = useState('')
+  const [setSearchHangHoa, filteredHangHoa, searchHangHoa] = useSearch(dataPLR)
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [isShowOption, setIsShowOption] = useState(false)
   const [isShowModal, setIsShowModal] = useState(false)
@@ -56,37 +51,34 @@ const PhieuNhapDieuChinh = ({ path }) => {
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
     setcheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
-    const key = Object.keys(dataNDC ? dataNDC[0] : []).filter((key) => key)
+    const key = Object.keys(dataPLR ? dataPLR[0] : []).filter((key) => key !== 'MaKho')
     setOptions(key)
   }, [selectVisible])
 
-  function formatDateTime(inputDate, includeTime = false) {
-    const date = new Date(inputDate)
-    const day = date.getDate().toString().padStart(2, '0')
-    const month = (date.getMonth() + 1).toString().padStart(2, '0')
-    const year = date.getFullYear()
-    let formattedDateTime = `${day}/${month}/${year}`
-    if (includeTime) {
-      const hours = date.getHours().toString().padStart(2, '0')
-      const minutes = date.getMinutes().toString().padStart(2, '0')
-      const seconds = date.getSeconds().toString().padStart(2, '0')
-      formattedDateTime += ` ${hours}:${minutes}:${seconds} `
+  useEffect(() => {
+    if (dataCRUD?.VIEW == false) {
+      setIsShowNotify(true)
     }
-    return formattedDateTime
-  }
-  const formatCurrency = (value) => {
-    return Number(value).toLocaleString('en-US')
-  }
-  const formatThapPhan = (number, decimalPlaces) => {
-    if (typeof number === 'number' && !isNaN(number)) {
-      const formatter = new Intl.NumberFormat('en-US', {
-        minimumFractionDigits: decimalPlaces,
-        maximumFractionDigits: decimalPlaces,
-      })
-      return formatter.format(number)
+  }, [dataCRUD])
+
+  useEffect(() => {
+    const getDataQuyenHan = async (path) => {
+      try {
+        const response = await categoryAPI.QuyenHan(path, TokenAccess)
+        if (response.data.DataError === 0) {
+          setDataCRUD(response.data)
+          setIsLoading(true)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          getDataQuyenHan()
+        }
+      } catch (error) {
+        console.log(error)
+        setIsLoading(true)
+      }
     }
-    return ''
-  }
+    getDataQuyenHan(path)
+  }, [])
 
   useEffect(() => {
     const getTimeSetting = async () => {
@@ -118,11 +110,11 @@ const PhieuNhapDieuChinh = ({ path }) => {
   }, [dateData?.NgayBatDau, dateData?.NgayKetThuc])
 
   useEffect(() => {
-    const getDataNDC = async () => {
+    const getDataPLR = async () => {
       try {
         setTableLoad(true)
         if (isLoading == true) {
-          const response = await categoryAPI.GetDataNDC(
+          const response = await categoryAPI.GetDataPLR(
             dateData == {}
               ? {}
               : {
@@ -132,14 +124,14 @@ const PhieuNhapDieuChinh = ({ path }) => {
             TokenAccess,
           )
           if (response.data.DataError == 0) {
-            setDataNDC(response.data.DataResults)
+            setDataPLR(response.data.DataResults)
             setTableLoad(false)
           } else if (response.data.DataError == -104) {
-            setDataNDC([])
+            setDataPLR([])
             setTableLoad(false)
           } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
             await RETOKEN()
-            getDataNDC()
+            getDataPLR()
           }
         }
       } catch (error) {
@@ -147,45 +139,34 @@ const PhieuNhapDieuChinh = ({ path }) => {
         setTableLoad(false)
       }
     }
-    getDataNDC()
-  }, [searchHangHoa, isLoading, targetRow, dateData.NgayBatDau, dateData.NgayKetThuc])
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (showOption.current && !showOption.current.contains(event.target)) {
-        setIsShowOption(false)
-      }
+    getDataPLR()
+  }, [searchHangHoa, isLoading, targetRow])
+  function formatDateTime(inputDate, includeTime = false) {
+    const date = new Date(inputDate)
+    const day = date.getDate().toString().padStart(2, '0')
+    const month = (date.getMonth() + 1).toString().padStart(2, '0')
+    const year = date.getFullYear()
+    let formattedDateTime = `${day}/${month}/${year}`
+    if (includeTime) {
+      const hours = date.getHours().toString().padStart(2, '0')
+      const minutes = date.getMinutes().toString().padStart(2, '0')
+      const seconds = date.getSeconds().toString().padStart(2, '0')
+      formattedDateTime += ` ${hours}:${minutes}:${seconds} `
     }
-    document.addEventListener('click', handleClickOutside)
-    return () => {
-      document.removeEventListener('click', handleClickOutside)
+    return formattedDateTime
+  }
+  const formatCurrency = (value) => {
+    return Number(value).toLocaleString('en-US')
+  }
+  const formatThapPhan = (number, decimalPlaces) => {
+    if (typeof number === 'number' && !isNaN(number)) {
+      const formatter = new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: decimalPlaces,
+        maximumFractionDigits: decimalPlaces,
+      })
+      return formatter.format(number)
     }
-  }, [])
-
-  useEffect(() => {
-    if (dataCRUD?.VIEW == false) {
-      setIsShowNotify(true)
-    }
-  }, [dataCRUD])
-
-  useEffect(() => {
-    getDataQuyenHan(path)
-  }, [])
-
-  const getDataQuyenHan = async (path) => {
-    try {
-      const response = await categoryAPI.QuyenHan(path, TokenAccess)
-      if (response.data.DataError === 0) {
-        setDataCRUD(response.data)
-        setIsLoading(true)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getDataQuyenHan()
-      }
-    } catch (error) {
-      console.log(error)
-      setIsLoading(true)
-    }
+    return ''
   }
   let timerId
   const handleSearch = (event) => {
@@ -201,16 +182,16 @@ const PhieuNhapDieuChinh = ({ path }) => {
   const handleEdit = (record) => {
     setIsShowModal(true)
     setActionType('edit')
-    setIsDataKhoDC(record)
+    setIsDataKhoLR(record)
   }
   const handleView = (record) => {
     setIsShowModal(true)
-    setIsDataKhoDC(record)
+    setIsDataKhoLR(record)
     setActionType('view')
   }
   const handleDelete = (record) => {
     setIsShowModal(true)
-    setIsDataKhoDC(record)
+    setIsDataKhoLR(record)
     setActionType('delete')
   }
   const handlePrint = () => {
@@ -220,23 +201,8 @@ const PhieuNhapDieuChinh = ({ path }) => {
   const handleLoading = () => {
     setTableLoad(true)
   }
-  const handleHidden = () => {
-    setSelectVisible(!selectVisible)
-  }
-  const onChange = (checkedValues) => {
-    setcheckedList(checkedValues)
-  }
-  const onClickSubmit = () => {
-    setTableLoad(true)
-    setTimeout(() => {
-      setHiddenRow(checkedList)
-      setTableLoad(false)
-      localStorage.setItem('hiddenColumns', JSON.stringify(checkedList))
-    }, 1000)
-  }
   const handleDateChange = () => {
     clearTimeout(timerId)
-    console.log(khoanNgayFrom, khoanNgayTo, 'dataaaaaaa')
     timerId = setTimeout(() => {
       if (
         !dateChange &&
@@ -269,6 +235,20 @@ const PhieuNhapDieuChinh = ({ path }) => {
     if (event.key === 'Enter') {
       handleDateChange()
     }
+  }
+  const handleHidden = () => {
+    setSelectVisible(!selectVisible)
+  }
+  const onChange = (checkedValues) => {
+    setcheckedList(checkedValues)
+  }
+  const onClickSubmit = () => {
+    setTableLoad(true)
+    setTimeout(() => {
+      setHiddenRow(checkedList)
+      setTableLoad(false)
+      localStorage.setItem('hiddenColumns', JSON.stringify(checkedList))
+    }, 1000)
   }
   const titles = [
     {
@@ -363,24 +343,6 @@ const PhieuNhapDieuChinh = ({ path }) => {
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </span>
       ),
-    },
-    {
-      ...(dataThongSo.HIENTHIGIATRIKHO === true
-        ? {
-            title: 'Trị Giá',
-            dataIndex: 'TongTriGiaKho',
-            key: 'TongTriGiaKho',
-            align: 'center',
-            width: 120,
-            showSorterTooltip: false,
-            sorter: (a, b) => a.TongSoLuong - b.TongSoLuong,
-            render: (text) => (
-              <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 || text === null ? 'text-gray-300' : ''}`}>
-                <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOTIEN)} search={searchHangHoa} />
-              </span>
-            ),
-          }
-        : null),
     },
     {
       title: 'Ghi chú',
@@ -567,10 +529,10 @@ const PhieuNhapDieuChinh = ({ path }) => {
           ) : (
             <>
               <div className="flex flex-col gap-1">
-                <div className="flex justify-between gap-2  relative">
-                  <div className="flex gap-1 ">
+                <div className="flex justify-between gap-2 relative">
+                  <div className="flex gap-1">
                     <div className="flex items-center gap-2 py-0.5">
-                      <h1 className="text-lg font-bold uppercase">Phiếu Nhập Kho Điều Chỉnh</h1>
+                      <h1 className="text-lg font-bold uppercase">Phiếu Lắp Ráp</h1>
                       <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
                     </div>
                     {isShowSearch && (
@@ -645,7 +607,7 @@ const PhieuNhapDieuChinh = ({ path }) => {
                                   {options.map((item) => (
                                     <Col span={8} key={item}>
                                       <Checkbox value={item} checked={true}>
-                                        {nameColumsPhieuNhapDieuChinh[item]}
+                                        {nameColumsPhieuLapRap[item]}
                                       </Checkbox>
                                     </Col>
                                   ))}
@@ -731,9 +693,10 @@ const PhieuNhapDieuChinh = ({ path }) => {
                 <div id="my-table">
                   <Table
                     loading={tableLoad}
+                    bordered
                     className="table_DMHangHoa setHeight"
                     columns={newTitles}
-                    dataSource={filteredHangHoa}
+                    dataSource={filteredHangHoa.map((record, index) => ({ ...record, key: index }))}
                     pagination={{
                       defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
                       showSizeChanger: true,
@@ -802,7 +765,7 @@ const PhieuNhapDieuChinh = ({ path }) => {
                   />
                 </div>
               </div>
-              <div>
+              {/* <div>
                 {isShowModal &&
                   (actionType == 'create' ? (
                     <NDCCreate close={() => setIsShowModal(false)} loadingData={handleLoading} setTargetRow={setTargetRow} />
@@ -815,7 +778,7 @@ const PhieuNhapDieuChinh = ({ path }) => {
                   ) : actionType == 'print' ? (
                     <NDCPrint close={() => setIsShowModal(false)} />
                   ) : null)}
-              </div>
+              </div> */}
             </>
           )}
         </>
@@ -824,4 +787,4 @@ const PhieuNhapDieuChinh = ({ path }) => {
   )
 }
 
-export default PhieuNhapDieuChinh
+export default PhieuLapRap

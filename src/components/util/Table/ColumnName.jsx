@@ -152,3 +152,17 @@ export const nameColumsPhieuNhapDieuChinh = {
   NgaySuaCuoi: 'Ngày Sửa Cuối',
   TongTriGiaKho: 'Tổng Trị Giá',
 }
+export const nameColumsPhieuLapRap = {
+  STT: 'STT',
+  SoChungTu: 'Số Chứng Từ',
+  NgayCTu: 'Ngày Chứng Từ',
+  MaKho: 'Mã Kho',
+  ThongTinKho: 'Thông Tin Kho',
+  GhiChu: 'Ghi Chú',
+  SoMatHang: 'Số Mặt Hàng',
+  TongSoLuong: 'Tổng Số Lượng',
+  NguoiTao: 'Người Tạo',
+  NgayTao: 'Ngày Tạo',
+  NguoiSuaCuoi: 'Người Sửa Cuối',
+  NgaySuaCuoi: 'Ngày Sửa Cuối',
+}

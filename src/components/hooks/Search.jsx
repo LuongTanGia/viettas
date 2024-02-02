@@ -44,7 +44,7 @@ export const useSearch = (data) => {
           SoLuongXuat_XDC,
           SoLuongTonCK,
           SoLuongXuat,
-          // NDC
+          // NDC, PLR
           SoChungTu,
           NgayCTu,
           ThongTinKho,

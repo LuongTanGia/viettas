@@ -5,8 +5,8 @@ import moment from 'moment'
 import logo from '../../../../../assets/VTS-iSale.ico'
 import categoryAPI from '../../../../../API/linkAPI'
 import { RETOKEN } from '../../../../../action/Actions'
-import ActionButton from '../../../../../components/util/Button/ActionButton'
-import SimpleBackdrop from '../../../../../components/util/Loading/LoadingPage'
+import ActionButton from '../../../../util/Button/ActionButton'
+import SimpleBackdrop from '../../../../util/Loading/LoadingPage'
 import NDCPrint from './NDCPrint'
 
 const NCKXem = ({ close, dataNDC }) => {

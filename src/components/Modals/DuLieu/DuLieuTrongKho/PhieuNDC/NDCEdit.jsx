@@ -14,8 +14,8 @@ import { useSearch } from '../../../../hooks/Search'
 import { RETOKEN } from '../../../../../action/Actions'
 import logo from '../../../../../assets/VTS-iSale.ico'
 import categoryAPI from '../../../../../API/linkAPI'
-import ActionButton from '../../../../../components/util/Button/ActionButton'
-import SimpleBackdrop from '../../../../../components/util/Loading/LoadingPage'
+import ActionButton from '../../../../util/Button/ActionButton'
+import SimpleBackdrop from '../../../../util/Loading/LoadingPage'
 import HighlightedCell from '../../../../hooks/HighlightedCell'
 import NDCPrint from './NDCPrint'
 
@@ -667,6 +667,7 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
                           />
                         </div>
                         <Table
+                          bordered
                           className="table_DLPhieuNDC"
                           columns={title}
                           dataSource={filteredHangHoa}

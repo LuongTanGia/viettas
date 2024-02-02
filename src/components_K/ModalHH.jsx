@@ -6,7 +6,7 @@ import { Table, Checkbox, Input } from 'antd'
 import { formatQuantity } from '../action/Actions'
 import { useSearchHH } from './myComponents/useSearchHH'
 import ActionButton from '../components/util/Button/ActionButton'
-import HighlightedCell from '../components_T/hooks/HighlightedCell'
+import HighlightedCell from '../components/hooks/HighlightedCell'
 import { toast } from 'react-toastify'
 import { CloseSquareFilled } from '@ant-design/icons'
 

@@ -16,13 +16,13 @@ import { FaSearch, FaEyeSlash } from 'react-icons/fa'
 import { CloseSquareFilled } from '@ant-design/icons'
 import { MdEdit, MdDelete, MdOutlineGroupAdd } from 'react-icons/md'
 import categoryAPI from '../../API/linkAPI'
-import { useSearch } from '../../components_T/hooks/Search'
+import { useSearch } from '../../components/hooks/Search'
 import ActionButton from '../../components/util/Button/ActionButton'
-import HighlightedCell from '../../components_T/hooks/HighlightedCell'
+import HighlightedCell from '../../components/hooks/HighlightedCell'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
 import { nameColumsHangHoa } from '../../components/util/Table/ColumnName'
 import { RETOKEN, base64ToPDF, exportToExcel } from '../../action/Actions'
-import HangHoaModals from '../../components_T/Modal/DanhMuc/HangHoa/HangHoaModals'
+import HangHoaModals from '../../components/Modals/DanhMuc/HangHoaModals'
 
 const HangHoa = ({ path }) => {
   const navigate = useNavigate()
@@ -749,6 +749,7 @@ const HangHoa = ({ path }) => {
                 <div id="my-table">
                   <Table
                     loading={tableLoad}
+                    bordered
                     rowSelection={{
                       selectedRowKeys,
                       showSizeChanger: true,
