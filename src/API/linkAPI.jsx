@@ -1,30 +1,5 @@
 import { axiosClient } from './functions'
 const categoryAPI = {
-  // Auth
-  getTokenDSDL(data, TokenID) {
-    const url = '/Auth/DanhSachDuLieu'
-    return axiosClient.post(url, data, { TokenID })
-  },
-  DangNhapGG(TokenID) {
-    const url = '/Auth/DanhSachDuLieu'
-    return axiosClient.post(url, { TokenID })
-  },
-  DangNhap(TokenID, RemoteDB) {
-    const url = '/Auth/DangNhap'
-    return axiosClient.post(url, { TokenID, RemoteDB })
-  },
-  Refresh(TokenID) {
-    const url = '/RefreshToken'
-    return axiosClient.post(url, { TokenID })
-  },
-  // TongHop
-  TongHop(accessToken) {
-    const url = '/statistics/TongHop'
-    const headers = {
-      Authorization: `Bearer ${accessToken}`,
-    }
-    return axiosClient.post(url, {}, { headers })
-  },
   // DanhMuc/HangHoa
   HangHoa(accessToken) {
     const url = '/lists/HangHoa/DanhSach'
@@ -214,7 +189,14 @@ const categoryAPI = {
     }
     return axiosClient.post(url, {}, { headers })
   },
-
+  // DuLieu/DCTK/PhieuLapRap
+  GetDataPLR(body, accessToken) {
+    const url = '/entries/DuLieuPLR/DanhSach'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
   // Hethong/KhoanNgay
   KhoanNgay(accessToken) {
     const url = '/settings/GiaTriHeThong/KhoanNgay'
@@ -223,7 +205,6 @@ const categoryAPI = {
     }
     return axiosClient.post(url, {}, { headers })
   },
-
   ThongSo(accessToken) {
     const url = '/settings/GiaTriHeThong/ThongSo'
     const headers = {

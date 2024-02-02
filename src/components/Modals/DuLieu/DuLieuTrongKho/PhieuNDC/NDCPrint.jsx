@@ -8,18 +8,19 @@ import { DateField } from '@mui/x-date-pickers'
 import categoryAPI from '../../../../../API/linkAPI'
 import logo from '../../../../../assets/VTS-iSale.ico'
 import { RETOKEN, base64ToPDF } from '../../../../../action/Actions'
-import ActionButton from '../../../../../components/util/Button/ActionButton'
-import SimpleBackdrop from '../../../../../components/util/Loading/LoadingPage'
+import ActionButton from '../../../../util/Button/ActionButton'
+import SimpleBackdrop from '../../../../util/Loading/LoadingPage'
 
 const NDCPrint = ({ close, dataPrint }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const [khoanNgayFrom, setKhoanNgayFrom] = useState()
   const [khoanNgayTo, setKhoanNgayTo] = useState()
   const [isLoading, setIsLoading] = useState(false)
-  const [dataListChungTu, setDataListChungTu] = useState('')
+  const [dataListChungTu, setDataListChungTu] = useState([])
   const [selectedNhomFrom, setSelectedNhomFrom] = useState([])
   const [selectedNhomTo, setSelectedNhomTo] = useState([])
   const [dateData, setDateData] = useState({})
+  const [dateChange, setDateChange] = useState(false)
   const [checkboxValues, setCheckboxValues] = useState({
     checkbox1: true,
     checkbox2: false,
@@ -35,8 +36,9 @@ const NDCPrint = ({ close, dataPrint }) => {
       try {
         const response = await categoryAPI.KhoanNgay(TokenAccess)
         if (response.data.DataError == 0) {
-          setKhoanNgayFrom(dayjs(response.data.NgayBatDau).format('YYYY-MM-DDTHH:mm:ss'))
-          setKhoanNgayTo(dayjs(response.data.NgayKetThuc).format('YYYY-MM-DDTHH:mm:ss'))
+          setDateData(response.data)
+          setKhoanNgayFrom(dayjs(response.data.NgayBatDau))
+          setKhoanNgayTo(dayjs(response.data.NgayKetThuc))
           setIsLoading(true)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
@@ -54,13 +56,22 @@ const NDCPrint = ({ close, dataPrint }) => {
   }, [isLoading])
 
   useEffect(() => {
+    setKhoanNgayFrom(dayjs(dateData?.NgayBatDau))
+    setKhoanNgayTo(dayjs(dateData?.NgayKetThuc))
+  }, [dateData?.NgayBatDau, dateData?.NgayKetThuc])
+
+  useEffect(() => {
     const getListChungTu = async () => {
       try {
         if (isLoading == true) {
-          const response = await categoryAPI.ListChungTuNDC({ NgayBatDau: dateData.NgayBatDau, NgayKetThuc: dateData.NgayKetThuc }, TokenAccess)
+          const response = await categoryAPI.ListChungTuNDC({ NgayBatDau: dateData?.NgayBatDau, NgayKetThuc: dateData?.NgayKetThuc }, TokenAccess)
           if (response.data.DataError == 0) {
             setDataListChungTu(response.data.DataResults)
             setIsLoading(true)
+          }
+          console.log({ NgayBatDau: dateData?.NgayBatDau, NgayKetThuc: dateData?.NgayKetThuc })
+          if (response.data.DataError == -104 && response.data.DataResults) {
+            setDataListChungTu([])
           } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
             await RETOKEN()
             getListChungTu()
@@ -71,7 +82,7 @@ const NDCPrint = ({ close, dataPrint }) => {
       }
     }
     getListChungTu()
-  }, [dateData.NgayBatDau, dateData.NgayKetThuc])
+  }, [dateData?.NgayBatDau, dateData?.NgayKetThuc])
 
   const calculateTotal = () => {
     let total = 0
@@ -98,8 +109,8 @@ const NDCPrint = ({ close, dataPrint }) => {
               SoLien: calculateTotal(),
             }
           : {
-              NgayBatDau: khoanNgayFrom,
-              NgayKetThuc: khoanNgayTo,
+              NgayBatDau: dateData.NgayBatDau,
+              NgayKetThuc: dateData.NgayKetThuc,
               SoChungTuBatDau: selectedNhomFrom,
               SoChungTuKetThuc: selectedNhomTo,
               SoLien: calculateTotal(),
@@ -111,8 +122,8 @@ const NDCPrint = ({ close, dataPrint }) => {
       } else {
         toast.error(response.data.DataErrorDescription)
         console.log({
-          NgayBatDau: khoanNgayFrom,
-          NgayKetThuc: khoanNgayTo,
+          NgayBatDau: dateData.NgayBatDau,
+          NgayKetThuc: dateData.NgayBatDau,
           SoChungTuBatDau: selectedNhomFrom,
           SoChungTuKetThuc: selectedNhomTo,
           SoLien: calculateTotal(),
@@ -126,13 +137,26 @@ const NDCPrint = ({ close, dataPrint }) => {
     let timerId
     clearTimeout(timerId)
     timerId = setTimeout(() => {
-      khoanNgayFrom, khoanNgayTo
-      setDateData({
-        NgayBatDau: khoanNgayFrom,
-        NgayKetThuc: khoanNgayTo,
-      })
+      if (!dateChange && khoanNgayFrom && khoanNgayTo && khoanNgayFrom.isAfter(khoanNgayTo)) {
+        setDateData({
+          NgayBatDau: dayjs(khoanNgayFrom).format('YYYY-MM-DD'),
+          NgayKetThuc: dayjs(khoanNgayFrom).format('YYYY-MM-DD'),
+        })
+        return
+      } else if (dateChange && khoanNgayFrom && khoanNgayTo && khoanNgayFrom.isAfter(khoanNgayTo)) {
+        setDateData({
+          NgayBatDau: dayjs(khoanNgayTo).format('YYYY-MM-DD'),
+          NgayKetThuc: dayjs(khoanNgayTo).format('YYYY-MM-DD'),
+        })
+      } else {
+        setDateData({
+          NgayBatDau: dayjs(khoanNgayFrom).format('YYYY-MM-DD'),
+          NgayKetThuc: dayjs(khoanNgayTo).format('YYYY-MM-DD'),
+        })
+      }
     }, 300)
   }
+
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
       handleDateChange()
@@ -162,8 +186,7 @@ const NDCPrint = ({ close, dataPrint }) => {
                         onBlur={handleDateChange}
                         onKeyDown={handleKeyDown}
                         format="DD/MM/YYYY"
-                        maxDate={dayjs(khoanNgayTo)}
-                        defaultValue={dataPrint ? dayjs(dataPrint.NgayCTu, 'YYYY-MM-DD') : dayjs(khoanNgayFrom, 'YYYY-MM-DD')}
+                        value={dataPrint ? dayjs(dataPrint.NgayCTu) : khoanNgayFrom}
                         sx={{
                           '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
                           '& .MuiButtonBase-root': {
@@ -175,7 +198,8 @@ const NDCPrint = ({ close, dataPrint }) => {
                           },
                         }}
                         onChange={(values) => {
-                          setKhoanNgayFrom(values ? dayjs(values).format('YYYY-MM-DDTHH:mm:ss') : '')
+                          setKhoanNgayFrom(values)
+                          setDateChange(false)
                         }}
                       />
                     </div>
@@ -186,8 +210,7 @@ const NDCPrint = ({ close, dataPrint }) => {
                         onKeyDown={handleKeyDown}
                         className="min-w-[100px] w-[60%]"
                         format="DD/MM/YYYY"
-                        minDate={dayjs(khoanNgayFrom)}
-                        defaultValue={dataPrint ? dayjs(dataPrint.NgayCTu, 'YYYY-MM-DD') : dayjs(khoanNgayTo, 'YYYY-MM-DD')}
+                        value={dataPrint ? dayjs(dataPrint.NgayCTu) : khoanNgayTo}
                         sx={{
                           '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
                           '& .MuiButtonBase-root': {
@@ -199,7 +222,8 @@ const NDCPrint = ({ close, dataPrint }) => {
                           },
                         }}
                         onChange={(values) => {
-                          setKhoanNgayTo(values ? dayjs(values).format('YYYY-MM-DDTHH:mm:ss') : '')
+                          setKhoanNgayTo(values)
+                          setDateChange(true)
                         }}
                       />
                     </div>

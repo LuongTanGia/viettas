@@ -10,13 +10,13 @@ import { CloseSquareFilled } from '@ant-design/icons'
 import { Checkbox, Select, Space, InputNumber, FloatButton, Input, Tooltip, Table } from 'antd'
 import moment from 'moment'
 import './HangHoaModals.css'
-import { useSearch } from '../../../hooks/Search'
-import categoryAPI from '../../../../API/linkAPI'
-import logo from '../../../../assets/VTS-iSale.ico'
-import HighlightedCell from '../../../hooks/HighlightedCell'
-import { RETOKEN, base64ToPDF } from '../../../../action/Actions'
-import ActionButton from '../../../../components/util/Button/ActionButton'
-import SimpleBackdrop from '../../../../components/util/Loading/LoadingPage'
+import categoryAPI from '../../../API/linkAPI'
+import { useSearch } from '../../hooks/Search'
+import logo from '../../../assets/VTS-iSale.ico'
+import HighlightedCell from '../../hooks/HighlightedCell'
+import ActionButton from '../../util/Button/ActionButton'
+import SimpleBackdrop from '../../util/Loading/LoadingPage'
+import { RETOKEN, base64ToPDF } from '../../../action/Actions'
 
 const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, setTargetRow }) => {
   const TokenAccess = localStorage.getItem('TKN')
@@ -2199,6 +2199,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                     <Table
                       loading={tableLoad}
                       className="h450"
+                      bordered
                       dataSource={filteredHangHoa}
                       columns={title}
                       onRow={(record) => ({

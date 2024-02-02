@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState, useRef } from 'react'
-import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { Table, Select, Tooltip, Typography, Checkbox, Row, Button, Col, Spin, Input } from 'antd'
 const { Text } = Typography
 import dayjs from 'dayjs'
@@ -13,13 +12,14 @@ import { RiFileExcel2Fill } from 'react-icons/ri'
 import { CloseSquareFilled } from '@ant-design/icons'
 import { FaSearch, FaEyeSlash } from 'react-icons/fa'
 import categoryAPI from '../../API/linkAPI'
-import { useSearch } from '../../components_T/hooks/Search'
+import { useSearch } from '../../components/hooks/Search'
 import { RETOKEN, exportToExcel } from '../../action/Actions'
 import ActionButton from '../../components/util/Button/ActionButton'
-import HighlightedCell from '../../components_T/hooks/HighlightedCell'
+import HighlightedCell from '../../components/hooks/HighlightedCell'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
 import { nameColumsNhapXuatTon } from '../../components/util/Table/ColumnName'
 import { useNavigate } from 'react-router-dom'
+import { DateField } from '@mui/x-date-pickers'
 
 const NhapXuatTonKho = ({ path }) => {
   const navigate = useNavigate()
@@ -51,6 +51,8 @@ const NhapXuatTonKho = ({ path }) => {
   const [options, setOptions] = useState()
   const [tableLoad, setTableLoad] = useState(true)
   const [dataCRUD, setDataCRUD] = useState()
+  const [dateData, setDateData] = useState({})
+  const [dateChange, setDateChange] = useState(false)
 
   useEffect(() => {
     const getDataNXTFirst = async () => {
@@ -104,24 +106,25 @@ const NhapXuatTonKho = ({ path }) => {
   }, [dataCRUD])
 
   useEffect(() => {
+    const getDataQuyenHan = async (path) => {
+      try {
+        const response = await categoryAPI.QuyenHan(path, TokenAccess)
+        if (response.data.DataError === 0) {
+          setDataCRUD(response.data)
+          setIsLoading(true)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          getDataQuyenHan()
+        }
+      } catch (error) {
+        console.log(error)
+        setIsLoading(true)
+      }
+    }
+
     getDataQuyenHan(path)
   }, [])
 
-  const getDataQuyenHan = async (path) => {
-    try {
-      const response = await categoryAPI.QuyenHan(path, TokenAccess)
-      if (response.data.DataError === 0) {
-        setDataCRUD(response.data)
-        setIsLoading(true)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getDataQuyenHan()
-      }
-    } catch (error) {
-      console.log(error)
-      setIsLoading(true)
-    }
-  }
   useEffect(() => {
     const getListNhomHangNXT = async () => {
       try {
@@ -196,12 +199,18 @@ const NhapXuatTonKho = ({ path }) => {
   }, [isLoading])
 
   useEffect(() => {
+    setKhoanNgayFrom(dayjs(dateData?.NgayBatDau))
+    setKhoanNgayTo(dayjs(dateData?.NgayKetThuc))
+  }, [dateData?.NgayBatDau, dateData?.NgayKetThuc])
+
+  useEffect(() => {
     const getTimeSetting = async () => {
       try {
         const response = await categoryAPI.KhoanNgay(TokenAccess)
         if (response.data.DataError == 0) {
-          setKhoanNgayFrom(response.data.NgayBatDau)
-          setKhoanNgayTo(response.data.NgayKetThuc)
+          setDateData(response.data)
+          setKhoanNgayFrom(dayjs(response.data.NgayBatDau))
+          setKhoanNgayTo(dayjs(response.data.NgayKetThuc))
           setIsLoading(true)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
@@ -221,12 +230,19 @@ const NhapXuatTonKho = ({ path }) => {
     }
   }, [isLoading])
 
+  useEffect(() => {
+    setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
+    setcheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
+    const key = Object.keys(dataNXT ? dataNXT[0] : {}).filter((key) => key !== 'MaNhomHang' && key !== 'MaKho')
+    setOptions(key)
+  }, [selectVisible])
+
   const getDataNXT = async () => {
     try {
       const response = await categoryAPI.InfoNXTTheoKho(
         {
-          NgayBatDau: khoanNgayFrom,
-          NgayKetThuc: khoanNgayTo,
+          NgayBatDau: dateData.NgayBatDau,
+          NgayKetThuc: dateData.NgayKetThuc,
           CodeValue1From: selectedNhomFrom,
           CodeValue1To: selectedNhomTo,
           CodeValue1List: selectedNhomList.join(', '),
@@ -256,8 +272,43 @@ const NhapXuatTonKho = ({ path }) => {
       getDataNXT()
     }
   }
+  let timerId
+  const handleDateChange = () => {
+    clearTimeout(timerId)
+    timerId = setTimeout(() => {
+      if (
+        !dateChange &&
+        khoanNgayFrom &&
+        khoanNgayTo &&
+        typeof khoanNgayFrom.isAfter === 'function' &&
+        typeof khoanNgayTo.isAfter === 'function' &&
+        khoanNgayFrom.isAfter(khoanNgayTo)
+      ) {
+        setDateData({
+          NgayBatDau: dayjs(khoanNgayFrom).format('YYYY-MM-DD'),
+          NgayKetThuc: dayjs(khoanNgayFrom).format('YYYY-MM-DD'),
+        })
+
+        return
+      } else if (dateChange && khoanNgayFrom && khoanNgayTo && khoanNgayFrom.isAfter(khoanNgayTo)) {
+        setDateData({
+          NgayBatDau: dayjs(khoanNgayTo).format('YYYY-MM-DD'),
+          NgayKetThuc: dayjs(khoanNgayTo).format('YYYY-MM-DD'),
+        })
+      } else {
+        setDateData({
+          NgayBatDau: dayjs(khoanNgayFrom).format('YYYY-MM-DD'),
+          NgayKetThuc: dayjs(khoanNgayTo).format('YYYY-MM-DD'),
+        })
+      }
+    }, 300)
+  }
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      handleDateChange()
+    }
+  }
   const handleSearch = (event) => {
-    let timerId
     clearTimeout(timerId)
     timerId = setTimeout(() => {
       setSearchHangHoa(event.target.value)
@@ -272,14 +323,6 @@ const NhapXuatTonKho = ({ path }) => {
     }
     return ''
   }
-
-  useEffect(() => {
-    setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
-    setcheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
-    const key = Object.keys(dataNXT ? dataNXT[0] : {}).filter((key) => key !== 'MaNhomHang' && key !== 'MaKho')
-    setOptions(key)
-  }, [selectVisible])
-
   const handleHidden = () => {
     setSelectVisible(!selectVisible)
   }
@@ -749,17 +792,18 @@ const NhapXuatTonKho = ({ path }) => {
                 <div className="flex justify-between  gap-2 w-[95vw]">
                   <form className="flex flex-col gap-1 items-start">
                     <div className="flex gap-2 justify-between">
-                      <div className="flex gap-1">
+                      <div className="flex">
                         <div className="flex items-center gap-1">
                           <label>Từ</label>
-                          <DatePicker
-                            showSearch
-                            className="DatePicker_NXTKho"
+                          <DateField
+                            className="DatePicker_NXTKho min-w-[100px] w-[70%]"
+                            onBlur={handleDateChange}
+                            onKeyDown={handleKeyDown}
                             format="DD/MM/YYYY"
-                            maxDate={dayjs(khoanNgayTo)}
-                            defaultValue={dayjs(khoanNgayFrom, 'YYYY-MM-DD')}
+                            value={khoanNgayFrom}
                             onChange={(values) => {
-                              setKhoanNgayFrom(values ? dayjs(values).format('YYYY-MM-DDTHH:mm:ss') : '')
+                              setKhoanNgayFrom(values)
+                              setDateChange(false)
                             }}
                             sx={{
                               '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
@@ -771,19 +815,19 @@ const NhapXuatTonKho = ({ path }) => {
                                 height: '18px',
                               },
                             }}
-                            slotProps={{ textField: { size: 'small' } }}
                           />
                         </div>
                         <div className=" flex items-center gap-1 ">
                           <label>Đến</label>
-                          <DatePicker
-                            slotProps={{ textField: { size: 'small' } }}
-                            className="DatePicker_NXTKho"
+                          <DateField
+                            className="DatePicker_NXTKho min-w-[100px] w-[70%]"
+                            onBlur={handleDateChange}
+                            onKeyDown={handleKeyDown}
                             format="DD/MM/YYYY"
-                            minDate={dayjs(khoanNgayFrom)}
-                            defaultValue={dayjs(khoanNgayTo, 'YYYY-MM-DD')}
+                            value={khoanNgayTo}
                             onChange={(values) => {
-                              setKhoanNgayTo(values ? dayjs(values).format('YYYY-MM-DDTHH:mm:ss') : '')
+                              setKhoanNgayTo(values)
+                              setDateChange(true)
                             }}
                             sx={{
                               '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },

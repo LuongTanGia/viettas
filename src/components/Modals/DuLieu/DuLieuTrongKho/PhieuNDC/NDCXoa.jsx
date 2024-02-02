@@ -2,7 +2,7 @@
 import categoryAPI from '../../../../../API/linkAPI'
 import { toast } from 'react-toastify'
 import logo from '../../../../../assets/VTS-iSale.ico'
-import ActionButton from '../../../../../components/util/Button/ActionButton'
+import ActionButton from '../../../../util/Button/ActionButton'
 
 const NCKXoa = ({ close, dataNDC, loadingData, targetRow }) => {
   const TokenAccess = localStorage.getItem('TKN')
