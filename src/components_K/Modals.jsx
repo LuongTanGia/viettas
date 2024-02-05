@@ -102,7 +102,6 @@ const Modals = ({
     NgayBatDau: startDate,
     NgayKetThuc: endDate,
   })
-
   const [checkboxValues, setCheckboxValues] = useState({
     checkbox1: true,
     checkbox2: false,

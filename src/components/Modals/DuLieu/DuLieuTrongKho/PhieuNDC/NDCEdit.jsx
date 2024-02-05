@@ -447,7 +447,7 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
                           placeholder={errors?.MaKho ? errors.MaKho : ''}
                           size="small"
                           status={errors.MaKho ? 'error' : ''}
-                          value={NDCForm?.MaKho || ''}
+                          value={NDCForm?.MaKho}
                           onChange={(value) => {
                             setNDCForm({
                               ...NDCForm,
@@ -457,8 +457,8 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
                           }}
                         >
                           {dataKhoHang &&
-                            dataKhoHang?.map((item) => (
-                              <Select.Option key={item.MaKho} value={item.MaKho}>
+                            dataKhoHang?.map((item, index) => (
+                              <Select.Option key={index} value={item.MaKho}>
                                 {item.ThongTinKho}
                               </Select.Option>
                             ))}
@@ -473,7 +473,7 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
                           <input
                             title={dataNDCView.NguoiTao}
                             value={dataNDCView.NguoiTao}
-                            className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] rounded resize-none border-[0.125rem] outline-none text-[1rem] overflow-ellipsis truncate"
+                            className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] rounded resize-none border outline-none text-[1rem] overflow-ellipsis truncate"
                             readOnly
                           />
                         </div>
@@ -481,7 +481,7 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
                           <label className="text-sm">Lúc</label>
                           <input
                             value={moment(dataNDCView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
-                            className="px-2 w-full rounded resize-none border-[0.125rem] outline-none text-[1rem] truncate"
+                            className="px-2 w-full rounded resize-none border outline-none text-[1rem] truncate"
                             readOnly
                           />
                         </div>
@@ -492,7 +492,7 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
                           <input
                             title={dataNDCView.NguoiSuaCuoi}
                             value={dataNDCView.NguoiSuaCuoi || ''}
-                            className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] rounded resize-none border-[0.125rem] outline-none text-[1rem] overflow-ellipsis truncate"
+                            className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] rounded resize-none border outline-none text-[1rem] overflow-ellipsis truncate"
                             readOnly
                           />
                         </div>
@@ -500,7 +500,7 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
                           <label className="text-sm">Lúc</label>
                           <input
                             value={dataNDCView?.NgaySuaCuoi ? moment(dataNDCView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                            className="px-2 w-full rounded resize-none border-[0.125rem] outline-none text-[1rem] truncate"
+                            className="px-2 w-full rounded resize-none border outline-none text-[1rem] truncate"
                             readOnly
                           />
                         </div>
@@ -543,7 +543,7 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
                         </thead>
                         <tbody>
                           {selectedRowData?.map((item, index) => (
-                            <tr key={item.MaHang}>
+                            <tr key={index}>
                               <td>
                                 <div className="flex justify-center">{item.STT ? item.STT : index + 1}</div>
                               </td>
@@ -579,7 +579,7 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
                               <td>
                                 <div className="inputNDC flex justify-end">
                                   <InputNumber
-                                    value={item.SoLuong || ''}
+                                    value={item.SoLuong}
                                     min={1}
                                     max={999999999999}
                                     size="small"
@@ -673,7 +673,7 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
                         bordered
                         className="table_DLPhieuNDC"
                         columns={title}
-                        dataSource={filteredHangHoa}
+                        dataSource={filteredHangHoa.map((record, index) => ({ ...record, key: index }))}
                         onRow={(record) => ({
                           onDoubleClick: () => {
                             handleChoose(record)

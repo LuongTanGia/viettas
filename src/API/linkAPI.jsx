@@ -96,6 +96,7 @@ const categoryAPI = {
     }
     return axiosClient.post(url, Ma, { headers })
   },
+
   // TruyVan/NhapXuatTonKho
   InfoNXTTheoKho(body, accessToken) {
     const url = '/inquiries/NhapXuatTon/TheoKho'
@@ -125,6 +126,7 @@ const categoryAPI = {
     }
     return axiosClient.post(url, {}, { headers })
   },
+
   // DuLieu/DLTK/PhieuNDC
   GetDataNDC(body, accessToken) {
     const url = '/entries/DuLieuNDC/DanhSach'
@@ -189,6 +191,7 @@ const categoryAPI = {
     }
     return axiosClient.post(url, {}, { headers })
   },
+
   // DuLieu/DCTK/PhieuLapRap
   GetDataPLR(body, accessToken) {
     const url = '/entries/DuLieuPLR/DanhSach'
@@ -196,6 +199,83 @@ const categoryAPI = {
       Authorization: `Bearer ${accessToken}`,
     }
     return axiosClient.post(url, body, { headers })
+  },
+  PLRView(SoChungTu, accessToken) {
+    const url = '/entries/DuLieuPLR/ThongTin'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, { SoChungTu }, { headers })
+  },
+  PLRInfoEdit(SoChungTu, accessToken) {
+    const url = '/entries/DuLieuPLR/ThongTinSua'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, { SoChungTu }, { headers })
+  },
+  PLRCreate(body, accessToken) {
+    const url = '/entries/DuLieuPLR/Them'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  PLREdit(body, accessToken) {
+    const url = '/entries/DuLieuPLR/Sua'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  PLRDel(SoChungTu, accessToken) {
+    const url = '/entries/DuLieuPLR/Xoa'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, { SoChungTu }, { headers })
+  },
+  PLRPrint(body, accessToken) {
+    const url = '/entries/DuLieuPLR/InPhieu'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  PLRPrintNhap(body, accessToken) {
+    const url = '/entries/DuLieuPLR/InPhieuNhap'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  PLRPrintXuat(body, accessToken) {
+    const url = '/entries/DuLieuPLR/InPhieuXuat'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  ListChungTuPLR(body, accessToken) {
+    const url = '/entries/DuLieuPLR/ListHelper_ChungTuTheoNgay'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  ListKhoHangPLR(accessToken) {
+    const url = '/entries/DuLieuPLR/ListHelper_KhoHang'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, {}, { headers })
+  },
+  ListHangHoaPLR(accessToken) {
+    const url = '/entries/DuLieuPLR/ListHelper_HangHoa'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, {}, { headers })
   },
   // Hethong/KhoanNgay
   KhoanNgay(accessToken) {

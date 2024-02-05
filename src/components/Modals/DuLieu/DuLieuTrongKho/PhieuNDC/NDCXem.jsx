@@ -2,12 +2,14 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from 'react'
 import moment from 'moment'
-import logo from '../../../../../assets/VTS-iSale.ico'
+const { Text } = Typography
+import { Table, Tooltip, Typography } from 'antd'
+import NDCPrint from './NDCPrint'
 import categoryAPI from '../../../../../API/linkAPI'
+import logo from '../../../../../assets/VTS-iSale.ico'
 import { RETOKEN } from '../../../../../action/Actions'
 import ActionButton from '../../../../util/Button/ActionButton'
 import SimpleBackdrop from '../../../../util/Loading/LoadingPage'
-import NDCPrint from './NDCPrint'
 
 const NCKXem = ({ close, dataNDC }) => {
   const TokenAccess = localStorage.getItem('TKN')
@@ -19,26 +21,26 @@ const NCKXem = ({ close, dataNDC }) => {
   const [isShowModal, setIsShowModal] = useState(false)
 
   useEffect(() => {
+    const handleView = async () => {
+      try {
+        const response = await categoryAPI.NDCView(dataNDC?.SoChungTu, TokenAccess)
+        if (response.data.DataError == 0) {
+          setDataNDCView(response.data.DataResult)
+          setIsLoading(true)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleView()
+        }
+      } catch (error) {
+        console.error(error)
+        setIsLoading(true)
+      }
+    }
     if (!isLoading) {
       handleView()
     }
   }, [isLoading])
 
-  const handleView = async () => {
-    try {
-      const response = await categoryAPI.NDCView(dataNDC?.SoChungTu, TokenAccess)
-      if (response.data.DataError == 0) {
-        setDataNDCView(response.data.DataResult)
-        setIsLoading(true)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        handleView()
-      }
-    } catch (error) {
-      console.error(error)
-      setIsLoading(true)
-    }
-  }
   const handlePrint = () => {
     setIsShowModal(true)
     setActionType('print')
@@ -53,6 +55,72 @@ const NCKXem = ({ close, dataNDC }) => {
     }
     return ''
   }
+  const title = [
+    {
+      title: 'STT',
+      render: (text, record, index) => index + 1,
+      width: 80,
+      align: 'center',
+    },
+    {
+      title: 'Mã hàng',
+      dataIndex: 'MaHang',
+      key: 'MaHang',
+      width: 150,
+      showSorterTooltip: false,
+      align: 'center',
+      sorter: (a, b) => a.MaHang.localeCompare(b.MaHang),
+      render: (text) => <span className="flex justify-center"> {text}</span>,
+    },
+    {
+      title: 'Tên hàng',
+      dataIndex: 'TenHang',
+      key: 'TenHang',
+      width: 250,
+      showSorterTooltip: false,
+      align: 'center',
+      sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
+      render: (text) => (
+        <Tooltip title={text} color="blue">
+          <div
+            style={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              cursor: 'pointer',
+              textAlign: 'start',
+            }}
+          >
+            {text}
+          </div>
+        </Tooltip>
+      ),
+    },
+    {
+      title: 'Đơn vị tính',
+      dataIndex: 'DVT',
+      key: 'DVT',
+      showSorterTooltip: false,
+      align: 'center',
+      width: 120,
+      sorter: (a, b) => a.DVT.localeCompare(b.DVT),
+      render: (text) => <span className="flex justify-center"> {text}</span>,
+    },
+    {
+      title: 'Số lượng ',
+      dataIndex: 'SoLuong',
+      key: 'SoLuong',
+      width: 150,
+      showSorterTooltip: false,
+      sorter: (a, b) => a.SoLuong - b.SoLuong,
+      align: 'center',
+      render: (text) => (
+        <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 || text === null ? 'text-gray-300' : ''}`}>
+          {formatThapPhan(text, dataThongSo.SOLESOLUONG)}
+        </span>
+      ),
+    },
+  ]
   return (
     <>
       {!isLoading ? (
@@ -72,30 +140,25 @@ const NCKXem = ({ close, dataNDC }) => {
                     <div className="flex flex-col gap-3">
                       <div className="flex gap-2">
                         <div className="flex items-center gap-1">
-                          <label className="required whitespace-nowrap min-w-[100px] flex justify-end">Số chứng từ</label>
-                          <input
-                            type="text"
-                            value={dataNDCView?.SoChungTu || ''}
-                            className="px-2 w-full resize-none rounded border-[0.125rem] outline-none text-[1rem] truncate"
-                            readOnly
-                          />
+                          <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Số chứng từ</label>
+                          <input type="text" value={dataNDCView?.SoChungTu || ''} className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate" readOnly />
                         </div>
                         <div className="flex items-center gap-1">
-                          <label className="required whitespace-nowrap">Ngày C.Từ</label>
+                          <label className="required whitespace-nowrap text-sm">Ngày C.Từ</label>
                           <input
                             type="text"
                             value={moment(dataNDCView?.NgayCTu)?.format('DD/MM/YYYY') || ''}
-                            className="px-2 w-[7rem] rounded resize-none border-[0.125rem] outline-none text-[1rem] text-center truncate"
+                            className="px-2 w-[7rem] rounded resize-none border outline-none text-[1rem] text-center truncate"
                             readOnly
                           />
                         </div>
                       </div>
                       <div className="flex items-center gap-1">
-                        <label className="required whitespace-nowrap min-w-[100px] flex justify-end">Kho hàng</label>
+                        <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Kho hàng</label>
                         <input
                           type="text"
                           value={`${dataNDCView?.MaKho} - ${dataNDCView?.TenKho}` || ''}
-                          className="px-2 w-full rounded resize-none border-[0.125rem] outline-none text-[1rem]"
+                          className="px-2 w-full rounded resize-none border outline-none text-[1rem]"
                           readOnly
                         />
                       </div>
@@ -104,18 +167,18 @@ const NCKXem = ({ close, dataNDC }) => {
                       <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
                       <div className="flex gap-1">
                         <div className="flex gap-1 items-center">
-                          <label className="whitespace-nowrap">Người tạo</label>
+                          <label className="whitespace-nowrap text-sm">Người tạo</label>
                           <input
-                            className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border-[0.125rem] outline-none text-[1rem] overflow-ellipsis truncate"
+                            className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-[1rem] overflow-ellipsis truncate"
                             value={dataNDCView?.NguoiTao || ''}
                             readOnly
                             title={dataNDCView?.NguoiTao || ''}
                           />
                         </div>
                         <div className="flex gap-1 items-center">
-                          <label>Lúc</label>
+                          <label className="text-sm">Lúc</label>
                           <input
-                            className="px-2 w-full resize-none rounded border-[0.125rem] outline-none text-[1rem] truncate"
+                            className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
                             value={moment(dataNDCView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
                             readOnly
                           />
@@ -123,18 +186,18 @@ const NCKXem = ({ close, dataNDC }) => {
                       </div>
                       <div className="flex gap-1">
                         <div className="flex gap-1 items-center">
-                          <label className="whitespace-nowrap">Người sửa</label>
+                          <label className="whitespace-nowrap text-sm">Người sửa</label>
                           <input
-                            className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border-[0.125rem] outline-none text-[1rem] overflow-ellipsis truncate"
+                            className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border  outline-none text-[1rem] overflow-ellipsis truncate"
                             value={dataNDCView?.NguoiSuaCuoi || ''}
                             readOnly
                             title={dataNDCView?.NguoiSuaCuoi || ''}
                           />
                         </div>
                         <div className="flex gap-1 items-center">
-                          <label>Lúc</label>
+                          <label className="text-sm">Lúc</label>
                           <input
-                            className="px-2 w-full resize-none rounded border-[0.125rem] outline-none text-[1rem] truncate"
+                            className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
                             value={dataNDCView?.NgaySuaCuoi ? moment(dataNDCView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
                             readOnly
                           />
@@ -143,46 +206,65 @@ const NCKXem = ({ close, dataNDC }) => {
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
-                    <label className="whitespace-nowrap min-w-[100px] flex justify-end">Ghi chú</label>
-                    <input type="text" value={dataNDCView?.GhiChu || ''} className="px-2 w-[70rem] rounded resize-none border-[0.125rem] outline-none text-[1rem]" readOnly />
+                    <label className="whitespace-nowrap min-w-[100px] flex justify-end text-sm">Ghi chú</label>
+                    <input type="text" value={dataNDCView?.GhiChu || ''} className="px-2 w-[70rem] rounded resize-none border outline-none text-[1rem]" readOnly />
                   </div>
-                  <div className="p-2 rounded border-2 m-1 flex flex-col gap-2 ">
-                    <div className="max-h-[30rem] overflow-y-auto">
-                      <table className="barcodeList ">
-                        <thead>
-                          <tr>
-                            <th>#</th>
-                            <th>Mã hàng</th>
-                            <th>Tên hàng</th>
-                            <th>ĐVT</th>
-                            <th>Số lượng</th>
-                          </tr>
-                        </thead>
-                        <tbody className="">
-                          {dataNDCView?.DataDetails?.map((item, index) => (
-                            <tr key={index}>
-                              <td>
-                                <div className="flex justify-center">{item.STT}</div>
-                              </td>
-                              <td>
-                                <div>{item.MaHang}</div>
-                              </td>
-                              <td>
-                                <div>
-                                  <p className="block truncate">{item.TenHang}</p>
-                                </div>
-                              </td>
-                              <td>
-                                <div className="flex justify-center">{item.DVT}</div>
-                              </td>
-                              <td>
-                                <div className="flex justify-end">{formatThapPhan(item.SoLuong, dataThongSo.SOLESOLUONG)}</div>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
+                  <div className="border rounded">
+                    <Table
+                      className="table_view"
+                      columns={title}
+                      dataSource={dataNDCView?.DataDetails?.map((item, index) => ({ ...item, key: index }))}
+                      size="small"
+                      scroll={{
+                        x: 1000,
+                        y: 300,
+                      }}
+                      bordered
+                      // pagination={{
+                      //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                      //   showSizeChanger: true,
+                      //   pageSizeOptions: ['50', '100', '1000'],
+                      //   onShowSizeChange: (current, size) => {
+                      //     localStorage.setItem('pageSize', size)
+                      //   },
+                      // }}
+                      pagination={false}
+                      summary={() => {
+                        return (
+                          <Table.Summary fixed="bottom">
+                            <Table.Summary.Row>
+                              {title
+                                .filter((column) => column.render)
+                                .map((column, index) => {
+                                  const isNumericColumn = typeof dataNDCView?.DataDetails[0]?.[column.dataIndex] === 'number'
+
+                                  return (
+                                    <Table.Summary.Cell key={`summary-cell-${index + 1}`} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                                      {isNumericColumn ? (
+                                        column.dataIndex === 'SoLuong' ? (
+                                          <Text strong>
+                                            {Number(dataNDCView?.DataDetails?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                              minimumFractionDigits: dataThongSo?.SOLESOLUONG,
+                                              maximumFractionDigits: dataThongSo?.SOLESOLUONG,
+                                            })}
+                                          </Text>
+                                        ) : (
+                                          <Text strong>
+                                            {Number(dataNDCView?.DataDetails?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                              minimumFractionDigits: 0,
+                                              maximumFractionDigits: 0,
+                                            })}
+                                          </Text>
+                                        )
+                                      ) : null}
+                                    </Table.Summary.Cell>
+                                  )
+                                })}
+                            </Table.Summary.Row>
+                          </Table.Summary>
+                        )
+                      }}
+                    ></Table>
                   </div>
                 </div>
                 <div className="flex justify-between">

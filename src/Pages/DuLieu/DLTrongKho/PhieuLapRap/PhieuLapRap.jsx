@@ -158,6 +158,7 @@ const PhieuLapRap = ({ path }) => {
     }
     getDataPLR()
   }, [searchHangHoa, isLoading, targetRow])
+
   function formatDateTime(inputDate, includeTime = false) {
     const date = new Date(inputDate)
     const day = date.getDate().toString().padStart(2, '0')
@@ -214,6 +215,14 @@ const PhieuLapRap = ({ path }) => {
   const handlePrint = () => {
     setIsShowModal(true)
     setActionType('print')
+  }
+  const handlePrintImport = () => {
+    setIsShowModal(true)
+    setActionType('printImport')
+  }
+  const handlePrintExport = () => {
+    setIsShowModal(true)
+    setActionType('printExport')
   }
   const handleLoading = () => {
     setTableLoad(true)
@@ -587,6 +596,24 @@ const PhieuLapRap = ({ path }) => {
                             bg_hover={'white'}
                           />
                           <ActionButton
+                            handleAction={handlePrintImport}
+                            title={'In Phiếu Nhập'}
+                            icon={<MdPrint className="w-6 h-6" />}
+                            color={'slate-50'}
+                            background={'purple-500'}
+                            color_hover={'purple-500'}
+                            bg_hover={'white'}
+                          />
+                          <ActionButton
+                            handleAction={handlePrintExport}
+                            title={'In Phiếu Xuất'}
+                            icon={<MdPrint className="w-6 h-6" />}
+                            color={'slate-50'}
+                            background={'purple-500'}
+                            color_hover={'purple-500'}
+                            bg_hover={'white'}
+                          />
+                          <ActionButton
                             handleAction={() => (dataCRUD?.EXCEL == false ? '' : exportToExcel())}
                             title={'Xuất Excel'}
                             icon={<RiFileExcel2Fill className="w-5 h-5" />}
@@ -650,7 +677,7 @@ const PhieuLapRap = ({ path }) => {
                         <DateField
                           onBlur={handleDateChange}
                           onKeyDown={handleKeyDown}
-                          className="DatePicker_NXTKho min-w-[100px] w-[60%]"
+                          className="max-w-[120px]"
                           format="DD/MM/YYYY"
                           value={khoanNgayFrom}
                           sx={{
@@ -674,7 +701,7 @@ const PhieuLapRap = ({ path }) => {
                         <DateField
                           onBlur={handleDateChange}
                           onKeyDown={handleKeyDown}
-                          className="DatePicker_NXTKho min-w-[100px] w-[60%]"
+                          className="max-w-[120px]"
                           format="DD/MM/YYYY"
                           value={khoanNgayTo}
                           sx={{
@@ -711,7 +738,7 @@ const PhieuLapRap = ({ path }) => {
                   <Table
                     loading={tableLoad}
                     bordered
-                    className="table_DMHangHoa setHeight"
+                    className="setHeight"
                     columns={newTitles}
                     dataSource={filteredHangHoa.map((record, index) => ({ ...record, key: index }))}
                     pagination={{
@@ -787,13 +814,13 @@ const PhieuLapRap = ({ path }) => {
                   (actionType == 'create' ? (
                     <PLRCreate close={() => setIsShowModal(false)} loadingData={handleLoading} setTargetRow={setTargetRow} />
                   ) : actionType == 'view' ? (
-                    <PLRView close={() => setIsShowModal(false)} dataNDC={isDataKhoLR} />
+                    <PLRView close={() => setIsShowModal(false)} dataPLR={isDataKhoLR} />
                   ) : actionType == 'edit' ? (
-                    <PLREdit close={() => setIsShowModal(false)} dataNDC={isDataKhoLR} loadingData={handleLoading} setTargetRow={setTargetRow} />
+                    <PLREdit close={() => setIsShowModal(false)} dataPLR={isDataKhoLR} loadingData={handleLoading} setTargetRow={setTargetRow} />
                   ) : actionType == 'delete' ? (
-                    <PLRDelete close={() => setIsShowModal(false)} dataNDC={isDataKhoLR} loadingData={handleLoading} setTargetRow={setTargetRow} />
-                  ) : actionType == 'print' ? (
-                    <PLRPrint close={() => setIsShowModal(false)} />
+                    <PLRDelete close={() => setIsShowModal(false)} dataPLR={isDataKhoLR} loadingData={handleLoading} setTargetRow={setTargetRow} />
+                  ) : actionType == 'print' || actionType == 'printImport' || actionType == 'printExport' ? (
+                    <PLRPrint close={() => setIsShowModal(false)} type={actionType} />
                   ) : null)}
               </div>
             </>

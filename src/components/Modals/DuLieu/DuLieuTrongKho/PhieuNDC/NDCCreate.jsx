@@ -199,6 +199,7 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
     setIsShowModal(true)
     setActionType('print')
   }
+
   const handleChange = (index, key, newValue) => {
     const newDataList = [...NDCForm.DataDetails]
     if (key === 'SoLuong') {
@@ -446,21 +447,21 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                       <div className="flex gap-1">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người tạo</label>
-                          <input className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border-[0.125rem] outline-none text-[1rem]" readOnly />
+                          <input className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-[1rem]" readOnly />
                         </div>
                         <div className="flex gap-1 items-center">
                           <label className="text-sm">Lúc</label>
-                          <input className="px-2 w-full resize-none rounded border-[0.125rem] outline-none text-[1rem]" readOnly />
+                          <input className="px-2 w-full resize-none rounded border outline-none text-[1rem]" readOnly />
                         </div>
                       </div>
                       <div className="flex gap-1">
                         <div className="flex gap-1 items-center">
-                          <label className="whitespace-nowraptext-sm text-sm">Người sửa</label>
-                          <input className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border-[0.125rem] outline-none text-[1rem]" readOnly />
+                          <label className="whitespace-nowrap text-sm">Người sửa</label>
+                          <input className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-[1rem]" readOnly />
                         </div>
                         <div className="flex gap-1 items-center">
                           <label className="text-sm">Lúc</label>
-                          <input className="px-2 w-full resize-none rounded border-[0.125rem] outline-none text-[1rem]" readOnly />
+                          <input className="px-2 w-full resize-none rounded border outline-none text-[1rem]" readOnly />
                         </div>
                       </div>
                     </div>
@@ -513,17 +514,18 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                                     }}
                                     onChange={(value) => handleChange(index, 'TenHang', value)}
                                   >
-                                    {dataHangHoa
-                                      ?.filter((row) => !currentRowData(item.MaHang).includes(row?.MaHang))
-                                      ?.map((hangHoa) => (
-                                        <>
-                                          <Select.Option key={hangHoa.MaHang} value={hangHoa.MaHang}>
-                                            <p className="text-start truncate">
-                                              {hangHoa.MaHang}-{hangHoa.TenHang}
-                                            </p>
-                                          </Select.Option>
-                                        </>
-                                      ))}
+                                    {dataHangHoa &&
+                                      dataHangHoa
+                                        ?.filter((row) => !currentRowData(item.MaHang).includes(row?.MaHang))
+                                        ?.map((hangHoa) => (
+                                          <>
+                                            <Select.Option key={hangHoa.MaHang} value={hangHoa.MaHang}>
+                                              <p className="text-start truncate">
+                                                {hangHoa.MaHang}-{hangHoa.TenHang}
+                                              </p>
+                                            </Select.Option>
+                                          </>
+                                        ))}
                                   </Select>
                                 </div>
                               </td>
@@ -632,7 +634,7 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                       <Table
                         bordered
                         columns={title}
-                        dataSource={filteredHangHoa}
+                        dataSource={filteredHangHoa.map((record, index) => ({ ...record, key: index }))}
                         onRow={(record) => ({
                           onDoubleClick: () => {
                             handleChoose(record)

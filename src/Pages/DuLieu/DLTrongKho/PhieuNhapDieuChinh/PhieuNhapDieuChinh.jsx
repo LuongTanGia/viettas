@@ -120,7 +120,7 @@ const PhieuNhapDieuChinh = ({ path }) => {
       }
     }
     getDataNDC()
-  }, [searchHangHoa, isLoading, targetRow, dateData.NgayBatDau, dateData.NgayKetThuc])
+  }, [searchHangHoa, isLoading, targetRow])
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -669,7 +669,7 @@ const PhieuNhapDieuChinh = ({ path }) => {
                         <DateField
                           onBlur={handleDateChange}
                           onKeyDown={handleKeyDown}
-                          className="DatePicker_NXTKho min-w-[100px] w-[60%]"
+                          className="DatePicker_NXTKho max-w-[110px]"
                           format="DD/MM/YYYY"
                           value={khoanNgayFrom}
                           sx={{
@@ -693,7 +693,7 @@ const PhieuNhapDieuChinh = ({ path }) => {
                         <DateField
                           onBlur={handleDateChange}
                           onKeyDown={handleKeyDown}
-                          className="DatePicker_NXTKho min-w-[100px] w-[60%]"
+                          className="DatePicker_NXTKho max-w-[110px]"
                           format="DD/MM/YYYY"
                           value={khoanNgayTo}
                           sx={{

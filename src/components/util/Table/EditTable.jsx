@@ -79,14 +79,13 @@ const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourT
 
         const updatedRow = newData[index]
 
-        if (updatedRow && updatedRow.SoLuong !== undefined && updatedRow.DonGia !== undefined) {
+        if (updatedRow && updatedRow.SoLuong !== undefined && updatedRow.DonGia !== undefined && tableName !== 'PhieuLapRap') {
           updatedRow.TienHang = (updatedRow.SoLuong * updatedRow.DonGia).toFixed(ThongSo.SOLESOTIEN)
           updatedRow.TienHang = parseFloat(updatedRow.TienHang)
           updatedRow.TienThue = ((updatedRow.TienHang * updatedRow.TyLeThue) / 100).toFixed(ThongSo.SOLESOTIEN)
           updatedRow.TienThue = parseFloat(updatedRow.TienThue)
           updatedRow.ThanhTien = (updatedRow.TienHang + (updatedRow.TienHang * updatedRow.TyLeThue) / 100).toFixed(ThongSo.SOLESOTIEN)
           updatedRow.ThanhTien = parseFloat(updatedRow.ThanhTien)
-
           updatedRow.TienCKTT = ((updatedRow.ThanhTien * updatedRow.TyLeCKTT) / 100).toFixed(ThongSo.SOLESOTIEN)
           updatedRow.TienCKTT = parseFloat(updatedRow.TienCKTT)
           // updatedRow.TyLeCKTT = ((updatedRow.TienCKTT * 100) / updatedRow.ThanhTien).toFixed(ThongSo.SOLETYLE)
@@ -94,11 +93,13 @@ const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourT
           // console.log(updatedRow.TyLeCKTT)
           updatedRow.TongCong = (updatedRow.ThanhTien - updatedRow.TienCKTT).toFixed(ThongSo.SOLESOTIEN)
           updatedRow.TongCong = parseFloat(updatedRow.TongCong)
-
           handleEditData(newData)
           return newData
         } else {
-          console.error('SoLuong or DonGia is undefined in updatedRow:', updatedRow)
+          updatedRow.TongCong = ''
+          handleEditData(newData)
+          console.log(newData)
+          // console.error('SoLuong or DonGia is undefined in updatedRow:', updatedRow)
         }
       } else {
         console.error('Row not found in data.')
@@ -143,7 +144,6 @@ const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourT
           const updatedRow = {
             ...record,
             ...values,
-
             TenHang: selectedOption.TenHang || record.TenHang,
             MaHang: selectedOption.MaHang || record.MaHang,
             DonGia: GiaBan || record.DonGia,
@@ -228,20 +228,20 @@ const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourT
           {isSelect ? (
             <Select ref={inputRef} onPressEnter={save} onBlur={save} style={{ width: '100%' }} showSearch dropdownMatchSelectWidth={false} listHeight={310}>
               {dataIndex === 'MaHang'
-                ? newOptions?.map((option) => (
-                    <Option key={option.MaHang} value={option.MaHang}>
+                ? newOptions?.map((option, index) => (
+                    <Option key={index} value={option.MaHang}>
                       {`${option.MaHang} - ${option.TenHang}`}
                     </Option>
                   ))
                 : dataIndex === 'TenHang'
-                  ? newOptions?.map((option) => (
-                      <Option key={option.TenHang} value={option.TenHang}>
+                  ? newOptions?.map((option, index) => (
+                      <Option key={index} value={option.TenHang}>
                         {`${option.MaHang} - ${option.TenHang}`}
                       </Option>
                     ))
                   : typeTable !== 'BanHang'
-                    ? listDVT.map((option) => (
-                        <Option key={option} value={option}>
+                    ? listDVT.map((option, index) => (
+                        <Option key={index} value={option}>
                           {option}
                         </Option>
                       ))
@@ -395,7 +395,6 @@ const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourT
         showSorterTooltip: false,
       }
     }
-
     if (item === 'SoLuong') {
       return {
         title: columName[item] || item,
@@ -452,7 +451,6 @@ const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourT
         showSorterTooltip: false,
       }
     }
-
     if (item === 'TyLeCKTT') {
       return {
         title: columName[item] || item,
@@ -580,7 +578,7 @@ const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourT
         dataSource={dataSource}
         columns={columns}
         scroll={{
-          x: 1500,
+          x: tableName == 'PhieuLapRap' ? 700 : 1500,
           y: true,
         }}
         size="small"
@@ -595,11 +593,11 @@ const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourT
 
                 {columns
                   .filter((column) => column.render)
-                  .map((column) => {
+                  .map((column, index) => {
                     const isNumericColumn = typeof dataSource[0]?.[column.dataIndex] === 'number' && column.dataIndex !== 'STT'
 
                     return (
-                      <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'center' : 'center'} className="text-end font-bold  bg-[#f1f1f1] pr-5">
+                      <Table.Summary.Cell key={`summary-cell-${index}`} align={isNumericColumn ? 'center' : 'center'} className="text-end font-bold  bg-[#f1f1f1] pr-5">
                         {isNumericColumn ? (
                           // <Text strong align="center">
                           //   {Number(pageData.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {

@@ -408,12 +408,14 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
       if (infoHang.data.DataError == 0) {
         setDataView(infoHang.data.DataResult)
         setIsLoading(true)
+        setTableLoad(false)
       } else if ((infoHang.data && infoHang.data.DataError === -107) || (infoHang.data && infoHang.data.DataError === -108)) {
         await RETOKEN()
         handleView()
       }
     } catch (error) {
       console.log(error)
+      setTableLoad(false)
     }
   }
   const handleUpdate = async () => {
@@ -505,7 +507,6 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
   }
   const handleGroup = async () => {
     try {
-      console.log(getMaHang)
       const response = await categoryAPI.GanNhom(
         {
           DanhSachMa: getMaHang?.map((item) => ({ Ma: item })),
@@ -670,6 +671,68 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
       render: (text, record) => <Checkbox className=" justify-center" id={`TonKho_${record.key}`} checked={text} />,
     },
   ]
+  const titleBarCodeView = [
+    {
+      title: 'Mã vạch',
+      dataIndex: 'MaVach',
+      key: 'MaVach',
+      align: 'center',
+      width: 150,
+      sorter: (a, b) => a.MaVach - b.MaVach,
+      showSorterTooltip: false,
+      render: (text) => <span className="flex justify-start"> {text}</span>,
+    },
+    {
+      title: 'Ngưng dùng',
+      dataIndex: 'NA',
+      key: 'NA',
+      width: 120,
+      align: 'center',
+      showSorterTooltip: false,
+      sorter: (a, b) => {
+        const valueA = a.NA ? 1 : 0
+        const valueB = b.NA ? 1 : 0
+        return valueA - valueB
+      },
+      render: (text, record) => <Checkbox className="justify-center" id={`NA_${record.key}`} checked={text} />,
+    },
+  ]
+  const titleHangHoa_CTsView = [
+    {
+      title: 'Tên hàng',
+      dataIndex: 'TenHangChiTiet',
+      key: 'TenHangChiTiet',
+      align: 'center',
+      width: 150,
+      sorter: (a, b) => a.TenHangChiTiet.localeCompare(b.TenHangChiTiet),
+      showSorterTooltip: false,
+      render: (text) => <span className="flex justify-start"> {text}</span>,
+    },
+    {
+      title: 'ĐVT',
+      dataIndex: 'DVTChiTiet',
+      key: 'DVTChiTiet',
+      width: 120,
+      align: 'center',
+      showSorterTooltip: false,
+      sorter: (a, b) => a.DVTChiTiet.localeCompare(b.DVTChiTiet),
+      render: (text) => <span className="flex justify-center"> {text}</span>,
+    },
+    {
+      title: 'Số lượng ',
+      dataIndex: 'SoLuong',
+      key: 'SoLuong',
+      width: 150,
+      showSorterTooltip: false,
+      sorter: (a, b) => a.SoLuong - b.SoLuong,
+      align: 'center',
+      render: (text) => (
+        <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 || text === null ? 'text-gray-300' : ''}`}>
+          {formatThapPhan(text, dataThongSo.SOLESOLUONG)}
+        </span>
+      ),
+    },
+  ]
   return (
     <>
       {!isLoading ? (
@@ -692,26 +755,21 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                       <div className="grid grid-cols-1 xl:grid-cols-2 gap-2 items-center">
                         <div className="flex items-center gap-1 whitespace-nowrap">
                           <label className="required  min-w-[90px] text-sm flex justify-end">Mã hàng</label>
-                          <input
-                            type="text"
-                            value={dataView?.MaHang || ''}
-                            className="px-2 w-full rounded resize-none border-[0.125rem] outline-none text-[1rem] truncate"
-                            readOnly
-                          />
+                          <Input size="small" className="w-full overflow-hidden whitespace-nowrap" required value={dataView?.MaHang || ''} readOnly />
                         </div>
                         <div className="flex items-center ml-[110px] xl:ml-0 gap-2">
                           <div className="flex items-center">
-                            <Checkbox className="text-base" id="TonKho" checked={dataView?.TonKho}>
+                            <Checkbox className="text-sm" id="TonKho" checked={dataView?.TonKho}>
                               Tồn kho
                             </Checkbox>
                           </div>
                           <div className="flex items-center">
-                            <Checkbox className="text-base" id="TonKho" checked={dataView?.LapRap}>
+                            <Checkbox className="text-sm" id="TonKho" checked={dataView?.LapRap}>
                               Lắp ráp
                             </Checkbox>
                           </div>
                           <div className="flex items-center">
-                            <Checkbox className="text-base" id="TonKho" checked={dataView?.NA}>
+                            <Checkbox className="text-sm" id="TonKho" checked={dataView?.NA}>
                               Ngưng dùng
                             </Checkbox>
                           </div>
@@ -719,69 +777,62 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                       </div>
                       <div className="flex items-center gap-1">
                         <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Tên hàng</label>
-                        <input type="text" value={dataView?.TenHang || ''} className="px-2 rounded w-full resize-none border-[0.125rem] outline-none text-[1rem]" readOnly />
+                        <Input size="small" className="w-full overflow-hidden whitespace-nowrap" required value={dataView?.TenHang || ''} readOnly />
                       </div>
                       <div className="flex items-center gap-1 whitespace-nowrap  ">
                         <label className="required min-w-[90px] text-sm flex justify-end">Tên nhóm</label>
-                        <input type="text" value={dataView?.TenNhom || ''} className="px-2 rounded w-full resize-none border-[0.125rem] outline-none text-[1rem]" readOnly />
+                        <Input size="small" className="w-full overflow-hidden whitespace-nowrap" required value={dataView?.TenNhom || ''} readOnly />
                       </div>
                       <div className="grid grid-cols-5 gap-2">
                         <div className="flex items-center gap-1 col-span-2">
                           <label className="required whitespace-nowrap min-w-[90px] text-sm flex justify-end">Đơn vị tính</label>
-                          <input type="text" value={dataView?.DVTKho || ''} className="px-2 rounded w-full resize-none border-[0.125rem] outline-none text-[1rem] " readOnly />
+                          <Input size="small" className="w-full overflow-hidden whitespace-nowrap" required value={dataView?.DVTKho || ''} readOnly />
                         </div>
                         <div className="flex items-center gap-1 ">
                           <label>x</label>
-                          <input
-                            type="text"
+                          <Input
+                            size="small"
+                            className="w-full overflow-hidden whitespace-nowrap"
+                            required
                             value={formatThapPhan(Number(dataView?.TyLeQuyDoi), dataThongSo?.SOLETYLE) || ''}
-                            className="px-2  rounded w-full resize-none border-[0.125rem] outline-none text-[1rem] flex text-end"
                             readOnly
                           />
                         </div>
                         <div className="flex items-center gap-1 col-span-2">
                           <label className="required whitespace-nowrap text-sm">Đơn vị quy đổi</label>
-                          <input type="text" value={dataView?.DVTQuyDoi || ''} className="px-2 rounded w-full resize-none  border-[0.125rem] outline-none text-[1rem]" readOnly />
+                          <Input size="small" className="w-full overflow-hidden whitespace-nowrap" required value={dataView?.DVTQuyDoi || ''} readOnly />
                         </div>
                       </div>
                       <div className="grid grid-cols-3">
                         <div className="flex items-center gap-1 whitespace-nowrap col-span-2">
                           <label className="required min-w-[90px] text-sm flex justify-end">Mã vạch</label>
-                          <input type="text" value={dataView?.MaVach || ''} className="px-2 rounded w-full resize-none border-[0.125rem] outline-none text-[1rem]" readOnly />
+                          <Input size="small" className="w-full overflow-hidden whitespace-nowrap" required value={dataView?.MaVach || ''} readOnly />
                         </div>
                       </div>
-                      <div className="border-[0.125rem] ml-[95px] min-h-[136px] p-2 rounded flex flex-col items-end gap-2">
-                        <div className="w-full max-h-[118px] overflow-y-auto">
-                          <table className="barcodeList">
-                            <thead>
-                              <tr>
-                                <th>Mã vạch</th>
-                                <th className="w-[10rem]">Ngưng dùng</th>
-                              </tr>
-                            </thead>
-                            <tbody className="">
-                              {dataView?.Barcodes?.map((barcode, index) => (
-                                <tr key={index}>
-                                  <td>
-                                    <div className="max-w-[30rem] flex justify-start">
-                                      <p className="block truncate">{barcode.MaVach}</p>
-                                    </div>
-                                  </td>
-                                  <td>
-                                    <Checkbox checked={barcode.NA}></Checkbox>
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
+                      <div className="border ml-[95px] rounded flex flex-col items-end gap-2">
+                        <div className="w-full ml-[95px]">
+                          <Table
+                            loading={tableLoad}
+                            className="table_viewHH"
+                            columns={titleBarCodeView}
+                            dataSource={dataView?.Barcodes?.map((item, index) => ({ ...item, key: index }))}
+                            size="small"
+                            scroll={{
+                              x: 500,
+                              y: 100,
+                            }}
+                            bordered
+                            pagination={false}
+                          />
                         </div>
                       </div>
                       <div className="flex items-center gap-1">
                         <label className="whitespace-nowrap min-w-[90px] text-sm flex justify-end">Diễn giải hàng</label>
-                        <input
-                          type="text"
+                        <Input
+                          size="small"
+                          className="w-full overflow-hidden whitespace-nowrap"
+                          required
                           value={dataView?.DienGiaiHangHoa == null ? 'Trống' : dataView?.DienGiaiHangHoa || ''}
-                          className="px-2 rounded w-full resize-none border-[0.125rem] outline-none text-[1rem] truncate"
                           readOnly
                         />
                       </div>
@@ -847,38 +898,22 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                         </div>
                       </div>
                     </div>
-                    <div className="flex flex-col gap-2 ">
-                      {dataView?.LapRap == true && (
-                        <div className="border-[0.125rem] p-2 rounded flex flex-col">
-                          <div className="w-full max-h-[525px] overflow-y-auto">
-                            <table className="barcodeList">
-                              <thead>
-                                <tr>
-                                  <th>Tên Hàng</th>
-                                  <th>ĐVT</th>
-                                  <th>Số Lượng</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {dataView?.HangHoa_CTs.map((item) => (
-                                  <tr key={item.MaHangChiTiet}>
-                                    <td>
-                                      <div title={item.TenHangChiTiet} className="flex justify-start">
-                                        <p className="block truncate max-w-[25rem]">{item.TenHangChiTiet}</p>
-                                      </div>
-                                    </td>
-                                    <td>{item.DVTChiTiet}</td>
-                                    <td>
-                                      <div className="flex justify-end px-4 items-end">{formatThapPhan(Number(item.SoLuong), dataThongSo.SOLESOLUONG)}</div>
-                                    </td>
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </table>
-                          </div>
-                        </div>
-                      )}
-                    </div>
+                    {dataView?.LapRap == true && (
+                      <div className="w-full border rounded">
+                        <Table
+                          loading={tableLoad}
+                          columns={titleHangHoa_CTsView}
+                          dataSource={dataView?.HangHoa_CTs?.map((item, index) => ({ ...item, key: index }))}
+                          size="small"
+                          scroll={{
+                            x: 500,
+                            y: 500,
+                          }}
+                          bordered
+                          pagination={false}
+                        />
+                      </div>
+                    )}
                   </div>
                   <div className="flex justify-end m-2">
                     <div>

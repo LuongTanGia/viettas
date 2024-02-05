@@ -7,28 +7,24 @@ import { Select, Checkbox } from 'antd'
 import { DateField } from '@mui/x-date-pickers'
 import categoryAPI from '../../../../../API/linkAPI'
 import logo from '../../../../../assets/VTS-iSale.ico'
-import { RETOKEN, base64ToPDF } from '../../../../../action/Actions'
 import ActionButton from '../../../../util/Button/ActionButton'
 import SimpleBackdrop from '../../../../util/Loading/LoadingPage'
+import { RETOKEN, base64ToPDF } from '../../../../../action/Actions'
 
 const NDCPrint = ({ close, dataPrint }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const [khoanNgayFrom, setKhoanNgayFrom] = useState()
   const [khoanNgayTo, setKhoanNgayTo] = useState()
   const [isLoading, setIsLoading] = useState(false)
-  const [dataListChungTu, setDataListChungTu] = useState([])
-  const [selectedNhomFrom, setSelectedNhomFrom] = useState([])
-  const [selectedNhomTo, setSelectedNhomTo] = useState([])
+  const [dataListChungTu, setDataListChungTu] = useState('')
+  const [selectedNhomFrom, setSelectedNhomFrom] = useState(null)
+  const [selectedNhomTo, setSelectedNhomTo] = useState(null)
   const [dateData, setDateData] = useState({})
   const [dateChange, setDateChange] = useState(false)
   const [checkboxValues, setCheckboxValues] = useState({
     checkbox1: true,
     checkbox2: false,
     checkbox3: false,
-  })
-  const [errors, setErrors] = useState({
-    SoChungTuBatDau: '',
-    SoChungTuKetThuc: '',
   })
 
   useEffect(() => {
@@ -69,9 +65,9 @@ const NDCPrint = ({ close, dataPrint }) => {
             setDataListChungTu(response.data.DataResults)
             setIsLoading(true)
           }
-          console.log({ NgayBatDau: dateData?.NgayBatDau, NgayKetThuc: dateData?.NgayKetThuc })
-          if (response.data.DataError == -104 && response.data.DataResults) {
+          if (response.data.DataError == -104) {
             setDataListChungTu([])
+            setIsLoading(true)
           } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
             await RETOKEN()
             getListChungTu()
@@ -91,13 +87,6 @@ const NDCPrint = ({ close, dataPrint }) => {
     return total
   }
   const handlePrint = async () => {
-    if (selectedNhomFrom == [] || selectedNhomTo == []) {
-      setErrors({
-        SoChungTuBatDau: selectedNhomFrom == [] ? '' : 'Số chứng từ không được trống',
-        SoChungTuKetThuc: selectedNhomTo == [] ? '' : 'Số chứng từ không được trống',
-      })
-      return
-    }
     try {
       const response = await categoryAPI.NDCPrint(
         dataPrint
@@ -156,7 +145,6 @@ const NDCPrint = ({ close, dataPrint }) => {
       }
     }, 300)
   }
-
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
       handleDateChange()
@@ -178,11 +166,11 @@ const NDCPrint = ({ close, dataPrint }) => {
               </div>
               <div className="flex flex-col gap-4 border-2 p-3">
                 <div className="flex justify-center">
-                  <div className="DatePicker_NDCKho flex justify-center gap-2">
+                  <div className="DatePicker_NDCKho flex justify-center gap-4">
                     <div className="DatePicker_NDCKho flex items-center gap-2">
                       <label>Từ</label>
                       <DateField
-                        className="min-w-[100px] w-[60%]"
+                        className="max-w-[180px]"
                         onBlur={handleDateChange}
                         onKeyDown={handleKeyDown}
                         format="DD/MM/YYYY"
@@ -208,7 +196,7 @@ const NDCPrint = ({ close, dataPrint }) => {
                       <DateField
                         onBlur={handleDateChange}
                         onKeyDown={handleKeyDown}
-                        className="min-w-[100px] w-[60%]"
+                        className=" max-w-[180px]"
                         format="DD/MM/YYYY"
                         value={dataPrint ? dayjs(dataPrint.NgayCTu) : khoanNgayTo}
                         sx={{
@@ -233,15 +221,12 @@ const NDCPrint = ({ close, dataPrint }) => {
                   <div className="flex gap-2 items-center">
                     <div>Số chứng từ</div>
                     <Select
-                      allowClear
                       showSearch
                       required
-                      status={errors.SoChungTuBatDau ? 'error' : ''}
                       value={dataPrint ? dataPrint.SoChungTu : selectedNhomFrom}
-                      placeholder={errors?.SoChungTuBatDau ? errors?.SoChungTuBatDau : 'Chọn nhóm'}
+                      placeholder={'Chọn nhóm'}
                       onChange={(value) => {
                         setSelectedNhomFrom(value)
-                        setErrors({ ...errors, SoChungTuBatDau: '' })
                       }}
                       style={{
                         width: '200px',
@@ -260,15 +245,12 @@ const NDCPrint = ({ close, dataPrint }) => {
                   <div className="flex gap-2 items-center">
                     <div> Tới</div>
                     <Select
-                      allowClear
                       showSearch
                       required
-                      placeholder={errors?.SoChungTuKetThuc ? errors?.SoChungTuKetThuc : 'Chọn nhóm'}
-                      status={errors.SoChungTuKetThuc ? 'error' : ''}
+                      placeholder={'Chọn nhóm'}
                       value={dataPrint ? dataPrint.SoChungTu : selectedNhomTo}
                       onChange={(value) => {
                         setSelectedNhomTo(value)
-                        setErrors({ ...errors, SoChungTuKetThuc: '' })
                       }}
                       style={{
                         width: '200px',

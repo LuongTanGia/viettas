@@ -790,13 +790,13 @@ const NhapXuatTonKho = ({ path }) => {
                   </div>
                 </div>
                 <div className="flex justify-between  gap-2 w-[95vw]">
-                  <form className="flex flex-col gap-1 items-start">
+                  <div className="flex flex-col gap-1 items-start">
                     <div className="flex gap-2 justify-between">
                       <div className="flex">
                         <div className="flex items-center gap-1">
                           <label>Từ</label>
                           <DateField
-                            className="DatePicker_NXTKho min-w-[100px] w-[70%]"
+                            className="DatePicker_NXTKho  max-w-[110px]"
                             onBlur={handleDateChange}
                             onKeyDown={handleKeyDown}
                             format="DD/MM/YYYY"
@@ -820,7 +820,7 @@ const NhapXuatTonKho = ({ path }) => {
                         <div className=" flex items-center gap-1 ">
                           <label>Đến</label>
                           <DateField
-                            className="DatePicker_NXTKho min-w-[100px] w-[70%]"
+                            className="DatePicker_NXTKho max-w-[110px]"
                             onBlur={handleDateChange}
                             onKeyDown={handleKeyDown}
                             format="DD/MM/YYYY"
@@ -1025,7 +1025,7 @@ const NhapXuatTonKho = ({ path }) => {
                         </div>
                       </div>
                     </div>
-                  </form>
+                  </div>
                   <div className="flex items-end ">
                     <Select
                       showSearch

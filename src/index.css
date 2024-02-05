@@ -243,7 +243,10 @@ input.ant-input.ant-input-sm {
   min-height: 276px;
   max-height: 276px;
 }
-
+.table_viewHH .ant-table-body {
+  min-height: 75px;
+  max-height: 75px;
+}
 .table_HH .ant-table-body {
   min-height: 450px;
   max-height: 450px;
