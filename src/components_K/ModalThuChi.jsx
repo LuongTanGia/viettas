@@ -158,20 +158,40 @@ const ModalPCT = ({
     }
     try {
       const tokenLogin = localStorage.getItem('TKN')
-      const response = await apis.ThemPCT(tokenLogin, formCreate)
-      if (response.data && response.data.DataError === 0) {
-        toast.success(response.data.DataErrorDescription)
-        const soChungTu = response.data.DataResults[0].SoChungTu
-        loading()
-        setHightLight(soChungTu)
-        close()
-      } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        handleCreateAndClose()
-      } else {
-        toast.error(response.data.DataErrorDescription)
+
+      if (typePage === 'PCT') {
+        const response = await apis.ThemPCT(tokenLogin, formCreate)
+        if (response.data && response.data.DataError === 0) {
+          toast.success(response.data.DataErrorDescription)
+          const soChungTu = response.data.DataResults[0].SoChungTu
+          loading()
+          setHightLight(soChungTu)
+          close()
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleCreateAndClose()
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
+      }
+      if (typePage === 'PTT') {
+        const response = await apis.ThemPTT(tokenLogin, formCreate)
+        if (response.data && response.data.DataError === 0) {
+          toast.success(response.data.DataErrorDescription)
+          const soChungTu = response.data.DataResults[0].SoChungTu
+          loading()
+          setHightLight(soChungTu)
+          close()
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleCreateAndClose()
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
       }
     } catch (error) {
       console.error('Error while saving data:', error)
@@ -202,22 +222,44 @@ const ModalPCT = ({
 
     try {
       const tokenLogin = localStorage.getItem('TKN')
-      const response = await apis.ThemPCT(tokenLogin, formCreate)
-      if (response.data && response.data.DataError === 0) {
-        toast.success(response.data.DataErrorDescription)
-        const soChungTu = response.data.DataResults[0].SoChungTu
-        loading()
-        setHightLight(soChungTu)
-        setSctCreate(soChungTu)
-        setFormCreate(defaultFormCreate)
-        setDoiTuongInfo({ Ten: '', DiaChi: '' })
-      } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        handleCreateAndClose()
-      } else {
-        toast.error(response.data.DataErrorDescription)
+
+      if (typePage === 'PCT') {
+        const response = await apis.ThemPCT(tokenLogin, formCreate)
+        if (response.data && response.data.DataError === 0) {
+          toast.success(response.data.DataErrorDescription)
+          const soChungTu = response.data.DataResults[0].SoChungTu
+          loading()
+          setHightLight(soChungTu)
+          setSctCreate(soChungTu)
+          setFormCreate(defaultFormCreate)
+          setDoiTuongInfo({ Ten: '', DiaChi: '' })
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleCreateAndClose()
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
+      }
+      if (typePage === 'PTT') {
+        const response = await apis.ThemPTT(tokenLogin, formCreate)
+        if (response.data && response.data.DataError === 0) {
+          toast.success(response.data.DataErrorDescription)
+          const soChungTu = response.data.DataResults[0].SoChungTu
+          loading()
+          setHightLight(soChungTu)
+          setSctCreate(soChungTu)
+          setFormCreate(defaultFormCreate)
+          setDoiTuongInfo({ Ten: '', DiaChi: '' })
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleCreateAndClose()
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
       }
     } catch (error) {
       console.error('Error while saving data:', error)
@@ -247,25 +289,38 @@ const ModalPCT = ({
     }
     try {
       const tokenLogin = localStorage.getItem('TKN')
-
-      const response = await apis.SuaPCT(tokenLogin, dataRecord.SoChungTu, formEdit)
-
-      if (response.data && response.data.DataError === 0) {
-        toast.success(response.data.DataErrorDescription)
-        loading()
-        setHightLight(dataRecord.SoChungTu)
-
-        close()
-      } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        handleEdit()
-      } else {
-        toast.error(response.data.DataErrorDescription)
+      if (typePage === 'PCT') {
+        const response = await apis.SuaPCT(tokenLogin, dataRecord.SoChungTu, formEdit)
+        if (response.data && response.data.DataError === 0) {
+          toast.success(response.data.DataErrorDescription)
+          loading()
+          setHightLight(dataRecord.SoChungTu)
+          close()
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleEdit()
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
       }
-
-      // close()
+      if (typePage === 'PTT') {
+        const response = await apis.SuaPTT(tokenLogin, dataRecord.SoChungTu, formEdit)
+        if (response.data && response.data.DataError === 0) {
+          toast.success(response.data.DataErrorDescription)
+          loading()
+          setHightLight(dataRecord.SoChungTu)
+          close()
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleEdit()
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
+      }
     } catch (error) {
       console.error('Error while saving data:', error)
     }
@@ -274,19 +329,33 @@ const ModalPCT = ({
   const handleDelete = async (dataRecord) => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
-
-      const response = await apis.XoaPCT(tokenLogin, dataRecord.SoChungTu)
-      // Kiểm tra call api thành công
-      if (response.data && response.data.DataError === 0) {
-        toast.success(response.data.DataErrorDescription)
-        loading()
-      } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-        toast.warning(response.data.DataErrorDescription)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        handleDelete()
-      } else {
-        toast.error(response.data.DataErrorDescription)
+      if (typePage === 'PCT') {
+        const response = await apis.XoaPCT(tokenLogin, dataRecord.SoChungTu)
+        if (response.data && response.data.DataError === 0) {
+          toast.success(response.data.DataErrorDescription)
+          loading()
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(response.data.DataErrorDescription)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleDelete()
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
+      }
+      if (typePage === 'PTT') {
+        const response = await apis.XoaPTT(tokenLogin, dataRecord.SoChungTu)
+        if (response.data && response.data.DataError === 0) {
+          toast.success(response.data.DataErrorDescription)
+          loading()
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(response.data.DataErrorDescription)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleDelete()
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
       }
       close()
     } catch (error) {
@@ -307,17 +376,31 @@ const ModalPCT = ({
       const tokenLogin = localStorage.getItem('TKN')
       const lien = calculateTotal()
 
-      const response = await apis.InPCT(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
-      // Kiểm tra call api thành công
-      if (response.data && response.data.DataError === 0) {
-        base64ToPDF(response.data.DataResults)
-      } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-        toast.warning(response.data.DataErrorDescription)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        handlePrint()
-      } else {
-        toast.error(response.data.DataErrorDescription)
+      if (typePage === 'PCT') {
+        const response = await apis.InPCT(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+        if (response.data && response.data.DataError === 0) {
+          base64ToPDF(response.data.DataResults)
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(response.data.DataErrorDescription)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handlePrint()
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
+      }
+      if (typePage === 'PTT') {
+        const response = await apis.InPTT(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+        if (response.data && response.data.DataError === 0) {
+          base64ToPDF(response.data.DataResults)
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(response.data.DataErrorDescription)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handlePrint()
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
       }
     } catch (error) {
       console.error('Error while saving data:', error)
@@ -348,21 +431,36 @@ const ModalPCT = ({
     try {
       const tokenLogin = localStorage.getItem('TKN')
 
-      const response = await apis.SuaPCT(tokenLogin, dataRecord.SoChungTu, formEdit)
-
-      if (response.data && response.data.DataError === 0) {
-        toast.success(response.data.DataErrorDescription)
-        loading()
-        setHightLight(dataRecord.SoChungTu)
-      } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        handleEdit()
-      } else {
-        toast.error(response.data.DataErrorDescription)
+      if (typePage === 'PCT') {
+        const response = await apis.SuaPCT(tokenLogin, dataRecord.SoChungTu, formEdit)
+        if (response.data && response.data.DataError === 0) {
+          toast.success(response.data.DataErrorDescription)
+          loading()
+          setHightLight(dataRecord.SoChungTu)
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleEdit()
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
       }
-
+      if (typePage === 'PTT') {
+        const response = await apis.SuaPTT(tokenLogin, dataRecord.SoChungTu, formEdit)
+        if (response.data && response.data.DataError === 0) {
+          toast.success(response.data.DataErrorDescription)
+          loading()
+          setHightLight(dataRecord.SoChungTu)
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleEdit()
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
+      }
       // close()
     } catch (error) {
       console.error('Error while saving data:', error)
@@ -625,7 +723,7 @@ const ModalPCT = ({
           )}
 
           {actionType === 'view' && (
-            <div className="md:w-[80vw] lg:w-[50vw] h-[400px]">
+            <div className="w-[700px] h-[400px]">
               <div className="flex gap-2">
                 <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
                 <label className="text-blue-700 font-semibold uppercase pb-1">thông tin - {namePage}</label>
@@ -646,7 +744,22 @@ const ModalPCT = ({
                         </div>
                         <div className="flex items-center gap-1 whitespace-nowrap">
                           <label className="required  min-w-[90px] text-sm flex justify-end">Ngày</label>
-                          <DateField className="DatePicker_PMH" format="DD/MM/YYYY" value={dayjs(dataRecord?.NgayCTu)} disabled />
+                          <DateField
+                            className="DatePicker_PMH  max-w-[110px]"
+                            format="DD/MM/YYYY"
+                            value={dayjs(dataRecord?.NgayCTu)}
+                            disabled
+                            sx={{
+                              '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                              '& .MuiButtonBase-root': {
+                                padding: '4px',
+                              },
+                              '& .MuiSvgIcon-root': {
+                                width: '18px',
+                                height: '18px',
+                              },
+                            }}
+                          />
                         </div>
                         <div className="flex items-center gap-1 whitespace-nowrap">
                           <label className="  min-w-[90px] text-sm flex justify-end">C.từ góc</label>
@@ -792,7 +905,7 @@ const ModalPCT = ({
             </div>
           )}
           {actionType === 'create' && (
-            <div className="md:w-[80vw] lg:w-[50vw] h-[400px]">
+            <div className="w-[700px] h-[400px]">
               <div className="flex gap-2">
                 <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
                 <label className="text-blue-700 font-semibold uppercase pb-1">Thêm - {namePage} </label>
@@ -1038,7 +1151,7 @@ const ModalPCT = ({
               {isLoadingEdit ? (
                 <SimpleBackdrop />
               ) : (
-                <div className=" md:w-[80vw] lg:w-[50vw] h-[400px]">
+                <div className="w-[700px] h-[400px]">
                   <div className="flex gap-2">
                     <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
                     <label className="text-blue-700 font-semibold uppercase pb-1"> Sửa - {namePage} </label>
@@ -1304,6 +1417,7 @@ const ModalPCT = ({
         {isShowModalOnlyPrint && (
           <ModalOnlyPrint
             typePage={typePage}
+            namePage={namePage}
             close={() => setIsShowModalOnlyPrint(false)}
             dataThongTin={dataRecord}
             data={data}

@@ -14,7 +14,7 @@ import { Checkbox } from 'antd'
 const { Option } = Select
 import * as apis from '../apis'
 
-const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2, SctCreate, typePage }) => {
+const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2, SctCreate, typePage, namePage }) => {
   const [selectedSctBD, setSelectedSctBD] = useState()
   const [selectedSctKT, setSelectedSctKT] = useState()
   const [newDataPMH, setNewDataPMH] = useState()
@@ -176,7 +176,7 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
         <div className=" h-[244px]  ">
           <div className="flex gap-2">
             <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
-            <label className="text-blue-700 font-semibold uppercase pb-1">In - phiếu mua hàng (Kho)</label>
+            <label className="text-blue-700 font-semibold uppercase pb-1">In - {namePage} (Kho)</label>
           </div>
           <div className="border-2 my-1">
             <div className="p-4">

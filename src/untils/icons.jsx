@@ -19,6 +19,7 @@ import { BsSearch } from 'react-icons/bs'
 import { TfiMoreAlt } from 'react-icons/tfi'
 import { RiFileExcel2Fill } from 'react-icons/ri'
 import { IoMdAddCircle } from 'react-icons/io'
+import { CgCloseO } from 'react-icons/cg'
 
 const icons = {
   TfiSearch,
@@ -55,5 +56,6 @@ const icons = {
   IoMdAddCircle,
   FaEyeSlash,
   RiFileExcel2Fill,
+  CgCloseO,
 }
 export default icons
