@@ -15,10 +15,12 @@ import { useSearch } from '../../../components_K/myComponents/useSearch'
 import HighlightedCell from '../../../components/hooks/HighlightedCell'
 import { exportToExcel } from '../../../action/Actions'
 import { CloseSquareFilled } from '@ant-design/icons'
+import { useNavigate } from 'react-router-dom'
 
 const { Text } = Typography
-const { IoAddCircleOutline, TiPrinter, MdDelete, GiPayMoney, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill } = icons
+const { IoAddCircleOutline, TiPrinter, MdDelete, GiPayMoney, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill, CgCloseO } = icons
 const PhieuMuaHang = () => {
+  const navigate = useNavigate()
   const optionContainerRef = useRef(null)
   const [isLoading, setIsLoading] = useState(true)
   const [tableLoad, setTableLoad] = useState(true)
@@ -35,10 +37,8 @@ const PhieuMuaHang = () => {
   const [dataDoiTuong, setDataDoiTuong] = useState(null)
   const [actionType, setActionType] = useState('')
   const [formKhoanNgay, setFormKhoanNgay] = useState({})
-  // const [dataThongSo, setDataThongSo] = useState()
-  // const [dataChucNang, setDataChucNang] = useState()
+  const [dataQuyenHan, setDataQuyenHan] = useState({})
   const [setSearchPMH, filteredPMH, searchPMH] = useSearch(data)
-
   const [prevSearchValue, setPrevSearchValue] = useState('')
   const [prevdateValue, setPrevDateValue] = useState({})
   const [donePMH, setDonePMH] = useState(null)
@@ -49,6 +49,7 @@ const PhieuMuaHang = () => {
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
   const [lastSearchTime, setLastSearchTime] = useState(0)
+  const [isShowNotify, setIsShowNotify] = useState(false)
 
   // bỏ focus option thì hidden
   useEffect(() => {
@@ -220,17 +221,50 @@ const PhieuMuaHang = () => {
 
     getKhoanNgay()
   }, [])
+  // get Chức năng quyền hạn
+  useEffect(() => {
+    const getChucNangQuyenHan = async () => {
+      try {
+        console.log('đi')
+        const tokenLogin = localStorage.getItem('TKN')
+        const response = await apis.ChucNangQuyenHan(tokenLogin, 'DuLieu_PMH')
 
+        if (response.data && response.data.DataError === 0) {
+          setDataQuyenHan(response.data)
+        }
+        // else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
+        //   toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+        // }
+        else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          getChucNangQuyenHan()
+        }
+        // else {
+        //   toast.error(response.data.DataErrorDescription)
+        // }
+      } catch (error) {
+        console.error('Kiểm tra token thất bại', error)
+      }
+    }
+
+    getChucNangQuyenHan()
+  }, [])
+  useEffect(() => {
+    if (dataQuyenHan?.VIEW == false) {
+      setIsShowNotify(true)
+    }
+  }, [dataQuyenHan])
   //get DSPMH
   useEffect(() => {
-    if (tableLoad) {
+    if (tableLoad && dataQuyenHan?.VIEW) {
       getDSPMH()
     }
-  }, [tableLoad])
+  }, [tableLoad, dataQuyenHan?.VIEW])
 
   const getDSPMH = async () => {
     try {
-      console.log('get ds PMH')
+      console.log('đi2')
+
       const tokenLogin = localStorage.getItem('TKN')
 
       const response = await apis.DanhSachPMH(tokenLogin, formKhoanNgay)
@@ -595,17 +629,21 @@ const PhieuMuaHang = () => {
                 <GiPayMoney size={16} />
               </div>
               <div
-                onClick={() => handleEdit(record)}
+                onClick={() => (dataQuyenHan?.EDIT ? handleEdit(record) : '')}
                 title="Sửa"
-                className="p-[3px] border-2 rounded-md text-slate-50 border-yellow-500 bg-yellow-500 hover:bg-white hover:text-yellow-500 cursor-pointer"
+                className={`p-[3px] border-2 rounded-md text-slate-50 ${
+                  dataQuyenHan?.EDIT ? 'border-yellow-500 bg-yellow-500 hover:bg-white hover:text-yellow-500 cursor-pointer' : 'border-gray-400 bg-gray-400 cursor-not-allowed'
+                } `}
               >
                 <MdEdit size={16} />
               </div>
 
               <div
-                onClick={() => handleDelete(record)}
+                onClick={() => (dataQuyenHan?.DEL ? handleDelete(record) : '')}
                 title="Xóa"
-                className="p-[3px]  border-2  border-red-500 rounded-md text-slate-50 bg-red-500  hover:bg-white hover:text-red-500  cursor-pointer "
+                className={`p-[3px] border-2 rounded-md text-slate-50 ${
+                  dataQuyenHan?.DEL ? 'border-red-500 bg-red-500 hover:bg-white hover:text-red-500 cursor-pointer' : 'border-gray-400 bg-gray-400 cursor-not-allowed'
+                } `}
               >
                 <MdDelete size={16} />
               </div>
@@ -654,7 +692,6 @@ const PhieuMuaHang = () => {
   }
 
   const handleCreate = (record) => {
-    console.log('create')
     setActionType('create')
     setDataRecord(record)
     setIsShowModal(true)
@@ -733,315 +770,373 @@ const PhieuMuaHang = () => {
 
   return (
     <>
-      {isLoading ? (
-        <SimpleBackdrop />
-      ) : (
-        <div className="w-auto">
-          <div className="relative text-lg flex justify-between items-center mb-1">
-            <div className="flex items-center gap-x-4 font-bold">
-              <h1 className="text-xl uppercase">Phiếu mua hàng </h1>
-              <div>
-                <BsSearch size={18} className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
+      {dataQuyenHan?.VIEW === false ? (
+        <>
+          {isShowNotify && (
+            <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10">
+              <div className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"></div>
+              <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col bg-white px-2 rounded shadow-custom overflow-hidden">
+                <div className="flex flex-col gap-2 p-2 justify-between ">
+                  <div className="flex flex-col gap-2 p-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex gap-2">
+                        <p className="text-blue-700 font-semibold uppercase">Kiểm tra quyền hạn người dùng</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2 border-2 p-3 items-center">
+                      <div>
+                        <CgCloseO className="w-8 h-8 text-red-500" />
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <p className="whitespace-nowrap">Bạn không có quyền thực hiện chức năng này!</p>
+                        <p className="whitespace-nowrap">
+                          Vui lòng liên hệ <span className="font-bold">Người Quản Trị</span> để được cấp quyền
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2 justify-end">
+                      <ActionButton
+                        handleAction={() => {
+                          setIsShowNotify(false)
+                          navigate('/')
+                        }}
+                        title={'Đóng'}
+                        color={'slate-50'}
+                        background={'red-500'}
+                        color_hover={'red-500'}
+                        bg_hover={'white'}
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-            <div className="flex  ">
-              {isShowSearch && (
-                <div className={`flex absolute left-[14rem] -top-[2px] transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
-                  <Input
-                    allowClear={{
-                      clearIcon: <CloseSquareFilled />,
-                    }}
-                    placeholder="Nhập ký tự bạn cần tìm"
-                    onPressEnter={(e) => {
-                      setPrevSearchValue(e.target.value)
-                      handleSearch(e.target.value)
-                    }}
-                    onBlur={(e) => handleSearch(e.target.value)}
-                    onFocus={(e) => setPrevSearchValue(e.target.value)}
+          )}
+        </>
+      ) : (
+        <>
+          {isLoading ? (
+            <SimpleBackdrop />
+          ) : (
+            <div className="w-auto">
+              <div className="relative text-lg flex justify-between items-center mb-1">
+                <div className="flex items-center gap-x-4 font-bold">
+                  <h1 className="text-xl uppercase">Phiếu mua hàng </h1>
+                  <div>
+                    <BsSearch size={18} className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
+                  </div>
+                </div>
+                <div className="flex  ">
+                  {isShowSearch && (
+                    <div className={`flex absolute left-[14rem] -top-[2px] transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
+                      <Input
+                        allowClear={{
+                          clearIcon: <CloseSquareFilled />,
+                        }}
+                        placeholder="Nhập ký tự bạn cần tìm"
+                        onPressEnter={(e) => {
+                          setPrevSearchValue(e.target.value)
+                          handleSearch(e.target.value)
+                        }}
+                        onBlur={(e) => handleSearch(e.target.value)}
+                        onFocus={(e) => setPrevSearchValue(e.target.value)}
+                      />
+                    </div>
+                  )}
+                </div>
+                <div ref={optionContainerRef}>
+                  <div className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5  " onClick={() => setIsShowOption(!isShowOption)} title="Chức năng khác">
+                    <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
+                  </div>
+                  {isShowOption && (
+                    <div className=" absolute flex flex-col gap-2 bg-slate-100 p-3  top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom ">
+                      <div className={`flex flex-grow flex-wrap gap-1 ${!hideColumns ? 'flex-col' : ''}`}>
+                        <button
+                          onClick={dataQuyenHan?.EXCEL ? exportToExcel : ''}
+                          className={`flex items-center py-1 px-2 rounded-md text-slate-50 text-base border-2 ${
+                            dataQuyenHan?.EXCEL ? 'border-green-500  bg-green-500 hover:bg-white hover:text-green-500' : 'bg-gray-400 cursor-not-allowed'
+                          } `}
+                        >
+                          <div className="pr-1">
+                            <RiFileExcel2Fill size={20} />
+                          </div>
+                          <div>Xuất excel</div>
+                        </button>
+                        <button
+                          onClick={handlePrint}
+                          className="flex items-center py-1 px-2 rounded-md border-2 border-purple-500  text-slate-50 text-base bg-purple-500 hover:bg-white hover:text-purple-500 "
+                        >
+                          <div className="pr-1">
+                            <TiPrinter size={20} />
+                          </div>
+                          <div>In phiếu</div>
+                        </button>
+                        {dataThongSo?.ALLOW_INPHIEUKHO_DAUVAODAURA === true && (
+                          <button
+                            onClick={handlePrintWareHouse}
+                            className="flex items-center  py-1 px-2  rounded-md border-2 border-purple-500  text-slate-50 text-base bg-purple-500 hover:bg-white hover:text-purple-500  "
+                          >
+                            <div className="pr-1">
+                              <TiPrinter size={20} />
+                            </div>
+                            <div>In phiếu kho</div>
+                          </button>
+                        )}
+                        <button
+                          onClick={() => setHideColumns(!hideColumns)}
+                          className="flex items-center py-1 px-2 rounded-md border-2 border-red-500  text-slate-50 text-base bg-red-500 hover:bg-white hover:text-red-500 "
+                        >
+                          <div className="pr-1">
+                            <FaEyeSlash size={20} />
+                          </div>
+                          <div>Ẩn cột</div>
+                        </button>
+                      </div>
+                      <div>
+                        {hideColumns && (
+                          <div>
+                            <Checkbox.Group
+                              style={{
+                                width: '470px',
+                                background: 'white',
+                                padding: 10,
+                                borderRadius: 10,
+                                boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+                              }}
+                              className="flex flex-col"
+                              defaultValue={checkedList}
+                              onChange={(value) => {
+                                setCheckedList(value)
+                                localStorage.setItem('hidenColumnPMH', JSON.stringify(value))
+                              }}
+                            >
+                              <Row>
+                                {options.map((item) => (
+                                  <Col span={8} key={item.value}>
+                                    <Checkbox value={item.value}>{item.label}</Checkbox>
+                                  </Col>
+                                ))}
+                              </Row>
+
+                              <button onClick={handleHideColumns} className="mt-2 w-full border-[1px] border-gray-400 px-1 py-1 rounded-md hover:text-bg-main hover:border-bg-main">
+                                Xác Nhận
+                              </button>
+                            </Checkbox.Group>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="flex justify-between items-center px-4 ">
+                <div className="flex gap-3">
+                  {/* DatePicker */}
+                  <div className="flex gap-x-2 items-center">
+                    <label htmlFor="">Ngày</label>
+                    <DateField
+                      className="DatePicker_PMH max-w-[110px]"
+                      format="DD/MM/YYYY"
+                      value={dayjs(formKhoanNgay.NgayBatDau)}
+                      // maxDate={dayjs(formKhoanNgay.NgayKetThuc)}
+                      onChange={(newDate) => {
+                        setFormKhoanNgay({
+                          ...formKhoanNgay,
+                          NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                        })
+                      }}
+                      onBlur={() => {
+                        handleStartDateChange(formKhoanNgay.NgayBatDau)
+                        handleFilterDS()
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          handleStartDateChange(formKhoanNgay.NgayBatDau)
+
+                          setPrevDateValue(formKhoanNgay)
+                          handleFilterDS()
+                        }
+                      }}
+                      onFocus={() => setPrevDateValue(formKhoanNgay)}
+                      sx={{
+                        '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                        '& .MuiButtonBase-root': {
+                          padding: '4px',
+                        },
+                        '& .MuiSvgIcon-root': {
+                          width: '18px',
+                          height: '18px',
+                        },
+                      }}
+                    />
+                  </div>
+                  <div className="flex gap-x-2 items-center">
+                    <label htmlFor="">Đến</label>
+                    <DateField
+                      className="DatePicker_PMH max-w-[110px]"
+                      format="DD/MM/YYYY"
+                      // minDate={dayjs(formKhoanNgay.NgayBatDau)}
+                      value={dayjs(formKhoanNgay.NgayKetThuc)}
+                      onChange={(newDate) => {
+                        setFormKhoanNgay({
+                          ...formKhoanNgay,
+                          NgayKetThuc: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                        })
+                      }}
+                      onBlur={() => {
+                        handleEndDateChange(formKhoanNgay.NgayKetThuc)
+                        handleFilterDS()
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          handleEndDateChange(formKhoanNgay.NgayKetThuc)
+                          setPrevDateValue(formKhoanNgay)
+                          handleFilterDS()
+                        }
+                      }}
+                      onFocus={() => setPrevDateValue(formKhoanNgay)}
+                      sx={{
+                        '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                        '& .MuiButtonBase-root': {
+                          padding: '4px',
+                        },
+                        '& .MuiSvgIcon-root': {
+                          width: '18px',
+                          height: '18px',
+                        },
+                      }}
+                    />
+                  </div>
+
+                  {/* <ActionButton
+                  color={'slate-50'}
+                  title={'Lọc'}
+                  icon={<MdFilterAlt size={20} />}
+                  background={'bg-main'}
+                  bg_hover={'white'}
+                  color_hover={'bg-main'}
+                  handleAction={handleFilterDS}
+                /> */}
+                </div>
+                <div className="flex items-center gap-2">
+                  <ActionButton
+                    color={'slate-50'}
+                    title={'Thêm phiếu'}
+                    icon={<IoAddCircleOutline size={20} />}
+                    bg_hover={!dataQuyenHan?.ADD ? '' : 'white'}
+                    background={!dataQuyenHan?.ADD ? 'gray-400' : 'bg-main'}
+                    color_hover={!dataQuyenHan?.ADD ? '' : 'bg-main'}
+                    handleAction={() => (!dataQuyenHan?.ADD ? '' : handleCreate())}
+                    quyenHan={dataQuyenHan?.ADD}
                   />
                 </div>
+              </div>
+
+              <div id="my-table" className="relative px-2 py-1 ">
+                <Table
+                  loading={tableLoad}
+                  className="table_pmh setHeight"
+                  // rowSelection={rowSelection}
+                  columns={newColumnsHide}
+                  dataSource={filteredPMH}
+                  size="small"
+                  scroll={{
+                    x: 1500,
+                    y: 410,
+                  }}
+                  bordered
+                  pagination={{
+                    defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                    showSizeChanger: true,
+                    pageSizeOptions: ['50', '100', '1000'],
+                    onShowSizeChange: (current, size) => {
+                      localStorage.setItem('pageSize', size)
+                    },
+                  }}
+                  rowKey={(record) => record.SoChungTu}
+                  onRow={(record) => ({
+                    onDoubleClick: () => {
+                      handleView(record)
+                    },
+                  })}
+                  rowClassName={(record) => (record.SoChungTu === donePMH ? 'highlighted-row' : '')}
+                  // Bảng Tổng
+                  summary={() => {
+                    return (
+                      <Table.Summary fixed="bottom">
+                        <Table.Summary.Row>
+                          {newColumnsHide
+                            .filter((column) => column.render)
+                            .map((column) => {
+                              const isNumericColumn = typeof filteredPMH[0]?.[column.dataIndex] === 'number'
+
+                              return (
+                                <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                                  {isNumericColumn ? (
+                                    column.dataIndex === 'TongTienHang' || column.dataIndex === 'TongTienThue' || column.dataIndex === 'TongThanhTien' ? (
+                                      <Text strong>
+                                        {Number(filteredPMH.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                          minimumFractionDigits: dataThongSo?.SOLESOTIEN,
+                                          maximumFractionDigits: dataThongSo?.SOLESOTIEN,
+                                        })}
+                                      </Text>
+                                    ) : column.dataIndex === 'TongSoLuong' ? (
+                                      <Text strong>
+                                        {Number(filteredPMH.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                          minimumFractionDigits: dataThongSo?.SOLESOLUONG,
+                                          maximumFractionDigits: dataThongSo?.SOLESOLUONG,
+                                        })}
+                                      </Text>
+                                    ) : (
+                                      <Text strong>
+                                        {Number(filteredPMH.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                          minimumFractionDigits: 0,
+                                          maximumFractionDigits: 0,
+                                        })}
+                                      </Text>
+                                    )
+                                  ) : column.dataIndex === 'TTTienMat' ? (
+                                    <Text className="text-center" strong>
+                                      {Object.values(data).filter((value) => value.TTTienMat).length}
+                                    </Text>
+                                  ) : column.dataIndex === 'STT' ? (
+                                    <Text className="text-center" strong>
+                                      {data.length}
+                                    </Text>
+                                  ) : null}
+                                </Table.Summary.Cell>
+                              )
+                            })}
+                        </Table.Summary.Row>
+                      </Table.Summary>
+                    )
+                  }}
+                ></Table>
+              </div>
+
+              {isShowModal && (
+                <Modals
+                  namePage={'Phiếu Mua Hàng'}
+                  typePage={'PMH'}
+                  close={() => setIsShowModal(false)}
+                  actionType={actionType}
+                  dataRecord={dataRecord}
+                  dataThongTin={dataThongTin}
+                  dataThongTinSua={dataThongTinSua}
+                  dataKhoHang={dataKhoHang}
+                  dataDoiTuong={dataDoiTuong}
+                  data={data}
+                  isLoadingModal={isLoadingModal}
+                  isLoadingEdit={isLoadingEdit}
+                  controlDate={formKhoanNgay}
+                  dataThongSo={dataThongSo}
+                  loading={() => setTableLoad(true)}
+                  setHightLight={setDonePMH}
+                />
               )}
             </div>
-            <div ref={optionContainerRef}>
-              <div className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5  " onClick={() => setIsShowOption(!isShowOption)} title="Chức năng khác">
-                <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
-              </div>
-              {isShowOption && (
-                <div className=" absolute flex flex-col gap-2 bg-slate-100 p-3  top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom ">
-                  <div className={`flex flex-grow flex-wrap gap-1 ${!hideColumns ? 'flex-col' : ''}`}>
-                    <button
-                      onClick={exportToExcel}
-                      className="flex items-center py-1 px-2 rounded-md border-2 border-green-500  text-slate-50 text-base bg-green-500 hover:bg-white hover:text-green-500 "
-                    >
-                      <div className="pr-1">
-                        <RiFileExcel2Fill size={20} />
-                      </div>
-                      <div>Xuất excel</div>
-                    </button>
-                    <button
-                      onClick={handlePrint}
-                      className="flex items-center py-1 px-2 rounded-md border-2 border-purple-500  text-slate-50 text-base bg-purple-500 hover:bg-white hover:text-purple-500 "
-                    >
-                      <div className="pr-1">
-                        <TiPrinter size={20} />
-                      </div>
-                      <div>In phiếu</div>
-                    </button>
-                    {dataThongSo?.ALLOW_INPHIEUKHO_DAUVAODAURA === true && (
-                      <button
-                        onClick={handlePrintWareHouse}
-                        className="flex items-center  py-1 px-2  rounded-md border-2 border-purple-500  text-slate-50 text-base bg-purple-500 hover:bg-white hover:text-purple-500  "
-                      >
-                        <div className="pr-1">
-                          <TiPrinter size={20} />
-                        </div>
-                        <div>In phiếu kho</div>
-                      </button>
-                    )}
-                    <button
-                      onClick={() => setHideColumns(!hideColumns)}
-                      className="flex items-center py-1 px-2 rounded-md border-2 border-red-500  text-slate-50 text-base bg-red-500 hover:bg-white hover:text-red-500 "
-                    >
-                      <div className="pr-1">
-                        <FaEyeSlash size={20} />
-                      </div>
-                      <div>Ẩn cột</div>
-                    </button>
-                  </div>
-                  <div>
-                    {hideColumns && (
-                      <div>
-                        <Checkbox.Group
-                          style={{
-                            width: '470px',
-                            background: 'white',
-                            padding: 10,
-                            borderRadius: 10,
-                            boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
-                          }}
-                          className="flex flex-col"
-                          defaultValue={checkedList}
-                          onChange={(value) => {
-                            setCheckedList(value)
-                            localStorage.setItem('hidenColumnPMH', JSON.stringify(value))
-                          }}
-                        >
-                          <Row>
-                            {options.map((item) => (
-                              <Col span={8} key={item.value}>
-                                <Checkbox value={item.value}>{item.label}</Checkbox>
-                              </Col>
-                            ))}
-                          </Row>
-
-                          <button onClick={handleHideColumns} className="mt-2 w-full border-[1px] border-gray-400 px-1 py-1 rounded-md hover:text-bg-main hover:border-bg-main">
-                            Xác Nhận
-                          </button>
-                        </Checkbox.Group>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-          <div className="flex justify-between items-center px-4 ">
-            <div className="flex gap-3">
-              {/* DatePicker */}
-              <div className="flex gap-x-2 items-center">
-                <label htmlFor="">Ngày</label>
-                <DateField
-                  className="DatePicker_PMH max-w-[110px]"
-                  format="DD/MM/YYYY"
-                  value={dayjs(formKhoanNgay.NgayBatDau)}
-                  // maxDate={dayjs(formKhoanNgay.NgayKetThuc)}
-                  onChange={(newDate) => {
-                    setFormKhoanNgay({
-                      ...formKhoanNgay,
-                      NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
-                    })
-                  }}
-                  onBlur={() => {
-                    handleStartDateChange(formKhoanNgay.NgayBatDau)
-                    handleFilterDS()
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      handleStartDateChange(formKhoanNgay.NgayBatDau)
-
-                      setPrevDateValue(formKhoanNgay)
-                      handleFilterDS()
-                    }
-                  }}
-                  onFocus={() => setPrevDateValue(formKhoanNgay)}
-                  sx={{
-                    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                    '& .MuiButtonBase-root': {
-                      padding: '4px',
-                    },
-                    '& .MuiSvgIcon-root': {
-                      width: '18px',
-                      height: '18px',
-                    },
-                  }}
-                />
-              </div>
-              <div className="flex gap-x-2 items-center">
-                <label htmlFor="">Đến</label>
-                <DateField
-                  className="DatePicker_PMH max-w-[110px]"
-                  format="DD/MM/YYYY"
-                  // minDate={dayjs(formKhoanNgay.NgayBatDau)}
-                  value={dayjs(formKhoanNgay.NgayKetThuc)}
-                  onChange={(newDate) => {
-                    setFormKhoanNgay({
-                      ...formKhoanNgay,
-                      NgayKetThuc: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
-                    })
-                  }}
-                  onBlur={() => {
-                    handleEndDateChange(formKhoanNgay.NgayKetThuc)
-                    handleFilterDS()
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      handleEndDateChange(formKhoanNgay.NgayKetThuc)
-                      setPrevDateValue(formKhoanNgay)
-                      handleFilterDS()
-                    }
-                  }}
-                  onFocus={() => setPrevDateValue(formKhoanNgay)}
-                  sx={{
-                    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                    '& .MuiButtonBase-root': {
-                      padding: '4px',
-                    },
-                    '& .MuiSvgIcon-root': {
-                      width: '18px',
-                      height: '18px',
-                    },
-                  }}
-                />
-              </div>
-
-              {/* <ActionButton
-                color={'slate-50'}
-                title={'Lọc'}
-                icon={<MdFilterAlt size={20} />}
-                background={'bg-main'}
-                bg_hover={'white'}
-                color_hover={'bg-main'}
-                handleAction={handleFilterDS}
-              /> */}
-            </div>
-            <div className="flex items-center gap-2">
-              <ActionButton
-                color={'slate-50'}
-                title={'Thêm phiếu'}
-                icon={<IoAddCircleOutline size={20} />}
-                background={'bg-main'}
-                bg_hover={'white'}
-                color_hover={'bg-main'}
-                handleAction={handleCreate}
-              />
-            </div>
-          </div>
-
-          <div id="my-table" className="relative px-2 py-1 ">
-            <Table
-              loading={tableLoad}
-              className="table_pmh setHeight"
-              // rowSelection={rowSelection}
-              columns={newColumnsHide}
-              dataSource={filteredPMH}
-              size="small"
-              scroll={{
-                x: 1500,
-                y: 410,
-              }}
-              bordered
-              pagination={{
-                defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                showSizeChanger: true,
-                pageSizeOptions: ['50', '100', '1000'],
-                onShowSizeChange: (current, size) => {
-                  localStorage.setItem('pageSize', size)
-                },
-              }}
-              rowKey={(record) => record.SoChungTu}
-              onRow={(record) => ({
-                onDoubleClick: () => {
-                  handleView(record)
-                },
-              })}
-              rowClassName={(record) => (record.SoChungTu === donePMH ? 'highlighted-row' : '')}
-              // Bảng Tổng
-              summary={() => {
-                return (
-                  <Table.Summary fixed="bottom">
-                    <Table.Summary.Row>
-                      {newColumnsHide
-                        .filter((column) => column.render)
-                        .map((column) => {
-                          const isNumericColumn = typeof filteredPMH[0]?.[column.dataIndex] === 'number'
-
-                          return (
-                            <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
-                              {isNumericColumn ? (
-                                column.dataIndex === 'TongTienHang' || column.dataIndex === 'TongTienThue' || column.dataIndex === 'TongThanhTien' ? (
-                                  <Text strong>
-                                    {Number(filteredPMH.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                      minimumFractionDigits: dataThongSo?.SOLESOTIEN,
-                                      maximumFractionDigits: dataThongSo?.SOLESOTIEN,
-                                    })}
-                                  </Text>
-                                ) : column.dataIndex === 'TongSoLuong' ? (
-                                  <Text strong>
-                                    {Number(filteredPMH.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                      minimumFractionDigits: dataThongSo?.SOLESOLUONG,
-                                      maximumFractionDigits: dataThongSo?.SOLESOLUONG,
-                                    })}
-                                  </Text>
-                                ) : (
-                                  <Text strong>
-                                    {Number(filteredPMH.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                      minimumFractionDigits: 0,
-                                      maximumFractionDigits: 0,
-                                    })}
-                                  </Text>
-                                )
-                              ) : null}
-                            </Table.Summary.Cell>
-                          )
-                        })}
-                    </Table.Summary.Row>
-                  </Table.Summary>
-                )
-              }}
-            ></Table>
-          </div>
-
-          {isShowModal && (
-            <Modals
-              namePage={'Phiếu Mua Hàng'}
-              typePage={'PMH'}
-              close={() => setIsShowModal(false)}
-              actionType={actionType}
-              dataRecord={dataRecord}
-              dataThongTin={dataThongTin}
-              dataThongTinSua={dataThongTinSua}
-              dataKhoHang={dataKhoHang}
-              dataDoiTuong={dataDoiTuong}
-              data={data}
-              isLoadingModal={isLoadingModal}
-              isLoadingEdit={isLoadingEdit}
-              controlDate={formKhoanNgay}
-              dataThongSo={dataThongSo}
-              loading={() => setTableLoad(true)}
-              setHightLight={setDonePMH}
-            />
           )}
-        </div>
+        </>
       )}
     </>
   )

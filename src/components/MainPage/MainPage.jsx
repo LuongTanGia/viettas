@@ -8,6 +8,7 @@ import HangHoa from '../../Pages/DanhMuc/HangHoa'
 import Phieumuahang from '../../pages_K/publics/MenuPage/PhieuMuaHang'
 import PhieuNTR from '../../pages_K/publics/MenuPage/PhieuNTR'
 import PhieuChiTien from '../../pages_K/publics/MenuPage/PhieuChiTien'
+import PhieuThuTien from '../../pages_K/publics/MenuPage/PhieuThuTien'
 import PhieuBanHang from '../PhieuBanHang/PhieuBanHang'
 import PhieuNhapDieuChinh from '../../Pages/DuLieu/DLTrongKho/PhieuNhapDieuChinh/PhieuNhapDieuChinh'
 import NhapXuatTonKho from '../../Pages/TruyVan/NhapXuatTonKho'
@@ -28,6 +29,7 @@ function MainPage({ isSidebarVisible }) {
           <Route path="/DuLieuTK/DuLieu_PLR" element={<PhieuLapRap path="DuLieu_PLR" />} />
           <Route path="/DuLieuDR/DuLieu_PBS" element={<PhieuBanHang />} />
           <Route path="/DuLieuTC/DuLieu_PCT" element={<PhieuChiTien />} />
+          <Route path="/DuLieuTC/DuLieu_PTT" element={<PhieuThuTien />} />
           <Route path="/TruyVan_CanDoiNXT_TheoKho" element={<NhapXuatTonKho path="TruyVan_CanDoiNXT_TheoKho" />} />
           <Route path="*" element={<ErrorPage />} />
         </Routes>

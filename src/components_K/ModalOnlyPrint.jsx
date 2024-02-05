@@ -15,7 +15,7 @@ import { Checkbox } from 'antd'
 const { Option } = Select
 // const { MdFilterAlt } = icons
 
-const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCreate, typePage }) => {
+const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCreate, typePage, namePage }) => {
   const [selectedSctBD, setSelectedSctBD] = useState()
   const [selectedSctKT, setSelectedSctKT] = useState()
   const [newDataPMH, setNewDataPMH] = useState()
@@ -41,6 +41,7 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
     NgayBatDau: startDate,
     NgayKetThuc: endDate,
   })
+
   const [checkboxValues, setCheckboxValues] = useState({
     checkbox1: true,
     checkbox2: false,
@@ -55,6 +56,26 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
       setFormPrint({ NgayBatDau: dayjs(), NgayKetThuc: dayjs() })
     }
   }, [dataThongTin, actionType])
+
+  useEffect(() => {
+    const handleFilterPrint = () => {
+      const ngayBD = dayjs(formPrintFilter.NgayBatDau)
+      const ngayKT = dayjs(formPrintFilter.NgayKetThuc)
+      // console.log('formPrint22222222', formPrint)
+
+      // Lọc hàng hóa dựa trên ngày bắt đầu và ngày kết thúc
+      const filteredData = data.filter((item) => {
+        const itemDate = dayjs(item.NgayCTu)
+
+        if (ngayBD.isValid() && ngayKT.isValid()) {
+          return itemDate >= ngayBD && itemDate <= ngayKT
+        }
+      })
+      setNewDataPMH(filteredData)
+    }
+
+    handleFilterPrint()
+  }, [formPrintFilter])
 
   useEffect(() => {
     if (dataThongTin && actionType !== 'create') {
@@ -74,27 +95,6 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
     if (checkboxValues.checkbox3) total += 4
     return total
   }
-
-  useEffect(() => {
-    const handleFilterPrint = () => {
-      console.log('formPrint', formPrintFilter)
-      const ngayBD = dayjs(formPrintFilter.NgayBatDau)
-      const ngayKT = dayjs(formPrintFilter.NgayKetThuc)
-      // console.log('formPrint22222222', formPrint)
-
-      // Lọc hàng hóa dựa trên ngày bắt đầu và ngày kết thúc
-      const filteredData = data.filter((item) => {
-        const itemDate = dayjs(item.NgayCTu)
-
-        if (ngayBD.isValid() && ngayKT.isValid()) {
-          return itemDate >= ngayBD && itemDate <= ngayKT
-        }
-      })
-      setNewDataPMH(filteredData)
-    }
-
-    handleFilterPrint()
-  }, [formPrintFilter?.NgayKetThuc, formPrintFilter?.NgayBatDau])
 
   const handleStartDateChange = (newDate) => {
     const startDate = newDate
@@ -184,6 +184,20 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
           toast.error(response.data.DataErrorDescription)
         }
       }
+      if (typePage === 'PTT') {
+        const response = await apis.InPTT(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+        // Kiểm tra call api thành công
+        if (response.data && response.data.DataError === 0) {
+          base64ToPDF(response.data.DataResults)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleOnlyPrint()
+        } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
+          toast.warning(response.data.DataErrorDescription)
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
+      }
     } catch (error) {
       console.error('Error while saving data:', error)
     }
@@ -195,7 +209,7 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
         <div className=" h-[244px]  ">
           <div className="flex gap-2">
             <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
-            <label className="text-blue-700 font-semibold uppercase pb-1">In - phiếu mua hàng</label>
+            <label className="text-blue-700 font-semibold uppercase pb-1">In - {namePage}</label>
           </div>
           <div className="border-2 my-1">
             <div className="p-4">
