@@ -79,6 +79,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
     typeAction === 'edit' || typeAction === 'view' ? setForm(data_chitiet.DataResult) : setForm({ ...initState, ...Dates })
     setDataChitiet(form?.DataDetails)
   }, [dataRecord, form?.DataDetails])
+
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === 'F9') {

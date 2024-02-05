@@ -133,24 +133,15 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
 
   const handleCreate = async (isSave = true, isPrint = true) => {
     try {
-      // const dataAddSTT = selectedRowData.map((item, index) => {
-      //   return {
-      //     ...item,
-      //     STT: index + 1,
-      //   }
-      // })
-      const response = await categoryAPI.PLRCreate({ ...PLRForm, DataDetails: selectedRowData, NgayCTu: dayjs(valueDate).format('YYYY-MM-DD HH:mm:ss') }, TokenAccess)
-      console.log({ ...PLRForm, DataDetails: selectedRowData, NgayCTu: dayjs(valueDate).format('YYYY-MM-DD') })
+      const response = await categoryAPI.PLRCreate({ ...PLRForm, DataDetails: selectedRowData, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss') }, TokenAccess)
+      console.log({ ...PLRForm, DataDetails: selectedRowData, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss') })
       if (response.data.DataError == 0) {
-        isPrint ? handlePrint() : isSave ? toast.success('Tạo thành công') : (close(), toast.success('Tạo thành công'))
+        isPrint ? handlePrint() : isSave ? (toast.success('Tạo thành công'), setPLRForm([]), setSelectedRowData([])) : (close(), toast.success('Tạo thành công'))
         loadingData()
-        console.log(response.data)
         setSoCTu(response.data.DataResults[0].SoChungTu)
         setTargetRow(response.data.DataResults[0].SoChungTu)
       } else {
-        // isPrint ? toast.error(response.data) : toast.error(response.data)
-        toast.error(response.data)
-        console.log(response.data)
+        toast.error(response.data.DataErrorDescription)
       }
     } catch (error) {
       console.log(error)
@@ -337,7 +328,7 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
               <div className="flex flex-col gap-2 py-1 px-2 xl:w-[80vw] lg:w-[90vw] md:w-[95vw]">
                 <div className="flex gap-2">
                   <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
-                  <p className="text-blue-700 font-semibold uppercase">Thêm - Phiếu Nhập Điều Chỉnh</p>
+                  <p className="text-blue-700 font-semibold uppercase">Thêm - Phiếu Lắp Ráp</p>
                 </div>
                 <div className="flex flex-col gap-2 border-2 px-1 py-2.5">
                   <div className="grid grid-cols-2 items-center gap-2">
@@ -448,77 +439,6 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
                     />
                   </div>
                   <div className="border-2 rounded relative ">
-                    {/* <table className="barcodeList">
-                        <thead>
-                          <tr>
-                            <th className="w-[5rem]">STT</th>
-                            <th className="w-[10rem]">Mã hàng</th>
-                            <th>Tên hàng</th>
-                            <th className="w-[20rem]">Số lượng</th>
-                            <th className={`${selectedRowData?.length > 9 ? 'w-[3.5rem]' : 'w-[5.5rem] '}`}></th>
-                          </tr>
-                        </thead>
-                        <tbody className="">
-                          {selectedRowData?.map((item, index) => (
-                            <tr key={index}>
-                              <td>
-                                <div className="flex justify-center">{index + 1}</div>
-                              </td>
-                              <td>
-                                <div className="flex justify-center">{item.MaHang}</div>
-                              </td>
-                              <td>
-                                <div>
-                                  <Select
-                                    className=" text-start"
-                                    showSearch
-                                    size="small"
-                                    value={item.TenHang || ''}
-                                    style={{
-                                      width: '100%',
-                                    }}
-                                    onChange={(value) => handleChange(index, 'TenHang', value)}
-                                  >
-                                    {dataHangHoa
-                                      ?.filter((row) => !currentRowData(item.MaHang).includes(row?.MaHang))
-                                      ?.map((hangHoa) => (
-                                        <>
-                                          <Select.Option key={hangHoa.MaHang} value={hangHoa.MaHang}>
-                                            <p className="text-start truncate">
-                                              {hangHoa.MaHang}-{hangHoa.TenHang}
-                                            </p>
-                                          </Select.Option>
-                                        </>
-                                      ))}
-                                  </Select>
-                                </div>
-                              </td>
-                              <td>
-                                <div className="inputNDC flex justify-end">
-                                  <InputNumber
-                                    value={item.SoLuong}
-                                    min={1}
-                                    max={999999999999}
-                                    size="small"
-                                    style={{ width: '100%' }}
-                                    formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                                    parser={(value) => {
-                                      const parsedValue = parseFloat(value.replace(/\$\s?|(,*)/g, ''))
-                                      return isNaN(parsedValue) ? null : parsedValue.toFixed(dataThongSo?.SOLESOLUONG)
-                                    }}
-                                    onChange={(value) => handleChange(index, 'SoLuong', value)}
-                                  />
-                                </div>
-                              </td>
-                              <td>
-                                <div className="flex justify-center">
-                                  <IoMdClose className="hover:text-red-600 w-6 h-6" onClick={() => removeRow(index)} />
-                                </div>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table> */}
                     <EditTable
                       typeTable="create"
                       typeAction="create"
@@ -531,15 +451,15 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
                     />
                     <Tooltip
                       placement="topLeft"
-                      title={isAdd ? 'Vui lòng chọn hàng hóa hoặc F9 để chọn từ danh sách' : 'Bấm vào đây để thêm hàng mới hoặc F9 để chọn từ danh sách!'}
-                      color="blue"
+                      title={isAdd ? 'Vui lòng chọn tên hàng!' : 'Bấm vào đây để thêm hàng mới hoặc F9 để chọn từ danh sách!'}
+                      color={isAdd ? 'gray' : 'blue'}
                     >
                       <FloatButton
                         type={isAdd ? 'default' : 'primary'}
                         className="absolute z-3 bg-transparent w-[26px] h-[26px]"
                         icon={<IoMdAddCircle />}
                         style={{
-                          right: 25,
+                          right: 18,
                           top: 8,
                         }}
                         onClick={addHangHoaCT}
