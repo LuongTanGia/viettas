@@ -121,6 +121,7 @@ const PhieuXuatDieuChinh = ({ path }) => {
     }
     getDataNDC()
   }, [searchHangHoa, isLoading, targetRow, dateData?.NgayBatDau, dateData?.NgayKetThuc])
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (showOption.current && !showOption.current.contains(event.target)) {
@@ -763,7 +764,6 @@ const PhieuXuatDieuChinh = ({ path }) => {
                               .filter((column) => column.render)
                               .map((column, index) => {
                                 const isNumericColumn = typeof filteredHangHoa[0]?.[column.dataIndex] === 'number'
-
                                 return (
                                   <Table.Summary.Cell key={`summary-cell-${index + 1}`} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
                                     {isNumericColumn ? (

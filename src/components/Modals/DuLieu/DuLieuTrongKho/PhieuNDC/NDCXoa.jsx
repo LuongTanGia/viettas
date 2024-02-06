@@ -4,7 +4,7 @@ import { toast } from 'react-toastify'
 import logo from '../../../../../assets/VTS-iSale.ico'
 import ActionButton from '../../../../util/Button/ActionButton'
 
-const NCKXoa = ({ close, dataNDC, loadingData, setTargetRow }) => {
+const NDCXoa = ({ close, dataNDC, loadingData, setTargetRow }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const handleDelete = async () => {
     try {
@@ -46,4 +46,4 @@ const NCKXoa = ({ close, dataNDC, loadingData, setTargetRow }) => {
   )
 }
 
-export default NCKXoa
+export default NDCXoa

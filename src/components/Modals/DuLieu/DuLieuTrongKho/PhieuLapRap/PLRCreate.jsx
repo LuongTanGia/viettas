@@ -133,7 +133,13 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
 
   const handleCreate = async (isSave = true, actionType) => {
     try {
-      const response = await categoryAPI.PLRCreate({ ...PLRForm, DataDetails: selectedRowData, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss') }, TokenAccess)
+      const newData = selectedRowData.map((item, index) => {
+        return {
+          ...item,
+          STT: index + 1,
+        }
+      })
+      const response = await categoryAPI.PLRCreate({ ...PLRForm, DataDetails: newData, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss') }, TokenAccess)
       if (response.data.DataError == 0) {
         actionType == 'print'
           ? handlePrint()
@@ -193,6 +199,7 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
       },
     ])
   }
+
   const formatThapPhan = (number, decimalPlaces) => {
     if (typeof number === 'number' && !isNaN(number)) {
       const formatter = new Intl.NumberFormat('en-US', {
@@ -453,7 +460,7 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
                       }
                     />
                   </div>
-                  <div className="border-2 rounded relative ">
+                  <div className="border-2 rounded relative">
                     <EditTable
                       typeTable="create"
                       typeAction="create"

@@ -105,7 +105,6 @@ const PhieuNhapDieuChinh = ({ path }) => {
           )
           if (response.data.DataError == 0) {
             setDataNDC(response.data.DataResults)
-            console.log(response.data)
             setTableLoad(false)
           } else if (response.data.DataError == -104) {
             setDataNDC([])

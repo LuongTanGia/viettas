@@ -466,7 +466,7 @@ const PhieuLapRap = ({ path }) => {
         const dateB = new Date(b.NgaySuaCuoi)
         return dateA - dateB
       },
-      render: (text) => <span className="flex justify-center">{formatDateTime(text, true)}</span>,
+      render: (text) => <span className="flex justify-center">{text ? formatDateTime(text, true) : ''}</span>,
     },
     {
       title: ' ',

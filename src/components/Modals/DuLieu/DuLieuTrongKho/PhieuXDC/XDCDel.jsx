@@ -1,5 +1,49 @@
-const XDCDel = () => {
-  return <div>XDCDel</div>
+/* eslint-disable react/prop-types */
+import { toast } from 'react-toastify'
+import categoryAPI from '../../../../../API/linkAPI'
+import logo from '../../../../../assets/VTS-iSale.ico'
+import ActionButton from '../../../../util/Button/ActionButton'
+
+const XDCDel = ({ close, dataXDC, loadingData, setTargetRow }) => {
+  const TokenAccess = localStorage.getItem('TKN')
+  const handleDelete = async () => {
+    try {
+      const response = await categoryAPI.XDCDelete(dataXDC?.SoChungTu, TokenAccess)
+      if (response.data.DataError == 0) {
+        loadingData()
+        close()
+        toast.success(response.data.DataErrorDescription)
+        setTargetRow([])
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  return (
+    <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10">
+      <div className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"></div>
+      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col min-w-[40rem] min-h-[8rem] bg-white  p-2 rounded shadow-custom overflow-hidden">
+        <div className="flex flex-col gap-2 p-2">
+          <div className="flex gap-2">
+            <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
+            <p className="text-blue-700 font-semibold uppercase">Xóa dữ liệu - Phiếu Xuất Điều Chỉnh</p>
+          </div>
+          <div className="flex flex-col gap-2 border-2 p-3 font-bold text-lg">
+            <div className="flex gap-1">
+              <p className="text-blue-700 uppercase">Bạn có chắc muốn xóa</p>
+              <p className="text-red-600">{dataXDC?.SoChungTu}</p>
+              <p className="text-blue-700 uppercase">?</p>
+            </div>
+            <p className="text-slate-500 text-lg font-light">Thông tin sản phẩm không thể hoàn tác nếu bạn xóa !</p>
+          </div>
+          <div className="flex gap-2 justify-end">
+            <ActionButton handleAction={handleDelete} title={'Xác nhận'} color={'slate-50'} background={'blue-500'} color_hover={'blue-500'} bg_hover={'white'} />
+            <ActionButton handleAction={close} title={'Đóng'} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
+          </div>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export default XDCDel

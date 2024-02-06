@@ -11,7 +11,7 @@ import { RETOKEN } from '../../../../../action/Actions'
 import ActionButton from '../../../../util/Button/ActionButton'
 import SimpleBackdrop from '../../../../util/Loading/LoadingPage'
 
-const NCKXem = ({ close, dataNDC }) => {
+const NDCXem = ({ close, dataNDC }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
@@ -283,4 +283,4 @@ const NCKXem = ({ close, dataNDC }) => {
   )
 }
 
-export default NCKXem
+export default NDCXem

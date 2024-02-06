@@ -157,7 +157,13 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
 
   const handleEdit = async (actionType) => {
     try {
-      const response = await categoryAPI.PLREdit({ SoChungTu: dataPLR?.SoChungTu, Data: { ...PLRForm, DataDetails: selectedRowData } }, TokenAccess)
+      const newData = selectedRowData.map((item, index) => {
+        return {
+          ...item,
+          STT: index + 1,
+        }
+      })
+      const response = await categoryAPI.PLREdit({ SoChungTu: dataPLR?.SoChungTu, Data: { ...PLRForm, DataDetails: newData } }, TokenAccess)
       if (response.data.DataError == 0) {
         actionType == 'print'
           ? handlePrint()
