@@ -168,39 +168,45 @@ const NCKXem = ({ close, dataNDC }) => {
                       <div className="flex gap-1">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người tạo</label>
-                          <input
-                            className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-[1rem] overflow-ellipsis truncate"
-                            value={dataNDCView?.NguoiTao || ''}
-                            readOnly
-                            title={dataNDCView?.NguoiTao || ''}
-                          />
+                          <Tooltip title={dataNDCView?.NguoiTao} color="blue">
+                            <input
+                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-[1rem] overflow-ellipsis truncate"
+                              value={dataNDCView?.NguoiTao || ''}
+                              readOnly
+                            />
+                          </Tooltip>
                         </div>
                         <div className="flex gap-1 items-center">
                           <label className="text-sm">Lúc</label>
-                          <input
-                            className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
-                            value={moment(dataNDCView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
-                            readOnly
-                          />
+                          <Tooltip title={moment(dataNDCView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''} color="blue">
+                            <input
+                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
+                              value={moment(dataNDCView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
+                              readOnly
+                            />
+                          </Tooltip>
                         </div>
                       </div>
                       <div className="flex gap-1">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người sửa</label>
-                          <input
-                            className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border  outline-none text-[1rem] overflow-ellipsis truncate"
-                            value={dataNDCView?.NguoiSuaCuoi || ''}
-                            readOnly
-                            title={dataNDCView?.NguoiSuaCuoi || ''}
-                          />
+                          <Tooltip title={dataNDCView?.NguoiSuaCuoi} color="blue">
+                            <input
+                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border  outline-none text-[1rem] overflow-ellipsis truncate"
+                              value={dataNDCView?.NguoiSuaCuoi || ''}
+                              readOnly
+                            />
+                          </Tooltip>
                         </div>
                         <div className="flex gap-1 items-center">
                           <label className="text-sm">Lúc</label>
-                          <input
-                            className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
-                            value={dataNDCView?.NgaySuaCuoi ? moment(dataNDCView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                            readOnly
-                          />
+                          <Tooltip title={dataNDCView?.NgaySuaCuoi ? moment(dataNDCView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''} color="blue">
+                            <input
+                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
+                              value={dataNDCView?.NgaySuaCuoi ? moment(dataNDCView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
+                              readOnly
+                            />
+                          </Tooltip>
                         </div>
                       </div>
                     </div>
@@ -220,14 +226,6 @@ const NCKXem = ({ close, dataNDC }) => {
                         y: 300,
                       }}
                       bordered
-                      // pagination={{
-                      //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                      //   showSizeChanger: true,
-                      //   pageSizeOptions: ['50', '100', '1000'],
-                      //   onShowSizeChange: (current, size) => {
-                      //     localStorage.setItem('pageSize', size)
-                      //   },
-                      // }}
                       pagination={false}
                       summary={() => {
                         return (

@@ -136,6 +136,10 @@ export const nameColumsPhieuNTR = {
 }
 export const nameColumsPhieuNhapDieuChinh = {
   STT: 'STT',
+  MaHang: 'Mã hàng',
+  TenHang: 'Tên hàng',
+  DVT: 'ĐVT',
+  SoLuong: 'Số Lượng',
   SoChungTu: 'Số Chứng Từ',
   NgayCTu: 'Ngày Chứng Từ',
   SoThamChieu: 'Số Tham Chiếu',
@@ -169,4 +173,26 @@ export const nameColumsPhieuLapRap = {
   NgayTao: 'Ngày Tạo',
   NguoiSuaCuoi: 'Người Sửa Cuối',
   NgaySuaCuoi: 'Ngày Sửa Cuối',
+}
+export const nameColumsPhieuXuatDieuChinh = {
+  STT: 'STT',
+  MaHang: 'Mã hàng',
+  TenHang: 'Tên hàng',
+  DVT: 'ĐVT',
+  SoLuong: 'Số Lượng',
+  SoChungTu: 'Số Chứng Từ',
+  NgayCTu: 'Ngày Chứng Từ',
+  SoThamChieu: 'Số Tham Chiếu',
+  MaKho: 'Mã Kho',
+  ThongTinKho: 'Thông Tin Kho',
+  MaKho_Nhan: 'Mã Kho Nhận',
+  ThongTinKhoNhan: 'Thông Tin Kho Nhận',
+  GhiChu: 'Ghi Chú',
+  SoMatHang: 'Số Mặt Hàng',
+  TongSoLuong: 'Tổng Số Lượng',
+  NguoiTao: 'Người Tạo',
+  NgayTao: 'Ngày Tạo',
+  NguoiSuaCuoi: 'Người Sửa Cuối',
+  NgaySuaCuoi: 'Ngày Sửa Cuối',
+  TongTriGiaKho: 'Tổng Trị Giá',
 }

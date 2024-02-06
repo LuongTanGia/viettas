@@ -60,9 +60,6 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
   const [NDCForm, setNDCForm] = useState(() => {
     return dataNDC ? { ...dataNDC } : innitProduct
   })
-  const [errors, setErrors] = useState({
-    MaKho: '',
-  })
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.keyCode === 120) {
@@ -220,12 +217,6 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
     setActionType('print')
   }
   const handleEdit = async (isPrint = true) => {
-    if (!NDCForm?.MaKho?.trim()) {
-      setErrors({
-        MaKho: NDCForm?.MaKho?.trim() ? '' : 'Kho không được trống',
-      })
-      return
-    }
     try {
       const response = await categoryAPI.NDCEdit({ SoChungTu: dataNDC?.SoChungTu, Data: { ...NDCForm } }, TokenAccess)
       if (response.data.DataError == 0) {
@@ -444,16 +435,13 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
                           type="text"
                           showSearch
                           required
-                          placeholder={errors?.MaKho ? errors.MaKho : ''}
                           size="small"
-                          status={errors.MaKho ? 'error' : ''}
                           value={NDCForm?.MaKho}
                           onChange={(value) => {
                             setNDCForm({
                               ...NDCForm,
                               MaKho: value,
                             })
-                            setErrors({ ...errors, MaKho: '' })
                           }}
                         >
                           {dataKhoHang &&
@@ -470,39 +458,45 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
                       <div className="flex gap-1">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người tạo</label>
-                          <input
-                            title={dataNDCView.NguoiTao}
-                            value={dataNDCView.NguoiTao}
-                            className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] rounded resize-none border outline-none text-[1rem] overflow-ellipsis truncate"
-                            readOnly
-                          />
+                          <Tooltip title={dataNDCView?.NguoiTao} color="blue">
+                            <input
+                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-[1rem] overflow-ellipsis truncate"
+                              value={dataNDCView?.NguoiTao || ''}
+                              readOnly
+                            />
+                          </Tooltip>
                         </div>
                         <div className="flex gap-1 items-center">
                           <label className="text-sm">Lúc</label>
-                          <input
-                            value={moment(dataNDCView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
-                            className="px-2 w-full rounded resize-none border outline-none text-[1rem] truncate"
-                            readOnly
-                          />
+                          <Tooltip title={moment(dataNDCView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''} color="blue">
+                            <input
+                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
+                              value={moment(dataNDCView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
+                              readOnly
+                            />
+                          </Tooltip>
                         </div>
                       </div>
                       <div className="flex gap-1">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người sửa</label>
-                          <input
-                            title={dataNDCView.NguoiSuaCuoi}
-                            value={dataNDCView.NguoiSuaCuoi || ''}
-                            className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] rounded resize-none border outline-none text-[1rem] overflow-ellipsis truncate"
-                            readOnly
-                          />
+                          <Tooltip title={dataNDCView?.NguoiSuaCuoi} color="blue">
+                            <input
+                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border  outline-none text-[1rem] overflow-ellipsis truncate"
+                              value={dataNDCView?.NguoiSuaCuoi || ''}
+                              readOnly
+                            />
+                          </Tooltip>
                         </div>
                         <div className="flex gap-1 items-center">
                           <label className="text-sm">Lúc</label>
-                          <input
-                            value={dataNDCView?.NgaySuaCuoi ? moment(dataNDCView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                            className="px-2 w-full rounded resize-none border outline-none text-[1rem] truncate"
-                            readOnly
-                          />
+                          <Tooltip title={dataNDCView?.NgaySuaCuoi ? moment(dataNDCView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''} color="blue">
+                            <input
+                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
+                              value={dataNDCView?.NgaySuaCuoi ? moment(dataNDCView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
+                              readOnly
+                            />
+                          </Tooltip>
                         </div>
                       </div>
                     </div>
@@ -671,7 +665,7 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
                     <div className="border-2 p-2 rounded m-1 flex flex-col gap-2 max-h-[35rem]">
                       <Table
                         bordered
-                        className="table_DLPhieuNDC"
+                        className="table_HH"
                         columns={title}
                         dataSource={filteredHangHoa.map((record, index) => ({ ...record, key: index }))}
                         onRow={(record) => ({

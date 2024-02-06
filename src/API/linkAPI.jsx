@@ -277,6 +277,72 @@ const categoryAPI = {
     }
     return axiosClient.post(url, {}, { headers })
   },
+
+  // DuLieu/DLTK/PhieuXDC
+  GetDataXDC(body, accessToken) {
+    const url = '/entries/DuLieuXDC/DanhSach'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  XDCView(SoChungTu, accessToken) {
+    const url = '/entries/DuLieuXDC/ThongTin'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, { SoChungTu }, { headers })
+  },
+  XDCCreate(body, accessToken) {
+    const url = '/entries/DuLieuXDC/Them'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  XDCEdit(body, accessToken) {
+    const url = '/entries/DuLieuXDC/Sua'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  XDCDelete(SoChungTu, accessToken) {
+    const url = '/entries/DuLieuXDC/Xoa'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, { SoChungTu }, { headers })
+  },
+  XDCPrint(body, accessToken) {
+    const url = '/entries/DuLieuXDC/InPhieu'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  ListChungTuXDC(body, accessToken) {
+    const url = '/entries/DuLieuXDC/ListHelper_ChungTuTheoNgay'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  ListKhoHangXDC(accessToken) {
+    const url = '/entries/DuLieuXDC/ListHelper_KhoHang'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, {}, { headers })
+  },
+  ListHangHoaXDC(accessToken) {
+    const url = '/entries/DuLieuXDC/ListHelper_HangHoa'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, {}, { headers })
+  },
+
   // Hethong/KhoanNgay
   KhoanNgay(accessToken) {
     const url = '/settings/GiaTriHeThong/KhoanNgay'

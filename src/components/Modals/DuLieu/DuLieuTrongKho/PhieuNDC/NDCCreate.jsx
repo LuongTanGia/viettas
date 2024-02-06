@@ -633,6 +633,7 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                     <div className="border-2 p-2 rounded m-1 flex flex-col gap-2 max-h-[35rem]">
                       <Table
                         bordered
+                        className="table_HH"
                         columns={title}
                         dataSource={filteredHangHoa.map((record, index) => ({ ...record, key: index }))}
                         onRow={(record) => ({

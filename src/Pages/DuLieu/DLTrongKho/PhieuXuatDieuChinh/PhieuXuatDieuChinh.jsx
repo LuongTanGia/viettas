@@ -19,21 +19,21 @@ import { RETOKEN, exportToExcel } from '../../../../action/Actions'
 import ActionButton from '../../../../components/util/Button/ActionButton'
 import HighlightedCell from '../../../../components/hooks/HighlightedCell'
 import SimpleBackdrop from '../../../../components/util/Loading/LoadingPage'
-import NDCXem from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuNDC/NDCXem'
-import NDCXoa from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuNDC/NDCXoa'
-import NDCEdit from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuNDC/NDCEdit'
-import { nameColumsPhieuNhapDieuChinh } from '../../../../components/util/Table/ColumnName'
-import NDCPrint from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuNDC/NDCPrint'
-import NDCCreate from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuNDC/NDCCreate'
+import { nameColumsPhieuXuatDieuChinh } from '../../../../components/util/Table/ColumnName'
+import XDCCreate from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuXDC/XDCCreate'
+import XDCView from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuXDC/XDCView'
+import XDCEdit from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuXDC/XDCEdit'
+import XDCDel from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuXDC/XDCDel'
+import XDCPrint from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuXDC/XDCPrint'
 
-const PhieuNhapDieuChinh = ({ path }) => {
+const PhieuXuatDieuChinh = ({ path }) => {
   const navigate = useNavigate()
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
-  const [dataNDC, setDataNDC] = useState('')
+  const [dataXDC, setDataXDC] = useState('')
   const [isDataKhoDC, setIsDataKhoDC] = useState('')
-  const [setSearchHangHoa, filteredHangHoa, searchHangHoa] = useSearch(dataNDC)
+  const [setSearchHangHoa, filteredHangHoa, searchHangHoa] = useSearch(dataXDC)
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [isShowOption, setIsShowOption] = useState(false)
   const [isShowModal, setIsShowModal] = useState(false)
@@ -56,7 +56,7 @@ const PhieuNhapDieuChinh = ({ path }) => {
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
     setcheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
-    const key = Object.keys(dataNDC ? dataNDC[0] : []).filter((key) => key !== 'SoThamChieu' && key !== 'MaKho_Nhan' && key !== 'ThongTinKhoNhan' && key !== 'MaKho')
+    const key = Object.keys(dataXDC ? dataXDC[0] : []).filter((key) => key !== 'SoThamChieu' && key !== 'MaKho_Nhan' && key !== 'ThongTinKhoNhan' && key !== 'MaKho')
     setOptions(key)
   }, [selectVisible])
 
@@ -94,7 +94,7 @@ const PhieuNhapDieuChinh = ({ path }) => {
       try {
         setTableLoad(true)
         if (isLoading == true) {
-          const response = await categoryAPI.GetDataNDC(
+          const response = await categoryAPI.GetDataXDC(
             dateData == {}
               ? {}
               : {
@@ -104,11 +104,10 @@ const PhieuNhapDieuChinh = ({ path }) => {
             TokenAccess,
           )
           if (response.data.DataError == 0) {
-            setDataNDC(response.data.DataResults)
-            console.log(response.data)
+            setDataXDC(response.data.DataResults)
             setTableLoad(false)
           } else if (response.data.DataError == -104) {
-            setDataNDC([])
+            setDataXDC([])
             setTableLoad(false)
           } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
             await RETOKEN()
@@ -122,7 +121,6 @@ const PhieuNhapDieuChinh = ({ path }) => {
     }
     getDataNDC()
   }, [searchHangHoa, isLoading, targetRow, dateData?.NgayBatDau, dateData?.NgayKetThuc])
-
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (showOption.current && !showOption.current.contains(event.target)) {
@@ -450,6 +448,7 @@ const PhieuNhapDieuChinh = ({ path }) => {
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => (a.NguoiSuaCuoi?.toString() || '').localeCompare(b.NguoiSuaCuoi?.toString() || ''),
+
       render: (text) => (
         <Tooltip title={text} color="blue">
           <div
@@ -568,7 +567,7 @@ const PhieuNhapDieuChinh = ({ path }) => {
                 <div className="flex justify-between gap-2 relative">
                   <div className="flex gap-1">
                     <div className="flex items-center gap-2 py-0.5">
-                      <h1 className="text-lg font-bold uppercase">Phiếu Nhập Kho Điều Chỉnh</h1>
+                      <h1 className="text-lg font-bold uppercase">Phiếu Xuất Kho Điều Chỉnh</h1>
                       <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
                     </div>
                     {isShowSearch && (
@@ -643,7 +642,7 @@ const PhieuNhapDieuChinh = ({ path }) => {
                                   {options.map((item) => (
                                     <Col span={8} key={item}>
                                       <Checkbox value={item} checked={true}>
-                                        {nameColumsPhieuNhapDieuChinh[item]}
+                                        {nameColumsPhieuXuatDieuChinh[item]}
                                       </Checkbox>
                                     </Col>
                                   ))}
@@ -804,15 +803,15 @@ const PhieuNhapDieuChinh = ({ path }) => {
               <div>
                 {isShowModal &&
                   (actionType == 'create' ? (
-                    <NDCCreate close={() => setIsShowModal(false)} loadingData={handleLoading} setTargetRow={setTargetRow} />
+                    <XDCCreate close={() => setIsShowModal(false)} loadingData={handleLoading} setTargetRow={setTargetRow} />
                   ) : actionType == 'view' ? (
-                    <NDCXem close={() => setIsShowModal(false)} dataNDC={isDataKhoDC} />
+                    <XDCView close={() => setIsShowModal(false)} dataXDC={isDataKhoDC} />
                   ) : actionType == 'edit' ? (
-                    <NDCEdit close={() => setIsShowModal(false)} dataNDC={isDataKhoDC} loadingData={handleLoading} setTargetRow={setTargetRow} />
+                    <XDCEdit close={() => setIsShowModal(false)} dataXDC={isDataKhoDC} loadingData={handleLoading} setTargetRow={setTargetRow} />
                   ) : actionType == 'delete' ? (
-                    <NDCXoa close={() => setIsShowModal(false)} dataNDC={isDataKhoDC} loadingData={handleLoading} setTargetRow={setTargetRow} />
+                    <XDCDel close={() => setIsShowModal(false)} dataXDC={isDataKhoDC} loadingData={handleLoading} setTargetRow={setTargetRow} />
                   ) : actionType == 'print' ? (
-                    <NDCPrint close={() => setIsShowModal(false)} />
+                    <XDCPrint close={() => setIsShowModal(false)} />
                   ) : null)}
               </div>
             </>
@@ -823,4 +822,4 @@ const PhieuNhapDieuChinh = ({ path }) => {
   )
 }
 
-export default PhieuNhapDieuChinh
+export default PhieuXuatDieuChinh
