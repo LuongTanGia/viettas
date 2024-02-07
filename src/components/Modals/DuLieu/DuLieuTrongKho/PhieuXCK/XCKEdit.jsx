@@ -1,31 +1,33 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
-import { useEffect, useState, useMemo } from 'react'
-import { toast } from 'react-toastify'
-import { FaSearch } from 'react-icons/fa'
-import { IoMdAddCircle } from 'react-icons/io'
+import { useEffect, useState, useCallback, useMemo } from 'react'
+import { Checkbox, FloatButton, Input, InputNumber, Select, Table, Tooltip } from 'antd'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
-import { Checkbox, Table, Tooltip, Select, FloatButton } from 'antd'
+import { FaSearch } from 'react-icons/fa'
+import { toast } from 'react-toastify'
+import { IoMdClose, IoMdAddCircle } from 'react-icons/io'
 import dayjs from 'dayjs'
 import moment from 'moment'
-import categoryAPI from '../../../../../API/linkAPI'
+import XCKPrint from './XCKPrint'
 import { useSearch } from '../../../../hooks/Search'
+import categoryAPI from '../../../../../API/linkAPI'
 import logo from '../../../../../assets/VTS-iSale.ico'
 import { RETOKEN } from '../../../../../action/Actions'
-import EditTable from '../../../../util/Table/EditTable'
 import ActionButton from '../../../../util/Button/ActionButton'
 import HighlightedCell from '../../../../hooks/HighlightedCell'
 import SimpleBackdrop from '../../../../util/Loading/LoadingPage'
-import { nameColumsPhieuLapRap } from '../../../../util/Table/ColumnName'
-import PLRPrint from './PLRPrint'
-const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
+import EditTable from '../../../../util/Table/EditTable'
+import { nameColumsPhieuNhapDieuChinh } from '../../../../util/Table/ColumnName'
+
+const XCKEdit = ({ close, dataXCK, loadingData, setTargetRow }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
   const [dataKhoHang, setDataKhoHang] = useState('')
   const [isShowModal, setIsShowModal] = useState(false)
   const [dataHangHoa, setDataHangHoa] = useState('')
-  const [dataPLRView, setDataPLRView] = useState('')
+  const [dataXCKView, setDataXCKView] = useState('')
   const [setSearchHangHoa, filteredHangHoa, searchHangHoa] = useSearch(dataHangHoa)
   const [selectedRowData, setSelectedRowData] = useState([])
   const [actionType, setActionType] = useState('')
@@ -35,11 +37,24 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
   const innitProduct = {
     SoChungTu: '',
     NgayCTu: '',
+    SoThamChieu: '',
     MaKho: '',
+    MaKho_Nhan: '',
     GhiChu: '',
-    DataDetails: [{ DonGia: '', TienHang: '', TyLeThue: '', TienThue: '', ThanhTien: '', TyLeCKTT: '', TienCKTT: '', TonKho: '', TyLeQuyDoi: '' }],
+    DataDetails: [
+      {
+        STT: 0,
+        MaHang: '',
+        SoLuong: 0,
+        DonGia: 0,
+        TienHang: 0,
+        MaHangLR: '',
+      },
+    ],
   }
-
+  const [XCKForm, setXCKForm] = useState(() => {
+    return dataXCK ? { ...dataXCK } : innitProduct
+  })
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.keyCode === 120) {
@@ -57,19 +72,15 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
     setTargetRow([])
   }, [])
 
-  const [PLRForm, setPLRForm] = useState(() => {
-    return dataPLR ? { ...dataPLR } : innitProduct
-  })
   useEffect(() => {
-    const getDataHangHoa = async () => {
+    const getDataKhoHangXCK = async () => {
       try {
-        const response = await categoryAPI.ListHangHoaPLR(TokenAccess)
+        const response = await categoryAPI.ListKhoHangXCK(TokenAccess)
         if (response.data.DataError == 0) {
-          setDataHangHoa(response.data.DataResults)
-          setIsLoading(true)
+          setDataKhoHang(response.data.DataResults)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
-          getDataHangHoa()
+          getDataKhoHangXCK()
         }
       } catch (error) {
         console.log(error)
@@ -77,20 +88,20 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
       }
     }
     if (!isLoading) {
-      getDataHangHoa()
+      getDataKhoHangXCK()
     }
   }, [isLoading])
 
   useEffect(() => {
-    const getDataKhoHang = async () => {
+    const getDataHangHoaXCK = async () => {
       try {
-        const response = await categoryAPI.ListKhoHangPLR(TokenAccess)
+        const response = await categoryAPI.ListHangHoaXCK(TokenAccess)
         if (response.data.DataError == 0) {
-          setDataKhoHang(response.data.DataResults)
           setIsLoading(true)
+          setDataHangHoa(response.data.DataResults)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
-          getDataKhoHang()
+          getDataHangHoaXCK()
         }
       } catch (error) {
         console.log(error)
@@ -98,16 +109,16 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
       }
     }
     if (!isLoading) {
-      getDataKhoHang()
+      getDataHangHoaXCK()
     }
   }, [isLoading])
 
   useEffect(() => {
     const handleView = async () => {
       try {
-        const response = await categoryAPI.PLRInfoEdit(dataPLR?.SoChungTu, TokenAccess)
+        const response = await categoryAPI.XCKView(dataXCK?.SoChungTu, TokenAccess)
         if (response.data.DataError == 0) {
-          setDataPLRView(response.data.DataResult)
+          setDataXCKView(response.data.DataResult)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
           handleView()
@@ -122,105 +133,13 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
   }, [isLoading])
 
   useEffect(() => {
-    if (dataPLRView?.DataDetails) {
-      setSelectedRowData([...dataPLRView.DataDetails])
+    if (dataXCKView?.DataDetails) {
+      setSelectedRowData([...dataXCKView.DataDetails])
     }
-  }, [dataPLRView])
+  }, [dataXCKView])
 
-  const handleChoose = (dataRow) => {
-    const defaultValues = {
-      SoLuong: 1,
-      DonGia: '',
-      TienHang: '',
-      TyLeThue: '',
-      TienThue: '',
-      ThanhTien: '',
-      TyLeCKTT: '',
-      TienCKTT: '',
-      TonKho: '',
-      TyLeQuyDoi: '',
-    }
-    const newRow = { ...dataRow, ...defaultValues }
-    const existMaHang = selectedRowData?.some((item) => item.MaHang === newRow.MaHang)
-    if (!existMaHang) {
-      setSelectedRowData([...selectedRowData, newRow])
-      toast.success('Chọn hàng hóa thành công', {
-        autoClose: 1000,
-      })
-    } else {
-      const index = selectedRowData?.findIndex((item) => item.MaHang === newRow.MaHang)
-      const oldQuantity = selectedRowData[index].SoLuong
-      selectedRowData[index].SoLuong = oldQuantity + newRow.SoLuong
-      setPLRForm({ ...PLRForm, DataDetails: selectedRowData })
-    }
-  }
-
-  const handleEdit = async (actionType) => {
-    try {
-      const newData = selectedRowData.map((item, index) => {
-        return {
-          ...item,
-          STT: index + 1,
-        }
-      })
-      const response = await categoryAPI.PLREdit({ SoChungTu: dataPLR?.SoChungTu, Data: { ...PLRForm, DataDetails: newData } }, TokenAccess)
-      if (response.data.DataError == 0) {
-        actionType == 'print'
-          ? handlePrint()
-          : actionType == 'printImport'
-            ? handlePrintImport()
-            : actionType == 'printExport'
-              ? handlePrintExport()
-              : (close(), toast.success('Sửa thành công'))
-        loadingData()
-        setTargetRow(dataPLR?.SoChungTu)
-      } else {
-        console.log('sai', PLRForm)
-        toast.error(response.data.DataErrorDescription)
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
-  console.log(PLRForm)
-  const handlePrint = () => {
-    setIsShowModal(true)
-    setActionType('print')
-  }
-  const handlePrintImport = () => {
-    setIsShowModal(true)
-    setActionType('printImport')
-  }
-  const handlePrintExport = () => {
-    setIsShowModal(true)
-    setActionType('printExport')
-  }
   const handleSearch = (event) => {
     setSearchHangHoa(event.target.value)
-  }
-  const isAdd = useMemo(() => selectedRowData?.map((item) => item.MaHang).includes('Chọn mã hàng'), [selectedRowData])
-
-  const addHangHoaCT = () => {
-    if (selectedRowData.map((item) => item.MaHang).includes('Chọn mã hàng')) return
-    setSelectedRowData([
-      ...selectedRowData,
-      {
-        MaHang: 'Chọn mã hàng',
-        TenHang: 'Chọn mã hàng',
-        DVT: '',
-        SoLuong: 1,
-        DonGia: '',
-        TienHang: '',
-        TyLeThue: '',
-        TienThue: '',
-        ThanhTien: '',
-        TyLeCKTT: '',
-        TienCKTT: '',
-        TonKho: '',
-        TyLeQuyDoi: '',
-        key: selectedRowData.length + dataHangHoa.length,
-      },
-    ])
   }
   const formatThapPhan = (number, decimalPlaces) => {
     if (typeof number === 'number' && !isNaN(number)) {
@@ -231,6 +150,88 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
       return formatter.format(number)
     }
     return ''
+  }
+  const handleEditData = (data) => {
+    setSelectedRowData(data)
+  }
+  const handleChoose = (dataRow) => {
+    const defaultValues = {
+      SoLuong: 1,
+      DonGia: 0,
+      TienHang: 0,
+      TyLeThue: '',
+      TienThue: '',
+      ThanhTien: '',
+      TyLeCKTT: '',
+      TienCKTT: '',
+      TonKho: '',
+      TyLeQuyDoi: '',
+      MaHangLR: '',
+    }
+    const newRow = { ...dataRow, ...defaultValues }
+    const existMaHang = selectedRowData.some((item) => item.MaHang === newRow.MaHang)
+    if (!existMaHang) {
+      setSelectedRowData([...selectedRowData, newRow])
+      toast.success('Chọn hàng hóa thành công', {
+        autoClose: 1000,
+      })
+    } else {
+      const index = selectedRowData.findIndex((item) => item.MaHang === newRow.MaHang)
+      const oldQuantity = selectedRowData[index].SoLuong
+      selectedRowData[index].SoLuong = oldQuantity + newRow.SoLuong
+      setXCKForm({ ...XCKForm, DataDetails: selectedRowData })
+    }
+  }
+  const handlePrint = () => {
+    setIsShowModal(true)
+    setActionType('print')
+  }
+  const handleEdit = async (isPrint = true) => {
+    try {
+      const newData = selectedRowData.map((item, index) => {
+        return {
+          ...item,
+          STT: index + 1,
+        }
+      })
+      const response = await categoryAPI.XCKEdit({ SoChungTu: dataXCK?.SoChungTu, Data: { ...XCKForm, DataDetails: newData } }, TokenAccess)
+      if (response.data.DataError == 0) {
+        isPrint ? handlePrint() : (close(), toast.success('Sửa thành công'))
+        loadingData()
+        setTargetRow(dataXCK?.SoChungTu)
+      } else {
+        console.log('sai', { SoChungTu: dataXCK?.SoChungTu, Data: { ...XCKForm, DataDetails: selectedRowData } })
+        toast.error(response.data.DataErrorDescription)
+        console.log(response.data.DataErrorDescription)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  const isAdd = useMemo(() => selectedRowData.map((item) => item.MaHang).includes('Chọn mã hàng'), [selectedRowData])
+
+  const addHangHoaCT = () => {
+    if (selectedRowData.map((item) => item.MaHang).includes('Chọn mã hàng')) return
+    setSelectedRowData([
+      ...selectedRowData,
+      {
+        MaHang: 'Chọn mã hàng',
+        TenHang: 'Chọn mã hàng',
+        DVT: '',
+        SoLuong: 1,
+        DonGia: 0,
+        TienHang: 0,
+        TyLeThue: '',
+        TienThue: '',
+        ThanhTien: '',
+        TyLeCKTT: '',
+        TienCKTT: '',
+        TonKho: '',
+        TyLeQuyDoi: '',
+        MaHangLR: '',
+        key: selectedRowData.length + dataHangHoa.length,
+      },
+    ])
   }
   const title = [
     {
@@ -262,7 +263,7 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
       align: 'center',
       sorter: (a, b) => a.NhomHang.localeCompare(b.NhomHang),
       render: (text) => (
-        <Tooltip title={text} color="blue">
+        <Tooltip title={text}>
           <div
             style={{
               overflow: 'hidden',
@@ -285,7 +286,7 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
       align: 'center',
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       render: (text) => (
-        <Tooltip title={text} color="blue">
+        <Tooltip title={text}>
           <div
             style={{
               overflow: 'hidden',
@@ -357,9 +358,6 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
       ),
     },
   ]
-  const handleEditData = (data) => {
-    setSelectedRowData(data)
-  }
   return (
     <>
       {!isLoading ? (
@@ -372,23 +370,21 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
               <div className="flex flex-col gap-2 py-1 px-2 xl:w-[80vw] lg:w-[90vw] md:w-[95vw]">
                 <div className="flex gap-2">
                   <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
-                  <p className="text-blue-700 font-semibold uppercase">Sửa - Phiếu Lắp Ráp</p>
+                  <p className="text-blue-700 font-semibold uppercase">Sửa - Phiếu Xuất Chuyển Kho</p>
                 </div>
                 <div className="flex flex-col gap-2 border-2 px-1 py-2.5">
                   <div className="grid grid-cols-2 items-center gap-2">
-                    <div className="flex flex-col gap-3">
+                    <div className="flex flex-col gap-2">
                       <div className="flex gap-2">
                         <div className="flex items-center gap-1">
-                          <label className="text-sm  required whitespace-nowrap min-w-[100px] flex justify-end">Số chứng từ</label>
-                          <input
-                            type="text"
-                            className="px-2 w-full resize-none rounded border outline-none text-[1rem]"
-                            name="SoChungTu"
-                            value={PLRForm?.SoChungTu || ''}
+                          <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Số chứng từ</label>
+                          <Input
+                            size="small"
+                            value={XCKForm?.SoChungTu || ''}
                             onChange={(e) =>
-                              setPLRForm({
-                                ...PLRForm,
-                                [e.target.name]: e.target.value,
+                              setXCKForm({
+                                ...XCKForm,
+                                SoChungTu: e.target.value,
                               })
                             }
                             readOnly
@@ -397,11 +393,12 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
                         <div className="flex items-center gap-1">
                           <label className="required whitespace-nowrap text-sm">Ngày c.từ</label>
                           <DatePicker
-                            className="DatePicker_NDCKho"
+                            className="DatePicker_XCKKho"
                             format="DD/MM/YYYY"
-                            value={dayjs(PLRForm?.NgayCTu) || ''}
+                            value={dayjs(XCKForm?.NgayCTu) || ''}
                             onChange={(values) => {
-                              setPLRForm({ ...PLRForm, NgayCTu: dayjs(values).format('YYYY-MM-DDTHH:mm:ss') })
+                              const newDate = dayjs(values).format('YYYY-MM-DDTHH:mm:ss')
+                              setXCKForm({ ...XCKForm, NgayCTu: newDate })
                             }}
                             sx={{
                               '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
@@ -417,48 +414,73 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
                         </div>
                       </div>
                       <div className="flex items-center gap-1">
-                        <label className="text-sm required whitespace-nowrap min-w-[100px] flex justify-end">Kho hàng</label>
+                        <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Kho hàng</label>
                         <Select
                           style={{ width: '100%' }}
+                          type="text"
                           showSearch
                           required
                           size="small"
-                          value={PLRForm?.MaKho}
+                          value={XCKForm?.MaKho}
                           onChange={(value) => {
-                            setPLRForm({
-                              ...PLRForm,
+                            setXCKForm({
+                              ...XCKForm,
                               MaKho: value,
                             })
                           }}
                         >
                           {dataKhoHang &&
-                            dataKhoHang?.map((item) => (
-                              <Select.Option key={item.MaKho} value={item.MaKho}>
+                            dataKhoHang?.map((item, index) => (
+                              <Select.Option key={index} value={item.MaKho}>
+                                {item.ThongTinKho}
+                              </Select.Option>
+                            ))}
+                        </Select>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Kho hàng nhận</label>
+                        <Select
+                          style={{ width: '100%' }}
+                          type="text"
+                          showSearch
+                          required
+                          size="small"
+                          value={XCKForm?.MaKho_Nhan}
+                          onChange={(value) => {
+                            setXCKForm({
+                              ...XCKForm,
+                              MaKho_Nhan: value,
+                            })
+                          }}
+                        >
+                          {dataKhoHang &&
+                            dataKhoHang?.map((item, index) => (
+                              <Select.Option key={index} value={item.MaKho}>
                                 {item.ThongTinKho}
                               </Select.Option>
                             ))}
                         </Select>
                       </div>
                     </div>
-                    <div className="grid grid-cols-1 gap-2 px-2 border-2 py-2.5 border-black-200 rounded relative">
+                    <div className="grid grid-cols-1 gap-2 px-2 border-2 py-3 border-black-200 rounded relative">
                       <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
                       <div className="flex gap-1">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người tạo</label>
-                          <Tooltip title={dataPLRView?.NguoiTao} color="blue">
+                          <Tooltip title={dataXCKView?.NguoiTao} color="blue">
                             <input
                               className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-[1rem] overflow-ellipsis truncate"
-                              value={dataPLRView?.NguoiTao || ''}
+                              value={dataXCKView?.NguoiTao || ''}
                               readOnly
                             />
                           </Tooltip>
                         </div>
                         <div className="flex gap-1 items-center">
                           <label className="text-sm">Lúc</label>
-                          <Tooltip title={moment(dataPLRView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''} color="blue">
+                          <Tooltip title={moment(dataXCKView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''} color="blue">
                             <input
                               className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
-                              value={moment(dataPLRView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
+                              value={moment(dataXCKView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
                               readOnly
                             />
                           </Tooltip>
@@ -467,20 +489,20 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
                       <div className="flex gap-1">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người sửa</label>
-                          <Tooltip title={dataPLRView?.NguoiSuaCuoi} color="blue">
+                          <Tooltip title={dataXCKView?.NguoiSuaCuoi} color="blue">
                             <input
                               className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border  outline-none text-[1rem] overflow-ellipsis truncate"
-                              value={dataPLRView?.NguoiSuaCuoi || ''}
+                              value={dataXCKView?.NguoiSuaCuoi || ''}
                               readOnly
                             />
                           </Tooltip>
                         </div>
                         <div className="flex gap-1 items-center">
                           <label className="text-sm">Lúc</label>
-                          <Tooltip title={dataPLRView?.NgaySuaCuoi ? moment(dataPLRView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''} color="blue">
+                          <Tooltip title={dataXCKView?.NgaySuaCuoi ? moment(dataXCKView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''} color="blue">
                             <input
                               className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
-                              value={dataPLRView?.NgaySuaCuoi ? moment(dataPLRView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
+                              value={dataXCKView?.NgaySuaCuoi ? moment(dataXCKView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
                               readOnly
                             />
                           </Tooltip>
@@ -489,27 +511,25 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
-                    <label className="whitespace-nowrap min-w-[100px] text-sm flex justify-end">Ghi chú</label>
-                    <input
-                      type="text"
-                      className="px-2 w-[70rem] resize-none rounded border-[1px] hover:border-blue-500 outline-none text-[1rem]"
-                      name="GhiChu"
-                      value={PLRForm?.GhiChu || ''}
+                    <label className="whitespace-nowrap min-w-[100px] flex justify-end text-sm">Ghi chú</label>
+                    <Input
+                      size="small"
+                      value={XCKForm?.GhiChu || ''}
                       onChange={(e) =>
-                        setPLRForm({
-                          ...PLRForm,
-                          [e.target.name]: e.target.value,
+                        setXCKForm({
+                          ...XCKForm,
+                          GhiChu: e.target.value,
                         })
                       }
                     />
                   </div>
-                  <div className="border-2 rounded relative ">
+                  <div className="border-2 rounded relative">
                     <EditTable
-                      tableName="PhieuLapRap"
+                      tableName="PhieuNhapDieuChinh"
                       param={selectedRowData}
                       handleEditData={handleEditData}
                       ColumnTable={['STT', 'MaHang', 'TenHang', 'DVT', 'SoLuong']}
-                      columName={nameColumsPhieuLapRap}
+                      columName={nameColumsPhieuNhapDieuChinh}
                       yourMaHangOptions={dataHangHoa}
                     />
                     <Tooltip
@@ -537,7 +557,7 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
                         isAdd
                           ? ''
                           : () => {
-                              handleEdit('print')
+                              handleEdit(true)
                             }
                       }
                       title={'In Phiếu'}
@@ -546,38 +566,16 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
                       color_hover={isAdd ? 'gray-500' : 'purple-500'}
                       bg_hover={isAdd ? 'gray-500' : 'white'}
                     />
-                    <ActionButton
-                      handleAction={
-                        isAdd
-                          ? ''
-                          : () => {
-                              handleEdit('printImport')
-                            }
-                      }
-                      title={'In Phiếu Nhập'}
-                      color={'slate-50'}
-                      background={isAdd ? 'gray-500' : 'purple-500'}
-                      color_hover={isAdd ? 'gray-500' : 'purple-500'}
-                      bg_hover={isAdd ? 'gray-500' : 'white'}
-                    />
-                    <ActionButton
-                      handleAction={
-                        isAdd
-                          ? ''
-                          : () => {
-                              handleEdit('printExport')
-                            }
-                      }
-                      title={'In Phiếu Xuất'}
-                      color={'slate-50'}
-                      background={isAdd ? 'gray-500' : 'purple-500'}
-                      color_hover={isAdd ? 'gray-500' : 'purple-500'}
-                      bg_hover={isAdd ? 'gray-500' : 'white'}
-                    />
                   </div>
                   <div className="flex gap-2 justify-end">
                     <ActionButton
-                      handleAction={isAdd ? '' : () => handleEdit(null)}
+                      handleAction={
+                        isAdd
+                          ? ''
+                          : () => {
+                              handleEdit(false)
+                            }
+                      }
                       title={'Xác nhận'}
                       color={'slate-50'}
                       background={isAdd ? 'gray-500' : 'blue-500'}
@@ -592,15 +590,15 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
           </div>
           <div>
             {isShowModal &&
-              (actionType === 'print' || actionType == 'printImport' || actionType == 'printExport' ? (
-                <PLRPrint close={() => setIsShowModal(false)} dataPrint={{ ...PLRForm }} type={actionType} />
+              (actionType === 'print' ? (
+                <XCKPrint close={() => setIsShowModal(false)} dataPrint={{ ...XCKForm }} />
               ) : (
-                <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col xl:w-[87vw] lg:w-[95vw] md:w-[95vw] min-h-[8rem] bg-white  p-2 rounded-xl shadow-custom overflow-hidden z-10">
-                  <div className="flex flex-col gap-2 p-2 ">
+                <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col xl:w-[87vw] lg:w-[95vw] md:w-[95vw]  bg-white  p-2 rounded-xl shadow-custom overflow-hidden z-10">
+                  <div className="flex flex-col gap-2 p-2">
                     <div className="flex items-center gap-2">
                       <div className="flex items-center gap-2 py-1">
                         <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
-                        <p className="text-blue-700 font-semibold uppercase">Danh Sách Hàng Hóa - Phiếu Lắp Ráp</p>
+                        <p className="text-blue-700 font-semibold uppercase">Danh Sách Hàng Hóa - Phiếu Nhập Điều Chỉnh</p>
                         <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
                       </div>
                       <div className="flex w-[20rem] overflow-hidden">
@@ -617,10 +615,10 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
                     </div>
                     <div className="border-2 p-2 rounded m-1 flex flex-col gap-2 max-h-[35rem]">
                       <Table
-                        className="table_HH"
                         bordered
+                        className="table_HH"
                         columns={title}
-                        dataSource={filteredHangHoa}
+                        dataSource={filteredHangHoa.map((record, index) => ({ ...record, key: index }))}
                         onRow={(record) => ({
                           onDoubleClick: () => {
                             handleChoose(record)
@@ -665,4 +663,4 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
   )
 }
 
-export default PLREdit
+export default XCKEdit

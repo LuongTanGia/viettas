@@ -128,7 +128,6 @@ const HangHoa = ({ path }) => {
     setActionType('delete')
     setIsShowModal(true)
     setIsMaHang(record)
-    getListHangHoa()
   }
   const handleView = (record) => {
     setActionType('view')

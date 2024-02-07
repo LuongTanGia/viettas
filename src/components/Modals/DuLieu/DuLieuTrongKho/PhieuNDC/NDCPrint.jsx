@@ -93,8 +93,8 @@ const NDCPrint = ({ close, dataPrint }) => {
           ? {
               NgayBatDau: dayjs(dataPrint.NgayCTu).format('YYYY-MM-DDTHH:mm:ss'),
               NgayKetThuc: dayjs(dataPrint.NgayCTu).format('YYYY-MM-DDTHH:mm:ss'),
-              SoChungTuBatDau: dataPrint.SoChungTu,
-              SoChungTuKetThuc: dataPrint.SoChungTu,
+              SoChungTuBatDau: dataPrint?.SoChungTu,
+              SoChungTuKetThuc: dataPrint?.SoChungTu,
               SoLien: calculateTotal(),
             }
           : {
@@ -110,13 +110,6 @@ const NDCPrint = ({ close, dataPrint }) => {
         base64ToPDF(response.data.DataResults)
       } else {
         toast.error(response.data.DataErrorDescription)
-        console.log({
-          NgayBatDau: dateData.NgayBatDau,
-          NgayKetThuc: dateData.NgayBatDau,
-          SoChungTuBatDau: selectedNhomFrom,
-          SoChungTuKetThuc: selectedNhomTo,
-          SoLien: calculateTotal(),
-        })
       }
     } catch (error) {
       console.log(error)
@@ -223,10 +216,16 @@ const NDCPrint = ({ close, dataPrint }) => {
                     <Select
                       showSearch
                       required
-                      value={dataPrint ? dataPrint.SoChungTu : selectedNhomFrom}
+                      value={dataPrint ? dataPrint?.SoChungTu : selectedNhomFrom}
                       placeholder={'Chọn nhóm'}
                       onChange={(value) => {
                         setSelectedNhomFrom(value)
+                        if (
+                          selectedNhomTo !== null &&
+                          dataListChungTu.findIndex((item) => item.SoChungTu === value) > dataListChungTu.findIndex((item) => item.SoChungTu === selectedNhomTo)
+                        ) {
+                          setSelectedNhomTo(value)
+                        }
                       }}
                       style={{
                         width: '200px',
@@ -248,9 +247,15 @@ const NDCPrint = ({ close, dataPrint }) => {
                       showSearch
                       required
                       placeholder={'Chọn nhóm'}
-                      value={dataPrint ? dataPrint.SoChungTu : selectedNhomTo}
+                      value={dataPrint ? dataPrint?.SoChungTu : selectedNhomTo}
                       onChange={(value) => {
                         setSelectedNhomTo(value)
+                        if (
+                          selectedNhomFrom !== null &&
+                          dataListChungTu.findIndex((item) => item.SoChungTu === value) > dataListChungTu.findIndex((item) => item.SoChungTu === selectedNhomFrom)
+                        ) {
+                          setSelectedNhomFrom(value)
+                        }
                       }}
                       style={{
                         width: '200px',

@@ -120,7 +120,7 @@ const PhieuNhapDieuChinh = ({ path }) => {
       }
     }
     getDataNDC()
-  }, [searchHangHoa, isLoading, targetRow])
+  }, [searchHangHoa, isLoading, targetRow, dateData?.NgayBatDau, dateData?.NgayKetThuc])
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -449,7 +449,6 @@ const PhieuNhapDieuChinh = ({ path }) => {
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => (a.NguoiSuaCuoi?.toString() || '').localeCompare(b.NguoiSuaCuoi?.toString() || ''),
-
       render: (text) => (
         <Tooltip title={text} color="blue">
           <div
@@ -476,7 +475,7 @@ const PhieuNhapDieuChinh = ({ path }) => {
         const dateB = new Date(b.NgaySuaCuoi)
         return dateA - dateB
       },
-      render: (text) => <span className="flex justify-center">{formatDateTime(text, true)}</span>,
+      render: (text) => <span className="flex justify-center">{text ? formatDateTime(text, true) : ''}</span>,
     },
     {
       title: ' ',

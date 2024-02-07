@@ -11,12 +11,12 @@ import ActionButton from '../../../../util/Button/ActionButton'
 import SimpleBackdrop from '../../../../util/Loading/LoadingPage'
 import { RETOKEN, base64ToPDF } from '../../../../../action/Actions'
 
-const PLRPrint = ({ close, dataPrint, type }) => {
+const NCKPrint = ({ close, dataPrint }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const [khoanNgayFrom, setKhoanNgayFrom] = useState()
   const [khoanNgayTo, setKhoanNgayTo] = useState()
   const [isLoading, setIsLoading] = useState(false)
-  const [dataListChungTu, setDataListChungTu] = useState([])
+  const [dataListChungTu, setDataListChungTu] = useState('')
   const [selectedNhomFrom, setSelectedNhomFrom] = useState(null)
   const [selectedNhomTo, setSelectedNhomTo] = useState(null)
   const [dateData, setDateData] = useState({})
@@ -26,6 +26,7 @@ const PLRPrint = ({ close, dataPrint, type }) => {
     checkbox2: false,
     checkbox3: false,
   })
+
   useEffect(() => {
     const getTimeSetting = async () => {
       try {
@@ -58,23 +59,26 @@ const PLRPrint = ({ close, dataPrint, type }) => {
   useEffect(() => {
     const getListChungTu = async () => {
       try {
-        const response = await categoryAPI.ListChungTuPLR({ NgayBatDau: dateData?.NgayBatDau, NgayKetThuc: dateData?.NgayKetThuc }, TokenAccess)
-        if (response.data.DataError == 0) {
-          setDataListChungTu(response.data.DataResults)
-          setIsLoading(true)
-        }
-        if (response.data.DataError == -104) {
-          setDataListChungTu([])
-          setIsLoading(true)
+        if (isLoading == true) {
+          const response = await categoryAPI.ListChungTuNCK({ NgayBatDau: dateData?.NgayBatDau, NgayKetThuc: dateData?.NgayKetThuc }, TokenAccess)
+          if (response.data.DataError == 0) {
+            setDataListChungTu(response.data.DataResults)
+            setIsLoading(true)
+          }
+          if (response.data.DataError == -104) {
+            setDataListChungTu([])
+            setIsLoading(true)
+          } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+            await RETOKEN()
+            getListChungTu()
+          }
         }
       } catch (error) {
         console.log(error)
       }
     }
-    if (dateData && dateData.NgayBatDau && dateData.NgayKetThuc) {
-      getListChungTu()
-    }
-  }, [dateData?.NgayBatDau, dateData?.NgayKetThuc, isLoading])
+    getListChungTu()
+  }, [dateData?.NgayBatDau, dateData?.NgayKetThuc])
 
   const calculateTotal = () => {
     let total = 0
@@ -82,78 +86,15 @@ const PLRPrint = ({ close, dataPrint, type }) => {
     if (checkboxValues.checkbox2) total += 2
     return total
   }
-  console.log(dataPrint)
   const handlePrint = async () => {
-    console.log('In')
-
     try {
-      const response = await categoryAPI.PLRPrint(
+      const response = await categoryAPI.NCKPrint(
         dataPrint
           ? {
               NgayBatDau: dayjs(dataPrint.NgayCTu).format('YYYY-MM-DDTHH:mm:ss'),
               NgayKetThuc: dayjs(dataPrint.NgayCTu).format('YYYY-MM-DDTHH:mm:ss'),
               SoChungTuBatDau: dataPrint?.SoChungTu,
               SoChungTuKetThuc: dataPrint?.SoChungTu,
-              SoLien: calculateTotal(),
-            }
-          : {
-              NgayBatDau: dateData.NgayBatDau,
-              NgayKetThuc: dateData.NgayKetThuc,
-              SoChungTuBatDau: selectedNhomFrom,
-              SoChungTuKetThuc: selectedNhomTo,
-              SoLien: calculateTotal(),
-            },
-        TokenAccess,
-      )
-      if (response.data.DataError == 0) {
-        base64ToPDF(response.data.DataResults)
-      } else {
-        toast.error(response.data.DataErrorDescription)
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
-  const handlePrintImport = async () => {
-    console.log('In Nhập')
-    try {
-      const response = await categoryAPI.PLRPrintNhap(
-        dataPrint
-          ? {
-              NgayBatDau: dayjs(dataPrint.NgayCTu).format('YYYY-MM-DDTHH:mm:ss'),
-              NgayKetThuc: dayjs(dataPrint.NgayCTu).format('YYYY-MM-DDTHH:mm:ss'),
-              SoChungTuBatDau: dataPrint.SoChungTu,
-              SoChungTuKetThuc: dataPrint.SoChungTu,
-              SoLien: calculateTotal(),
-            }
-          : {
-              NgayBatDau: dateData.NgayBatDau,
-              NgayKetThuc: dateData.NgayKetThuc,
-              SoChungTuBatDau: selectedNhomFrom,
-              SoChungTuKetThuc: selectedNhomTo,
-              SoLien: calculateTotal(),
-            },
-        TokenAccess,
-      )
-      if (response.data.DataError == 0) {
-        base64ToPDF(response.data.DataResults)
-      } else {
-        toast.error(response.data.DataErrorDescription)
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
-  const handlePrintExport = async () => {
-    console.log('In Xuất')
-    try {
-      const response = await categoryAPI.PLRPrintXuat(
-        dataPrint
-          ? {
-              NgayBatDau: dayjs(dataPrint.NgayCTu).format('YYYY-MM-DDTHH:mm:ss'),
-              NgayKetThuc: dayjs(dataPrint.NgayCTu).format('YYYY-MM-DDTHH:mm:ss'),
-              SoChungTuBatDau: dataPrint.SoChungTu,
-              SoChungTuKetThuc: dataPrint.SoChungTu,
               SoLien: calculateTotal(),
             }
           : {
@@ -202,6 +143,7 @@ const PLRPrint = ({ close, dataPrint, type }) => {
       handleDateChange()
     }
   }
+
   return (
     <>
       {!isLoading ? (
@@ -217,8 +159,8 @@ const PLRPrint = ({ close, dataPrint, type }) => {
               </div>
               <div className="flex flex-col gap-4 border-2 p-3">
                 <div className="flex justify-center">
-                  <div className="DatePicker_NDCKho flex justify-center gap-4">
-                    <div className="DatePicker_NDCKho flex items-center gap-2">
+                  <div className="DatePicker_NCKKho flex justify-center gap-4">
+                    <div className="DatePicker_NCKKho flex items-center gap-2">
                       <label>Từ</label>
                       <DateField
                         className="max-w-[180px]"
@@ -274,7 +216,7 @@ const PLRPrint = ({ close, dataPrint, type }) => {
                     <Select
                       showSearch
                       required
-                      value={dataPrint ? dataPrint.SoChungTu : selectedNhomFrom}
+                      value={dataPrint ? dataPrint?.SoChungTu : selectedNhomFrom}
                       placeholder={'Chọn nhóm'}
                       onChange={(value) => {
                         setSelectedNhomFrom(value)
@@ -305,12 +247,12 @@ const PLRPrint = ({ close, dataPrint, type }) => {
                       showSearch
                       required
                       placeholder={'Chọn nhóm'}
-                      value={dataPrint ? dataPrint.SoChungTu : selectedNhomTo}
+                      value={dataPrint ? dataPrint?.SoChungTu : selectedNhomTo}
                       onChange={(value) => {
                         setSelectedNhomTo(value)
                         if (
                           selectedNhomFrom !== null &&
-                          dataListChungTu.findIndex((item) => item.SoChungTu === value) < dataListChungTu.findIndex((item) => item.SoChungTu === selectedNhomFrom)
+                          dataListChungTu.findIndex((item) => item.SoChungTu === value) > dataListChungTu.findIndex((item) => item.SoChungTu === selectedNhomFrom)
                         ) {
                           setSelectedNhomFrom(value)
                         }
@@ -362,17 +304,7 @@ const PLRPrint = ({ close, dataPrint, type }) => {
                 </div>
               </div>
               <div className="flex gap-2 justify-end">
-                <ActionButton
-                  handleAction={
-                    type == 'print' ? () => handlePrint() : type == 'printImport' ? () => handlePrintImport() : type == 'printExport' ? () => handlePrintExport() : null
-                  }
-                  title={'Xác nhận'}
-                  color={'slate-50'}
-                  background={'blue-500'}
-                  color_hover={'blue-500'}
-                  bg_hover={'white'}
-                  disable
-                />
+                <ActionButton handleAction={handlePrint} title={'Xác nhận'} color={'slate-50'} background={'blue-500'} color_hover={'blue-500'} bg_hover={'white'} disable />
                 <ActionButton handleAction={close} title={'Đóng'} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
               </div>
             </div>
@@ -383,4 +315,4 @@ const PLRPrint = ({ close, dataPrint, type }) => {
   )
 }
 
-export default PLRPrint
+export default NCKPrint

@@ -16,24 +16,24 @@ import { MdEdit, MdDelete, MdPrint } from 'react-icons/md'
 import categoryAPI from '../../../../API/linkAPI'
 import { useSearch } from '../../../../components/hooks/Search'
 import { RETOKEN, exportToExcel } from '../../../../action/Actions'
-import HighlightedCell from '../../../../components/hooks/HighlightedCell'
 import ActionButton from '../../../../components/util/Button/ActionButton'
+import HighlightedCell from '../../../../components/hooks/HighlightedCell'
 import SimpleBackdrop from '../../../../components/util/Loading/LoadingPage'
-import { nameColumsPhieuLapRap } from '../../../../components/util/Table/ColumnName'
-import PLRView from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuLapRap/PLRView'
-import PLREdit from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuLapRap/PLREdit'
-import PLRPrint from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuLapRap/PLRPrint'
-import PLRCreate from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuLapRap/PLRCreate'
-import PLRDelete from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuLapRap/PLRDelete'
+import { nameColumsPhieuXuatDieuChinh } from '../../../../components/util/Table/ColumnName'
+import XDCCreate from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuXDC/XDCCreate'
+import XDCView from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuXDC/XDCView'
+import XDCEdit from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuXDC/XDCEdit'
+import XDCDel from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuXDC/XDCDel'
+import XDCPrint from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuXDC/XDCPrint'
 
-const PhieuLapRap = ({ path }) => {
+const PhieuXuatDieuChinh = ({ path }) => {
   const navigate = useNavigate()
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
-  const [dataPLR, setDataPLR] = useState('')
-  const [isDataKhoLR, setIsDataKhoLR] = useState('')
-  const [setSearchHangHoa, filteredHangHoa, searchHangHoa] = useSearch(dataPLR)
+  const [dataXDC, setDataXDC] = useState('')
+  const [isDataKhoDC, setIsDataKhoDC] = useState('')
+  const [setSearchHangHoa, filteredHangHoa, searchHangHoa] = useSearch(dataXDC)
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [isShowOption, setIsShowOption] = useState(false)
   const [isShowModal, setIsShowModal] = useState(false)
@@ -56,46 +56,9 @@ const PhieuLapRap = ({ path }) => {
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
     setcheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
-    const key = Object.keys(dataPLR ? dataPLR[0] : []).filter((key) => key !== 'MaKho')
+    const key = Object.keys(dataXDC ? dataXDC[0] : []).filter((key) => key !== 'SoThamChieu' && key !== 'MaKho_Nhan' && key !== 'ThongTinKhoNhan' && key !== 'MaKho')
     setOptions(key)
   }, [selectVisible])
-
-  useEffect(() => {
-    if (dataCRUD?.VIEW == false) {
-      setIsShowNotify(true)
-    }
-  }, [dataCRUD])
-
-  useEffect(() => {
-    const getDataQuyenHan = async (path) => {
-      try {
-        const response = await categoryAPI.QuyenHan(path, TokenAccess)
-        if (response.data.DataError === 0) {
-          setDataCRUD(response.data)
-          setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getDataQuyenHan()
-        }
-      } catch (error) {
-        console.log(error)
-        setIsLoading(true)
-      }
-    }
-    getDataQuyenHan(path)
-  }, [])
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (showOption.current && !showOption.current.contains(event.target)) {
-        setIsShowOption(false)
-      }
-    }
-    document.addEventListener('click', handleClickOutside)
-    return () => {
-      document.removeEventListener('click', handleClickOutside)
-    }
-  }, [])
 
   useEffect(() => {
     const getTimeSetting = async () => {
@@ -127,11 +90,11 @@ const PhieuLapRap = ({ path }) => {
   }, [dateData?.NgayBatDau, dateData?.NgayKetThuc])
 
   useEffect(() => {
-    const getDataPLR = async () => {
+    const getDataNDC = async () => {
       try {
         setTableLoad(true)
         if (isLoading == true) {
-          const response = await categoryAPI.GetDataPLR(
+          const response = await categoryAPI.GetDataXDC(
             dateData == {}
               ? {}
               : {
@@ -141,14 +104,14 @@ const PhieuLapRap = ({ path }) => {
             TokenAccess,
           )
           if (response.data.DataError == 0) {
-            setDataPLR(response.data.DataResults)
+            setDataXDC(response.data.DataResults)
             setTableLoad(false)
           } else if (response.data.DataError == -104) {
-            setDataPLR([])
+            setDataXDC([])
             setTableLoad(false)
           } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
             await RETOKEN()
-            getDataPLR()
+            getDataNDC()
           }
         }
       } catch (error) {
@@ -156,8 +119,45 @@ const PhieuLapRap = ({ path }) => {
         setTableLoad(false)
       }
     }
-    getDataPLR()
-  }, [searchHangHoa, isLoading, targetRow])
+    getDataNDC()
+  }, [searchHangHoa, isLoading, targetRow, dateData?.NgayBatDau, dateData?.NgayKetThuc])
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showOption.current && !showOption.current.contains(event.target)) {
+        setIsShowOption(false)
+      }
+    }
+    document.addEventListener('click', handleClickOutside)
+    return () => {
+      document.removeEventListener('click', handleClickOutside)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (dataCRUD?.VIEW == false) {
+      setIsShowNotify(true)
+    }
+  }, [dataCRUD])
+
+  useEffect(() => {
+    const getDataQuyenHan = async (path) => {
+      try {
+        const response = await categoryAPI.QuyenHan(path, TokenAccess)
+        if (response.data.DataError === 0) {
+          setDataCRUD(response.data)
+          setIsLoading(true)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          getDataQuyenHan()
+        }
+      } catch (error) {
+        console.log(error)
+        setIsLoading(true)
+      }
+    }
+    getDataQuyenHan(path)
+  }, [])
 
   function formatDateTime(inputDate, includeTime = false) {
     const date = new Date(inputDate)
@@ -200,32 +200,38 @@ const PhieuLapRap = ({ path }) => {
   const handleEdit = (record) => {
     setIsShowModal(true)
     setActionType('edit')
-    setIsDataKhoLR(record)
+    setIsDataKhoDC(record)
   }
   const handleView = (record) => {
     setIsShowModal(true)
-    setIsDataKhoLR(record)
+    setIsDataKhoDC(record)
     setActionType('view')
   }
   const handleDelete = (record) => {
     setIsShowModal(true)
-    setIsDataKhoLR(record)
+    setIsDataKhoDC(record)
     setActionType('delete')
   }
   const handlePrint = () => {
     setIsShowModal(true)
     setActionType('print')
   }
-  const handlePrintImport = () => {
-    setIsShowModal(true)
-    setActionType('printImport')
-  }
-  const handlePrintExport = () => {
-    setIsShowModal(true)
-    setActionType('printExport')
-  }
   const handleLoading = () => {
     setTableLoad(true)
+  }
+  const handleHidden = () => {
+    setSelectVisible(!selectVisible)
+  }
+  const onChange = (checkedValues) => {
+    setcheckedList(checkedValues)
+  }
+  const onClickSubmit = () => {
+    setTableLoad(true)
+    setTimeout(() => {
+      setHiddenRow(checkedList)
+      setTableLoad(false)
+      localStorage.setItem('hiddenColumns', JSON.stringify(checkedList))
+    }, 1000)
   }
   const handleDateChange = () => {
     clearTimeout(timerId)
@@ -261,20 +267,6 @@ const PhieuLapRap = ({ path }) => {
     if (event.key === 'Enter') {
       handleDateChange()
     }
-  }
-  const handleHidden = () => {
-    setSelectVisible(!selectVisible)
-  }
-  const onChange = (checkedValues) => {
-    setcheckedList(checkedValues)
-  }
-  const onClickSubmit = () => {
-    setTableLoad(true)
-    setTimeout(() => {
-      setHiddenRow(checkedList)
-      setTableLoad(false)
-      localStorage.setItem('hiddenColumns', JSON.stringify(checkedList))
-    }, 1000)
   }
   const titles = [
     {
@@ -370,6 +362,24 @@ const PhieuLapRap = ({ path }) => {
         </span>
       ),
     },
+    ...(dataThongSo.HIENTHIGIATRIKHO == true
+      ? [
+          {
+            title: 'Trị Giá',
+            dataIndex: 'TongTriGiaKho',
+            key: 'TongTriGiaKho',
+            align: 'center',
+            width: 120,
+            showSorterTooltip: false,
+            sorter: (a, b) => a.TongSoLuong - b.TongSoLuong,
+            render: (text) => (
+              <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 || text === null ? 'text-gray-300' : ''}`}>
+                <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOTIEN)} search={searchHangHoa} />
+              </span>
+            ),
+          },
+        ]
+      : []),
     {
       title: 'Ghi chú',
       dataIndex: 'GhiChu',
@@ -558,7 +568,7 @@ const PhieuLapRap = ({ path }) => {
                 <div className="flex justify-between gap-2 relative">
                   <div className="flex gap-1">
                     <div className="flex items-center gap-2 py-0.5">
-                      <h1 className="text-lg font-bold uppercase">Phiếu Lắp Ráp</h1>
+                      <h1 className="text-lg font-bold uppercase">Phiếu Xuất Kho Điều Chỉnh</h1>
                       <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
                     </div>
                     {isShowSearch && (
@@ -589,24 +599,6 @@ const PhieuLapRap = ({ path }) => {
                           <ActionButton
                             handleAction={handlePrint}
                             title={'In Phiếu'}
-                            icon={<MdPrint className="w-6 h-6" />}
-                            color={'slate-50'}
-                            background={'purple-500'}
-                            color_hover={'purple-500'}
-                            bg_hover={'white'}
-                          />
-                          <ActionButton
-                            handleAction={handlePrintImport}
-                            title={'In Phiếu Nhập'}
-                            icon={<MdPrint className="w-6 h-6" />}
-                            color={'slate-50'}
-                            background={'purple-500'}
-                            color_hover={'purple-500'}
-                            bg_hover={'white'}
-                          />
-                          <ActionButton
-                            handleAction={handlePrintExport}
-                            title={'In Phiếu Xuất'}
                             icon={<MdPrint className="w-6 h-6" />}
                             color={'slate-50'}
                             background={'purple-500'}
@@ -651,7 +643,7 @@ const PhieuLapRap = ({ path }) => {
                                   {options.map((item) => (
                                     <Col span={8} key={item}>
                                       <Checkbox value={item} checked={true}>
-                                        {nameColumsPhieuLapRap[item]}
+                                        {nameColumsPhieuXuatDieuChinh[item]}
                                       </Checkbox>
                                     </Col>
                                   ))}
@@ -677,7 +669,7 @@ const PhieuLapRap = ({ path }) => {
                         <DateField
                           onBlur={handleDateChange}
                           onKeyDown={handleKeyDown}
-                          className="max-w-[120px]"
+                          className="DatePicker_NXTKho max-w-[110px]"
                           format="DD/MM/YYYY"
                           value={khoanNgayFrom}
                           sx={{
@@ -701,7 +693,7 @@ const PhieuLapRap = ({ path }) => {
                         <DateField
                           onBlur={handleDateChange}
                           onKeyDown={handleKeyDown}
-                          className="max-w-[120px]"
+                          className="DatePicker_NXTKho max-w-[110px]"
                           format="DD/MM/YYYY"
                           value={khoanNgayTo}
                           sx={{
@@ -738,7 +730,7 @@ const PhieuLapRap = ({ path }) => {
                   <Table
                     loading={tableLoad}
                     bordered
-                    className="setHeight"
+                    className="table_DMHangHoa setHeight"
                     columns={newTitles}
                     dataSource={filteredHangHoa.map((record, index) => ({ ...record, key: index }))}
                     pagination={{
@@ -772,7 +764,6 @@ const PhieuLapRap = ({ path }) => {
                               .filter((column) => column.render)
                               .map((column, index) => {
                                 const isNumericColumn = typeof filteredHangHoa[0]?.[column.dataIndex] === 'number'
-
                                 return (
                                   <Table.Summary.Cell key={`summary-cell-${index + 1}`} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
                                     {isNumericColumn ? (
@@ -812,15 +803,15 @@ const PhieuLapRap = ({ path }) => {
               <div>
                 {isShowModal &&
                   (actionType == 'create' ? (
-                    <PLRCreate close={() => setIsShowModal(false)} loadingData={handleLoading} setTargetRow={setTargetRow} />
+                    <XDCCreate close={() => setIsShowModal(false)} loadingData={handleLoading} setTargetRow={setTargetRow} />
                   ) : actionType == 'view' ? (
-                    <PLRView close={() => setIsShowModal(false)} dataPLR={isDataKhoLR} />
+                    <XDCView close={() => setIsShowModal(false)} dataXDC={isDataKhoDC} />
                   ) : actionType == 'edit' ? (
-                    <PLREdit close={() => setIsShowModal(false)} dataPLR={isDataKhoLR} loadingData={handleLoading} setTargetRow={setTargetRow} />
+                    <XDCEdit close={() => setIsShowModal(false)} dataXDC={isDataKhoDC} loadingData={handleLoading} setTargetRow={setTargetRow} />
                   ) : actionType == 'delete' ? (
-                    <PLRDelete close={() => setIsShowModal(false)} dataPLR={isDataKhoLR} loadingData={handleLoading} setTargetRow={setTargetRow} />
-                  ) : actionType == 'print' || actionType == 'printImport' || actionType == 'printExport' ? (
-                    <PLRPrint close={() => setIsShowModal(false)} type={actionType} />
+                    <XDCDel close={() => setIsShowModal(false)} dataXDC={isDataKhoDC} loadingData={handleLoading} setTargetRow={setTargetRow} />
+                  ) : actionType == 'print' ? (
+                    <XDCPrint close={() => setIsShowModal(false)} />
                   ) : null)}
               </div>
             </>
@@ -831,4 +822,4 @@ const PhieuLapRap = ({ path }) => {
   )
 }
 
-export default PhieuLapRap
+export default PhieuXuatDieuChinh

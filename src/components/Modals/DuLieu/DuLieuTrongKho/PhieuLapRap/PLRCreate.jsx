@@ -1,21 +1,21 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
-import { useEffect, useState, useCallback, useMemo } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { toast } from 'react-toastify'
 import { FaSearch } from 'react-icons/fa'
-import { IoMdClose, IoMdAddCircle } from 'react-icons/io'
+import { IoMdAddCircle } from 'react-icons/io'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
-import { Checkbox, Table, Tooltip, Select, InputNumber, FloatButton } from 'antd'
+import { Checkbox, Table, Tooltip, Select, FloatButton } from 'antd'
 import dayjs from 'dayjs'
+import PLRPrint from './PLRPrint'
 import categoryAPI from '../../../../../API/linkAPI'
 import { useSearch } from '../../../../hooks/Search'
 import logo from '../../../../../assets/VTS-iSale.ico'
 import { RETOKEN } from '../../../../../action/Actions'
+import EditTable from '../../../../util/Table/EditTable'
 import ActionButton from '../../../../util/Button/ActionButton'
 import HighlightedCell from '../../../../hooks/HighlightedCell'
 import SimpleBackdrop from '../../../../util/Loading/LoadingPage'
-import PLRPrint from './PLRPrint'
-import EditTable from '../../../../util/Table/EditTable'
 import { nameColumsPhieuLapRap } from '../../../../util/Table/ColumnName'
 
 const PLRCreate = ({ close, loadingData, setTargetRow }) => {
@@ -113,7 +113,7 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
   useEffect(() => {
     const getDataKhoHang = async () => {
       try {
-        const response = await categoryAPI.ListKhoHangNDC(TokenAccess)
+        const response = await categoryAPI.ListKhoHangPLR(TokenAccess)
         if (response.data.DataError == 0) {
           setDataKhoHang(response.data.DataResults)
           setIsLoading(true)
@@ -131,12 +131,25 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
     }
   }, [isLoading])
 
-  const handleCreate = async (isSave = true, isPrint = true) => {
+  const handleCreate = async (isSave = true, actionType) => {
     try {
-      const response = await categoryAPI.PLRCreate({ ...PLRForm, DataDetails: selectedRowData, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss') }, TokenAccess)
-      console.log({ ...PLRForm, DataDetails: selectedRowData, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss') })
+      const newData = selectedRowData.map((item, index) => {
+        return {
+          ...item,
+          STT: index + 1,
+        }
+      })
+      const response = await categoryAPI.PLRCreate({ ...PLRForm, DataDetails: newData, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss') }, TokenAccess)
       if (response.data.DataError == 0) {
-        isPrint ? handlePrint() : isSave ? (toast.success('Tạo thành công'), setPLRForm([]), setSelectedRowData([])) : (close(), toast.success('Tạo thành công'))
+        actionType == 'print'
+          ? handlePrint()
+          : actionType == 'printImport'
+            ? handlePrintImport()
+            : actionType == 'printExport'
+              ? handlePrintExport()
+              : isSave
+                ? (toast.success('Tạo thành công'), setPLRForm([]), setSelectedRowData([]))
+                : (close(), toast.success('Tạo thành công'))
         loadingData()
         setSoCTu(response.data.DataResults[0].SoChungTu)
         setTargetRow(response.data.DataResults[0].SoChungTu)
@@ -150,6 +163,14 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
   const handlePrint = () => {
     setIsShowModal(true)
     setActionType('print')
+  }
+  const handlePrintImport = () => {
+    setIsShowModal(true)
+    setActionType('printImport')
+  }
+  const handlePrintExport = () => {
+    setIsShowModal(true)
+    setActionType('printExport')
   }
   const handleSearch = (event) => {
     setSearchHangHoa(event.target.value)
@@ -178,6 +199,7 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
       },
     ])
   }
+
   const formatThapPhan = (number, decimalPlaces) => {
     if (typeof number === 'number' && !isNaN(number)) {
       const formatter = new Intl.NumberFormat('en-US', {
@@ -438,7 +460,7 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
                       }
                     />
                   </div>
-                  <div className="border-2 rounded relative ">
+                  <div className="border-2 rounded relative">
                     <EditTable
                       typeTable="create"
                       typeAction="create"
@@ -474,7 +496,7 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
                         isAdd
                           ? ''
                           : () => {
-                              handleCreate(true, true)
+                              handleCreate(true, 'print')
                             }
                       }
                       title={'In Phiếu'}
@@ -483,10 +505,38 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
                       color_hover={isAdd ? 'gray-500' : 'purple-500'}
                       bg_hover={isAdd ? 'gray-500' : 'white'}
                     />
+                    <ActionButton
+                      handleAction={
+                        isAdd
+                          ? ''
+                          : () => {
+                              handleCreate(true, 'printImport')
+                            }
+                      }
+                      title={'In Phiếu Nhập'}
+                      color={'slate-50'}
+                      background={isAdd ? 'gray-500' : 'purple-500'}
+                      color_hover={isAdd ? 'gray-500' : 'purple-500'}
+                      bg_hover={isAdd ? 'gray-500' : 'white'}
+                    />
+                    <ActionButton
+                      handleAction={
+                        isAdd
+                          ? ''
+                          : () => {
+                              handleCreate(true, 'printExport')
+                            }
+                      }
+                      title={'In Phiếu Xuất'}
+                      color={'slate-50'}
+                      background={isAdd ? 'gray-500' : 'purple-500'}
+                      color_hover={isAdd ? 'gray-500' : 'purple-500'}
+                      bg_hover={isAdd ? 'gray-500' : 'white'}
+                    />
                   </div>
                   <div className="flex gap-2 justify-end">
                     <ActionButton
-                      handleAction={isAdd ? '' : () => handleCreate(true, false)}
+                      handleAction={isAdd ? '' : () => handleCreate(true, null)}
                       title={'Lưu'}
                       color={'slate-50'}
                       background={isAdd ? 'gray-500' : 'blue-500'}
@@ -494,7 +544,7 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
                       bg_hover={isAdd ? 'gray-500' : 'white'}
                     />
                     <ActionButton
-                      handleAction={isAdd ? '' : () => handleCreate(false, false)}
+                      handleAction={isAdd ? '' : () => handleCreate(false, null)}
                       title={'Lưu & Đóng'}
                       color={'slate-50'}
                       background={isAdd ? 'gray-500' : 'blue-500'}
@@ -509,8 +559,12 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
           </div>
           <div>
             {isShowModal &&
-              (actionType === 'print' ? (
-                <PLRPrint close={() => setIsShowModal(false)} dataPrint={{ ...PLRForm, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss'), SoChungTu: SoCTu }} />
+              (actionType === 'print' || actionType == 'printImport' || actionType == 'printExport' ? (
+                <PLRPrint
+                  close={() => setIsShowModal(false)}
+                  dataPrint={{ ...PLRForm, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss'), SoChungTu: SoCTu }}
+                  type={actionType}
+                />
               ) : (
                 <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col xl:w-[87vw] lg:w-[95vw] md:w-[95vw] min-h-[8rem] bg-white  p-2 rounded-xl shadow-custom overflow-hidden z-10">
                   <div className="flex flex-col gap-2 p-2 ">
@@ -534,6 +588,7 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
                     </div>
                     <div className="border-2 p-2 rounded m-1 flex flex-col gap-2 max-h-[35rem]">
                       <Table
+                        className="table_HH"
                         bordered
                         columns={title}
                         dataSource={filteredHangHoa}

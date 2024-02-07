@@ -4,11 +4,11 @@ import { toast } from 'react-toastify'
 import logo from '../../../../../assets/VTS-iSale.ico'
 import ActionButton from '../../../../util/Button/ActionButton'
 
-const PLRDelete = ({ close, dataPLR, loadingData, setTargetRow }) => {
+const XCKDel = ({ close, dataXCK, loadingData, setTargetRow }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const handleDelete = async () => {
     try {
-      const response = await categoryAPI.PLRDel(dataPLR?.SoChungTu, TokenAccess)
+      const response = await categoryAPI.XCKDelete(dataXCK?.SoChungTu, TokenAccess)
       if (response.data.DataError == 0) {
         loadingData()
         close()
@@ -19,7 +19,6 @@ const PLRDelete = ({ close, dataPLR, loadingData, setTargetRow }) => {
       console.log(error)
     }
   }
-
   return (
     <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10">
       <div className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"></div>
@@ -27,12 +26,12 @@ const PLRDelete = ({ close, dataPLR, loadingData, setTargetRow }) => {
         <div className="flex flex-col gap-2 p-2">
           <div className="flex gap-2">
             <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
-            <p className="text-blue-700 font-semibold uppercase">Xóa dữ liệu - Phiếu Lắp Ráp</p>
+            <p className="text-blue-700 font-semibold uppercase">Xóa dữ liệu - Phiếu Xuất Chuyển Kho</p>
           </div>
           <div className="flex flex-col gap-2 border-2 p-3 font-bold text-lg">
             <div className="flex gap-1">
               <p className="text-blue-700 uppercase">Bạn có chắc muốn xóa</p>
-              <p className="text-red-600">{dataPLR?.SoChungTu}</p>
+              <p className="text-red-600">{dataXCK?.SoChungTu}</p>
               <p className="text-blue-700 uppercase">?</p>
             </div>
             <p className="text-slate-500 text-lg font-light">Thông tin sản phẩm không thể hoàn tác nếu bạn xóa !</p>
@@ -47,4 +46,4 @@ const PLRDelete = ({ close, dataPLR, loadingData, setTargetRow }) => {
   )
 }
 
-export default PLRDelete
+export default XCKDel
