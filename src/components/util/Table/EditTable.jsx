@@ -578,7 +578,7 @@ const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourT
         dataSource={dataSource}
         columns={columns}
         scroll={{
-          x: tableName == 'PhieuLapRap' ? 700 : 1500,
+          x: tableName == 'PhieuLapRap' || tableName == 'PhieuNhapDieuChinh' ? 700 : 1500,
           y: true,
         }}
         size="small"

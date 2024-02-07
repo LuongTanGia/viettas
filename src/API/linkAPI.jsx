@@ -142,6 +142,13 @@ const categoryAPI = {
     }
     return axiosClient.post(url, { SoChungTu }, { headers })
   },
+  NDCInfoEdit(SoChungTu, accessToken) {
+    const url = '/entries/DuLieuNDC/ThongTinSua'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, { SoChungTu }, { headers })
+  },
   NDCCreate(body, accessToken) {
     const url = '/entries/DuLieuNDC/Them'
     const headers = {
@@ -341,6 +348,129 @@ const categoryAPI = {
       Authorization: `Bearer ${accessToken}`,
     }
     return axiosClient.post(url, {}, { headers })
+  },
+
+  // DuLieu/DLTK/PhieuXCK
+  GetDataXCK(body, accessToken) {
+    const url = '/entries/DuLieuXCK/DanhSach'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  XCKView(SoChungTu, accessToken) {
+    const url = '/entries/DuLieuXCK/ThongTin'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, { SoChungTu }, { headers })
+  },
+  XCKCreate(body, accessToken) {
+    const url = '/entries/DuLieuXCK/Them'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  XCKEdit(body, accessToken) {
+    const url = '/entries/DuLieuXCK/Sua'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  XCKInfoEdit(SoChungTu, accessToken) {
+    const url = '/entries/DuLieuXCK/ThongTinSua'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, { SoChungTu }, { headers })
+  },
+  XCKDelete(SoChungTu, accessToken) {
+    const url = '/entries/DuLieuXCK/Xoa'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, { SoChungTu }, { headers })
+  },
+  XCKPrint(body, accessToken) {
+    const url = '/entries/DuLieuXCK/InPhieu'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  ListChungTuXCK(body, accessToken) {
+    const url = '/entries/DuLieuXCK/ListHelper_ChungTuTheoNgay'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  ListKhoHangXCK(accessToken) {
+    const url = '/entries/DuLieuXCK/ListHelper_KhoHang'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, {}, { headers })
+  },
+  ListHangHoaXCK(accessToken) {
+    const url = '/entries/DuLieuXCK/ListHelper_HangHoa'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, {}, { headers })
+  },
+
+  // DuLieu/DLTK/PhieuNCK
+  GetDataNCK(body, accessToken) {
+    const url = '/entries/DuLieuNCK/DanhSach'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  NCKView(SoChungTu, accessToken) {
+    const url = '/entries/DuLieuNCK/ThongTin'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, { SoChungTu }, { headers })
+  },
+  NCKDelete(SoChungTu, accessToken) {
+    const url = '/entries/DuLieuNCK/Xoa'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, { SoChungTu }, { headers })
+  },
+  NCKPrint(body, accessToken) {
+    const url = '/entries/DuLieuNCK/InPhieu'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  ListChungTuNCK(body, accessToken) {
+    const url = '/entries/DuLieuNCK/ListHelper_ChungTuTheo'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  ListChuaDuyetNCK(accessToken) {
+    const url = '/entries/DuLieuNCK/ListHelper_DanhSachChuaDuyet'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, {}, { headers })
+  },
+  DuyetPhieuNCK(SoChungTu, accessToken) {
+    const url = '/entries/DuLieuNCK/DuyetPhieu'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, { SoChungTu }, { headers })
   },
 
   // Hethong/KhoanNgay
