@@ -4,10 +4,10 @@ import moment from 'moment'
 import icons from '../../../untils/icons'
 import { toast } from 'react-toastify'
 import * as apis from '../../../apis'
-
+import { Modals } from '../../../components_K'
 import ActionButton from '../../../components/util/Button/ActionButton'
 import dayjs from 'dayjs'
-import { RETOKEN, formatPrice } from '../../../action/Actions'
+import { RETOKEN, formatPrice, formatQuantity } from '../../../action/Actions'
 import SimpleBackdrop from '../../../components/util/Loading/LoadingPage'
 // import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { DateField } from '@mui/x-date-pickers/DateField'
@@ -15,33 +15,33 @@ import { useSearch } from '../../../components_K/myComponents/useSearch'
 import HighlightedCell from '../../../components/hooks/HighlightedCell'
 import { exportToExcel } from '../../../action/Actions'
 import { CloseSquareFilled } from '@ant-design/icons'
-import ModalThuChi from '../../../components_K/ModalThuChi'
 import { useNavigate } from 'react-router-dom'
 
 const { Text } = Typography
-const { IoAddCircleOutline, TiPrinter, MdDelete, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill, CgCloseO } = icons
-const PhieuChiTien = () => {
+const { IoAddCircleOutline, TiPrinter, MdDelete, GiReceiveMoney, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill, CgCloseO } = icons
+const PhieuXTR = () => {
   const navigate = useNavigate()
   const optionContainerRef = useRef(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [isLoadingEdit, setIsLoadingEdit] = useState(true)
   const [isLoadingModal, setIsLoadingModal] = useState(true)
+  const [isLoadingEdit, setIsLoadingEdit] = useState(true)
   const [tableLoad, setTableLoad] = useState(true)
   const [isShowModal, setIsShowModal] = useState(false)
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [isShowOption, setIsShowOption] = useState(false)
   const [data, setData] = useState([])
+  const [dataThongTin, setDataThongTin] = useState([])
   const [dataThongTinSua, setDataThongTinSua] = useState([])
   const [dataRecord, setDataRecord] = useState(null)
-  const [dataHangMuc, setDataHangMuc] = useState([])
-  const [dataDoiTuong, setDataDoiTuong] = useState([])
+  const [dataKhoHang, setDataKhoHang] = useState(null)
+  const [dataDoiTuong, setDataDoiTuong] = useState(null)
   const [dataQuyenHan, setDataQuyenHan] = useState({})
   const [actionType, setActionType] = useState('')
   const [formKhoanNgay, setFormKhoanNgay] = useState([])
-  const [setSearchPCT, filteredPCT, searchPCT] = useSearch(data)
+  const [setSearchPXTR, filteredPXTR, searchPXTR] = useSearch(data)
   const [prevSearchValue, setPrevSearchValue] = useState('')
   const [prevdateValue, setPrevDateValue] = useState({})
-  const [doneNTR, setDoneNTR] = useState(null)
+  const [doneXTR, setDoneXTR] = useState(null)
   const [hideColumns, setHideColumns] = useState(false)
   const [checkedList, setCheckedList] = useState([])
   const [confirmed, setConfirmed] = useState(false)
@@ -71,7 +71,7 @@ const PhieuChiTien = () => {
   useEffect(() => {
     setNewColumns(columns)
     // Lấy thông tin từ local storage sau khi đăng nhập
-    const storedHiddenColumns = localStorage.getItem('hidenColumnPCT')
+    const storedHiddenColumns = localStorage.getItem('hidenColumnPMH')
     const parsedHiddenColumns = storedHiddenColumns ? JSON.parse(storedHiddenColumns) : null
 
     // Áp dụng thông tin đã lưu vào checkedList và setConfirmed để ẩn cột
@@ -83,8 +83,8 @@ const PhieuChiTien = () => {
 
   useEffect(() => {
     if (confirmed) {
-      setCheckedList(JSON.parse(localStorage.getItem('hidenColumnPCT')))
-      setNewColumns(JSON.parse(localStorage.getItem('hidenColumnPCT')))
+      setCheckedList(JSON.parse(localStorage.getItem('hidenColumnPMH')))
+      setNewColumns(JSON.parse(localStorage.getItem('hidenColumnPMH')))
     }
   }, [confirmed])
 
@@ -98,21 +98,22 @@ const PhieuChiTien = () => {
 
         const tokenLogin = localStorage.getItem('TKN')
         if (actionType === 'create' || actionType === 'edit') {
-          const responseHM = await apis.ListHelperHangMucPCT(tokenLogin)
-          if (responseHM.data && responseHM.data.DataError === 0) {
-            setDataHangMuc(responseHM.data.DataResults)
+          console.log('get helper  KH,DT')
+          const responseKH = await apis.ListHelperKhoHangXTR(tokenLogin)
+          if (responseKH.data && responseKH.data.DataError === 0) {
+            setDataKhoHang(responseKH.data.DataResults)
             setIsLoadingModal(false)
-          } else if (responseHM.data.DataError === -1 || responseHM.data.DataError === -2 || responseHM.data.DataError === -3) {
-            toast.warning(responseHM.data.DataErrorDescription)
+          } else if (responseKH.data.DataError === -1 || responseKH.data.DataError === -2 || responseKH.data.DataError === -3) {
+            toast.warning(responseKH.data.DataErrorDescription)
             setIsLoadingModal(false)
-          } else if (responseHM.data.DataError === -107 || responseHM.data.DataError === -108) {
+          } else if (responseKH.data.DataError === -107 || responseKH.data.DataError === -108) {
             await RETOKEN()
             fetchData()
           } else {
-            toast.error(responseHM.data.DataErrorDescription)
+            toast.error(responseKH.data.DataErrorDescription)
             setIsLoadingModal(false)
           }
-          const responseDT = await apis.ListHelperDoiTuongPCT(tokenLogin)
+          const responseDT = await apis.ListHelperDoiTuongXTR(tokenLogin)
           if (responseDT.data && responseDT.data.DataError === 0) {
             setDataDoiTuong(responseDT.data.DataResults)
             setIsLoadingModal(false)
@@ -133,32 +134,49 @@ const PhieuChiTien = () => {
             setIsLoadingModal(false)
           }
         }
-        if (actionType === 'edit') {
+        if (actionType === 'view') {
           console.log('get helper tt')
-          const responseTT = await apis.ThongTinSuaPCT(tokenLogin, dataRecord.SoChungTu)
+          const responseTT = await apis.ThongTinXTR(tokenLogin, dataRecord.SoChungTu)
           if (responseTT.data && responseTT.data.DataError === 0) {
-            setDataThongTinSua(responseTT.data.DataResult)
+            setDataThongTin(responseTT.data.DataResult)
             setIsLoadingModal(false)
-            setIsLoadingEdit(false)
           } else if (responseTT.data.DataError === -1 || responseTT.data.DataError === -2 || responseTT.data.DataError === -3) {
-            setIsShowModal(false)
+            toast.warning(responseTT.data.DataErrorDescription)
             setIsLoadingModal(false)
-            setIsLoadingEdit(false)
-            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseTT.data.DataErrorDescription}</div>)
           } else if (responseTT.data.DataError === -107 || responseTT.data.DataError === -108) {
             await RETOKEN()
             fetchData()
           } else {
-            setIsShowModal(false)
+            toast.error(responseTT.data.DataErrorDescription)
+            setIsLoadingModal(false)
+          }
+        }
+        if (actionType === 'edit') {
+          console.log('get helper tt sua')
+          const responseTTS = await apis.ThongTinSuaXTR(tokenLogin, dataRecord.SoChungTu)
+          if (responseTTS.data && responseTTS.data.DataError === 0) {
+            setDataThongTinSua(responseTTS.data.DataResult)
             setIsLoadingModal(false)
             setIsLoadingEdit(false)
-            toast.error(responseTT.data.DataErrorDescription)
+          } else if (responseTTS.data.DataError === -1 || responseTTS.data.DataError === -2 || responseTTS.data.DataError === -3) {
+            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseTTS.data.DataErrorDescription}</div>)
+            setIsLoadingModal(false)
+            setIsShowModal(false)
+            setIsLoadingEdit(false)
+          } else if (responseTTS.data.DataError === -107 || responseTTS.data.DataError === -108) {
+            await RETOKEN()
+            fetchData()
+          } else {
+            setIsLoadingModal(false)
+            setIsShowModal(false)
+            setIsLoadingEdit(false)
+            toast.error(responseTTS.data.DataErrorDescription)
           }
         }
       } catch (error) {
         console.error('Lấy data thất bại', error)
-        setIsShowModal(false)
         setIsLoadingModal(false)
+        setIsShowModal(false)
         setIsLoadingEdit(false)
         // toast.error('Lấy data thất bại. Vui lòng thử lại sau.')
       }
@@ -168,6 +186,14 @@ const PhieuChiTien = () => {
       fetchData()
     }
   }, [isShowModal])
+
+  useEffect(() => {
+    console.log('fix')
+    if (dataThongTin && dataRecord) {
+      // Data đã được chuyền vào, dừng loading
+      setTableLoad(false)
+    }
+  }, [dataRecord, dataThongTin])
 
   // get Khoảng ngày
   useEffect(() => {
@@ -199,13 +225,14 @@ const PhieuChiTien = () => {
 
     getKhoanNgay()
   }, [])
+
   // get Chức năng quyền hạn
   useEffect(() => {
     const getChucNangQuyenHan = async () => {
       try {
         console.log('đi')
         const tokenLogin = localStorage.getItem('TKN')
-        const response = await apis.ChucNangQuyenHan(tokenLogin, 'DuLieu_PCT')
+        const response = await apis.ChucNangQuyenHan(tokenLogin, 'DuLieu_XTR')
 
         if (response.data && response.data.DataError === 0) {
           setDataQuyenHan(response.data)
@@ -227,6 +254,7 @@ const PhieuChiTien = () => {
 
     getChucNangQuyenHan()
   }, [])
+
   useEffect(() => {
     if (dataQuyenHan?.VIEW == false) {
       setIsShowNotify(true)
@@ -236,21 +264,21 @@ const PhieuChiTien = () => {
   //get DSPMH
   useEffect(() => {
     if (tableLoad && dataQuyenHan?.VIEW) {
-      getDSPCT()
+      getDSPXTR()
     }
   }, [tableLoad, dataQuyenHan?.VIEW])
 
-  const getDSPCT = async () => {
+  const getDSPXTR = async () => {
     try {
       console.log('get ds PMH')
       const tokenLogin = localStorage.getItem('TKN')
-      const response = await apis.DanhSachPCT(tokenLogin, formKhoanNgay)
+      const response = await apis.DanhSachXTR(tokenLogin, formKhoanNgay)
       if (response.data && response.data.DataError === 0) {
         setData(response.data.DataResults)
         setTableLoad(false)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
-        getDSPCT()
+        getDSPXTR()
         // setTableLoad(false)
       } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
         toast.warning(response.data.DataErrorDescription)
@@ -278,7 +306,7 @@ const PhieuChiTien = () => {
       render: (text, record, index) => <div style={{ textAlign: 'center' }}>{index + 1}</div>,
     },
     {
-      title: 'Số Phiếu Chi',
+      title: 'Số Chứng Từ',
       dataIndex: 'SoChungTu',
       key: 'SoChungTu',
       width: 150,
@@ -288,7 +316,7 @@ const PhieuChiTien = () => {
       align: 'center',
       render: (text) => (
         <div style={{ textAlign: 'start' }}>
-          <HighlightedCell text={text} search={searchPCT} />
+          <HighlightedCell text={text} search={searchPXTR} />
         </div>
       ),
     },
@@ -297,7 +325,7 @@ const PhieuChiTien = () => {
       dataIndex: 'NgayCTu',
       key: 'NgayCTu',
       align: 'center',
-      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY')} search={searchPCT} />,
+      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY')} search={searchPXTR} />,
       width: 150,
       sorter: (a, b) => {
         const dateA = new Date(a.NgayCTu)
@@ -308,51 +336,21 @@ const PhieuChiTien = () => {
     },
 
     {
-      title: 'Tên Hạng Mục',
-      dataIndex: 'TenHangMuc',
-      key: 'TenHangMuc',
-      width: 150,
-      sorter: (a, b) => a.TenHangMuc.localeCompare(b.TenHangMuc),
-      showSorterTooltip: false,
-      align: 'center',
-      render: (text) => (
-        <div style={{ textAlign: 'start' }}>
-          <HighlightedCell text={text} search={searchPCT} />
-        </div>
-      ),
-    },
-    {
-      title: 'Chứng Từ Góc',
-      dataIndex: 'SoThamChieu',
-      key: 'SoThamChieu',
-      width: 200,
-      sorter: (a, b) => a.SoThamChieu.localeCompare(b.SoThamChieu),
-      showSorterTooltip: false,
-      align: 'center',
-      render: (text) => (
-        <div className="truncate text-start">
-          <HighlightedCell text={text} search={searchPCT} />
-        </div>
-      ),
-    },
-
-    {
       title: 'Mã Đối Tượng',
       dataIndex: 'MaDoiTuong',
       key: 'MaDoiTuong',
-      width: 200,
+      width: 150,
       sorter: (a, b) => a.MaDoiTuong.localeCompare(b.MaDoiTuong),
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
-          <HighlightedCell text={text} search={searchPCT} />
+        <div style={{ textAlign: 'start' }}>
+          <HighlightedCell text={text} search={searchPXTR} />
         </div>
       ),
     },
-
     {
-      title: 'Tên Đối Tượng',
+      title: 'Tên đối tượng',
       dataIndex: 'TenDoiTuong',
       key: 'TenDoiTuong',
       width: 200,
@@ -361,7 +359,7 @@ const PhieuChiTien = () => {
       align: 'center',
       render: (text) => (
         <div className="truncate text-start">
-          <HighlightedCell text={text} search={searchPCT} />
+          <HighlightedCell text={text} search={searchPXTR} />
         </div>
       ),
     },
@@ -369,7 +367,7 @@ const PhieuChiTien = () => {
       title: 'Địa chỉ ',
       dataIndex: 'DiaChi',
       key: 'DiaChi',
-      width: 300,
+      width: 250,
       sorter: (a, b) => {
         const diaChiA = a.DiaChi || ''
         const diaChiB = b.DiaChi || ''
@@ -382,33 +380,59 @@ const PhieuChiTien = () => {
         <div className="truncate text-start">
           <Tooltip title={text} color="blue">
             <span>
-              <HighlightedCell text={text} search={searchPCT} />
+              <HighlightedCell text={text} search={searchPXTR} />
             </span>
           </Tooltip>
         </div>
       ),
     },
-
     {
-      title: 'Số Tiền',
-      dataIndex: 'SoTien',
-      key: 'SoTien',
-      width: 200,
-      align: 'end',
+      title: 'Mã số thuế',
+      dataIndex: 'MaSoThue',
+      key: 'MaSoThue',
+      width: 150,
+      sorter: (a, b) => a.MaSoThue - b.MaSoThue,
+      showSorterTooltip: false,
+      align: 'center',
       render: (text) => (
-        <div className={`flex justify-end w-full h-full    ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchPCT} />
+        <div style={{ textAlign: 'start' }}>
+          <HighlightedCell text={text} search={searchPXTR} />
         </div>
       ),
-      sorter: (a, b) => a.SoTien - b.SoTien,
-      showSorterTooltip: false,
     },
-
+    {
+      title: 'Mã kho',
+      dataIndex: 'MaKho',
+      key: 'MaKho',
+      width: 150,
+      sorter: (a, b) => a.MaKho.localeCompare(b.MaKho),
+      showSorterTooltip: false,
+      align: 'center',
+      render: (text) => (
+        <div style={{ textAlign: 'start' }}>
+          <HighlightedCell text={text} search={searchPXTR} />
+        </div>
+      ),
+    },
+    {
+      title: 'Thông tin kho',
+      dataIndex: 'ThongTinKho',
+      key: 'ThongTinKho',
+      width: 150,
+      sorter: (a, b) => a.ThongTinKho.localeCompare(b.ThongTinKho),
+      showSorterTooltip: false,
+      align: 'center',
+      render: (text) => (
+        <div className="truncate text-start">
+          <HighlightedCell text={text} search={searchPXTR} />
+        </div>
+      ),
+    },
     {
       title: 'Ghi chú ',
       dataIndex: 'GhiChu',
       key: 'GhiChu',
-      width: 300,
+      width: 200,
       sorter: (a, b) => {
         const GhiChuA = a.GhiChu || ''
         const GhiChuB = b.GhiChu || ''
@@ -418,21 +442,103 @@ const PhieuChiTien = () => {
       align: 'center',
       render: (text) => (
         <div className="truncate text-start">
-          <Tooltip title={text} color="blue">
-            <span>
-              <HighlightedCell text={text} search={searchPCT} />
-            </span>
-          </Tooltip>
+          <HighlightedCell text={text} search={searchPXTR} />
         </div>
       ),
     },
+    {
+      title: 'Tổng mặt hàng',
+      dataIndex: 'TongMatHang',
+      key: 'TongMatHang',
+      width: 200,
+      align: 'end',
+      render: (text) => <div className="">{text} </div>,
 
+      sorter: (a, b) => a.TongMatHang - b.TongMatHang,
+      showSorterTooltip: false,
+    },
+    {
+      title: 'Tổng số lượng',
+      dataIndex: 'TongSoLuong',
+      key: 'TongSoLuong',
+      width: 200,
+      align: 'end',
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full    ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatQuantity(text, dataThongSo?.SOLESOLUONG)} search={searchPXTR} />
+        </div>
+      ),
+      sorter: (a, b) => a.TongSoLuong - b.TongSoLuong,
+      showSorterTooltip: false,
+    },
+    {
+      title: 'Tổng tiền hàng',
+      dataIndex: 'TongTienHang',
+      key: 'TongTienHang',
+      width: 200,
+      align: 'end',
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchPXTR} />
+        </div>
+      ),
+      sorter: (a, b) => a.TongTienHang - b.TongTienHang,
+      showSorterTooltip: false,
+    },
+    {
+      title: 'Tổng tiền thuế',
+      dataIndex: 'TongTienThue',
+      key: 'TongTienThue',
+      width: 200,
+      align: 'end',
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchPXTR} />
+        </div>
+      ),
+      sorter: (a, b) => a.TongTienThue - b.TongTienThue,
+      showSorterTooltip: false,
+    },
+    {
+      title: 'Tổng thành tiền',
+      dataIndex: 'TongThanhTien',
+      key: 'TongThanhTien',
+      width: 200,
+      align: 'end',
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchPXTR} />
+        </div>
+      ),
+      sorter: (a, b) => a.TongThanhTien - b.TongThanhTien,
+      showSorterTooltip: false,
+    },
+
+    {
+      title: 'Phiếu thu',
+      dataIndex: 'PhieuThu',
+      key: 'PhieuThu',
+      width: 150,
+      sorter: (a, b) => {
+        const PhieuThuA = a.PhieuThu || ''
+        const PhieuThuB = b.PhieuThu || ''
+        return PhieuThuA.localeCompare(PhieuThuB)
+      },
+      showSorterTooltip: false,
+      align: 'center',
+      render: (text) => (
+        <div style={{ textAlign: 'start' }}>
+          {' '}
+          <HighlightedCell text={text} search={searchPXTR} />
+        </div>
+      ),
+    },
     {
       title: 'Ngày tạo',
       dataIndex: 'NgayTao',
       key: 'NgayTao',
       align: 'center',
-      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY hh:mm:ss')} search={searchPCT} />,
+      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY hh:mm:ss')} search={searchPXTR} />,
       width: 200,
       sorter: (a, b) => {
         const dateA = new Date(a.NgayTao)
@@ -451,7 +557,7 @@ const PhieuChiTien = () => {
       align: 'center',
       render: (text) => (
         <div className="truncate text-start">
-          <HighlightedCell text={text} search={searchPCT} />
+          <HighlightedCell text={text} search={searchPXTR} />
         </div>
       ),
     },
@@ -460,7 +566,7 @@ const PhieuChiTien = () => {
       dataIndex: 'NgaySuaCuoi',
       key: 'NgaySuaCuoi',
       align: 'center',
-      render: (text) => <HighlightedCell text={text ? moment(text).format('DD/MM/YYYY hh:mm:ss') : null} search={searchPCT} />,
+      render: (text) => <HighlightedCell text={text ? moment(text).format('DD/MM/YYYY hh:mm:ss') : null} search={searchPXTR} />,
       width: 200,
       sorter: (a, b) => {
         const dateA = new Date(a.NgaySuaCuoi)
@@ -484,11 +590,27 @@ const PhieuChiTien = () => {
       align: 'center',
       render: (text) => (
         <div className="truncate text-start">
-          <HighlightedCell text={text} search={searchPCT} />
+          <HighlightedCell text={text} search={searchPXTR} />
         </div>
       ),
     },
 
+    {
+      title: 'Tiền mặt',
+      key: 'TTTienMat',
+      dataIndex: 'TTTienMat',
+      fixed: 'right',
+      width: 100,
+      align: 'center',
+
+      render: (text) => <Checkbox value={text} disabled={!text} checked={text} />,
+      sorter: (a, b) => {
+        const valueA = a.TTTienMat ? 1 : 0
+        const valueB = b.TTTienMat ? 1 : 0
+        return valueA - valueB
+      },
+      showSorterTooltip: false,
+    },
     {
       title: 'Chức năng',
       key: 'ChucNang',
@@ -500,13 +622,22 @@ const PhieuChiTien = () => {
           <>
             <div className=" flex gap-1 items-center justify-center  ">
               <div
+                onClick={() => handlePay(record)}
+                title="Lập phiếu thu"
+                className={`p-[3px] rounded-md text-slate-50 ${
+                  record.TTTienMat
+                    ? 'border-2 border-gray-400 bg-gray-400 cursor-not-allowed'
+                    : ' border-2 border-blue-500 bg-blue-500  hover:bg-white hover:text-blue-500 cursor-pointer'
+                }`}
+              >
+                <GiReceiveMoney size={16} />
+              </div>
+              <div
                 onClick={() => (dataQuyenHan?.EDIT ? handleEdit(record) : '')}
                 title="Sửa"
-                className={`p-[3px] rounded-md text-slate-50 ${
-                  record.TenHangMuc === 'Chi tiền tại quầy' || dataQuyenHan?.EDIT === false
-                    ? 'border-2 border-gray-400 bg-gray-400 cursor-not-allowed'
-                    : ' border-2 border-yellow-500 bg-yellow-500  hover:bg-white hover:text-yellow-500 cursor-pointer'
-                }`}
+                className={`p-[3px] border-2 rounded-md text-slate-50 ${
+                  dataQuyenHan?.EDIT ? 'border-yellow-500 bg-yellow-500 hover:bg-white hover:text-yellow-500 cursor-pointer' : 'border-gray-400 bg-gray-400 cursor-not-allowed'
+                } `}
               >
                 <MdEdit size={16} />
               </div>
@@ -552,11 +683,16 @@ const PhieuChiTien = () => {
   }
 
   const handleEdit = (record) => {
-    if (record.TenHangMuc === 'Chi tiền tại quầy') return
-    setActionType('edit')
-    setDataRecord(record)
-    setDataThongTinSua(record)
-    setIsShowModal(true)
+    if (record.TTTienMat === true) {
+      toast.error('Phiếu mua hàng đã được lập phiếu chi! Không thể sửa.', {
+        autoClose: 1500,
+      })
+    } else {
+      setActionType('edit')
+      setDataRecord(record)
+      setDataThongTinSua(record)
+      setIsShowModal(true)
+    }
   }
 
   const handleCreate = (record) => {
@@ -569,7 +705,11 @@ const PhieuChiTien = () => {
     setDataRecord(record)
     setIsShowModal(true)
   }
-
+  const handlePrintWareHouse = (record) => {
+    setActionType('printWareHouse')
+    setDataRecord(record)
+    setIsShowModal(true)
+  }
   const handleFilterDS = () => {
     const currentTime = new Date().getTime()
     if (currentTime - lastSearchTime >= 1000 && formKhoanNgay !== prevdateValue) {
@@ -616,11 +756,18 @@ const PhieuChiTien = () => {
     }
   }
 
-  const handleSearch = (newSearch) => {
+  const handlePay = (record) => {
+    if (record.TTTienMat) return
+    setActionType('pay')
+    setDataRecord(record)
+    setIsShowModal(true)
+  }
+
+  const handleSearch = (e) => {
     const currentTime = new Date().getTime()
-    if (currentTime - lastSearchTime >= 1000 && newSearch !== prevSearchValue) {
+    if (currentTime - lastSearchTime >= 1000 && e !== prevSearchValue) {
       setTableLoad(true)
-      setSearchPCT(newSearch)
+      setSearchPXTR(e)
       setLastSearchTime(currentTime)
     }
   }
@@ -678,14 +825,14 @@ const PhieuChiTien = () => {
             <div className="w-auto">
               <div className="relative text-lg flex justify-between items-center mb-1">
                 <div className="flex items-center gap-x-4 font-bold">
-                  <h1 className="text-xl uppercase">Phiếu chi tiền </h1>
+                  <h1 className="text-xl uppercase">Phiếu Xuất Trả Hàng Nhà Cung Cấp</h1>
                   <div>
                     <BsSearch size={18} className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
                   </div>
                 </div>
                 <div className="flex  ">
                   {isShowSearch && (
-                    <div className={`flex absolute left-[12rem] -top-[2px] transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
+                    <div className={`flex absolute left-[27rem] -top-[2px] transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
                       <Input
                         allowClear={{
                           clearIcon: <CloseSquareFilled />,
@@ -728,7 +875,17 @@ const PhieuChiTien = () => {
                           </div>
                           <div>In phiếu</div>
                         </button>
-
+                        {dataThongSo?.ALLOW_INPHIEUKHO_DAUVAODAURA === true && (
+                          <button
+                            onClick={handlePrintWareHouse}
+                            className="flex items-center  py-1 px-2  rounded-md border-2 border-purple-500  text-slate-50 text-base bg-purple-500 hover:bg-white hover:text-purple-500  "
+                          >
+                            <div className="pr-1">
+                              <TiPrinter size={20} />
+                            </div>
+                            <div>In phiếu kho</div>
+                          </button>
+                        )}
                         <button
                           onClick={() => setHideColumns(!hideColumns)}
                           className="flex items-center py-1 px-2 rounded-md border-2 border-red-500  text-slate-50 text-base bg-red-500 hover:bg-white hover:text-red-500 "
@@ -754,7 +911,7 @@ const PhieuChiTien = () => {
                               defaultValue={checkedList}
                               onChange={(value) => {
                                 setCheckedList(value)
-                                localStorage.setItem('hidenColumnPCT', JSON.stringify(value))
+                                localStorage.setItem('hidenColumnPMH', JSON.stringify(value))
                               }}
                             >
                               <Row>
@@ -854,6 +1011,16 @@ const PhieuChiTien = () => {
                       }}
                     />
                   </div>
+
+                  {/* <ActionButton
+                color={'slate-50'}
+                title={'Lọc'}
+                icon={<MdFilterAlt size={20} />}
+                background={'bg-main'}
+                bg_hover={'white'}
+                color_hover={'bg-main'}
+                handleAction={handleFilterDS}
+              /> */}
                 </div>
                 <div className="flex items-center gap-2">
                   <ActionButton
@@ -875,7 +1042,7 @@ const PhieuChiTien = () => {
                   className="table_pmh setHeight"
                   // rowSelection={rowSelection}
                   columns={newColumnsHide}
-                  dataSource={filteredPCT}
+                  dataSource={filteredPXTR}
                   size="small"
                   scroll={{
                     x: 1500,
@@ -896,7 +1063,7 @@ const PhieuChiTien = () => {
                       handleView(record)
                     },
                   })}
-                  rowClassName={(record) => (record.SoChungTu === doneNTR ? 'highlighted-row' : '')}
+                  rowClassName={(record) => (record.SoChungTu === doneXTR ? 'highlighted-row' : '')}
                   // Bảng Tổng
                   summary={() => {
                     return (
@@ -904,27 +1071,38 @@ const PhieuChiTien = () => {
                         <Table.Summary.Row>
                           {newColumnsHide
                             .filter((column) => column.render)
-                            .map((column, index) => {
-                              const isNumericColumn = typeof filteredPCT[0]?.[column.dataIndex] === 'number'
+                            .map((column) => {
+                              const isNumericColumn = typeof filteredPXTR[0]?.[column.dataIndex] === 'number'
 
                               return (
-                                <Table.Summary.Cell key={`summary-cell-${index + 1}`} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                                <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
                                   {isNumericColumn ? (
-                                    column.dataIndex === 'SoTien' ? (
+                                    column.dataIndex === 'TongTienHang' || column.dataIndex === 'TongTienThue' || column.dataIndex === 'TongThanhTien' ? (
                                       <Text strong>
-                                        {Number(filteredPCT.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                        {Number(filteredPXTR.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                           minimumFractionDigits: dataThongSo?.SOLESOTIEN,
                                           maximumFractionDigits: dataThongSo?.SOLESOTIEN,
                                         })}
                                       </Text>
+                                    ) : column.dataIndex === 'TongSoLuong' ? (
+                                      <Text strong>
+                                        {Number(filteredPXTR.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                          minimumFractionDigits: dataThongSo?.SOLESOLUONG,
+                                          maximumFractionDigits: dataThongSo?.SOLESOLUONG,
+                                        })}
+                                      </Text>
                                     ) : (
                                       <Text strong>
-                                        {Number(filteredPCT.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                        {Number(filteredPXTR.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                           minimumFractionDigits: 0,
                                           maximumFractionDigits: 0,
                                         })}
                                       </Text>
                                     )
+                                  ) : column.dataIndex === 'TTTienMat' ? (
+                                    <Text className="text-center" strong>
+                                      {Object.values(data).filter((value) => value.TTTienMat).length}
+                                    </Text>
                                   ) : column.dataIndex === 'STT' ? (
                                     <Text className="text-center" strong>
                                       {data.length}
@@ -941,23 +1119,23 @@ const PhieuChiTien = () => {
               </div>
 
               {isShowModal && (
-                <ModalThuChi
-                  namePage={'Phiếu Chi Tiền'}
-                  typePage={'PCT'}
+                <Modals
+                  namePage={'Phiếu Xuất Trả Hàng Nhà Cung Cấp'}
+                  typePage={'XTR'}
                   close={() => setIsShowModal(false)}
                   actionType={actionType}
                   dataRecord={dataRecord}
-                  // dataThongTin={dataThongTin}
+                  dataThongTin={dataThongTin}
                   dataThongTinSua={dataThongTinSua}
-                  dataHangMuc={dataHangMuc}
+                  dataKhoHang={dataKhoHang}
                   dataDoiTuong={dataDoiTuong}
                   data={data}
+                  isLoadingModal={isLoadingModal}
+                  isLoadingEdit={isLoadingEdit}
                   controlDate={formKhoanNgay}
                   dataThongSo={dataThongSo}
                   loading={() => setTableLoad(true)}
-                  isLoadingModal={isLoadingModal}
-                  isLoadingEdit={isLoadingEdit}
-                  setHightLight={setDoneNTR}
+                  setHightLight={setDoneXTR}
                 />
               )}
             </div>
@@ -968,4 +1146,4 @@ const PhieuChiTien = () => {
   )
 }
 
-export default PhieuChiTien
+export default PhieuXTR

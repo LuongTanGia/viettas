@@ -163,6 +163,20 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
           toast.error(response.data.DataErrorDescription)
         }
       }
+      if (typePage === 'XTR') {
+        const response = await apis.InPKXTR(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+        // Kiểm tra call api thành công
+        if (response.data && response.data.DataError === 0) {
+          base64ToPDF(response.data.DataResults)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleOnlyPrintWareHouse()
+        } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
+          toast.warning(response.data.DataErrorDescription)
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
+      }
 
       // close()
     } catch (error) {
