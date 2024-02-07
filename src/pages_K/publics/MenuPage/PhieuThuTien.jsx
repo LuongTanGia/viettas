@@ -526,7 +526,7 @@ const PhieuThuTien = () => {
     },
   ]
 
-  const options = columns.map(({ key, title }) => ({
+  const options = columns.slice(0, -1).map(({ key, title }) => ({
     label: title,
     value: key,
   }))

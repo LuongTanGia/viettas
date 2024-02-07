@@ -198,6 +198,20 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
           toast.error(response.data.DataErrorDescription)
         }
       }
+      if (typePage === 'XTR') {
+        const response = await apis.InXTR(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+        // Kiểm tra call api thành công
+        if (response.data && response.data.DataError === 0) {
+          base64ToPDF(response.data.DataResults)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleOnlyPrint()
+        } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
+          toast.warning(response.data.DataErrorDescription)
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
+      }
     } catch (error) {
       console.error('Error while saving data:', error)
     }

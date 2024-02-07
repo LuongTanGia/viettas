@@ -7,6 +7,7 @@ import DKSD from '../FAQ/DKSD'
 import HangHoa from '../../Pages/DanhMuc/HangHoa'
 import Phieumuahang from '../../pages_K/publics/MenuPage/PhieuMuaHang'
 import PhieuNTR from '../../pages_K/publics/MenuPage/PhieuNTR'
+import PhieuXTR from '../../pages_K/publics/MenuPage/PhieuXTR'
 import PhieuChiTien from '../../pages_K/publics/MenuPage/PhieuChiTien'
 import PhieuThuTien from '../../pages_K/publics/MenuPage/PhieuThuTien'
 import PhieuBanHang from '../PhieuBanHang/PhieuBanHang'
@@ -25,6 +26,7 @@ function MainPage({ isSidebarVisible }) {
           <Route path="/DanhMuc_HangHoa" element={<HangHoa path={'DanhMuc_HangHoa'} />} />
           <Route path="/DuLieuDV/DuLieu_PMH" element={<Phieumuahang />} />
           <Route path="/DuLieuDV/DuLieu_NTR" element={<PhieuNTR />} />
+          <Route path="/DuLieuDR/DuLieu_XTR" element={<PhieuXTR />} />
           <Route path="/DuLieuTK/DuLieu_NDC" element={<PhieuNhapDieuChinh path="DuLieu_NDC" />} />
           <Route path="/DuLieuTK/DuLieu_PLR" element={<PhieuLapRap path="DuLieu_PLR" />} />
           <Route path="/DuLieuDR/DuLieu_PBS" element={<PhieuBanHang />} />

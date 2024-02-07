@@ -112,11 +112,11 @@ const Modals = ({
   // get dsHH
   useEffect(() => {
     if (actionType === 'create' || actionType === 'edit') {
-      if (selectedKhoHang && isLoading) {
+      if (selectedKhoHang) {
         handleAddInList()
       }
     }
-  }, [selectedKhoHang, isLoading])
+  }, [selectedKhoHang])
 
   useEffect(() => {
     if (dataThongTinSua !== null) setFormEdit(dataThongTinSua)
@@ -249,8 +249,7 @@ const Modals = ({
   const columnName = ['STT', 'MaHang', 'TenHang', 'DVT', 'SoLuong', 'DonGia', 'TienHang', 'TyLeThue', 'TienThue', 'ThanhTien']
 
   useEffect(() => {
-    // if (dataDoiTuong && actionType === 'create') handleDoiTuongFocus(dataDoiTuong[0].Ma)
-    if (dataDoiTuong && typePage === 'PMH' && actionType === 'create') {
+    if ((typePage === 'PMH' || typePage === 'XTR') && dataDoiTuong && actionType === 'create') {
       // Tìm giá trị có mã là 'NCVL' trong mảng dataDoiTuong
       const ncvlDoiTuong = dataDoiTuong.find((item) => item.Ma === 'NCVL')
       // Sử dụng 'NCVL' nếu có, ngược lại sử dụng mã đầu tiên trong mảng
@@ -277,8 +276,10 @@ const Modals = ({
   useEffect(() => {
     if (dataKhoHang && dataThongTinSua && actionType === 'edit') {
       setSelectedKhoHang(dataThongTinSua.MaKho)
+      setIsLoading(true)
     } else if (dataKhoHang && dataThongTin && actionType !== 'edit') {
       setSelectedKhoHang(dataKhoHang[0].MaKho)
+      setIsLoading(true)
     }
   }, [dataKhoHang, dataThongTin, dataThongTinSua])
 
@@ -311,6 +312,22 @@ const Modals = ({
       }
       if (typePage === 'NTR') {
         const response = await apis.ListHelperHHNTR(tokenLogin, selectedKhoHang)
+        if (response.data && response.data.DataError === 0) {
+          setDataHangHoa(response.data.DataResults)
+          setIsLoading(false)
+        } else if (response.data.DataError === -1 || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(response.data.DataErrorDescription)
+          setIsLoading(false)
+        } else if (response.data.DataError === -107 || response.data.DataError === -108) {
+          await RETOKEN()
+          handleAddInList()
+        } else {
+          setIsLoading(false)
+          toast.error(response.data.DataErrorDescription)
+        }
+      }
+      if (typePage === 'XTR') {
+        const response = await apis.ListHelperHHXTR(tokenLogin, selectedKhoHang)
         if (response.data && response.data.DataError === 0) {
           setDataHangHoa(response.data.DataResults)
           setIsLoading(false)
@@ -482,6 +499,24 @@ const Modals = ({
           toast.error(response.data.DataErrorDescription)
         }
       }
+      if (typePage === 'XTR') {
+        const response = await apis.ThemXTR(tokenLogin, { ...formCreate, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
+
+        if (response.data && response.data.DataError === 0) {
+          toast.success(response.data.DataErrorDescription)
+          const soChungTu = response.data.DataResults[0].SoChungTu
+          loading()
+          setHightLight(soChungTu)
+          close()
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleCreateAndClose()
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
+      }
     } catch (error) {
       console.error('Error while saving data:', error)
     }
@@ -530,6 +565,29 @@ const Modals = ({
       }
       if (typePage === 'NTR') {
         const response = await apis.ThemNTR(tokenLogin, { ...formCreate, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
+        if (response.data && response.data.DataError === 0) {
+          const soChungTu = response.data.DataResults[0].SoChungTu
+
+          toast.success(response.data.DataErrorDescription)
+          loading()
+          setHightLight(soChungTu)
+          setSctCreate(soChungTu)
+          setFormCreate(defaultFormCreate)
+          setSelectedDoiTuong(dataDoiTuong[0].Ma)
+          setDoiTuongInfo({ Ten: '', DiaChi: '' })
+          setSelectedKhoHang(dataKhoHang[0].MaKho)
+          setSelectedRowData([])
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleCreate()
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
+      }
+      if (typePage === 'XTR') {
+        const response = await apis.ThemXTR(tokenLogin, { ...formCreate, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
         if (response.data && response.data.DataError === 0) {
           const soChungTu = response.data.DataResults[0].SoChungTu
 
@@ -610,6 +668,24 @@ const Modals = ({
           toast.error(response.data.DataErrorDescription)
         }
       }
+      if (typePage === 'XTR') {
+        const response = await apis.SuaXTR(tokenLogin, dataRecord.SoChungTu, { ...formEdit, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
+
+        if (response.data && response.data.DataError === 0) {
+          toast.success(response.data.DataErrorDescription)
+          loading()
+          setHightLight(dataRecord.SoChungTu)
+
+          close()
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleEdit()
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
+      }
       // close()
     } catch (error) {
       console.error('Error while saving data:', error)
@@ -651,6 +727,22 @@ const Modals = ({
         }
         close()
       }
+      if (typePage === 'XTR') {
+        const response = await apis.XoaXTR(tokenLogin, dataRecord.SoChungTu)
+        // Kiểm tra call api thành công
+        if (response.data && response.data.DataError === 0) {
+          toast.success(response.data.DataErrorDescription)
+          loading()
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(response.data.DataErrorDescription)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleDelete()
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
+        close()
+      }
     } catch (error) {
       console.error('Error while saving data:', error)
     }
@@ -676,6 +768,20 @@ const Modals = ({
       }
       if (typePage === 'NTR') {
         const response = await apis.InNTR(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+        // Kiểm tra call api thành công
+        if (response.data && response.data.DataError === 0) {
+          base64ToPDF(response.data.DataResults)
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(response.data.DataErrorDescription)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handlePrint()
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
+      }
+      if (typePage === 'XTR') {
+        const response = await apis.InXTR(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
         // Kiểm tra call api thành công
         if (response.data && response.data.DataError === 0) {
           base64ToPDF(response.data.DataResults)
@@ -735,6 +841,21 @@ const Modals = ({
           toast.error(response.data.DataErrorDescription)
         }
       }
+      if (typePage === 'XTR') {
+        const response = await apis.SuaXTR(tokenLogin, dataRecord.SoChungTu, { ...formEdit, DataDetails: selectedRowData }, selectedDoiTuong, selectedKhoHang)
+        if (response.data && response.data.DataError === 0) {
+          loading()
+          setHightLight(dataRecord.SoChungTu)
+          setSelectedRowData([])
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleEdit()
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
+      }
 
       // close()
     } catch (error) {
@@ -762,6 +883,20 @@ const Modals = ({
       }
       if (typePage === 'NTR') {
         const response = await apis.InPKNTR(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+        // Kiểm tra call api thành công
+        if (response.data && response.data.DataError === 0) {
+          base64ToPDF(response.data.DataResults)
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(response.data.DataErrorDescription)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handlePrintWareHouse()
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
+      }
+      if (typePage === 'XTR') {
+        const response = await apis.InPKXTR(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
         // Kiểm tra call api thành công
         if (response.data && response.data.DataError === 0) {
           base64ToPDF(response.data.DataResults)
@@ -802,6 +937,23 @@ const Modals = ({
       }
       if (typePage === 'NTR') {
         const response = await apis.LapPhieuChiNTR(tokenLogin, dataRecord.SoChungTu)
+        // Kiểm tra call api thành công
+        if (response.data && response.data.DataError === 0) {
+          toast.success(response.data.DataErrorDescription)
+          loading()
+          setHightLight(dataRecord.SoChungTu)
+          close()
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(response.data.DataErrorDescription)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handlePay()
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
+      }
+      if (typePage === 'XTR') {
+        const response = await apis.LapPhieuThuXTR(tokenLogin, dataRecord.SoChungTu)
         // Kiểm tra call api thành công
         if (response.data && response.data.DataError === 0) {
           toast.success(response.data.DataErrorDescription)
@@ -922,7 +1074,7 @@ const Modals = ({
           {(actionType === 'delete' || actionType === 'pay') && (
             <div className=" flex justify-between items-center ">
               <label>
-                {`${actionType === 'delete' ? 'Bạn có chắc muốn xóa phiếu' : 'Bạn có chắc muốn lập phiếu chi'}`}
+                {`${actionType === 'delete' ? 'Bạn có chắc muốn xóa phiếu' : typePage === 'XTR' ? 'Bạn có chắc muốn lập phiếu thu' : 'Bạn có chắc muốn lập phiếu chi'}`}
                 <span className="font-bold mx-1"> {dataRecord.SoChungTu}</span>
                 không ?
               </label>
@@ -1441,16 +1593,16 @@ const Modals = ({
                           type="text"
                           className={`w-full border-[1px] outline-none px-2 rounded-[4px] h-[24px] border-gray-300
                                      ${
-                                       (typePage === 'PMH' && selectedDoiTuong === 'NCVL' && 'hover:border-[#4897e6]') ||
+                                       ((typePage === 'PMH' || typePage === 'XTR') && selectedDoiTuong === 'NCVL' && 'hover:border-[#4897e6]') ||
                                        (typePage === 'NTR' && selectedDoiTuong === 'KHVL' && 'hover:border-[#4897e6]')
                                      }
-                                     ${typePage === 'PMH' && selectedDoiTuong === 'NCVL' && errors.Ten ? 'border-red-500' : ''} 
+                                     ${(typePage === 'PMH' || typePage === 'XTR') && selectedDoiTuong === 'NCVL' && errors.Ten ? 'border-red-500' : ''} 
                                      ${typePage === 'NTR' && selectedDoiTuong === 'KHVL' && errors.Ten ? 'border-red-500' : ''} 
                                       `}
                           value={
                             typePage === 'NTR' && selectedDoiTuong === 'KHVL'
                               ? formCreate.TenDoiTuong
-                              : typePage === 'PMH' && selectedDoiTuong === 'NCVL'
+                              : (typePage === 'PMH' || typePage === 'XTR') && selectedDoiTuong === 'NCVL'
                                 ? formCreate.TenDoiTuong
                                 : doiTuongInfo.Ten
                           }
@@ -1461,7 +1613,7 @@ const Modals = ({
                             })
                             setErrors({ ...errors, Ten: '' })
                           }}
-                          disabled={(typePage === 'PMH' && selectedDoiTuong !== 'NCVL') || (typePage === 'NTR' && selectedDoiTuong !== 'KHVL')}
+                          disabled={((typePage === 'PMH' || typePage === 'XTR') && selectedDoiTuong !== 'NCVL') || (typePage === 'NTR' && selectedDoiTuong !== 'KHVL')}
                         />
                       </div>
                       <div className="flex  items-center p-1">
@@ -1471,14 +1623,14 @@ const Modals = ({
                           type="text"
                           className={`w-full border-[1px] outline-none px-2 rounded-[4px] h-[24px] border-gray-300
                                      ${
-                                       (typePage === 'PMH' && selectedDoiTuong === 'NCVL' && 'hover:border-[#4897e6]') ||
+                                       ((typePage === 'PMH' || typePage === 'XTR') && selectedDoiTuong === 'NCVL' && 'hover:border-[#4897e6]') ||
                                        (typePage === 'NTR' && selectedDoiTuong === 'KHVL' && 'hover:border-[#4897e6]')
                                      }
-                                     ${typePage === 'PMH' && selectedDoiTuong === 'NCVL' && errors.DiaChi ? 'border-red-500' : ''} 
+                                     ${(typePage === 'PMH' || typePage === 'XTR') && selectedDoiTuong === 'NCVL' && errors.DiaChi ? 'border-red-500' : ''} 
                                      ${typePage === 'NTR' && selectedDoiTuong === 'KHVL' && errors.DiaChi ? 'border-red-500' : ''} 
                                       `}
                           value={
-                            typePage === 'PMH' && selectedDoiTuong === 'NCVL'
+                            (typePage === 'PMH' || typePage === 'XTR') && selectedDoiTuong === 'NCVL'
                               ? formCreate.DiaChi
                               : typePage === 'NTR' && selectedDoiTuong === 'KHVL'
                                 ? formCreate.DiaChi
@@ -1491,7 +1643,7 @@ const Modals = ({
                             })
                             setErrors({ ...errors, DiaChi: '' })
                           }}
-                          disabled={(typePage === 'PMH' && selectedDoiTuong !== 'NCVL') || (typePage === 'NTR' && selectedDoiTuong !== 'KHVL')}
+                          disabled={((typePage === 'PMH' || typePage === 'XTR') && selectedDoiTuong !== 'NCVL') || (typePage === 'NTR' && selectedDoiTuong !== 'KHVL')}
                         />
                       </div>
                     </div>
@@ -1713,14 +1865,14 @@ const Modals = ({
                             type="text"
                             className={`w-full border-[1px] outline-none px-2 rounded-[4px] h-[24px] border-gray-300
                                        ${
-                                         (typePage === 'PMH' && selectedDoiTuong === 'NCVL' && 'hover:border-[#4897e6]') ||
+                                         ((typePage === 'PMH' || typePage === 'XTR') && selectedDoiTuong === 'NCVL' && 'hover:border-[#4897e6]') ||
                                          (typePage === 'NTR' && selectedDoiTuong === 'KHVL' && 'hover:border-[#4897e6]')
                                        }
-                                       ${typePage === 'PMH' && selectedDoiTuong === 'NCVL' && errors.Ten ? 'border-red-500' : ''} 
+                                       ${(typePage === 'PMH' || typePage === 'XTR') && selectedDoiTuong === 'NCVL' && errors.Ten ? 'border-red-500' : ''} 
                                        ${typePage === 'NTR' && selectedDoiTuong === 'KHVL' && errors.Ten ? 'border-red-500' : ''} 
                                         `}
                             value={
-                              typePage === 'PMH' && selectedDoiTuong === 'NCVL'
+                              (typePage === 'PMH' || typePage === 'XTR') && selectedDoiTuong === 'NCVL'
                                 ? formEdit.TenDoiTuong
                                 : typePage === 'NTR' && selectedDoiTuong === 'KHVL'
                                   ? formEdit.TenDoiTuong
@@ -1735,7 +1887,7 @@ const Modals = ({
                                 setErrors({ ...errors, Ten: '' })
                               }
                             }}
-                            disabled={(typePage === 'PMH' && selectedDoiTuong !== 'NCVL') || (typePage === 'NTR' && selectedDoiTuong !== 'KHVL')}
+                            disabled={((typePage === 'PMH' || typePage === 'XTR') && selectedDoiTuong !== 'NCVL') || (typePage === 'NTR' && selectedDoiTuong !== 'KHVL')}
                           />
                         </div>
                         <div className="flex  items-center  p-1">
@@ -1745,14 +1897,14 @@ const Modals = ({
                             type="text"
                             className={`w-full border-[1px] outline-none px-2 rounded-[4px] h-[24px] border-gray-300
                                        ${
-                                         (typePage === 'PMH' && selectedDoiTuong === 'NCVL' && 'hover:border-[#4897e6]') ||
+                                         ((typePage === 'PMH' || typePage === 'XTR') && selectedDoiTuong === 'NCVL' && 'hover:border-[#4897e6]') ||
                                          (typePage === 'NTR' && selectedDoiTuong === 'KHVL' && 'hover:border-[#4897e6]')
                                        }
-                                       ${typePage === 'PMH' && selectedDoiTuong === 'NCVL' && errors.DiaChi ? 'border-red-500' : ''} 
+                                       ${(typePage === 'PMH' || typePage === 'XTR') && selectedDoiTuong === 'NCVL' && errors.DiaChi ? 'border-red-500' : ''} 
                                        ${typePage === 'NTR' && selectedDoiTuong === 'KHVL' && errors.DiaChi ? 'border-red-500' : ''} 
                                         `}
                             value={
-                              typePage === 'PMH' && selectedDoiTuong === 'NCVL'
+                              (typePage === 'PMH' || typePage === 'XTR') && selectedDoiTuong === 'NCVL'
                                 ? formEdit.DiaChi
                                 : typePage === 'NTR' && selectedDoiTuong === 'KHVL'
                                   ? formEdit.DiaChi
@@ -1767,7 +1919,7 @@ const Modals = ({
                                 setErrors({ ...errors, DiaChi: '' })
                               }
                             }}
-                            disabled={(typePage === 'PMH' && selectedDoiTuong !== 'NCVL') || (typePage === 'NTR' && selectedDoiTuong !== 'KHVL')}
+                            disabled={((typePage === 'PMH' || typePage === 'XTR') && selectedDoiTuong !== 'NCVL') || (typePage === 'NTR' && selectedDoiTuong !== 'KHVL')}
                           />
                         </div>
                       </div>
