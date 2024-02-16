@@ -26,7 +26,7 @@ import { nameColumsPhieuNhapDieuChinh } from '../../../../components/util/Table/
 import NDCPrint from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuNDC/NDCPrint'
 import NDCCreate from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuNDC/NDCCreate'
 
-const PhieuNhapDieuChinh = ({ path }) => {
+const PhieuNhapDieuChinh = () => {
   const navigate = useNavigate()
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
@@ -141,9 +141,9 @@ const PhieuNhapDieuChinh = ({ path }) => {
   }, [dataCRUD])
 
   useEffect(() => {
-    const getDataQuyenHan = async (path) => {
+    const getDataQuyenHan = async () => {
       try {
-        const response = await categoryAPI.QuyenHan(path, TokenAccess)
+        const response = await categoryAPI.QuyenHan('DuLieu_NDC', TokenAccess)
         if (response.data.DataError === 0) {
           setDataCRUD(response.data)
           setIsLoading(true)
@@ -156,7 +156,7 @@ const PhieuNhapDieuChinh = ({ path }) => {
         setIsLoading(true)
       }
     }
-    getDataQuyenHan(path)
+    getDataQuyenHan()
   }, [])
 
   function formatDateTime(inputDate, includeTime = false) {
@@ -542,7 +542,7 @@ const PhieuNhapDieuChinh = ({ path }) => {
                       <ActionButton
                         handleAction={() => {
                           setIsShowNotify(false)
-                          navigate('/')
+                          navigate(-1)
                         }}
                         title={'Đóng'}
                         color={'slate-50'}

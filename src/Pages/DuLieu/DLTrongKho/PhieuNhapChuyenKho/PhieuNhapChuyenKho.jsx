@@ -24,7 +24,7 @@ import NCKDel from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuNCK
 import NCKPrint from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuNCK/NCKPrint'
 import NCKConfirm from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuNCK/NCKConfirm'
 
-const PhieuNhapChuyenKho = ({ path }) => {
+const PhieuNhapChuyenKho = () => {
   const navigate = useNavigate()
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
@@ -139,9 +139,9 @@ const PhieuNhapChuyenKho = ({ path }) => {
   }, [dataCRUD])
 
   useEffect(() => {
-    const getDataQuyenHan = async (path) => {
+    const getDataQuyenHan = async () => {
       try {
-        const response = await categoryAPI.QuyenHan(path, TokenAccess)
+        const response = await categoryAPI.QuyenHan('DuLieu_NCK', TokenAccess)
         if (response.data.DataError === 0) {
           setDataCRUD(response.data)
           setIsLoading(true)
@@ -154,7 +154,7 @@ const PhieuNhapChuyenKho = ({ path }) => {
         setIsLoading(true)
       }
     }
-    getDataQuyenHan(path)
+    getDataQuyenHan()
   }, [])
 
   function formatDateTime(inputDate, includeTime = false) {
@@ -514,7 +514,7 @@ const PhieuNhapChuyenKho = ({ path }) => {
                       <ActionButton
                         handleAction={() => {
                           setIsShowNotify(false)
-                          navigate('/')
+                          navigate(-1)
                         }}
                         title={'Đóng'}
                         color={'slate-50'}

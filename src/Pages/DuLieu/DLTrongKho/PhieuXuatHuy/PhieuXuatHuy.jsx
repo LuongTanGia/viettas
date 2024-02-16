@@ -26,7 +26,7 @@ import HUYEdit from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuXH
 import HUYXoa from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuXHuy/HUYXoa'
 import HUYPrint from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuXHuy/HUYPrint'
 
-const PhieuXuatHuy = ({ path }) => {
+const PhieuXuatHuy = () => {
   const navigate = useNavigate()
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
@@ -141,9 +141,9 @@ const PhieuXuatHuy = ({ path }) => {
   }, [dataCRUD])
 
   useEffect(() => {
-    const getDataQuyenHan = async (path) => {
+    const getDataQuyenHan = async () => {
       try {
-        const response = await categoryAPI.QuyenHan(path, TokenAccess)
+        const response = await categoryAPI.QuyenHan('DuLieu_HUY', TokenAccess)
         if (response.data.DataError === 0) {
           setDataCRUD(response.data)
           setIsLoading(true)
@@ -156,7 +156,7 @@ const PhieuXuatHuy = ({ path }) => {
         setIsLoading(true)
       }
     }
-    getDataQuyenHan(path)
+    getDataQuyenHan()
   }, [])
 
   function formatDateTime(inputDate, includeTime = false) {
@@ -542,7 +542,7 @@ const PhieuXuatHuy = ({ path }) => {
                       <ActionButton
                         handleAction={() => {
                           setIsShowNotify(false)
-                          navigate('/')
+                          navigate(-1)
                         }}
                         title={'Đóng'}
                         color={'slate-50'}

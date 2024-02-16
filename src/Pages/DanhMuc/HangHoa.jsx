@@ -24,7 +24,7 @@ import { nameColumsHangHoa } from '../../components/util/Table/ColumnName'
 import { RETOKEN, base64ToPDF, exportToExcel } from '../../action/Actions'
 import HangHoaModals from '../../components/Modals/DanhMuc/HangHoaModals'
 
-const HangHoa = ({ path }) => {
+const HangHoa = () => {
   const navigate = useNavigate()
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
@@ -60,24 +60,24 @@ const HangHoa = ({ path }) => {
   }, [dataCRUD])
 
   useEffect(() => {
-    getDataQuyenHan(path)
+    const getDataQuyenHan = async () => {
+      try {
+        const response = await categoryAPI.QuyenHan('DanhMuc_HangHoa', TokenAccess)
+        if (response.data.DataError === 0) {
+          setDataCRUD(response.data)
+          setIsLoading(true)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          getDataQuyenHan()
+        }
+      } catch (error) {
+        console.log(error)
+        setIsLoading(true)
+      }
+    }
+    getDataQuyenHan()
   }, [])
 
-  const getDataQuyenHan = async (path) => {
-    try {
-      const response = await categoryAPI.QuyenHan(path, TokenAccess)
-      if (response.data.DataError === 0) {
-        setDataCRUD(response.data)
-        setIsLoading(true)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getDataQuyenHan()
-      }
-    } catch (error) {
-      console.log(error)
-      setIsLoading(true)
-    }
-  }
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (showOption.current && !showOption.current.contains(event.target)) {
@@ -585,7 +585,7 @@ const HangHoa = ({ path }) => {
                       <ActionButton
                         handleAction={() => {
                           setIsShowNotify(false)
-                          navigate('/')
+                          navigate(-1)
                         }}
                         title={'Đóng'}
                         color={'slate-50'}

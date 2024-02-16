@@ -26,7 +26,7 @@ import { nameColumsPhieuXuatSuDung } from '../../../../components/util/Table/Col
 import XSDPrint from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuXSD/XSDPrint'
 import XSDCreate from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuXSD/XSDCreate'
 
-const PhieuXuatSuDung = ({ path }) => {
+const PhieuXuatSuDung = () => {
   const navigate = useNavigate()
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
@@ -141,9 +141,9 @@ const PhieuXuatSuDung = ({ path }) => {
   }, [dataCRUD])
 
   useEffect(() => {
-    const getDataQuyenHan = async (path) => {
+    const getDataQuyenHan = async () => {
       try {
-        const response = await categoryAPI.QuyenHan(path, TokenAccess)
+        const response = await categoryAPI.QuyenHan('DuLieu_XSD', TokenAccess)
         if (response.data.DataError === 0) {
           setDataCRUD(response.data)
           setIsLoading(true)
@@ -156,7 +156,7 @@ const PhieuXuatSuDung = ({ path }) => {
         setIsLoading(true)
       }
     }
-    getDataQuyenHan(path)
+    getDataQuyenHan()
   }, [])
 
   function formatDateTime(inputDate, includeTime = false) {
@@ -542,7 +542,7 @@ const PhieuXuatSuDung = ({ path }) => {
                       <ActionButton
                         handleAction={() => {
                           setIsShowNotify(false)
-                          navigate('/')
+                          navigate(-1)
                         }}
                         title={'Đóng'}
                         color={'slate-50'}

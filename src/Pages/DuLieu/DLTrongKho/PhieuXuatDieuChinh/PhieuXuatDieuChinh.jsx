@@ -26,7 +26,7 @@ import XDCEdit from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuXD
 import XDCDel from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuXDC/XDCDel'
 import XDCPrint from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuXDC/XDCPrint'
 
-const PhieuXuatDieuChinh = ({ path }) => {
+const PhieuXuatDieuChinh = () => {
   const navigate = useNavigate()
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
@@ -141,9 +141,9 @@ const PhieuXuatDieuChinh = ({ path }) => {
   }, [dataCRUD])
 
   useEffect(() => {
-    const getDataQuyenHan = async (path) => {
+    const getDataQuyenHan = async () => {
       try {
-        const response = await categoryAPI.QuyenHan(path, TokenAccess)
+        const response = await categoryAPI.QuyenHan('DuLieu_XDC', TokenAccess)
         if (response.data.DataError === 0) {
           setDataCRUD(response.data)
           setIsLoading(true)
@@ -156,7 +156,7 @@ const PhieuXuatDieuChinh = ({ path }) => {
         setIsLoading(true)
       }
     }
-    getDataQuyenHan(path)
+    getDataQuyenHan()
   }, [])
 
   function formatDateTime(inputDate, includeTime = false) {
@@ -543,7 +543,7 @@ const PhieuXuatDieuChinh = ({ path }) => {
                       <ActionButton
                         handleAction={() => {
                           setIsShowNotify(false)
-                          navigate('/')
+                          navigate(-1)
                         }}
                         title={'Đóng'}
                         color={'slate-50'}
