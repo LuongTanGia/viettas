@@ -89,15 +89,15 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
   }, [dataThongTin, SctCreate])
 
   useEffect(() => {
-    if (newDataPMH) {
+    if (newDataPMH && actionType !== 'create') {
       setSelectedSctBD(dataThongTin.SoChungTu)
       setSelectedSctKT(dataThongTin.SoChungTu)
     }
-    if (newDataPMH?.length <= 0) {
+    if (newDataPMH?.length <= 0 && actionType !== 'create') {
       setSelectedSctBD('Chọn mã hàng')
       setSelectedSctKT('Chọn mã hàng')
     }
-  }, [newDataPMH, dataThongTin])
+  }, [newDataPMH])
 
   const calculateTotal = () => {
     let total = 0
