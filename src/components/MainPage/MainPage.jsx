@@ -17,6 +17,8 @@ import PhieuLapRap from '../../Pages/DuLieu/DLTrongKho/PhieuLapRap/PhieuLapRap'
 import PhieuXuatDieuChinh from '../../Pages/DuLieu/DLTrongKho/PhieuXuatDieuChinh/PhieuXuatDieuChinh'
 import PhieuXuatChuyenKho from '../../Pages/DuLieu/DLTrongKho/PhieuXuatChuyenKho/PhieuXuatChuyenKho'
 import PhieuNhapChuyenKho from '../../Pages/DuLieu/DLTrongKho/PhieuNhapChuyenKho/PhieuNhapChuyenKho'
+import PhieuXuatSuDung from '../../Pages/DuLieu/DLTrongKho/PhieuXuatSuDung/PhieuXuatSuDung'
+import PhieuXuatHuy from '../../Pages/DuLieu/DLTrongKho/PhieuXuatHuy/PhieuXuatHuy'
 
 function MainPage({ isSidebarVisible }) {
   return (
@@ -31,10 +33,12 @@ function MainPage({ isSidebarVisible }) {
           <Route path="/DuLieuDV/DuLieu_NTR" element={<PhieuNTR />} />
           <Route path="/DuLieuDR/DuLieu_XTR" element={<PhieuXTR />} />
           <Route path="/DuLieuTK/DuLieu_NDC" element={<PhieuNhapDieuChinh path="DuLieu_NDC" />} />
+          <Route path="/DuLieuTK/DuLieu_XSD" element={<PhieuXuatSuDung path="DuLieu_XSD" />} />
+          <Route path="/DuLieuTK/DuLieu_HUY" element={<PhieuXuatHuy path="DuLieu_HUY" />} />
           <Route path="/DuLieuTK/DuLieu_PLR" element={<PhieuLapRap path="DuLieu_PLR" />} />
-          <Route path="/DuLieuTK/DuLieu_NCK" element={<PhieuNhapChuyenKho path="/DuLieu_NCK" />} />
+          <Route path="/DuLieuTK/DuLieu_NCK" element={<PhieuNhapChuyenKho path="DuLieu_NCK" />} />
           <Route path="/DuLieuTK/DuLieu_XDC" element={<PhieuXuatDieuChinh path="DuLieu_XDC" />} />
-          <Route path="/DuLieuTK/DuLieu_XCK" element={<PhieuXuatChuyenKho path="/DuLieu_XCK" />} />
+          <Route path="/DuLieuTK/DuLieu_XCK" element={<PhieuXuatChuyenKho path="DuLieu_XCK" />} />
           <Route path="/DuLieuDR/DuLieu_PBS" element={<PhieuBanHang />} />
           <Route path="/DuLieuTC/DuLieu_PCT" element={<PhieuChiTien />} />
           <Route path="/DuLieuTC/DuLieu_PTT" element={<PhieuThuTien />} />

@@ -107,6 +107,7 @@ const PLRPrint = ({ close, dataPrint, type }) => {
       )
       if (response.data.DataError == 0) {
         base64ToPDF(response.data.DataResults)
+        close()
       } else {
         toast.error(response.data.DataErrorDescription)
       }

@@ -142,11 +142,11 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
       const response = await categoryAPI.PLRCreate({ ...PLRForm, DataDetails: newData, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss') }, TokenAccess)
       if (response.data.DataError == 0) {
         actionType == 'print'
-          ? handlePrint()
+          ? (handlePrint(), setPLRForm([]), setSelectedRowData([]))
           : actionType == 'printImport'
-            ? handlePrintImport()
+            ? (handlePrintImport(), setPLRForm([]), setSelectedRowData([]))
             : actionType == 'printExport'
-              ? handlePrintExport()
+              ? (handlePrintExport(), setPLRForm([]), setSelectedRowData([]))
               : isSave
                 ? (toast.success('Tạo thành công'), setPLRForm([]), setSelectedRowData([]))
                 : (close(), toast.success('Tạo thành công'))

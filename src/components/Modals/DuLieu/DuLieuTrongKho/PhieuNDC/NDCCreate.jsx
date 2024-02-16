@@ -179,7 +179,11 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
       })
       const response = await categoryAPI.NDCCreate({ ...NDCForm, DataDetails: newData, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss') }, TokenAccess)
       if (response.data.DataError == 0) {
-        isPrint ? handlePrint() : isSave ? (toast.success('Tạo thành công'), setNDCForm([]), setSelectedRowData([])) : (close(), toast.success('Tạo thành công'))
+        isPrint
+          ? (handlePrint(), setNDCForm([]), setSelectedRowData([]))
+          : isSave
+            ? (toast.success('Tạo thành công'), setNDCForm([]), setSelectedRowData([]))
+            : (close(), toast.success('Tạo thành công'))
         loadingData()
         setSoCTu(response.data.DataResults[0].SoChungTu)
         setTargetRow(response.data.DataResults[0].SoChungTu)

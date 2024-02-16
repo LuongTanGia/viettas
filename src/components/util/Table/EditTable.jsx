@@ -657,9 +657,9 @@ const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourT
 
                 {columns
                   .filter((column) => column.render)
-                  .map((column) => {
+                  .map((column, index) => {
                     return (
-                      <Table.Summary.Cell key={column.key} className="text-end font-bold  bg-[#f1f1f1] ">
+                      <Table.Summary.Cell key={`summary-cell-${index}`} className="text-end font-bold  bg-[#f1f1f1] ">
                         <p className="opacity-0">0</p>
                       </Table.Summary.Cell>
                     )

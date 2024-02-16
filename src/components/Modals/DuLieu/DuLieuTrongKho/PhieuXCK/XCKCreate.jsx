@@ -181,7 +181,11 @@ const XCKCreate = ({ close, loadingData, setTargetRow }) => {
       })
       const response = await categoryAPI.XCKCreate({ ...XCKForm, DataDetails: newData, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss') }, TokenAccess)
       if (response.data.DataError == 0) {
-        isPrint ? handlePrint() : isSave ? (toast.success('Tạo thành công'), setXCKForm([]), setSelectedRowData([])) : (close(), toast.success('Tạo thành công'))
+        isPrint
+          ? (handlePrint(), setXCKForm([]), setSelectedRowData([]))
+          : isSave
+            ? (toast.success('Tạo thành công'), setXCKForm([]), setSelectedRowData([]))
+            : (close(), toast.success('Tạo thành công'))
         loadingData()
         setSoCTu(response.data.DataResults[0].SoChungTu)
         setTargetRow(response.data.DataResults[0].SoChungTu)
@@ -572,7 +576,7 @@ const XCKCreate = ({ close, loadingData, setTargetRow }) => {
                     <div className="flex items-center gap-2">
                       <div className="flex items-center gap-2 py-1">
                         <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
-                        <p className="text-blue-700 font-semibold uppercase">Danh Sách Hàng Hóa - Phiếu Nhập Điều Chỉnh</p>
+                        <p className="text-blue-700 font-semibold uppercase">Danh Sách Hàng Hóa - Phiếu Xuất Chuyển Kho</p>
                         <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
                       </div>
                       <div className="flex w-[20rem] overflow-hidden">

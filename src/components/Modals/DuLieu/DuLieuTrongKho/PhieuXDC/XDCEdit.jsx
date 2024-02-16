@@ -571,14 +571,14 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
           <div>
             {isShowModal &&
               (actionType === 'print' ? (
-                <XDCPrint close={() => setIsShowModal(false)} dataPrint={{ ...XDCForm }} />
+                <XDCPrint close={() => close()} dataPrint={{ ...XDCForm }} />
               ) : (
                 <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col xl:w-[87vw] lg:w-[95vw] md:w-[95vw]  bg-white  p-2 rounded-xl shadow-custom overflow-hidden z-10">
                   <div className="flex flex-col gap-2 p-2">
                     <div className="flex items-center gap-2">
                       <div className="flex items-center gap-2 py-1">
                         <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
-                        <p className="text-blue-700 font-semibold uppercase">Danh Sách Hàng Hóa - Phiếu Nhập Điều Chỉnh</p>
+                        <p className="text-blue-700 font-semibold uppercase">Danh Sách Hàng Hóa - Phiếu Xuất Điều Chỉnh</p>
                         <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
                       </div>
                       <div className="flex w-[20rem] overflow-hidden">

@@ -4,18 +4,18 @@ import { useEffect, useState } from 'react'
 import moment from 'moment'
 const { Text } = Typography
 import { Table, Tooltip, Typography } from 'antd'
-import NCKPrint from './NCKPrint'
+import HUYPrint from './HUYPrint'
 import categoryAPI from '../../../../../API/linkAPI'
 import logo from '../../../../../assets/VTS-iSale.ico'
 import { RETOKEN } from '../../../../../action/Actions'
 import ActionButton from '../../../../util/Button/ActionButton'
 import SimpleBackdrop from '../../../../util/Loading/LoadingPage'
 
-const NCKView = ({ close, dataNCK }) => {
+const HUYXem = ({ close, dataHUY }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
-  const [dataNCKView, setDataNCKView] = useState('')
+  const [dataHUYView, setDataHUYView] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [actionType, setActionType] = useState('')
   const [isShowModal, setIsShowModal] = useState(false)
@@ -23,9 +23,9 @@ const NCKView = ({ close, dataNCK }) => {
   useEffect(() => {
     const handleView = async () => {
       try {
-        const response = await categoryAPI.NCKView(dataNCK?.SoChungTu, TokenAccess)
+        const response = await categoryAPI.HUYView(dataHUY?.SoChungTu, TokenAccess)
         if (response.data.DataError == 0) {
-          setDataNCKView(response.data.DataResult)
+          setDataHUYView(response.data.DataResult)
           setIsLoading(true)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
@@ -133,21 +133,21 @@ const NCKView = ({ close, dataNCK }) => {
               <div className="flex flex-col gap-2 py-1 px-2 xl:w-[80vw] lg:w-[90vw] md:w-[95vw] ">
                 <div className="flex gap-2">
                   <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
-                  <p className="text-blue-700 font-semibold uppercase">Thông tin - Phiếu Nhập Chuyển Kho</p>
+                  <p className="text-blue-700 font-semibold uppercase">Thông tin - Phiếu Xuất Kho Sử Dụng</p>
                 </div>
                 <div className="flex flex-col gap-2 border-2 px-1 py-2.5">
                   <div className="grid grid-cols-2 items-center gap-2">
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col gap-3">
                       <div className="flex gap-2">
                         <div className="flex items-center gap-1">
                           <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Số chứng từ</label>
-                          <input type="text" value={dataNCKView?.SoChungTu || ''} className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate" readOnly />
+                          <input type="text" value={dataHUYView?.SoChungTu || ''} className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate" readOnly />
                         </div>
                         <div className="flex items-center gap-1">
                           <label className="required whitespace-nowrap text-sm">Ngày C.Từ</label>
                           <input
                             type="text"
-                            value={moment(dataNCKView?.NgayCTu)?.format('DD/MM/YYYY') || ''}
+                            value={moment(dataHUYView?.NgayCTu)?.format('DD/MM/YYYY') || ''}
                             className="px-2 w-[7rem] rounded resize-none border outline-none text-[1rem] text-center truncate"
                             readOnly
                           />
@@ -157,35 +157,31 @@ const NCKView = ({ close, dataNCK }) => {
                         <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Kho hàng</label>
                         <input
                           type="text"
-                          value={`${dataNCKView?.MaKho} - ${dataNCKView?.TenKho}` || ''}
+                          value={`${dataHUYView?.MaKho} - ${dataHUYView?.TenKho}` || ''}
                           className="px-2 w-full rounded resize-none border outline-none text-[1rem]"
                           readOnly
                         />
                       </div>
-                      <div className="flex items-center gap-1">
-                        <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Chứng từ gốc</label>
-                        <input type="text" value={dataNCKView?.SoThamChieu || ''} className="px-2 w-full rounded resize-none border outline-none text-[1rem]" readOnly />
-                      </div>
                     </div>
-                    <div className="grid grid-cols-1 gap-2 border-2 px-2 py-3 border-black-200 rounded relative">
+                    <div className="grid grid-cols-1 gap-2 border-2 px-2 py-2.5 border-black-200 rounded relative">
                       <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
                       <div className="flex gap-1">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người tạo</label>
-                          <Tooltip title={dataNCKView?.NguoiTao} color="blue">
+                          <Tooltip title={dataHUYView?.NguoiTao} color="blue">
                             <input
                               className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-[1rem] overflow-ellipsis truncate"
-                              value={dataNCKView?.NguoiTao || ''}
+                              value={dataHUYView?.NguoiTao || ''}
                               readOnly
                             />
                           </Tooltip>
                         </div>
                         <div className="flex gap-1 items-center">
                           <label className="text-sm">Lúc</label>
-                          <Tooltip title={moment(dataNCKView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''} color="blue">
+                          <Tooltip title={moment(dataHUYView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''} color="blue">
                             <input
                               className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
-                              value={moment(dataNCKView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
+                              value={moment(dataHUYView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
                               readOnly
                             />
                           </Tooltip>
@@ -194,20 +190,20 @@ const NCKView = ({ close, dataNCK }) => {
                       <div className="flex gap-1">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người sửa</label>
-                          <Tooltip title={dataNCKView?.NguoiSuaCuoi} color="blue">
+                          <Tooltip title={dataHUYView?.NguoiSuaCuoi} color="blue">
                             <input
                               className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border  outline-none text-[1rem] overflow-ellipsis truncate"
-                              value={dataNCKView?.NguoiSuaCuoi || ''}
+                              value={dataHUYView?.NguoiSuaCuoi || ''}
                               readOnly
                             />
                           </Tooltip>
                         </div>
                         <div className="flex gap-1 items-center">
                           <label className="text-sm">Lúc</label>
-                          <Tooltip title={dataNCKView?.NgaySuaCuoi ? moment(dataNCKView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''} color="blue">
+                          <Tooltip title={dataHUYView?.NgaySuaCuoi ? moment(dataHUYView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''} color="blue">
                             <input
                               className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
-                              value={dataNCKView?.NgaySuaCuoi ? moment(dataNCKView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
+                              value={dataHUYView?.NgaySuaCuoi ? moment(dataHUYView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
                               readOnly
                             />
                           </Tooltip>
@@ -217,13 +213,13 @@ const NCKView = ({ close, dataNCK }) => {
                   </div>
                   <div className="flex items-center gap-1">
                     <label className="whitespace-nowrap min-w-[100px] flex justify-end text-sm">Ghi chú</label>
-                    <input type="text" value={dataNCKView?.GhiChu || ''} className="px-2 w-[70rem] rounded resize-none border outline-none text-[1rem]" readOnly />
+                    <input type="text" value={dataHUYView?.GhiChu || ''} className="px-2 w-[70rem] rounded resize-none border outline-none text-[1rem]" readOnly />
                   </div>
                   <div className="border rounded">
                     <Table
                       className="table_view"
                       columns={title}
-                      dataSource={dataNCKView?.DataDetails?.map((item, index) => ({ ...item, key: index }))}
+                      dataSource={dataHUYView?.DataDetails?.map((item, index) => ({ ...item, key: index }))}
                       size="small"
                       scroll={{
                         x: 1000,
@@ -238,21 +234,21 @@ const NCKView = ({ close, dataNCK }) => {
                               {title
                                 .filter((column) => column.render)
                                 .map((column, index) => {
-                                  const isNumericColumn = typeof dataNCKView?.DataDetails[0]?.[column.dataIndex] === 'number'
+                                  const isNumericColumn = typeof dataHUYView?.DataDetails[0]?.[column.dataIndex] === 'number'
 
                                   return (
                                     <Table.Summary.Cell key={`summary-cell-${index + 1}`} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
                                       {isNumericColumn ? (
                                         column.dataIndex === 'SoLuong' ? (
                                           <Text strong>
-                                            {Number(dataNCKView?.DataDetails?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                            {Number(dataHUYView?.DataDetails?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                               minimumFractionDigits: dataThongSo?.SOLESOLUONG,
                                               maximumFractionDigits: dataThongSo?.SOLESOLUONG,
                                             })}
                                           </Text>
                                         ) : (
                                           <Text strong>
-                                            {Number(dataNCKView?.DataDetails?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                            {Number(dataHUYView?.DataDetails?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                               minimumFractionDigits: 0,
                                               maximumFractionDigits: 0,
                                             })}
@@ -280,11 +276,11 @@ const NCKView = ({ close, dataNCK }) => {
               </div>
             </div>
           </div>
-          <div>{isShowModal && actionType === 'print' ? <NCKPrint close={() => setIsShowModal(false)} dataPrint={dataNCKView} /> : ''}</div>
+          <div>{isShowModal && actionType === 'print' ? <HUYPrint close={() => setIsShowModal(false)} dataPrint={dataHUYView} /> : ''}</div>
         </>
       )}
     </>
   )
 }
 
-export default NCKView
+export default HUYXem

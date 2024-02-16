@@ -200,9 +200,8 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
         loadingData()
         setTargetRow(dataNDC?.SoChungTu)
       } else {
-        console.log('sai', { SoChungTu: dataNDC?.SoChungTu, Data: { ...NDCForm, DataDetails: selectedRowData } })
+        console.log('sai', { SoChungTu: dataNDC?.SoChungTu, Data: { ...NDCForm, DataDetails: newData } })
         toast.error(response.data.DataErrorDescription)
-        console.log(response.data.DataErrorDescription)
       }
     } catch (error) {
       console.log(error)
@@ -571,7 +570,7 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
           <div>
             {isShowModal &&
               (actionType === 'print' ? (
-                <NDCPrint close={() => setIsShowModal(false)} dataPrint={{ ...NDCForm }} />
+                <NDCPrint close={() => close()} dataPrint={{ ...NDCForm }} />
               ) : (
                 <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col xl:w-[87vw] lg:w-[95vw] md:w-[95vw]  bg-white  p-2 rounded-xl shadow-custom overflow-hidden z-10">
                   <div className="flex flex-col gap-2 p-2">
