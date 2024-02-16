@@ -252,7 +252,7 @@ const NCKPrint = ({ close, dataPrint }) => {
                         setSelectedNhomTo(value)
                         if (
                           selectedNhomFrom !== null &&
-                          dataListChungTu.findIndex((item) => item.SoChungTu === value) > dataListChungTu.findIndex((item) => item.SoChungTu === selectedNhomFrom)
+                          dataListChungTu.findIndex((item) => item.SoChungTu === value) < dataListChungTu.findIndex((item) => item.SoChungTu === selectedNhomFrom)
                         ) {
                           setSelectedNhomFrom(value)
                         }
