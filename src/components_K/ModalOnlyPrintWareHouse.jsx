@@ -15,8 +15,8 @@ const { Option } = Select
 import * as apis from '../apis'
 
 const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2, SctCreate, typePage, namePage }) => {
-  const [selectedSctBD, setSelectedSctBD] = useState()
-  const [selectedSctKT, setSelectedSctKT] = useState()
+  const [selectedSctBD, setSelectedSctBD] = useState(actionType !== 'create' ? dataThongTin?.SoChungTu : SctCreate)
+  const [selectedSctKT, setSelectedSctKT] = useState(actionType !== 'create' ? dataThongTin?.SoChungTu : SctCreate)
   const [newDataPMH, setNewDataPMH] = useState()
 
   const startDate = dayjs(dataThongTin?.NgayCTu).format('YYYY-MM-DDTHH:mm:ss')
@@ -50,16 +50,27 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
   })
 
   useEffect(() => {
-    if (dataThongTin && actionType !== 'create') {
-      setSelectedSctBD(dataThongTin.SoChungTu)
-      setSelectedSctKT(dataThongTin.SoChungTu)
-    }
+    // if (dataThongTin && actionType !== 'create') {
+    //   setSelectedSctBD(dataThongTin.SoChungTu)
+    //   setSelectedSctKT(dataThongTin.SoChungTu)
+    // }
     if (actionType == 'create') {
       setSelectedSctBD(SctCreate)
       setSelectedSctKT(SctCreate)
     }
   }, [dataThongTin, SctCreate])
 
+  useEffect(() => {
+    if (newDataPMH) {
+      setSelectedSctBD(dataThongTin.SoChungTu)
+      setSelectedSctKT(dataThongTin.SoChungTu)
+    }
+    if (newDataPMH?.length <= 0) {
+      setSelectedSctBD('Chọn mã hàng')
+      setSelectedSctKT('Chọn mã hàng')
+    }
+  }, [newDataPMH])
+  console.log('newDataPMH', newDataPMH)
   const calculateTotal = () => {
     let total = 0
     if (checkboxValues.checkbox1) total += 1
@@ -184,6 +195,21 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
     }
   }
 
+  const handleSctBDChange = (value) => {
+    setSelectedSctBD(value)
+
+    if (selectedSctKT && value > selectedSctKT) {
+      setSelectedSctKT(value)
+    }
+  }
+
+  const handleSctKTChange = (value) => {
+    setSelectedSctKT(value)
+
+    if (selectedSctBD && value < selectedSctBD) {
+      setSelectedSctBD(value)
+    }
+  }
   return (
     <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
       <div className="p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
@@ -199,7 +225,7 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
                 <div className="flex gap-x-5 items-center">
                   <label htmlFor="">Ngày</label>
                   <DateField
-                    className="DatePicker_PMH max-w-[154px]"
+                    className="DatePicker_PMH max-w-[170px]"
                     format="DD/MM/YYYY"
                     // maxDate={dayjs(formPrint.NgayKetThuc)}
                     value={dayjs(formPrint.NgayBatDau)}
@@ -232,7 +258,7 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
                 <div className="flex gap-x-5 items-center">
                   <label htmlFor="">Đến</label>
                   <DateField
-                    className="DatePicker_PMH max-w-[154px]"
+                    className="DatePicker_PMH max-w-[170px]"
                     format="DD/MM/YYYY"
                     value={dayjs(formPrint.NgayKetThuc)}
                     onChange={(newDate) => {
@@ -279,9 +305,9 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
                     size="small"
                     showSearch
                     optionFilterProp="children"
-                    onChange={(value) => setSelectedSctBD(value)}
-                    style={{ width: '154px' }}
+                    style={{ width: '170px' }}
                     value={selectedSctBD}
+                    onChange={handleSctBDChange}
                     dropdownMatchSelectWidth={false}
                   >
                     {newDataPMH?.map((item) => (
@@ -299,9 +325,9 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
                     size="small"
                     showSearch
                     optionFilterProp="children"
-                    onChange={(value) => setSelectedSctKT(value)}
-                    style={{ width: '154px' }}
+                    style={{ width: '170px' }}
                     value={selectedSctKT}
+                    onChange={handleSctKTChange}
                     dropdownMatchSelectWidth={false}
                   >
                     {newDataPMH?.map((item) => (

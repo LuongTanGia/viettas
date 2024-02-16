@@ -239,7 +239,7 @@ const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourT
                         {`${option.MaHang} - ${option.TenHang}`}
                       </Option>
                     ))
-                  : typeTable !== 'BanHang'
+                  : tableName !== 'BanHang'
                     ? listDVT.map((option, index) => (
                         <Option key={index} value={option}>
                           {option}

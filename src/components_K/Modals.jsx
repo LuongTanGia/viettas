@@ -1065,6 +1065,21 @@ const Modals = ({
     if (!formCreate?.TenDoiTuong?.trim() || !formCreate?.DiaChi?.trim()) return
     setIsShowModalOnlyPrintWareHouse(true)
   }
+  const handleSctBDChange = (value) => {
+    setSelectedSctBD(value)
+
+    if (selectedSctKT !== 'Chọn số chứng từ' && value > selectedSctKT) {
+      setSelectedSctKT(value)
+    }
+  }
+
+  const handleSctKTChange = (value) => {
+    setSelectedSctKT(value)
+
+    if (selectedSctBD !== 'Chọn số chứng từ' && value < selectedSctBD) {
+      setSelectedSctBD(value)
+    }
+  }
 
   return (
     <>
@@ -1094,7 +1109,7 @@ const Modals = ({
                     <div className="flex gap-x-5 items-center">
                       <label htmlFor="">Ngày</label>
                       <DateField
-                        className="DatePicker_PMH max-w-[154px]"
+                        className="DatePicker_PMH max-w-[170px]"
                         format="DD/MM/YYYY"
                         // maxDate={dayjs(controlDate.NgayKetThuc)}
                         value={dayjs(formPrint.NgayBatDau)}
@@ -1127,7 +1142,7 @@ const Modals = ({
                     <div className="flex gap-x-5 items-center ">
                       <label htmlFor="">Đến</label>
                       <DateField
-                        className="DatePicker_PMH max-w-[154px]"
+                        className="DatePicker_PMH max-w-[170px]"
                         format="DD/MM/YYYY"
                         // minDate={dayjs(controlDate.NgayBatDau)}
                         value={dayjs(formPrint.NgayKetThuc)}
@@ -1163,7 +1178,7 @@ const Modals = ({
                       <div className="flex ">
                         <label className="pr-[23px]">Số chứng từ</label>
 
-                        <Select size="small" showSearch optionFilterProp="children" onChange={(value) => setSelectedSctBD(value)} style={{ width: '154px' }} value={selectedSctBD}>
+                        <Select size="small" showSearch optionFilterProp="children" style={{ width: '170px' }} onChange={handleSctBDChange} value={selectedSctBD}>
                           {newData?.map((item) => (
                             <Option key={item.SoChungTu} value={item.SoChungTu}>
                               {item.SoChungTu}
@@ -1174,7 +1189,7 @@ const Modals = ({
                       <div className="flex ">
                         <label className="pl-[18px] pr-[18px]">Đến</label>
 
-                        <Select size="small" showSearch optionFilterProp="children" onChange={(value) => setSelectedSctKT(value)} style={{ width: '154px' }} value={selectedSctKT}>
+                        <Select size="small" showSearch optionFilterProp="children" style={{ width: '170px' }} onChange={handleSctKTChange} value={selectedSctKT}>
                           {newData?.map((item) => (
                             <Option key={item.SoChungTu} value={item.SoChungTu}>
                               {item.SoChungTu}
@@ -1186,16 +1201,16 @@ const Modals = ({
                   ) : (
                     <div className="flex  mt-4 ">
                       <div className="flex ">
-                        <label className="pr-[22px]">Số chứng từ</label>
+                        <label className="pr-[23px]">Số chứng từ</label>
 
                         <Select
                           size="small"
                           showSearch
                           optionFilterProp="children"
-                          style={{ width: '154px' }}
+                          style={{ width: '170px' }}
                           value={selectedSctBD}
                           dropdownMatchSelectWidth={false}
-                          onChange={(value) => setSelectedSctBD(value)}
+                          onChange={handleSctBDChange}
                         >
                           {newData?.map((item) => (
                             <Option key={item.SoChungTu} value={item.SoChungTu}>
@@ -1205,15 +1220,15 @@ const Modals = ({
                         </Select>
                       </div>
                       <div className="flex ">
-                        <label className="pl-[16px] pr-[18px]">Đến</label>
+                        <label className="pl-[18px] pr-[18px]">Đến</label>
 
                         <Select
                           size="small"
                           showSearch
                           optionFilterProp="children"
-                          onChange={(value) => setSelectedSctKT(value)}
-                          style={{ width: '154px' }}
+                          style={{ width: '170px' }}
                           value={selectedSctKT}
+                          onChange={handleSctKTChange}
                           dropdownMatchSelectWidth={false}
                         >
                           {newData?.map((item) => (
@@ -1726,7 +1741,7 @@ const Modals = ({
                       typeTable="create"
                       typeAction="create"
                       className="table_cre"
-                      tableName="MuaHang"
+                      tableName={typePage === 'XTR' ? 'BanHang' : ''}
                       param={selectedRowData}
                       handleEditData={handleEditData}
                       ColumnTable={columnName}
@@ -1765,12 +1780,6 @@ const Modals = ({
                 </div>
 
                 <div className="flex justify-end items-center gap-3  pt-3">
-                  {/* <button
-                              onClick={handleCreate}
-                              className="active:scale-[.98] active:duration-75   border-2 border-bg-main text-slate-50 text-text-main font-bold  bg-bg-main hover:bg-white hover:text-bg-main  rounded-md px-2 py-1  w-[80px] "
-                            >
-                              Lưu
-                            </button> */}
                   <ActionButton color={'slate-50'} title={'Lưu'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleCreate} />
                   <ActionButton color={'slate-50'} title={'Lưu & đóng'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleCreateAndClose} />
 
@@ -2027,6 +2036,8 @@ const Modals = ({
                         param={selectedRowData}
                         handleEditData={handleEditData}
                         ColumnTable={columnName}
+                        typeTable={'edit'}
+                        tableName={typePage === 'XTR' ? 'BanHang' : ''}
                         columName={nameColumsPhieuMuaHang}
                         yourMaHangOptions={dataHangHoa}
                         yourTenHangOptions={dataHangHoa}

@@ -78,15 +78,26 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
   }, [formPrintFilter])
 
   useEffect(() => {
-    if (dataThongTin && actionType !== 'create') {
-      setSelectedSctBD(dataThongTin.SoChungTu)
-      setSelectedSctKT(dataThongTin.SoChungTu)
-    }
+    // if (dataThongTin && actionType !== 'create') {
+    //   setSelectedSctBD(dataThongTin.SoChungTu)
+    //   setSelectedSctKT(dataThongTin.SoChungTu)
+    // }
     if (actionType == 'create') {
       setSelectedSctBD(SctCreate)
       setSelectedSctKT(SctCreate)
     }
   }, [dataThongTin, SctCreate])
+
+  useEffect(() => {
+    if (newDataPMH) {
+      setSelectedSctBD(dataThongTin.SoChungTu)
+      setSelectedSctKT(dataThongTin.SoChungTu)
+    }
+    if (newDataPMH?.length <= 0) {
+      setSelectedSctBD('Chọn mã hàng')
+      setSelectedSctKT('Chọn mã hàng')
+    }
+  }, [newDataPMH, dataThongTin])
 
   const calculateTotal = () => {
     let total = 0
@@ -217,6 +228,22 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
     }
   }
 
+  const handleSctBDChange = (value) => {
+    setSelectedSctBD(value)
+
+    if (selectedSctKT && value > selectedSctKT) {
+      setSelectedSctKT(value)
+    }
+  }
+
+  const handleSctKTChange = (value) => {
+    setSelectedSctKT(value)
+
+    if (selectedSctBD && value < selectedSctBD) {
+      setSelectedSctBD(value)
+    }
+  }
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
       <div className="p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
@@ -295,22 +322,12 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
                     }}
                   />
                 </div>
-
-                {/* <ActionButton
-                  color={'slate-50'}
-                  title={'Lọc'}
-                  icon={<MdFilterAlt size={20} />}
-                  background={'bg-main'}
-                  bg_hover={'white'}
-                  color_hover={'bg-main'}
-                  handleAction={handleFilterPrint}
-                /> */}
               </div>
               <div className="flex  mt-4 ">
                 <div className="flex ">
                   <label className="pr-[23px]">Số chứng từ</label>
 
-                  <Select size="small" showSearch optionFilterProp="children" onChange={(value) => setSelectedSctBD(value)} style={{ width: '154px' }} value={selectedSctBD}>
+                  <Select size="small" showSearch optionFilterProp="children" style={{ width: '154px' }} value={selectedSctBD} onChange={handleSctBDChange}>
                     {newDataPMH?.map((item) => (
                       <Option key={item.SoChungTu} value={item.SoChungTu}>
                         {item.SoChungTu}
@@ -322,7 +339,7 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
                 <div className="flex ">
                   <label className="pl-[18px] pr-[18px]">Đến</label>
 
-                  <Select size="small" showSearch optionFilterProp="children" onChange={(value) => setSelectedSctKT(value)} style={{ width: '154px' }} value={selectedSctKT}>
+                  <Select size="small" showSearch optionFilterProp="children" style={{ width: '154px' }} value={selectedSctKT} onChange={handleSctKTChange}>
                     {newDataPMH?.map((item) => (
                       <Option key={item.SoChungTu} value={item.SoChungTu}>
                         {item.SoChungTu}

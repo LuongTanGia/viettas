@@ -534,6 +534,22 @@ const ModalPCT = ({
     }
   }
 
+  const handleSctBDChange = (value) => {
+    setSelectedSctBD(value)
+
+    if (selectedSctKT !== 'Chọn số chứng từ' && value > selectedSctKT) {
+      setSelectedSctKT(value)
+    }
+  }
+
+  const handleSctKTChange = (value) => {
+    setSelectedSctKT(value)
+
+    if (selectedSctBD !== 'Chọn số chứng từ' && value < selectedSctBD) {
+      setSelectedSctBD(value)
+    }
+  }
+
   return (
     <>
       <div className=" fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
@@ -642,7 +658,7 @@ const ModalPCT = ({
                     <div className="flex ">
                       <label className="pr-[23px]">Số chứng từ</label>
 
-                      <Select size="small" showSearch optionFilterProp="children" onChange={(value) => setSelectedSctBD(value)} style={{ width: '154px' }} value={selectedSctBD}>
+                      <Select size="small" showSearch optionFilterProp="children" style={{ width: '154px' }} value={selectedSctBD} onChange={handleSctBDChange}>
                         {newData?.map((item) => (
                           <Option key={item.SoChungTu} value={item.SoChungTu}>
                             {item.SoChungTu}
@@ -653,7 +669,7 @@ const ModalPCT = ({
                     <div className="flex ">
                       <label className="pl-[18px] pr-[18px]">Đến</label>
 
-                      <Select size="small" showSearch optionFilterProp="children" onChange={(value) => setSelectedSctKT(value)} style={{ width: '154px' }} value={selectedSctKT}>
+                      <Select size="small" showSearch optionFilterProp="children" style={{ width: '154px' }} onChange={handleSctKTChange} value={selectedSctKT}>
                         {newData?.map((item) => (
                           <Option key={item.SoChungTu} value={item.SoChungTu}>
                             {item.SoChungTu}
