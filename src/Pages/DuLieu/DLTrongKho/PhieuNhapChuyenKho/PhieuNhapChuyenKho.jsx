@@ -385,6 +385,7 @@ const PhieuNhapChuyenKho = ({ path }) => {
       dataIndex: 'NguoiTao',
       key: 'NguoiTao',
       align: 'center',
+      width: 250,
       showSorterTooltip: false,
       sorter: (a, b) => a.NguoiTao.localeCompare(b.NguoiTao),
       render: (text) => (
@@ -425,6 +426,7 @@ const PhieuNhapChuyenKho = ({ path }) => {
       dataIndex: 'NguoiSuaCuoi',
       key: 'NguoiSuaCuoi',
       align: 'center',
+      width: 250,
       showSorterTooltip: false,
       sorter: (a, b) => (a.NguoiSuaCuoi?.toString() || '').localeCompare(b.NguoiSuaCuoi?.toString() || ''),
       render: (text) => (
@@ -716,7 +718,7 @@ const PhieuNhapChuyenKho = ({ path }) => {
                     rowClassName={(record) => (record.SoChungTu === targetRow ? 'highlighted-row' : '')}
                     size="small"
                     scroll={{
-                      x: 2500,
+                      x: 2200,
                       y: 400,
                     }}
                     style={{
@@ -771,7 +773,7 @@ const PhieuNhapChuyenKho = ({ path }) => {
               <div>
                 {isShowModal &&
                   (actionType == 'confirm' ? (
-                    <NCKConfirm close={() => setIsShowModal(false)} />
+                    <NCKConfirm close={() => setIsShowModal(false)} loadingData={handleLoading} setTargetRow={setTargetRow} />
                   ) : actionType == 'view' ? (
                     <NCKView close={() => setIsShowModal(false)} dataNCK={isDataKhoDC} />
                   ) : actionType == 'delete' ? (

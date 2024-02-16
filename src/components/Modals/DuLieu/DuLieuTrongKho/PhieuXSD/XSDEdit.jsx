@@ -196,13 +196,12 @@ const XSDEdit = ({ close, dataXSD, loadingData, setTargetRow }) => {
       })
       const response = await categoryAPI.XSDEdit({ SoChungTu: dataXSD?.SoChungTu, Data: { ...XSDForm, DataDetails: newData } }, TokenAccess)
       if (response.data.DataError == 0) {
-        isPrint ? handlePrint() : (close(), toast.success('Sửa thành công'))
+        isPrint ? handlePrint() : (close(), toast.success('Sửa thành công', { autoClose: 1000 }))
         loadingData()
         setTargetRow(dataXSD?.SoChungTu)
       } else {
         console.log('sai', { SoChungTu: dataXSD?.SoChungTu, Data: { ...XSDForm, DataDetails: selectedRowData } })
-        toast.error(response.data.DataErrorDescription)
-        console.log(response.data.DataErrorDescription)
+        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
       }
     } catch (error) {
       console.log(error)

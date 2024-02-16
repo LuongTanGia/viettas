@@ -196,13 +196,12 @@ const XCKEdit = ({ close, dataXCK, loadingData, setTargetRow }) => {
       })
       const response = await categoryAPI.XCKEdit({ SoChungTu: dataXCK?.SoChungTu, Data: { ...XCKForm, DataDetails: newData } }, TokenAccess)
       if (response.data.DataError == 0) {
-        isPrint ? handlePrint() : (close(), toast.success('Sửa thành công'))
+        isPrint ? handlePrint() : (close(), toast.success('Sửa thành công', { autoClose: 1000 }))
         loadingData()
         setTargetRow(dataXCK?.SoChungTu)
       } else {
         console.log('sai', { SoChungTu: dataXCK?.SoChungTu, Data: { ...XCKForm, DataDetails: selectedRowData } })
-        toast.error(response.data.DataErrorDescription)
-        console.log(response.data.DataErrorDescription)
+        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
       }
     } catch (error) {
       console.log(error)

@@ -171,12 +171,12 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
             ? handlePrintImport()
             : actionType == 'printExport'
               ? handlePrintExport()
-              : (close(), toast.success('Sửa thành công'))
+              : (close(), toast.success('Sửa thành công', { autoClose: 1000 }))
         loadingData()
         setTargetRow(dataPLR?.SoChungTu)
       } else {
         console.log('sai', PLRForm)
-        toast.error(response.data.DataErrorDescription)
+        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
       }
     } catch (error) {
       console.log(error)

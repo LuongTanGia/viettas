@@ -182,14 +182,13 @@ const HUYCreate = ({ close, loadingData, setTargetRow }) => {
         isPrint
           ? (handlePrint(), setHUYForm([]), setSelectedRowData([]))
           : isSave
-            ? (toast.success('Tạo thành công'), setHUYForm([]), setSelectedRowData([]))
-            : (close(), toast.success('Tạo thành công'))
+            ? (toast.success('Tạo thành công', { autoClose: 1000 }), setHUYForm([]), setSelectedRowData([]))
+            : (close(), toast.success('Tạo thành công', { autoClose: 1000 }))
         loadingData()
         setSoCTu(response.data.DataResults[0].SoChungTu)
         setTargetRow(response.data.DataResults[0].SoChungTu)
       } else {
-        console.log(response.data)
-        toast.error(response.data.DataErrorDescription)
+        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
       }
     } catch (error) {
       console.log(error)

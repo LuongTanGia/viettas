@@ -1,24 +1,25 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from 'react'
-const { Text } = Typography
 import moment from 'moment'
 import { FaSearch } from 'react-icons/fa'
-import { Table, Tooltip, Typography } from 'antd'
+import { Table, Tooltip } from 'antd'
 import categoryAPI from '../../../../../API/linkAPI'
 import logo from '../../../../../assets/VTS-iSale.ico'
 import { RETOKEN } from '../../../../../action/Actions'
 import ActionButton from '../../../../util/Button/ActionButton'
 import SimpleBackdrop from '../../../../util/Loading/LoadingPage'
 import { useSearch } from '../../../../hooks/Search'
+import { toast } from 'react-toastify'
 
-const NCKConfirm = ({ close }) => {
+const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
   const [dataNCKUnconfirm, setDataNCKUnconfirm] = useState('')
   const [dataXCKView, setDataXCKView] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [tableLoad, setTableLoad] = useState(true)
   const [isShowModal, setIsShowModal] = useState(false)
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [setSearchHangHoa, filteredHangHoa, searchHangHoa] = useSearch(dataNCKUnconfirm)
@@ -30,22 +31,24 @@ const NCKConfirm = ({ close }) => {
         if (response.data.DataError == 0) {
           setDataNCKUnconfirm(response.data.DataResults)
           setIsLoading(true)
+          setTableLoad(false)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
           listUnconfirmed()
         } else {
           setDataNCKUnconfirm([])
           setIsLoading(true)
+          setTableLoad(false)
         }
       } catch (error) {
         console.error(error)
         setIsLoading(true)
       }
     }
-    if (!isLoading) {
+    if (tableLoad || !isLoading) {
       listUnconfirmed()
     }
-  }, [isLoading])
+  }, [isLoading, tableLoad])
 
   const formatThapPhan = (number, decimalPlaces) => {
     if (typeof number === 'number' && !isNaN(number)) {
@@ -74,15 +77,13 @@ const NCKConfirm = ({ close }) => {
     }
     return formattedDateTime
   }
-
   const handleView = async (record) => {
     setIsShowModal(true)
     try {
       const response = await categoryAPI.XCKView(record.SoChungTu, TokenAccess)
       if (response.data.DataError == 0) {
         setDataXCKView(response.data.DataResult)
-        console.log(response.data.DataResult)
-        setIsLoading(true)
+        setTableLoad(false)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         handleView()
@@ -90,10 +91,28 @@ const NCKConfirm = ({ close }) => {
     } catch (error) {
       console.error(error)
       setIsLoading(true)
+      setTableLoad(false)
     }
   }
-  console.log(dataXCKView)
-  const handleConfirm = () => {}
+
+  const handleConfirm = async () => {
+    try {
+      const response = await categoryAPI.DuyetPhieuNCK(dataXCKView?.SoChungTu, TokenAccess)
+      if (response.data.DataError == 0) {
+        loadingData()
+        setTableLoad(true)
+        toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
+        setTargetRow(response.data.DataResults[0].SoChungTu)
+        setIsShowModal(false)
+      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        await RETOKEN()
+        handleView()
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   const title = [
     {
       title: 'STT',
@@ -178,6 +197,7 @@ const NCKConfirm = ({ close }) => {
     {
       title: 'Người tạo',
       dataIndex: 'NguoiTao',
+      width: 200,
       key: 'NguoiTao',
       align: 'center',
       showSorterTooltip: false,
@@ -216,6 +236,7 @@ const NCKConfirm = ({ close }) => {
       dataIndex: 'NguoiSuaCuoi',
       key: 'NguoiSuaCuoi',
       align: 'center',
+      width: 200,
       showSorterTooltip: false,
       sorter: (a, b) => (a.NguoiSuaCuoi?.toString() || '').localeCompare(b.NguoiSuaCuoi?.toString() || ''),
       render: (text) => (
@@ -344,6 +365,7 @@ const NCKConfirm = ({ close }) => {
                 </div>
                 <div className="flex flex-col gap-2 border rounded px-1 py-2.5">
                   <Table
+                    loading={tableLoad}
                     className="table_view"
                     columns={title}
                     dataSource={filteredHangHoa?.map((item, index) => ({ ...item, key: index }))}
@@ -363,16 +385,6 @@ const NCKConfirm = ({ close }) => {
                   ></Table>
                 </div>
                 <div className="flex justify-end gap-2">
-                  <div>
-                    {/* <ActionButton
-                      handleAction={() => setIsShowModal(true)}
-                      title={'Thông tin xác nhận'}
-                      color={'slate-50'}
-                      background={'blue-500'}
-                      color_hover={'blue-500'}
-                      bg_hover={'white'}
-                    /> */}
-                  </div>
                   <div className="flex gap-2 justify-end ">
                     <ActionButton handleAction={close} title={'Đóng'} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
                   </div>
@@ -387,7 +399,7 @@ const NCKConfirm = ({ close }) => {
                   <div className="flex items-center gap-2">
                     <div className="flex items-center gap-2 py-1">
                       <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
-                      <p className="text-blue-700 font-semibold uppercase">Thông tin xác nhận- Phiếu Nhập Xuất Kho</p>
+                      <p className="text-blue-700 font-semibold uppercase">Thông tin xác nhận- Phiếu Xuất Chuyển Kho</p>
                     </div>
                   </div>
                   <div className="flex flex-col gap-2 border-2 px-1 py-2.5">
@@ -474,7 +486,7 @@ const NCKConfirm = ({ close }) => {
                       <Table
                         className="table_view"
                         columns={titleXDC}
-                        dataSource={dataXCKView?.map((item, index) => ({ ...item, key: index }))}
+                        dataSource={dataXCKView?.DataDetails?.map((item, index) => ({ ...item, key: index }))}
                         size="small"
                         scroll={{
                           x: 1000,
@@ -521,14 +533,7 @@ const NCKConfirm = ({ close }) => {
                     </div>
                   </div>
                   <div className="flex gap-2 justify-end ">
-                    <ActionButton
-                      // handleAction={() => setIsShowModal(false)}
-                      title={'Xác nhận'}
-                      color={'slate-50'}
-                      background={'blue-500'}
-                      color_hover={'blue-500'}
-                      bg_hover={'white'}
-                    />
+                    <ActionButton handleAction={handleConfirm} title={'Xác nhận'} color={'slate-50'} background={'blue-500'} color_hover={'blue-500'} bg_hover={'white'} />
                     <ActionButton handleAction={() => setIsShowModal(false)} title={'Đóng'} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
                   </div>
                 </div>

@@ -184,14 +184,14 @@ const XCKCreate = ({ close, loadingData, setTargetRow }) => {
         isPrint
           ? (handlePrint(), setXCKForm([]), setSelectedRowData([]))
           : isSave
-            ? (toast.success('Tạo thành công'), setXCKForm([]), setSelectedRowData([]))
-            : (close(), toast.success('Tạo thành công'))
+            ? (toast.success('Tạo thành công', { autoClose: 1000 }), setXCKForm([]), setSelectedRowData([]))
+            : (close(), toast.success('Tạo thành công', { autoClose: 1000 }))
         loadingData()
         setSoCTu(response.data.DataResults[0].SoChungTu)
         setTargetRow(response.data.DataResults[0].SoChungTu)
       } else {
         console.log(response.data)
-        toast.error(response.data.DataErrorDescription)
+        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
       }
     } catch (error) {
       console.log(error)

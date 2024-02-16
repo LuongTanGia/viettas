@@ -196,13 +196,12 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
       })
       const response = await categoryAPI.XDCEdit({ SoChungTu: dataXDC?.SoChungTu, Data: { ...XDCForm, DataDetails: newData } }, TokenAccess)
       if (response.data.DataError == 0) {
-        isPrint ? handlePrint() : (close(), toast.success('Sửa thành công'))
+        isPrint ? handlePrint() : (close(), toast.success('Sửa thành công', { autoClose: 1000 }))
         loadingData()
         setTargetRow(dataXDC?.SoChungTu)
       } else {
         console.log('sai', { SoChungTu: dataXDC?.SoChungTu, Data: { ...XDCForm, DataDetails: selectedRowData } })
-        toast.error(response.data.DataErrorDescription)
-        console.log(response.data.DataErrorDescription)
+        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
       }
     } catch (error) {
       console.log(error)
@@ -370,7 +369,7 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
               <div className="flex flex-col gap-2 py-1 px-2 xl:w-[80vw] lg:w-[90vw] md:w-[95vw]">
                 <div className="flex gap-2">
                   <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
-                  <p className="text-blue-700 font-semibold uppercase">Sửa - Phiếu Nhập Điều Chỉnh</p>
+                  <p className="text-blue-700 font-semibold uppercase">Sửa - Phiếu Xuất Điều Chỉnh</p>
                 </div>
                 <div className="flex flex-col gap-2 border-2 px-1 py-2.5">
                   <div className="grid grid-cols-2 items-center gap-2">

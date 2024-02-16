@@ -148,13 +148,13 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
             : actionType == 'printExport'
               ? (handlePrintExport(), setPLRForm([]), setSelectedRowData([]))
               : isSave
-                ? (toast.success('Tạo thành công'), setPLRForm([]), setSelectedRowData([]))
+                ? (toast.success('Tạo thành công', { autoClose: 1000 }), setPLRForm([]), setSelectedRowData([]))
                 : (close(), toast.success('Tạo thành công'))
         loadingData()
         setSoCTu(response.data.DataResults[0].SoChungTu)
         setTargetRow(response.data.DataResults[0].SoChungTu)
       } else {
-        toast.error(response.data.DataErrorDescription)
+        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
       }
     } catch (error) {
       console.log(error)

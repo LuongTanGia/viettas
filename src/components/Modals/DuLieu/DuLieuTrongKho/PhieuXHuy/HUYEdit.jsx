@@ -196,13 +196,12 @@ const HUYEdit = ({ close, dataHUY, loadingData, setTargetRow }) => {
       })
       const response = await categoryAPI.HUYEdit({ SoChungTu: dataHUY?.SoChungTu, Data: { ...HUYForm, DataDetails: newData } }, TokenAccess)
       if (response.data.DataError == 0) {
-        isPrint ? handlePrint() : (close(), toast.success('Sửa thành công'))
+        isPrint ? handlePrint() : (close(), toast.success('Sửa thành công', { autoClose: 1000 }))
         loadingData()
         setTargetRow(dataHUY?.SoChungTu)
       } else {
         console.log('sai', { SoChungTu: dataHUY?.SoChungTu, Data: { ...HUYForm, DataDetails: selectedRowData } })
-        toast.error(response.data.DataErrorDescription)
-        console.log(response.data.DataErrorDescription)
+        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
       }
     } catch (error) {
       console.log(error)

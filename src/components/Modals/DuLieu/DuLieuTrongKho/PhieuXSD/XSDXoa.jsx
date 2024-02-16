@@ -12,7 +12,7 @@ const XSDXoa = ({ close, dataXSD, loadingData, setTargetRow }) => {
       if (response.data.DataError == 0) {
         loadingData()
         close()
-        toast.success(response.data.DataErrorDescription)
+        toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
         setTargetRow([])
       }
     } catch (error) {
