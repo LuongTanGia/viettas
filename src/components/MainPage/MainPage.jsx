@@ -14,6 +14,12 @@ import PhieuBanHang from '../PhieuBanHang/PhieuBanHang'
 import PhieuNhapDieuChinh from '../../Pages/DuLieu/DLTrongKho/PhieuNhapDieuChinh/PhieuNhapDieuChinh'
 import NhapXuatTonKho from '../../Pages/TruyVan/NhapXuatTonKho'
 import PhieuLapRap from '../../Pages/DuLieu/DLTrongKho/PhieuLapRap/PhieuLapRap'
+import PhieuXuatDieuChinh from '../../Pages/DuLieu/DLTrongKho/PhieuXuatDieuChinh/PhieuXuatDieuChinh'
+import PhieuXuatChuyenKho from '../../Pages/DuLieu/DLTrongKho/PhieuXuatChuyenKho/PhieuXuatChuyenKho'
+import PhieuNhapChuyenKho from '../../Pages/DuLieu/DLTrongKho/PhieuNhapChuyenKho/PhieuNhapChuyenKho'
+import PhieuXuatSuDung from '../../Pages/DuLieu/DLTrongKho/PhieuXuatSuDung/PhieuXuatSuDung'
+import PhieuXuatHuy from '../../Pages/DuLieu/DLTrongKho/PhieuXuatHuy/PhieuXuatHuy'
+import CongNoDauRa from '../CongNoDauRa/CongNoDauRa'
 
 function MainPage({ isSidebarVisible }) {
   return (
@@ -23,16 +29,23 @@ function MainPage({ isSidebarVisible }) {
           <Route path="/" element={<DashBoar />} />
           <Route path="/FAQ" element={<FAQ />} />
           <Route path="/DKSD" element={<DKSD />} />
-          <Route path="/DanhMuc_HangHoa" element={<HangHoa path={'DanhMuc_HangHoa'} />} />
+          <Route path="/DanhMuc_HangHoa" element={<HangHoa />} />
           <Route path="/DuLieuDV/DuLieu_PMH" element={<Phieumuahang />} />
           <Route path="/DuLieuDV/DuLieu_NTR" element={<PhieuNTR />} />
           <Route path="/DuLieuDR/DuLieu_XTR" element={<PhieuXTR />} />
-          <Route path="/DuLieuTK/DuLieu_NDC" element={<PhieuNhapDieuChinh path="DuLieu_NDC" />} />
-          <Route path="/DuLieuTK/DuLieu_PLR" element={<PhieuLapRap path="DuLieu_PLR" />} />
+          <Route path="/DuLieuTK/DuLieu_NDC" element={<PhieuNhapDieuChinh />} />
+          <Route path="/DuLieuTK/DuLieu_XSD" element={<PhieuXuatSuDung />} />
+          <Route path="/DuLieuTK/DuLieu_HUY" element={<PhieuXuatHuy />} />
+          <Route path="/DuLieuTK/DuLieu_PLR" element={<PhieuLapRap />} />
+          <Route path="/DuLieuTK/DuLieu_NCK" element={<PhieuNhapChuyenKho />} />
+          <Route path="/DuLieuTK/DuLieu_XDC" element={<PhieuXuatDieuChinh />} />
+          <Route path="/DuLieuTK/DuLieu_XCK" element={<PhieuXuatChuyenKho />} />
           <Route path="/DuLieuDR/DuLieu_PBS" element={<PhieuBanHang />} />
           <Route path="/DuLieuTC/DuLieu_PCT" element={<PhieuChiTien />} />
           <Route path="/DuLieuTC/DuLieu_PTT" element={<PhieuThuTien />} />
-          <Route path="/TruyVan_CanDoiNXT_TheoKho" element={<NhapXuatTonKho path="TruyVan_CanDoiNXT_TheoKho" />} />
+          <Route path="/TruyVan_CongNoDauRa" element={<CongNoDauRa />} />
+
+          <Route path="/TruyVan_CanDoiNXT_TheoKho" element={<NhapXuatTonKho />} />
           <Route path="*" element={<ErrorPage />} />
         </Routes>
       </main>

@@ -44,10 +44,12 @@ export const useSearch = (data) => {
           SoLuongXuat_XDC,
           SoLuongTonCK,
           SoLuongXuat,
-          // NDC, PLR
+          // NDC, PLR , XDC, XCK, NCK
           SoChungTu,
           NgayCTu,
+          SoThamChieu,
           ThongTinKho,
+          ThongTinKhoNhan,
           SoMatHang,
           GhiChu,
           NhomHang,
@@ -94,6 +96,8 @@ export const useSearch = (data) => {
           (SoChungTu || '').toLowerCase().includes(search.toLowerCase()) ||
           (NgayCTu?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (ThongTinKho || '').toLowerCase().includes(search.toLowerCase()) ||
+          (ThongTinKhoNhan || '').toLowerCase().includes(search.toLowerCase()) ||
+          (SoThamChieu || '').toLowerCase().includes(search.toLowerCase()) ||
           (SoMatHang?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (GhiChu || '').toLowerCase().includes(search.toLowerCase()) ||
           (TongTriGiaKho?.toString() || '').toLowerCase().includes(search.toLowerCase()) ||

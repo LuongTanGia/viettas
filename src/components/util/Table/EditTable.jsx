@@ -79,7 +79,7 @@ const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourT
 
         const updatedRow = newData[index]
 
-        if (updatedRow && updatedRow.SoLuong !== undefined && updatedRow.DonGia !== undefined && tableName !== 'PhieuLapRap') {
+        if (updatedRow && updatedRow.SoLuong !== undefined && updatedRow.DonGia !== undefined && tableName !== 'PhieuLapRap' && tableName !== 'PhieuNhapDieuChinh') {
           updatedRow.TienHang = (updatedRow.SoLuong * updatedRow.DonGia).toFixed(ThongSo.SOLESOTIEN)
           updatedRow.TienHang = parseFloat(updatedRow.TienHang)
           updatedRow.TienThue = ((updatedRow.TienHang * updatedRow.TyLeThue) / 100).toFixed(ThongSo.SOLESOTIEN)
@@ -578,7 +578,7 @@ const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourT
         dataSource={dataSource}
         columns={columns}
         scroll={{
-          x: tableName == 'PhieuLapRap' ? 700 : 1500,
+          x: tableName == 'PhieuLapRap' || tableName == 'PhieuNhapDieuChinh' ? 700 : 1500,
           y: true,
         }}
         size="small"
@@ -657,9 +657,9 @@ const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourT
 
                 {columns
                   .filter((column) => column.render)
-                  .map((column) => {
+                  .map((column, index) => {
                     return (
-                      <Table.Summary.Cell key={column.key} className="text-end font-bold  bg-[#f1f1f1] ">
+                      <Table.Summary.Cell key={`summary-cell-${index}`} className="text-end font-bold  bg-[#f1f1f1] ">
                         <p className="opacity-0">0</p>
                       </Table.Summary.Cell>
                     )

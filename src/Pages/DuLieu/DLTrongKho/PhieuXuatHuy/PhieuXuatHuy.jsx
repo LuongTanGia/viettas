@@ -19,21 +19,21 @@ import { RETOKEN, exportToExcel } from '../../../../action/Actions'
 import ActionButton from '../../../../components/util/Button/ActionButton'
 import HighlightedCell from '../../../../components/hooks/HighlightedCell'
 import SimpleBackdrop from '../../../../components/util/Loading/LoadingPage'
-import NDCXem from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuNDC/NDCXem'
-import NDCXoa from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuNDC/NDCXoa'
-import NDCEdit from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuNDC/NDCEdit'
-import { nameColumsPhieuNhapDieuChinh } from '../../../../components/util/Table/ColumnName'
-import NDCPrint from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuNDC/NDCPrint'
-import NDCCreate from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuNDC/NDCCreate'
+import { nameColumsPhieuXuatHuy } from '../../../../components/util/Table/ColumnName'
+import HUYCreate from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuXHuy/HUYCreate'
+import HUYXem from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuXHuy/HUYXem'
+import HUYEdit from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuXHuy/HUYEdit'
+import HUYXoa from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuXHuy/HUYXoa'
+import HUYPrint from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuXHuy/HUYPrint'
 
-const PhieuNhapDieuChinh = () => {
+const PhieuXuatHuy = () => {
   const navigate = useNavigate()
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
-  const [dataNDC, setDataNDC] = useState('')
+  const [dataHUY, setDataHUY] = useState('')
   const [isDataKhoDC, setIsDataKhoDC] = useState('')
-  const [setSearchHangHoa, filteredHangHoa, searchHangHoa] = useSearch(dataNDC)
+  const [setSearchHangHoa, filteredHangHoa, searchHangHoa] = useSearch(dataHUY)
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [isShowOption, setIsShowOption] = useState(false)
   const [isShowModal, setIsShowModal] = useState(false)
@@ -56,7 +56,7 @@ const PhieuNhapDieuChinh = () => {
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
     setcheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
-    const key = Object.keys(dataNDC ? dataNDC[0] : []).filter((key) => key !== 'SoThamChieu' && key !== 'MaKho_Nhan' && key !== 'ThongTinKhoNhan' && key !== 'MaKho')
+    const key = Object.keys(dataHUY ? dataHUY[0] : []).filter((key) => key !== 'SoThamChieu' && key !== 'MaKho_Nhan' && key !== 'ThongTinKhoNhan' && key !== 'MaKho')
     setOptions(key)
   }, [selectVisible])
 
@@ -90,11 +90,11 @@ const PhieuNhapDieuChinh = () => {
   }, [dateData?.NgayBatDau, dateData?.NgayKetThuc])
 
   useEffect(() => {
-    const getDataNDC = async () => {
+    const getDataHUY = async () => {
       try {
         setTableLoad(true)
         if (isLoading == true) {
-          const response = await categoryAPI.GetDataNDC(
+          const response = await categoryAPI.GetDataHUY(
             dateData == {}
               ? {}
               : {
@@ -104,14 +104,14 @@ const PhieuNhapDieuChinh = () => {
             TokenAccess,
           )
           if (response.data.DataError == 0) {
-            setDataNDC(response.data.DataResults)
+            setDataHUY(response.data.DataResults)
             setTableLoad(false)
           } else if (response.data.DataError == -104) {
-            setDataNDC([])
+            setDataHUY([])
             setTableLoad(false)
           } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
             await RETOKEN()
-            getDataNDC()
+            getDataHUY()
           }
         }
       } catch (error) {
@@ -119,7 +119,7 @@ const PhieuNhapDieuChinh = () => {
         setTableLoad(false)
       }
     }
-    getDataNDC()
+    getDataHUY()
   }, [searchHangHoa, isLoading, targetRow, dateData?.NgayBatDau, dateData?.NgayKetThuc])
 
   useEffect(() => {
@@ -143,7 +143,7 @@ const PhieuNhapDieuChinh = () => {
   useEffect(() => {
     const getDataQuyenHan = async () => {
       try {
-        const response = await categoryAPI.QuyenHan('DuLieu_NDC', TokenAccess)
+        const response = await categoryAPI.QuyenHan('DuLieu_HUY', TokenAccess)
         if (response.data.DataError === 0) {
           setDataCRUD(response.data)
           setIsLoading(true)
@@ -567,7 +567,7 @@ const PhieuNhapDieuChinh = () => {
                 <div className="flex justify-between gap-2 relative">
                   <div className="flex gap-1">
                     <div className="flex items-center gap-2 py-0.5">
-                      <h1 className="text-lg font-bold uppercase">Phiếu Nhập Kho Điều Chỉnh</h1>
+                      <h1 className="text-lg font-bold uppercase">Phiếu Xuất Kho Hủy</h1>
                       <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
                     </div>
                     {isShowSearch && (
@@ -642,7 +642,7 @@ const PhieuNhapDieuChinh = () => {
                                   {options.map((item) => (
                                     <Col span={8} key={item}>
                                       <Checkbox value={item} checked={true}>
-                                        {nameColumsPhieuNhapDieuChinh[item]}
+                                        {nameColumsPhieuXuatHuy[item]}
                                       </Checkbox>
                                     </Col>
                                   ))}
@@ -803,15 +803,15 @@ const PhieuNhapDieuChinh = () => {
               <div>
                 {isShowModal &&
                   (actionType == 'create' ? (
-                    <NDCCreate close={() => setIsShowModal(false)} loadingData={handleLoading} setTargetRow={setTargetRow} />
+                    <HUYCreate close={() => setIsShowModal(false)} loadingData={handleLoading} setTargetRow={setTargetRow} />
                   ) : actionType == 'view' ? (
-                    <NDCXem close={() => setIsShowModal(false)} dataNDC={isDataKhoDC} />
+                    <HUYXem close={() => setIsShowModal(false)} dataHUY={isDataKhoDC} />
                   ) : actionType == 'edit' ? (
-                    <NDCEdit close={() => setIsShowModal(false)} dataNDC={isDataKhoDC} loadingData={handleLoading} setTargetRow={setTargetRow} />
+                    <HUYEdit close={() => setIsShowModal(false)} dataHUY={isDataKhoDC} loadingData={handleLoading} setTargetRow={setTargetRow} />
                   ) : actionType == 'delete' ? (
-                    <NDCXoa close={() => setIsShowModal(false)} dataNDC={isDataKhoDC} loadingData={handleLoading} setTargetRow={setTargetRow} />
+                    <HUYXoa close={() => setIsShowModal(false)} dataHUY={isDataKhoDC} loadingData={handleLoading} setTargetRow={setTargetRow} />
                   ) : actionType == 'print' ? (
-                    <NDCPrint close={() => setIsShowModal(false)} />
+                    <HUYPrint close={() => setIsShowModal(false)} />
                   ) : null)}
               </div>
             </>
@@ -822,4 +822,4 @@ const PhieuNhapDieuChinh = () => {
   )
 }
 
-export default PhieuNhapDieuChinh
+export default PhieuXuatHuy

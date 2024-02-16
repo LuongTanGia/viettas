@@ -2209,7 +2209,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
           <div>
             {isShowModal && hangHoaForm.LapRap == true ? (
               <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col  bg-white  p-2 rounded shadow-custom overflow-hidden z-10">
-                <div className="flex flex-col gap-2 p-2 justify-between xl:w-[95vw] md:w-[100vw] min-h-[90vh]">
+                <div className="flex flex-col gap-2 p-2 justify-between xl:w-[95vw] md:w-[100vw]">
                   <div className="flex gap-2 items-center">
                     <div className="flex items-center gap-2 py-1">
                       <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
@@ -2233,7 +2233,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                   <div className="p-2 rounded m-1 flex flex-col gap-2 border-2">
                     <Table
                       loading={tableLoad}
-                      className="h450"
+                      className="table_HH"
                       bordered
                       dataSource={filteredHangHoa}
                       columns={title}

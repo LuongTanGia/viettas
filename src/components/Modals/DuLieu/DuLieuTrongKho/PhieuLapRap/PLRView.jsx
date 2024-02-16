@@ -175,39 +175,45 @@ const PLRView = ({ close, dataPLR }) => {
                       <div className="flex gap-1">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người tạo</label>
-                          <input
-                            className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-[1rem] overflow-ellipsis truncate"
-                            value={dataPLRView?.NguoiTao || ''}
-                            readOnly
-                            title={dataPLRView?.NguoiTao || ''}
-                          />
+                          <Tooltip title={dataPLRView?.NguoiTao} color="blue">
+                            <input
+                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-[1rem] overflow-ellipsis truncate"
+                              value={dataPLRView?.NguoiTao || ''}
+                              readOnly
+                            />
+                          </Tooltip>
                         </div>
                         <div className="flex gap-1 items-center">
                           <label className="text-sm">Lúc</label>
-                          <input
-                            className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
-                            value={moment(dataPLRView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
-                            readOnly
-                          />
+                          <Tooltip title={moment(dataPLRView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''} color="blue">
+                            <input
+                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
+                              value={moment(dataPLRView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
+                              readOnly
+                            />
+                          </Tooltip>
                         </div>
                       </div>
                       <div className="flex gap-1">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người sửa</label>
-                          <input
-                            className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border  outline-none text-[1rem] overflow-ellipsis truncate"
-                            value={dataPLRView?.NguoiSuaCuoi || ''}
-                            readOnly
-                            title={dataPLRView?.NguoiSuaCuoi || ''}
-                          />
+                          <Tooltip title={dataPLRView?.NguoiSuaCuoi} color="blue">
+                            <input
+                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border  outline-none text-[1rem] overflow-ellipsis truncate"
+                              value={dataPLRView?.NguoiSuaCuoi || ''}
+                              readOnly
+                            />
+                          </Tooltip>
                         </div>
                         <div className="flex gap-1 items-center">
                           <label className="text-sm">Lúc</label>
-                          <input
-                            className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
-                            value={dataPLRView?.NgaySuaCuoi ? moment(dataPLRView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                            readOnly
-                          />
+                          <Tooltip title={dataPLRView?.NgaySuaCuoi ? moment(dataPLRView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''} color="blue">
+                            <input
+                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
+                              value={dataPLRView?.NgaySuaCuoi ? moment(dataPLRView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
+                              readOnly
+                            />
+                          </Tooltip>
                         </div>
                       </div>
                     </div>

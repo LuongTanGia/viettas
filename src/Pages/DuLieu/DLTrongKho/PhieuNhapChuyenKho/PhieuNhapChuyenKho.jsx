@@ -9,31 +9,29 @@ import { CgCloseO } from 'react-icons/cg'
 import { TfiMoreAlt } from 'react-icons/tfi'
 import { DateField } from '@mui/x-date-pickers'
 import { RiFileExcel2Fill } from 'react-icons/ri'
-import { FaSearch, FaEyeSlash } from 'react-icons/fa'
-import { IoMdAddCircleOutline } from 'react-icons/io'
+import { FaSearch, FaEyeSlash, FaCheck } from 'react-icons/fa'
 import { CloseSquareFilled } from '@ant-design/icons'
-import { MdEdit, MdDelete, MdPrint } from 'react-icons/md'
-import categoryAPI from '../../../../API/linkAPI'
+import { MdDelete, MdPrint } from 'react-icons/md'
 import { useSearch } from '../../../../components/hooks/Search'
+import categoryAPI from '../../../../API/linkAPI'
 import { RETOKEN, exportToExcel } from '../../../../action/Actions'
-import ActionButton from '../../../../components/util/Button/ActionButton'
 import HighlightedCell from '../../../../components/hooks/HighlightedCell'
+import ActionButton from '../../../../components/util/Button/ActionButton'
 import SimpleBackdrop from '../../../../components/util/Loading/LoadingPage'
-import NDCXem from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuNDC/NDCXem'
-import NDCXoa from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuNDC/NDCXoa'
-import NDCEdit from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuNDC/NDCEdit'
-import { nameColumsPhieuNhapDieuChinh } from '../../../../components/util/Table/ColumnName'
-import NDCPrint from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuNDC/NDCPrint'
-import NDCCreate from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuNDC/NDCCreate'
+import { nameColumsPhieuNhapChuyenKho } from '../../../../components/util/Table/ColumnName'
+import NCKView from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuNCK/NCKView'
+import NCKDel from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuNCK/NCKDel'
+import NCKPrint from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuNCK/NCKPrint'
+import NCKConfirm from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuNCK/NCKConfirm'
 
-const PhieuNhapDieuChinh = () => {
+const PhieuNhapChuyenKho = () => {
   const navigate = useNavigate()
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
-  const [dataNDC, setDataNDC] = useState('')
+  const [dataNCK, setDataNCK] = useState('')
   const [isDataKhoDC, setIsDataKhoDC] = useState('')
-  const [setSearchHangHoa, filteredHangHoa, searchHangHoa] = useSearch(dataNDC)
+  const [setSearchHangHoa, filteredHangHoa, searchHangHoa] = useSearch(dataNCK)
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [isShowOption, setIsShowOption] = useState(false)
   const [isShowModal, setIsShowModal] = useState(false)
@@ -56,7 +54,7 @@ const PhieuNhapDieuChinh = () => {
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
     setcheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
-    const key = Object.keys(dataNDC ? dataNDC[0] : []).filter((key) => key !== 'SoThamChieu' && key !== 'MaKho_Nhan' && key !== 'ThongTinKhoNhan' && key !== 'MaKho')
+    const key = Object.keys(dataNCK ? dataNCK[0] : []).filter((key) => key !== 'MaKho_Nhan' && key !== 'ThongTinKhoNhan' && key !== 'MaKho')
     setOptions(key)
   }, [selectVisible])
 
@@ -90,11 +88,11 @@ const PhieuNhapDieuChinh = () => {
   }, [dateData?.NgayBatDau, dateData?.NgayKetThuc])
 
   useEffect(() => {
-    const getDataNDC = async () => {
+    const getDataNCK = async () => {
       try {
         setTableLoad(true)
         if (isLoading == true) {
-          const response = await categoryAPI.GetDataNDC(
+          const response = await categoryAPI.GetDataNCK(
             dateData == {}
               ? {}
               : {
@@ -104,14 +102,14 @@ const PhieuNhapDieuChinh = () => {
             TokenAccess,
           )
           if (response.data.DataError == 0) {
-            setDataNDC(response.data.DataResults)
+            setDataNCK(response.data.DataResults)
             setTableLoad(false)
           } else if (response.data.DataError == -104) {
-            setDataNDC([])
+            setDataNCK([])
             setTableLoad(false)
           } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
             await RETOKEN()
-            getDataNDC()
+            getDataNCK()
           }
         }
       } catch (error) {
@@ -119,7 +117,7 @@ const PhieuNhapDieuChinh = () => {
         setTableLoad(false)
       }
     }
-    getDataNDC()
+    getDataNCK()
   }, [searchHangHoa, isLoading, targetRow, dateData?.NgayBatDau, dateData?.NgayKetThuc])
 
   useEffect(() => {
@@ -143,7 +141,7 @@ const PhieuNhapDieuChinh = () => {
   useEffect(() => {
     const getDataQuyenHan = async () => {
       try {
-        const response = await categoryAPI.QuyenHan('DuLieu_NDC', TokenAccess)
+        const response = await categoryAPI.QuyenHan('DuLieu_NCK', TokenAccess)
         if (response.data.DataError === 0) {
           setDataCRUD(response.data)
           setIsLoading(true)
@@ -193,15 +191,7 @@ const PhieuNhapDieuChinh = () => {
       setSearchHangHoa(event.target.value)
     }, 300)
   }
-  const handleCreate = () => {
-    setIsShowModal(true)
-    setActionType('create')
-  }
-  const handleEdit = (record) => {
-    setIsShowModal(true)
-    setActionType('edit')
-    setIsDataKhoDC(record)
-  }
+
   const handleView = (record) => {
     setIsShowModal(true)
     setIsDataKhoDC(record)
@@ -215,6 +205,10 @@ const PhieuNhapDieuChinh = () => {
   const handlePrint = () => {
     setIsShowModal(true)
     setActionType('print')
+  }
+  const handleConfirm = () => {
+    setIsShowModal(true)
+    setActionType('confirm')
   }
   const handleLoading = () => {
     setTableLoad(true)
@@ -362,24 +356,6 @@ const PhieuNhapDieuChinh = () => {
         </span>
       ),
     },
-    ...(dataThongSo.HIENTHIGIATRIKHO == true
-      ? [
-          {
-            title: 'Trị Giá',
-            dataIndex: 'TongTriGiaKho',
-            key: 'TongTriGiaKho',
-            align: 'center',
-            width: 120,
-            showSorterTooltip: false,
-            sorter: (a, b) => a.TongSoLuong - b.TongSoLuong,
-            render: (text) => (
-              <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 || text === null ? 'text-gray-300' : ''}`}>
-                <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOTIEN)} search={searchHangHoa} />
-              </span>
-            ),
-          },
-        ]
-      : []),
     {
       title: 'Ghi chú',
       dataIndex: 'GhiChu',
@@ -391,6 +367,7 @@ const PhieuNhapDieuChinh = () => {
         <Tooltip title={text} color="blue">
           <div
             style={{
+              display: 'flex',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
@@ -408,6 +385,7 @@ const PhieuNhapDieuChinh = () => {
       dataIndex: 'NguoiTao',
       key: 'NguoiTao',
       align: 'center',
+      width: 250,
       showSorterTooltip: false,
       sorter: (a, b) => a.NguoiTao.localeCompare(b.NguoiTao),
       render: (text) => (
@@ -430,6 +408,7 @@ const PhieuNhapDieuChinh = () => {
       dataIndex: 'NgayTao',
       key: 'NgayTao',
       align: 'center',
+      width: 180,
       showSorterTooltip: false,
       sorter: (a, b) => {
         const dateA = new Date(a.NgayTao)
@@ -447,6 +426,7 @@ const PhieuNhapDieuChinh = () => {
       dataIndex: 'NguoiSuaCuoi',
       key: 'NguoiSuaCuoi',
       align: 'center',
+      width: 250,
       showSorterTooltip: false,
       sorter: (a, b) => (a.NguoiSuaCuoi?.toString() || '').localeCompare(b.NguoiSuaCuoi?.toString() || ''),
       render: (text) => (
@@ -469,6 +449,7 @@ const PhieuNhapDieuChinh = () => {
       dataIndex: 'NgaySuaCuoi',
       key: 'NgaySuaCuoi',
       align: 'center',
+      width: 180,
       showSorterTooltip: false,
       sorter: (a, b) => {
         const dateA = new Date(a.NgaySuaCuoi)
@@ -481,21 +462,12 @@ const PhieuNhapDieuChinh = () => {
       title: ' ',
       key: 'operation',
       fixed: 'right',
-      width: 100,
+      width: 50,
       align: 'center',
       render: (record) => {
         return (
           <>
             <div className="flex gap-2 items-center justify-center">
-              <div
-                className={`${
-                  dataCRUD?.EDIT == false ? 'border-gray-400 bg-gray-400 hover:text-gray-500' : 'border-yellow-400 bg-yellow-400 hover:text-yellow-400'
-                } ' p-[4px] border-2 rounded text-slate-50 hover:bg-white cursor-pointer'`}
-                title="Sửa"
-                onClick={() => (dataCRUD?.EDIT == false ? '' : handleEdit(record))}
-              >
-                <MdEdit />
-              </div>
               <div
                 className={`${
                   dataCRUD?.DEL == false ? 'border-gray-400 bg-gray-400 hover:text-gray-500' : 'border-red-500 bg-red-500 hover:text-red-500'
@@ -567,7 +539,7 @@ const PhieuNhapDieuChinh = () => {
                 <div className="flex justify-between gap-2 relative">
                   <div className="flex gap-1">
                     <div className="flex items-center gap-2 py-0.5">
-                      <h1 className="text-lg font-bold uppercase">Phiếu Nhập Kho Điều Chỉnh</h1>
+                      <h1 className="text-lg font-bold uppercase">Phiếu Nhập Chuyển Kho</h1>
                       <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
                     </div>
                     {isShowSearch && (
@@ -595,6 +567,15 @@ const PhieuNhapDieuChinh = () => {
                     {isShowOption && (
                       <div className="absolute flex flex-col gap-2 bg-slate-200 p-3 top-[12] right-[2.5%] rounded-lg z-10 duration-500 shadow-custom">
                         <div className={`flex ${selectVisible ? '' : 'flex-col'} items-center gap-2`}>
+                          <ActionButton
+                            handleAction={handleConfirm}
+                            title={'Xác Nhận'}
+                            icon={<FaCheck className="w-5 h-5" />}
+                            color={'slate-50'}
+                            background={'blue-500'}
+                            color_hover={'blue-500'}
+                            bg_hover={'white'}
+                          />
                           <ActionButton
                             handleAction={handlePrint}
                             title={'In Phiếu'}
@@ -642,7 +623,7 @@ const PhieuNhapDieuChinh = () => {
                                   {options.map((item) => (
                                     <Col span={8} key={item}>
                                       <Checkbox value={item} checked={true}>
-                                        {nameColumsPhieuNhapDieuChinh[item]}
+                                        {nameColumsPhieuNhapChuyenKho[item]}
                                       </Checkbox>
                                     </Col>
                                   ))}
@@ -713,17 +694,6 @@ const PhieuNhapDieuChinh = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <ActionButton
-                      handleAction={() => (dataCRUD?.ADD == false ? '' : handleCreate())}
-                      title={'Thêm Sản Phẩm'}
-                      icon={<IoMdAddCircleOutline className="w-6 h-6" />}
-                      color={'slate-50'}
-                      background={dataCRUD?.ADD == false ? 'gray-400' : 'blue-500'}
-                      color_hover={dataCRUD?.ADD == false ? 'gray-500' : 'blue-500'}
-                      bg_hover={'white'}
-                    />
-                  </div>
                 </div>
                 <div id="my-table">
                   <Table
@@ -748,7 +718,7 @@ const PhieuNhapDieuChinh = () => {
                     rowClassName={(record) => (record.SoChungTu === targetRow ? 'highlighted-row' : '')}
                     size="small"
                     scroll={{
-                      x: 2000,
+                      x: 2200,
                       y: 400,
                     }}
                     style={{
@@ -802,16 +772,14 @@ const PhieuNhapDieuChinh = () => {
               </div>
               <div>
                 {isShowModal &&
-                  (actionType == 'create' ? (
-                    <NDCCreate close={() => setIsShowModal(false)} loadingData={handleLoading} setTargetRow={setTargetRow} />
+                  (actionType == 'confirm' ? (
+                    <NCKConfirm close={() => setIsShowModal(false)} loadingData={handleLoading} setTargetRow={setTargetRow} />
                   ) : actionType == 'view' ? (
-                    <NDCXem close={() => setIsShowModal(false)} dataNDC={isDataKhoDC} />
-                  ) : actionType == 'edit' ? (
-                    <NDCEdit close={() => setIsShowModal(false)} dataNDC={isDataKhoDC} loadingData={handleLoading} setTargetRow={setTargetRow} />
+                    <NCKView close={() => setIsShowModal(false)} dataNCK={isDataKhoDC} />
                   ) : actionType == 'delete' ? (
-                    <NDCXoa close={() => setIsShowModal(false)} dataNDC={isDataKhoDC} loadingData={handleLoading} setTargetRow={setTargetRow} />
+                    <NCKDel close={() => setIsShowModal(false)} dataNCK={isDataKhoDC} loadingData={handleLoading} setTargetRow={setTargetRow} />
                   ) : actionType == 'print' ? (
-                    <NDCPrint close={() => setIsShowModal(false)} />
+                    <NCKPrint close={() => setIsShowModal(false)} />
                   ) : null)}
               </div>
             </>
@@ -822,4 +790,4 @@ const PhieuNhapDieuChinh = () => {
   )
 }
 
-export default PhieuNhapDieuChinh
+export default PhieuNhapChuyenKho

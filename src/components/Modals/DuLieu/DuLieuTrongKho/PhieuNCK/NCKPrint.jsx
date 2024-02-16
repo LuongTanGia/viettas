@@ -11,7 +11,7 @@ import ActionButton from '../../../../util/Button/ActionButton'
 import SimpleBackdrop from '../../../../util/Loading/LoadingPage'
 import { RETOKEN, base64ToPDF } from '../../../../../action/Actions'
 
-const NDCPrint = ({ close, dataPrint }) => {
+const NCKPrint = ({ close, dataPrint }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const [khoanNgayFrom, setKhoanNgayFrom] = useState()
   const [khoanNgayTo, setKhoanNgayTo] = useState()
@@ -60,7 +60,7 @@ const NDCPrint = ({ close, dataPrint }) => {
     const getListChungTu = async () => {
       try {
         if (isLoading == true) {
-          const response = await categoryAPI.ListChungTuNDC({ NgayBatDau: dateData?.NgayBatDau, NgayKetThuc: dateData?.NgayKetThuc }, TokenAccess)
+          const response = await categoryAPI.ListChungTuNCK({ NgayBatDau: dateData?.NgayBatDau, NgayKetThuc: dateData?.NgayKetThuc }, TokenAccess)
           if (response.data.DataError == 0) {
             setDataListChungTu(response.data.DataResults)
             setIsLoading(true)
@@ -88,7 +88,7 @@ const NDCPrint = ({ close, dataPrint }) => {
   }
   const handlePrint = async () => {
     try {
-      const response = await categoryAPI.NDCPrint(
+      const response = await categoryAPI.NCKPrint(
         dataPrint
           ? {
               NgayBatDau: dayjs(dataPrint.NgayCTu).format('YYYY-MM-DDTHH:mm:ss'),
@@ -108,7 +108,6 @@ const NDCPrint = ({ close, dataPrint }) => {
       )
       if (response.data.DataError == 0) {
         base64ToPDF(response.data.DataResults)
-        close()
       } else {
         toast.error(response.data.DataErrorDescription)
       }
@@ -160,8 +159,8 @@ const NDCPrint = ({ close, dataPrint }) => {
               </div>
               <div className="flex flex-col gap-4 border-2 p-3">
                 <div className="flex justify-center">
-                  <div className="DatePicker_NDCKho flex justify-center gap-4">
-                    <div className="DatePicker_NDCKho flex items-center gap-2">
+                  <div className="DatePicker_NCKKho flex justify-center gap-4">
+                    <div className="DatePicker_NCKKho flex items-center gap-2">
                       <label>Từ</label>
                       <DateField
                         className="max-w-[180px]"
@@ -316,4 +315,4 @@ const NDCPrint = ({ close, dataPrint }) => {
   )
 }
 
-export default NDCPrint
+export default NCKPrint

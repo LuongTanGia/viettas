@@ -12,12 +12,12 @@ function Header({ handleToggleSidebar, refs }) {
   const user = localStorage.getItem('User')
   const logout = () => {
     window.localStorage.removeItem('firstLogin')
+    window.localStorage.removeItem('authLogin')
     window.localStorage.removeItem('TKN')
     window.localStorage.removeItem('tokenDuLieu')
     window.localStorage.removeItem('RTKN')
     window.localStorage.removeItem('userName')
-    window.localStorage.removeItem('path')
-    window.localStorage.removeItem('dataCRUD')
+    window.localStorage.removeItem('dateLogin')
     window.location.href = '/login'
   }
   const handeleChange = () => {

@@ -21,7 +21,7 @@ import { nameColumsNhapXuatTon } from '../../components/util/Table/ColumnName'
 import { useNavigate } from 'react-router-dom'
 import { DateField } from '@mui/x-date-pickers'
 
-const NhapXuatTonKho = ({ path }) => {
+const NhapXuatTonKho = () => {
   const navigate = useNavigate()
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
@@ -106,9 +106,9 @@ const NhapXuatTonKho = ({ path }) => {
   }, [dataCRUD])
 
   useEffect(() => {
-    const getDataQuyenHan = async (path) => {
+    const getDataQuyenHan = async () => {
       try {
-        const response = await categoryAPI.QuyenHan(path, TokenAccess)
+        const response = await categoryAPI.QuyenHan('TruyVan_CanDoiNXT_TheoKho', TokenAccess)
         if (response.data.DataError === 0) {
           setDataCRUD(response.data)
           setIsLoading(true)
@@ -122,7 +122,7 @@ const NhapXuatTonKho = ({ path }) => {
       }
     }
 
-    getDataQuyenHan(path)
+    getDataQuyenHan()
   }, [])
 
   useEffect(() => {
@@ -677,7 +677,7 @@ const NhapXuatTonKho = ({ path }) => {
                       <ActionButton
                         handleAction={() => {
                           setIsShowNotify(false)
-                          navigate('/')
+                          navigate(-1)
                         }}
                         title={'Đóng'}
                         color={'slate-50'}

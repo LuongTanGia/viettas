@@ -1,37 +1,37 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
-import { useEffect, useState, useMemo } from 'react'
-import { toast } from 'react-toastify'
-import { FaSearch } from 'react-icons/fa'
-import { IoMdAddCircle } from 'react-icons/io'
+import { useEffect, useState, useCallback, useMemo } from 'react'
+import { Checkbox, FloatButton, InputNumber, Select, Table, Tooltip } from 'antd'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
-import { Checkbox, Table, Tooltip, Select, FloatButton } from 'antd'
+import { FaSearch } from 'react-icons/fa'
+import { toast } from 'react-toastify'
+import { IoMdClose, IoMdAddCircle } from 'react-icons/io'
 import dayjs from 'dayjs'
-import NDCPrint from './NDCPrint'
-import categoryAPI from '../../../../../API/linkAPI'
+import moment from 'moment'
+import XSDPrint from './XSDPrint'
 import { useSearch } from '../../../../hooks/Search'
+import categoryAPI from '../../../../../API/linkAPI'
 import logo from '../../../../../assets/VTS-iSale.ico'
 import { RETOKEN } from '../../../../../action/Actions'
-import EditTable from '../../../../util/Table/EditTable'
 import ActionButton from '../../../../util/Button/ActionButton'
 import HighlightedCell from '../../../../hooks/HighlightedCell'
 import SimpleBackdrop from '../../../../util/Loading/LoadingPage'
-import { nameColumsPhieuNhapDieuChinh } from '../../../../util/Table/ColumnName'
+import EditTable from '../../../../util/Table/EditTable'
+import { nameColumsPhieuXuatSuDung } from '../../../../util/Table/ColumnName'
 
-const NDCCreate = ({ close, loadingData, setTargetRow }) => {
+const XSDEdit = ({ close, dataXSD, loadingData, setTargetRow }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
-  const [SoCTu, setSoCTu] = useState('')
   const [dataKhoHang, setDataKhoHang] = useState('')
   const [isShowModal, setIsShowModal] = useState(false)
   const [dataHangHoa, setDataHangHoa] = useState('')
+  const [dataXSDView, setDataXSDView] = useState('')
   const [setSearchHangHoa, filteredHangHoa, searchHangHoa] = useSearch(dataHangHoa)
   const [selectedRowData, setSelectedRowData] = useState([])
-  const [valueDate, setValueDate] = useState(dayjs(new Date()))
-  const [isLoading, setIsLoading] = useState(false)
   const [actionType, setActionType] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
   const [isShowSearch, setIsShowSearch] = useState(false)
 
   const innitProduct = {
@@ -52,22 +52,14 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
       },
     ],
   }
-  const [NDCForm, setNDCForm] = useState(() => {
-    return innitProduct
+  const [XSDForm, setXSDForm] = useState(() => {
+    return dataXSD ? { ...dataXSD } : innitProduct
   })
-
-  const [errors, setErrors] = useState({
-    MaKho: '',
-  })
-
-  useEffect(() => {
-    setTargetRow([])
-  }, [])
-
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.keyCode === 120) {
         setIsShowModal(true)
+        setActionType('choose')
       }
     }
     document.addEventListener('keydown', handleKeyDown)
@@ -77,15 +69,18 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
   }, [isShowModal])
 
   useEffect(() => {
-    const getDataKhoHangNDC = async () => {
+    setTargetRow([])
+  }, [])
+
+  useEffect(() => {
+    const getDataKhoHangXSD = async () => {
       try {
-        const response = await categoryAPI.ListKhoHangNDC(TokenAccess)
+        const response = await categoryAPI.ListKhoHangXSD(TokenAccess)
         if (response.data.DataError == 0) {
           setDataKhoHang(response.data.DataResults)
-          setIsLoading(true)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
-          getDataKhoHangNDC()
+          getDataKhoHangXSD()
         }
       } catch (error) {
         console.log(error)
@@ -93,20 +88,20 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
       }
     }
     if (!isLoading) {
-      getDataKhoHangNDC()
+      getDataKhoHangXSD()
     }
   }, [isLoading])
 
   useEffect(() => {
-    const getDataHangHoaNDC = async () => {
+    const getDataHangHoaXSD = async () => {
       try {
-        const response = await categoryAPI.ListHangHoaNDC(TokenAccess)
+        const response = await categoryAPI.ListHangHoaXSD(TokenAccess)
         if (response.data.DataError == 0) {
-          setDataHangHoa(response.data.DataResults)
           setIsLoading(true)
+          setDataHangHoa(response.data.DataResults)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
-          getDataHangHoaNDC()
+          getDataHangHoaXSD()
         }
       } catch (error) {
         console.log(error)
@@ -114,9 +109,34 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
       }
     }
     if (!isLoading) {
-      getDataHangHoaNDC()
+      getDataHangHoaXSD()
     }
   }, [isLoading])
+
+  useEffect(() => {
+    const handleView = async () => {
+      try {
+        const response = await categoryAPI.XSDInfoEdit(dataXSD?.SoChungTu, TokenAccess)
+        if (response.data.DataError == 0) {
+          setDataXSDView(response.data.DataResult)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleView()
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    if (!isLoading) {
+      handleView()
+    }
+  }, [isLoading])
+
+  useEffect(() => {
+    if (dataXSDView?.DataDetails) {
+      setSelectedRowData([...dataXSDView.DataDetails])
+    }
+  }, [dataXSDView])
 
   const handleSearch = (event) => {
     setSearchHangHoa(event.target.value)
@@ -159,17 +179,14 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
       const index = selectedRowData.findIndex((item) => item.MaHang === newRow.MaHang)
       const oldQuantity = selectedRowData[index].SoLuong
       selectedRowData[index].SoLuong = oldQuantity + newRow.SoLuong
-      setNDCForm({ ...NDCForm, DataDetails: selectedRowData })
+      setXSDForm({ ...XSDForm, DataDetails: selectedRowData })
     }
   }
-
-  const handleCreate = async (isSave = true, isPrint = true) => {
-    if (!NDCForm?.MaKho) {
-      setErrors({
-        MaKho: NDCForm?.MaKho ? '' : 'Kho không được trống',
-      })
-      return
-    }
+  const handlePrint = () => {
+    setIsShowModal(true)
+    setActionType('print')
+  }
+  const handleEdit = async (isPrint = true) => {
     try {
       const newData = selectedRowData.map((item, index) => {
         return {
@@ -177,27 +194,18 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
           STT: index + 1,
         }
       })
-      const response = await categoryAPI.NDCCreate({ ...NDCForm, DataDetails: newData, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss') }, TokenAccess)
+      const response = await categoryAPI.XSDEdit({ SoChungTu: dataXSD?.SoChungTu, Data: { ...XSDForm, DataDetails: newData } }, TokenAccess)
       if (response.data.DataError == 0) {
-        isPrint
-          ? (handlePrint(), setNDCForm([]), setSelectedRowData([]))
-          : isSave
-            ? (toast.success('Tạo thành công', { autoClose: 1000 }), setNDCForm([]), setSelectedRowData([]))
-            : (close(), toast.success('Tạo thành công', { autoClose: 1000 }))
+        isPrint ? handlePrint() : (close(), toast.success('Sửa thành công', { autoClose: 1000 }))
         loadingData()
-        setSoCTu(response.data.DataResults[0].SoChungTu)
-        setTargetRow(response.data.DataResults[0].SoChungTu)
+        setTargetRow(dataXSD?.SoChungTu)
       } else {
-        console.log(response.data)
+        console.log('sai', { SoChungTu: dataXSD?.SoChungTu, Data: { ...XSDForm, DataDetails: selectedRowData } })
         toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
       }
     } catch (error) {
       console.log(error)
     }
-  }
-  const handlePrint = () => {
-    setIsShowModal(true)
-    setActionType('print')
   }
   const isAdd = useMemo(() => selectedRowData.map((item) => item.MaHang).includes('Chọn mã hàng'), [selectedRowData])
 
@@ -254,7 +262,7 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
       align: 'center',
       sorter: (a, b) => a.NhomHang.localeCompare(b.NhomHang),
       render: (text) => (
-        <Tooltip title={text} color="blue">
+        <Tooltip title={text}>
           <div
             style={{
               overflow: 'hidden',
@@ -277,7 +285,7 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
       align: 'center',
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       render: (text) => (
-        <Tooltip title={text} color="blue">
+        <Tooltip title={text}>
           <div
             style={{
               overflow: 'hidden',
@@ -349,7 +357,6 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
       ),
     },
   ]
-
   return (
     <>
       {!isLoading ? (
@@ -362,22 +369,22 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
               <div className="flex flex-col gap-2 py-1 px-2 xl:w-[80vw] lg:w-[90vw] md:w-[95vw]">
                 <div className="flex gap-2">
                   <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
-                  <p className="text-blue-700 font-semibold uppercase">Thêm - Phiếu Nhập Điều Chỉnh</p>
+                  <p className="text-blue-700 font-semibold uppercase">Sửa - Phiếu Xuất Kho Sử Dụng</p>
                 </div>
                 <div className="flex flex-col gap-2 border-2 px-1 py-2.5">
                   <div className="grid grid-cols-2 items-center gap-2">
                     <div className="flex flex-col gap-3">
                       <div className="flex gap-2">
                         <div className="flex items-center gap-1">
-                          <label className="text-sm  required whitespace-nowrap min-w-[100px] flex justify-end">Số chứng từ</label>
+                          <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Số chứng từ</label>
                           <input
                             type="text"
-                            className="px-2 w-full resize-none rounded border outline-none text-[1rem]"
+                            className="px-2 w-full rounded resize-none border outline-none text-[1rem]"
                             name="SoChungTu"
-                            value={NDCForm?.SoChungTu || ''}
+                            value={XSDForm?.SoChungTu || ''}
                             onChange={(e) =>
-                              setNDCForm({
-                                ...NDCForm,
+                              setXSDForm({
+                                ...XSDForm,
                                 [e.target.name]: e.target.value,
                               })
                             }
@@ -387,11 +394,12 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                         <div className="flex items-center gap-1">
                           <label className="required whitespace-nowrap text-sm">Ngày c.từ</label>
                           <DatePicker
-                            className="DatePicker_NDCKho"
+                            className="DatePicker_XSDKho"
                             format="DD/MM/YYYY"
-                            value={valueDate}
+                            value={dayjs(XSDForm?.NgayCTu) || ''}
                             onChange={(values) => {
-                              setNDCForm({ ...NDCForm, NgayCTu: dayjs(setValueDate(values)).format('YYYY-MM-DDTHH:mm:ss') })
+                              const newDate = dayjs(values).format('YYYY-MM-DDTHH:mm:ss')
+                              setXSDForm({ ...XSDForm, NgayCTu: newDate })
                             }}
                             sx={{
                               '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
@@ -407,26 +415,24 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                         </div>
                       </div>
                       <div className="flex items-center gap-1">
-                        <label className="text-sm required whitespace-nowrap min-w-[100px] flex justify-end">Kho hàng</label>
+                        <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Kho hàng</label>
                         <Select
                           style={{ width: '100%' }}
+                          type="text"
                           showSearch
                           required
                           size="small"
-                          value={NDCForm?.MaKho}
-                          placeholder={errors.MaKho ? errors.MaKho : ''}
-                          status={errors.MaKho ? 'error' : ''}
+                          value={XSDForm?.MaKho}
                           onChange={(value) => {
-                            setNDCForm({
-                              ...NDCForm,
+                            setXSDForm({
+                              ...XSDForm,
                               MaKho: value,
                             })
-                            setErrors({ ...errors, MaKho: '' })
                           }}
                         >
                           {dataKhoHang &&
-                            dataKhoHang?.map((item) => (
-                              <Select.Option key={item.MaKho} value={item.MaKho}>
+                            dataKhoHang?.map((item, index) => (
+                              <Select.Option key={index} value={item.MaKho}>
                                 {item.ThongTinKho}
                               </Select.Option>
                             ))}
@@ -438,35 +444,59 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                       <div className="flex gap-1">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người tạo</label>
-                          <input className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-[1rem]" readOnly />
+                          <Tooltip title={dataXSDView?.NguoiTao} color="blue">
+                            <input
+                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-[1rem] overflow-ellipsis truncate"
+                              value={dataXSDView?.NguoiTao || ''}
+                              readOnly
+                            />
+                          </Tooltip>
                         </div>
                         <div className="flex gap-1 items-center">
                           <label className="text-sm">Lúc</label>
-                          <input className="px-2 w-full resize-none rounded border outline-none text-[1rem]" readOnly />
+                          <Tooltip title={moment(dataXSDView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''} color="blue">
+                            <input
+                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
+                              value={moment(dataXSDView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
+                              readOnly
+                            />
+                          </Tooltip>
                         </div>
                       </div>
                       <div className="flex gap-1">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người sửa</label>
-                          <input className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-[1rem]" readOnly />
+                          <Tooltip title={dataXSDView?.NguoiSuaCuoi} color="blue">
+                            <input
+                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border  outline-none text-[1rem] overflow-ellipsis truncate"
+                              value={dataXSDView?.NguoiSuaCuoi || ''}
+                              readOnly
+                            />
+                          </Tooltip>
                         </div>
                         <div className="flex gap-1 items-center">
                           <label className="text-sm">Lúc</label>
-                          <input className="px-2 w-full resize-none rounded border outline-none text-[1rem]" readOnly />
+                          <Tooltip title={dataXSDView?.NgaySuaCuoi ? moment(dataXSDView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''} color="blue">
+                            <input
+                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
+                              value={dataXSDView?.NgaySuaCuoi ? moment(dataXSDView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
+                              readOnly
+                            />
+                          </Tooltip>
                         </div>
                       </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
-                    <label className="whitespace-nowrap min-w-[100px] text-sm flex justify-end">Ghi chú</label>
+                    <label className="whitespace-nowrap min-w-[100px] flex justify-end text-sm">Ghi chú</label>
                     <input
                       type="text"
-                      className="px-2 w-[70rem] resize-none rounded border-[1px] hover:border-blue-500 outline-none text-[1rem]"
+                      className="px-2 w-[70rem] resize-none rounded border-[1px] border-solid outline-none text-[1rem] hover:border-blue-500 "
                       name="GhiChu"
-                      value={NDCForm?.GhiChu || ''}
+                      value={XSDForm?.GhiChu || ''}
                       onChange={(e) =>
-                        setNDCForm({
-                          ...NDCForm,
+                        setXSDForm({
+                          ...XSDForm,
                           [e.target.name]: e.target.value,
                         })
                       }
@@ -474,13 +504,11 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                   </div>
                   <div className="border-2 rounded relative">
                     <EditTable
-                      typeTable="create"
-                      typeAction="create"
                       tableName="PhieuNhapDieuChinh"
                       param={selectedRowData}
                       handleEditData={handleEditData}
                       ColumnTable={['STT', 'MaHang', 'TenHang', 'DVT', 'SoLuong']}
-                      columName={nameColumsPhieuNhapDieuChinh}
+                      columName={nameColumsPhieuXuatSuDung}
                       yourMaHangOptions={dataHangHoa}
                     />
                     <Tooltip
@@ -508,7 +536,7 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                         isAdd
                           ? ''
                           : () => {
-                              handleCreate(true, true)
+                              handleEdit(true)
                             }
                       }
                       title={'In Phiếu'}
@@ -520,16 +548,14 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                   </div>
                   <div className="flex gap-2 justify-end">
                     <ActionButton
-                      handleAction={isAdd ? '' : () => handleCreate(true, false)}
-                      title={'Lưu'}
-                      color={'slate-50'}
-                      background={isAdd ? 'gray-500' : 'blue-500'}
-                      color_hover={isAdd ? 'gray-500' : 'blue-500'}
-                      bg_hover={isAdd ? 'gray-500' : 'white'}
-                    />
-                    <ActionButton
-                      handleAction={isAdd ? '' : () => handleCreate(false, false)}
-                      title={'Lưu & Đóng'}
+                      handleAction={
+                        isAdd
+                          ? ''
+                          : () => {
+                              handleEdit(false)
+                            }
+                      }
+                      title={'Xác nhận'}
                       color={'slate-50'}
                       background={isAdd ? 'gray-500' : 'blue-500'}
                       color_hover={isAdd ? 'gray-500' : 'blue-500'}
@@ -544,14 +570,14 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
           <div>
             {isShowModal &&
               (actionType === 'print' ? (
-                <NDCPrint close={() => setIsShowModal(false)} dataPrint={{ ...NDCForm, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss'), SoChungTu: SoCTu }} />
+                <XSDPrint close={() => close()} dataPrint={{ ...XSDForm }} />
               ) : (
-                <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col xl:w-[87vw] lg:w-[95vw] md:w-[95vw] min-h-[8rem] bg-white  p-2 rounded-xl shadow-custom overflow-hidden z-10">
-                  <div className="flex flex-col gap-2 p-2 ">
+                <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col xl:w-[87vw] lg:w-[95vw] md:w-[95vw]  bg-white  p-2 rounded-xl shadow-custom overflow-hidden z-10">
+                  <div className="flex flex-col gap-2 p-2">
                     <div className="flex items-center gap-2">
                       <div className="flex items-center gap-2 py-1">
                         <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
-                        <p className="text-blue-700 font-semibold uppercase">Danh Sách Hàng Hóa - Phiếu Nhập Điều Chỉnh</p>
+                        <p className="text-blue-700 font-semibold uppercase">Danh Sách Hàng Hóa - Phiếu Xuất Kho Sử Dụng</p>
                         <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
                       </div>
                       <div className="flex w-[20rem] overflow-hidden">
@@ -616,4 +642,4 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
   )
 }
 
-export default NDCCreate
+export default XSDEdit

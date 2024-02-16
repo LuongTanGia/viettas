@@ -26,7 +26,7 @@ import PLRPrint from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuL
 import PLRCreate from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuLapRap/PLRCreate'
 import PLRDelete from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuLapRap/PLRDelete'
 
-const PhieuLapRap = ({ path }) => {
+const PhieuLapRap = () => {
   const navigate = useNavigate()
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
@@ -67,9 +67,9 @@ const PhieuLapRap = ({ path }) => {
   }, [dataCRUD])
 
   useEffect(() => {
-    const getDataQuyenHan = async (path) => {
+    const getDataQuyenHan = async () => {
       try {
-        const response = await categoryAPI.QuyenHan(path, TokenAccess)
+        const response = await categoryAPI.QuyenHan('DuLieu_PLR', TokenAccess)
         if (response.data.DataError === 0) {
           setDataCRUD(response.data)
           setIsLoading(true)
@@ -82,7 +82,7 @@ const PhieuLapRap = ({ path }) => {
         setIsLoading(true)
       }
     }
-    getDataQuyenHan(path)
+    getDataQuyenHan()
   }, [])
 
   useEffect(() => {
@@ -466,7 +466,7 @@ const PhieuLapRap = ({ path }) => {
         const dateB = new Date(b.NgaySuaCuoi)
         return dateA - dateB
       },
-      render: (text) => <span className="flex justify-center">{formatDateTime(text, true)}</span>,
+      render: (text) => <span className="flex justify-center">{text ? formatDateTime(text, true) : ''}</span>,
     },
     {
       title: ' ',
@@ -533,7 +533,7 @@ const PhieuLapRap = ({ path }) => {
                       <ActionButton
                         handleAction={() => {
                           setIsShowNotify(false)
-                          navigate('/')
+                          navigate(-1)
                         }}
                         title={'Đóng'}
                         color={'slate-50'}

@@ -8,7 +8,7 @@ import { IoMdAddCircle } from 'react-icons/io'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { Checkbox, Table, Tooltip, Select, FloatButton } from 'antd'
 import dayjs from 'dayjs'
-import NDCPrint from './NDCPrint'
+import HUYPrint from './HUYPrint'
 import categoryAPI from '../../../../../API/linkAPI'
 import { useSearch } from '../../../../hooks/Search'
 import logo from '../../../../../assets/VTS-iSale.ico'
@@ -17,9 +17,9 @@ import EditTable from '../../../../util/Table/EditTable'
 import ActionButton from '../../../../util/Button/ActionButton'
 import HighlightedCell from '../../../../hooks/HighlightedCell'
 import SimpleBackdrop from '../../../../util/Loading/LoadingPage'
-import { nameColumsPhieuNhapDieuChinh } from '../../../../util/Table/ColumnName'
+import { nameColumsPhieuXuatHuy } from '../../../../util/Table/ColumnName'
 
-const NDCCreate = ({ close, loadingData, setTargetRow }) => {
+const HUYCreate = ({ close, loadingData, setTargetRow }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
@@ -52,7 +52,7 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
       },
     ],
   }
-  const [NDCForm, setNDCForm] = useState(() => {
+  const [HUYForm, setHUYForm] = useState(() => {
     return innitProduct
   })
 
@@ -77,15 +77,15 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
   }, [isShowModal])
 
   useEffect(() => {
-    const getDataKhoHangNDC = async () => {
+    const getDataKhoHangHUY = async () => {
       try {
-        const response = await categoryAPI.ListKhoHangNDC(TokenAccess)
+        const response = await categoryAPI.ListKhoHangHUY(TokenAccess)
         if (response.data.DataError == 0) {
           setDataKhoHang(response.data.DataResults)
           setIsLoading(true)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
-          getDataKhoHangNDC()
+          getDataKhoHangHUY()
         }
       } catch (error) {
         console.log(error)
@@ -93,20 +93,20 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
       }
     }
     if (!isLoading) {
-      getDataKhoHangNDC()
+      getDataKhoHangHUY()
     }
   }, [isLoading])
 
   useEffect(() => {
-    const getDataHangHoaNDC = async () => {
+    const getDataHangHoaHUY = async () => {
       try {
-        const response = await categoryAPI.ListHangHoaNDC(TokenAccess)
+        const response = await categoryAPI.ListHangHoaHUY(TokenAccess)
         if (response.data.DataError == 0) {
           setDataHangHoa(response.data.DataResults)
           setIsLoading(true)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
-          getDataHangHoaNDC()
+          getDataHangHoaHUY()
         }
       } catch (error) {
         console.log(error)
@@ -114,7 +114,7 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
       }
     }
     if (!isLoading) {
-      getDataHangHoaNDC()
+      getDataHangHoaHUY()
     }
   }, [isLoading])
 
@@ -159,14 +159,14 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
       const index = selectedRowData.findIndex((item) => item.MaHang === newRow.MaHang)
       const oldQuantity = selectedRowData[index].SoLuong
       selectedRowData[index].SoLuong = oldQuantity + newRow.SoLuong
-      setNDCForm({ ...NDCForm, DataDetails: selectedRowData })
+      setHUYForm({ ...HUYForm, DataDetails: selectedRowData })
     }
   }
 
   const handleCreate = async (isSave = true, isPrint = true) => {
-    if (!NDCForm?.MaKho) {
+    if (!HUYForm?.MaKho) {
       setErrors({
-        MaKho: NDCForm?.MaKho ? '' : 'Kho không được trống',
+        MaKho: HUYForm?.MaKho ? '' : 'Kho không được trống',
       })
       return
     }
@@ -177,18 +177,17 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
           STT: index + 1,
         }
       })
-      const response = await categoryAPI.NDCCreate({ ...NDCForm, DataDetails: newData, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss') }, TokenAccess)
+      const response = await categoryAPI.HUYCreate({ ...HUYForm, DataDetails: newData, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss') }, TokenAccess)
       if (response.data.DataError == 0) {
         isPrint
-          ? (handlePrint(), setNDCForm([]), setSelectedRowData([]))
+          ? (handlePrint(), setHUYForm([]), setSelectedRowData([]))
           : isSave
-            ? (toast.success('Tạo thành công', { autoClose: 1000 }), setNDCForm([]), setSelectedRowData([]))
+            ? (toast.success('Tạo thành công', { autoClose: 1000 }), setHUYForm([]), setSelectedRowData([]))
             : (close(), toast.success('Tạo thành công', { autoClose: 1000 }))
         loadingData()
         setSoCTu(response.data.DataResults[0].SoChungTu)
         setTargetRow(response.data.DataResults[0].SoChungTu)
       } else {
-        console.log(response.data)
         toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
       }
     } catch (error) {
@@ -362,7 +361,7 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
               <div className="flex flex-col gap-2 py-1 px-2 xl:w-[80vw] lg:w-[90vw] md:w-[95vw]">
                 <div className="flex gap-2">
                   <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
-                  <p className="text-blue-700 font-semibold uppercase">Thêm - Phiếu Nhập Điều Chỉnh</p>
+                  <p className="text-blue-700 font-semibold uppercase">Thêm - Phiếu Xuất Kho Hủy</p>
                 </div>
                 <div className="flex flex-col gap-2 border-2 px-1 py-2.5">
                   <div className="grid grid-cols-2 items-center gap-2">
@@ -374,10 +373,10 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                             type="text"
                             className="px-2 w-full resize-none rounded border outline-none text-[1rem]"
                             name="SoChungTu"
-                            value={NDCForm?.SoChungTu || ''}
+                            value={HUYForm?.SoChungTu || ''}
                             onChange={(e) =>
-                              setNDCForm({
-                                ...NDCForm,
+                              setHUYForm({
+                                ...HUYForm,
                                 [e.target.name]: e.target.value,
                               })
                             }
@@ -387,11 +386,11 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                         <div className="flex items-center gap-1">
                           <label className="required whitespace-nowrap text-sm">Ngày c.từ</label>
                           <DatePicker
-                            className="DatePicker_NDCKho"
+                            className="DatePicker_HUYKho"
                             format="DD/MM/YYYY"
                             value={valueDate}
                             onChange={(values) => {
-                              setNDCForm({ ...NDCForm, NgayCTu: dayjs(setValueDate(values)).format('YYYY-MM-DDTHH:mm:ss') })
+                              setHUYForm({ ...HUYForm, NgayCTu: dayjs(setValueDate(values)).format('YYYY-MM-DDTHH:mm:ss') })
                             }}
                             sx={{
                               '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
@@ -413,12 +412,12 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                           showSearch
                           required
                           size="small"
-                          value={NDCForm?.MaKho}
+                          value={HUYForm?.MaKho}
                           placeholder={errors.MaKho ? errors.MaKho : ''}
                           status={errors.MaKho ? 'error' : ''}
                           onChange={(value) => {
-                            setNDCForm({
-                              ...NDCForm,
+                            setHUYForm({
+                              ...HUYForm,
                               MaKho: value,
                             })
                             setErrors({ ...errors, MaKho: '' })
@@ -463,10 +462,10 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                       type="text"
                       className="px-2 w-[70rem] resize-none rounded border-[1px] hover:border-blue-500 outline-none text-[1rem]"
                       name="GhiChu"
-                      value={NDCForm?.GhiChu || ''}
+                      value={HUYForm?.GhiChu || ''}
                       onChange={(e) =>
-                        setNDCForm({
-                          ...NDCForm,
+                        setHUYForm({
+                          ...HUYForm,
                           [e.target.name]: e.target.value,
                         })
                       }
@@ -480,7 +479,7 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                       param={selectedRowData}
                       handleEditData={handleEditData}
                       ColumnTable={['STT', 'MaHang', 'TenHang', 'DVT', 'SoLuong']}
-                      columName={nameColumsPhieuNhapDieuChinh}
+                      columName={nameColumsPhieuXuatHuy}
                       yourMaHangOptions={dataHangHoa}
                     />
                     <Tooltip
@@ -544,14 +543,14 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
           <div>
             {isShowModal &&
               (actionType === 'print' ? (
-                <NDCPrint close={() => setIsShowModal(false)} dataPrint={{ ...NDCForm, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss'), SoChungTu: SoCTu }} />
+                <HUYPrint close={() => setIsShowModal(false)} dataPrint={{ ...HUYForm, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss'), SoChungTu: SoCTu }} />
               ) : (
                 <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col xl:w-[87vw] lg:w-[95vw] md:w-[95vw] min-h-[8rem] bg-white  p-2 rounded-xl shadow-custom overflow-hidden z-10">
                   <div className="flex flex-col gap-2 p-2 ">
                     <div className="flex items-center gap-2">
                       <div className="flex items-center gap-2 py-1">
                         <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
-                        <p className="text-blue-700 font-semibold uppercase">Danh Sách Hàng Hóa - Phiếu Nhập Điều Chỉnh</p>
+                        <p className="text-blue-700 font-semibold uppercase">Danh Sách Hàng Hóa - Phiếu Xuất Kho Hủy</p>
                         <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
                       </div>
                       <div className="flex w-[20rem] overflow-hidden">
@@ -616,4 +615,4 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
   )
 }
 
-export default NDCCreate
+export default HUYCreate

@@ -4,16 +4,18 @@ import { toast } from 'react-toastify'
 import logo from '../../../../../assets/VTS-iSale.ico'
 import ActionButton from '../../../../util/Button/ActionButton'
 
-const NDCXoa = ({ close, dataNDC, loadingData, setTargetRow }) => {
+const NCKDel = ({ close, dataNCK, loadingData, setTargetRow }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const handleDelete = async () => {
     try {
-      const response = await categoryAPI.NDCDelete(dataNDC?.SoChungTu, TokenAccess)
+      const response = await categoryAPI.NCKDelete(dataNCK?.SoChungTu, TokenAccess)
       if (response.data.DataError == 0) {
         loadingData()
         close()
         toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
         setTargetRow([])
+      } else {
+        toast.error(response.data.DataErrorDescription)
       }
     } catch (error) {
       console.log(error)
@@ -26,12 +28,12 @@ const NDCXoa = ({ close, dataNDC, loadingData, setTargetRow }) => {
         <div className="flex flex-col gap-2 p-2">
           <div className="flex gap-2">
             <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
-            <p className="text-blue-700 font-semibold uppercase">Xóa dữ liệu - Phiếu Nhập Điều Chỉnh</p>
+            <p className="text-blue-700 font-semibold uppercase">Xóa dữ liệu - Phiếu Nhập Chuyển Kho</p>
           </div>
           <div className="flex flex-col gap-2 border-2 p-3 font-bold text-lg">
             <div className="flex gap-1">
               <p className="text-blue-700 uppercase">Bạn có chắc muốn xóa</p>
-              <p className="text-red-600">{dataNDC?.SoChungTu}</p>
+              <p className="text-red-600">{dataNCK?.SoChungTu}</p>
               <p className="text-blue-700 uppercase">?</p>
             </div>
             <p className="text-slate-500 text-lg font-light">Thông tin sản phẩm không thể hoàn tác nếu bạn xóa !</p>
@@ -46,4 +48,4 @@ const NDCXoa = ({ close, dataNDC, loadingData, setTargetRow }) => {
   )
 }
 
-export default NDCXoa
+export default NCKDel

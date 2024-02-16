@@ -82,8 +82,9 @@ const PLRPrint = ({ close, dataPrint, type }) => {
     if (checkboxValues.checkbox2) total += 2
     return total
   }
+  console.log(dataPrint)
   const handlePrint = async () => {
-    console.log('In ')
+    console.log('In')
 
     try {
       const response = await categoryAPI.PLRPrint(
@@ -91,8 +92,8 @@ const PLRPrint = ({ close, dataPrint, type }) => {
           ? {
               NgayBatDau: dayjs(dataPrint.NgayCTu).format('YYYY-MM-DDTHH:mm:ss'),
               NgayKetThuc: dayjs(dataPrint.NgayCTu).format('YYYY-MM-DDTHH:mm:ss'),
-              SoChungTuBatDau: dataPrint.SoChungTu,
-              SoChungTuKetThuc: dataPrint.SoChungTu,
+              SoChungTuBatDau: dataPrint?.SoChungTu,
+              SoChungTuKetThuc: dataPrint?.SoChungTu,
               SoLien: calculateTotal(),
             }
           : {
@@ -106,15 +107,9 @@ const PLRPrint = ({ close, dataPrint, type }) => {
       )
       if (response.data.DataError == 0) {
         base64ToPDF(response.data.DataResults)
+        close()
       } else {
         toast.error(response.data.DataErrorDescription)
-        console.log({
-          NgayBatDau: dateData.NgayBatDau,
-          NgayKetThuc: dateData.NgayBatDau,
-          SoChungTuBatDau: selectedNhomFrom,
-          SoChungTuKetThuc: selectedNhomTo,
-          SoLien: calculateTotal(),
-        })
       }
     } catch (error) {
       console.log(error)
@@ -145,13 +140,6 @@ const PLRPrint = ({ close, dataPrint, type }) => {
         base64ToPDF(response.data.DataResults)
       } else {
         toast.error(response.data.DataErrorDescription)
-        console.log({
-          NgayBatDau: dateData.NgayBatDau,
-          NgayKetThuc: dateData.NgayBatDau,
-          SoChungTuBatDau: selectedNhomFrom,
-          SoChungTuKetThuc: selectedNhomTo,
-          SoLien: calculateTotal(),
-        })
       }
     } catch (error) {
       console.log(error)
@@ -182,13 +170,6 @@ const PLRPrint = ({ close, dataPrint, type }) => {
         base64ToPDF(response.data.DataResults)
       } else {
         toast.error(response.data.DataErrorDescription)
-        console.log({
-          NgayBatDau: dateData.NgayBatDau,
-          NgayKetThuc: dateData.NgayBatDau,
-          SoChungTuBatDau: selectedNhomFrom,
-          SoChungTuKetThuc: selectedNhomTo,
-          SoLien: calculateTotal(),
-        })
       }
     } catch (error) {
       console.log(error)
@@ -298,6 +279,12 @@ const PLRPrint = ({ close, dataPrint, type }) => {
                       placeholder={'Chọn nhóm'}
                       onChange={(value) => {
                         setSelectedNhomFrom(value)
+                        if (
+                          selectedNhomTo !== null &&
+                          dataListChungTu.findIndex((item) => item.SoChungTu === value) > dataListChungTu.findIndex((item) => item.SoChungTu === selectedNhomTo)
+                        ) {
+                          setSelectedNhomTo(value)
+                        }
                       }}
                       style={{
                         width: '200px',
@@ -322,6 +309,12 @@ const PLRPrint = ({ close, dataPrint, type }) => {
                       value={dataPrint ? dataPrint.SoChungTu : selectedNhomTo}
                       onChange={(value) => {
                         setSelectedNhomTo(value)
+                        if (
+                          selectedNhomFrom !== null &&
+                          dataListChungTu.findIndex((item) => item.SoChungTu === value) < dataListChungTu.findIndex((item) => item.SoChungTu === selectedNhomFrom)
+                        ) {
+                          setSelectedNhomFrom(value)
+                        }
                       }}
                       style={{
                         width: '200px',
@@ -371,7 +364,9 @@ const PLRPrint = ({ close, dataPrint, type }) => {
               </div>
               <div className="flex gap-2 justify-end">
                 <ActionButton
-                  handleAction={type == 'print' ? () => handlePrint() : type == 'printImport' ? () => handlePrintImport() : () => handlePrintExport()}
+                  handleAction={
+                    type == 'print' ? () => handlePrint() : type == 'printImport' ? () => handlePrintImport() : type == 'printExport' ? () => handlePrintExport() : null
+                  }
                   title={'Xác nhận'}
                   color={'slate-50'}
                   background={'blue-500'}
