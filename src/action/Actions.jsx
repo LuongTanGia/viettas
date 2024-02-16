@@ -7,6 +7,17 @@ import { toast } from 'react-toastify'
 import * as XLSX from 'xlsx'
 import dayjs from 'dayjs'
 // CallBack API Function
+const axiosInstance = axios.create({
+  headers: {
+    'Content-Type': 'application/json',
+  },
+})
+
+const handleAPIError = (response) => {
+  if (response.data.DataError !== 0) {
+    toast.error(response.data.DataErrorDescription)
+  }
+}
 export const CallBackAPI = async (API, token, data) => {
   try {
     const response = await axios.post(API, data, {
@@ -75,24 +86,29 @@ export const RETOKEN = async () => {
   }
 }
 export const DANHSACHDULIEU = async (API, data) => {
+  // console.log('DANHSACHDULIEU')
   try {
-    const response = await axios.post(API, data)
+    const response = await axiosInstance.post(API, data)
     window.localStorage.setItem('tokenDuLieu', response.data.TKN)
+
     if (response.data.DataError === 0) {
       return response.data
     } else {
-      toast.error(response.data.DataErrorDescription)
+      console.log('Error')
     }
+    return response.data
   } catch (error) {
     console.error('Error adding user:', error)
   }
 }
 export const LOGIN = async (API1, API2, TKN, RemoteDB, data, dispatch) => {
+  // console.log('LOGIN')
   try {
-    const response = await axios.post(API1, {
+    const response = await axiosInstance.post(API1, {
       TokenID: TKN,
       RemoteDB: RemoteDB,
     })
+
     if (response.data.DataError === 0) {
       window.localStorage.setItem('TKN', response.data.TKN)
       window.localStorage.setItem('RTKN', response.data.RTKN)
@@ -103,8 +119,12 @@ export const LOGIN = async (API1, API2, TKN, RemoteDB, data, dispatch) => {
       return 1
     } else {
       dispatch(loginSlice.actions.login([]))
+      console.log('Error')
     }
+
     if (response.data.DataError !== 0) {
+      handleAPIError(response)
+
       await DANHSACHDULIEU(API2, data)
     }
   } catch (error) {
@@ -691,7 +711,40 @@ export const INPHIEUPBS = async (API, token, data) => {
     toast.error('Error adding user:', error)
   }
 }
+// Công nợ đầu ra
+export const CNDRTONGHOP = async (API, token, data) => {
+  try {
+    const response = await axios.post(API, data, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    if (response.data.DataError === -107 || response.data.DataError === -108) {
+      // toast.error(response.data.DataErrorDescription);
+      const newToken = await RETOKEN()
+      if (newToken !== '') {
+        await CNDRTONGHOP(API, newToken)
+      } else if (newToken === 0) {
+        toast.error('Failed to refresh token!')
+        window.localStorage.removeItem('firstLogin')
+        window.localStorage.removeItem('TKN')
+        window.localStorage.removeItem('tokenDuLieu')
+        window.localStorage.removeItem('RTKN')
+        window.localStorage.removeItem('userName')
 
+        window.location.href = '/login'
+      }
+    }
+    if (response.data.DataError === -104) {
+      toast.error(response.data.DataErrorDescription)
+      return -1
+    }
+    return response.data
+  } catch (error) {
+    console.error('Error adding user:', error)
+  }
+}
 // function Normal
 export const base64ToPDF = (Base64PMH) => {
   // Decode base64 string
