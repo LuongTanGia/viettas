@@ -29,6 +29,14 @@ const API = {
   INPHIEUKHO: `${BASE_URL}/api/entries/DuLieuPBS/InPhieuKho`,
   //Lấy danh sách giá trị hệ thống
   THONGSO: `${BASE_URL}/api/settings/GiaTriHeThong/ThongSo`,
+
+  //CongNoDauRa-CongNoDauVao
+  CNDRTONGHOP: `${BASE_URL}/api/inquiries/CongNoDauRa/TongHop`,
+  CNDRDoiTuong: `${BASE_URL}/api/inquiries/CongNoDauRa/ListHelper_DoiTuong`,
+  CNDRNhomDoiTuong: `${BASE_URL}/api/inquiries/CongNoDauRa/ListHelper_NhomDoiTuong`,
+  CNDVTONGHOP: `${BASE_URL}/api/inquiries/CongNoDauVao/TongHop`,
+  CNDVDoiTuong: `${BASE_URL}/api/inquiries/CongNoDauVao/ListHelper_DoiTuong`,
+  CNDVNhomDoiTuong: `${BASE_URL}/api/inquiries/CongNoDauVao/ListHelper_NhomDoiTuong`,
 }
 
 export default API

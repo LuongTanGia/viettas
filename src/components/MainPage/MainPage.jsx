@@ -17,6 +17,7 @@ import PhieuLapRap from '../../Pages/DuLieu/DLTrongKho/PhieuLapRap/PhieuLapRap'
 import PhieuXuatDieuChinh from '../../Pages/DuLieu/DLTrongKho/PhieuXuatDieuChinh/PhieuXuatDieuChinh'
 import PhieuXuatChuyenKho from '../../Pages/DuLieu/DLTrongKho/PhieuXuatChuyenKho/PhieuXuatChuyenKho'
 import PhieuNhapChuyenKho from '../../Pages/DuLieu/DLTrongKho/PhieuNhapChuyenKho/PhieuNhapChuyenKho'
+import CongNoDauRa from '../CongNoDauRa/CongNoDauRa'
 
 function MainPage({ isSidebarVisible }) {
   return (
@@ -38,6 +39,8 @@ function MainPage({ isSidebarVisible }) {
           <Route path="/DuLieuDR/DuLieu_PBS" element={<PhieuBanHang />} />
           <Route path="/DuLieuTC/DuLieu_PCT" element={<PhieuChiTien />} />
           <Route path="/DuLieuTC/DuLieu_PTT" element={<PhieuThuTien />} />
+          <Route path="/TruyVan_CongNoDauRa" element={<CongNoDauRa />} />
+
           <Route path="/TruyVan_CanDoiNXT_TheoKho" element={<NhapXuatTonKho path="TruyVan_CanDoiNXT_TheoKho" />} />
           <Route path="*" element={<ErrorPage />} />
         </Routes>
