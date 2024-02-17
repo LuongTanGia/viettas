@@ -97,6 +97,70 @@ const categoryAPI = {
     return axiosClient.post(url, Ma, { headers })
   },
 
+  // DanhMuc/DoiTuong
+  DoiTuong(accessToken) {
+    const url = '/lists/DoiTuong/DanhSach'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, {}, { headers })
+  },
+  InfoDoiTuong(Ma, accessToken) {
+    const url = '/lists/DoiTuong/ThongTin'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, { Ma }, { headers })
+  },
+  ThemDoiTuong(body, accessToken) {
+    const url = '/lists/DoiTuong/Them'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  SuaDoiTuong(body, accessToken) {
+    const url = '/lists/DoiTuong/Sua'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  XoaDoiTuong(Ma, accessToken) {
+    const url = '/lists/DoiTuong/Xoa'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, { Ma }, { headers })
+  },
+  ListNhomDoiTuong(accessToken) {
+    const url = '/lists/DoiTuong/ListHelper_NhomDoiTuong'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, {}, { headers })
+  },
+  ListNhomGia(accessToken) {
+    const url = '/lists/DoiTuong/ListHelper_NhomGia'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, {}, { headers })
+  },
+  GanNhomDoiTuong(body, accessToken) {
+    const url = '/lists/DoiTuong/GanNhom'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  GanNhomGia(body, accessToken) {
+    const url = '/lists/DoiTuong/GanNhomGia'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
   // TruyVan/NhapXuatTonKho
   InfoNXTTheoKho(body, accessToken) {
     const url = '/inquiries/NhapXuatTon/TheoKho'

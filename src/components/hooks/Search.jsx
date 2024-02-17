@@ -24,6 +24,16 @@ export const useSearch = (data) => {
           BangGiaSi_Max,
           NgayTao,
           NgaySuaCuoi,
+          // DoiTuong
+          Ma,
+          TenLoai,
+          Ten,
+          DiaChi,
+          MST,
+          DienThoai,
+          Email,
+          Fax,
+          ThongTinNhomGia,
           // NTX
           TenNhomHang,
           TenKho,
@@ -72,6 +82,16 @@ export const useSearch = (data) => {
           (BangGiaSi?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (BangGiaSi_Min?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (BangGiaSi_Max?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          // DoiTuong
+          (Ma || '').toLowerCase().includes(search.toLowerCase()) ||
+          (TenLoai || '').toLowerCase().includes(search.toLowerCase()) ||
+          (Ten || '').toLowerCase().includes(search.toLowerCase()) ||
+          (DiaChi?.toString() || '').toLowerCase().includes(search.toLowerCase()) ||
+          (ThongTinNhomGia || '').toLowerCase().includes(search.toLowerCase()) ||
+          (Email || '').toLowerCase().includes(search.toLowerCase()) ||
+          (DienThoai?.toString() || '').includes(search.toLowerCase()) ||
+          (MST?.toString() || '').includes(search.toLowerCase()) ||
+          (Fax?.toString() || '').includes(search.toLowerCase()) ||
           // NXTKho
           (TenNhomHang || '').toLowerCase().includes(search.toLowerCase()) ||
           (TenKho || '').toLowerCase().includes(search.toLowerCase()) ||

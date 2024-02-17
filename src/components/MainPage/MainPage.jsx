@@ -20,6 +20,7 @@ import PhieuNhapChuyenKho from '../../Pages/DuLieu/DLTrongKho/PhieuNhapChuyenKho
 import PhieuXuatSuDung from '../../Pages/DuLieu/DLTrongKho/PhieuXuatSuDung/PhieuXuatSuDung'
 import PhieuXuatHuy from '../../Pages/DuLieu/DLTrongKho/PhieuXuatHuy/PhieuXuatHuy'
 import CongNoDauRa from '../CongNoDauRa/CongNoDauRa'
+import DoiTuong from '../../Pages/DanhMuc/DoiTuong'
 
 function MainPage({ isSidebarVisible }) {
   return (
@@ -30,6 +31,7 @@ function MainPage({ isSidebarVisible }) {
           <Route path="/FAQ" element={<FAQ />} />
           <Route path="/DKSD" element={<DKSD />} />
           <Route path="/DanhMuc_HangHoa" element={<HangHoa />} />
+          <Route path="/DanhMuc_DoiTuong" element={<DoiTuong />} />
           <Route path="/DuLieuDV/DuLieu_PMH" element={<Phieumuahang />} />
           <Route path="/DuLieuDV/DuLieu_NTR" element={<PhieuNTR />} />
           <Route path="/DuLieuDR/DuLieu_XTR" element={<PhieuXTR />} />
@@ -44,7 +46,6 @@ function MainPage({ isSidebarVisible }) {
           <Route path="/DuLieuTC/DuLieu_PCT" element={<PhieuChiTien />} />
           <Route path="/DuLieuTC/DuLieu_PTT" element={<PhieuThuTien />} />
           <Route path="/TruyVan_CongNoDauRa" element={<CongNoDauRa />} />
-
           <Route path="/TruyVan_CanDoiNXT_TheoKho" element={<NhapXuatTonKho />} />
           <Route path="*" element={<ErrorPage />} />
         </Routes>
