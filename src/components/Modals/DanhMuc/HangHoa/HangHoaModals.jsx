@@ -10,13 +10,13 @@ import { CloseSquareFilled } from '@ant-design/icons'
 import { Checkbox, Select, Space, InputNumber, FloatButton, Input, Tooltip, Table } from 'antd'
 import moment from 'moment'
 import './HangHoaModals.css'
-import categoryAPI from '../../../API/linkAPI'
-import { useSearch } from '../../hooks/Search'
-import logo from '../../../assets/VTS-iSale.ico'
-import HighlightedCell from '../../hooks/HighlightedCell'
-import ActionButton from '../../util/Button/ActionButton'
-import SimpleBackdrop from '../../util/Loading/LoadingPage'
-import { RETOKEN, base64ToPDF } from '../../../action/Actions'
+import { useSearch } from '../../../hooks/Search'
+import categoryAPI from '../../../../API/linkAPI'
+import logo from '../../../../assets/VTS-iSale.ico'
+import HighlightedCell from '../../../hooks/HighlightedCell'
+import ActionButton from '../../../util/Button/ActionButton'
+import SimpleBackdrop from '../../../util/Loading/LoadingPage'
+import { RETOKEN, base64ToPDF } from '../../../../action/Actions'
 
 const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, setTargetRow }) => {
   const TokenAccess = localStorage.getItem('TKN')
@@ -759,17 +759,17 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                         </div>
                         <div className="flex items-center ml-[110px] xl:ml-0 gap-2">
                           <div className="flex items-center">
-                            <Checkbox className="text-sm" id="TonKho" checked={dataView?.TonKho}>
+                            <Checkbox className="text-sm" checked={dataView?.TonKho}>
                               Tồn kho
                             </Checkbox>
                           </div>
                           <div className="flex items-center">
-                            <Checkbox className="text-sm" id="TonKho" checked={dataView?.LapRap}>
+                            <Checkbox className="text-sm" checked={dataView?.LapRap}>
                               Lắp ráp
                             </Checkbox>
                           </div>
                           <div className="flex items-center">
-                            <Checkbox className="text-sm" id="TonKho" checked={dataView?.NA}>
+                            <Checkbox className="text-sm" checked={dataView?.NA}>
                               Ngưng dùng
                             </Checkbox>
                           </div>

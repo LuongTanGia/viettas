@@ -24,7 +24,28 @@ export const nameColumsHangHoa = {
   NguoiSuaCuoi: 'Người Sửa Cuối',
   NgaySuaCuoi: 'Ngày Sửa Cuối',
 }
-
+export const nameColumsDoiTuong = {
+  Loai: 'Loại',
+  TenLoai: 'Tên Loại',
+  Ma: 'Mã',
+  Nhom: 'Nhóm',
+  TenNhom: 'Tên Nhóm',
+  Ten: 'Tên',
+  DiaChi: 'Địa Chỉ',
+  QuanHuyen: 'Quận Huyện',
+  TinhThanh: 'Tỉnh Thành',
+  NguoiLienHe: 'Người Liên Hệ',
+  DienThoai: 'Điện Thoại',
+  Fax: 'Fax',
+  Email: 'Email',
+  MST: 'MST',
+  ThongTinNhomGia: 'Thông Tin Nhóm Giá',
+  GhiChu: 'Ghi Chú',
+  NguoiTao: 'Người Tạo',
+  NgayTao: 'Ngày Tạo',
+  NguoiSuaCuoi: 'Người Sửa Cuối',
+  NgaySuaCuoi: 'Ngày Sửa Cuối',
+}
 export const nameColumsPhieuBanHang = {
   SoChungTu: 'Số Chứng Từ',
   NgayCTu: 'Ngày Chứng Từ',

@@ -21,6 +21,7 @@ import PhieuNhapChuyenKho from '../../Pages/DuLieu/DLTrongKho/PhieuNhapChuyenKho
 import PhieuXuatSuDung from '../../Pages/DuLieu/DLTrongKho/PhieuXuatSuDung/PhieuXuatSuDung'
 import PhieuXuatHuy from '../../Pages/DuLieu/DLTrongKho/PhieuXuatHuy/PhieuXuatHuy'
 import CongNoDauRa from '../CongNoDauRa/CongNoDauRa'
+import DoiTuong from '../../Pages/DanhMuc/DoiTuong'
 import GiaBanLe from '../../pages/ThietLap/GiaBanLe'
 
 function MainPage({ isSidebarVisible }) {
@@ -32,6 +33,7 @@ function MainPage({ isSidebarVisible }) {
           <Route path="/FAQ" element={<FAQ />} />
           <Route path="/DKSD" element={<DKSD />} />
           <Route path="/DanhMuc_HangHoa" element={<HangHoa />} />
+          <Route path="/DanhMuc_DoiTuong" element={<DoiTuong />} />
           <Route path="/DuLieuDV/DuLieu_PMH" element={<PhieuMuaHang />} />
           <Route path="/DuLieuDV/DuLieu_NTR" element={<PhieuNTR />} />
           <Route path="/DuLieuDR/DuLieu_XTR" element={<PhieuXTR />} />

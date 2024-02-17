@@ -792,7 +792,7 @@ const NhapXuatTonKho = () => {
                 <div className="flex justify-between  gap-2 w-[95vw]">
                   <div className="flex flex-col gap-1 items-start">
                     <div className="flex gap-2 justify-between">
-                      <div className="flex">
+                      <div className="flex gap-1">
                         <div className="flex items-center gap-1">
                           <label>Từ</label>
                           <DateField
@@ -861,7 +861,6 @@ const NhapXuatTonKho = () => {
                           <Select
                             showSearch
                             size="small"
-                            allowClear
                             placeholder="Chọn nhóm"
                             value={selectedNhomFrom}
                             onChange={(value) => {
@@ -889,7 +888,6 @@ const NhapXuatTonKho = () => {
                           <div>Đến</div>
                           <Select
                             showSearch
-                            allowClear
                             size="small"
                             placeholder="Chọn nhóm"
                             value={selectedNhomTo}
@@ -941,7 +939,6 @@ const NhapXuatTonKho = () => {
                         <div className="flex gap-1 items-center">
                           <div>Từ</div>
                           <Select
-                            allowClear
                             showSearch
                             placeholder="Chọn mã hàng"
                             size="small"
@@ -970,7 +967,6 @@ const NhapXuatTonKho = () => {
                         <div className="flex gap-1 items-center">
                           <div>Đến</div>
                           <Select
-                            allowClear
                             showSearch
                             size="small"
                             placeholder="Chọn mã hàng"
