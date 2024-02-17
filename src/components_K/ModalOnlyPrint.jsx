@@ -259,7 +259,7 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
                 <div className="flex gap-x-5 items-center">
                   <label htmlFor="">Ngày</label>
                   <DateField
-                    className="DatePicker_PMH max-w-[154px]"
+                    className="DatePicker_PMH max-w-[170px]"
                     format="DD/MM/YYYY"
                     // maxDate={actionType !== 'create' && dayjs(formPrint.NgayKetThuc)}
                     value={actionType === 'create' ? dayjs() : dayjs(formPrint.NgayBatDau)}
@@ -292,7 +292,7 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
                 <div className="flex gap-x-5 items-center">
                   <label htmlFor="">Đến</label>
                   <DateField
-                    className="DatePicker_PMH max-w-[154px]"
+                    className="DatePicker_PMH max-w-[170px]"
                     format="DD/MM/YYYY"
                     // minDate={actionType !== 'create' && dayjs(formPrint.NgayBatDau)}
                     value={actionType === 'create' ? dayjs() : dayjs(formPrint.NgayKetThuc)}
@@ -327,7 +327,7 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
                 <div className="flex ">
                   <label className="pr-[23px]">Số chứng từ</label>
 
-                  <Select size="small" showSearch optionFilterProp="children" style={{ width: '154px' }} value={selectedSctBD} onChange={handleSctBDChange}>
+                  <Select size="small" showSearch optionFilterProp="children" style={{ width: '170px' }} value={selectedSctBD} onChange={handleSctBDChange}>
                     {newDataPMH?.map((item) => (
                       <Option key={item.SoChungTu} value={item.SoChungTu}>
                         {item.SoChungTu}
@@ -339,7 +339,7 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
                 <div className="flex ">
                   <label className="pl-[18px] pr-[18px]">Đến</label>
 
-                  <Select size="small" showSearch optionFilterProp="children" style={{ width: '154px' }} value={selectedSctKT} onChange={handleSctKTChange}>
+                  <Select size="small" showSearch optionFilterProp="children" style={{ width: '170px' }} value={selectedSctKT} onChange={handleSctKTChange}>
                     {newDataPMH?.map((item) => (
                       <Option key={item.SoChungTu} value={item.SoChungTu}>
                         {item.SoChungTu}

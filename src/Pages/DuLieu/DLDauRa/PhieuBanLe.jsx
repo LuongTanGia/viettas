@@ -18,30 +18,30 @@ import { CloseSquareFilled } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 
 const { Text } = Typography
-const { IoAddCircleOutline, TiPrinter, MdDelete, GiPayMoney, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill, CgCloseO } = icons
-const PhieuNTR = () => {
+const { TiPrinter, BsSearch, TfiMoreAlt, FaEyeSlash, RiFileExcel2Fill, CgCloseO } = icons
+const PhieuBanLe = () => {
   const navigate = useNavigate()
   const optionContainerRef = useRef(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [isLoadingModal, setIsLoadingModal] = useState(true)
-  const [isLoadingEdit, setIsLoadingEdit] = useState(true)
   const [tableLoad, setTableLoad] = useState(true)
+  const [isLoadingEdit, setIsLoadingEdit] = useState(true)
+  const [isLoadingModal, setIsLoadingModal] = useState(true)
   const [isShowModal, setIsShowModal] = useState(false)
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [isShowOption, setIsShowOption] = useState(false)
   const [data, setData] = useState([])
-  const [dataThongTin, setDataThongTin] = useState([])
-  const [dataThongTinSua, setDataThongTinSua] = useState([])
+  const [dataThongTin, setDataThongTin] = useState({})
+  const [dataThongTinSua, setDataThongTinSua] = useState({})
   const [dataRecord, setDataRecord] = useState(null)
   const [dataKhoHang, setDataKhoHang] = useState(null)
   const [dataDoiTuong, setDataDoiTuong] = useState(null)
-  const [dataQuyenHan, setDataQuyenHan] = useState({})
   const [actionType, setActionType] = useState('')
-  const [formKhoanNgay, setFormKhoanNgay] = useState([])
-  const [setSearchPNTR, filteredPNTR, searchPNTR] = useSearch(data)
+  const [formKhoanNgay, setFormKhoanNgay] = useState({})
+  const [dataQuyenHan, setDataQuyenHan] = useState({})
+  const [setSearchPBL, filteredPBL, searchPBL] = useSearch(data)
   const [prevSearchValue, setPrevSearchValue] = useState('')
   const [prevdateValue, setPrevDateValue] = useState({})
-  const [doneNTR, setDoneNTR] = useState(null)
+  const [donePBL, setDonePBL] = useState(null)
   const [hideColumns, setHideColumns] = useState(false)
   const [checkedList, setCheckedList] = useState([])
   const [confirmed, setConfirmed] = useState(false)
@@ -71,7 +71,7 @@ const PhieuNTR = () => {
   useEffect(() => {
     setNewColumns(columns)
     // Lấy thông tin từ local storage sau khi đăng nhập
-    const storedHiddenColumns = localStorage.getItem('hidenColumnPMH')
+    const storedHiddenColumns = localStorage.getItem('hidenColumnPBL')
     const parsedHiddenColumns = storedHiddenColumns ? JSON.parse(storedHiddenColumns) : null
 
     // Áp dụng thông tin đã lưu vào checkedList và setConfirmed để ẩn cột
@@ -83,8 +83,8 @@ const PhieuNTR = () => {
 
   useEffect(() => {
     if (confirmed) {
-      setCheckedList(JSON.parse(localStorage.getItem('hidenColumnPMH')))
-      setNewColumns(JSON.parse(localStorage.getItem('hidenColumnPMH')))
+      setCheckedList(JSON.parse(localStorage.getItem('hidenColumnPBL')))
+      setNewColumns(JSON.parse(localStorage.getItem('hidenColumnPBL')))
     }
   }, [confirmed])
 
@@ -99,12 +99,12 @@ const PhieuNTR = () => {
         const tokenLogin = localStorage.getItem('TKN')
         if (actionType === 'create' || actionType === 'edit') {
           console.log('get helper  KH,DT')
-          const responseKH = await apis.ListHelperKhoHangNTR(tokenLogin)
+          const responseKH = await apis.ListHelperKhoHang(tokenLogin)
           if (responseKH.data && responseKH.data.DataError === 0) {
             setDataKhoHang(responseKH.data.DataResults)
             setIsLoadingModal(false)
           } else if (responseKH.data.DataError === -1 || responseKH.data.DataError === -2 || responseKH.data.DataError === -3) {
-            toast.warning(responseKH.data.DataErrorDescription)
+            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseKH.data.DataErrorDescription}</div>)
             setIsLoadingModal(false)
           } else if (responseKH.data.DataError === -107 || responseKH.data.DataError === -108) {
             await RETOKEN()
@@ -113,7 +113,7 @@ const PhieuNTR = () => {
             toast.error(responseKH.data.DataErrorDescription)
             setIsLoadingModal(false)
           }
-          const responseDT = await apis.ListHelperDoiTuongNTR(tokenLogin)
+          const responseDT = await apis.ListHelperDoiTuong(tokenLogin)
           if (responseDT.data && responseDT.data.DataError === 0) {
             setDataDoiTuong(responseDT.data.DataResults)
             setIsLoadingModal(false)
@@ -136,12 +136,13 @@ const PhieuNTR = () => {
         }
         if (actionType === 'view') {
           console.log('get helper tt')
-          const responseTT = await apis.ThongTinNTR(tokenLogin, dataRecord.SoChungTu)
+
+          const responseTT = await apis.ThongTinPBL(tokenLogin, dataRecord.SoChungTu)
           if (responseTT.data && responseTT.data.DataError === 0) {
             setDataThongTin(responseTT.data.DataResult)
             setIsLoadingModal(false)
           } else if (responseTT.data.DataError === -1 || responseTT.data.DataError === -2 || responseTT.data.DataError === -3) {
-            toast.warning(responseTT.data.DataErrorDescription)
+            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseTT.data.DataErrorDescription}</div>)
             setIsLoadingModal(false)
           } else if (responseTT.data.DataError === -107 || responseTT.data.DataError === -108) {
             await RETOKEN()
@@ -151,26 +152,28 @@ const PhieuNTR = () => {
             setIsLoadingModal(false)
           }
         }
+
         if (actionType === 'edit') {
           console.log('get helper tt sua')
-          const responseTTS = await apis.ThongTinSuaNTR(tokenLogin, dataRecord.SoChungTu)
+          const responseTTS = await apis.ThongTinSuaPBL(tokenLogin, dataRecord.SoChungTu)
           if (responseTTS.data && responseTTS.data.DataError === 0) {
             setDataThongTinSua(responseTTS.data.DataResult)
-            setIsLoadingModal(false)
             setIsLoadingEdit(false)
+            setIsLoadingModal(false)
           } else if (responseTTS.data.DataError === -1 || responseTTS.data.DataError === -2 || responseTTS.data.DataError === -3) {
             toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseTTS.data.DataErrorDescription}</div>)
             setIsLoadingModal(false)
-            setIsShowModal(false)
             setIsLoadingEdit(false)
+
+            setIsShowModal(false)
           } else if (responseTTS.data.DataError === -107 || responseTTS.data.DataError === -108) {
             await RETOKEN()
             fetchData()
           } else {
+            toast.error(responseTTS.data.DataErrorDescription)
             setIsLoadingModal(false)
             setIsShowModal(false)
             setIsLoadingEdit(false)
-            toast.error(responseTTS.data.DataErrorDescription)
           }
         }
       } catch (error) {
@@ -178,6 +181,7 @@ const PhieuNTR = () => {
         setIsLoadingModal(false)
         setIsShowModal(false)
         setIsLoadingEdit(false)
+
         // toast.error('Lấy data thất bại. Vui lòng thử lại sau.')
       }
     }
@@ -186,14 +190,6 @@ const PhieuNTR = () => {
       fetchData()
     }
   }, [isShowModal])
-
-  useEffect(() => {
-    console.log('fix')
-    if (dataThongTin && dataRecord) {
-      // Data đã được chuyền vào, dừng loading
-      setTableLoad(false)
-    }
-  }, [dataRecord, dataThongTin])
 
   // get Khoảng ngày
   useEffect(() => {
@@ -207,7 +203,7 @@ const PhieuNTR = () => {
           setFormKhoanNgay(response.data)
           setIsLoading(false)
         } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-          toast.warning(response.data.DataErrorDescription)
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
           setIsLoading(false)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
@@ -225,14 +221,13 @@ const PhieuNTR = () => {
 
     getKhoanNgay()
   }, [])
-
   // get Chức năng quyền hạn
   useEffect(() => {
     const getChucNangQuyenHan = async () => {
       try {
         console.log('đi')
         const tokenLogin = localStorage.getItem('TKN')
-        const response = await apis.ChucNangQuyenHan(tokenLogin, 'DuLieu_NTR')
+        const response = await apis.ChucNangQuyenHan(tokenLogin, 'DuLieu_PBL')
 
         if (response.data && response.data.DataError === 0) {
           setDataQuyenHan(response.data)
@@ -254,34 +249,35 @@ const PhieuNTR = () => {
 
     getChucNangQuyenHan()
   }, [])
-
   useEffect(() => {
     if (dataQuyenHan?.VIEW == false) {
       setIsShowNotify(true)
     }
   }, [dataQuyenHan])
-
-  //get DSPMH
+  //get DSPBL
   useEffect(() => {
     if (tableLoad && dataQuyenHan?.VIEW) {
-      getDSPNTR()
+      getDSPBL()
     }
   }, [tableLoad, dataQuyenHan?.VIEW])
 
-  const getDSPNTR = async () => {
+  const getDSPBL = async () => {
     try {
-      console.log('get ds PMH')
+      console.log('đi2')
+
       const tokenLogin = localStorage.getItem('TKN')
-      const response = await apis.DanhSachNTR(tokenLogin, formKhoanNgay)
+
+      const response = await apis.DanhSachPBL(tokenLogin, formKhoanNgay)
+
       if (response.data && response.data.DataError === 0) {
         setData(response.data.DataResults)
         setTableLoad(false)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
-        getDSPNTR()
+        getDSPBL()
         // setTableLoad(false)
       } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        toast.warning(response.data.DataErrorDescription)
+        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
         setTableLoad(false)
       } else {
         toast.error(response.data.DataErrorDescription)
@@ -316,7 +312,7 @@ const PhieuNTR = () => {
       align: 'center',
       render: (text) => (
         <div style={{ textAlign: 'start' }}>
-          <HighlightedCell text={text} search={searchPNTR} />
+          <HighlightedCell text={text} search={searchPBL} />
         </div>
       ),
     },
@@ -325,7 +321,7 @@ const PhieuNTR = () => {
       dataIndex: 'NgayCTu',
       key: 'NgayCTu',
       align: 'center',
-      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY')} search={searchPNTR} />,
+      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY')} search={searchPBL} />,
       width: 150,
       sorter: (a, b) => {
         const dateA = new Date(a.NgayCTu)
@@ -345,7 +341,7 @@ const PhieuNTR = () => {
       align: 'center',
       render: (text) => (
         <div style={{ textAlign: 'start' }}>
-          <HighlightedCell text={text} search={searchPNTR} />
+          <HighlightedCell text={text} search={searchPBL} />
         </div>
       ),
     },
@@ -359,7 +355,7 @@ const PhieuNTR = () => {
       align: 'center',
       render: (text) => (
         <div className="truncate text-start">
-          <HighlightedCell text={text} search={searchPNTR} />
+          <HighlightedCell text={text} search={searchPBL} />
         </div>
       ),
     },
@@ -380,7 +376,7 @@ const PhieuNTR = () => {
         <div className="truncate text-start">
           <Tooltip title={text} color="blue">
             <span>
-              <HighlightedCell text={text} search={searchPNTR} />
+              <HighlightedCell text={text} search={searchPBL} />
             </span>
           </Tooltip>
         </div>
@@ -396,7 +392,7 @@ const PhieuNTR = () => {
       align: 'center',
       render: (text) => (
         <div style={{ textAlign: 'start' }}>
-          <HighlightedCell text={text} search={searchPNTR} />
+          <HighlightedCell text={text} search={searchPBL} />
         </div>
       ),
     },
@@ -410,7 +406,7 @@ const PhieuNTR = () => {
       align: 'center',
       render: (text) => (
         <div style={{ textAlign: 'start' }}>
-          <HighlightedCell text={text} search={searchPNTR} />
+          <HighlightedCell text={text} search={searchPBL} />
         </div>
       ),
     },
@@ -424,7 +420,7 @@ const PhieuNTR = () => {
       align: 'center',
       render: (text) => (
         <div className="truncate text-start">
-          <HighlightedCell text={text} search={searchPNTR} />
+          <HighlightedCell text={text} search={searchPBL} />
         </div>
       ),
     },
@@ -442,7 +438,7 @@ const PhieuNTR = () => {
       align: 'center',
       render: (text) => (
         <div className="truncate text-start">
-          <HighlightedCell text={text} search={searchPNTR} />
+          <HighlightedCell text={text} search={searchPBL} />
         </div>
       ),
     },
@@ -465,7 +461,7 @@ const PhieuNTR = () => {
       align: 'end',
       render: (text) => (
         <div className={`flex justify-end w-full h-full    ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatQuantity(text, dataThongSo?.SOLESOLUONG)} search={searchPNTR} />
+          <HighlightedCell text={formatQuantity(text, dataThongSo?.SOLESOLUONG)} search={searchPBL} />
         </div>
       ),
       sorter: (a, b) => a.TongSoLuong - b.TongSoLuong,
@@ -479,7 +475,7 @@ const PhieuNTR = () => {
       align: 'end',
       render: (text) => (
         <div className={`flex justify-end w-full h-full ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchPNTR} />
+          <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchPBL} />
         </div>
       ),
       sorter: (a, b) => a.TongTienHang - b.TongTienHang,
@@ -493,7 +489,7 @@ const PhieuNTR = () => {
       align: 'end',
       render: (text) => (
         <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchPNTR} />
+          <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchPBL} />
         </div>
       ),
       sorter: (a, b) => a.TongTienThue - b.TongTienThue,
@@ -507,7 +503,7 @@ const PhieuNTR = () => {
       align: 'end',
       render: (text) => (
         <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchPNTR} />
+          <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchPBL} />
         </div>
       ),
       sorter: (a, b) => a.TongThanhTien - b.TongThanhTien,
@@ -529,7 +525,7 @@ const PhieuNTR = () => {
       render: (text) => (
         <div style={{ textAlign: 'start' }}>
           {' '}
-          <HighlightedCell text={text} search={searchPNTR} />
+          <HighlightedCell text={text} search={searchPBL} />
         </div>
       ),
     },
@@ -538,7 +534,7 @@ const PhieuNTR = () => {
       dataIndex: 'NgayTao',
       key: 'NgayTao',
       align: 'center',
-      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY hh:mm:ss')} search={searchPNTR} />,
+      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY hh:mm:ss')} search={searchPBL} />,
       width: 200,
       sorter: (a, b) => {
         const dateA = new Date(a.NgayTao)
@@ -557,7 +553,7 @@ const PhieuNTR = () => {
       align: 'center',
       render: (text) => (
         <div className="truncate text-start">
-          <HighlightedCell text={text} search={searchPNTR} />
+          <HighlightedCell text={text} search={searchPBL} />
         </div>
       ),
     },
@@ -566,7 +562,7 @@ const PhieuNTR = () => {
       dataIndex: 'NgaySuaCuoi',
       key: 'NgaySuaCuoi',
       align: 'center',
-      render: (text) => <HighlightedCell text={text ? moment(text).format('DD/MM/YYYY hh:mm:ss') : null} search={searchPNTR} />,
+      render: (text) => <HighlightedCell text={text ? moment(text).format('DD/MM/YYYY hh:mm:ss') : null} search={searchPBL} />,
       width: 200,
       sorter: (a, b) => {
         const dateA = new Date(a.NgaySuaCuoi)
@@ -590,7 +586,7 @@ const PhieuNTR = () => {
       align: 'center',
       render: (text) => (
         <div className="truncate text-start">
-          <HighlightedCell text={text} search={searchPNTR} />
+          <HighlightedCell text={text} search={searchPBL} />
         </div>
       ),
     },
@@ -611,51 +607,6 @@ const PhieuNTR = () => {
       },
       showSorterTooltip: false,
     },
-    {
-      title: 'Chức năng',
-      key: 'ChucNang',
-      fixed: 'right',
-      width: 120,
-      align: 'center',
-      render: (record) => {
-        return (
-          <>
-            <div className=" flex gap-1 items-center justify-center  ">
-              <div
-                onClick={() => handlePay(record)}
-                title="Lập phiếu chi"
-                className={`p-[3px] rounded-md text-slate-50 ${
-                  record.TTTienMat
-                    ? 'border-2 border-gray-400 bg-gray-400 cursor-not-allowed'
-                    : ' border-2 border-blue-500 bg-blue-500  hover:bg-white hover:text-blue-500 cursor-pointer'
-                }`}
-              >
-                <GiPayMoney size={16} />
-              </div>
-              <div
-                onClick={() => (dataQuyenHan?.EDIT ? handleEdit(record) : '')}
-                title="Sửa"
-                className={`p-[3px] border-2 rounded-md text-slate-50 ${
-                  dataQuyenHan?.EDIT ? 'border-yellow-500 bg-yellow-500 hover:bg-white hover:text-yellow-500 cursor-pointer' : 'border-gray-400 bg-gray-400 cursor-not-allowed'
-                } `}
-              >
-                <MdEdit size={16} />
-              </div>
-
-              <div
-                onClick={() => (dataQuyenHan?.DEL ? handleDelete(record) : '')}
-                title="Xóa"
-                className={`p-[3px] border-2 rounded-md text-slate-50 ${
-                  dataQuyenHan?.DEL ? 'border-red-500 bg-red-500 hover:bg-white hover:text-red-500 cursor-pointer' : 'border-gray-400 bg-gray-400 cursor-not-allowed'
-                } `}
-              >
-                <MdDelete size={16} />
-              </div>
-            </div>
-          </>
-        )
-      },
-    },
   ]
 
   const options = columns.slice(0, -1).map(({ key, title }) => ({
@@ -670,36 +621,12 @@ const PhieuNTR = () => {
     setConfirmed(true)
   }
 
-  const handleDelete = (record) => {
-    setActionType('delete')
-    setDataRecord(record)
-    setIsShowModal(true)
-  }
-
   const handleView = (record) => {
     setActionType('view')
     setDataRecord(record)
     setIsShowModal(true)
   }
 
-  const handleEdit = (record) => {
-    if (record.TTTienMat === true) {
-      toast.error('Phiếu mua hàng đã được lập phiếu chi! Không thể sửa.', {
-        autoClose: 1500,
-      })
-    } else {
-      setActionType('edit')
-      setDataRecord(record)
-      setDataThongTinSua(record)
-      setIsShowModal(true)
-    }
-  }
-
-  const handleCreate = (record) => {
-    setActionType('create')
-    setDataRecord(record)
-    setIsShowModal(true)
-  }
   const handlePrint = (record) => {
     setActionType('print')
     setDataRecord(record)
@@ -709,7 +636,9 @@ const PhieuNTR = () => {
     setActionType('printWareHouse')
     setDataRecord(record)
     setIsShowModal(true)
+    setIsLoadingModal(false)
   }
+
   const handleFilterDS = () => {
     const currentTime = new Date().getTime()
     if (currentTime - lastSearchTime >= 1000 && formKhoanNgay !== prevdateValue) {
@@ -756,19 +685,10 @@ const PhieuNTR = () => {
     }
   }
 
-  const handlePay = (record) => {
-    if (record.TTTienMat) return
-    setActionType('pay')
-    setDataRecord(record)
-    setIsShowModal(true)
-  }
-
-  const handleSearch = (e) => {
-    const currentTime = new Date().getTime()
-    if (currentTime - lastSearchTime >= 1000 && e !== prevSearchValue) {
+  const handleSearch = (newSearch) => {
+    if (newSearch !== prevSearchValue) {
       setTableLoad(true)
-      setSearchPNTR(e)
-      setLastSearchTime(currentTime)
+      setSearchPBL(newSearch)
     }
   }
 
@@ -825,14 +745,14 @@ const PhieuNTR = () => {
             <div className="w-auto">
               <div className="relative text-lg flex justify-between items-center mb-1">
                 <div className="flex items-center gap-x-4 font-bold">
-                  <h1 className="text-xl uppercase">Phiếu nhập hàng bán trả lại </h1>
+                  <h1 className="text-xl uppercase">Phiếu bán hàng (lẻ) </h1>
                   <div>
                     <BsSearch size={18} className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
                   </div>
                 </div>
                 <div className="flex  ">
                   {isShowSearch && (
-                    <div className={`flex absolute left-[23rem] -top-[2px] transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
+                    <div className={`flex absolute left-[16.4rem] -top-[2px] transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
                       <Input
                         allowClear={{
                           clearIcon: <CloseSquareFilled />,
@@ -911,7 +831,7 @@ const PhieuNTR = () => {
                               defaultValue={checkedList}
                               onChange={(value) => {
                                 setCheckedList(value)
-                                localStorage.setItem('hidenColumnPMH', JSON.stringify(value))
+                                localStorage.setItem('hidenColumnPBL', JSON.stringify(value))
                               }}
                             >
                               <Row>
@@ -939,7 +859,7 @@ const PhieuNTR = () => {
                   <div className="flex gap-x-2 items-center">
                     <label htmlFor="">Ngày</label>
                     <DateField
-                      className="DatePicker_PMH max-w-[110px]"
+                      className="DatePicker_PBL max-w-[110px]"
                       format="DD/MM/YYYY"
                       value={dayjs(formKhoanNgay.NgayBatDau)}
                       // maxDate={dayjs(formKhoanNgay.NgayKetThuc)}
@@ -977,7 +897,7 @@ const PhieuNTR = () => {
                   <div className="flex gap-x-2 items-center">
                     <label htmlFor="">Đến</label>
                     <DateField
-                      className="DatePicker_PMH max-w-[110px]"
+                      className="DatePicker_PBL max-w-[110px]"
                       format="DD/MM/YYYY"
                       // minDate={dayjs(formKhoanNgay.NgayBatDau)}
                       value={dayjs(formKhoanNgay.NgayKetThuc)}
@@ -1011,28 +931,6 @@ const PhieuNTR = () => {
                       }}
                     />
                   </div>
-
-                  {/* <ActionButton
-                color={'slate-50'}
-                title={'Lọc'}
-                icon={<MdFilterAlt size={20} />}
-                background={'bg-main'}
-                bg_hover={'white'}
-                color_hover={'bg-main'}
-                handleAction={handleFilterDS}
-              /> */}
-                </div>
-                <div className="flex items-center gap-2">
-                  <ActionButton
-                    color={'slate-50'}
-                    title={'Thêm phiếu'}
-                    icon={<IoAddCircleOutline size={20} />}
-                    bg_hover={!dataQuyenHan?.ADD ? '' : 'white'}
-                    background={!dataQuyenHan?.ADD ? 'gray-400' : 'bg-main'}
-                    color_hover={!dataQuyenHan?.ADD ? '' : 'bg-main'}
-                    handleAction={() => (!dataQuyenHan?.ADD ? '' : handleCreate())}
-                    quyenHan={dataQuyenHan?.ADD}
-                  />
                 </div>
               </div>
 
@@ -1042,7 +940,7 @@ const PhieuNTR = () => {
                   className="table_pmh setHeight"
                   // rowSelection={rowSelection}
                   columns={newColumnsHide}
-                  dataSource={filteredPNTR}
+                  dataSource={filteredPBL}
                   size="small"
                   scroll={{
                     x: 1500,
@@ -1063,7 +961,7 @@ const PhieuNTR = () => {
                       handleView(record)
                     },
                   })}
-                  rowClassName={(record) => (record.SoChungTu === doneNTR ? 'highlighted-row' : '')}
+                  rowClassName={(record) => (record.SoChungTu === donePBL ? 'highlighted-row' : '')}
                   // Bảng Tổng
                   summary={() => {
                     return (
@@ -1072,28 +970,28 @@ const PhieuNTR = () => {
                           {newColumnsHide
                             .filter((column) => column.render)
                             .map((column) => {
-                              const isNumericColumn = typeof filteredPNTR[0]?.[column.dataIndex] === 'number'
+                              const isNumericColumn = typeof filteredPBL[0]?.[column.dataIndex] === 'number'
 
                               return (
                                 <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
                                   {isNumericColumn ? (
                                     column.dataIndex === 'TongTienHang' || column.dataIndex === 'TongTienThue' || column.dataIndex === 'TongThanhTien' ? (
                                       <Text strong>
-                                        {Number(filteredPNTR.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                        {Number(filteredPBL.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                           minimumFractionDigits: dataThongSo?.SOLESOTIEN,
                                           maximumFractionDigits: dataThongSo?.SOLESOTIEN,
                                         })}
                                       </Text>
                                     ) : column.dataIndex === 'TongSoLuong' ? (
                                       <Text strong>
-                                        {Number(filteredPNTR.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                        {Number(filteredPBL.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                           minimumFractionDigits: dataThongSo?.SOLESOLUONG,
                                           maximumFractionDigits: dataThongSo?.SOLESOLUONG,
                                         })}
                                       </Text>
                                     ) : (
                                       <Text strong>
-                                        {Number(filteredPNTR.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                        {Number(filteredPBL.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                           minimumFractionDigits: 0,
                                           maximumFractionDigits: 0,
                                         })}
@@ -1120,8 +1018,8 @@ const PhieuNTR = () => {
 
               {isShowModal && (
                 <Modals
-                  namePage={'Phiếu nhập hàng bán trả'}
-                  typePage={'NTR'}
+                  namePage={'Phiếu Bán Hàng (Lẻ)'}
+                  typePage={'PBL'}
                   close={() => setIsShowModal(false)}
                   actionType={actionType}
                   dataRecord={dataRecord}
@@ -1135,7 +1033,7 @@ const PhieuNTR = () => {
                   controlDate={formKhoanNgay}
                   dataThongSo={dataThongSo}
                   loading={() => setTableLoad(true)}
-                  setHightLight={setDoneNTR}
+                  setHightLight={setDonePBL}
                 />
               )}
             </div>
@@ -1146,4 +1044,4 @@ const PhieuNTR = () => {
   )
 }
 
-export default PhieuNTR
+export default PhieuBanLe

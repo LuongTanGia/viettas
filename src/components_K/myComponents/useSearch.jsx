@@ -43,12 +43,12 @@ export const useSearch = (data) => {
           (NgayTao || '').toLowerCase().includes(search.toLowerCase()) ||
           (NguoiTao || '').toLowerCase().includes(search.toLowerCase()) ||
           (NgaySuaCuoi || '').toLowerCase().includes(search.toLowerCase()) ||
+          (NguoiSuaCuoi || '').toLowerCase().includes(search.toLowerCase()) ||
           (TongMatHang?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (TongSoLuong?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (TongTienThue?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (TongTienHang?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (TongThanhTien?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
-          (NguoiSuaCuoi || '').toLowerCase().includes(search.toLowerCase()) ||
           // PCT
           (SoTien?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (TenHangMuc || '').toLowerCase().includes(search.toLowerCase()) ||

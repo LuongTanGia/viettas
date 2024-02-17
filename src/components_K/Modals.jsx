@@ -294,7 +294,7 @@ const Modals = ({
       console.log('get HH')
       const tokenLogin = localStorage.getItem('TKN')
       if (typePage === 'PMH') {
-        const response = await apis.ListHelperHH(tokenLogin, selectedKhoHang)
+        const response = await apis.ListHelperHHPMH(tokenLogin, selectedKhoHang)
         if (response.data && response.data.DataError === 0) {
           setDataHangHoa(response.data.DataResults)
           setIsLoading(false)
@@ -793,6 +793,20 @@ const Modals = ({
           toast.error(response.data.DataErrorDescription)
         }
       }
+      if (typePage === 'PBL') {
+        const response = await apis.InPBL(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+        // Kiểm tra call api thành công
+        if (response.data && response.data.DataError === 0) {
+          base64ToPDF(response.data.DataResults)
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(response.data.DataErrorDescription)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handlePrint()
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
+      }
     } catch (error) {
       console.error('Error while saving data:', error)
     }
@@ -896,6 +910,20 @@ const Modals = ({
       }
       if (typePage === 'XTR') {
         const response = await apis.InPKXTR(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+        // Kiểm tra call api thành công
+        if (response.data && response.data.DataError === 0) {
+          base64ToPDF(response.data.DataResults)
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(response.data.DataErrorDescription)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handlePrintWareHouse()
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
+      }
+      if (typePage === 'PBL') {
+        const response = await apis.InPKPBL(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
         // Kiểm tra call api thành công
         if (response.data && response.data.DataError === 0) {
           base64ToPDF(response.data.DataResults)

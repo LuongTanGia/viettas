@@ -1,18 +1,19 @@
-import axios from '../axios'
+/* eslint-disable no-async-promise-executor */
+import axios from '../../axios'
 
-export const DanhSachNTR = (token, formKhoanNgay) =>
+export const DanhSachGBL = (token) =>
   new Promise(async (resolve, reject) => {
     try {
       // console.log('Data to be sent to API:', {
       //   formKhoanNgay,
       // })
       const response = await axios({
-        url: '/entries/DuLieuNTR/DanhSach',
+        url: '/settings/GiaBanLe/DanhSach',
         method: 'post',
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        data: formKhoanNgay,
+        data: {},
       })
       resolve(response)
     } catch (error) {
@@ -20,11 +21,29 @@ export const DanhSachNTR = (token, formKhoanNgay) =>
     }
   })
 
-export const ThongTinNTR = (token, Sct) =>
+export const ThongTinGBL = (token, Sct) =>
   new Promise(async (resolve, reject) => {
     try {
       const response = await axios({
-        url: '/entries/DuLieuNTR/ThongTin',
+        url: '/entries/DuLieuGiaBanLe/ThongTin',
+        method: 'post',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        data: {
+          SoChungTu: Sct,
+        },
+      })
+      resolve(response)
+    } catch (error) {
+      reject(error)
+    }
+  })
+export const ThongTinSuaGBL = (token, Sct) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const response = await axios({
+        url: '/entries/DuLieuGiaBanLe/ThongTinSua',
         method: 'post',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -39,60 +58,7 @@ export const ThongTinNTR = (token, Sct) =>
     }
   })
 
-export const ThongTinSuaNTR = (token, Sct) =>
-  new Promise(async (resolve, reject) => {
-    try {
-      const response = await axios({
-        url: '/entries/DuLieuNTR/ThongTinSua',
-        method: 'post',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        data: {
-          SoChungTu: Sct,
-        },
-      })
-      resolve(response)
-    } catch (error) {
-      reject(error)
-    }
-  })
-
-export const ListHelperKhoHangNTR = (token) =>
-  new Promise(async (resolve, reject) => {
-    try {
-      const response = await axios({
-        url: '/entries/DuLieuNTR/ListHelper_KhoHang',
-        method: 'post',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        data: {},
-      })
-      resolve(response)
-    } catch (error) {
-      reject(error)
-    }
-  })
-
-export const ListHelperDoiTuongNTR = (token) =>
-  new Promise(async (resolve, reject) => {
-    try {
-      const response = await axios({
-        url: '/entries/DuLieuNTR/ListHelper_DoiTuong',
-        method: 'post',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        data: {},
-      })
-      resolve(response)
-    } catch (error) {
-      reject(error)
-    }
-  })
-
-export const ListHelperHHNTR = (token, MK) =>
+export const ListHelperHHGBL = (token, MK) =>
   new Promise(async (resolve, reject) => {
     try {
       // console.log("Data to be sent to API:", {
@@ -100,7 +66,7 @@ export const ListHelperHHNTR = (token, MK) =>
       //   MaKho: MK,
       // });
       const response = await axios({
-        url: '/entries/DuLieuNTR/ListHelper_HangHoa',
+        url: '/entries/DuLieuGiaBanLe/ListHelper_HangHoa',
         method: 'post',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -113,21 +79,21 @@ export const ListHelperHHNTR = (token, MK) =>
     }
   })
 
-export const ThemNTR = (token, formCreate, MaDoiTuong, MaKho) =>
+export const ThemGBL = (token, formGBL, MaDoiTuong, MaKho) =>
   new Promise(async (resolve, reject) => {
     try {
-      console.log('Data to be sent to API 2:', {
-        ...formCreate,
+      console.log('Data to be sent to API:', {
+        ...formGBL,
         MaDoiTuong: MaDoiTuong,
         MaKho: MaKho,
       })
       const response = await axios({
-        url: '/entries/DuLieuNTR/Them',
+        url: '/entries/DuLieuGiaBanLe/Them',
         method: 'post',
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        data: { ...formCreate, MaDoiTuong: MaDoiTuong, MaKho: MaKho },
+        data: { ...formGBL, MaDoiTuong: MaDoiTuong, MaKho: MaKho },
       })
       resolve(response)
     } catch (error) {
@@ -135,15 +101,15 @@ export const ThemNTR = (token, formCreate, MaDoiTuong, MaKho) =>
     }
   })
 
-export const SuaNTR = (token, Sct, formPNTREdit, MaDoiTuong, MaKho) =>
+export const SuaGBL = (token, Sct, formGBLEdit, MaDoiTuong, MaKho) =>
   new Promise(async (resolve, reject) => {
     try {
       console.log('Data to be sent to API:', {
         SoChungTu: Sct,
         Data: {
-          ...formPNTREdit,
-          // ...formPNTREdit,
-          // DataDetails: formPNTREdit?.DataDetails?.map((item, index) => ({
+          ...formGBLEdit,
+          // ...formGiaBanLeEdit,
+          // DataDetails: formGiaBanLeEdit?.DataDetails?.map((item, index) => ({
           //   ...item,
           //   STT: index + 1,
           // })),
@@ -152,7 +118,7 @@ export const SuaNTR = (token, Sct, formPNTREdit, MaDoiTuong, MaKho) =>
         },
       })
       const response = await axios({
-        url: '/entries/DuLieuNTR/Sua',
+        url: '/entries/DuLieuGiaBanLe/Sua',
         method: 'post',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -160,7 +126,7 @@ export const SuaNTR = (token, Sct, formPNTREdit, MaDoiTuong, MaKho) =>
         data: {
           SoChungTu: Sct,
           Data: {
-            ...formPNTREdit,
+            ...formGBLEdit,
             MaDoiTuong: MaDoiTuong,
             MaKho: MaKho,
           },
@@ -172,11 +138,11 @@ export const SuaNTR = (token, Sct, formPNTREdit, MaDoiTuong, MaKho) =>
     }
   })
 
-export const XoaNTR = (token, Sct) =>
+export const XoaGBL = (token, Sct) =>
   new Promise(async (resolve, reject) => {
     try {
       const response = await axios({
-        url: '/entries/DuLieuNTR/Xoa',
+        url: '/entries/DuLieuGiaBanLe/Xoa',
         method: 'post',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -189,7 +155,7 @@ export const XoaNTR = (token, Sct) =>
     }
   })
 
-export const InNTR = (token, formPrint, SctBD, SctKT, SoLien) =>
+export const InGBL = (token, formPrint, SctBD, SctKT, SoLien) =>
   new Promise(async (resolve, reject) => {
     try {
       console.log('Data to be sent to API:', {
@@ -199,7 +165,7 @@ export const InNTR = (token, formPrint, SctBD, SctKT, SoLien) =>
         SoLien: SoLien,
       })
       const response = await axios({
-        url: '/entries/DuLieuNTR/InPhieu',
+        url: '/entries/DuLieuGiaBanLe/InPhieu',
         method: 'post',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -210,52 +176,6 @@ export const InNTR = (token, formPrint, SctBD, SctKT, SoLien) =>
           SoChungTuketThuc: SctKT,
           SoLien: SoLien,
         },
-      })
-      resolve(response)
-    } catch (error) {
-      reject(error)
-    }
-  })
-
-export const InPKNTR = (token, formPrint, SctBD, SctKT, SoLien) =>
-  new Promise(async (resolve, reject) => {
-    try {
-      // console.log("Data to be sent to API:", {
-      //   ...formPrint,
-      //   SoChungTuBatDau: SctBD,
-      //   SoChungTuketThuc: SctKT,
-      //   SoLien: SoLien,
-      // });
-      const response = await axios({
-        url: '/entries/DuLieuNTR/InPhieuKho',
-        method: 'post',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        data: {
-          ...formPrint,
-          SoChungTuBatDau: SctBD,
-          SoChungTuketThuc: SctKT,
-          SoLien: SoLien,
-        },
-      })
-      resolve(response)
-    } catch (error) {
-      reject(error)
-    }
-  })
-
-export const LapPhieuChiNTR = (token, Sct) =>
-  new Promise(async (resolve, reject) => {
-    try {
-      console.log('Data to be sent to API:', Sct)
-      const response = await axios({
-        url: '/entries/DuLieuNTR/LapPhieuChi',
-        method: 'post',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        data: { SoChungTu: Sct },
       })
       resolve(response)
     } catch (error) {
