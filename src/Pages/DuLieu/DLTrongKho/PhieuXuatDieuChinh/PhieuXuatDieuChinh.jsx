@@ -92,8 +92,8 @@ const PhieuXuatDieuChinh = () => {
   useEffect(() => {
     const getDataNDC = async () => {
       try {
-        setTableLoad(true)
         if (isLoading == true) {
+          setTableLoad(true)
           const response = await categoryAPI.GetDataXDC(
             dateData == {}
               ? {}

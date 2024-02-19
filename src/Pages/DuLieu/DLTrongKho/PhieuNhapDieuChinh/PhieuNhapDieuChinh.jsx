@@ -92,8 +92,8 @@ const PhieuNhapDieuChinh = () => {
   useEffect(() => {
     const getDataNDC = async () => {
       try {
-        setTableLoad(true)
         if (isLoading == true) {
+          setTableLoad(true)
           const response = await categoryAPI.GetDataNDC(
             dateData == {}
               ? {}

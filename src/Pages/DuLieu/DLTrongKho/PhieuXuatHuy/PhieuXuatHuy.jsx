@@ -92,8 +92,8 @@ const PhieuXuatHuy = () => {
   useEffect(() => {
     const getDataHUY = async () => {
       try {
-        setTableLoad(true)
         if (isLoading == true) {
+          setTableLoad(true)
           const response = await categoryAPI.GetDataHUY(
             dateData == {}
               ? {}
@@ -120,7 +120,7 @@ const PhieuXuatHuy = () => {
       }
     }
     getDataHUY()
-  }, [searchHangHoa, isLoading, targetRow, dateData?.NgayBatDau, dateData?.NgayKetThuc])
+  }, [searchHangHoa, targetRow, dateData?.NgayBatDau, dateData?.NgayKetThuc])
 
   useEffect(() => {
     const handleClickOutside = (event) => {

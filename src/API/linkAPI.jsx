@@ -169,6 +169,27 @@ const categoryAPI = {
     }
     return axiosClient.post(url, body, { headers })
   },
+  InfoNXTTheoKho_DVTQD(body, accessToken) {
+    const url = '/inquiries/NhapXuatTon/TheoKho_DVTQuyDoi'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  InfoNXTTongKho(body, accessToken) {
+    const url = '/inquiries/NhapXuatTon/TongKho'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  InfoNXTTongKho_DVTQD(body, accessToken) {
+    const url = '/inquiries/NhapXuatTon/TongKho_DVTQuyDoi'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
   ListNhomHangNXT(accessToken) {
     const url = '/inquiries/NhapXuatTon/ListHelper_NhomHang'
     const headers = {

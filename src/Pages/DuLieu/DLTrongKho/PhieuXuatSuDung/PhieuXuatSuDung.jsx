@@ -92,8 +92,8 @@ const PhieuXuatSuDung = () => {
   useEffect(() => {
     const getDataXSD = async () => {
       try {
-        setTableLoad(true)
         if (isLoading == true) {
+          setTableLoad(true)
           const response = await categoryAPI.GetDataXSD(
             dateData == {}
               ? {}

@@ -23,6 +23,7 @@ import PhieuXuatHuy from '../../Pages/DuLieu/DLTrongKho/PhieuXuatHuy/PhieuXuatHu
 import CongNoDauRa from '../CongNoDauRa/CongNoDauRa'
 import DoiTuong from '../../Pages/DanhMuc/DoiTuong'
 import GiaBanLe from '../../pages/ThietLap/GiaBanLe'
+import NhapXuatTon from '../../Pages/TruyVan/NhapXuatTon'
 
 function MainPage({ isSidebarVisible }) {
   return (
@@ -52,6 +53,7 @@ function MainPage({ isSidebarVisible }) {
           <Route path="/TruyVan_CanDoiNXT_TheoKho" element={<NhapXuatTonKho />} />
           <Route path="/ThietLap_GiaLe" element={<GiaBanLe />} />
 
+          <Route path="/TruyVan_CanDoiNXT_TongKho" element={<NhapXuatTon />} />
           <Route path="*" element={<ErrorPage />} />
         </Routes>
       </main>

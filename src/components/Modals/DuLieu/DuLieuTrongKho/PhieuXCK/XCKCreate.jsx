@@ -165,10 +165,10 @@ const XCKCreate = ({ close, loadingData, setTargetRow }) => {
   }
 
   const handleCreate = async (isSave = true, isPrint = true) => {
-    if (!XCKForm?.MaKho || !XCKForm.MaKho_Nhan) {
+    if (!XCKForm?.MaKho?.trim() || !XCKForm.MaKho_Nhan.trim()) {
       setErrors({
-        MaKho: XCKForm?.MaKho ? '' : 'Kho không được trống',
-        MaKho_Nhan: XCKForm?.MaKho_Nhan ? '' : 'Kho nhận không được trống',
+        MaKho: XCKForm?.MaKho?.trim() ? '' : 'Kho không được trống',
+        MaKho_Nhan: XCKForm?.MaKho_Nhan.trim() ? '' : 'Kho nhận không được trống',
       })
       return
     }
@@ -414,7 +414,7 @@ const XCKCreate = ({ close, loadingData, setTargetRow }) => {
                           showSearch
                           required
                           size="small"
-                          value={XCKForm?.MaKho}
+                          value={XCKForm?.MaKho || undefined}
                           placeholder={errors.MaKho ? errors.MaKho : ''}
                           status={errors.MaKho ? 'error' : ''}
                           onChange={(value) => {
@@ -440,7 +440,7 @@ const XCKCreate = ({ close, loadingData, setTargetRow }) => {
                           showSearch
                           required
                           size="small"
-                          value={XCKForm?.MaKho_Nhan}
+                          value={XCKForm?.MaKho_Nhan || undefined}
                           placeholder={errors.MaKho_Nhan ? errors.MaKho_Nhan : ''}
                           status={errors.MaKho_Nhan ? 'error' : ''}
                           onChange={(value) => {

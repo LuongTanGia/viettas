@@ -11,10 +11,14 @@ import { RETOKEN } from '../../../../action/Actions'
 
 const DTGroup = ({ close, type, dataDT, loadingData, setTargetRow }) => {
   const TokenAccess = localStorage.getItem('TKN')
-  const [selectedValue, setSelectedValue] = useState('')
+  const [selectedValue, setSelectedValue] = useState(null)
   const [nhomHang, setNhomHang] = useState('')
   const [nhomGia, setNhomGia] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+
+  const [errors, setErrors] = useState({
+    GiaTriMoi: '',
+  })
 
   useEffect(() => {
     setTargetRow([])
@@ -42,6 +46,12 @@ const DTGroup = ({ close, type, dataDT, loadingData, setTargetRow }) => {
   }, [isLoading])
 
   const handlePrice = async () => {
+    if (!selectedValue) {
+      setErrors({
+        GiaTriMoi: selectedValue ? '' : 'Nhóm không được trống',
+      })
+      return
+    }
     try {
       const response = await categoryAPI.GanNhomGia(
         {
@@ -68,6 +78,13 @@ const DTGroup = ({ close, type, dataDT, loadingData, setTargetRow }) => {
   }
 
   const handleGroup = async () => {
+    console.log(selectedValue)
+    if (!selectedValue) {
+      setErrors({
+        GiaTriMoi: selectedValue ? '' : 'Nhóm không được trống',
+      })
+      return
+    }
     try {
       const response = await categoryAPI.GanNhomDoiTuong(
         {
@@ -112,13 +129,17 @@ const DTGroup = ({ close, type, dataDT, loadingData, setTargetRow }) => {
                     <div className="required whitespace-nowrap">Nhóm</div>
                     <Space wrap>
                       <Select
-                        placeholder="Chọn nhóm"
+                        placeholder={errors?.GiaTriMoi ? errors?.GiaTriMoi : 'Chọn nhóm'}
                         required
                         style={{
                           width: 500,
                         }}
-                        value={selectedValue}
-                        onChange={(value) => setSelectedValue(value)}
+                        value={selectedValue || undefined}
+                        status={errors.GiaTriMoi ? 'error' : ''}
+                        onChange={(value) => {
+                          setSelectedValue(value)
+                          setErrors({ ...errors, GiaTriMoi: '' })
+                        }}
                       >
                         {type === 'price'
                           ? nhomGia.map((item) => (

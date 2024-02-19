@@ -132,6 +132,12 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
   }, [isLoading])
 
   const handleCreate = async (isSave = true, actionType) => {
+    if (!PLRForm?.MaKho?.trim()) {
+      setErrors({
+        MaKho: PLRForm?.MaKho?.trim() ? '' : 'Kho không được trống',
+      })
+      return
+    }
     try {
       const newData = selectedRowData.map((item, index) => {
         return {
@@ -401,7 +407,7 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
                           showSearch
                           required
                           size="small"
-                          value={PLRForm?.MaKho}
+                          value={PLRForm?.MaKho || undefined}
                           placeholder={errors?.MaKho ? errors?.MaKho : ''}
                           status={errors.MaKho ? 'error' : ''}
                           onChange={(value) => {

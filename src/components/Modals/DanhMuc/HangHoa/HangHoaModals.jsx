@@ -27,8 +27,8 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
   const [dVTKho, setDVTKho] = useState()
   const [dVTQuyDoi, setDVTQuyDoi] = useState()
   const [HangHoaCT, setHangHoaCT] = useState()
-  const [selectedStatus, setSelectedStatus] = useState([])
-  const [selectedGroup, setSelectedGroup] = useState([])
+  const [selectedStatus, setSelectedStatus] = useState(null)
+  const [selectedGroup, setSelectedGroup] = useState(null)
   const [selectedBarCodeFrom, setSelectedBarCodeFrom] = useState(null)
   const [selectedBarCodeTo, setSelectedBarCodeTo] = useState(null)
   const [selectedBarCodeList, setSelectedBarCodeList] = useState([])
@@ -36,7 +36,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
   const [selectednhomTo, setSelectednhomTo] = useState(null)
   const [selectednhomList, setSelectednhomList] = useState([])
   const [lastNumber13Main, setLastNumber13Main] = useState('')
-  const [selectedTem, setSelectedTem] = useState('')
+  const [selectedTem, setSelectedTem] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const [tableLoad, setTableLoad] = useState(true)
   const [isShowModal, setIsShowModal] = useState(false)
@@ -70,6 +70,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
     DVTKho: '',
     MaVach: '',
     SoTem: '',
+    GiaTriMoi: '',
   })
 
   useEffect(() => {
@@ -482,6 +483,12 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
     }
   }
   const handleStatus = async () => {
+    if (!selectedStatus) {
+      setErrors({
+        GiaTriMoi: selectedStatus ? '' : 'Trạng thái không được trống',
+      })
+      return
+    }
     try {
       const response = await categoryAPI.GanTrangThai(
         {
@@ -506,6 +513,12 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
     }
   }
   const handleGroup = async () => {
+    if (!selectedGroup) {
+      setErrors({
+        GiaTriMoi: selectedGroup ? '' : 'Nhóm không được trống',
+      })
+      return
+    }
     try {
       const response = await categoryAPI.GanNhom(
         {
@@ -530,7 +543,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
   const handlePrintBar = async () => {
     if (!selectedTem) {
       setErrors({
-        SoTem: selectedTem.trim() ? '' : 'Số tem không được trống',
+        SoTem: selectedTem ? '' : 'Số tem không được trống',
       })
       return
     }
@@ -1936,13 +1949,17 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                       <div className="required whitespace-nowrap">Trạng thái</div>
                       <Space wrap>
                         <Select
-                          placeholder="Chọn trạng thái"
+                          placeholder={errors?.GiaTriMoi ? errors?.GiaTriMoi : 'Chọn trạng thái'}
+                          status={errors.GiaTriMoi ? 'error' : ''}
                           required
                           style={{
                             width: 500,
                           }}
-                          value={selectedStatus}
-                          onChange={(value) => setSelectedStatus(value)}
+                          value={selectedStatus || undefined}
+                          onChange={(value) => {
+                            setSelectedStatus(value)
+                            setErrors({ ...errors, GiaTriMoi: '' })
+                          }}
                           options={[
                             {
                               value: '1',
@@ -1979,14 +1996,18 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                     <div className="flex gap-2 items-center border-2 p-4">
                       <div className="required whitespace-nowrap">Chọn nhóm</div>
                       <Select
-                        placeholder="Chọn Nhóm"
+                        placeholder={errors?.GiaTriMoi ? errors?.GiaTriMoi : 'Chọn nhóm'}
+                        status={errors.GiaTriMoi ? 'error' : ''}
                         filterOption
                         required
                         style={{
                           width: '450px',
                         }}
-                        value={selectedGroup}
-                        onChange={(value) => setSelectedGroup(value)}
+                        value={selectedGroup || undefined}
+                        onChange={(value) => {
+                          setSelectedGroup(value)
+                          setErrors({ ...errors, GiaTriMoi: '' })
+                        }}
                       >
                         {nhomHang?.map((item, index) => {
                           return (
