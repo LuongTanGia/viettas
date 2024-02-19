@@ -745,6 +745,39 @@ export const CNDRTONGHOP = async (API, token, data) => {
     console.error('Error adding user:', error)
   }
 }
+export const CNDRTONGHOP_listHelper = async (API, token, data) => {
+  try {
+    const response = await axios.post(API, data, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    if (response.data.DataError === -107 || response.data.DataError === -108) {
+      // toast.error(response.data.DataErrorDescription);
+      const newToken = await RETOKEN()
+      if (newToken !== '') {
+        await CNDRTONGHOP_listHelper(API, newToken, data)
+      } else if (newToken === 0) {
+        toast.error('Failed to refresh token!')
+        window.localStorage.removeItem('firstLogin')
+        window.localStorage.removeItem('TKN')
+        window.localStorage.removeItem('tokenDuLieu')
+        window.localStorage.removeItem('RTKN')
+        window.localStorage.removeItem('userName')
+
+        window.location.href = '/login'
+      }
+    }
+    if (response.data.DataError === -104) {
+      toast.error(response.data.DataErrorDescription)
+      return -1
+    }
+    return response.data
+  } catch (error) {
+    console.error('Error adding user:', error)
+  }
+}
 // function Normal
 export const base64ToPDF = (Base64PMH) => {
   // Decode base64 string
