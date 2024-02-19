@@ -20,30 +20,31 @@ export const DanhSachGBL = (token) =>
       reject(error)
     }
   })
+export const DanhSachFullGBL = (token) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      // console.log('Data to be sent to API:', {
+      //   formKhoanNgay,
+      // })
+      const response = await axios({
+        url: '/settings/GiaBanLe/DanhSachFull',
+        method: 'post',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        data: {},
+      })
+      resolve(response)
+    } catch (error) {
+      reject(error)
+    }
+  })
 
 export const ThongTinGBL = (token, Sct) =>
   new Promise(async (resolve, reject) => {
     try {
       const response = await axios({
-        url: '/entries/DuLieuGiaBanLe/ThongTin',
-        method: 'post',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        data: {
-          SoChungTu: Sct,
-        },
-      })
-      resolve(response)
-    } catch (error) {
-      reject(error)
-    }
-  })
-export const ThongTinSuaGBL = (token, Sct) =>
-  new Promise(async (resolve, reject) => {
-    try {
-      const response = await axios({
-        url: '/entries/DuLieuGiaBanLe/ThongTinSua',
+        url: '/entries/GiaBanLe/ThongTin',
         method: 'post',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -58,20 +59,16 @@ export const ThongTinSuaGBL = (token, Sct) =>
     }
   })
 
-export const ListHelperHHGBL = (token, MK) =>
+export const ListHelperHHGBL = (token) =>
   new Promise(async (resolve, reject) => {
     try {
-      // console.log("Data to be sent to API:", {
-      //   SoChungTu: null,
-      //   MaKho: MK,
-      // });
       const response = await axios({
-        url: '/entries/DuLieuGiaBanLe/ListHelper_HangHoa',
+        url: '/settings/GiaBanLe/ListHelper_HangHoa',
         method: 'post',
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        data: { SoChungTu: null, MaKho: MK },
+        data: {},
       })
       resolve(response)
     } catch (error) {
@@ -79,21 +76,19 @@ export const ListHelperHHGBL = (token, MK) =>
     }
   })
 
-export const ThemGBL = (token, formGBL, MaDoiTuong, MaKho) =>
+export const ThemGBL = (token, formGBL) =>
   new Promise(async (resolve, reject) => {
     try {
       console.log('Data to be sent to API:', {
-        ...formGBL,
-        MaDoiTuong: MaDoiTuong,
-        MaKho: MaKho,
+        formGBL,
       })
       const response = await axios({
-        url: '/entries/DuLieuGiaBanLe/Them',
+        url: '/settings/GiaBanLe/Them',
         method: 'post',
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        data: { ...formGBL, MaDoiTuong: MaDoiTuong, MaKho: MaKho },
+        data: formGBL,
       })
       resolve(response)
     } catch (error) {
@@ -101,36 +96,19 @@ export const ThemGBL = (token, formGBL, MaDoiTuong, MaKho) =>
     }
   })
 
-export const SuaGBL = (token, Sct, formGBLEdit, MaDoiTuong, MaKho) =>
+export const SuaGBL = (token, formEdit) =>
   new Promise(async (resolve, reject) => {
     try {
       console.log('Data to be sent to API:', {
-        SoChungTu: Sct,
-        Data: {
-          ...formGBLEdit,
-          // ...formGiaBanLeEdit,
-          // DataDetails: formGiaBanLeEdit?.DataDetails?.map((item, index) => ({
-          //   ...item,
-          //   STT: index + 1,
-          // })),
-          MaDoiTuong: MaDoiTuong,
-          MaKho: MaKho,
-        },
+        formEdit,
       })
       const response = await axios({
-        url: '/entries/DuLieuGiaBanLe/Sua',
+        url: '/settings/GiaBanLe/Sua',
         method: 'post',
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        data: {
-          SoChungTu: Sct,
-          Data: {
-            ...formGBLEdit,
-            MaDoiTuong: MaDoiTuong,
-            MaKho: MaKho,
-          },
-        },
+        data: formEdit,
       })
       resolve(response)
     } catch (error) {
@@ -138,16 +116,16 @@ export const SuaGBL = (token, Sct, formGBLEdit, MaDoiTuong, MaKho) =>
     }
   })
 
-export const XoaGBL = (token, Sct) =>
+export const XoaGBL = (token, Ma, HieuLuc) =>
   new Promise(async (resolve, reject) => {
     try {
       const response = await axios({
-        url: '/entries/DuLieuGiaBanLe/Xoa',
+        url: '/settings/GiaBanLe/Xoa',
         method: 'post',
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        data: { SoChungTu: Sct },
+        data: { Ma, HieuLuc },
       })
       resolve(response)
     } catch (error) {

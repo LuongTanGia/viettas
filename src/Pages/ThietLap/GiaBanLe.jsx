@@ -1,12 +1,12 @@
 import { useEffect, useState, useRef } from 'react'
-import { Table, Checkbox, Tooltip, Row, Col, Typography, Input } from 'antd'
+import { Table, Checkbox, Tooltip, Row, Col, Typography, Input, Select } from 'antd'
 import moment from 'moment'
 import icons from '../../untils/icons'
 import { toast } from 'react-toastify'
 import * as apis from '../../apis'
-import { Modals } from '../../components_K'
+import { ModalTL, Modals } from '../../components_K'
 import ActionButton from '../../components/util/Button/ActionButton'
-import { RETOKEN } from '../../action/Actions'
+import { RETOKEN, formatCurrency } from '../../action/Actions'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
 import { exportToExcel } from '../../action/Actions'
 import { CloseSquareFilled } from '@ant-design/icons'
@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router-dom'
 import { useSearchHH } from '../../components_K/myComponents/useSearchHH'
 
 const { Text } = Typography
-const { IoAddCircleOutline, TiPrinter, MdDelete, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill, CgCloseO } = icons
+const { IoAddCircleOutline, TiPrinter, MdDelete, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill, CgCloseO, TiThSmall, MdFilterAlt } = icons
 const GBL = () => {
   const navigate = useNavigate()
   const optionContainerRef = useRef(null)
@@ -22,20 +22,20 @@ const GBL = () => {
   const [isLoadingEdit, setIsLoadingEdit] = useState(true)
   const [isLoadingModal, setIsLoadingModal] = useState(true)
   const [isShowModal, setIsShowModal] = useState(false)
+  const [isShowFull, setIsShowFull] = useState(false)
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [isShowOption, setIsShowOption] = useState(false)
   const [data, setData] = useState([])
   const [dataThongTin, setDataThongTin] = useState({})
 
   const [dataRecord, setDataRecord] = useState(null)
-  const [dataKhoHang, setDataKhoHang] = useState(null)
-  const [dataDoiTuong, setDataDoiTuong] = useState(null)
+  const [dataHangHoa, setDataHangHoa] = useState(null)
+
   const [actionType, setActionType] = useState('')
   const [dataQuyenHan, setDataQuyenHan] = useState({})
   const [setSearchGBL, filteredGBL, searchGBL] = useSearchHH(data)
   const [prevSearchValue, setPrevSearchValue] = useState('')
 
-  const [doneGBL, setDoneGBL] = useState(null)
   const [hideColumns, setHideColumns] = useState(false)
   const [checkedList, setCheckedList] = useState([])
   const [confirmed, setConfirmed] = useState(false)
@@ -95,7 +95,7 @@ const GBL = () => {
           console.log('get helper  KH,DT')
           const responseKH = await apis.ListHelperHHGBL(tokenLogin)
           if (responseKH.data && responseKH.data.DataError === 0) {
-            setDataKhoHang(responseKH.data.DataResults)
+            setDataHangHoa(responseKH.data.DataResults)
             setIsLoadingModal(false)
           } else if (responseKH.data.DataError === -1 || responseKH.data.DataError === -2 || responseKH.data.DataError === -3) {
             toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseKH.data.DataErrorDescription}</div>)
@@ -107,49 +107,11 @@ const GBL = () => {
             toast.error(responseKH.data.DataErrorDescription)
             setIsLoadingModal(false)
           }
-          const responseDT = await apis.ListHelperDoiTuong(tokenLogin)
-          if (responseDT.data && responseDT.data.DataError === 0) {
-            setDataDoiTuong(responseDT.data.DataResults)
-            setIsLoadingModal(false)
-          } else if (responseDT.data && responseDT.data.DataError === -103) {
-            toast.error(responseDT.data.DataErrorDescription)
-            setIsLoadingModal(false)
-          } else if (responseDT.data && responseDT.data.DataError === -104) {
-            toast.error(responseDT.data.DataErrorDescription)
-            setIsLoadingModal(false)
-          } else if (responseDT.data.DataError === -1 || responseDT.data.DataError === -2 || responseDT.data.DataError === -3) {
-            toast.warning(responseDT.data.DataErrorDescription)
-            setIsLoadingModal(false)
-          } else if (responseDT.data.DataError === -107 || responseDT.data.DataError === -108) {
-            await RETOKEN()
-            fetchData()
-          } else {
-            toast.error(responseDT.data.DataErrorDescription)
-            setIsLoadingModal(false)
-          }
-        }
-        if (actionType === 'view' || actionType === 'edit') {
-          console.log('get helper tt')
-
-          const responseTT = await apis.ThongTinGBL(tokenLogin, dataRecord.SoChungTu)
-          if (responseTT.data && responseTT.data.DataError === 0) {
-            setDataThongTin(responseTT.data.DataResult)
-            setIsLoadingModal(false)
-          } else if (responseTT.data.DataError === -1 || responseTT.data.DataError === -2 || responseTT.data.DataError === -3) {
-            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseTT.data.DataErrorDescription}</div>)
-            setIsLoadingModal(false)
-          } else if (responseTT.data.DataError === -107 || responseTT.data.DataError === -108) {
-            await RETOKEN()
-            fetchData()
-          } else {
-            toast.error(responseTT.data.DataErrorDescription)
-            setIsLoadingModal(false)
-          }
         }
       } catch (error) {
         console.error('Lấy data thất bại', error)
         setIsLoadingModal(false)
-        setIsShowModal(false)
+        // setIsShowModal(false)
         setIsLoadingEdit(false)
 
         // toast.error('Lấy data thất bại. Vui lòng thử lại sau.')
@@ -197,7 +159,11 @@ const GBL = () => {
   //get DSGBL
   useEffect(() => {
     if (tableLoad && dataQuyenHan?.VIEW) {
-      getDSGBL()
+      if (isShowFull) {
+        getDSFullGBL()
+      } else {
+        getDSGBL()
+      }
     }
   }, [tableLoad, dataQuyenHan?.VIEW])
 
@@ -206,6 +172,32 @@ const GBL = () => {
       const tokenLogin = localStorage.getItem('TKN')
 
       const response = await apis.DanhSachGBL(tokenLogin)
+
+      if (response.data && response.data.DataError === 0) {
+        setData(response.data.DataResults)
+        setTableLoad(false)
+      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        await RETOKEN()
+        getDSGBL()
+        // setTableLoad(false)
+      } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
+        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+        setTableLoad(false)
+      } else {
+        toast.error(response.data.DataErrorDescription)
+        setData([])
+        setTableLoad(false)
+      }
+    } catch (error) {
+      console.error('Kiểm tra token thất bại', error)
+      setTableLoad(false)
+    }
+  }
+  const getDSFullGBL = async () => {
+    try {
+      const tokenLogin = localStorage.getItem('TKN')
+
+      const response = await apis.DanhSachFullGBL(tokenLogin)
 
       if (response.data && response.data.DataError === 0) {
         setData(response.data.DataResults)
@@ -328,8 +320,8 @@ const GBL = () => {
       dataIndex: 'HieuLucTu',
       key: 'HieuLucTu',
       align: 'center',
-      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY hh:mm:ss')} search={searchGBL} />,
-      width: 200,
+      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY')} search={searchGBL} />,
+      width: 120,
       sorter: (a, b) => {
         const dateA = new Date(a.HieuLucTu)
         const dateB = new Date(b.HieuLucTu)
@@ -346,7 +338,9 @@ const GBL = () => {
       sorter: (a, b) => a.DonGia - b.DonGia,
       showSorterTooltip: false,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{text.toLocaleString()}</div>
+        <div className={`flex justify-end w-full h-full ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatCurrency(text)} search={searchGBL} />
+        </div>
       ),
     },
     {
@@ -370,7 +364,11 @@ const GBL = () => {
       key: 'TyLeThue',
       width: 120,
       align: 'end',
-      render: (text) => <div className={`flex justify-end w-full h-full    ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>{text}</div>,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full    ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatCurrency(text)} search={searchGBL} />
+        </div>
+      ),
       sorter: (a, b) => a.TyLeThue - b.TyLeThue,
       showSorterTooltip: false,
     },
@@ -623,7 +621,7 @@ const GBL = () => {
                 )}
               </div>
               <div ref={optionContainerRef}>
-                <div className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5  " onClick={() => setIsShowOption(!isShowOption)} title="Chức năng khác">
+                <div className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5" onClick={() => setIsShowOption(!isShowOption)} title="Chức năng khác">
                   <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
                 </div>
                 {isShowOption && (
@@ -708,11 +706,113 @@ const GBL = () => {
               </div>
             </div>
             <div className="flex justify-between items-center px-4 ">
-              <div className="flex gap-3"></div>
+              <div className="flex gap-1">
+                <div className="flex gap-1 items-center">
+                  <div>Nhóm</div>
+                  <Select
+                    showSearch
+                    size="small"
+                    allowClear
+                    placeholder="Chọn nhóm"
+                    // value={selectedNhomFrom}
+                    // onChange={(value) => {
+                    //   setSelectedNhomFrom(value)
+                    //   selectedNhomTo == null ? setSelectedNhomTo(value) : ''
+                    //   if (selectedNhomTo !== null && nhomHangNXT.findIndex((item) => item.Ma === value) > nhomHangNXT.findIndex((item) => item.Ma === selectedNhomTo)) {
+                    //     setSelectedNhomTo(value)
+                    //   }
+                    // }}
+                    style={{
+                      width: '10vw',
+                      textOverflow: 'ellipsis',
+                    }}
+                  >
+                    {/* {nhomHangNXT?.map((item, index) => {
+                      return (
+                        <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomHang}>
+                          <p className="truncate">{item.Ma}</p>
+                        </Select.Option>
+                      )
+                    })} */}
+                  </Select>
+                </div>
+                <div className="flex gap-1 items-center">
+                  <div>Đến</div>
+                  <Select
+                    showSearch
+                    size="small"
+                    allowClear
+                    placeholder="Chọn nhóm"
+                    // value={selectedNhomFrom}
+                    // onChange={(value) => {
+                    //   setSelectedNhomFrom(value)
+                    //   selectedNhomTo == null ? setSelectedNhomTo(value) : ''
+                    //   if (selectedNhomTo !== null && nhomHangNXT.findIndex((item) => item.Ma === value) > nhomHangNXT.findIndex((item) => item.Ma === selectedNhomTo)) {
+                    //     setSelectedNhomTo(value)
+                    //   }
+                    // }}
+                    style={{
+                      width: '10vw',
+                      textOverflow: 'ellipsis',
+                    }}
+                  >
+                    {/* {nhomHangNXT?.map((item, index) => {
+                      return (
+                        <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomHang}>
+                          <p className="truncate">{item.Ma}</p>
+                        </Select.Option>
+                      )
+                    })} */}
+                  </Select>
+                </div>
+                <div className="flex gap-1 items-center">
+                  <div>Chọn</div>
+                  <Select
+                    mode="multiple"
+                    allowClear
+                    maxTagCount={1}
+                    filterOption
+                    size="small"
+                    placeholder="Danh sách nhóm"
+                    // value={selectedNhomList}
+                    // onChange={(value) => setSelectedNhomList(value)}
+                    className="md:w-[20vw] lg:w-[35vw] truncate"
+                  >
+                    {/* {nhomHangNXT?.map((item) => {
+                      return (
+                        <Select.Option key={item.Ma} value={item.Ma} title={item.ThongTinNhomHang}>
+                          <p className="truncate">{item.ThongTinNhomHang}</p>
+                        </Select.Option>
+                      )
+                    })} */}
+                  </Select>
+                </div>
+                <div>
+                  <ActionButton
+                    title={'Xem Dữ Liệu'}
+                    // handleAction={handleFilterDS}
+                    icon={<MdFilterAlt className="w-5 h-5" />}
+                    color={'slate-50'}
+                    background={'bg-main'}
+                    color_hover={'bg-main'}
+                    bg_hover={'white'}
+                  />
+                </div>
+              </div>
               <div className="flex items-center gap-2">
+                <div
+                  className={`cursor-pointer hover:bg-slate-200 rounded-full p-2 ${isShowFull ? 'text-bg-main' : ''} `}
+                  onClick={() => {
+                    setIsShowFull(!isShowFull), setTableLoad(true)
+                  }}
+                >
+                  <Tooltip title={`${!isShowFull ? ' Bật hiện tất cả' : 'Tắt hiện tất cả'} `} color="blue">
+                    <TiThSmall size={20} className=""></TiThSmall>
+                  </Tooltip>
+                </div>
                 <ActionButton
                   color={'slate-50'}
-                  title={'Thêm phiếu'}
+                  title={'Thêm'}
                   icon={<IoAddCircleOutline size={20} />}
                   bg_hover={!dataQuyenHan?.ADD ? '' : 'white'}
                   background={!dataQuyenHan?.ADD ? 'gray-400' : 'bg-main'}
@@ -750,7 +850,6 @@ const GBL = () => {
                     handleView(record)
                   },
                 })}
-                rowClassName={(record) => (record.SoChungTu === doneGBL ? 'highlighted-row' : '')}
                 // Bảng Tổng
                 summary={() => {
                   return (
@@ -779,21 +878,19 @@ const GBL = () => {
             </div>
 
             {isShowModal && (
-              <Modals
+              <ModalTL
                 namePage={'Bảng Giá Bán Lẻ'}
                 typePage={'GBL'}
                 close={() => setIsShowModal(false)}
                 actionType={actionType}
                 dataRecord={dataRecord}
                 dataThongTin={dataThongTin}
-                dataKhoHang={dataKhoHang}
-                dataDoiTuong={dataDoiTuong}
+                dataHangHoa={dataHangHoa}
                 data={data}
                 isLoadingModal={isLoadingModal}
                 isLoadingEdit={isLoadingEdit}
                 dataThongSo={dataThongSo}
                 loading={() => setTableLoad(true)}
-                setHightLight={setDoneGBL}
               />
             )}
           </div>

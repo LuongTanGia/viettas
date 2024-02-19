@@ -11,7 +11,7 @@ import { MdQueryStats, MdDelete, MdEdit, MdFilterAlt } from 'react-icons/md'
 import { SiGithubactions } from 'react-icons/si'
 import { AiOutlineMenuFold, AiOutlineMenuUnfold } from 'react-icons/ai'
 import { IoAddCircleOutline } from 'react-icons/io5'
-import { TiPrinter } from 'react-icons/ti'
+import { TiPrinter, TiThSmall } from 'react-icons/ti'
 import { SlOptions } from 'react-icons/sl'
 import { GiPayMoney, GiReceiveMoney } from 'react-icons/gi'
 import { BsSearch } from 'react-icons/bs'
@@ -56,5 +56,6 @@ const icons = {
   FaEyeSlash,
   RiFileExcel2Fill,
   CgCloseO,
+  TiThSmall,
 }
 export default icons
