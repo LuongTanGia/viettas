@@ -107,7 +107,7 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
         ),
       }
     }
-    if (item === 'TenHang') {
+    if (item === 'TenHang' || item === 'ThongTinHangHoa' || item === 'DiaChiDoiTuong') {
       return {
         title: columName[item] || item,
         width: 250,
@@ -216,6 +216,37 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
         ),
       }
     }
+    if (item === 'TongCong_TM' || item === 'TongCong_CN' || item === 'TongCong') {
+      return {
+        title: columName[item] || item,
+        width: 282,
+        dataIndex: item,
+        key: index,
+
+        showSorterTooltip: false,
+        align: 'center',
+        ellipsis: {
+          showTitle: false,
+        },
+        render: (text) => {
+          return (
+            <div
+              style={{
+                textAlign: 'right',
+                opacity: text === 0 ? 0.5 : 1,
+                color: text < 0 ? 'red' : 'black',
+                fontWeight: text < 0 ? 'bold' : '',
+              }}
+              className=" truncate"
+              title={Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLEDONGIA, maximumFractionDigits: ThongSo.SOLEDONGIA })}
+            >
+              {Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLEDONGIA, maximumFractionDigits: ThongSo.SOLEDONGIA })}
+            </div>
+          )
+        },
+        sorter: (a, b) => a.item - b.item,
+      }
+    }
     const isTienColumn = item.includes('Tien') && item !== 'TTTienMat'
     const isTGiaBan = item.includes('GiaBan')
     const isTienColumn2 = item.includes('TongTongCong')
@@ -300,15 +331,15 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
   const columns = [
     ...newColumns,
 
-    typeTable !== 'listHelper'
-      ? {
+    typeTable === 'listHelper' || typeTable === 'DSBH'
+      ? {}
+      : {
           title: 'Action',
           key: 'operation',
           fixed: 'right',
           width: 100,
           render: (record) => <BtnAction handleView={handleView} record={record} handleEdit={handleEdit} handleDelete={handleDelete} handleChangePhieuThu={handleChangePhieuThu} />,
-        }
-      : {},
+        },
   ]
 
   const mergedColumns = columns.map((col) => {
@@ -431,7 +462,7 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
             // rowClassName="editable-row"
 
             rowClassName={(record) => {
-              if (record.SoChungTu === selectedRecord) {
+              if (record.SoChungTu === selectedRecord && typeTable !== 'DSBH') {
                 return 'highlight-row'
               }
               return ''

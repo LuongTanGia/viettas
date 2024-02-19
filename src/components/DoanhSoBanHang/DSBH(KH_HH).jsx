@@ -1,4 +1,4 @@
-import QueryTable from '../util/Table/QueryTable'
+// import QueryTable from '../util/Table/QueryTable'
 // import LoadingPage from '../util/Loading/LoadingPage'
 // import { PrinterOutlined } from '@ant-design/icons'
 // import { nameColumsPhieuBanHang } from '../util/Table/ColumnName'
@@ -9,6 +9,7 @@ import { CNDRTONGHOP, CNDRTONGHOP_listHelper } from '../../action/Actions'
 import API from '../../API/API'
 import FilterCp from '../util/filterCP/FilterCp'
 import Date from '../util/DateCP/DateCP'
+import Tables from '../util/Table/Table'
 
 // import ModelPrint from './PrintModel'
 // import ActionButton from '../util/Button/ActionButton'
@@ -24,7 +25,7 @@ import Date from '../util/DateCP/DateCP'
 // import { IoAddCircleOutline } from 'react-icons/io5'
 // import { FaEyeSlash } from 'react-icons/fa'
 // import { CloseSquareFilled } from '@ant-design/icons'
-function CongNoDauRa() {
+function DSBHKH_HH() {
   const token = localStorage.getItem('TKN')
   const [dataAPI, setDataAPI] = useState({
     NgayBatDau: '2023-12-15',
@@ -36,53 +37,69 @@ function CongNoDauRa() {
   const [data, setData] = useState([])
   const [dataDoiTuong, setDataDoiTuong] = useState([])
   const [dataNhomDoiTuong, setDataNhomDoiTuong] = useState([])
-
+  const [dataDoiTuong_2, setDataDoiTuong_2] = useState([])
+  const [dataNhomDoiTuong_2, setDataNhomDoiTuong_2] = useState([])
   useEffect(() => {
     const getDate = async () => {
       console.log(dataAPI)
-      const listTongHop = await CNDRTONGHOP(API.CNDRTONGHOP, token, dataAPI)
-      const listDoiTuong = await CNDRTONGHOP_listHelper(API.CNDRDoiTuong, token)
-      const listNhomDoiTuong = await CNDRTONGHOP_listHelper(API.CNDRNhomDoiTuong, token)
-
+      const listTongHop = await CNDRTONGHOP(API.DSHangHoa, token, dataAPI)
+      const listDoiTuong = await CNDRTONGHOP_listHelper(API.DSListHelper_HangHoa, token)
+      const listNhomDoiTuong = await CNDRTONGHOP_listHelper(API.DSListHelper_NhomHang, token)
+      const listDoiTuong_2 = await CNDRTONGHOP_listHelper(API.DSListHelper_DoiTuong, token)
+      const listNhomDoiTuong_2 = await CNDRTONGHOP_listHelper(API.DSListHelper_NhomDoiTuong, token)
       setData(listTongHop.DataResults || [])
       setDataDoiTuong(listDoiTuong.DataResults)
       setDataNhomDoiTuong(listNhomDoiTuong.DataResults)
+      setDataDoiTuong_2(listDoiTuong_2.DataResults)
+      setDataNhomDoiTuong_2(listNhomDoiTuong_2.DataResults)
     }
     getDate()
   }, [dataAPI.NgayBatDau, dataAPI.NgayKetThuc, dataAPI.CodeValue1From, dataAPI.CodeValue1To, dataAPI.CodeValue1List])
 
-  let nhomArray = dataDoiTuong?.map((customer) => customer.Nhom)
+  //   let nhomArray = dataDoiTuong?.map((customer) => customer.Nhom)
 
-  console.log()
   return (
     <>
       <>
         <div className="flex justify-between ">
           <div className=" flex items-center gap-x-4 ">
-            <h1 className="text-xl font-black uppercase">Công Nợ Khách Hàng </h1>
+            <h1 className="text-xl font-black uppercase">Doanh số bán hàng (khách hàng, hàng hóa) </h1>
           </div>
         </div>
-        <div className="flex justify-start items-center">
+        <div className="flex justify-start items-start flex-col">
           <Date onDateChange={setDataAPI} dataDate={dataAPI} />
-          <FilterCp
-            title1={'Nhóm'}
-            title2={'Đến'}
-            title3={'Chọn'}
-            option1={Array.from(new Set(nhomArray)).filter((element) => element !== '')}
-            option2={Array.from(new Set(nhomArray)).filter((element) => element !== '')}
-            option3={Array.from(new Set(dataNhomDoiTuong)).filter((element) => element !== '')}
-            dataAPI={dataAPI}
-            setDataAPI={setDataAPI}
-            title={'DauRa'}
-          />
+          <div className="flex flex-col w-full ml-[100px]">
+            <FilterCp
+              title={''}
+              title1={'Nhóm'}
+              title2={'Đến'}
+              title3={'Chọn'}
+              option1={dataDoiTuong}
+              option2={Array.from(new Set(dataDoiTuong)).filter((element) => element !== '')}
+              option3={Array.from(new Set(dataNhomDoiTuong)).filter((element) => element !== '')}
+              dataAPI={dataAPI}
+              setDataAPI={setDataAPI}
+            />
+            <FilterCp
+              title1={'Nhóm'}
+              title2={'Đến'}
+              title3={'Chọn'}
+              option1={Array.from(new Set(dataDoiTuong_2)).filter((element) => element !== '')}
+              option2={Array.from(new Set(dataDoiTuong_2)).filter((element) => element !== '')}
+              option3={Array.from(new Set(dataNhomDoiTuong_2)).filter((element) => element !== '')}
+              dataAPI={dataAPI}
+              setDataAPI={setDataAPI}
+              title={'DoiTuong'}
+            />
+          </div>
         </div>
 
         <div id="my-table">
-          <QueryTable param={data} columName={[]} height={'setHeight'} title={'DauRa'} />
+          <Tables param={data} columName={[]} height={'setHeight DSBH_KHHH'} selectMH={[1]} typeTable={'DSBH'} />
         </div>
       </>
     </>
   )
 }
 
-export default CongNoDauRa
+export default DSBHKH_HH

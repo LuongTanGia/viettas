@@ -37,6 +37,14 @@ const API = {
   CNDVTONGHOP: `${BASE_URL}/api/inquiries/CongNoDauVao/TongHop`,
   CNDVDoiTuong: `${BASE_URL}/api/inquiries/CongNoDauVao/ListHelper_DoiTuong`,
   CNDVNhomDoiTuong: `${BASE_URL}/api/inquiries/CongNoDauVao/ListHelper_NhomDoiTuong`,
+  //DoanhSo
+  DSHangHoa: `${BASE_URL}/api/inquiries/DoanhSo/HangHoa`,
+  DSKhachHang: `${BASE_URL}/api/inquiries/DoanhSo/KhachHang`,
+  DSKhachHangHangHoa: `${BASE_URL}/api/inquiries/DoanhSo/KhachHangHangHoa`,
+  DSListHelper_DoiTuong: `${BASE_URL}/api/inquiries/DoanhSo/ListHelper_DoiTuong`,
+  DSListHelper_NhomDoiTuong: `${BASE_URL}/api/inquiries/DoanhSo/ListHelper_NhomDoiTuong`,
+  DSListHelper_HangHoa: `${BASE_URL}/api/inquiries/DoanhSo/ListHelper_HangHoa`,
+  DSListHelper_NhomHang: `${BASE_URL}/api/inquiries/DoanhSo/ListHelper_NhomHang`,
 }
 
 export default API

@@ -24,7 +24,7 @@ import Date from '../util/DateCP/DateCP'
 // import { IoAddCircleOutline } from 'react-icons/io5'
 // import { FaEyeSlash } from 'react-icons/fa'
 // import { CloseSquareFilled } from '@ant-design/icons'
-function CongNoDauRa() {
+function CongNoDauVao() {
   const token = localStorage.getItem('TKN')
   const [dataAPI, setDataAPI] = useState({
     NgayBatDau: '2023-12-15',
@@ -40,8 +40,8 @@ function CongNoDauRa() {
   useEffect(() => {
     const getDate = async () => {
       console.log(dataAPI)
-      const listTongHop = await CNDRTONGHOP(API.CNDRTONGHOP, token, dataAPI)
-      const listDoiTuong = await CNDRTONGHOP_listHelper(API.CNDRDoiTuong, token)
+      const listTongHop = await CNDRTONGHOP(API.CNDVTONGHOP, token, dataAPI)
+      const listDoiTuong = await CNDRTONGHOP_listHelper(API.CNDVDoiTuong, token)
       const listNhomDoiTuong = await CNDRTONGHOP_listHelper(API.CNDRNhomDoiTuong, token)
 
       setData(listTongHop.DataResults || [])
@@ -53,13 +53,13 @@ function CongNoDauRa() {
 
   let nhomArray = dataDoiTuong?.map((customer) => customer.Nhom)
 
-  console.log()
+  console.log(data)
   return (
     <>
       <>
         <div className="flex justify-between ">
           <div className=" flex items-center gap-x-4 ">
-            <h1 className="text-xl font-black uppercase">Công Nợ Khách Hàng </h1>
+            <h1 className="text-xl font-black uppercase">Công Nợ Nhà cung cấp </h1>
           </div>
         </div>
         <div className="flex justify-start items-center">
@@ -73,16 +73,16 @@ function CongNoDauRa() {
             option3={Array.from(new Set(dataNhomDoiTuong)).filter((element) => element !== '')}
             dataAPI={dataAPI}
             setDataAPI={setDataAPI}
-            title={'DauRa'}
+            title={'DauVao'}
           />
         </div>
 
         <div id="my-table">
-          <QueryTable param={data} columName={[]} height={'setHeight'} title={'DauRa'} />
+          <QueryTable param={data} columName={[]} height={'setHeight'} title={'DauVao'} />
         </div>
       </>
     </>
   )
 }
 
-export default CongNoDauRa
+export default CongNoDauVao

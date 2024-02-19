@@ -12,6 +12,16 @@
 .setHeight .ant-table {
   height: calc(100vh - 225px);
 }
+.DSBH_KHHH.setHeight .ant-table {
+  height: calc(100vh - 300px) !important;
+  /* z-index: 100000; */
+}
+.ant-table-wrapper.setHeight,
+.DSBH_KHHH.setHeight .ant-spin-container,
+.DSBH_KHHH.setHeight .ant-table,
+.DSBH_KHHH.setHeight .ant-table-container .ant-table-body {
+  height: calc(100vh - 370px);
+}
 /* NXT */
 .NhapXuatTonKho .ant-table-wrapper.setHeight,
 .NhapXuatTonKho .setHeight .ant-spin-container,
@@ -131,4 +141,10 @@ tbody tr {
 /* Handle on hover */
 .ant-table-body::-webkit-scrollbar-thumb:hover {
   background: #969696;
+}
+/* .ant-table-wrapper .ant-table-cell-fix-left {
+  background-color: #f1f1f1;
+} */
+.ant-table-summary td {
+  background-color: #f1f1f1 !important;
 }

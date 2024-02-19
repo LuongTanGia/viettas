@@ -12,7 +12,22 @@ import { bool } from 'prop-types'
 
 const { Text } = Typography
 
-function Tables({ hiden, loadingSearch, param, columName, height, handleView, handleEdit, typeTable, handleAddData, handleDelete, handleChangePhieuThu, selectMH, textSearch }) {
+function Tables({
+  title,
+  hiden,
+  loadingSearch,
+  param,
+  columName,
+  height,
+  handleView,
+  handleEdit,
+  typeTable,
+  handleAddData,
+  handleDelete,
+  handleChangePhieuThu,
+  selectMH,
+  textSearch,
+}) {
   const [soLuong, setSoLuong] = useState(1)
 
   const DataColumns = param ? param[0] : []
@@ -131,7 +146,354 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
   })
 
   const columns = [...newColumns]
+  const columns_2 = [
+    {
+      title: '#',
+      dataIndex: 'name',
+      key: 'name',
+      width: 70,
+      fixed: 'left',
+      align: 'center',
+      render: (text, record, index) => (
+        <Tooltip placement="topLeft" title={index} className="truncate" color="blue">
+          {renderHighlightedCell(index + 1)}
+        </Tooltip>
+      ),
+      onFilter: (value, record) => record.name.indexOf(value) === 0,
+    },
 
+    {
+      title: 'Mã Kh.Hàng',
+      dataIndex: 'MaDoiTuong',
+      key: 'TenDoiTuong',
+      width: 100,
+      align: 'center',
+      fixed: 'left',
+      render: (text) => {
+        return (
+          <div
+            style={{
+              textAlign: 'left',
+              opacity: text === 0 ? 0.5 : 1,
+              color: text < 0 ? 'red' : 'black',
+              fontWeight: text < 0 ? 'bold' : '',
+            }}
+          >
+            {text}
+          </div>
+        )
+      },
+      onFilter: (value, record) => record.name.indexOf(value) === 0,
+    },
+    {
+      title: 'Tên khách hàng',
+      dataIndex: 'TenDoiTuong',
+      key: 'TenDoiTuong',
+      width: 200,
+      align: 'center',
+      render: (text) => {
+        return (
+          <div
+            style={{
+              textAlign: 'left',
+              opacity: text === 0 ? 0.5 : 1,
+              color: text < 0 ? 'red' : 'black',
+              fontWeight: text < 0 ? 'bold' : '',
+            }}
+          >
+            {text}
+          </div>
+        )
+      },
+      onFilter: (value, record) => record.name.indexOf(value) === 0,
+    },
+    {
+      title: 'Địa chỉ',
+      dataIndex: 'DiaChiDoiTuong',
+      key: 'DiaChiDoiTuong',
+      width: 300,
+      align: 'center',
+      render: (text) => {
+        return (
+          <div
+            style={{
+              textAlign: 'left',
+              opacity: text === 0 ? 0.5 : 1,
+              color: text < 0 ? 'red' : 'black',
+              fontWeight: text < 0 ? 'bold' : '',
+            }}
+          >
+            {text}
+          </div>
+        )
+      },
+      onFilter: (value, record) => record.name.indexOf(value) === 0,
+    },
+    {
+      title: 'Số dư đầu',
+      dataIndex: 'SoDuDK',
+      key: 'SoDuDK',
+      width: 150,
+      align: 'center',
+      sorter: (a, b) => a.SoDuDK - b.SoDuDK,
+
+      render: (text) => {
+        return (
+          <div
+            style={{
+              textAlign: 'right',
+              opacity: text === 0 ? 0.5 : 1,
+              color: text < 0 ? 'red' : 'black',
+              fontWeight: text < 0 ? 'bold' : '',
+            }}
+            className=" truncate"
+            title={Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLEDONGIA, maximumFractionDigits: ThongSo.SOLEDONGIA })}
+          >
+            {Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLEDONGIA, maximumFractionDigits: ThongSo.SOLEDONGIA })}
+          </div>
+        )
+      },
+      onFilter: (value, record) => record.name.indexOf(value) === 0,
+    },
+    {
+      title: 'Phát sinh, tăng nợ',
+      children: [
+        {
+          title: title === 'DauVao' ? 'Mua hàng' : 'Bán hàng',
+          dataIndex: title === 'DauVao' ? 'PhatSinhNo_PMH' : 'PhatSinhNo_PBS',
+          key: title === 'DauVao' ? 'PhatSinhNo_PMH' : 'PhatSinhNo_PBS',
+          width: 150,
+          align: 'center',
+
+          render: (text) => {
+            return (
+              <div
+                style={{
+                  textAlign: 'right',
+                  opacity: text === 0 ? 0.5 : 1,
+                  color: text < 0 ? 'red' : 'black',
+                  fontWeight: text < 0 ? 'bold' : '',
+                }}
+                className=" truncate"
+                title={Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLEDONGIA, maximumFractionDigits: ThongSo.SOLEDONGIA })}
+              >
+                {Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLEDONGIA, maximumFractionDigits: ThongSo.SOLEDONGIA })}
+              </div>
+            )
+          },
+          sorter: (a, b) => a.PhatSinhNo_PBS - b.PhatSinhNo_PBS,
+        },
+        {
+          title: 'Điểu chỉnh',
+          dataIndex: 'PhatSinhNo_DC',
+          key: 'PhatSinhNo_DC',
+          width: 150,
+          align: 'center',
+
+          render: (text) => {
+            return (
+              <div
+                style={{
+                  textAlign: 'right',
+                  opacity: text === 0 ? 0.5 : 1,
+                  color: text < 0 ? 'red' : 'black',
+                  fontWeight: text < 0 ? 'bold' : '',
+                }}
+                className=" truncate"
+                title={Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLEDONGIA, maximumFractionDigits: ThongSo.SOLEDONGIA })}
+              >
+                {Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLEDONGIA, maximumFractionDigits: ThongSo.SOLEDONGIA })}
+              </div>
+            )
+          },
+          sorter: (a, b) => a.PhatSinhNo_DC - b.PhatSinhNo_DC,
+        },
+        {
+          title: title === 'DauVao' ? 'Thu hàng trả' : 'Chi trả hàng',
+          dataIndex: title === 'DauVao' ? 'PhatSinhNo_Thu_XTR' : 'PhatSinhNo_Chi_NTR',
+          key: title === 'DauVao' ? 'PhatSinhNo_Thu_XTR' : 'PhatSinhNo_Chi_NTR',
+          width: 150,
+          align: 'center',
+
+          render: (text) => {
+            return (
+              <div
+                style={{
+                  textAlign: 'right',
+                  opacity: text === 0 ? 0.5 : 1,
+                  color: text < 0 ? 'red' : 'black',
+                  fontWeight: text < 0 ? 'bold' : '',
+                }}
+                className=" truncate"
+                title={Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLEDONGIA, maximumFractionDigits: ThongSo.SOLEDONGIA })}
+              >
+                {Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLEDONGIA, maximumFractionDigits: ThongSo.SOLEDONGIA })}
+              </div>
+            )
+          },
+          sorter: (a, b) => a.PhatSinhNo_Chi_NTR - b.PhatSinhNo_Chi_NTR,
+        },
+        {
+          title: 'Tổng',
+          dataIndex: 'PhatSinhNo',
+          key: 'PhatSinhNo',
+          width: 150,
+          align: 'center',
+
+          render: (text) => {
+            return (
+              <div
+                style={{
+                  textAlign: 'right',
+                  opacity: text === 0 ? 0.5 : 1,
+                  color: text < 0 ? 'red' : 'black',
+                  fontWeight: text < 0 ? 'bold' : '',
+                }}
+                className=" truncate"
+                title={Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLEDONGIA, maximumFractionDigits: ThongSo.SOLEDONGIA })}
+              >
+                {Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLEDONGIA, maximumFractionDigits: ThongSo.SOLEDONGIA })}
+              </div>
+            )
+          },
+          sorter: (a, b) => a.PhatSinhNo - b.PhatSinhNo,
+        },
+      ],
+    },
+    {
+      title: 'Thanh toán, giảm nợ',
+      children: [
+        {
+          title: title === 'DauVao' ? 'Chi công nợ' : 'Thu công nợ',
+          dataIndex: title === 'DauVao' ? 'ThanhToan_Chi_PMH' : 'ThanhToan_Thu_PBS',
+          key: title === 'DauVao' ? 'ThanhToan_Chi_PMH' : 'ThanhToan_Thu_PBS',
+          width: 150,
+          align: 'center',
+
+          render: (text) => {
+            return (
+              <div
+                style={{
+                  textAlign: 'right',
+                  opacity: text === 0 ? 0.5 : 1,
+                  color: text < 0 ? 'red' : 'black',
+                  fontWeight: text < 0 ? 'bold' : '',
+                }}
+                className=" truncate"
+                title={Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLEDONGIA, maximumFractionDigits: ThongSo.SOLEDONGIA })}
+              >
+                {Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLEDONGIA, maximumFractionDigits: ThongSo.SOLEDONGIA })}
+              </div>
+            )
+          },
+          sorter: (a, b) => a.ThanhToan_Thu_PBS - b.ThanhToan_Thu_PBS,
+        },
+        {
+          title: 'Điểu chỉnh',
+          dataIndex: 'ThanhToan_DC',
+          key: 'ThanhToan_DC',
+          width: 150,
+          align: 'center',
+
+          sorter: (a, b) => a.ThanhToan_DC - b.ThanhToan_DC,
+          render: (text) => {
+            return (
+              <div
+                style={{
+                  textAlign: 'right',
+                  opacity: text === 0 ? 0.5 : 1,
+                  color: text < 0 ? 'red' : 'black',
+                  fontWeight: text < 0 ? 'bold' : '',
+                }}
+                className=" truncate"
+                title={Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLEDONGIA, maximumFractionDigits: ThongSo.SOLEDONGIA })}
+              >
+                {Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLEDONGIA, maximumFractionDigits: ThongSo.SOLEDONGIA })}
+              </div>
+            )
+          },
+        },
+        {
+          title: title === 'DauVao' ? 'Trả hàng' : 'Trả hàng',
+          dataIndex: title === 'DauVao' ? 'ThanhToan_XTR' : 'ThanhToan_NTR',
+          key: title === 'DauVao' ? 'ThanhToan_XTR' : 'ThanhToan_NTR',
+          width: 150,
+          align: 'center',
+
+          render: (text) => {
+            return (
+              <div
+                style={{
+                  textAlign: 'right',
+                  opacity: text === 0 ? 0.5 : 1,
+                  color: text < 0 ? 'red' : 'black',
+                  fontWeight: text < 0 ? 'bold' : '',
+                }}
+                className=" truncate"
+                title={Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLEDONGIA, maximumFractionDigits: ThongSo.SOLEDONGIA })}
+              >
+                {Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLEDONGIA, maximumFractionDigits: ThongSo.SOLEDONGIA })}
+              </div>
+            )
+          },
+          sorter: (a, b) => a.ThanhToan_NTR - b.ThanhToan_NTR,
+        },
+        {
+          title: 'Tổng',
+          dataIndex: 'ThanhToan',
+          key: 'ThanhToan',
+          width: 150,
+          align: 'center',
+
+          render: (text) => {
+            return (
+              <div
+                style={{
+                  textAlign: 'right',
+                  opacity: text === 0 ? 0.5 : 1,
+                  color: text < 0 ? 'red' : 'black',
+                  fontWeight: text < 0 ? 'bold' : '',
+                }}
+                className=" truncate"
+                title={Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLEDONGIA, maximumFractionDigits: ThongSo.SOLEDONGIA })}
+              >
+                {Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLEDONGIA, maximumFractionDigits: ThongSo.SOLEDONGIA })}
+              </div>
+            )
+          },
+          sorter: (a, b) => a.ThanhToan - b.ThanhToan,
+        },
+      ],
+    },
+    {
+      title: 'Số dư cuối',
+      dataIndex: 'SoDuCK',
+      key: 'SoDuCK',
+      width: 150,
+      align: 'center',
+      sorter: (a, b) => a.SoDuCK - b.SoDuCK,
+
+      render: (text) => {
+        return (
+          <div
+            style={{
+              textAlign: 'right',
+              opacity: text === 0 ? 0.5 : 1,
+              color: text < 0 ? 'red' : 'black',
+              fontWeight: text < 0 ? 'bold' : '',
+            }}
+            className=" truncate w-[100%] "
+            title={Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLEDONGIA, maximumFractionDigits: ThongSo.SOLEDONGIA })}
+          >
+            {Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLEDONGIA, maximumFractionDigits: ThongSo.SOLEDONGIA })}
+          </div>
+        )
+      },
+      fixed: 'right',
+
+      onFilter: (value, record) => record.name.indexOf(value) === 0,
+    },
+  ]
   const mergedColumns = columns.map((col) => {
     if (!col.editable) {
       return col
@@ -242,151 +604,111 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
         </div>
       )} */}
       <Form form={form} component={false}>
-        {typeTable !== 'listHelper' ? (
-          <Table
-            loading={loadingSearch}
-            // rowSelection={rowSelection}
-            className={height}
-            columns={mergedColumns}
-            dataSource={data}
-            // rowClassName="editable-row"
+        <Table
+          loading={loadingSearch}
+          // rowSelection={rowSelection}
+          className={height}
+          columns={title === 'DauVao' || title === 'DauRa' ? columns_2 : mergedColumns}
+          dataSource={data}
+          // rowClassName="editable-row"
 
-            bordered
-            onRow={(record) => ({
-              ...onRowClick(record),
-              onClick: () => handleRowClick(record),
-            })}
-            scroll={{
-              y: 300,
-              x: 200,
-            }}
-            scrollToFirstRowOnChange
-            size="small"
-            summary={
-              typeTable !== 'listHelper'
-                ? () => (
-                    <Table.Summary fixed="bottom">
-                      <Table.Summary.Row>
-                        {/* <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"> {data.length + 1}</Table.Summary.Cell> */}
-                        {columns
-                          .filter((column) => column.render)
-                          .map((column, index) => {
-                            const isNumericColumn = typeof data[0]?.[column.dataIndex] === 'number'
-                            return (
-                              <Table.Summary.Cell key={`summary-cell-${index + 1}`} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
-                                {isNumericColumn ? (
-                                  column.dataIndex === 'TongSoLuong' ? (
-                                    <Text strong>
-                                      {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                        minimumFractionDigits: ThongSo.SOLESOLUONG,
-                                        maximumFractionDigits: ThongSo.SOLESOLUONG,
-                                      })}
-                                    </Text>
-                                  ) : ['SoDuDK', 'PhatSinhNo_PBS', 'PhatSinhNo_Chi_NTR', 'PhatSinhNo', 'ThanhToan_Thu_PBS', 'ThanhToan_NTR', 'ThanhToan', 'SoDuCK'].includes(
-                                      column.dataIndex,
-                                    ) ? (
-                                    <Text strong>
-                                      {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                        minimumFractionDigits: ThongSo.SOLESOTIEN,
-                                        maximumFractionDigits: ThongSo.SOLESOTIEN,
-                                      })}
-                                    </Text>
-                                  ) : ['TyLeCKTT'].includes(column.dataIndex) ? (
-                                    <Text strong>
-                                      {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                        minimumFractionDigits: ThongSo.SOLETYLE,
-                                        maximumFractionDigits: ThongSo.SOLETYLE,
-                                      })}
-                                    </Text>
-                                  ) : column.dataIndex === 'key' ? (
-                                    <Text strong className="text-center">
-                                      {data.length}
-                                    </Text>
-                                  ) : (
-                                    <Text strong>
-                                      {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                        minimumFractionDigits: ThongSo.SOLESOTIEN,
-                                        maximumFractionDigits: ThongSo.SOLESOTIEN,
-                                      })}
-                                    </Text>
-                                  )
-                                ) : column.dataIndex === 'TTTienMat' ? (
-                                  <Text strong>{Object.values(data).filter((value) => value.TTTienMat).length}</Text>
-                                ) : null}
-                              </Table.Summary.Cell>
-                            )
-                          })}
-                      </Table.Summary.Row>
-                    </Table.Summary>
-                  )
-                : null
-            }
-            pagination={{
-              defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-              showSizeChanger: true,
-              pageSizeOptions: ['50', '100', '1000'],
-              onShowSizeChange: (current, size) => {
-                localStorage.setItem('pageSize', size)
-              },
-            }}
-          />
-        ) : (
-          <Table
-            loading={loadingSearch}
-            className={height}
-            columns={mergedColumns}
-            dataSource={data}
-            bordered
-            onRow={(record) => ({
-              ...onRowClick(record),
-            })}
-            scroll={{
-              y: 300,
-              x: 200,
-            }}
-            scrollToFirstRowOnChange
-            size="small"
-            summary={
-              typeTable !== 'listHelper'
-                ? () => {
-                    return (
-                      <Table.Summary fixed="bottom">
-                        <Table.Summary.Row>
-                          {/* <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell> */}
-                          {columns
-                            .filter((column) => column.render)
-                            .map((column) => {
-                              const isNumericColumn = typeof data[0]?.[column.dataIndex] === 'number'
-
-                              return (
-                                <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
-                                  {isNumericColumn ? (
-                                    <Text strong>
-                                      {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                        minimumFractionDigits: ThongSo.SOLESOTIEN,
-                                        maximumFractionDigits: ThongSo.SOLESOTIEN,
-                                      })}
-                                    </Text>
-                                  ) : null}
-                                </Table.Summary.Cell>
-                              )
-                            })}
-                        </Table.Summary.Row>
-                      </Table.Summary>
-                    )
-                  }
-                : null
-            }
-            pagination={{
-              defaultPageSize: 50,
-              showSizeChanger: true,
-              pageSizeOptions: ['50', '100', '1000'],
-              onShowSizeChange: (current, size) => {
-                console.log(size, current, '???')
-              },
-            }}
-          />
-        )}
+          bordered
+          onRow={(record) => ({
+            ...onRowClick(record),
+            onClick: () => handleRowClick(record),
+          })}
+          scroll={{
+            y: 300,
+            x: 200,
+          }}
+          scrollToFirstRowOnChange
+          size="small"
+          summary={
+            typeTable !== 'listHelper'
+              ? () => (
+                  <Table.Summary fixed>
+                    <Table.Summary.Row>
+                      {/* <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"> {data.length + 1}</Table.Summary.Cell> */}
+                      {columns
+                        .filter((column) => column.render)
+                        .map((column, index) => {
+                          const isNumericColumn = typeof data[0]?.[column.dataIndex] === 'number'
+                          return (
+                            <Table.Summary.Cell
+                              index={index}
+                              key={`summary-cell-${index + 1}`}
+                              align={isNumericColumn ? 'right' : 'left'}
+                              className="text-end font-bold  bg-[#f1f1f1] truncate"
+                            >
+                              {isNumericColumn ? (
+                                column.dataIndex === 'TongSoLuong' ? (
+                                  <Text
+                                    strong
+                                    className=""
+                                    title={Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                      minimumFractionDigits: ThongSo.SOLESOLUONG,
+                                      maximumFractionDigits: ThongSo.SOLESOLUONG,
+                                    })}
+                                  >
+                                    {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                      minimumFractionDigits: ThongSo.SOLESOLUONG,
+                                      maximumFractionDigits: ThongSo.SOLESOLUONG,
+                                    })}
+                                  </Text>
+                                ) : ['SoDuDK', 'PhatSinhNo_PBS', 'PhatSinhNo_Chi_NTR', 'PhatSinhNo', 'ThanhToan_Thu_PBS', 'ThanhToan_NTR', 'ThanhToan', 'SoDuCK'].includes(
+                                    column.dataIndex,
+                                  ) ? (
+                                  <Text
+                                    strong
+                                    title={Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                      minimumFractionDigits: ThongSo.SOLESOLUONG,
+                                      maximumFractionDigits: ThongSo.SOLESOLUONG,
+                                    })}
+                                  >
+                                    {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                      minimumFractionDigits: ThongSo.SOLESOTIEN,
+                                      maximumFractionDigits: ThongSo.SOLESOTIEN,
+                                    })}
+                                  </Text>
+                                ) : ['TyLeCKTT'].includes(column.dataIndex) ? (
+                                  <Text strong>
+                                    {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                      minimumFractionDigits: ThongSo.SOLETYLE,
+                                      maximumFractionDigits: ThongSo.SOLETYLE,
+                                    })}
+                                  </Text>
+                                ) : column.dataIndex === 'key' ? (
+                                  <Text strong className="text-center">
+                                    {data.length}
+                                  </Text>
+                                ) : (
+                                  <Text strong>
+                                    {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                      minimumFractionDigits: ThongSo.SOLESOTIEN,
+                                      maximumFractionDigits: ThongSo.SOLESOTIEN,
+                                    })}
+                                  </Text>
+                                )
+                              ) : column.dataIndex === 'TTTienMat' ? (
+                                <Text strong>{Object.values(data).filter((value) => value.TTTienMat).length}</Text>
+                              ) : null}
+                            </Table.Summary.Cell>
+                          )
+                        })}
+                    </Table.Summary.Row>
+                  </Table.Summary>
+                )
+              : null
+          }
+          pagination={{
+            defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+            showSizeChanger: true,
+            pageSizeOptions: ['50', '100', '1000'],
+            onShowSizeChange: (current, size) => {
+              localStorage.setItem('pageSize', size)
+            },
+          }}
+        />
       </Form>
     </>
   )
