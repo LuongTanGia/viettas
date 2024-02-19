@@ -39,21 +39,35 @@ export const useSearch = (data) => {
           TenKho,
           DVT,
           SoLuongTonDK,
+          TriGiaTonDK,
           SoLuongNhap_PMH,
+          TriGiaNhap_PMH,
           SoLuongNhap_NTR,
+          TriGiaNhap_NTR,
           SoLuongNhap_NDC,
+          TriGiaNhap_NDC,
           SoLuongNhap_NCK,
           SoLuongNhap,
+          TriGiaNhap,
           SoLuongXuat_PBS,
+          TriGiaXuat_PBS,
           SoLuongXuat_PBL,
+          TriGiaXuat_PBL,
           SoLuongXuat_PBQ,
+          TriGiaXuat_PBQ,
           SoLuongXuat_XTR,
+          TriGiaXuat_XTR,
           SoLuongXuat_XSD,
+          TriGiaXuat_XSD,
           SoLuongXuat_HUY,
+          TriGiaXuat_HUY,
           SoLuongXuat_XCK,
           SoLuongXuat_XDC,
+          TriGiaXuat_XDC,
           SoLuongTonCK,
+          TriGiaTonCK,
           SoLuongXuat,
+          TriGiaXuat,
           // NDC, PLR , XDC, XCK, NCK
           SoChungTu,
           NgayCTu,
@@ -97,21 +111,35 @@ export const useSearch = (data) => {
           (TenKho || '').toLowerCase().includes(search.toLowerCase()) ||
           (DVT || '').toLowerCase().includes(search.toLowerCase()) ||
           (SoLuongTonDK?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (TriGiaTonDK?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (SoLuongNhap_PMH?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (TriGiaNhap_PMH?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (SoLuongNhap_NTR?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (TriGiaNhap_NTR?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (SoLuongNhap_NDC?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (TriGiaNhap_NDC?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (SoLuongNhap_NCK?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (SoLuongNhap?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (TriGiaNhap?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (SoLuongXuat_PBS?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (TriGiaXuat_PBS?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (SoLuongXuat_PBL?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (TriGiaXuat_PBL?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (SoLuongXuat_PBQ?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (TriGiaXuat_PBQ?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (SoLuongXuat_XTR?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (TriGiaXuat_XTR?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (SoLuongXuat_XSD?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (TriGiaXuat_XSD?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (SoLuongXuat_HUY?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (TriGiaXuat_HUY?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (SoLuongXuat_XDC?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (TriGiaXuat_XDC?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (SoLuongXuat_XCK?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (SoLuongTonCK?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (TriGiaTonCK?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (SoLuongXuat?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (TriGiaXuat?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           // NDC
           (SoChungTu || '').toLowerCase().includes(search.toLowerCase()) ||
           (NgayCTu?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||

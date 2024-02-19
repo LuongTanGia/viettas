@@ -164,9 +164,9 @@ const XSDCreate = ({ close, loadingData, setTargetRow }) => {
   }
 
   const handleCreate = async (isSave = true, isPrint = true) => {
-    if (!XSDForm?.MaKho) {
+    if (!XSDForm?.MaKho?.trim()) {
       setErrors({
-        MaKho: XSDForm?.MaKho ? '' : 'Kho không được trống',
+        MaKho: XSDForm?.MaKho.trim() ? '' : 'Kho không được trống',
       })
       return
     }
@@ -412,7 +412,7 @@ const XSDCreate = ({ close, loadingData, setTargetRow }) => {
                           showSearch
                           required
                           size="small"
-                          value={XSDForm?.MaKho}
+                          value={XSDForm?.MaKho || undefined}
                           placeholder={errors.MaKho ? errors.MaKho : ''}
                           status={errors.MaKho ? 'error' : ''}
                           onChange={(value) => {

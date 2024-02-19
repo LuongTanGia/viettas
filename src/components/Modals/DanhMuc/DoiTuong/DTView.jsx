@@ -34,7 +34,7 @@ const DTView = ({ close, dataDT }) => {
       handleView()
     }
   }, [isLoading])
-
+  console.log(dataDTView)
   return (
     <>
       {!isLoading ? (
@@ -63,10 +63,10 @@ const DTView = ({ close, dataDT }) => {
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
-                    <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Nhóm</label>
+                    <label className=" whitespace-nowrap  min-w-[90px] text-sm flex justify-end">Nhóm</label>
                     <input
                       type="text"
-                      value={`${dataDTView?.Nhom} - ${dataDTView?.TenNhom}` || ''}
+                      value={`${(dataDTView?.Nhom || '') !== '' || (dataDTView?.TenNhom || '') !== '' ? `${dataDTView?.Nhom || ''} - ${dataDTView?.TenNhom || ''}` : ''}`}
                       className="px-2 w-full resize-none rounded border outline-none text-sm truncate"
                       readOnly
                     />
@@ -80,7 +80,7 @@ const DTView = ({ close, dataDT }) => {
                     <input type="text" value={dataDTView?.Ten || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" readOnly />
                   </div>
                   <div className="flex items-center gap-1">
-                    <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Địa chỉ</label>
+                    <label className=" whitespace-nowrap min-w-[90px] text-sm flex justify-end">Địa chỉ</label>
                     <input type="text" value={dataDTView?.DiaChi || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" readOnly />
                   </div>
                   <div className="flex items-center gap-1">
@@ -143,7 +143,7 @@ const DTView = ({ close, dataDT }) => {
                         <label className=" text-sm">Người sửa</label>
                         <Tooltip title={dataDTView?.NguoiSuaCuoi} color="blue">
                           <input
-                            value={dataDTView?.NguoiSuaCuoi || ' '}
+                            value={dataDTView?.NguoiSuaCuoi || ''}
                             className="2xl:w-[20vw] lg:w-[18vw] md:w-[15vw] px-2 rounded  resize-none border-[0.125rem] outline-none text-[1rem] truncate"
                             readOnly
                           />

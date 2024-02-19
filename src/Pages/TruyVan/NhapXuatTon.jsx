@@ -16,11 +16,11 @@ import { RETOKEN, exportToExcel } from '../../action/Actions'
 import ActionButton from '../../components/util/Button/ActionButton'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
-import { nameColumsNhapXuatTon_TheoKho } from '../../components/util/Table/ColumnName'
+import { nameColumsNhapXuatTon_TongKho } from '../../components/util/Table/ColumnName'
 import { useNavigate } from 'react-router-dom'
 import { DateField } from '@mui/x-date-pickers'
 
-const NhapXuatTonKho = () => {
+const NhapXuatTon = () => {
   const navigate = useNavigate()
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
@@ -33,7 +33,6 @@ const NhapXuatTonKho = () => {
   const showOption = useRef(null)
   const [nhomHangNXT, setNhomHangNXT] = useState([])
   const [hangHoaNXT, setHangHoaNXT] = useState([])
-  const [khoHangNXT, setKhoHangNXT] = useState([])
   const [khoanNgayFrom, setKhoanNgayFrom] = useState([])
   const [khoanNgayTo, setKhoanNgayTo] = useState([])
   const [selectedMaFrom, setSelectedMaFrom] = useState(null)
@@ -42,7 +41,6 @@ const NhapXuatTonKho = () => {
   const [selectedNhomFrom, setSelectedNhomFrom] = useState(null)
   const [selectedNhomTo, setSelectedNhomTo] = useState(null)
   const [selectedNhomList, setSelectedNhomList] = useState([])
-  const [selectedMaKho, setSelectedMaKho] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const [hiddenRow, setHiddenRow] = useState([])
   const [checkedList, setcheckedList] = useState([])
@@ -58,16 +56,10 @@ const NhapXuatTonKho = () => {
       try {
         if (isLoading == true) {
           setTableLoad(true)
-          const response = await categoryAPI.InfoNXTTheoKho(
+          const response = await categoryAPI.InfoNXTTongKho(
             {
               NgayBatDau: khoanNgayFrom.format('YYYY-MM-DD'),
               NgayKetThuc: khoanNgayTo.format('YYYY-MM-DD'),
-              CodeValue1From: null,
-              CodeValue1To: null,
-              CodeValue1List: null,
-              CodeValue2From: null,
-              CodeValue2To: null,
-              CodeValue2List: null,
             },
             TokenAccess,
           )
@@ -113,7 +105,7 @@ const NhapXuatTonKho = () => {
   useEffect(() => {
     const getDataQuyenHan = async () => {
       try {
-        const response = await categoryAPI.QuyenHan('TruyVan_CanDoiNXT_TheoKho', TokenAccess)
+        const response = await categoryAPI.QuyenHan('TruyVan_CanDoiNXT_TongKho', TokenAccess)
         if (response.data.DataError === 0) {
           setDataCRUD(response.data)
           setIsLoading(true)
@@ -179,31 +171,6 @@ const NhapXuatTonKho = () => {
   }, [isLoading])
 
   useEffect(() => {
-    const getListKhoNXT = async () => {
-      try {
-        const response = await categoryAPI.ListKhoHangNXT(TokenAccess)
-        if (response.data.DataError == 0) {
-          setKhoHangNXT(response.data.DataResults)
-          setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getListKhoNXT()
-        } else {
-          console.log(response.data)
-          setIsLoading(true)
-        }
-      } catch (error) {
-        console.log(error)
-        setIsLoading(true)
-      }
-    }
-
-    if (!isLoading) {
-      getListKhoNXT()
-    }
-  }, [isLoading])
-
-  useEffect(() => {
     setKhoanNgayFrom(dayjs(dateData?.NgayBatDau))
     setKhoanNgayTo(dayjs(dateData?.NgayKetThuc))
   }, [dateData?.NgayBatDau, dateData?.NgayKetThuc])
@@ -244,7 +211,7 @@ const NhapXuatTonKho = () => {
 
   const getDataNXT = async () => {
     try {
-      const response = await categoryAPI.InfoNXTTheoKho(
+      const response = await categoryAPI.InfoNXTTongKho(
         {
           NgayBatDau: dateData.NgayBatDau,
           NgayKetThuc: dateData.NgayKetThuc,
@@ -277,10 +244,9 @@ const NhapXuatTonKho = () => {
       getDataNXT()
     }
   }
-
   const getDataNXT_DVTQD = async () => {
     try {
-      const response = await categoryAPI.InfoNXTTheoKho_DVTQD(
+      const response = await categoryAPI.InfoNXTTongKho_DVTQD(
         {
           NgayBatDau: dateData.NgayBatDau,
           NgayKetThuc: dateData.NgayKetThuc,
@@ -404,19 +370,28 @@ const NhapXuatTonKho = () => {
       dataIndex: 'TenHang',
       key: 'TenHang',
       fixed: 'left',
+      align: 'center',
+      width: 220,
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       showSorterTooltip: false,
       render: (text) => (
         <Tooltip title={text}>
           <div
             style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
+              display: 'flex',
+              justifyContent: 'start',
             }}
           >
-            <HighlightedCell text={text} search={searchHangHoa} />
+            <div
+              style={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                cursor: 'pointer',
+              }}
+            >
+              <HighlightedCell text={text} search={searchHangHoa} />
+            </div>
           </div>
         </Tooltip>
       ),
@@ -425,6 +400,7 @@ const NhapXuatTonKho = () => {
       title: 'Nhóm',
       dataIndex: 'TenNhomHang',
       key: 'TenNhomHang',
+      align: 'center',
       width: 150,
       sorter: (a, b) => a.TenNhomHang.localeCompare(b.TenNhomHang),
       showSorterTooltip: false,
@@ -432,55 +408,64 @@ const NhapXuatTonKho = () => {
         <Tooltip title={text}>
           <div
             style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
+              display: 'flex',
+              justifyContent: 'start',
             }}
           >
-            <HighlightedCell text={text} search={searchHangHoa} />
+            <div
+              style={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                cursor: 'pointer',
+              }}
+            >
+              <HighlightedCell text={text} search={searchHangHoa} />
+            </div>
           </div>
         </Tooltip>
       ),
     },
     {
-      title: 'Tên Kho',
-      dataIndex: 'TenKho',
-      key: 'TenKho',
-      width: 150,
-      sorter: (a, b) => a.TenKho.localeCompare(b.TenKho),
-      showSorterTooltip: false,
-      render: (text) => <HighlightedCell text={text} search={searchHangHoa} />,
-    },
-    {
       title: 'Đơn vị tính',
       dataIndex: 'DVT',
       key: 'DVT',
-      width: 150,
+      width: 120,
       align: 'center',
       sorter: (a, b) => a.DVT.localeCompare(b.DVT),
       showSorterTooltip: false,
       render: (text) => <HighlightedCell text={text} search={searchHangHoa} />,
     },
     {
-      title: 'Tồn đầu',
+      title: 'SL Tồn đầu',
       dataIndex: 'SoLuongTonDK',
       key: 'SoLuongTonDK',
-      width: 150,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongTonDK - b.SoLuongTonDK,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full px-2 ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
     },
     {
-      title: 'Mua hàng',
+      title: 'TG Tồn đầu',
+      dataIndex: 'TriGiaTonDK',
+      key: 'TriGiaTonDK',
+      align: 'center',
+      showSorterTooltip: false,
+      sorter: (a, b) => a.TriGiaTonDK - b.TriGiaTonDK,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full px-2 ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+        </div>
+      ),
+    },
+    {
+      title: 'SL Mua hàng',
       dataIndex: 'SoLuongNhap_PMH',
       key: 'SoLuongNhap_PMH',
-      width: 150,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongNhap_PMH - b.SoLuongNhap_PMH,
@@ -491,10 +476,22 @@ const NhapXuatTonKho = () => {
       ),
     },
     {
-      title: 'Trả hàng',
+      title: 'TG Mua hàng',
+      dataIndex: 'TriGiaNhap_PMH',
+      key: 'TriGiaNhap_PMH',
+      align: 'center',
+      showSorterTooltip: false,
+      sorter: (a, b) => a.TriGiaNhap_PMH - b.TriGiaNhap_PMH,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+        </div>
+      ),
+    },
+    {
+      title: 'SL Trả hàng',
       dataIndex: 'SoLuongNhap_NTR',
       key: 'SoLuongNhap_NTR',
-      width: 150,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongNhap_NTR - b.SoLuongNhap_NTR,
@@ -505,13 +502,12 @@ const NhapXuatTonKho = () => {
       ),
     },
     {
-      title: 'Chuyển kho',
-      dataIndex: 'SoLuongNhap_NCK',
-      key: 'SoLuongNhap_NCK',
-      width: 150,
+      title: 'TG Trả hàng',
+      dataIndex: 'TriGiaNhap_NTR',
+      key: 'TriGiaNhap_NTR',
       align: 'center',
       showSorterTooltip: false,
-      sorter: (a, b) => a.SoLuongNhap_NCK - b.SoLuongNhap_NCK,
+      sorter: (a, b) => a.TriGiaNhap_NTR - b.TriGiaNhap_NTR,
       render: (text) => (
         <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
@@ -519,10 +515,9 @@ const NhapXuatTonKho = () => {
       ),
     },
     {
-      title: 'Điều chỉnh',
+      title: 'SL Nhập Điều chỉnh',
       dataIndex: 'SoLuongNhap_NDC',
       key: 'SoLuongNhap_NDC',
-      width: 150,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongNhap_NDC - b.SoLuongNhap_NDC,
@@ -533,10 +528,22 @@ const NhapXuatTonKho = () => {
       ),
     },
     {
-      title: 'Tổng nhập',
+      title: 'TG Nhập Điều chỉnh',
+      dataIndex: 'TriGiaNhap_NDC',
+      key: 'TriGiaNhap_NDC',
+      align: 'center',
+      showSorterTooltip: false,
+      sorter: (a, b) => a.TriGiaNhap_NDC - b.TriGiaNhap_NDC,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+        </div>
+      ),
+    },
+    {
+      title: 'SL Tổng nhập',
       dataIndex: 'SoLuongNhap',
       key: 'SoLuongNhap',
-      width: 150,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongNhap - b.SoLuongNhap,
@@ -547,10 +554,22 @@ const NhapXuatTonKho = () => {
       ),
     },
     {
-      title: 'Bán sỉ',
+      title: 'TG Tổng nhập',
+      dataIndex: 'TriGiaNhap',
+      key: 'TriGiaNhap',
+      align: 'center',
+      showSorterTooltip: false,
+      sorter: (a, b) => a.TriGiaNhap - b.TriGiaNhap,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+        </div>
+      ),
+    },
+    {
+      title: 'SL Bán sỉ',
       dataIndex: 'SoLuongXuat_PBS',
       key: 'SoLuongXuat_PBS',
-      width: 150,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongXuat_PBS - b.SoLuongXuat_PBS,
@@ -561,10 +580,22 @@ const NhapXuatTonKho = () => {
       ),
     },
     {
-      title: 'Bán lẻ',
+      title: 'TG Bán sỉ',
+      dataIndex: 'TriGiaXuat_PBS',
+      key: 'TriGiaXuat_PBS',
+      align: 'center',
+      showSorterTooltip: false,
+      sorter: (a, b) => a.TriGiaXuat_PBS - b.TriGiaXuat_PBS,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+        </div>
+      ),
+    },
+    {
+      title: 'SL Bán lẻ',
       dataIndex: 'SoLuongXuat_PBL',
       key: 'SoLuongXuat_PBL',
-      width: 150,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongXuat_PBL - b.SoLuongXuat_PBL,
@@ -575,10 +606,22 @@ const NhapXuatTonKho = () => {
       ),
     },
     {
-      title: 'Bán lẻ (Quầy)',
+      title: 'TG Bán lẻ',
+      dataIndex: 'TriGiaXuat_PBL',
+      key: 'TriGiaXuat_PBL',
+      align: 'center',
+      showSorterTooltip: false,
+      sorter: (a, b) => a.TriGiaXuat_PBL - b.TriGiaXuat_PBL,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+        </div>
+      ),
+    },
+    {
+      title: 'SL Bán lẻ (Quầy)',
       dataIndex: 'SoLuongXuat_PBQ',
       key: 'SoLuongXuat_PBQ',
-      width: 150,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongXuat_PBQ - b.SoLuongXuat_PBQ,
@@ -589,10 +632,22 @@ const NhapXuatTonKho = () => {
       ),
     },
     {
-      title: 'Trả hàng',
+      title: 'TG Bán lẻ (Quầy)',
+      dataIndex: 'TriGiaXuat_PBQ',
+      key: 'TriGiaXuat_PBQ',
+      align: 'center',
+      showSorterTooltip: false,
+      sorter: (a, b) => a.TriGiaXuat_PBQ - b.TriGiaXuat_PBQ,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+        </div>
+      ),
+    },
+    {
+      title: 'SL Trả hàng',
       dataIndex: 'SoLuongXuat_XTR',
       key: 'SoLuongXuat_XTR',
-      width: 150,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongXuat_XTR - b.SoLuongXuat_XTR,
@@ -603,10 +658,22 @@ const NhapXuatTonKho = () => {
       ),
     },
     {
-      title: 'Sử dụng',
+      title: 'TG Trả hàng',
+      dataIndex: 'TriGiaXuat_XTR',
+      key: 'TriGiaXuat_XTR',
+      align: 'center',
+      showSorterTooltip: false,
+      sorter: (a, b) => a.TriGiaXuat_XTR - b.TriGiaXuat_XTR,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+        </div>
+      ),
+    },
+    {
+      title: 'SL Sử dụng',
       dataIndex: 'SoLuongXuat_XSD',
       key: 'SoLuongXuat_XSD',
-      width: 150,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongXuat_XSD - b.SoLuongXuat_XSD,
@@ -617,10 +684,22 @@ const NhapXuatTonKho = () => {
       ),
     },
     {
-      title: 'Hủy',
+      title: 'TG Sử dụng',
+      dataIndex: 'TriGiaXuat_XSD',
+      key: 'TriGiaXuat_XSD',
+      align: 'center',
+      showSorterTooltip: false,
+      sorter: (a, b) => a.TriGiaXuat_XSD - b.TriGiaXuat_XSD,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+        </div>
+      ),
+    },
+    {
+      title: 'SL Hủy',
       dataIndex: 'SoLuongXuat_HUY',
       key: 'SoLuongXuat_HUY',
-      width: 150,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongXuat_HUY - b.SoLuongXuat_HUY,
@@ -631,10 +710,22 @@ const NhapXuatTonKho = () => {
       ),
     },
     {
-      title: 'Điều chỉnh',
+      title: 'TG Hủy',
+      dataIndex: 'TriGiaXuat_HUY',
+      key: 'TriGiaXuat_HUY',
+      align: 'center',
+      showSorterTooltip: false,
+      sorter: (a, b) => a.TriGiaXuat_HUY - b.TriGiaXuat_HUY,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+        </div>
+      ),
+    },
+    {
+      title: 'SL Xuất Điều chỉnh',
       dataIndex: 'SoLuongXuat_XDC',
       key: 'SoLuongXuat_XDC',
-      width: 150,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongXuat_XDC - b.SoLuongXuat_XDC,
@@ -645,13 +736,12 @@ const NhapXuatTonKho = () => {
       ),
     },
     {
-      title: 'Chuyển kho',
-      dataIndex: 'SoLuongXuat_XCK',
-      key: 'SoLuongXuat_XCK',
-      width: 150,
+      title: 'TG Xuất Điều chỉnh',
+      dataIndex: 'TriGiaXuat_XDC',
+      key: 'TriGiaXuat_XDC',
       align: 'center',
       showSorterTooltip: false,
-      sorter: (a, b) => a.SoLuongXuat_XCK - b.SoLuongXuat_XCK,
+      sorter: (a, b) => a.TriGiaXuat_XDC - b.TriGiaXuat_XDC,
       render: (text) => (
         <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
@@ -659,10 +749,9 @@ const NhapXuatTonKho = () => {
       ),
     },
     {
-      title: 'Tổng xuất',
+      title: 'SL Xuất',
       dataIndex: 'SoLuongXuat',
       key: 'SoLuongXuat',
-      width: 150,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongXuat - b.SoLuongXuat,
@@ -673,14 +762,38 @@ const NhapXuatTonKho = () => {
       ),
     },
     {
-      title: 'Tồn Cuối',
+      title: 'TG Xuất',
+      dataIndex: 'TriGiaXuat',
+      key: 'TriGiaXuat',
+      align: 'center',
+      showSorterTooltip: false,
+      sorter: (a, b) => a.TriGiaXuat - b.TriGiaXuat,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+        </div>
+      ),
+    },
+    {
+      title: 'SL Tồn Cuối',
       dataIndex: 'SoLuongTonCK',
-      fixed: 'right',
       key: 'SoLuongTonCK',
-      width: 150,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongTonCK - b.SoLuongTonCK,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+        </div>
+      ),
+    },
+    {
+      title: 'TG Tồn Cuối',
+      dataIndex: 'TriGiaTonCK',
+      key: 'TriGiaTonCK',
+      align: 'center',
+      showSorterTooltip: false,
+      sorter: (a, b) => a.TriGiaTonCK - b.TriGiaTonCK,
       render: (text) => (
         <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
@@ -744,7 +857,7 @@ const NhapXuatTonKho = () => {
                 <div className="flex justify-between">
                   <div className="flex gap-2 items-center ">
                     <div className="flex items-center gap-2 py-1">
-                      <h1 className="text-lg font-bold text-black-600 uppercase">Nhập Xuất Tồn - Theo Kho</h1>
+                      <h1 className="text-lg font-bold text-black-600 uppercase">Nhập Xuất Tồn</h1>
                       <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
                     </div>
                     <div className="flex ">
@@ -772,7 +885,7 @@ const NhapXuatTonKho = () => {
                       <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
                     </div>
                     {isShowOption && (
-                      <div className="absolute   flex flex-col gap-2 bg-slate-200 p-3 top-16 right-[4.5%] rounded-lg z-10 duration-500 shadow-custom  ">
+                      <div className="absolute flex flex-col gap-2 bg-slate-200 p-3 top-16 right-[4.5%] rounded-lg z-10 duration-500 shadow-custom  ">
                         <div className={`flex ${selectVisible ? '' : 'flex-col'} items-center gap-2`}>
                           <ActionButton
                             handleAction={() => (dataCRUD?.EXCEL == false ? '' : exportToExcel())}
@@ -813,7 +926,7 @@ const NhapXuatTonKho = () => {
                                   {options.map((item) => (
                                     <Col span={8} key={item}>
                                       <Checkbox value={item} checked={true}>
-                                        {nameColumsNhapXuatTon_TheoKho[item]}
+                                        {nameColumsNhapXuatTon_TongKho[item]}
                                       </Checkbox>
                                     </Col>
                                   ))}
@@ -1073,27 +1186,6 @@ const NhapXuatTonKho = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-end ">
-                    <Select
-                      showSearch
-                      allowClear
-                      size="small"
-                      placeholder="Lọc Kho"
-                      value={selectedMaKho}
-                      onChange={(value) => setSelectedMaKho(value)}
-                      style={{
-                        width: '160px',
-                      }}
-                    >
-                      {khoHangNXT?.map((item, index) => {
-                        return (
-                          <Select.Option key={index} value={item.MaKho} title={item.TenKho} className="py-8">
-                            <p> {item.ThongTinKho}</p>
-                          </Select.Option>
-                        )
-                      })}
-                    </Select>
-                  </div>
                 </div>
               </div>
               <div className="NhapXuatTonKho" id="my-table">
@@ -1101,10 +1193,10 @@ const NhapXuatTonKho = () => {
                   loading={tableLoad}
                   className="setHeight"
                   columns={newTitles}
-                  dataSource={filteredHangHoa.filter((item) => (selectedMaKho ? item.MaKho === selectedMaKho : true)).map((item, index) => ({ ...item, key: index }))}
+                  dataSource={filteredHangHoa.map((item, index) => ({ ...item, key: index }))}
                   size="small"
                   scroll={{
-                    x: 3300,
+                    x: 6500,
                     y: 300,
                   }}
                   pagination={{
@@ -1157,4 +1249,4 @@ const NhapXuatTonKho = () => {
   )
 }
 
-export default NhapXuatTonKho
+export default NhapXuatTon

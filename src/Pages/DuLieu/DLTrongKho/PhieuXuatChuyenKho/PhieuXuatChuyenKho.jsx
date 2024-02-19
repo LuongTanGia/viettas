@@ -94,8 +94,8 @@ const PhieuXuatChuyenKho = () => {
   useEffect(() => {
     const getDataXCK = async () => {
       try {
-        setTableLoad(true)
         if (isLoading == true) {
+          setTableLoad(true)
           const response = await categoryAPI.GetDataXCK(
             dateData == {}
               ? {}

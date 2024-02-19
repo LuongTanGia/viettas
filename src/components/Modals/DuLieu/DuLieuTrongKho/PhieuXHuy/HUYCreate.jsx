@@ -164,9 +164,9 @@ const HUYCreate = ({ close, loadingData, setTargetRow }) => {
   }
 
   const handleCreate = async (isSave = true, isPrint = true) => {
-    if (!HUYForm?.MaKho) {
+    if (!HUYForm?.MaKho?.trim()) {
       setErrors({
-        MaKho: HUYForm?.MaKho ? '' : 'Kho không được trống',
+        MaKho: HUYForm?.MaKho?.trim() ? '' : 'Kho không được trống',
       })
       return
     }
@@ -412,7 +412,7 @@ const HUYCreate = ({ close, loadingData, setTargetRow }) => {
                           showSearch
                           required
                           size="small"
-                          value={HUYForm?.MaKho}
+                          value={HUYForm?.MaKho || undefined}
                           placeholder={errors.MaKho ? errors.MaKho : ''}
                           status={errors.MaKho ? 'error' : ''}
                           onChange={(value) => {

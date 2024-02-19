@@ -164,9 +164,9 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
   }
 
   const handleCreate = async (isSave = true, isPrint = true) => {
-    if (!NDCForm?.MaKho) {
+    if (!NDCForm?.MaKho?.trim()) {
       setErrors({
-        MaKho: NDCForm?.MaKho ? '' : 'Kho không được trống',
+        MaKho: NDCForm?.MaKho?.trim() ? null : 'Kho không được trống',
       })
       return
     }
@@ -413,7 +413,7 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                           showSearch
                           required
                           size="small"
-                          value={NDCForm?.MaKho}
+                          value={NDCForm?.MaKho || undefined}
                           placeholder={errors.MaKho ? errors.MaKho : ''}
                           status={errors.MaKho ? 'error' : ''}
                           onChange={(value) => {

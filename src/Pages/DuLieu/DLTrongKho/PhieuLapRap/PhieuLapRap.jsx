@@ -129,8 +129,8 @@ const PhieuLapRap = () => {
   useEffect(() => {
     const getDataPLR = async () => {
       try {
-        setTableLoad(true)
         if (isLoading == true) {
+          setTableLoad(true)
           const response = await categoryAPI.GetDataPLR(
             dateData == {}
               ? {}
