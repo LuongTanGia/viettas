@@ -783,6 +783,10 @@ export const formatQuantity = (number, odd) => {
   return number.toFixed(Math.max(odd)).replace(/,/g, '.')
 }
 
+export const formatCurrency = (value) => {
+  return Number(value).toLocaleString('en-US')
+}
+
 export const formatPrice = (price, odd) => {
   const numberOfDecimals = odd || 0
 
