@@ -7,14 +7,14 @@ import { LuLoader2, LuBoxes, LuLogOut } from 'react-icons/lu'
 import { GoInbox } from 'react-icons/go'
 import { PiDogLight } from 'react-icons/pi'
 import { BiCategory } from 'react-icons/bi'
-import { MdQueryStats, MdDelete, MdEdit, MdFilterAlt } from 'react-icons/md'
+import { MdQueryStats, MdDelete, MdEdit, MdFilterAlt, MdOutlineViewCompact } from 'react-icons/md'
 import { SiGithubactions } from 'react-icons/si'
 import { AiOutlineMenuFold, AiOutlineMenuUnfold } from 'react-icons/ai'
 import { IoAddCircleOutline } from 'react-icons/io5'
 import { TiPrinter, TiThSmall } from 'react-icons/ti'
 import { SlOptions } from 'react-icons/sl'
 import { GiPayMoney, GiReceiveMoney } from 'react-icons/gi'
-import { BsSearch } from 'react-icons/bs'
+import { BsSearch, BsWrenchAdjustableCircle } from 'react-icons/bs'
 import { TfiMoreAlt } from 'react-icons/tfi'
 import { RiFileExcel2Fill } from 'react-icons/ri'
 import { IoMdAddCircle } from 'react-icons/io'
@@ -57,5 +57,7 @@ const icons = {
   RiFileExcel2Fill,
   CgCloseO,
   TiThSmall,
+  MdOutlineViewCompact,
+  BsWrenchAdjustableCircle,
 }
 export default icons

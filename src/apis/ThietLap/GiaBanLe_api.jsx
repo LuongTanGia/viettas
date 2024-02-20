@@ -132,6 +132,25 @@ export const XoaGBL = (token, Ma, HieuLuc) =>
       reject(error)
     }
   })
+export const DieuChinhGBL = (token, formAdjustPrice) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      console.log('Data to be sent to API:', {
+        formAdjustPrice,
+      })
+      // const response = await axios({
+      //   url: '/settings/GiaBanLe/DieuChinh',
+      //   method: 'post',
+      //   headers: {
+      //     Authorization: `Bearer ${token}`,
+      //   },
+      //   data: formAdjustPrice,
+      // })
+      // resolve(response)
+    } catch (error) {
+      reject(error)
+    }
+  })
 
 export const InGBL = (token, formPrint, SctBD, SctKT, SoLien) =>
   new Promise(async (resolve, reject) => {
