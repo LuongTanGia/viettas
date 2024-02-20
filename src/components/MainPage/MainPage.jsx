@@ -28,6 +28,11 @@ import CongNoDauVao from '../CongNoDauVao/CongNoDauVao'
 import DSBHHH from '../DoanhSoBanHang/DSBH(HH)'
 import DSBHKHH from '../DoanhSoBanHang/DSBH(KH)'
 import DSBHKH_HH from '../DoanhSoBanHang/DSBH(KH_HH)'
+import NhomDoiTuong from '../../Pages/DanhMuc/NhomDoiTuong'
+import NhomHang from '../../Pages/DanhMuc/NhomHang'
+import HangMucThu from '../../Pages/DanhMuc/HangMucThu'
+import HangMucChi from '../../Pages/DanhMuc/HangMucChi'
+import KhoHang from '../../Pages/ThietLap/KhoHang'
 
 function MainPage({ isSidebarVisible }) {
   return (
@@ -38,7 +43,11 @@ function MainPage({ isSidebarVisible }) {
           <Route path="/FAQ" element={<FAQ />} />
           <Route path="/DKSD" element={<DKSD />} />
           <Route path="/DanhMuc_HangHoa" element={<HangHoa />} />
+          <Route path="/DanhMuc_NhomDoiTuong" element={<NhomDoiTuong />} />
+          <Route path="/DanhMuc_NhomHang" element={<NhomHang />} />
           <Route path="/DanhMuc_DoiTuong" element={<DoiTuong />} />
+          <Route path="/DanhMuc_HangMucThu" element={<HangMucThu />} />
+          <Route path="/DanhMuc_HangMucChi" element={<HangMucChi />} />
           <Route path="/DuLieuDV/DuLieu_PMH" element={<PhieuMuaHang />} />
           <Route path="/DuLieuDV/DuLieu_NTR" element={<PhieuNTR />} />
           <Route path="/DuLieuDR/DuLieu_XTR" element={<PhieuXTR />} />
@@ -59,9 +68,9 @@ function MainPage({ isSidebarVisible }) {
           <Route path="/TruyVan_DoanhSoBanHangKH" element={<DSBHKHH />} />
           <Route path="/TruyVan_DoanhSoBanHangKHHH" element={<DSBHKH_HH />} />
           <Route path="/TruyVan_CanDoiNXT_TheoKho" element={<NhapXuatTonKho />} />
-          <Route path="/ThietLap_GiaLe" element={<GiaBanLe />} />
-
           <Route path="/TruyVan_CanDoiNXT_TongKho" element={<NhapXuatTon />} />
+          <Route path="/ThietLap_GiaLe" element={<GiaBanLe />} />
+          <Route path="/ThietLap_KhoHang" element={<KhoHang />} />
           <Route path="*" element={<ErrorPage />} />
         </Routes>
       </main>

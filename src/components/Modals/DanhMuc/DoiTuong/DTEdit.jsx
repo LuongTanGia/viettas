@@ -7,12 +7,16 @@ import { Checkbox, Input, Select, Tooltip } from 'antd'
 import categoryAPI from '../../../../API/linkAPI'
 import logo from '../../../../assets/VTS-iSale.ico'
 import { RETOKEN } from '../../../../action/Actions'
+import { FaPlus } from 'react-icons/fa'
 import ActionButton from '../../../util/Button/ActionButton'
 import SimpleBackdrop from '../../../util/Loading/LoadingPage'
+import NDTCreate from '../NhomDoiTuong/NDTCreate'
 const DTEdit = ({ close, loadingData, setTargetRow, dataDT }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const [isLoading, setIsLoading] = useState(false)
   const [nhomDT, setNhomDT] = useState()
+  const [isMaNDT, setIsMaNDT] = useState('')
+  const [isShowModal, setIsShowModal] = useState(false)
 
   const innitProduct = {
     Loai: 2,
@@ -32,7 +36,9 @@ const DTEdit = ({ close, loadingData, setTargetRow, dataDT }) => {
   const [DTForm, setDTForm] = useState(() => {
     return dataDT ? { ...dataDT } : innitProduct
   })
-
+  const [errors, setErrors] = useState({
+    Ten: '',
+  })
   useEffect(() => {
     setTargetRow([])
   }, [])
@@ -58,16 +64,24 @@ const DTEdit = ({ close, loadingData, setTargetRow, dataDT }) => {
     }
   }, [isLoading])
 
+  const handleLoading = () => {
+    setIsLoading(false)
+  }
+
   const handleEdit = async () => {
-    console.log({ Ma: dataDT?.Ma, Data: { ...DTForm } })
+    if (!DTForm?.Ten?.trim()) {
+      setErrors({
+        Ten: DTForm?.Ten?.trim() ? null : 'Tên không được trống',
+      })
+      return
+    }
     try {
-      const response = await categoryAPI.SuaDoiTuong({ Ma: dataDT?.Ma, Data: { ...DTForm } }, TokenAccess)
+      const response = await categoryAPI.SuaDoiTuong({ Ma: dataDT?.Ma, Data: { ...DTForm, Nhom: isMaNDT ? isMaNDT : DTForm.Nhom } }, TokenAccess)
       if (response.data.DataError == 0) {
         close()
         loadingData()
-        console.log(response.data)
         toast.success('Sửa thành công', { autoClose: 1000 })
-        setTargetRow(dataDT.Ma)
+        setTargetRow(dataDT?.Ma)
       } else {
         toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
       }
@@ -121,56 +135,54 @@ const DTEdit = ({ close, loadingData, setTargetRow, dataDT }) => {
                       </Checkbox>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <label className=" whitespace-nowrap min-w-[90px] text-sm flex justify-end">Nhóm</label>
-                    <Select
-                      style={{ width: '100%' }}
-                      showSearch
-                      required
-                      size="small"
-                      value={DTForm?.Nhom || undefined}
-                      onChange={(value) => {
-                        setDTForm({
-                          ...DTForm,
-                          Nhom: value,
-                        })
-                      }}
-                    >
-                      {nhomDT &&
-                        nhomDT?.map((item) => (
-                          <Select.Option key={item.Ma} value={item.Ma}>
-                            {item.ThongTinNhomDoiTuong}
-                          </Select.Option>
-                        ))}
-                    </Select>
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1 w-[100%]">
+                      <label className=" whitespace-nowrap min-w-[90px] text-sm flex justify-end">Nhóm</label>
+                      <Select
+                        style={{ width: '100%' }}
+                        showSearch
+                        required
+                        size="small"
+                        value={isMaNDT ? isMaNDT : DTForm?.Nhom || undefined}
+                        onChange={(value) => {
+                          setDTForm({
+                            ...DTForm,
+                            Nhom: value,
+                          })
+                        }}
+                      >
+                        {nhomDT &&
+                          nhomDT?.map((item) => (
+                            <Select.Option key={item.Ma} value={item.Ma}>
+                              {item.ThongTinNhomDoiTuong}
+                            </Select.Option>
+                          ))}
+                      </Select>
+                    </div>
+                    <div onClick={() => setIsShowModal(true)}>
+                      <Tooltip title="Tạo đối tượng mới" color="blue">
+                        <FaPlus className=" w-5 h-5 cursor-pointer text-blue-500 border-2 border-blue-500 hover:bg-blue-500 hover:text-white" />
+                      </Tooltip>
+                    </div>
                   </div>
                   <div className="flex items-center gap-1">
                     <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Mã</label>
-                    <Input
-                      required
-                      size="small"
-                      className=" w-full overflow-hidden whitespace-nowrap overflow-ellipsis"
-                      value={DTForm?.Ma}
-                      onChange={(e) => {
-                        setDTForm({
-                          ...DTForm,
-                          Ma: e.target.value,
-                        })
-                      }}
-                    />
+                    <Input disabled readOnly required size="small" className="w-full overflow-hidden whitespace-nowrap overflow-ellipsis" value={DTForm?.Ma} />
                   </div>
                   <div className="flex items-center gap-1">
                     <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Tên</label>
                     <Input
                       required
                       size="small"
-                      className="w-full overflow-hidden whitespace-nowrap overflow-ellipsis"
+                      placeholder={errors.Ten && errors.Ten}
+                      className={`${errors.Ten ? 'border-red-500' : ''} w-full overflow-hidden whitespace-nowrap overflow-ellipsis`}
                       value={DTForm?.Ten}
                       onChange={(e) => {
                         setDTForm({
                           ...DTForm,
                           Ten: e.target.value,
                         })
+                        setErrors({ ...errors, Ten: '' })
                       }}
                     />
                   </div>
@@ -352,6 +364,7 @@ const DTEdit = ({ close, loadingData, setTargetRow, dataDT }) => {
               </div>
             </div>
           </div>
+          <div>{isShowModal && <NDTCreate close={() => setIsShowModal(false)} loadingData={handleLoading} setTargetRow={setTargetRow} isNDT={true} setIsMaNDT={setIsMaNDT} />}</div>
         </>
       )}
     </>

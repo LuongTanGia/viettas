@@ -161,6 +161,155 @@ const categoryAPI = {
     }
     return axiosClient.post(url, body, { headers })
   },
+
+  // DanhMuc/NhomDoiTuong
+  NhomDoiTuong(accessToken) {
+    const url = '/lists/NhomDoiTuong/DanhSach'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, {}, { headers })
+  },
+  InfoNhomDoiTuong(Ma, accessToken) {
+    const url = '/lists/NhomDoiTuong/ThongTin'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, { Ma }, { headers })
+  },
+  ThemNhomDoiTuong(body, accessToken) {
+    const url = '/lists/NhomDoiTuong/Them'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  SuaNhomDoiTuong(body, accessToken) {
+    const url = '/lists/NhomDoiTuong/Sua'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  XoaNhomDoiTuong(Ma, accessToken) {
+    const url = '/lists/NhomDoiTuong/Xoa'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, { Ma }, { headers })
+  },
+
+  // DanhMuc/NhomHang
+  NhomHang(accessToken) {
+    const url = '/lists/NhomHang/DanhSach'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, {}, { headers })
+  },
+  InfoNhomHang(Ma, accessToken) {
+    const url = '/lists/NhomHang/ThongTin'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, { Ma }, { headers })
+  },
+  ThemNhomHang(body, accessToken) {
+    const url = '/lists/NhomHang/Them'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  SuaNhomHang(body, accessToken) {
+    const url = '/lists/NhomHang/Sua'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  XoaNhomHang(Ma, accessToken) {
+    const url = '/lists/NhomHang/Xoa'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, { Ma }, { headers })
+  },
+
+  // DanhMuc/HangMucThu
+  HangMucThu(accessToken) {
+    const url = '/lists/HangMucThu/DanhSach'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, {}, { headers })
+  },
+  InfoHangMucThu(Ma, accessToken) {
+    const url = '/lists/HangMucThu/ThongTin'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, { Ma }, { headers })
+  },
+  ThemHangMucThu(body, accessToken) {
+    const url = '/lists/HangMucThu/Them'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  SuaHangMucThu(body, accessToken) {
+    const url = '/lists/HangMucThu/Sua'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  XoaHangMucThu(Ma, accessToken) {
+    const url = '/lists/HangMucThu/Xoa'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, { Ma }, { headers })
+  },
+
+  // DanhMuc/HangMucChi
+  HangMucChi(accessToken) {
+    const url = '/lists/HangMucChi/DanhSach'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, {}, { headers })
+  },
+  InfoHangMucChi(Ma, accessToken) {
+    const url = '/lists/HangMucChi/ThongTin'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, { Ma }, { headers })
+  },
+  ThemHangMucChi(body, accessToken) {
+    const url = '/lists/HangMucChi/Them'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  SuaHangMucChi(body, accessToken) {
+    const url = '/lists/HangMucChi/Sua'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  XoaHangMucChi(Ma, accessToken) {
+    const url = '/lists/HangMucChi/Xoa'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, { Ma }, { headers })
+  },
+
   // TruyVan/NhapXuatTonKho
   InfoNXTTheoKho(body, accessToken) {
     const url = '/inquiries/NhapXuatTon/TheoKho'
@@ -700,6 +849,42 @@ const categoryAPI = {
       Authorization: `Bearer ${accessToken}`,
     }
     return axiosClient.post(url, {}, { headers })
+  },
+  // ThietLap/KhoHang
+  KhoHang(accessToken) {
+    const url = '/settings/KhoHang/DanhSach'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, {}, { headers })
+  },
+  InfoKhoHang(Ma, accessToken) {
+    const url = '/settings/KhoHang/ThongTin'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, { Ma }, { headers })
+  },
+  ThemKhoHang(body, accessToken) {
+    const url = '/settings/KhoHang/Them'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  SuaKhoHang(body, accessToken) {
+    const url = '/settings/KhoHang/Sua'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  XoaKhoHang(Ma, accessToken) {
+    const url = '/settings/KhoHang/Xoa'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, { Ma }, { headers })
   },
   // Hethong/KhoanNgay
   KhoanNgay(accessToken) {

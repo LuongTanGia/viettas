@@ -1,38 +1,35 @@
-/* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
 import { Button, Checkbox, Col, Input, Row, Spin, Table, Tooltip, Typography } from 'antd'
 const { Text } = Typography
 import moment from 'moment'
-import { toast } from 'react-toastify'
 import { CgCloseO } from 'react-icons/cg'
 import { TfiMoreAlt } from 'react-icons/tfi'
-import { GrStatusUnknown } from 'react-icons/gr'
 import { RiFileExcel2Fill } from 'react-icons/ri'
 import { IoMdAddCircleOutline } from 'react-icons/io'
 import { FaSearch, FaEyeSlash } from 'react-icons/fa'
 import { CloseSquareFilled } from '@ant-design/icons'
-import { MdEdit, MdDelete, MdOutlineGroupAdd } from 'react-icons/md'
-import categoryAPI from '../../API/linkAPI'
+import { MdEdit, MdDelete } from 'react-icons/md'
 import { useSearch } from '../../components/hooks/Search'
-import ActionButton from '../../components/util/Button/ActionButton'
-import HighlightedCell from '../../components/hooks/HighlightedCell'
-import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
+import NDTCreate from '../../components/Modals/DanhMuc/NhomDoiTuong/NDTCreate'
+import NDTView from '../../components/Modals/DanhMuc/NhomDoiTuong/NDTView'
+import NDTEdit from '../../components/Modals/DanhMuc/NhomDoiTuong/NDTEdit'
+import NDTDelete from '../../components/Modals/DanhMuc/NhomDoiTuong/NDTDelete'
 import { RETOKEN, exportToExcel } from '../../action/Actions'
-import { nameColumsDoiTuong } from '../../components/util/Table/ColumnName'
-import DTCreate from '../../components/Modals/DanhMuc/DoiTuong/DTCreate'
-import DTView from '../../components/Modals/DanhMuc/DoiTuong/DTView'
-import DTEdit from '../../components/Modals/DanhMuc/DoiTuong/DTEdit'
-import DTDelete from '../../components/Modals/DanhMuc/DoiTuong/DTDelete'
-import DTGroup from '../../components/Modals/DanhMuc/DoiTuong/DTGroup'
-const DoiTuong = () => {
+import categoryAPI from '../../API/linkAPI'
+import HighlightedCell from '../../components/hooks/HighlightedCell'
+import ActionButton from '../../components/util/Button/ActionButton'
+import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
+import { nameColumsNhomDoiTuong } from '../../components/util/Table/ColumnName'
+
+const NhomDoiTuong = () => {
   const navigate = useNavigate()
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
-  const [dataDoiTuong, setDataDoiTuong] = useState()
-  const [setSearchDoiTuong, filteredDoiTuong, searchDoiTuong] = useSearch(dataDoiTuong)
+  const [dataNhomDoiTuong, setDataNhomDoiTuong] = useState()
+  const [setSearchNhomDoiTuong, filteredNhomDoiTuong, searchNhomDoiTuong] = useSearch(dataNhomDoiTuong)
   const [isMaHang, setIsMaHang] = useState()
   const [actionType, setActionType] = useState('')
   const [isShowModal, setIsShowModal] = useState(false)
@@ -41,7 +38,6 @@ const DoiTuong = () => {
   const showOption = useRef(null)
   const [isLoading, setIsLoading] = useState(false)
   const [tableLoad, setTableLoad] = useState(true)
-  const [selectedRowKeys, setSelectedRowKeys] = useState([])
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [targetRow, setTargetRow] = useState([])
   const [dataCRUD, setDataCRUD] = useState()
@@ -49,33 +45,34 @@ const DoiTuong = () => {
   const [checkedList, setcheckedList] = useState([])
   const [selectVisible, setSelectVisible] = useState(false)
   const [options, setOptions] = useState()
+
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
     setcheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
-    const key = Object.keys(dataDoiTuong ? dataDoiTuong[0] : {}).filter((key) => key !== 'Loai' && key !== 'Nhom' && key !== 'QuanHuyen' && key !== 'TinhThanh')
+    const key = Object.keys(dataNhomDoiTuong ? dataNhomDoiTuong[0] : {}).filter((key) => key)
     setOptions(key)
   }, [selectVisible])
 
   useEffect(() => {
-    const getListDoiTuong = async () => {
+    const getListNhomDoiTuong = async () => {
       try {
         setTableLoad(true)
-        const response = await categoryAPI.DoiTuong(TokenAccess)
+        const response = await categoryAPI.NhomDoiTuong(TokenAccess)
         if (response.data.DataError === 0) {
-          setDataDoiTuong(response.data.DataResults)
+          setDataNhomDoiTuong(response.data.DataResults)
           setTableLoad(false)
           setIsLoading(true)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
-          getListDoiTuong()
+          getListNhomDoiTuong()
         }
       } catch (error) {
         console.log(error)
         setTableLoad(false)
       }
     }
-    getListDoiTuong()
-  }, [searchDoiTuong, targetRow])
+    getListNhomDoiTuong()
+  }, [searchNhomDoiTuong, targetRow])
 
   useEffect(() => {
     if (dataCRUD?.VIEW == false) {
@@ -86,7 +83,7 @@ const DoiTuong = () => {
   useEffect(() => {
     const getDataQuyenHan = async () => {
       try {
-        const response = await categoryAPI.QuyenHan('DanhMuc_DoiTuong', TokenAccess)
+        const response = await categoryAPI.QuyenHan('DanhMuc_NhomDoiTuong', TokenAccess)
         if (response.data.DataError === 0) {
           setDataCRUD(response.data)
           setIsLoading(true)
@@ -121,7 +118,7 @@ const DoiTuong = () => {
     let timerId
     clearTimeout(timerId)
     timerId = setTimeout(() => {
-      setSearchDoiTuong(event.target.value)
+      setSearchNhomDoiTuong(event.target.value)
     }, 300)
   }
   const handleCreate = () => {
@@ -143,29 +140,6 @@ const DoiTuong = () => {
     setActionType('edit')
     setIsMaHang(record)
     setIsShowModal(true)
-  }
-  const handlePrice = () => {
-    if (selectedRowKeys.length > 0) {
-      setActionType('price')
-      setIsShowModal(true)
-      setIsMaHang(selectedRowKeys)
-    } else {
-      toast.warning('Vui Lòng Chọn Mã Hàng Muốn Đổi', { autoClose: 1000 })
-    }
-  }
-  const handleGroup = () => {
-    if (selectedRowKeys.length > 0) {
-      setActionType('group')
-      setIsShowModal(true)
-      setIsMaHang(selectedRowKeys)
-    } else {
-      toast.warning('Vui Lòng Chọn Mã Hàng Muốn Đổi', { autoClose: 1000 })
-    }
-  }
-  const handleRowClick = (record) => {
-    const isSelected = selectedRowKeys.includes(record.key)
-    const newSelectedRowKeys = isSelected ? selectedRowKeys.filter((key) => key !== record.key) : [...selectedRowKeys, record.key]
-    setSelectedRowKeys(newSelectedRowKeys)
   }
   const handleHidden = () => {
     setSelectVisible(!selectVisible)
@@ -200,62 +174,15 @@ const DoiTuong = () => {
       showSorterTooltip: false,
       render: (text) => (
         <div>
-          <HighlightedCell text={text} search={searchDoiTuong} />
+          <HighlightedCell text={text} search={searchNhomDoiTuong} />
         </div>
-      ),
-    },
-    {
-      title: 'Tên loại',
-      dataIndex: 'TenLoai',
-      key: 'TenLoai',
-      width: 200,
-      align: 'center',
-      sorter: (a, b) => a.TenLoai.localeCompare(b.TenLoai),
-      showSorterTooltip: false,
-      render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchDoiTuong} />
-          </div>
-        </Tooltip>
-      ),
-    },
-    {
-      title: 'Tên nhóm',
-      dataIndex: 'TenNhom',
-      key: 'TenNhom',
-      width: 200,
-      align: 'center',
-      sorter: (a, b) => (a.TenNhom?.toString() || '').localeCompare(b.TenNhom?.toString() || ''),
-      showSorterTooltip: false,
-      render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchDoiTuong} />
-          </div>
-        </Tooltip>
       ),
     },
     {
       title: 'Tên',
       dataIndex: 'Ten',
       key: 'Ten',
-      width: 180,
+      width: 220,
       align: 'center',
       sorter: (a, b) => a.Ten.localeCompare(b.Ten),
       showSorterTooltip: false,
@@ -269,108 +196,7 @@ const DoiTuong = () => {
               textAlign: 'start',
             }}
           >
-            <HighlightedCell text={text} search={searchDoiTuong} />
-          </div>
-        </Tooltip>
-      ),
-    },
-    {
-      title: 'Địa chỉ',
-      dataIndex: 'DiaChi',
-      key: 'DiaChi',
-      width: 280,
-      align: 'center',
-      sorter: (a, b) => (a.DiaChi?.toString() || '').localeCompare(b.DiaChi?.toString() || ''),
-      showSorterTooltip: false,
-      render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchDoiTuong} />
-          </div>
-        </Tooltip>
-      ),
-    },
-    {
-      title: 'Mã số thuế',
-      dataIndex: 'MST',
-      key: 'MST',
-      align: 'center',
-      width: 150,
-      sorter: (a, b) => a.MST - b.MST,
-      showSorterTooltip: false,
-      render: (text) => <HighlightedCell text={text} search={searchDoiTuong} />,
-    },
-    {
-      title: 'Điện thoại',
-      dataIndex: 'DienThoai',
-      key: 'DienThoai',
-      align: 'center',
-      width: 120,
-      showSorterTooltip: false,
-      sorter: (a, b) => a.DienThoai - b.DienThoai,
-      render: (text) => <HighlightedCell text={text} search={searchDoiTuong} />,
-    },
-    {
-      title: 'Email',
-      dataIndex: 'Email',
-      key: 'Email',
-      width: 220,
-      align: 'center',
-      sorter: (a, b) => (a.Email?.toString() || '').localeCompare(b.Email?.toString() || ''),
-      showSorterTooltip: false,
-      render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchDoiTuong} />
-          </div>
-        </Tooltip>
-      ),
-    },
-    {
-      title: 'Fax',
-      dataIndex: 'Fax',
-      key: 'Fax',
-      align: 'center',
-      width: 180,
-      showSorterTooltip: false,
-      sorter: (a, b) => a.Fax - b.Fax,
-      render: (text) => <HighlightedCell text={text} search={searchDoiTuong} />,
-    },
-    {
-      title: 'Nhóm giá',
-      dataIndex: 'ThongTinNhomGia',
-      key: 'ThongTinNhomGia',
-      width: 150,
-      align: 'center',
-      sorter: (a, b) => (a.ThongTinNhomGia?.toString() || '').localeCompare(b.ThongTinNhomGia?.toString() || ''),
-      showSorterTooltip: false,
-      render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchDoiTuong} />
+            <HighlightedCell text={text} search={searchNhomDoiTuong} />
           </div>
         </Tooltip>
       ),
@@ -393,7 +219,7 @@ const DoiTuong = () => {
               justifyContent: 'start',
             }}
           >
-            <HighlightedCell text={text} search={searchDoiTuong} />
+            <HighlightedCell text={text} search={searchNhomDoiTuong} />
           </div>
         </Tooltip>
       ),
@@ -415,7 +241,7 @@ const DoiTuong = () => {
               whiteSpace: 'nowrap',
             }}
           >
-            <HighlightedCell text={text} search={searchDoiTuong} />
+            <HighlightedCell text={text} search={searchNhomDoiTuong} />
           </div>
         </Tooltip>
       ),
@@ -432,7 +258,7 @@ const DoiTuong = () => {
         const dateB = new Date(b.NgayTao)
         return dateA - dateB
       },
-      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss.SS')} search={searchDoiTuong} />,
+      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss.SS')} search={searchNhomDoiTuong} />,
     },
     {
       title: 'Người sửa',
@@ -452,7 +278,7 @@ const DoiTuong = () => {
               whiteSpace: 'nowrap',
             }}
           >
-            <HighlightedCell text={text} search={searchDoiTuong} />
+            <HighlightedCell text={text} search={searchNhomDoiTuong} />
           </div>
         </Tooltip>
       ),
@@ -471,7 +297,7 @@ const DoiTuong = () => {
       },
       render: (text) => {
         if (text) {
-          return <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss.SS')} search={searchDoiTuong} />
+          return <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss.SS')} search={searchNhomDoiTuong} />
         } else {
           return ''
         }
@@ -567,7 +393,7 @@ const DoiTuong = () => {
                 <div className="flex justify-between gap-2 relative">
                   <div className="flex gap-2 items-center">
                     <div className="flex items-center gap-2 mt-1">
-                      <h1 className="text-xl font-black uppercase">Đối Tượng</h1>
+                      <h1 className="text-xl font-black uppercase">Nhóm Đối Tượng</h1>
                       <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
                     </div>
                     <div className="flex">
@@ -635,7 +461,7 @@ const DoiTuong = () => {
                                   {options.map((item) => (
                                     <Col span={8} key={item}>
                                       <Checkbox value={item} checked={true}>
-                                        {nameColumsDoiTuong[item]}
+                                        {nameColumsNhomDoiTuong[item]}
                                       </Checkbox>
                                     </Col>
                                   ))}
@@ -664,60 +490,27 @@ const DoiTuong = () => {
                       color_hover={dataCRUD?.ADD == false ? 'gray-500' : 'blue-500'}
                       bg_hover={'white'}
                     />
-                    <ActionButton
-                      handleAction={() => handlePrice()}
-                      title={'Đổi Nhóm Giá'}
-                      icon={<GrStatusUnknown className="w-6 h-6" />}
-                      color={'slate-50'}
-                      background={'blue-500'}
-                      color_hover={'blue-500'}
-                      bg_hover={'white'}
-                    />
-                    <ActionButton
-                      handleAction={() => handleGroup()}
-                      title={'Đổi Nhóm'}
-                      icon={<MdOutlineGroupAdd className="w-6 h-6" />}
-                      color={'slate-50'}
-                      background={'blue-500'}
-                      color_hover={'blue-500'}
-                      bg_hover={'white'}
-                    />
                   </div>
                 </div>
                 <div id="my-table">
                   <Table
                     loading={tableLoad}
                     bordered
-                    rowSelection={{
-                      selectedRowKeys,
-                      showSizeChanger: true,
-                      onChange: (selectedKeys) => {
-                        setSelectedRowKeys(selectedKeys)
-                      },
-                    }}
-                    rowKey={(record) => record.Ma}
                     onRow={(record) => ({
-                      onClick: () => {
-                        handleRowClick(record)
-                        const selected = selectedRowKeys.includes(record.Ma)
-                        if (selected) {
-                          setSelectedRowKeys(selectedRowKeys.filter((key) => key !== record.Ma))
-                        } else {
-                          setSelectedRowKeys([...selectedRowKeys, record.Ma])
-                        }
+                      onDoubleClick: () => {
+                        handleView(record)
                       },
-                      onDoubleClick: () => handleView(record),
                     })}
                     rowClassName={(record) => (record.Ma == targetRow ? 'highlighted-row' : '')}
                     className="setHeight"
                     columns={newTitles}
-                    dataSource={filteredDoiTuong.map((item, index) => ({
+                    dataSource={filteredNhomDoiTuong.map((item, index) => ({
                       ...item,
-                      modifiedIndex: index + 1,
+                      key: index,
                     }))}
                     size="small"
                     scroll={{
-                      x: 3300,
+                      x: 1800,
                       y: 400,
                     }}
                     pagination={{
@@ -740,20 +533,20 @@ const DoiTuong = () => {
                             {newTitles
                               .filter((column) => column.render)
                               .map((column, index) => {
-                                const isNumericColumn = typeof filteredDoiTuong[0]?.[column.dataIndex] === 'number'
+                                const isNumericColumn = typeof filteredNhomDoiTuong[0]?.[column.dataIndex] === 'number'
                                 return (
                                   <Table.Summary.Cell key={`summary-cell-${index + 1}`} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
                                     {isNumericColumn ? (
                                       column.dataIndex === 'GiaBanLe' || column.dataIndex === 'BangGiaSi_Min' || column.dataIndex === 'BangGiaSi_Max' ? (
                                         <Text strong>
-                                          {Number(filteredDoiTuong.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                          {Number(filteredNhomDoiTuong.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                             minimumFractionDigits: dataThongSo.SOLEDONGIA,
                                             maximumFractionDigits: dataThongSo.SOLEDONGIA,
                                           })}
                                         </Text>
                                       ) : (
                                         <Text strong>
-                                          {Number(filteredDoiTuong.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                          {Number(filteredNhomDoiTuong.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                             minimumFractionDigits: 0,
                                             maximumFractionDigits: 0,
                                           })}
@@ -773,15 +566,13 @@ const DoiTuong = () => {
               <div>
                 {isShowModal &&
                   (actionType == 'create' ? (
-                    <DTCreate close={() => setIsShowModal(false)} loadingData={handleLoading} setTargetRow={setTargetRow} />
+                    <NDTCreate close={() => setIsShowModal(false)} loadingData={handleLoading} setTargetRow={setTargetRow} />
                   ) : actionType == 'view' ? (
-                    <DTView close={() => setIsShowModal(false)} dataDT={isMaHang} />
+                    <NDTView close={() => setIsShowModal(false)} dataNDT={isMaHang} />
                   ) : actionType == 'edit' ? (
-                    <DTEdit close={() => setIsShowModal(false)} dataDT={isMaHang} loadingData={handleLoading} setTargetRow={setTargetRow} />
+                    <NDTEdit close={() => setIsShowModal(false)} dataNDT={isMaHang} loadingData={handleLoading} setTargetRow={setTargetRow} />
                   ) : actionType == 'delete' ? (
-                    <DTDelete close={() => setIsShowModal(false)} dataDT={isMaHang} loadingData={handleLoading} setTargetRow={setTargetRow} />
-                  ) : actionType == 'price' || actionType == 'group' ? (
-                    <DTGroup close={() => setIsShowModal(false)} type={actionType} dataDT={isMaHang} loadingData={handleLoading} setTargetRow={setTargetRow} />
+                    <NDTDelete close={() => setIsShowModal(false)} dataNDT={isMaHang} loadingData={handleLoading} setTargetRow={setTargetRow} />
                   ) : null)}
               </div>
             </>
@@ -792,4 +583,4 @@ const DoiTuong = () => {
   )
 }
 
-export default DoiTuong
+export default NhomDoiTuong

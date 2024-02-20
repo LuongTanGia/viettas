@@ -26,6 +26,7 @@ export const useSearch = (data) => {
           NgaySuaCuoi,
           // DoiTuong
           Ma,
+          MaNhom,
           TenLoai,
           Ten,
           DiaChi,
@@ -98,6 +99,7 @@ export const useSearch = (data) => {
           (BangGiaSi_Max?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           // DoiTuong
           (Ma || '').toLowerCase().includes(search.toLowerCase()) ||
+          (MaNhom || '').toLowerCase().includes(search.toLowerCase()) ||
           (TenLoai || '').toLowerCase().includes(search.toLowerCase()) ||
           (Ten || '').toLowerCase().includes(search.toLowerCase()) ||
           (DiaChi?.toString() || '').toLowerCase().includes(search.toLowerCase()) ||

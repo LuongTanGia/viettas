@@ -46,6 +46,43 @@ export const nameColumsDoiTuong = {
   NguoiSuaCuoi: 'Người Sửa Cuối',
   NgaySuaCuoi: 'Ngày Sửa Cuối',
 }
+export const nameColumsNhomDoiTuong = {
+  Ma: 'Mã',
+  Ten: 'Tên',
+  GhiChu: 'Ghi Chú',
+  NguoiTao: 'Người Tạo',
+  NgayTao: 'Ngày Tạo',
+  NguoiSuaCuoi: 'Người Sửa Cuối',
+  NgaySuaCuoi: 'Ngày Sửa Cuối',
+}
+export const nameColumsHangMucThu = {
+  Ma: 'Mã',
+  Ten: 'Tên',
+  GhiChu: 'Ghi Chú',
+  NguoiTao: 'Người Tạo',
+  NgayTao: 'Ngày Tạo',
+  NguoiSuaCuoi: 'Người Sửa Cuối',
+  NgaySuaCuoi: 'Ngày Sửa Cuối',
+}
+export const nameColumsHangMucChi = {
+  Ma: 'Mã',
+  Ten: 'Tên',
+  GhiChu: 'Ghi Chú',
+  NguoiTao: 'Người Tạo',
+  NgayTao: 'Ngày Tạo',
+  NguoiSuaCuoi: 'Người Sửa Cuối',
+  NgaySuaCuoi: 'Ngày Sửa Cuối',
+}
+export const nameColumsNhomHang = {
+  MaNhom: 'Mã',
+  TenNhom: 'Tên',
+  GhiChu: 'Ghi Chú',
+  NguoiTao: 'Người Tạo',
+  NgayTao: 'Ngày Tạo',
+  NguoiSuaCuoi: 'Người Sửa Cuối',
+  NgaySuaCuoi: 'Ngày Sửa Cuối',
+  NA: 'Ngưng Dùng',
+}
 export const nameColumsPhieuBanHang = {
   SoChungTu: 'Số Chứng Từ',
   NgayCTu: 'Ngày Chứng Từ',
@@ -338,4 +375,13 @@ export const nameColumsPhieuXuatHuy = {
   NguoiSuaCuoi: 'Người Sửa Cuối',
   NgaySuaCuoi: 'Ngày Sửa Cuối',
   TongTriGiaKho: 'Tổng Trị Giá',
+}
+export const nameColumsKhoHang = {
+  Ma: 'Mã',
+  Ten: 'Tên',
+  GhiChu: 'Ghi Chú',
+  NguoiTao: 'Người Tạo',
+  NgayTao: 'Ngày Tạo',
+  NguoiSuaCuoi: 'Người Sửa Cuối',
+  NgaySuaCuoi: 'Ngày Sửa Cuối',
 }
