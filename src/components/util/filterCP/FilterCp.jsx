@@ -6,7 +6,7 @@ function FilterCp({ title1, title2, title3, option1, option2, option3, dataAPI, 
   const [valueFrom, setValueFrom] = useState(null)
   const [valueTo, setValueTo] = useState(null)
   const [count, setCount] = useState(0)
-  console.log(title_DS)
+
   const options_1 = []
   const options_2 = []
   const options_3 = []
@@ -39,7 +39,9 @@ function FilterCp({ title1, title2, title3, option1, option2, option3, dataAPI, 
     })
   }
   const handleChange = () => {
-    setDataAPI({ ...dataAPI, CodeValue1List: `${typeof value === 'string' ? value : ''}`, CodeValue1From: valueFrom, CodeValue1To: valueTo })
+    title_DS !== 'DoiTuong'
+      ? setDataAPI({ ...dataAPI, CodeValue1List: `${typeof value === 'string' ? value : ''}`, CodeValue1From: valueFrom, CodeValue1To: valueTo })
+      : setDataAPI({ ...dataAPI, CodeValue2List: `${typeof value === 'string' ? value : ''}`, CodeValue2From: valueFrom, CodeValue2To: valueTo })
   }
   const handleChangeValue = (value) => {
     setValue(`${value}`)
@@ -52,18 +54,26 @@ function FilterCp({ title1, title2, title3, option1, option2, option3, dataAPI, 
   }
   const handleChangeFromTo = () => {
     if (valueFrom !== null && valueTo !== null) {
-      setDataAPI({ ...dataAPI, CodeValue1List: `${typeof value === 'string' ? value : ''}`, CodeValue1From: valueFrom, CodeValue1To: valueTo })
+      title_DS !== 'DoiTuong'
+        ? setDataAPI({ ...dataAPI, CodeValue1List: `${typeof value === 'string' ? value : ''}`, CodeValue1From: valueFrom, CodeValue1To: valueTo })
+        : setDataAPI({ ...dataAPI, CodeValue2List: `${typeof value === 'string' ? value : ''}`, CodeValue2From: valueFrom, CodeValue2To: valueTo })
     } else if (valueFrom === null && valueTo !== null && count === 0) {
       setCount(1)
       setValueFrom(valueTo)
-      setDataAPI({ ...dataAPI, CodeValue1List: `${typeof value === 'string' ? value : ''}`, CodeValue1From: valueTo, CodeValue1To: valueTo })
+      title_DS !== 'DoiTuong'
+        ? setDataAPI({ ...dataAPI, CodeValue1List: `${typeof value === 'string' ? value : ''}`, CodeValue1From: valueTo, CodeValue1To: valueTo })
+        : setDataAPI({ ...dataAPI, CodeValue2List: `${typeof value === 'string' ? value : ''}`, CodeValue2From: valueTo, CodeValue2To: valueTo })
     } else if (valueFrom !== null && valueTo === null && count === 0) {
       setCount(1)
       setValueTo(valueFrom)
-      setDataAPI({ ...dataAPI, CodeValue1List: `${typeof value === 'string' ? value : ''}`, CodeValue1From: valueFrom, CodeValue1To: valueFrom })
+      title_DS !== 'DoiTuong'
+        ? setDataAPI({ ...dataAPI, CodeValue1List: `${typeof value === 'string' ? value : ''}`, CodeValue1From: valueFrom, CodeValue1To: valueFrom })
+        : setDataAPI({ ...dataAPI, CodeValue2List: `${typeof value === 'string' ? value : ''}`, CodeValue2From: valueFrom, CodeValue2To: valueFrom })
     } else if (valueFrom === null && valueTo === null) {
       setCount(0)
-      setDataAPI({ ...dataAPI, CodeValue1List: `${typeof value === 'string' ? value : ''}`, CodeValue1From: '', CodeValue1To: '' })
+      title_DS !== 'DoiTuong'
+        ? setDataAPI({ ...dataAPI, CodeValue1List: `${typeof value === 'string' ? value : ''}`, CodeValue1From: '', CodeValue1To: '' })
+        : setDataAPI({ ...dataAPI, CodeValue2List: `${typeof value === 'string' ? value : ''}`, CodeValue2From: '', CodeValue2To: '' })
     }
   }
   return (

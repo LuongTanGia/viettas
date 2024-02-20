@@ -50,8 +50,8 @@ export const nameColumsPhieuBanHang = {
   SoChungTu: 'Số Chứng Từ',
   NgayCTu: 'Ngày Chứng Từ',
   DaoHan: 'Đáo Hạn',
-  MaDoiTuong: 'Mã Đối Tượng',
-  TenDoiTuong: 'Tên Đối Tượng',
+  MaDoiTuong: 'Mã đối tượng',
+  TenDoiTuong: 'Tên đối tượng',
   DiaChi: 'Địa Chỉ',
   MaSoThue: 'Mã Số Thuế',
   MaKho: 'Mã Kho',
@@ -71,6 +71,17 @@ export const nameColumsPhieuBanHang = {
   NgayTao: 'Ngày Tạo',
   NguoiSuaCuoi: 'Người Sửa Cuối',
   NgaySuaCuoi: 'Ngày Sửa Cuối',
+  DiaChiDoiTuong: 'Địa chỉ',
+  MaHang: 'Mã hàng',
+  TenHang: 'Tên hàng',
+  DVT: 'ĐVT',
+  SoLuong: 'Số lượng',
+  TienHang: 'Tiền hàng',
+  TienThue: 'Tiền thuế',
+  TienCKTT: 'Tiền Ch.Khấu',
+  TongCong_TM: 'Tiền mặt',
+  TongCong_CN: 'Công nợ',
+  TongCong: 'Tổng cộng',
 }
 
 export const nameColumsPhieuMuaHang = {
