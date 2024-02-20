@@ -1,30 +1,10 @@
-// import QueryTable from '../util/Table/QueryTable'
-// import LoadingPage from '../util/Loading/LoadingPage'
-// import { PrinterOutlined } from '@ant-design/icons'
-// import { nameColumsPhieuBanHang } from '../util/Table/ColumnName'
-// import ActionModals from './ActionModals'
 import { useEffect, useState } from 'react'
-// import { useDispatch } from 'react-redux'
 import { CNDRTONGHOP, CNDRTONGHOP_listHelper } from '../../action/Actions'
 import API from '../../API/API'
 import FilterCp from '../util/filterCP/FilterCp'
 import Date from '../util/DateCP/DateCP'
 import Tables from '../util/Table/Table'
 
-// import ModelPrint from './PrintModel'
-// import ActionButton from '../util/Button/ActionButton'
-// import Model from './Model'
-// import { DatePicker } from '@mui/x-date-pickers/DatePicker'
-// import { DateField } from '@mui/x-date-pickers/DateField'
-// import { BsSearch } from 'react-icons/bs'
-// import dayjs from 'dayjs'
-// import { Checkbox, Col, Input, Row } from 'antd'
-// import { TfiMoreAlt } from 'react-icons/tfi'
-// import { RiFileExcel2Fill } from 'react-icons/ri'
-// import { Button, Spin } from 'antd'
-// import { IoAddCircleOutline } from 'react-icons/io5'
-// import { FaEyeSlash } from 'react-icons/fa'
-// import { CloseSquareFilled } from '@ant-design/icons'
 function DSBHKHH() {
   const token = localStorage.getItem('TKN')
   const [dataAPI, setDataAPI] = useState({
@@ -52,7 +32,7 @@ function DSBHKHH() {
     getDate()
   }, [dataAPI.NgayBatDau, dataAPI.NgayKetThuc, dataAPI.CodeValue1From, dataAPI.CodeValue1To, dataAPI.CodeValue1List])
 
-  //   let nhomArray = dataDoiTuong?.map((customer) => customer.Nhom)
+  let nhomArray = dataDoiTuong?.map((customer) => customer.Nhom)
 
   return (
     <>
@@ -68,12 +48,12 @@ function DSBHKHH() {
             title1={'Nhóm'}
             title2={'Đến'}
             title3={'Chọn'}
-            option1={Array.from(new Set(dataDoiTuong)).filter((element) => element !== '')}
-            option2={Array.from(new Set(dataDoiTuong)).filter((element) => element !== '')}
+            option1={Array.from(new Set(nhomArray)).filter((element) => element !== '')}
+            option2={Array.from(new Set(nhomArray)).filter((element) => element !== '')}
             option3={Array.from(new Set(dataNhomDoiTuong)).filter((element) => element !== '')}
             dataAPI={dataAPI}
             setDataAPI={setDataAPI}
-            title={'DoiTuong'}
+            title={'DauVao'}
           />
         </div>
 

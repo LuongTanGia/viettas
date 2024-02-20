@@ -498,7 +498,20 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
                                         maximumFractionDigits: ThongSo.SOLESOLUONG,
                                       })}
                                     </Text>
-                                  ) : ['TongTienHang', 'TongTienThue', 'TongThanhTien', 'TongTienCKTT', 'TongTongCong'].includes(column.dataIndex) ? (
+                                  ) : [
+                                      'TongTienHang',
+                                      'TongTienThue',
+                                      'TongThanhTien',
+                                      'TongTienCKTT',
+                                      'TongTongCong',
+                                      'SoLuong',
+                                      'TienHang',
+                                      'TienThue',
+                                      'TienCKTT',
+                                      'TongCong_TM',
+                                      'TongCong_CN',
+                                      'TongCong',
+                                    ].includes(column.dataIndex) ? (
                                     <Text strong>
                                       {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                         minimumFractionDigits: ThongSo.SOLESOTIEN,
