@@ -8,13 +8,13 @@ import logo from '../assets/VTS-iSale.ico'
 import * as apis from '../apis'
 import { RETOKEN, formatPrice } from '../action/Actions'
 import { DateField } from '@mui/x-date-pickers'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import ActionButton from '../components/util/Button/ActionButton'
 import { toast } from 'react-toastify'
 
 const { Option } = Select
 
-const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongSo, dataHangHoa, loading }) => {
+const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, dataThongSo, dataHangHoa, loading }) => {
   const [errors, setErrors] = useState({
     DonGia: '',
   })
@@ -39,9 +39,23 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
       TyLeThue: dataRecord?.TyLeThue,
     },
   })
+  const [formAdjustPrice, setFormAdjustPrice] = useState({
+    GiaTriTinh: 'OLDVALUE',
+    ToanTu: '',
+    LoaiGiaTri: 'TYLE',
+    GiaTri: 0,
+    HieuLucTu: ngayHieuLuc,
+    DanhSachMa: [],
+  })
 
   //  set value default
-
+  useEffect(() => {
+    if (formAdjustPrice?.GiaTriTinh === 'OLDVALUE') {
+      setFormAdjustPrice({ ...formAdjustPrice, ToanTu: '+' })
+    } else {
+      setFormAdjustPrice({ ...formAdjustPrice, ToanTu: '=' })
+    }
+  }, [formAdjustPrice])
   useEffect(() => {
     if (dataHangHoa && actionType === 'create') {
       setFormCreate({ ...formCreate, MaHang: dataHangHoa[0]?.MaHang })
@@ -114,6 +128,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
       console.error('Error while saving data:', error)
     }
   }
+
   const handleEdit = async () => {
     if (formEdit?.DonGia === null || formEdit?.DonGia === 0) {
       setErrors({
@@ -170,6 +185,44 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
     }
   }
 
+  const handleCoThue = () => {
+    if (actionType === 'create') {
+      setFormCreate({ ...formCreate, CoThue: !formCreate.CoThue })
+    }
+    if (actionType === 'edit') {
+      setFormEdit({
+        ...formEdit,
+        Data: {
+          ...formEdit.Data,
+          CoThue: !formEdit.Data.CoThue,
+        },
+      })
+    }
+  }
+  const handleAdjustPrice = async () => {
+    try {
+      const tokenLogin = localStorage.getItem('TKN')
+      if (typePage === 'GBL') {
+        const response = await apis.DieuChinhGBL(tokenLogin, formAdjustPrice)
+        if (response.data && response.data.DataError === 0) {
+          toast.success(response.data.DataErrorDescription)
+          loading()
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(response.data.DataErrorDescription)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleDelete()
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
+      }
+
+      close()
+    } catch (error) {
+      console.error('Error while saving data:', error)
+    }
+  }
+
   return (
     <>
       <div className=" fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
@@ -195,7 +248,182 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
               </div>
             </div>
           )}
+          {actionType === 'adjustPrice' && (
+            <div className="w-[700px] h-[160px]">
+              <div className="flex gap-2">
+                <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
+                <label className="text-blue-700 font-semibold uppercase pb-1">Điều chỉnh giá - {namePage}</label>
+              </div>
+              <div className="border w-full h-[60%] rounded-[4px]-sm text-sm">
+                <div className="flex flex-col px-2 ">
+                  <div className=" py-3 px-2 gap-2  grid grid-cols-1">
+                    <div className="flex flex-col gap-3">
+                      <div className="flex items-center gap-1">
+                        <label className="required  min-w-[70px] text-sm flex justify-end">Hiệu lực từ</label>
+                        <DateField
+                          className="DatePicker_PMH  max-w-[110px]"
+                          format="DD/MM/YYYY"
+                          value={dayjs(formAdjustPrice?.HieuLucTu)}
+                          onChange={(newDate) => {
+                            setFormAdjustPrice({
+                              ...formAdjustPrice,
+                              HieuLucTu: dayjs(newDate).format('YYYY-MM-DD'),
+                            })
+                          }}
+                          sx={{
+                            '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                            '& .MuiButtonBase-root': {
+                              padding: '4px',
+                            },
+                            '& .MuiSvgIcon-root': {
+                              width: '18px',
+                              height: '18px',
+                            },
+                          }}
+                        />
+                      </div>
+                      <div className="flex  gap-2 items-center">
+                        <div className="flex items-center gap-1">
+                          <label className=" whitespace-nowrap  min-w-[74px] text-sm flex justify-end">Trị giá tính</label>
+                          <Select
+                            className="w-[140px] truncate"
+                            showSearch
+                            size="small"
+                            optionFilterProp="children"
+                            onChange={(value) =>
+                              setFormAdjustPrice({
+                                ...formAdjustPrice,
+                                GiaTriTinh: value,
+                              })
+                            }
+                            value={formAdjustPrice.GiaTriTinh}
+                          >
+                            <Option value="OLDVALUE">Từ giá trị cũ</Option>
+                            <Option value="NEWVALUE">Thay giá trị mới</Option>
+                          </Select>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <label className=" whitespace-nowrap   text-sm flex justify-end">Toán tử</label>
+                          {formAdjustPrice.GiaTriTinh === 'OLDVALUE' ? (
+                            <Select
+                              className="w-[50px] truncate"
+                              showSearch
+                              size="small"
+                              onChange={(value) =>
+                                setFormAdjustPrice({
+                                  ...formAdjustPrice,
+                                  ToanTu: value,
+                                })
+                              }
+                              value="+"
+                            >
+                              <Option value="+">+</Option>
+                              <Option value="-">-</Option>
+                              <Option value="*">*</Option>
+                              <Option value="/">/</Option>
+                            </Select>
+                          ) : (
+                            <Select
+                              className="w-[50px] truncate"
+                              showSearch
+                              size="small"
+                              onChange={(value) =>
+                                setFormAdjustPrice({
+                                  ...formAdjustPrice,
+                                  ToanTu: value,
+                                })
+                              }
+                              value={formAdjustPrice.ToanTu}
+                            >
+                              <Option value="=">=</Option>
+                            </Select>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <label className=" whitespace-nowrap   text-sm flex justify-end">Loại</label>
+                          <Select
+                            className="w-[100px] truncate"
+                            showSearch
+                            size="small"
+                            optionFilterProp="children"
+                            onChange={(value) =>
+                              setFormAdjustPrice({
+                                ...formAdjustPrice,
+                                LoaiGiaTri: value,
+                              })
+                            }
+                            value={formAdjustPrice.LoaiGiaTri}
+                          >
+                            <Option value="TYLE">Tỷ lệ %</Option>
+                            <Option value="HANGSO">Hằng số</Option>
+                          </Select>
+                        </div>
+                        <div className="flex items-center gap-1 whitespace-nowrap">
+                          <label className=" text-sm flex justify-end">Giá trị</label>
+                          {formAdjustPrice.LoaiGiaTri === 'TYLE' ? (
+                            <InputNumber
+                              className="w-[100%]"
+                              size="small"
+                              min={0}
+                              max={100}
+                              value={formAdjustPrice.GiaTri}
+                              formatter={(value) => `${value}`}
+                              parser={(value) => {
+                                const parsedValue = parseFloat(value)
+                                return isNaN(parsedValue) ? null : parseFloat(parsedValue.toFixed(dataThongSo.SOLETYLE))
+                              }}
+                              onChange={(e) =>
+                                setFormAdjustPrice({
+                                  ...formAdjustPrice,
+                                  GiaTri: e,
+                                })
+                              }
+                            />
+                          ) : (
+                            <InputNumber
+                              className="w-[100%]"
+                              size="small"
+                              min={0}
+                              max={999999999999}
+                              value={formAdjustPrice.GiaTri}
+                              formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                              parser={(value) => {
+                                const parsedValue = parseFloat(value.replace(/\$\s?|(,*)/g, ''))
+                                return isNaN(parsedValue) ? null : parseFloat(parsedValue.toFixed(dataThongSo.SOLEDONGIA))
+                              }}
+                              onChange={(e) =>
+                                setFormAdjustPrice({
+                                  ...formAdjustPrice,
+                                  GiaTri: e,
+                                })
+                              }
+                            />
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {/* button */}
+              <div className="flex justify-end items-center pt-[14px]  gap-x-2">
+                <button
+                  onClick={handleAdjustPrice}
+                  className="flex items-center  py-1 px-2  rounded-md  border-2 border-blue-500 text-slate-50 text-text-main font-bold  bg-blue-500 hover:bg-white hover:text-blue-500"
+                >
+                  <div className="pr-1">{/* <TiPrinter size={20} /> */}</div>
+                  <div>Xử lý</div>
+                </button>
 
+                <button
+                  onClick={() => close()}
+                  className="active:scale-[.98] active:duration-75 border-2 border-rose-500 text-slate-50 text-text-main font-bold  bg-rose-500 hover:bg-white hover:text-rose-500  rounded-md px-2 py-1 w-[80px] "
+                >
+                  Đóng
+                </button>
+              </div>
+            </div>
+          )}
           {actionType === 'view' && (
             <div className="w-[700px] h-[260px]">
               <div className="flex gap-2">
@@ -384,7 +612,6 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                                 HieuLucTu: dayjs(newDate).format('YYYY-MM-DD'),
                               })
                             }}
-                            disabled
                             sx={{
                               '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
                               '& .MuiButtonBase-root': {
@@ -422,7 +649,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                           />
                         </div>
                         <div className="flex items-center gap-1 whitespace-nowrap">
-                          <Checkbox className="min-w-[192px] text-sm flex justify-end " checked={dataRecord?.CoThue}>
+                          <Checkbox className="min-w-[192px] text-sm flex justify-end " checked={formCreate?.CoThue} onChange={handleCoThue}>
                             Đã có thuế
                           </Checkbox>
                         </div>
@@ -434,6 +661,11 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                             min={0}
                             max={100}
                             value={formCreate.TyLeThue}
+                            formatter={(value) => `${value}`}
+                            parser={(value) => {
+                              const parsedValue = parseFloat(value)
+                              return isNaN(parsedValue) ? null : parseFloat(parsedValue.toFixed(dataThongSo.SOLETYLE))
+                            }}
                             onChange={(e) =>
                               setFormCreate({
                                 ...formCreate,
@@ -520,7 +752,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                             format="DD/MM/YYYY"
                             value={dayjs(formEdit.Data.HieuLucTu)}
                             onChange={(newDate) => {
-                              setFormCreate({
+                              setFormEdit({
                                 ...formEdit,
                                 Data: {
                                   ...formEdit.Data,
@@ -568,7 +800,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                           />
                         </div>
                         <div className="flex items-center gap-1 whitespace-nowrap">
-                          <Checkbox className="min-w-[192px] text-sm flex justify-end " checked={dataRecord?.CoThue}>
+                          <Checkbox className="min-w-[192px] text-sm flex justify-end " checked={formEdit?.Data.CoThue} onChange={handleCoThue}>
                             Đã có thuế
                           </Checkbox>
                         </div>
@@ -580,6 +812,11 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                             min={0}
                             max={100}
                             value={formEdit.Data.TyLeThue}
+                            formatter={(value) => `${value}`}
+                            parser={(value) => {
+                              const parsedValue = parseFloat(value)
+                              return isNaN(parsedValue) ? null : parseFloat(parsedValue.toFixed(dataThongSo.SOLETYLE))
+                            }}
                             onChange={(e) =>
                               setFormEdit({
                                 ...formEdit,

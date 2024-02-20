@@ -4,7 +4,7 @@ import moment from 'moment'
 import icons from '../../untils/icons'
 import { toast } from 'react-toastify'
 import * as apis from '../../apis'
-import { ModalTL, Modals } from '../../components_K'
+import { ModalTL } from '../../components_K'
 import ActionButton from '../../components/util/Button/ActionButton'
 import { RETOKEN, formatCurrency } from '../../action/Actions'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router-dom'
 import { useSearchHH } from '../../components_K/myComponents/useSearchHH'
 
 const { Text } = Typography
-const { IoAddCircleOutline, TiPrinter, MdDelete, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill, CgCloseO, TiThSmall, MdFilterAlt } = icons
+const { IoAddCircleOutline, TiPrinter, MdDelete, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill, CgCloseO, TiThSmall, MdFilterAlt, BsWrenchAdjustableCircle } = icons
 const GBL = () => {
   const navigate = useNavigate()
   const optionContainerRef = useRef(null)
@@ -533,11 +533,9 @@ const GBL = () => {
     setDataRecord(record)
     setIsShowModal(true)
   }
-  const handlePrintWareHouse = (record) => {
-    setActionType('printWareHouse')
-    setDataRecord(record)
+  const handleAdjustPrice = () => {
+    setActionType('adjustPrice')
     setIsShowModal(true)
-    setIsLoadingModal(false)
   }
 
   const handleSearch = (newSearch) => {
@@ -647,17 +645,17 @@ const GBL = () => {
                         </div>
                         <div>In phiếu</div>
                       </button>
-                      {dataThongSo?.ALLOW_INPHIEUKHO_DAUVAODAURA === true && (
-                        <button
-                          onClick={handlePrintWareHouse}
-                          className="flex items-center  py-1 px-2  rounded-md border-2 border-purple-500  text-slate-50 text-base bg-purple-500 hover:bg-white hover:text-purple-500  "
-                        >
-                          <div className="pr-1">
-                            <TiPrinter size={20} />
-                          </div>
-                          <div>In phiếu kho</div>
-                        </button>
-                      )}
+
+                      <button
+                        onClick={handleAdjustPrice}
+                        className="flex items-center  py-1 px-2  rounded-md border-2 border-orange-500  text-slate-50 text-base bg-orange-500 hover:bg-white hover:text-orange-500  "
+                      >
+                        <div className="pr-1">
+                          <BsWrenchAdjustableCircle size={20} />
+                        </div>
+                        <div>Điều chỉnh giá</div>
+                      </button>
+
                       <button
                         onClick={() => setHideColumns(!hideColumns)}
                         className="flex items-center py-1 px-2 rounded-md border-2 border-red-500  text-slate-50 text-base bg-red-500 hover:bg-white hover:text-red-500 "
@@ -705,7 +703,7 @@ const GBL = () => {
                 )}
               </div>
             </div>
-            <div className="flex justify-between items-center px-4 ">
+            <div className="flex justify-between items-center px-3 ">
               <div className="flex gap-1">
                 <div className="flex gap-1 items-center">
                   <div>Nhóm</div>
