@@ -7,7 +7,28 @@ export const useSearchHH = (data) => {
   const filteredData = useMemo(() => {
     if (data)
       return data.filter((item) => {
-        const { MaHang, TenHang, DVT, NhomHang, ThongTinNhom, SoLuongTon, HieuLucTu, DonGia, TyLeThue, NgayTao, NguoiTao, NgaySuaCuoi, NguoiSuaCuoi, MaVach } = item || {}
+        const {
+          MaHang,
+          TenHang,
+          DVT,
+          NhomHang,
+          // GiaBanLe
+          ThongTinNhom,
+          SoLuongTon,
+          HieuLucTu,
+          DonGia,
+          TyLeThue,
+          NgayTao,
+          NguoiTao,
+          NgaySuaCuoi,
+          NguoiSuaCuoi,
+          MaVach,
+          // GiaKH
+          MaDoiTuong,
+          TenDoiTuong,
+          ThongTinNhomGia,
+          GhiChu,
+        } = item || {}
 
         return (
           (MaHang || '').toLowerCase().includes(search.toLowerCase()) ||
@@ -24,7 +45,12 @@ export const useSearchHH = (data) => {
           (NguoiTao || '').toLowerCase().includes(search.toLowerCase()) ||
           (NgaySuaCuoi || '').toLowerCase().includes(search.toLowerCase()) ||
           (NguoiSuaCuoi || '').toLowerCase().includes(search.toLowerCase()) ||
-          (MaVach?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase())
+          (MaVach?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          // GiaKH
+          (MaDoiTuong || '').toLowerCase().includes(search.toLowerCase()) ||
+          (TenDoiTuong || '').toLowerCase().includes(search.toLowerCase()) ||
+          (ThongTinNhomGia || '').toLowerCase().includes(search.toLowerCase()) ||
+          (GhiChu || '').toLowerCase().includes(search.toLowerCase())
         )
       })
     else return []

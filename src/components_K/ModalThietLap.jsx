@@ -8,13 +8,13 @@ import logo from '../assets/VTS-iSale.ico'
 import * as apis from '../apis'
 import { RETOKEN, formatPrice } from '../action/Actions'
 import { DateField } from '@mui/x-date-pickers'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import ActionButton from '../components/util/Button/ActionButton'
 import { toast } from 'react-toastify'
 
 const { Option } = Select
 
-const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, dataThongSo, dataHangHoa, loading }) => {
+const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, dataThongSo, dataHangHoa, dataDoiTuong, dataNhomGia, loading }) => {
   const [errors, setErrors] = useState({
     DonGia: '',
   })
@@ -27,8 +27,16 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
     TyLeThue: 0,
   }
 
-  const [formCreate, setFormCreate] = useState(defaultFormCreate)
-  const [formEdit, setFormEdit] = useState({
+  const defaultFormCreateGKH = {
+    MaDoiTuong: '',
+    HieuLucTu: ngayHieuLuc,
+    NhomGia: '',
+    GhiChu: '',
+  }
+
+  const [formCreate, setFormCreate] = useState(typePage === 'GBL' ? defaultFormCreate : defaultFormCreateGKH)
+
+  const defaultFormEdit = {
     Ma: dataRecord?.MaHang,
     HieuLuc: dataRecord?.HieuLucTu,
     Data: {
@@ -38,7 +46,17 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
       CoThue: dataRecord?.CoThue,
       TyLeThue: dataRecord?.TyLeThue,
     },
-  })
+  }
+  const defaultFormEditGKH = {
+    Ma: dataRecord?.MaDoiTuong,
+    HieuLuc: dataRecord?.HieuLucTu,
+    Data: {
+      NhomGia: dataRecord?.NhomGia,
+      GhiChu: dataRecord?.GhiChu,
+    },
+  }
+  const [formEdit, setFormEdit] = useState(typePage === 'GBL' ? defaultFormEdit : defaultFormEditGKH)
+
   const [formAdjustPrice, setFormAdjustPrice] = useState({
     GiaTriTinh: 'OLDVALUE',
     ToanTu: '',
@@ -50,28 +68,48 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
 
   //  set value default
   useEffect(() => {
+    if (data && actionType === 'adjustPrice') {
+      filterDSMa(ngayHieuLuc)
+    }
+  }, [])
+
+  useEffect(() => {
     if (formAdjustPrice?.GiaTriTinh === 'OLDVALUE') {
       setFormAdjustPrice({ ...formAdjustPrice, ToanTu: '+' })
     } else {
       setFormAdjustPrice({ ...formAdjustPrice, ToanTu: '=' })
     }
-  }, [formAdjustPrice])
+  }, [formAdjustPrice.GiaTriTinh])
+
+  // set value default
   useEffect(() => {
-    if (dataHangHoa && actionType === 'create') {
-      setFormCreate({ ...formCreate, MaHang: dataHangHoa[0]?.MaHang })
-    }
-    if (dataHangHoa && actionType === 'edit') {
-      setFormEdit({ ...formEdit, MaHang: dataRecord.MaHang })
+    if (typePage === 'GBL') {
+      if (dataHangHoa && actionType === 'create') {
+        setFormCreate({ ...formCreate, MaHang: dataHangHoa[0]?.MaHang })
+      }
+      if (dataHangHoa && actionType === 'edit') {
+        setFormEdit({ ...formEdit, MaHang: dataRecord.MaHang })
+      }
     }
   }, [dataHangHoa, dataRecord])
 
+  useEffect(() => {
+    if (typePage === 'GKH') {
+      if (dataDoiTuong && dataNhomGia && actionType === 'create') {
+        setFormCreate({ ...formCreate, MaDoiTuong: dataDoiTuong[0]?.Ma, NhomGia: dataNhomGia[0]?.Ma })
+      }
+    }
+  }, [dataDoiTuong, dataNhomGia, dataRecord])
+
   const handleCreateAndClose = async () => {
-    if (formCreate?.DonGia === null || formCreate?.DonGia === 0) {
-      setErrors({
-        ...errors,
-        DonGia: formCreate?.DonGia === null ? null : formCreate?.DonGia === 0 && 0,
-      })
-      return
+    if (typePage === 'GBL') {
+      if (formCreate?.DonGia === null || formCreate?.DonGia === 0) {
+        setErrors({
+          ...errors,
+          DonGia: formCreate?.DonGia === null ? null : formCreate?.DonGia === 0 && 0,
+        })
+        return
+      }
     }
 
     try {
@@ -79,6 +117,21 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
 
       if (typePage === 'GBL') {
         const response = await apis.ThemGBL(tokenLogin, formCreate)
+        if (response.data && response.data.DataError === 0) {
+          toast.success(response.data.DataErrorDescription)
+          loading()
+          close()
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleCreateAndClose()
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
+      }
+      if (typePage === 'GKH') {
+        const response = await apis.ThemGKH(tokenLogin, formCreate)
         if (response.data && response.data.DataError === 0) {
           toast.success(response.data.DataErrorDescription)
           loading()
@@ -98,12 +151,14 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
   }
 
   const handleCreate = async () => {
-    if (formCreate?.DonGia === null || formCreate?.DonGia === 0) {
-      setErrors({
-        ...errors,
-        DonGia: formCreate?.DonGia === null ? null : formCreate?.DonGia === 0 && 0,
-      })
-      return
+    if (typePage === 'GBL') {
+      if (formCreate?.DonGia === null || formCreate?.DonGia === 0) {
+        setErrors({
+          ...errors,
+          DonGia: formCreate?.DonGia === null ? null : formCreate?.DonGia === 0 && 0,
+        })
+        return
+      }
     }
 
     try {
@@ -119,7 +174,7 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
           toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
-          handleCreateAndClose()
+          handleCreate()
         } else {
           toast.error(response.data.DataErrorDescription)
         }
@@ -130,12 +185,14 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
   }
 
   const handleEdit = async () => {
-    if (formEdit?.DonGia === null || formEdit?.DonGia === 0) {
-      setErrors({
-        ...errors,
-        DonGia: formEdit?.DonGia === null ? null : formEdit?.DonGia === 0 && 0,
-      })
-      return
+    if (typePage === 'GBL') {
+      if (formEdit?.DonGia === null || formEdit?.DonGia === 0) {
+        setErrors({
+          ...errors,
+          DonGia: formEdit?.DonGia === null ? null : formEdit?.DonGia === 0 && 0,
+        })
+        return
+      }
     }
 
     try {
@@ -151,7 +208,22 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
           toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
-          handleCreateAndClose()
+          handleEdit()
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
+      }
+      if (typePage === 'GKH') {
+        const response = await apis.SuaGKH(tokenLogin, formEdit)
+        if (response.data && response.data.DataError === 0) {
+          toast.success(response.data.DataErrorDescription)
+          loading()
+          close()
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleEdit()
         } else {
           toast.error(response.data.DataErrorDescription)
         }
@@ -166,6 +238,20 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
       const tokenLogin = localStorage.getItem('TKN')
       if (typePage === 'GBL') {
         const response = await apis.XoaGBL(tokenLogin, dataRecord.MaHang, dataRecord.HieuLucTu)
+        if (response.data && response.data.DataError === 0) {
+          toast.success(response.data.DataErrorDescription)
+          loading()
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(response.data.DataErrorDescription)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleDelete()
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
+      }
+      if (typePage === 'GKH') {
+        const response = await apis.XoaGKH(tokenLogin, dataRecord.MaDoiTuong, dataRecord.HieuLucTu)
         if (response.data && response.data.DataError === 0) {
           toast.success(response.data.DataErrorDescription)
           loading()
@@ -202,25 +288,34 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
   const handleAdjustPrice = async () => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
-      if (typePage === 'GBL') {
-        const response = await apis.DieuChinhGBL(tokenLogin, formAdjustPrice)
-        if (response.data && response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription)
-          loading()
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(response.data.DataErrorDescription)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleDelete()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
+
+      const response = await apis.DieuChinhGBL(tokenLogin, formAdjustPrice)
+      if (response.data && response.data.DataError === 0) {
+        toast.success(response.data.DataErrorDescription)
+        loading()
+      } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+        toast.warning(response.data.DataErrorDescription)
+      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        await RETOKEN()
+        handleAdjustPrice()
+      } else {
+        toast.error(response.data.DataErrorDescription)
       }
 
       close()
     } catch (error) {
       console.error('Error while saving data:', error)
     }
+  }
+
+  const filterDSMa = (date) => {
+    const filteredMaHang = data.filter((item) => dayjs(item.HieuLucTu).format('YYYY-MM-DD') === dayjs(date).format('YYYY-MM-DD')).map((item) => ({ Ma: item.MaHang }))
+    console.log('aaaaaa', filteredMaHang)
+    setFormAdjustPrice({
+      ...formAdjustPrice,
+      HieuLucTu: dayjs(date).format('YYYY-MM-DD'),
+      DanhSachMa: filteredMaHang,
+    })
   }
 
   return (
@@ -230,8 +325,8 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
           {actionType === 'delete' && (
             <div className=" items-center ">
               <label>
-                Bạn có chắc muốn xóa mã hàng
-                <span className="font-bold mx-1"> {dataRecord.MaHang}</span>
+                Bạn có chắc muốn xóa
+                <span className="font-bold mx-1"> {typePage === 'GBL' ? dataRecord.MaHang : dataRecord.MaDoiTuong}</span>
                 không ?
               </label>
               <div className="flex justify-end mt-4 gap-2">
@@ -264,12 +359,7 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
                           className="DatePicker_PMH  max-w-[110px]"
                           format="DD/MM/YYYY"
                           value={dayjs(formAdjustPrice?.HieuLucTu)}
-                          onChange={(newDate) => {
-                            setFormAdjustPrice({
-                              ...formAdjustPrice,
-                              HieuLucTu: dayjs(newDate).format('YYYY-MM-DD'),
-                            })
-                          }}
+                          onChange={filterDSMa}
                           sx={{
                             '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
                             '& .MuiButtonBase-root': {
@@ -425,7 +515,7 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
             </div>
           )}
           {actionType === 'view' && (
-            <div className="w-[700px] h-[260px]">
+            <div className={`w-[700px] ${typePage === 'GBL' ? 'h-[260px]' : 'h-[300px]'}`}>
               <div className="flex gap-2">
                 <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
                 <label className="text-blue-700 font-semibold uppercase pb-1">thông tin - {namePage}</label>
@@ -434,60 +524,112 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
                 <div className="flex flex-col px-2 ">
                   <div className=" py-2 px-2 gap-2  grid grid-cols-1">
                     <div className="flex flex-col gap-2">
-                      <div className="flex items-center gap-1">
-                        <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Hàng hóa</label>
-                        <input
-                          type="text"
-                          value={`${dataRecord?.MaHang}-${dataRecord?.TenHang} (${dataRecord?.DVT}) `}
-                          className="h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none "
-                          disabled
-                        />
-                      </div>
-                      <div className="grid grid-cols-2  gap-2 items-center">
-                        <div className="flex items-center gap-1 whitespace-nowrap">
-                          <label className="required  min-w-[90px] text-sm flex justify-end">Kể từ ngày</label>
-                          <DateField
-                            className="DatePicker_PMH  max-w-[110px]"
-                            format="DD/MM/YYYY"
-                            value={dayjs(dataRecord?.HieuLucTu)}
-                            disabled
-                            sx={{
-                              '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                              '& .MuiButtonBase-root': {
-                                padding: '4px',
-                              },
-                              '& .MuiSvgIcon-root': {
-                                width: '18px',
-                                height: '18px',
-                              },
-                            }}
-                          />
-                        </div>
-                        <div className="flex items-center gap-1 whitespace-nowrap">
-                          <label className="required  min-w-[90px] text-sm flex justify-end">Giá bán lẻ</label>
-                          <input
-                            type="text"
-                            value={formatPrice(dataRecord?.DonGia, dataThongSo.SOLEDONGIA) || ''}
-                            className="h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate text-end"
-                            disabled
-                          />
-                        </div>
-                        <div className="flex items-center gap-1 whitespace-nowrap">
-                          <Checkbox className="min-w-[192px] text-sm flex justify-end " checked={dataRecord?.CoThue}>
-                            Đã có thuế
-                          </Checkbox>
-                        </div>
-                        <div className="flex items-center gap-1 whitespace-nowrap">
-                          <label className="  min-w-[90px] text-sm flex justify-end">% Thuế</label>
-                          <input
-                            type="text"
-                            value={formatPrice(dataRecord?.TyLeThue, dataThongSo.SOLETYLE) || ''}
-                            className="h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate  text-end"
-                            disabled
-                          />
-                        </div>
-                      </div>
-
+                      {typePage === 'GBL' && (
+                        <>
+                          <div className="flex items-center gap-1">
+                            <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Hàng hóa</label>
+                            <input
+                              type="text"
+                              value={`${dataRecord?.MaHang}-${dataRecord?.TenHang} (${dataRecord?.DVT}) `}
+                              className="h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none "
+                              disabled
+                            />
+                          </div>
+                          <div className="grid grid-cols-2  gap-2 items-center">
+                            <div className="flex items-center gap-1 whitespace-nowrap">
+                              <label className="required  min-w-[90px] text-sm flex justify-end">Kể từ ngày</label>
+                              <DateField
+                                className="DatePicker_PMH  max-w-[110px]"
+                                format="DD/MM/YYYY"
+                                value={dayjs(dataRecord?.HieuLucTu)}
+                                disabled
+                                sx={{
+                                  '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                                  '& .MuiButtonBase-root': {
+                                    padding: '4px',
+                                  },
+                                  '& .MuiSvgIcon-root': {
+                                    width: '18px',
+                                    height: '18px',
+                                  },
+                                }}
+                              />
+                            </div>
+                            <div className="flex items-center gap-1 whitespace-nowrap">
+                              <label className="required  min-w-[90px] text-sm flex justify-end">Giá bán lẻ</label>
+                              <input
+                                type="text"
+                                value={formatPrice(dataRecord?.DonGia, dataThongSo.SOLEDONGIA) || ''}
+                                className="h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate text-end"
+                                disabled
+                              />
+                            </div>
+                            <div className="flex items-center gap-1 whitespace-nowrap">
+                              <Checkbox className="min-w-[192px] text-sm flex justify-end " checked={dataRecord?.CoThue}>
+                                Đã có thuế
+                              </Checkbox>
+                            </div>
+                            <div className="flex items-center gap-1 whitespace-nowrap">
+                              <label className="  min-w-[90px] text-sm flex justify-end">% Thuế</label>
+                              <input
+                                type="text"
+                                value={formatPrice(dataRecord?.TyLeThue, dataThongSo.SOLETYLE) || ''}
+                                className="h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate  text-end"
+                                disabled
+                              />
+                            </div>
+                          </div>
+                        </>
+                      )}
+                      {typePage === 'GKH' && (
+                        <>
+                          <div className="flex items-center gap-1">
+                            <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Khách hàng</label>
+                            <input
+                              type="text"
+                              value={`${dataRecord?.MaDoiTuong}-${dataRecord?.TenDoiTuong}`}
+                              className="h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none "
+                              disabled
+                            />
+                          </div>
+                          <div className="flex items-center gap-1 whitespace-nowrap">
+                            <label className="required  min-w-[90px] text-sm flex justify-end">Hiệu lực từ</label>
+                            <DateField
+                              className="DatePicker_PMH  max-w-[110px]"
+                              format="DD/MM/YYYY"
+                              value={dayjs(dataRecord?.HieuLucTu)}
+                              disabled
+                              sx={{
+                                '& .MuiButtonBase-root': {
+                                  padding: '4px',
+                                },
+                                '& .MuiSvgIcon-root': {
+                                  width: '18px',
+                                  height: '18px',
+                                },
+                              }}
+                            />
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Nhóm giá</label>
+                            <input
+                              type="text"
+                              value={dataRecord?.ThongTinNhomGia}
+                              className="h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none "
+                              disabled
+                            />
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <label className=" whitespace-nowrap  min-w-[90px] text-sm flex justify-end">Ghi chú</label>
+                            <input
+                              type="text"
+                              value={dataRecord?.GhiChu}
+                              className="h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none "
+                              disabled
+                            />
+                          </div>
+                        </>
+                      )}
                       {/* thong tin */}
                       <div className="grid grid-cols-1 mt-2 gap-2 px-2 py-2.5 rounded-[4px] border-black-200 ml-[95px] relative border-[1px] border-gray-300 ">
                         <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
@@ -548,16 +690,7 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
                 </div>
               </div>
               {/* button */}
-              <div className="flex justify-between items-center pt-[10px] ">
-                <div className="flex gap-x-3   ">
-                  <button
-                    onClick={() => setIsShowModalOnlyPrint(true)}
-                    className="flex items-center  py-1 px-2  rounded-md  border-2 border-purple-500 text-slate-50 text-text-main font-bold  bg-purple-500 hover:bg-white hover:text-purple-500"
-                  >
-                    <div className="pr-1">{/* <TiPrinter size={20} /> */}</div>
-                    <div>In phiếu</div>
-                  </button>
-                </div>
+              <div className="flex justify-end items-center pt-[10px] ">
                 <button
                   onClick={() => close()}
                   className="active:scale-[.98] active:duration-75 border-2 border-rose-500 text-slate-50 text-text-main font-bold  bg-rose-500 hover:bg-white hover:text-rose-500  rounded-md px-2 py-1 w-[80px] "
@@ -568,7 +701,7 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
             </div>
           )}
           {actionType === 'create' && (
-            <div className="w-[700px] h-[260px]">
+            <div className={`w-[700px] ${typePage === 'GBL' ? 'h-[260px]' : 'h-[300px]'}`}>
               <div className="flex gap-2">
                 <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
                 <label className="text-blue-700 font-semibold uppercase pb-1">Thêm - {namePage}</label>
@@ -577,104 +710,194 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
                 <div className="flex flex-col px-2 ">
                   <div className=" py-2 px-2 gap-2  grid grid-cols-1">
                     <div className="flex flex-col gap-2">
-                      <div className="flex items-center gap-1">
-                        <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Hàng hóa</label>
-                        <Select
-                          className="w-full truncate"
-                          showSearch
-                          size="small"
-                          optionFilterProp="children"
-                          onChange={(value) =>
-                            setFormCreate({
-                              ...formCreate,
-                              MaHang: value,
-                            })
-                          }
-                          value={formCreate.MaHang}
-                        >
-                          {dataHangHoa?.map((item) => (
-                            <Option key={item.MaHang} value={item.MaHang}>
-                              {item.MaHang}- {item.TenHang} ({item.DVT})
-                            </Option>
-                          ))}
-                        </Select>
-                      </div>
-                      <div className="grid grid-cols-2  gap-2 items-center">
-                        <div className="flex items-center gap-1 whitespace-nowrap">
-                          <label className="required  min-w-[90px] text-sm flex justify-end">Kể từ ngày</label>
-                          <DateField
-                            className="DatePicker_PMH  max-w-[110px]"
-                            format="DD/MM/YYYY"
-                            defaultValue={dayjs()}
-                            onChange={(newDate) => {
-                              setFormCreate({
-                                ...formCreate,
-                                HieuLucTu: dayjs(newDate).format('YYYY-MM-DD'),
-                              })
-                            }}
-                            sx={{
-                              '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                              '& .MuiButtonBase-root': {
-                                padding: '4px',
-                              },
-                              '& .MuiSvgIcon-root': {
-                                width: '18px',
-                                height: '18px',
-                              },
-                            }}
-                          />
-                        </div>
-                        <div className="flex items-center gap-1 whitespace-nowrap">
-                          <label className="required  min-w-[90px] text-sm flex justify-end">Giá bán lẻ</label>
-                          <InputNumber
-                            className={`w-[100%]   
+                      {typePage === 'GBL' && (
+                        <>
+                          <div className="flex items-center gap-1">
+                            <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Hàng hóa</label>
+                            <Select
+                              className="w-full truncate"
+                              showSearch
+                              size="small"
+                              optionFilterProp="children"
+                              onChange={(value) =>
+                                setFormCreate({
+                                  ...formCreate,
+                                  MaHang: value,
+                                })
+                              }
+                              value={formCreate.MaHang}
+                            >
+                              {dataHangHoa?.map((item) => (
+                                <Option key={item.MaHang} value={item.MaHang}>
+                                  {item.MaHang}- {item.TenHang} ({item.DVT})
+                                </Option>
+                              ))}
+                            </Select>
+                          </div>
+                          <div className="grid grid-cols-2  gap-2 items-center">
+                            <div className="flex items-center gap-1 whitespace-nowrap">
+                              <label className="required  min-w-[90px] text-sm flex justify-end">Kể từ ngày</label>
+                              <DateField
+                                className="DatePicker_PMH  max-w-[110px]"
+                                format="DD/MM/YYYY"
+                                defaultValue={dayjs()}
+                                onChange={(newDate) => {
+                                  setFormCreate({
+                                    ...formCreate,
+                                    HieuLucTu: dayjs(newDate).format('YYYY-MM-DD'),
+                                  })
+                                }}
+                                sx={{
+                                  '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                                  '& .MuiButtonBase-root': {
+                                    padding: '4px',
+                                  },
+                                  '& .MuiSvgIcon-root': {
+                                    width: '18px',
+                                    height: '18px',
+                                  },
+                                }}
+                              />
+                            </div>
+                            <div className="flex items-center gap-1 whitespace-nowrap">
+                              <label className="required  min-w-[90px] text-sm flex justify-end">Giá bán lẻ</label>
+                              <InputNumber
+                                className={`w-[100%]   
                                        ${errors.DonGia === 0 || errors.DonGia === null ? 'border-red-500' : ''} `}
-                            placeholder={errors.DonGia}
-                            size="small"
-                            min={0}
-                            max={999999999999}
-                            value={formCreate.DonGia}
-                            formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                            parser={(value) => {
-                              const parsedValue = parseFloat(value.replace(/\$\s?|(,*)/g, ''))
-                              return isNaN(parsedValue) ? null : parseFloat(parsedValue.toFixed(dataThongSo.SOLEDONGIA))
-                            }}
-                            onChange={(e) => {
-                              setFormCreate({
-                                ...formCreate,
-                                DonGia: e,
-                              })
-                              setErrors({ ...errors, DonGia: e })
-                            }}
-                          />
-                        </div>
-                        <div className="flex items-center gap-1 whitespace-nowrap">
-                          <Checkbox className="min-w-[192px] text-sm flex justify-end " checked={formCreate?.CoThue} onChange={handleCoThue}>
-                            Đã có thuế
-                          </Checkbox>
-                        </div>
-                        <div className="flex items-center gap-1 whitespace-nowrap">
-                          <label className="  min-w-[90px] text-sm flex justify-end">% Thuế</label>
-                          <InputNumber
-                            className="w-[100%]"
-                            size="small"
-                            min={0}
-                            max={100}
-                            value={formCreate.TyLeThue}
-                            formatter={(value) => `${value}`}
-                            parser={(value) => {
-                              const parsedValue = parseFloat(value)
-                              return isNaN(parsedValue) ? null : parseFloat(parsedValue.toFixed(dataThongSo.SOLETYLE))
-                            }}
-                            onChange={(e) =>
-                              setFormCreate({
-                                ...formCreate,
-                                TyLeThue: e,
-                              })
-                            }
-                          />
-                        </div>
-                      </div>
+                                placeholder={errors.DonGia}
+                                size="small"
+                                min={0}
+                                max={999999999999}
+                                value={formCreate.DonGia}
+                                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                parser={(value) => {
+                                  const parsedValue = parseFloat(value.replace(/\$\s?|(,*)/g, ''))
+                                  return isNaN(parsedValue) ? null : parseFloat(parsedValue.toFixed(dataThongSo.SOLEDONGIA))
+                                }}
+                                onChange={(e) => {
+                                  setFormCreate({
+                                    ...formCreate,
+                                    DonGia: e,
+                                  })
+                                  setErrors({ ...errors, DonGia: e })
+                                }}
+                              />
+                            </div>
+                            <div className="flex items-center gap-1 whitespace-nowrap">
+                              <Checkbox className="min-w-[192px] text-sm flex justify-end " checked={formCreate?.CoThue} onChange={handleCoThue}>
+                                Đã có thuế
+                              </Checkbox>
+                            </div>
+                            <div className="flex items-center gap-1 whitespace-nowrap">
+                              <label className="  min-w-[90px] text-sm flex justify-end">% Thuế</label>
+                              <InputNumber
+                                className="w-[100%]"
+                                size="small"
+                                min={0}
+                                max={100}
+                                value={formCreate.TyLeThue}
+                                formatter={(value) => `${value}`}
+                                parser={(value) => {
+                                  const parsedValue = parseFloat(value)
+                                  return isNaN(parsedValue) ? null : parseFloat(parsedValue.toFixed(dataThongSo.SOLETYLE))
+                                }}
+                                onChange={(e) =>
+                                  setFormCreate({
+                                    ...formCreate,
+                                    TyLeThue: e,
+                                  })
+                                }
+                              />
+                            </div>
+                          </div>
+                        </>
+                      )}
+                      {typePage === 'GKH' && (
+                        <>
+                          <div className="flex items-center gap-1">
+                            <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Khách hàng</label>
+                            <Select
+                              className="w-full truncate"
+                              showSearch
+                              size="small"
+                              optionFilterProp="children"
+                              onChange={(value) =>
+                                setFormCreate({
+                                  ...formCreate,
+                                  MaDoiTuong: value,
+                                })
+                              }
+                              value={formCreate.MaDoiTuong}
+                            >
+                              {dataDoiTuong?.map((item) => (
+                                <Option key={item.Ma} value={item.Ma}>
+                                  {item.Ma}- {item.Ten}
+                                </Option>
+                              ))}
+                            </Select>
+                          </div>
+                          <div className="flex items-center gap-1 whitespace-nowrap">
+                            <label className="required  min-w-[90px] text-sm flex justify-end">Hiệu lực từ</label>
+                            <DateField
+                              className="DatePicker_PMH  max-w-[110px]"
+                              format="DD/MM/YYYY"
+                              value={dayjs()}
+                              onChange={(newDate) => {
+                                setFormCreate({
+                                  ...formCreate,
+                                  HieuLucTu: dayjs(newDate).format('YYYY-MM-DD'),
+                                })
+                              }}
+                              sx={{
+                                '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                                '& .MuiButtonBase-root': {
+                                  padding: '4px',
+                                },
+                                '& .MuiSvgIcon-root': {
+                                  width: '18px',
+                                  height: '18px',
+                                },
+                              }}
+                            />
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Nhóm giá</label>
+                            <Select
+                              className="w-full truncate"
+                              showSearch
+                              size="small"
+                              optionFilterProp="children"
+                              onChange={(value) =>
+                                setFormCreate({
+                                  ...formCreate,
+                                  NhomGia: value,
+                                })
+                              }
+                              value={formCreate.NhomGia}
+                            >
+                              {dataNhomGia?.map((item) => (
+                                <Option key={item.Ma} value={item.Ma}>
+                                  {item.Ma}- {item.Ten}
+                                </Option>
+                              ))}
+                            </Select>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <label className=" whitespace-nowrap  min-w-[90px] text-sm flex justify-end">Ghi chú</label>
+                            <input
+                              type="text"
+                              className="h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none "
+                              value={formCreate.GhiChu}
+                              onChange={(e) =>
+                                setFormCreate({
+                                  ...formCreate,
+                                  GhiChu: e.target.value,
+                                })
+                              }
+                            />
+                          </div>
+                        </>
+                      )}
 
                       {/* thong tin */}
                       <div className="grid grid-cols-1 mt-2 gap-2 px-2 py-2.5 rounded-[4px] border-black-200 ml-[95px] relative border-[1px] border-gray-300 ">
@@ -724,7 +947,7 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
             </div>
           )}
           {actionType === 'edit' && (
-            <div className="w-[700px] h-[260px]">
+            <div className={`w-[700px] ${typePage === 'GBL' ? 'h-[260px]' : 'h-[300px]'}`}>
               <div className="flex gap-2">
                 <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
                 <label className="text-blue-700 font-semibold uppercase pb-1">Sửa - {namePage}</label>
@@ -733,103 +956,198 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
                 <div className="flex flex-col px-2 ">
                   <div className=" py-2 px-2 gap-2  grid grid-cols-1">
                     <div className="flex flex-col gap-2">
-                      <div className="flex items-center gap-1">
-                        <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Hàng hóa</label>
-                        <Select
-                          className="w-full truncate"
-                          showSearch
-                          size="small"
-                          optionFilterProp="children"
-                          value={`${dataRecord?.MaHang}-${dataRecord?.TenHang} (${dataRecord?.DVT}) `}
-                          disabled
-                        ></Select>
-                      </div>
-                      <div className="grid grid-cols-2  gap-2 items-center">
-                        <div className="flex items-center gap-1 whitespace-nowrap">
-                          <label className="required  min-w-[90px] text-sm flex justify-end">Kể từ ngày</label>
-                          <DateField
-                            className="DatePicker_PMH  max-w-[110px]"
-                            format="DD/MM/YYYY"
-                            value={dayjs(formEdit.Data.HieuLucTu)}
-                            onChange={(newDate) => {
-                              setFormEdit({
-                                ...formEdit,
-                                Data: {
-                                  ...formEdit.Data,
-                                  HieuLucTu: dayjs(newDate).format('YYYY-MM-DD'),
-                                },
-                              })
-                            }}
-                            sx={{
-                              '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                              '& .MuiButtonBase-root': {
-                                padding: '4px',
-                              },
-                              '& .MuiSvgIcon-root': {
-                                width: '18px',
-                                height: '18px',
-                              },
-                            }}
-                          />
-                        </div>
-                        <div className="flex items-center gap-1 whitespace-nowrap">
-                          <label className="required  min-w-[90px] text-sm flex justify-end">Giá bán lẻ</label>
-                          <InputNumber
-                            className={`w-[100%]   
+                      {typePage === 'GBL' && (
+                        <>
+                          <div className="flex items-center gap-1">
+                            <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Hàng hóa</label>
+                            <Select
+                              className="w-full truncate"
+                              showSearch
+                              size="small"
+                              optionFilterProp="children"
+                              value={`${dataRecord?.MaHang}-${dataRecord?.TenHang} (${dataRecord?.DVT}) `}
+                              disabled
+                            ></Select>
+                          </div>
+                          <div className="grid grid-cols-2  gap-2 items-center">
+                            <div className="flex items-center gap-1 whitespace-nowrap">
+                              <label className="required  min-w-[90px] text-sm flex justify-end">Kể từ ngày</label>
+                              <DateField
+                                className="DatePicker_PMH  max-w-[110px]"
+                                format="DD/MM/YYYY"
+                                value={dayjs(formEdit.Data.HieuLucTu)}
+                                onChange={(newDate) => {
+                                  setFormEdit({
+                                    ...formEdit,
+                                    Data: {
+                                      ...formEdit.Data,
+                                      HieuLucTu: dayjs(newDate).format('YYYY-MM-DD'),
+                                    },
+                                  })
+                                }}
+                                sx={{
+                                  '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                                  '& .MuiButtonBase-root': {
+                                    padding: '4px',
+                                  },
+                                  '& .MuiSvgIcon-root': {
+                                    width: '18px',
+                                    height: '18px',
+                                  },
+                                }}
+                              />
+                            </div>
+                            <div className="flex items-center gap-1 whitespace-nowrap">
+                              <label className="required  min-w-[90px] text-sm flex justify-end">Giá bán lẻ</label>
+                              <InputNumber
+                                className={`w-[100%]   
                                        ${errors.DonGia === 0 || errors.DonGia === null ? 'border-red-500' : ''} `}
-                            placeholder={errors.DonGia}
-                            size="small"
-                            min={0}
-                            max={999999999999}
-                            value={formEdit.Data.DonGia}
-                            formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                            parser={(value) => {
-                              const parsedValue = parseFloat(value.replace(/\$\s?|(,*)/g, ''))
-                              return isNaN(parsedValue) ? null : parseFloat(parsedValue.toFixed(dataThongSo.SOLEDONGIA))
-                            }}
-                            onChange={(e) => {
-                              setFormEdit({
-                                ...formEdit,
-                                Data: {
-                                  ...formEdit.Data,
-                                  DonGia: e,
+                                placeholder={errors.DonGia}
+                                size="small"
+                                min={0}
+                                max={999999999999}
+                                value={formEdit.Data.DonGia}
+                                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                parser={(value) => {
+                                  const parsedValue = parseFloat(value.replace(/\$\s?|(,*)/g, ''))
+                                  return isNaN(parsedValue) ? null : parseFloat(parsedValue.toFixed(dataThongSo.SOLEDONGIA))
+                                }}
+                                onChange={(e) => {
+                                  setFormEdit({
+                                    ...formEdit,
+                                    Data: {
+                                      ...formEdit.Data,
+                                      DonGia: e,
+                                    },
+                                  })
+                                  setErrors({ ...errors, DonGia: e })
+                                }}
+                              />
+                            </div>
+                            <div className="flex items-center gap-1 whitespace-nowrap">
+                              <Checkbox className="min-w-[192px] text-sm flex justify-end " checked={formEdit?.Data.CoThue} onChange={handleCoThue}>
+                                Đã có thuế
+                              </Checkbox>
+                            </div>
+                            <div className="flex items-center gap-1 whitespace-nowrap">
+                              <label className="  min-w-[90px] text-sm flex justify-end">% Thuế</label>
+                              <InputNumber
+                                className="w-[100%]"
+                                size="small"
+                                min={0}
+                                max={100}
+                                value={formEdit.Data.TyLeThue}
+                                formatter={(value) => `${value}`}
+                                parser={(value) => {
+                                  const parsedValue = parseFloat(value)
+                                  return isNaN(parsedValue) ? null : parseFloat(parsedValue.toFixed(dataThongSo.SOLETYLE))
+                                }}
+                                onChange={(e) =>
+                                  setFormEdit({
+                                    ...formEdit,
+                                    Data: {
+                                      ...formEdit.Data,
+                                      TyLeThue: e,
+                                    },
+                                  })
+                                }
+                              />
+                            </div>
+                          </div>
+                        </>
+                      )}
+                      {typePage === 'GKH' && (
+                        <>
+                          <div className="flex items-center gap-1">
+                            <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Khách hàng</label>
+                            <Select
+                              className="w-full truncate"
+                              showSearch
+                              size="small"
+                              optionFilterProp="children"
+                              onChange={(value) =>
+                                setFormEdit({
+                                  ...formEdit,
+                                  Ma: value,
+                                })
+                              }
+                              value={formEdit.Ma}
+                            >
+                              {dataDoiTuong?.map((item) => (
+                                <Option key={item.Ma} value={item.Ma}>
+                                  {item.Ma} - {item.Ten}
+                                </Option>
+                              ))}
+                            </Select>
+                          </div>
+                          <div className="flex items-center gap-1 whitespace-nowrap">
+                            <label className="required  min-w-[90px] text-sm flex justify-end">Hiệu lực từ</label>
+                            <DateField
+                              className="DatePicker_PMH  max-w-[110px]"
+                              format="DD/MM/YYYY"
+                              value={dayjs(formEdit.HieuLuc)}
+                              onChange={(newDate) => {
+                                setFormEdit({
+                                  ...formEdit,
+                                  HieuLucTu: dayjs(newDate).format('YYYY-MM-DD'),
+                                })
+                              }}
+                              sx={{
+                                '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                                '& .MuiButtonBase-root': {
+                                  padding: '4px',
                                 },
-                              })
-                              setErrors({ ...errors, DonGia: e })
-                            }}
-                          />
-                        </div>
-                        <div className="flex items-center gap-1 whitespace-nowrap">
-                          <Checkbox className="min-w-[192px] text-sm flex justify-end " checked={formEdit?.Data.CoThue} onChange={handleCoThue}>
-                            Đã có thuế
-                          </Checkbox>
-                        </div>
-                        <div className="flex items-center gap-1 whitespace-nowrap">
-                          <label className="  min-w-[90px] text-sm flex justify-end">% Thuế</label>
-                          <InputNumber
-                            className="w-[100%]"
-                            size="small"
-                            min={0}
-                            max={100}
-                            value={formEdit.Data.TyLeThue}
-                            formatter={(value) => `${value}`}
-                            parser={(value) => {
-                              const parsedValue = parseFloat(value)
-                              return isNaN(parsedValue) ? null : parseFloat(parsedValue.toFixed(dataThongSo.SOLETYLE))
-                            }}
-                            onChange={(e) =>
-                              setFormEdit({
-                                ...formEdit,
-                                Data: {
-                                  ...formEdit.Data,
-                                  TyLeThue: e,
+                                '& .MuiSvgIcon-root': {
+                                  width: '18px',
+                                  height: '18px',
                                 },
-                              })
-                            }
-                          />
-                        </div>
-                      </div>
-
+                              }}
+                            />
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Nhóm giá</label>
+                            <Select
+                              className="w-full truncate"
+                              showSearch
+                              size="small"
+                              optionFilterProp="children"
+                              onChange={(value) =>
+                                setFormEdit({
+                                  ...formEdit,
+                                  Data: {
+                                    ...formEdit.Data,
+                                    NhomGia: value,
+                                  },
+                                })
+                              }
+                              value={formEdit.Data.NhomGia}
+                            >
+                              {dataNhomGia?.map((item) => (
+                                <Option key={item.Ma} value={item.Ma}>
+                                  {item.Ma} - {item.Ten}
+                                </Option>
+                              ))}
+                            </Select>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <label className=" whitespace-nowrap  min-w-[90px] text-sm flex justify-end">Ghi chú</label>
+                            <input
+                              type="text"
+                              className="h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none "
+                              value={formEdit.GhiChu}
+                              onChange={(e) =>
+                                setFormEdit({
+                                  ...formEdit,
+                                  Data: {
+                                    ...formEdit.Data,
+                                    GhiChu: e.target.value,
+                                  },
+                                })
+                              }
+                            />
+                          </div>
+                        </>
+                      )}
                       {/* thong tin */}
                       <div className="grid grid-cols-1 mt-2 gap-2 px-2 py-2.5 rounded-[4px] border-black-200 ml-[95px] relative border-[1px] border-gray-300 ">
                         <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
