@@ -25,8 +25,6 @@ import KHODelete from '../../components/Modals/ThietLap/KhoHang/KHODelete'
 const KhoHang = () => {
   const navigate = useNavigate()
   const TokenAccess = localStorage.getItem('TKN')
-  const ThongSo = localStorage.getItem('ThongSo')
-  const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
   const [dataKhoHang, setDataKhoHang] = useState()
   const [setSearchKhoHang, filteredKhoHang, searchKhoHang] = useSearch(dataKhoHang)
   const [isMaHang, setIsMaHang] = useState()
@@ -50,10 +48,7 @@ const KhoHang = () => {
     setcheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
     const key = Object.keys(dataKhoHang ? dataKhoHang[0] : {}).filter((key) => key)
     setOptions(key)
-    console.log(key)
   }, [selectVisible])
-
-  console.log(dataKhoHang)
 
   useEffect(() => {
     const getListKhoHang = async () => {
@@ -67,6 +62,10 @@ const KhoHang = () => {
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
           getListKhoHang()
+        } else {
+          setDataKhoHang([])
+          setTableLoad(false)
+          setIsLoading(true)
         }
       } catch (error) {
         console.log(error)
@@ -160,6 +159,7 @@ const KhoHang = () => {
   const titles = [
     {
       title: 'STT',
+      dataIndex: 'STT',
       render: (text, record, index) => index + 1,
       fixed: 'left',
       width: 50,
@@ -170,7 +170,7 @@ const KhoHang = () => {
       dataIndex: 'MaKho',
       key: 'MaKho',
       fixed: 'left',
-      width: 100,
+      width: 80,
       align: 'center',
       sorter: (a, b) => a.MaKho.localeCompare(b.MaKho),
       showSorterTooltip: false,
@@ -184,7 +184,7 @@ const KhoHang = () => {
       title: 'Tên',
       dataIndex: 'TenKho',
       key: 'TenKho',
-      width: 220,
+      width: 150,
       align: 'center',
       sorter: (a, b) => a.TenKho.localeCompare(b.TenKho),
       showSorterTooltip: false,
@@ -196,6 +196,97 @@ const KhoHang = () => {
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
               textAlign: 'start',
+            }}
+          >
+            <HighlightedCell text={text} search={searchKhoHang} />
+          </div>
+        </Tooltip>
+      ),
+    },
+    {
+      title: 'Tên cửa hàng',
+      dataIndex: 'TenDayDu',
+      key: 'TenDayDu',
+      width: 320,
+      align: 'center',
+      sorter: (a, b) => a.TenDayDu.localeCompare(b.TenDayDu),
+      showSorterTooltip: false,
+      render: (text) => (
+        <Tooltip title={text} color="blue">
+          <div
+            style={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              textAlign: 'start',
+            }}
+          >
+            <HighlightedCell text={text} search={searchKhoHang} />
+          </div>
+        </Tooltip>
+      ),
+    },
+    {
+      title: 'Địa chỉ',
+      dataIndex: 'DiaChi',
+      key: 'DiaChi',
+      width: 300,
+      align: 'center',
+      sorter: (a, b) => a.DiaChi.localeCompare(b.DiaChi),
+      showSorterTooltip: false,
+      render: (text) => (
+        <Tooltip title={text} color="blue">
+          <div
+            style={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              textAlign: 'start',
+            }}
+          >
+            <HighlightedCell text={text} search={searchKhoHang} />
+          </div>
+        </Tooltip>
+      ),
+    },
+    {
+      title: 'Người liên hệ',
+      dataIndex: 'NguoiLienHe',
+      key: 'NguoiLienHe',
+      width: 220,
+      align: 'center',
+      sorter: (a, b) => (a.NguoiLienHe?.toString() || '').localeCompare(b.NguoiLienHe?.toString() || ''),
+      showSorterTooltip: false,
+      render: (text) => (
+        <Tooltip title={text} color="blue">
+          <div
+            style={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              textAlign: 'start',
+            }}
+          >
+            <HighlightedCell text={text} search={searchKhoHang} />
+          </div>
+        </Tooltip>
+      ),
+    },
+    {
+      title: 'Điện thoại',
+      dataIndex: 'DienThoai',
+      key: 'DienThoai',
+      width: 220,
+      align: 'center',
+      sorter: (a, b) => a.DienThoai.localeCompare(b.DienThoai),
+      showSorterTooltip: false,
+      render: (text) => (
+        <Tooltip title={text} color="blue">
+          <div
+            style={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
             }}
           >
             <HighlightedCell text={text} search={searchKhoHang} />
@@ -396,7 +487,7 @@ const KhoHang = () => {
                 <div className="flex justify-between gap-2 relative">
                   <div className="flex gap-2 items-center">
                     <div className="flex items-center gap-2 mt-1">
-                      <h1 className="text-xl font-black uppercase">Hạng Mục Thu Tiền</h1>
+                      <h1 className="text-xl font-black uppercase">Kho Hàng</h1>
                       <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
                     </div>
                     <div className="flex">
@@ -513,7 +604,7 @@ const KhoHang = () => {
                     }))}
                     size="small"
                     scroll={{
-                      x: 1800,
+                      x: 2800,
                       y: 400,
                     }}
                     pagination={{
@@ -532,29 +623,16 @@ const KhoHang = () => {
                       return (
                         <Table.Summary fixed="bottom">
                           <Table.Summary.Row>
-                            <Table.Summary.Cell className="bg-gray-100"></Table.Summary.Cell>
                             {newTitles
                               .filter((column) => column.render)
                               .map((column, index) => {
                                 const isNumericColumn = typeof filteredKhoHang[0]?.[column.dataIndex] === 'number'
                                 return (
                                   <Table.Summary.Cell key={`summary-cell-${index + 1}`} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
-                                    {isNumericColumn ? (
-                                      column.dataIndex === 'GiaBanLe' || column.dataIndex === 'BangGiaSi_Min' || column.dataIndex === 'BangGiaSi_Max' ? (
-                                        <Text strong>
-                                          {Number(filteredKhoHang.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                            minimumFractionDigits: dataThongSo.SOLEDONGIA,
-                                            maximumFractionDigits: dataThongSo.SOLEDONGIA,
-                                          })}
-                                        </Text>
-                                      ) : (
-                                        <Text strong>
-                                          {Number(filteredKhoHang.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                            minimumFractionDigits: 0,
-                                            maximumFractionDigits: 0,
-                                          })}
-                                        </Text>
-                                      )
+                                    {column.dataIndex == 'STT' ? (
+                                      <Text className="text-center" strong>
+                                        {dataKhoHang?.length}
+                                      </Text>
                                     ) : null}
                                   </Table.Summary.Cell>
                                 )

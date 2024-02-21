@@ -84,8 +84,6 @@ const PLRPrint = ({ close, dataPrint, type }) => {
   }
   console.log(dataPrint)
   const handlePrint = async () => {
-    console.log('In')
-
     try {
       const response = await categoryAPI.PLRPrint(
         dataPrint
@@ -116,7 +114,6 @@ const PLRPrint = ({ close, dataPrint, type }) => {
     }
   }
   const handlePrintImport = async () => {
-    console.log('In Nhập')
     try {
       const response = await categoryAPI.PLRPrintNhap(
         dataPrint

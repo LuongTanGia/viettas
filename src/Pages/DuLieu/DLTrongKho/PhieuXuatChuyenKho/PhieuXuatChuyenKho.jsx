@@ -19,7 +19,6 @@ import { RETOKEN, exportToExcel } from '../../../../action/Actions'
 import ActionButton from '../../../../components/util/Button/ActionButton'
 import HighlightedCell from '../../../../components/hooks/HighlightedCell'
 import SimpleBackdrop from '../../../../components/util/Loading/LoadingPage'
-
 import { nameColumsPhieuXuatChuyenKho } from '../../../../components/util/Table/ColumnName'
 import XCKCreate from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuXCK/XCKCreate'
 import XCKView from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuXCK/XCKView'
@@ -273,6 +272,7 @@ const PhieuXuatChuyenKho = () => {
   const titles = [
     {
       title: 'STT',
+      dataIndex: 'STT',
       render: (text, record, index) => index + 1,
       with: 10,
       width: 50,
@@ -785,7 +785,6 @@ const PhieuXuatChuyenKho = () => {
                               .filter((column) => column.render)
                               .map((column, index) => {
                                 const isNumericColumn = typeof filteredHangHoa[0]?.[column.dataIndex] === 'number'
-
                                 return (
                                   <Table.Summary.Cell key={`summary-cell-${index + 1}`} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
                                     {isNumericColumn ? (
@@ -811,6 +810,10 @@ const PhieuXuatChuyenKho = () => {
                                           })}
                                         </Text>
                                       )
+                                    ) : column.dataIndex == 'STT' ? (
+                                      <Text className="text-center" strong>
+                                        {dataXCK?.length}
+                                      </Text>
                                     ) : null}
                                   </Table.Summary.Cell>
                                 )

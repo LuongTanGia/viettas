@@ -271,6 +271,7 @@ const PhieuNhapDieuChinh = () => {
   const titles = [
     {
       title: 'STT',
+      dataIndex: 'STT',
       render: (text, record, index) => index + 1,
       with: 10,
       width: 50,
@@ -763,7 +764,6 @@ const PhieuNhapDieuChinh = () => {
                               .filter((column) => column.render)
                               .map((column, index) => {
                                 const isNumericColumn = typeof filteredHangHoa[0]?.[column.dataIndex] === 'number'
-
                                 return (
                                   <Table.Summary.Cell key={`summary-cell-${index + 1}`} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
                                     {isNumericColumn ? (
@@ -789,6 +789,10 @@ const PhieuNhapDieuChinh = () => {
                                           })}
                                         </Text>
                                       )
+                                    ) : column.dataIndex == 'STT' ? (
+                                      <Text className="text-center" strong>
+                                        {dataNDC?.length}
+                                      </Text>
                                     ) : null}
                                   </Table.Summary.Cell>
                                 )

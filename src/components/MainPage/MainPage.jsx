@@ -34,6 +34,8 @@ import NhomHang from '../../Pages/DanhMuc/NhomHang'
 import HangMucThu from '../../Pages/DanhMuc/HangMucThu'
 import HangMucChi from '../../Pages/DanhMuc/HangMucChi'
 import KhoHang from '../../Pages/ThietLap/KhoHang'
+import QuanLy from '../../Pages/ThietLap/QuanLy'
+import QuayTinhTien from '../../Pages/ThietLap/QuayTinhTien'
 
 function MainPage({ isSidebarVisible }) {
   return (
@@ -75,6 +77,8 @@ function MainPage({ isSidebarVisible }) {
           <Route path="/TruyVan_CanDoiNXT_TongKho" element={<NhapXuatTon />} />
           <Route path="/ThietLap_GiaLe" element={<GiaBanLe />} />
           <Route path="/ThietLap_KhoHang" element={<KhoHang />} />
+          <Route path="/ThietLap_QuanLy" element={<QuanLy />} />
+          <Route path="/ThietLap_QuayTinhTien" element={<QuayTinhTien />} />
           <Route path="*" element={<ErrorPage />} />
         </Routes>
       </main>

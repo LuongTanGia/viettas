@@ -29,8 +29,6 @@ import DTGroup from '../../components/Modals/DanhMuc/DoiTuong/DTGroup'
 const DoiTuong = () => {
   const navigate = useNavigate()
   const TokenAccess = localStorage.getItem('TKN')
-  const ThongSo = localStorage.getItem('ThongSo')
-  const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
   const [dataDoiTuong, setDataDoiTuong] = useState()
   const [setSearchDoiTuong, filteredDoiTuong, searchDoiTuong] = useSearch(dataDoiTuong)
   const [isMaHang, setIsMaHang] = useState()
@@ -68,6 +66,10 @@ const DoiTuong = () => {
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
           getListDoiTuong()
+        } else {
+          setDataDoiTuong([])
+          setTableLoad(false)
+          setIsLoading(true)
         }
       } catch (error) {
         console.log(error)
@@ -184,6 +186,7 @@ const DoiTuong = () => {
   const titles = [
     {
       title: 'STT',
+      dataIndex: 'STT',
       render: (text, record, index) => index + 1,
       fixed: 'left',
       width: 50,
@@ -743,22 +746,10 @@ const DoiTuong = () => {
                                 const isNumericColumn = typeof filteredDoiTuong[0]?.[column.dataIndex] === 'number'
                                 return (
                                   <Table.Summary.Cell key={`summary-cell-${index + 1}`} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
-                                    {isNumericColumn ? (
-                                      column.dataIndex === 'GiaBanLe' || column.dataIndex === 'BangGiaSi_Min' || column.dataIndex === 'BangGiaSi_Max' ? (
-                                        <Text strong>
-                                          {Number(filteredDoiTuong.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                            minimumFractionDigits: dataThongSo.SOLEDONGIA,
-                                            maximumFractionDigits: dataThongSo.SOLEDONGIA,
-                                          })}
-                                        </Text>
-                                      ) : (
-                                        <Text strong>
-                                          {Number(filteredDoiTuong.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                            minimumFractionDigits: 0,
-                                            maximumFractionDigits: 0,
-                                          })}
-                                        </Text>
-                                      )
+                                    {column.dataIndex == 'STT' ? (
+                                      <Text className="text-center" strong>
+                                        {dataDoiTuong?.length}
+                                      </Text>
                                     ) : null}
                                   </Table.Summary.Cell>
                                 )

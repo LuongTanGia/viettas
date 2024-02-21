@@ -25,7 +25,6 @@ const NHEdit = ({ close, loadingData, setTargetRow, dataNH }) => {
   useEffect(() => {
     setTargetRow([])
   }, [])
-  console.log(NHForm.MaNhom)
   const handleEdit = async () => {
     if (!NHForm?.TenNhom?.trim()) {
       setErrors({
@@ -33,8 +32,6 @@ const NHEdit = ({ close, loadingData, setTargetRow, dataNH }) => {
       })
       return
     }
-    console.log({ Ma: dataNH?.MaNhom, Data: { ...NHForm } })
-
     try {
       const response = await categoryAPI.SuaNhomHang({ Ma: dataNH?.MaNhom, Data: { ...NHForm } }, TokenAccess)
       if (response.data.DataError == 0) {

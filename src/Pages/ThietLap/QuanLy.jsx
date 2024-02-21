@@ -4,7 +4,9 @@ import { useState, useEffect, useRef } from 'react'
 import { Button, Checkbox, Col, Input, Row, Spin, Table, Tooltip, Typography } from 'antd'
 const { Text } = Typography
 import moment from 'moment'
+import { toast } from 'react-toastify'
 import { CgCloseO } from 'react-icons/cg'
+import { CiBarcode } from 'react-icons/ci'
 import { TfiMoreAlt } from 'react-icons/tfi'
 import { RiFileExcel2Fill } from 'react-icons/ri'
 import { IoMdAddCircleOutline } from 'react-icons/io'
@@ -12,22 +14,22 @@ import { FaSearch, FaEyeSlash } from 'react-icons/fa'
 import { CloseSquareFilled } from '@ant-design/icons'
 import { MdEdit, MdDelete } from 'react-icons/md'
 import { useSearch } from '../../components/hooks/Search'
-import { RETOKEN, exportToExcel } from '../../action/Actions'
+import { RETOKEN, base64ToPDF, exportToExcel } from '../../action/Actions'
 import categoryAPI from '../../API/linkAPI'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
 import ActionButton from '../../components/util/Button/ActionButton'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
-import { nameColumsHangMucChi } from '../../components/util/Table/ColumnName'
-import HMCCreate from '../../components/Modals/DanhMuc/HangMucChi/HMCCreate'
-import HMCView from '../../components/Modals/DanhMuc/HangMucChi/HMCView'
-import HMCEdit from '../../components/Modals/DanhMuc/HangMucChi/HMCEdit'
-import HMCDelete from '../../components/Modals/DanhMuc/HangMucChi/HMCDelete'
+import { nameColumsQuanLy } from '../../components/util/Table/ColumnName'
+import QLCreate from '../../components/Modals/ThietLap/QuanLy/QLCreate'
+import QLView from '../../components/Modals/ThietLap/QuanLy/QLView'
+import QLEdit from '../../components/Modals/ThietLap/QuanLy/QLEdit'
+import QLDelete from '../../components/Modals/ThietLap/QuanLy/QLDelete'
 
-const HangMucChi = () => {
+const QuanLy = () => {
   const navigate = useNavigate()
   const TokenAccess = localStorage.getItem('TKN')
-  const [dataHangMucChi, setDataHangMucChi] = useState()
-  const [setSearchHangMucChi, filteredHangMucChi, searchHangMucChi] = useSearch(dataHangMucChi)
+  const [dataQuanLy, setDataQuanLy] = useState()
+  const [setSearchQuanLy, filteredQuanLy, searchQuanLy] = useSearch(dataQuanLy)
   const [isMaHang, setIsMaHang] = useState()
   const [actionType, setActionType] = useState('')
   const [isShowModal, setIsShowModal] = useState(false)
@@ -47,24 +49,24 @@ const HangMucChi = () => {
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
     setcheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
-    const key = Object.keys(dataHangMucChi ? dataHangMucChi[0] : {}).filter((key) => key)
+    const key = Object.keys(dataQuanLy ? dataQuanLy[0] : {}).filter((key) => key != 'ID')
     setOptions(key)
   }, [selectVisible])
 
   useEffect(() => {
-    const getListHangMucChi = async () => {
+    const getListQuanLy = async () => {
       try {
         setTableLoad(true)
-        const response = await categoryAPI.HangMucChi(TokenAccess)
+        const response = await categoryAPI.QuanLy(TokenAccess)
         if (response.data.DataError === 0) {
-          setDataHangMucChi(response.data.DataResults)
+          setDataQuanLy(response.data.DataResults)
           setTableLoad(false)
           setIsLoading(true)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
-          getListHangMucChi()
+          getListQuanLy()
         } else {
-          setDataHangMucChi([])
+          setDataQuanLy([])
           setTableLoad(false)
           setIsLoading(true)
         }
@@ -73,8 +75,8 @@ const HangMucChi = () => {
         setTableLoad(false)
       }
     }
-    getListHangMucChi()
-  }, [searchHangMucChi, targetRow])
+    getListQuanLy()
+  }, [searchQuanLy, targetRow])
 
   useEffect(() => {
     if (dataCRUD?.VIEW == false) {
@@ -85,7 +87,7 @@ const HangMucChi = () => {
   useEffect(() => {
     const getDataQuyenHan = async () => {
       try {
-        const response = await categoryAPI.QuyenHan('DanhMuc_HangMucChi', TokenAccess)
+        const response = await categoryAPI.QuyenHan('ThietLap_QuanLy', TokenAccess)
         if (response.data.DataError === 0) {
           setDataCRUD(response.data)
           setIsLoading(true)
@@ -120,7 +122,7 @@ const HangMucChi = () => {
     let timerId
     clearTimeout(timerId)
     timerId = setTimeout(() => {
-      setSearchHangMucChi(event.target.value)
+      setSearchQuanLy(event.target.value)
     }, 300)
   }
   const handleCreate = () => {
@@ -142,6 +144,18 @@ const HangMucChi = () => {
     setActionType('edit')
     setIsMaHang(record)
     setIsShowModal(true)
+  }
+  const handlePrint = async (record) => {
+    try {
+      const response = await categoryAPI.InTheQuanLy(record?.MaQuanLy, TokenAccess)
+      if (response.data.DataError == 0) {
+        base64ToPDF(response.data.DataResults)
+      } else {
+        toast.error(response.data.DataErrorDescription)
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
   const handleHidden = () => {
     setSelectVisible(!selectVisible)
@@ -167,27 +181,42 @@ const HangMucChi = () => {
       align: 'center',
     },
     {
-      title: 'Mã',
-      dataIndex: 'Ma',
-      key: 'Ma',
+      title: 'Mã quản lý',
+      dataIndex: 'MaQuanLy',
+      key: 'MaQuanLy',
       fixed: 'left',
-      width: 100,
+      width: 150,
       align: 'center',
-      sorter: (a, b) => a.Ma.localeCompare(b.Ma),
+      sorter: (a, b) => a.MaQuanLy.localeCompare(b.MaQuanLy),
       showSorterTooltip: false,
       render: (text) => (
         <div>
-          <HighlightedCell text={text} search={searchHangMucChi} />
+          <HighlightedCell text={text} search={searchQuanLy} />
         </div>
       ),
     },
     {
-      title: 'Tên',
-      dataIndex: 'Ten',
-      key: 'Ten',
-      width: 220,
+      title: 'Mã người dùng',
+      dataIndex: 'MaNguoiDung',
+      key: 'MaNguoiDung',
+      fixed: 'left',
+      width: 150,
       align: 'center',
-      sorter: (a, b) => a.Ten.localeCompare(b.Ten),
+      sorter: (a, b) => a.MaNguoiDung.localeCompare(b.MaNguoiDung),
+      showSorterTooltip: false,
+      render: (text) => (
+        <div>
+          <HighlightedCell text={text} search={searchQuanLy} />
+        </div>
+      ),
+    },
+    {
+      title: 'Tên người dùng',
+      dataIndex: 'TenNguoiDung',
+      key: 'TenNguoiDung',
+      width: 280,
+      align: 'center',
+      sorter: (a, b) => a.TenNguoiDung.localeCompare(b.TenNguoiDung),
       showSorterTooltip: false,
       render: (text) => (
         <Tooltip title={text} color="blue">
@@ -199,10 +228,64 @@ const HangMucChi = () => {
               textAlign: 'start',
             }}
           >
-            <HighlightedCell text={text} search={searchHangMucChi} />
+            <HighlightedCell text={text} search={searchQuanLy} />
           </div>
         </Tooltip>
       ),
+    },
+    {
+      title: 'Hiệu lực từ',
+      dataIndex: 'TuNgay',
+      key: 'TuNgay',
+      align: 'center',
+      width: 150,
+      showSorterTooltip: false,
+      sorter: (a, b) => {
+        const dateA = new Date(a.TuNgay)
+        const dateB = new Date(b.TuNgay)
+        return dateA - dateB
+      },
+      render: (text) => {
+        if (text) {
+          return <HighlightedCell text={moment(text).format('DD/MM/YYYY')} search={searchQuanLy} />
+        } else {
+          return ''
+        }
+      },
+    },
+    {
+      title: 'Ngày hết hạn',
+      dataIndex: 'DenNgay',
+      key: 'DenNgay',
+      align: 'center',
+      width: 150,
+      showSorterTooltip: false,
+      sorter: (a, b) => {
+        const dateA = new Date(a.DenNgay)
+        const dateB = new Date(b.DenNgay)
+        return dateA - dateB
+      },
+      render: (text) => {
+        if (text) {
+          return <HighlightedCell text={moment(text).format('DD/MM/YYYY')} search={searchQuanLy} />
+        } else {
+          return ''
+        }
+      },
+    },
+    {
+      title: 'Không kết thúc',
+      dataIndex: 'KhongKetThuc',
+      key: 'KhongKetThuc',
+      width: 150,
+      align: 'center',
+      showSorterTooltip: false,
+      sorter: (a, b) => {
+        const valueA = a.KhongKetThuc ? 1 : 0
+        const valueB = b.KhongKetThuc ? 1 : 0
+        return valueA - valueB
+      },
+      render: (text, record) => <Checkbox className="justify-center" id={`KhongKetThuc_${record.key}`} checked={text} />,
     },
     {
       title: 'Ghi chú',
@@ -222,7 +305,7 @@ const HangMucChi = () => {
               justifyContent: 'start',
             }}
           >
-            <HighlightedCell text={text} search={searchHangMucChi} />
+            <HighlightedCell text={text} search={searchQuanLy} />
           </div>
         </Tooltip>
       ),
@@ -244,7 +327,7 @@ const HangMucChi = () => {
               whiteSpace: 'nowrap',
             }}
           >
-            <HighlightedCell text={text} search={searchHangMucChi} />
+            <HighlightedCell text={text} search={searchQuanLy} />
           </div>
         </Tooltip>
       ),
@@ -261,7 +344,7 @@ const HangMucChi = () => {
         const dateB = new Date(b.NgayTao)
         return dateA - dateB
       },
-      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss.SS')} search={searchHangMucChi} />,
+      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss.SS')} search={searchQuanLy} />,
     },
     {
       title: 'Người sửa',
@@ -281,7 +364,7 @@ const HangMucChi = () => {
               whiteSpace: 'nowrap',
             }}
           >
-            <HighlightedCell text={text} search={searchHangMucChi} />
+            <HighlightedCell text={text} search={searchQuanLy} />
           </div>
         </Tooltip>
       ),
@@ -300,17 +383,31 @@ const HangMucChi = () => {
       },
       render: (text) => {
         if (text) {
-          return <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss.SS')} search={searchHangMucChi} />
+          return <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss.SS')} search={searchQuanLy} />
         } else {
           return ''
         }
       },
     },
     {
+      title: 'Ngưng dùng',
+      dataIndex: 'NA',
+      key: 'NA',
+      width: 120,
+      align: 'center',
+      showSorterTooltip: false,
+      sorter: (a, b) => {
+        const valueA = a.NA ? 1 : 0
+        const valueB = b.NA ? 1 : 0
+        return valueA - valueB
+      },
+      render: (text, record) => <Checkbox className="justify-center" id={`NA_${record.key}`} checked={text} />,
+    },
+    {
       title: ' ',
       key: 'operation',
       fixed: 'right',
-      width: 80,
+      width: 120,
       align: 'center',
       render: (record) => {
         return (
@@ -324,6 +421,13 @@ const HangMucChi = () => {
                 } ' p-[4px] border-2 rounded text-slate-50 hover:bg-white cursor-pointer'`}
               >
                 <MdEdit />
+              </div>
+              <div
+                onClick={() => handlePrint(record)}
+                title="In thẻ"
+                className="p-[4px] border-2 rounded text-slate-50 border-purple-500 bg-purple-500 hover:bg-white hover:text-purple-500 cursor-pointer"
+              >
+                <CiBarcode />
               </div>
               <div
                 onClick={() => (dataCRUD?.DEL == false ? '' : handleDelete(record))}
@@ -341,7 +445,6 @@ const HangMucChi = () => {
     },
   ]
   const newTitles = titles.filter((item) => !hiddenRow?.includes(item.dataIndex))
-
   return (
     <>
       {dataCRUD?.VIEW == false ? (
@@ -397,7 +500,7 @@ const HangMucChi = () => {
                 <div className="flex justify-between gap-2 relative">
                   <div className="flex gap-2 items-center">
                     <div className="flex items-center gap-2 mt-1">
-                      <h1 className="text-xl font-black uppercase">Hạng Mục Chi Tiền</h1>
+                      <h1 className="text-xl font-black uppercase">Quản Lý</h1>
                       <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
                     </div>
                     <div className="flex">
@@ -465,7 +568,7 @@ const HangMucChi = () => {
                                   {options.map((item) => (
                                     <Col span={8} key={item}>
                                       <Checkbox value={item} checked={true}>
-                                        {nameColumsHangMucChi[item]}
+                                        {nameColumsQuanLy[item]}
                                       </Checkbox>
                                     </Col>
                                   ))}
@@ -505,16 +608,16 @@ const HangMucChi = () => {
                         handleView(record)
                       },
                     })}
-                    rowClassName={(record) => (record.Ma == targetRow ? 'highlighted-row' : '')}
+                    rowClassName={(record) => (record.MaQuanLy == targetRow ? 'highlighted-row' : '')}
                     className="setHeight"
                     columns={newTitles}
-                    dataSource={filteredHangMucChi.map((item, index) => ({
+                    dataSource={filteredQuanLy.map((item, index) => ({
                       ...item,
                       key: index,
                     }))}
                     size="small"
                     scroll={{
-                      x: 1800,
+                      x: 2800,
                       y: 400,
                     }}
                     pagination={{
@@ -536,12 +639,12 @@ const HangMucChi = () => {
                             {newTitles
                               .filter((column) => column.render)
                               .map((column, index) => {
-                                const isNumericColumn = typeof filteredHangMucChi[0]?.[column.dataIndex] === 'number'
+                                const isNumericColumn = typeof filteredQuanLy[0]?.[column.dataIndex] === 'number'
                                 return (
                                   <Table.Summary.Cell key={`summary-cell-${index + 1}`} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
                                     {column.dataIndex == 'STT' ? (
                                       <Text className="text-center" strong>
-                                        {dataHangMucChi?.length}
+                                        {dataQuanLy?.length}
                                       </Text>
                                     ) : null}
                                   </Table.Summary.Cell>
@@ -557,13 +660,13 @@ const HangMucChi = () => {
               <div>
                 {isShowModal &&
                   (actionType == 'create' ? (
-                    <HMCCreate close={() => setIsShowModal(false)} loadingData={handleLoading} setTargetRow={setTargetRow} />
+                    <QLCreate close={() => setIsShowModal(false)} loadingData={handleLoading} setTargetRow={setTargetRow} />
                   ) : actionType == 'view' ? (
-                    <HMCView close={() => setIsShowModal(false)} dataHMC={isMaHang} />
+                    <QLView close={() => setIsShowModal(false)} dataQL={isMaHang} />
                   ) : actionType == 'edit' ? (
-                    <HMCEdit close={() => setIsShowModal(false)} dataHMC={isMaHang} loadingData={handleLoading} setTargetRow={setTargetRow} />
+                    <QLEdit close={() => setIsShowModal(false)} dataQL={isMaHang} loadingData={handleLoading} setTargetRow={setTargetRow} />
                   ) : actionType == 'delete' ? (
-                    <HMCDelete close={() => setIsShowModal(false)} dataHMC={isMaHang} loadingData={handleLoading} setTargetRow={setTargetRow} />
+                    <QLDelete close={() => setIsShowModal(false)} dataQL={isMaHang} loadingData={handleLoading} setTargetRow={setTargetRow} />
                   ) : null)}
               </div>
             </>
@@ -574,4 +677,4 @@ const HangMucChi = () => {
   )
 }
 
-export default HangMucChi
+export default QuanLy

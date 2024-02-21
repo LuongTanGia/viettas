@@ -265,6 +265,7 @@ const PhieuNhapChuyenKho = () => {
   const titles = [
     {
       title: 'STT',
+      dataIndex: 'STT',
       render: (text, record, index) => index + 1,
       with: 10,
       width: 50,
@@ -759,6 +760,10 @@ const PhieuNhapChuyenKho = () => {
                                           })}
                                         </Text>
                                       )
+                                    ) : column.dataIndex == 'STT' ? (
+                                      <Text className="text-center" strong>
+                                        {dataNCK?.length}
+                                      </Text>
                                     ) : null}
                                   </Table.Summary.Cell>
                                 )

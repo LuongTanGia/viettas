@@ -61,6 +61,10 @@ const HangHoa = () => {
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
           getListHangHoa()
+        } else {
+          setDataHangHoa([])
+          setTableLoad(false)
+          setIsLoading(true)
         }
       } catch (error) {
         console.log(error)
@@ -242,6 +246,7 @@ const HangHoa = () => {
   const titles = [
     {
       title: 'STT',
+      dataIndex: 'STT',
       render: (text, record, index) => index + 1,
       fixed: 'left',
       width: 50,
@@ -820,6 +825,10 @@ const HangHoa = () => {
                                           })}
                                         </Text>
                                       )
+                                    ) : column.dataIndex == 'STT' ? (
+                                      <Text className="text-center" strong>
+                                        {dataHangHoa?.length}
+                                      </Text>
                                     ) : null}
                                   </Table.Summary.Cell>
                                 )

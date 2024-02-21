@@ -26,7 +26,7 @@ const NDTEdit = ({ close, loadingData, setTargetRow, dataNDT }) => {
   }, [])
 
   const handleEdit = async () => {
-    if (!NDTForm?.Ma?.trim() || !NDTForm?.Ten?.trim()) {
+    if (!NDTForm?.Ten?.trim()) {
       setErrors({
         Ten: NDTForm?.Ten?.trim() ? null : 'Tên không được trống',
       })

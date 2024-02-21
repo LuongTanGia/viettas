@@ -886,6 +886,107 @@ const categoryAPI = {
     }
     return axiosClient.post(url, { Ma }, { headers })
   },
+
+  // ThietLap/QuanLy
+  QuanLy(accessToken) {
+    const url = '/settings/QuanLy/DanhSach'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, {}, { headers })
+  },
+  InfoQuanLy(Ma, accessToken) {
+    const url = '/settings/QuanLy/ThongTin'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, { Ma }, { headers })
+  },
+  ThemQuanLy(body, accessToken) {
+    const url = '/settings/QuanLy/Them'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  SuaQuanLy(body, accessToken) {
+    const url = '/settings/QuanLy/Sua'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  XoaQuanLy(Ma, accessToken) {
+    const url = '/settings/QuanLy/Xoa'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, { Ma }, { headers })
+  },
+  InTheQuanLy(Ma, accessToken) {
+    const url = '/settings/QuanLy/InThe'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, { Ma }, { headers })
+  },
+  ListHelper_NguoiDung(accessToken) {
+    const url = '/settings/QuanLy/ListHelper_NguoiDung'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, {}, { headers })
+  },
+  // ThietLap/QuayTinhTien
+  QuayTinhTien(accessToken) {
+    const url = '/settings/QuayTinhTien/DanhSach'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, {}, { headers })
+  },
+  InfoQuayTinhTien(Ma, accessToken) {
+    const url = '/settings/QuayTinhTien/ThongTin'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, { Ma }, { headers })
+  },
+  ThemQuayTinhTien(body, accessToken) {
+    const url = '/settings/QuayTinhTien/Them'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  SuaQuayTinhTien(body, accessToken) {
+    const url = '/settings/QuayTinhTien/Sua'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  XoaQuayTinhTien(Ma, accessToken) {
+    const url = '/settings/QuayTinhTien/Xoa'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, { Ma }, { headers })
+  },
+  ListHelper_NhomGia(accessToken) {
+    const url = '/settings/QuayTinhTien/ListHelper_NhomGia'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, {}, { headers })
+  },
+  ListHelper_Kho(accessToken) {
+    const url = '/settings/QuayTinhTien/ListHelper_KhoHang'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, {}, { headers })
+  },
   // Hethong/KhoanNgay
   KhoanNgay(accessToken) {
     const url = '/settings/GiaTriHeThong/KhoanNgay'

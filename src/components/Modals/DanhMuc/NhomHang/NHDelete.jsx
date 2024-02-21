@@ -15,6 +15,9 @@ const NHDelete = ({ close, dataNH, loadingData, setTargetRow }) => {
         close()
         toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
         setTargetRow([])
+      } else {
+        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
+        console.log(response.data)
       }
     } catch (error) {
       console.log(error)
