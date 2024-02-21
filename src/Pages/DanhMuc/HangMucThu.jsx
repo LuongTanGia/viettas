@@ -25,8 +25,6 @@ import HMTDelete from '../../components/Modals/DanhMuc/HangMucThu/HMTDelete'
 const HangMucThu = () => {
   const navigate = useNavigate()
   const TokenAccess = localStorage.getItem('TKN')
-  const ThongSo = localStorage.getItem('ThongSo')
-  const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
   const [dataHangMucThu, setDataHangMucThu] = useState()
   const [setSearchHangMucThu, filteredHangMucThu, searchHangMucThu] = useSearch(dataHangMucThu)
   const [isMaHang, setIsMaHang] = useState()
@@ -64,6 +62,10 @@ const HangMucThu = () => {
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
           getListHangMucThu()
+        } else {
+          setDataHangMucThu([])
+          setTableLoad(false)
+          setIsLoading(true)
         }
       } catch (error) {
         console.log(error)
@@ -157,6 +159,7 @@ const HangMucThu = () => {
   const titles = [
     {
       title: 'STT',
+      dataIndex: 'STT',
       render: (text, record, index) => index + 1,
       fixed: 'left',
       width: 50,
@@ -529,29 +532,16 @@ const HangMucThu = () => {
                       return (
                         <Table.Summary fixed="bottom">
                           <Table.Summary.Row>
-                            <Table.Summary.Cell className="bg-gray-100"></Table.Summary.Cell>
                             {newTitles
                               .filter((column) => column.render)
                               .map((column, index) => {
                                 const isNumericColumn = typeof filteredHangMucThu[0]?.[column.dataIndex] === 'number'
                                 return (
                                   <Table.Summary.Cell key={`summary-cell-${index + 1}`} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
-                                    {isNumericColumn ? (
-                                      column.dataIndex === 'GiaBanLe' || column.dataIndex === 'BangGiaSi_Min' || column.dataIndex === 'BangGiaSi_Max' ? (
-                                        <Text strong>
-                                          {Number(filteredHangMucThu.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                            minimumFractionDigits: dataThongSo.SOLEDONGIA,
-                                            maximumFractionDigits: dataThongSo.SOLEDONGIA,
-                                          })}
-                                        </Text>
-                                      ) : (
-                                        <Text strong>
-                                          {Number(filteredHangMucThu.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                            minimumFractionDigits: 0,
-                                            maximumFractionDigits: 0,
-                                          })}
-                                        </Text>
-                                      )
+                                    {column.dataIndex == 'STT' ? (
+                                      <Text className="text-center" strong>
+                                        {dataHangMucThu?.length}
+                                      </Text>
                                     ) : null}
                                   </Table.Summary.Cell>
                                 )

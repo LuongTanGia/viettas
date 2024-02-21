@@ -26,7 +26,7 @@ const HMCEdit = ({ close, loadingData, setTargetRow, dataHMC }) => {
   }, [])
   console.log(dataHMC.Ma)
   const handleEdit = async () => {
-    if (!HMCForm?.Ma?.trim() || !HMCForm?.Ten?.trim()) {
+    if (!HMCForm?.Ten?.trim()) {
       setErrors({
         Ten: HMCForm?.Ten?.trim() ? null : 'Tên không được trống',
       })

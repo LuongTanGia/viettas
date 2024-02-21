@@ -26,8 +26,6 @@ import NHDelete from '../../components/Modals/DanhMuc/NhomHang/NHDelete'
 const NhomHang = () => {
   const navigate = useNavigate()
   const TokenAccess = localStorage.getItem('TKN')
-  const ThongSo = localStorage.getItem('ThongSo')
-  const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
   const [dataNhomHang, setDataNhomHang] = useState()
   const [setSearchNhomHang, filteredNhomHang, searchNhomHang] = useSearch(dataNhomHang)
   const [isMaHang, setIsMaHang] = useState()
@@ -66,6 +64,10 @@ const NhomHang = () => {
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
           getListNhomHang()
+        } else {
+          setDataNhomHang([])
+          setTableLoad(false)
+          setIsLoading(true)
         }
       } catch (error) {
         console.log(error)
@@ -159,6 +161,7 @@ const NhomHang = () => {
   const titles = [
     {
       title: 'STT',
+      dataIndex: 'STT',
       render: (text, record, index) => index + 1,
       fixed: 'left',
       width: 50,
@@ -544,29 +547,16 @@ const NhomHang = () => {
                       return (
                         <Table.Summary fixed="bottom">
                           <Table.Summary.Row>
-                            <Table.Summary.Cell className="bg-gray-100"></Table.Summary.Cell>
                             {newTitles
                               .filter((column) => column.render)
                               .map((column, index) => {
                                 const isNumericColumn = typeof filteredNhomHang[0]?.[column.dataIndex] === 'number'
                                 return (
                                   <Table.Summary.Cell key={`summary-cell-${index + 1}`} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
-                                    {isNumericColumn ? (
-                                      column.dataIndex === 'GiaBanLe' || column.dataIndex === 'BangGiaSi_Min' || column.dataIndex === 'BangGiaSi_Max' ? (
-                                        <Text strong>
-                                          {Number(filteredNhomHang.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                            minimumFractionDigits: dataThongSo.SOLEDONGIA,
-                                            maximumFractionDigits: dataThongSo.SOLEDONGIA,
-                                          })}
-                                        </Text>
-                                      ) : (
-                                        <Text strong>
-                                          {Number(filteredNhomHang.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                            minimumFractionDigits: 0,
-                                            maximumFractionDigits: 0,
-                                          })}
-                                        </Text>
-                                      )
+                                    {column.dataIndex == 'STT' ? (
+                                      <Text className="text-center" strong>
+                                        {dataNhomHang?.length}
+                                      </Text>
                                     ) : null}
                                   </Table.Summary.Cell>
                                 )

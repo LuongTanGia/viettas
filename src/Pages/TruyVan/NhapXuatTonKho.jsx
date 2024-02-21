@@ -4,7 +4,6 @@ import { useEffect, useState, useRef } from 'react'
 import { Table, Select, Tooltip, Typography, Checkbox, Row, Button, Col, Spin, Input } from 'antd'
 const { Text } = Typography
 import dayjs from 'dayjs'
-import { toast } from 'react-toastify'
 import { CgCloseO } from 'react-icons/cg'
 import { TfiMoreAlt } from 'react-icons/tfi'
 import { RiFileExcel2Fill } from 'react-icons/ri'
@@ -79,6 +78,7 @@ const NhapXuatTonKho = () => {
             await RETOKEN()
             getDataNXTFirst()
           } else {
+            setDataNXT([])
             console.log(response.data)
             setTableLoad(false)
           }
@@ -264,8 +264,8 @@ const NhapXuatTonKho = () => {
         await RETOKEN()
         getDataNXT()
       } else {
-        console.log(response.data)
-        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
+        setDataNXT([])
+        setTableLoad(false)
       }
     } catch (error) {
       console.log(error)
@@ -300,8 +300,8 @@ const NhapXuatTonKho = () => {
         await RETOKEN()
         getDataNXT_DVTQD()
       } else {
-        console.log(response.data)
-        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
+        setDataNXT([])
+        setTableLoad(false)
       }
     } catch (error) {
       console.log(error)
@@ -382,6 +382,7 @@ const NhapXuatTonKho = () => {
   const titles = [
     {
       title: 'STT',
+      dataIndex: 'STT',
       render: (text, record, index) => index + 1,
       with: 10,
       fixed: 'left',
@@ -910,6 +911,7 @@ const NhapXuatTonKho = () => {
                         <div className="flex gap-1 items-center">
                           <div>Từ</div>
                           <Select
+                            allowClear
                             showSearch
                             size="small"
                             placeholder="Chọn nhóm"
@@ -938,6 +940,7 @@ const NhapXuatTonKho = () => {
                         <div className="flex gap-1 items-center">
                           <div>Đến</div>
                           <Select
+                            allowClear
                             showSearch
                             size="small"
                             placeholder="Chọn nhóm"
@@ -990,6 +993,7 @@ const NhapXuatTonKho = () => {
                         <div className="flex gap-1 items-center">
                           <div>Từ</div>
                           <Select
+                            allowClear
                             showSearch
                             placeholder="Chọn mã hàng"
                             size="small"
@@ -1018,6 +1022,7 @@ const NhapXuatTonKho = () => {
                         <div className="flex gap-1 items-center">
                           <div>Đến</div>
                           <Select
+                            allowClear
                             showSearch
                             size="small"
                             placeholder="Chọn mã hàng"
@@ -1129,7 +1134,6 @@ const NhapXuatTonKho = () => {
                             .filter((column) => column.render)
                             .map((column, index) => {
                               const isNumericColumn = typeof filteredHangHoa[0]?.[column.dataIndex] === 'number'
-
                               return (
                                 <Table.Summary.Cell key={`summary-cell-${index + 1}`} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
                                   {isNumericColumn ? (
@@ -1138,6 +1142,10 @@ const NhapXuatTonKho = () => {
                                         minimumFractionDigits: dataThongSo.SOLESOLUONG,
                                         maximumFractionDigits: dataThongSo.SOLESOLUONG,
                                       })}
+                                    </Text>
+                                  ) : column.dataIndex == 'STT' ? (
+                                    <Text className="text-center" strong>
+                                      {dataNXT?.length}
                                     </Text>
                                   ) : null}
                                 </Table.Summary.Cell>

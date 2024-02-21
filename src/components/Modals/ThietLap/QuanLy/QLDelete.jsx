@@ -4,12 +4,11 @@ import categoryAPI from '../../../../API/linkAPI'
 import logo from '../../../../assets/VTS-iSale.ico'
 import { toast } from 'react-toastify'
 import ActionButton from '../../../util/Button/ActionButton'
-
-const DTDelete = ({ close, dataDT, loadingData, setTargetRow }) => {
+const QLDelete = ({ close, dataQL, loadingData, setTargetRow }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const handleDelete = async () => {
     try {
-      const response = await categoryAPI.XoaDoiTuong(dataDT?.Ma, TokenAccess)
+      const response = await categoryAPI.XoaQuanLy(dataQL?.MaQuanLy, TokenAccess)
       if (response.data.DataError == 0) {
         loadingData()
         close()
@@ -17,7 +16,7 @@ const DTDelete = ({ close, dataDT, loadingData, setTargetRow }) => {
         setTargetRow([])
       } else {
         toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
-        console.log(response.data)
+        console.log(response.data.DataErrorDescription)
       }
     } catch (error) {
       console.log(error)
@@ -30,12 +29,12 @@ const DTDelete = ({ close, dataDT, loadingData, setTargetRow }) => {
         <div className="flex flex-col gap-2 p-2">
           <div className="flex gap-2">
             <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
-            <p className="text-blue-700 font-semibold uppercase">Xóa dữ liệu - Đối Tượng</p>
+            <p className="text-blue-700 font-semibold uppercase">Xóa dữ liệu - Quản Lý</p>
           </div>
           <div className="flex flex-col gap-2 border-2 p-3 font-bold text-lg">
             <div className="flex gap-1">
               <p className="text-blue-700 uppercase">Bạn có chắc muốn xóa</p>
-              <p className="text-red-600">{dataDT?.Ma}</p>
+              <p className="text-red-600">{dataQL?.MaQuanLy}</p>
               <p className="text-blue-700 uppercase">?</p>
             </div>
             <p className="text-slate-500 text-lg font-light">Thông tin sản phẩm không thể hoàn tác nếu bạn xóa !</p>
@@ -50,4 +49,4 @@ const DTDelete = ({ close, dataDT, loadingData, setTargetRow }) => {
   )
 }
 
-export default DTDelete
+export default QLDelete

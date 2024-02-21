@@ -14,6 +14,8 @@ const PLRDelete = ({ close, dataPLR, loadingData, setTargetRow }) => {
         close()
         toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
         setTargetRow([])
+      } else {
+        toast.error(response.data.DataErrorDescription)
       }
     } catch (error) {
       console.log(error)

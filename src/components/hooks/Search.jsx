@@ -35,6 +35,15 @@ export const useSearch = (data) => {
           Email,
           Fax,
           ThongTinNhomGia,
+          // KhoHang
+          MaKho,
+          TenDayDu,
+          // QuanLy
+          MaNguoiDung,
+          MaQuanLy,
+          TenNguoiDung,
+          TuNgay,
+          DenNgay,
           // NTX
           TenNhomHang,
           TenKho,
@@ -108,6 +117,15 @@ export const useSearch = (data) => {
           (DienThoai?.toString() || '').includes(search.toLowerCase()) ||
           (MST?.toString() || '').includes(search.toLowerCase()) ||
           (Fax?.toString() || '').includes(search.toLowerCase()) ||
+          // KhoHang
+          (MaKho || '').toLowerCase().includes(search.toLowerCase()) ||
+          (TenDayDu || '').toLowerCase().includes(search.toLowerCase()) ||
+          // QuanLy
+          (MaNguoiDung || '').toLowerCase().includes(search.toLowerCase()) ||
+          (MaQuanLy || '').toLowerCase().includes(search.toLowerCase()) ||
+          (TenNguoiDung || '').toLowerCase().includes(search.toLowerCase()) ||
+          (moment(TuNgay).format('DD/MM/YYYY') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (moment(DenNgay).format('DD/MM/YYYY') || '').toLowerCase().includes(search.toLowerCase()) ||
           // NXTKho
           (TenNhomHang || '').toLowerCase().includes(search.toLowerCase()) ||
           (TenKho || '').toLowerCase().includes(search.toLowerCase()) ||

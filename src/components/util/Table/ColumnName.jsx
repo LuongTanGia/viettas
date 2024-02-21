@@ -120,7 +120,6 @@ export const nameColumsPhieuBanHang = {
   TongCong_CN: 'Công nợ',
   TongCong: 'Tổng cộng',
 }
-
 export const nameColumsPhieuMuaHang = {
   STT: 'STT',
   MaHang: 'Mã hàng',
@@ -209,7 +208,6 @@ export const nameColumsNhapXuatTon_TongKho = {
   SoLuongXuat_XTR: 'Phiếu Trả',
   TriGiaXuat_XTR: 'T.Giá Phiếu Trả',
 }
-// Phiếu NTR
 export const nameColumsPhieuNTR = {
   STT: 'STT',
   SoChungTu: 'Số Chứng Từ',
@@ -388,8 +386,40 @@ export const nameColumsPhieuXuatHuy = {
   TongTriGiaKho: 'Tổng Trị Giá',
 }
 export const nameColumsKhoHang = {
-  Ma: 'Mã',
-  Ten: 'Tên',
+  MaKho: 'Mã',
+  TenKho: 'Tên',
+  TenDayDu: 'Tên Cửa Hàng',
+  DienThoai: 'Điện Thoại',
+  DiaChi: 'Địa Chỉ',
+  NguoiLienHe: 'Người Liên Hệ',
+  GhiChu: 'Ghi Chú',
+  NguoiTao: 'Người Tạo',
+  NgayTao: 'Ngày Tạo',
+  NguoiSuaCuoi: 'Người Sửa Cuối',
+  NgaySuaCuoi: 'Ngày Sửa Cuối',
+}
+export const nameColumsQuanLy = {
+  ID: 'ID',
+  MaQuanLy: 'Mã Quản Lý',
+  MaNguoiDung: 'Mã Người Dùng',
+  TenNguoiDung: 'Tên Người Dùng',
+  TuNgay: 'Hiệu Lực Từ',
+  DenNgay: 'Ngày Hết Hạn',
+  KhongKetThuc: 'Không Kết Thúc',
+  NA: 'Ngưng Dùng',
+  GhiChu: 'Ghi Chú',
+  NguoiTao: 'Người Tạo',
+  NgayTao: 'Ngày Tạo',
+  NguoiSuaCuoi: 'Người Sửa Cuối',
+  NgaySuaCuoi: 'Ngày Sửa Cuối',
+}
+export const nameColumsQuayTinhTien = {
+  MaKho: 'Mã',
+  TenKho: 'Tên',
+  TenDayDu: 'Tên Cửa Hàng',
+  DienThoai: 'Điện Thoại',
+  DiaChi: 'Địa Chỉ',
+  NguoiLienHe: 'Người Liên Hệ',
   GhiChu: 'Ghi Chú',
   NguoiTao: 'Người Tạo',
   NgayTao: 'Ngày Tạo',

@@ -4,7 +4,6 @@ import { useEffect, useState, useRef } from 'react'
 import { Table, Select, Tooltip, Typography, Checkbox, Row, Button, Col, Spin, Input } from 'antd'
 const { Text } = Typography
 import dayjs from 'dayjs'
-import { toast } from 'react-toastify'
 import { CgCloseO } from 'react-icons/cg'
 import { TfiMoreAlt } from 'react-icons/tfi'
 import { RiFileExcel2Fill } from 'react-icons/ri'
@@ -71,6 +70,7 @@ const NhapXuatTon = () => {
             await RETOKEN()
             getDataNXTFirst()
           } else {
+            setDataNXT([])
             console.log(response.data)
             setTableLoad(false)
           }
@@ -82,7 +82,7 @@ const NhapXuatTon = () => {
     if (searchHangHoa || isLoading) {
       getDataNXTFirst()
     }
-  }, [searchHangHoa, isLoading])
+  }, [searchHangHoa, isLoading, dateData?.NgayBatDau, dateData?.NgayKetThuc])
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -137,7 +137,6 @@ const NhapXuatTon = () => {
           setIsLoading(true)
         }
       } catch (error) {
-        console.log(error)
         setIsLoading(true)
       }
     }
@@ -230,9 +229,9 @@ const NhapXuatTon = () => {
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         getDataNXT()
-      } else {
-        console.log(response.data)
-        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
+      } else if (response.data.DataError == -104) {
+        setDataNXT([])
+        setTableLoad(false)
       }
     } catch (error) {
       console.log(error)
@@ -266,8 +265,8 @@ const NhapXuatTon = () => {
         await RETOKEN()
         getDataNXT_DVTQD()
       } else {
-        console.log(response.data)
-        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
+        setDataNXT([])
+        setTableLoad(false)
       }
     } catch (error) {
       console.log(error)
@@ -348,6 +347,7 @@ const NhapXuatTon = () => {
   const titles = [
     {
       title: 'STT',
+      dataIndex: 'STT',
       render: (text, record, index) => index + 1,
       with: 10,
       fixed: 'left',
@@ -437,7 +437,7 @@ const NhapXuatTon = () => {
       render: (text) => <HighlightedCell text={text} search={searchHangHoa} />,
     },
     {
-      title: 'SL Tồn đầu',
+      title: 'Số lượng - Tồn đầu',
       dataIndex: 'SoLuongTonDK',
       key: 'SoLuongTonDK',
       align: 'center',
@@ -450,7 +450,7 @@ const NhapXuatTon = () => {
       ),
     },
     {
-      title: 'TG Tồn đầu',
+      title: 'Trị giá - Tồn đầu',
       dataIndex: 'TriGiaTonDK',
       key: 'TriGiaTonDK',
       align: 'center',
@@ -463,7 +463,7 @@ const NhapXuatTon = () => {
       ),
     },
     {
-      title: 'SL Mua hàng',
+      title: 'Số lượng - Mua hàng',
       dataIndex: 'SoLuongNhap_PMH',
       key: 'SoLuongNhap_PMH',
       align: 'center',
@@ -476,7 +476,7 @@ const NhapXuatTon = () => {
       ),
     },
     {
-      title: 'TG Mua hàng',
+      title: 'Trị giá - Mua hàng',
       dataIndex: 'TriGiaNhap_PMH',
       key: 'TriGiaNhap_PMH',
       align: 'center',
@@ -489,7 +489,7 @@ const NhapXuatTon = () => {
       ),
     },
     {
-      title: 'SL Trả hàng',
+      title: 'Số lượng - Trả hàng',
       dataIndex: 'SoLuongNhap_NTR',
       key: 'SoLuongNhap_NTR',
       align: 'center',
@@ -502,7 +502,7 @@ const NhapXuatTon = () => {
       ),
     },
     {
-      title: 'TG Trả hàng',
+      title: 'Trị giá - Trả hàng',
       dataIndex: 'TriGiaNhap_NTR',
       key: 'TriGiaNhap_NTR',
       align: 'center',
@@ -515,7 +515,7 @@ const NhapXuatTon = () => {
       ),
     },
     {
-      title: 'SL Nhập Điều chỉnh',
+      title: 'Số lượng - Nhập Điều chỉnh',
       dataIndex: 'SoLuongNhap_NDC',
       key: 'SoLuongNhap_NDC',
       align: 'center',
@@ -528,7 +528,7 @@ const NhapXuatTon = () => {
       ),
     },
     {
-      title: 'TG Nhập Điều chỉnh',
+      title: 'Trị giá - Nhập Điều chỉnh',
       dataIndex: 'TriGiaNhap_NDC',
       key: 'TriGiaNhap_NDC',
       align: 'center',
@@ -541,7 +541,7 @@ const NhapXuatTon = () => {
       ),
     },
     {
-      title: 'SL Tổng nhập',
+      title: 'Số lượng - Tổng nhập',
       dataIndex: 'SoLuongNhap',
       key: 'SoLuongNhap',
       align: 'center',
@@ -554,7 +554,7 @@ const NhapXuatTon = () => {
       ),
     },
     {
-      title: 'TG Tổng nhập',
+      title: 'Trị giá - Tổng nhập',
       dataIndex: 'TriGiaNhap',
       key: 'TriGiaNhap',
       align: 'center',
@@ -567,7 +567,7 @@ const NhapXuatTon = () => {
       ),
     },
     {
-      title: 'SL Bán sỉ',
+      title: 'Số lượng - Bán sỉ',
       dataIndex: 'SoLuongXuat_PBS',
       key: 'SoLuongXuat_PBS',
       align: 'center',
@@ -580,7 +580,7 @@ const NhapXuatTon = () => {
       ),
     },
     {
-      title: 'TG Bán sỉ',
+      title: 'Trị giá - Bán sỉ',
       dataIndex: 'TriGiaXuat_PBS',
       key: 'TriGiaXuat_PBS',
       align: 'center',
@@ -593,7 +593,7 @@ const NhapXuatTon = () => {
       ),
     },
     {
-      title: 'SL Bán lẻ',
+      title: 'Số lượng - Bán lẻ',
       dataIndex: 'SoLuongXuat_PBL',
       key: 'SoLuongXuat_PBL',
       align: 'center',
@@ -606,7 +606,7 @@ const NhapXuatTon = () => {
       ),
     },
     {
-      title: 'TG Bán lẻ',
+      title: 'Trị giá - Bán lẻ',
       dataIndex: 'TriGiaXuat_PBL',
       key: 'TriGiaXuat_PBL',
       align: 'center',
@@ -619,7 +619,7 @@ const NhapXuatTon = () => {
       ),
     },
     {
-      title: 'SL Bán lẻ (Quầy)',
+      title: 'Số lượng - Bán lẻ (Quầy)',
       dataIndex: 'SoLuongXuat_PBQ',
       key: 'SoLuongXuat_PBQ',
       align: 'center',
@@ -632,7 +632,7 @@ const NhapXuatTon = () => {
       ),
     },
     {
-      title: 'TG Bán lẻ (Quầy)',
+      title: 'Trị giá - Bán lẻ (Quầy)',
       dataIndex: 'TriGiaXuat_PBQ',
       key: 'TriGiaXuat_PBQ',
       align: 'center',
@@ -645,7 +645,7 @@ const NhapXuatTon = () => {
       ),
     },
     {
-      title: 'SL Trả hàng',
+      title: 'Số lượng - Trả hàng',
       dataIndex: 'SoLuongXuat_XTR',
       key: 'SoLuongXuat_XTR',
       align: 'center',
@@ -658,7 +658,7 @@ const NhapXuatTon = () => {
       ),
     },
     {
-      title: 'TG Trả hàng',
+      title: 'Trị giá - Trả hàng',
       dataIndex: 'TriGiaXuat_XTR',
       key: 'TriGiaXuat_XTR',
       align: 'center',
@@ -671,7 +671,7 @@ const NhapXuatTon = () => {
       ),
     },
     {
-      title: 'SL Sử dụng',
+      title: 'Số lượng - Sử dụng',
       dataIndex: 'SoLuongXuat_XSD',
       key: 'SoLuongXuat_XSD',
       align: 'center',
@@ -684,7 +684,7 @@ const NhapXuatTon = () => {
       ),
     },
     {
-      title: 'TG Sử dụng',
+      title: 'Trị giá - Sử dụng',
       dataIndex: 'TriGiaXuat_XSD',
       key: 'TriGiaXuat_XSD',
       align: 'center',
@@ -697,7 +697,7 @@ const NhapXuatTon = () => {
       ),
     },
     {
-      title: 'SL Hủy',
+      title: 'Số lượng - Hủy',
       dataIndex: 'SoLuongXuat_HUY',
       key: 'SoLuongXuat_HUY',
       align: 'center',
@@ -710,7 +710,7 @@ const NhapXuatTon = () => {
       ),
     },
     {
-      title: 'TG Hủy',
+      title: 'Trị giá - Hủy',
       dataIndex: 'TriGiaXuat_HUY',
       key: 'TriGiaXuat_HUY',
       align: 'center',
@@ -723,7 +723,7 @@ const NhapXuatTon = () => {
       ),
     },
     {
-      title: 'SL Xuất Điều chỉnh',
+      title: 'Số lượng - Xuất Điều chỉnh',
       dataIndex: 'SoLuongXuat_XDC',
       key: 'SoLuongXuat_XDC',
       align: 'center',
@@ -736,7 +736,7 @@ const NhapXuatTon = () => {
       ),
     },
     {
-      title: 'TG Xuất Điều chỉnh',
+      title: 'Trị giá - Xuất Điều chỉnh',
       dataIndex: 'TriGiaXuat_XDC',
       key: 'TriGiaXuat_XDC',
       align: 'center',
@@ -749,7 +749,7 @@ const NhapXuatTon = () => {
       ),
     },
     {
-      title: 'SL Xuất',
+      title: 'Số lượng - Xuất',
       dataIndex: 'SoLuongXuat',
       key: 'SoLuongXuat',
       align: 'center',
@@ -762,7 +762,7 @@ const NhapXuatTon = () => {
       ),
     },
     {
-      title: 'TG Xuất',
+      title: 'Trị giá - Xuất',
       dataIndex: 'TriGiaXuat',
       key: 'TriGiaXuat',
       align: 'center',
@@ -775,7 +775,7 @@ const NhapXuatTon = () => {
       ),
     },
     {
-      title: 'SL Tồn Cuối',
+      title: 'Số lượng - Tồn Cuối',
       dataIndex: 'SoLuongTonCK',
       key: 'SoLuongTonCK',
       align: 'center',
@@ -788,7 +788,7 @@ const NhapXuatTon = () => {
       ),
     },
     {
-      title: 'TG Tồn Cuối',
+      title: 'Trị giá - Tồn Cuối',
       dataIndex: 'TriGiaTonCK',
       key: 'TriGiaTonCK',
       align: 'center',
@@ -1023,6 +1023,7 @@ const NhapXuatTon = () => {
                         <div className="flex gap-1 items-center">
                           <div>Từ</div>
                           <Select
+                            allowClear
                             showSearch
                             size="small"
                             placeholder="Chọn nhóm"
@@ -1051,6 +1052,7 @@ const NhapXuatTon = () => {
                         <div className="flex gap-1 items-center">
                           <div>Đến</div>
                           <Select
+                            allowClear
                             showSearch
                             size="small"
                             placeholder="Chọn nhóm"
@@ -1103,6 +1105,7 @@ const NhapXuatTon = () => {
                         <div className="flex gap-1 items-center">
                           <div>Từ</div>
                           <Select
+                            allowClear
                             showSearch
                             placeholder="Chọn mã hàng"
                             size="small"
@@ -1131,6 +1134,7 @@ const NhapXuatTon = () => {
                         <div className="flex gap-1 items-center">
                           <div>Đến</div>
                           <Select
+                            allowClear
                             showSearch
                             size="small"
                             placeholder="Chọn mã hàng"
@@ -1230,6 +1234,10 @@ const NhapXuatTon = () => {
                                         minimumFractionDigits: dataThongSo.SOLESOLUONG,
                                         maximumFractionDigits: dataThongSo.SOLESOLUONG,
                                       })}
+                                    </Text>
+                                  ) : column.dataIndex == 'STT' ? (
+                                    <Text className="text-center" strong>
+                                      {dataNXT?.length}
                                     </Text>
                                   ) : null}
                                 </Table.Summary.Cell>
