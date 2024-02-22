@@ -1328,7 +1328,6 @@ const Modals = ({
               </div>
             </div>
           )}
-
           {actionType === 'view' && (
             <div className=" w-[90vw] h-[600px]">
               <div className="flex gap-2">
@@ -1816,7 +1815,6 @@ const Modals = ({
               </div>
             </div>
           )}
-
           {actionType === 'edit' && (
             <>
               {isLoadingEdit ? (

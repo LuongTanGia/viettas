@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router-dom'
 import { useSearchHH } from '../../components_K/myComponents/useSearchHH'
 
 const { Text } = Typography
-const { IoAddCircleOutline, MdDelete, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill, CgCloseO, TiThSmall } = icons
+const { IoAddCircleOutline, IoIosRemoveCircleOutline, MdDelete, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill, CgCloseO, TiThSmall } = icons
 const BangGiaKH = () => {
   const navigate = useNavigate()
   const optionContainerRef = useRef(null)
@@ -45,6 +45,10 @@ const BangGiaKH = () => {
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
   const [isShowNotify, setIsShowNotify] = useState(false)
+  const [selectedRowKeys, setSelectedRowKeys] = useState([])
+  const [formDEL, setFormDEL] = useState({
+    DanhSachMaHieuLuc: [],
+  })
 
   // bỏ focus option thì hidden
   useEffect(() => {
@@ -182,6 +186,14 @@ const BangGiaKH = () => {
       // getDSGKH()
     }
   }, [tableLoad, dataQuyenHan?.VIEW])
+  // data DS delete
+  useEffect(() => {
+    const selectedRowObjs = selectedRowKeys.map((key) => {
+      const [Ma, HieuLuc] = key.split('/')
+      return { Ma, HieuLuc }
+    })
+    setFormDEL({ ...formDEL, DanhSachMaHieuLuc: selectedRowObjs })
+  }, [selectedRowKeys])
 
   const getDSGKH = async () => {
     try {
@@ -270,7 +282,7 @@ const BangGiaKH = () => {
       title: 'Tên khách hàng',
       dataIndex: 'TenDoiTuong',
       key: 'TenDoiTuong',
-      width: 150,
+      width: 250,
 
       sorter: (a, b) => a.TenDoiTuong.localeCompare(b.TenDoiTuong),
       showSorterTooltip: false,
@@ -464,9 +476,13 @@ const BangGiaKH = () => {
     setIsShowModal(true)
   }
 
-  const handleCreate = (record) => {
+  const handleCreate = () => {
     setActionType('create')
-    setDataRecord(record)
+    setIsShowModal(true)
+  }
+
+  const handleDeleteDS = () => {
+    setActionType('deleteds')
     setIsShowModal(true)
   }
 
@@ -475,6 +491,13 @@ const BangGiaKH = () => {
       setTableLoad(true)
       setSearchGKH(newSearch)
     }
+  }
+
+  const handleRowClick = (record) => {
+    const selectedKey = `${record.MaDoiTuong}/${record.HieuLucTu}`
+    const isSelected = selectedRowKeys.includes(selectedKey)
+    const newSelectedRowKeys = isSelected ? selectedRowKeys.filter((key) => key !== selectedKey) : [...selectedRowKeys, selectedKey]
+    setSelectedRowKeys(newSelectedRowKeys)
   }
 
   return (
@@ -630,6 +653,16 @@ const BangGiaKH = () => {
                 </div>
                 <ActionButton
                   color={'slate-50'}
+                  title={'Xóa'}
+                  icon={<IoIosRemoveCircleOutline size={20} />}
+                  bg_hover={!dataQuyenHan?.DEL ? '' : 'white'}
+                  background={!dataQuyenHan?.DEL ? 'gray-400' : 'red-500'}
+                  color_hover={!dataQuyenHan?.DEL ? '' : 'red-500'}
+                  handleAction={() => (!dataQuyenHan?.DEL ? '' : handleDeleteDS())}
+                  quyenHan={dataQuyenHan?.DEL}
+                />
+                <ActionButton
+                  color={'slate-50'}
                   title={'Thêm'}
                   icon={<IoAddCircleOutline size={20} />}
                   bg_hover={!dataQuyenHan?.ADD ? '' : 'white'}
@@ -645,7 +678,12 @@ const BangGiaKH = () => {
               <Table
                 loading={tableLoad}
                 className="table_pmh setHeight"
-                // rowSelection={rowSelection}
+                rowSelection={{
+                  selectedRowKeys,
+                  onChange: (selectedKeys) => {
+                    setSelectedRowKeys(selectedKeys)
+                  },
+                }}
                 columns={newColumnsHide}
                 dataSource={filteredGKH}
                 size="small"
@@ -662,8 +700,11 @@ const BangGiaKH = () => {
                     localStorage.setItem('pageSize', size)
                   },
                 }}
-                rowKey={(record) => record.SoChungTu}
+                rowKey={(record) => `${record.MaDoiTuong}/${record.HieuLucTu}`}
                 onRow={(record) => ({
+                  onClick: () => {
+                    handleRowClick(record)
+                  },
                   onDoubleClick: () => {
                     handleView(record)
                   },
@@ -710,6 +751,7 @@ const BangGiaKH = () => {
                 isLoadingEdit={isLoadingEdit}
                 dataThongSo={dataThongSo}
                 loading={() => setTableLoad(true)}
+                formDEL={formDEL}
               />
             )}
           </div>

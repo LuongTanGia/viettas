@@ -17,7 +17,7 @@ import { GiPayMoney, GiReceiveMoney } from 'react-icons/gi'
 import { BsSearch, BsWrenchAdjustableCircle } from 'react-icons/bs'
 import { TfiMoreAlt } from 'react-icons/tfi'
 import { RiFileExcel2Fill } from 'react-icons/ri'
-import { IoMdAddCircle } from 'react-icons/io'
+import { IoMdAddCircle, IoIosRemoveCircleOutline } from 'react-icons/io'
 import { CgCloseO } from 'react-icons/cg'
 
 const icons = {
@@ -59,5 +59,6 @@ const icons = {
   TiThSmall,
   MdOutlineViewCompact,
   BsWrenchAdjustableCircle,
+  IoIosRemoveCircleOutline,
 }
 export default icons

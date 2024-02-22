@@ -2,19 +2,20 @@
 
 // import ActionButton from '../components/util/Button/ActionButton'
 // import { Checkbox, Tooltip } from 'antd'
-import { Checkbox, InputNumber, Select, Tooltip } from 'antd'
+import { Checkbox, InputNumber, Select, Spin, Table, Tooltip } from 'antd'
 import dayjs from 'dayjs'
 import logo from '../assets/VTS-iSale.ico'
 import * as apis from '../apis'
-import { RETOKEN, formatPrice } from '../action/Actions'
+import { RETOKEN, formatPrice, formatQuantity } from '../action/Actions'
 import { DateField } from '@mui/x-date-pickers'
 import { useEffect, useState } from 'react'
 import ActionButton from '../components/util/Button/ActionButton'
 import { toast } from 'react-toastify'
+import moment from 'moment'
 
 const { Option } = Select
 
-const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, dataThongSo, dataHangHoa, dataDoiTuong, dataNhomGia, loading, formDEL }) => {
+const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dataThongSo, dataThongTin, dataHangHoa, dataDoiTuong, dataNhomGia, loading, isLoadingModal }) => {
   const [errors, setErrors] = useState({
     DonGia: '',
   })
@@ -65,14 +66,6 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
     HieuLucTu: ngayHieuLuc,
     DanhSachMa: [],
   })
-  const [formPrint, setFormPrint] = useState({
-    CodeValue1From: '',
-    CodeValue1To: '',
-    CodeValue1List: '',
-    CodeValue2From: '',
-    CodeValue2To: '',
-    CodeValue2List: '',
-  })
 
   //  set value default
   useEffect(() => {
@@ -108,6 +101,102 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
       }
     }
   }, [dataDoiTuong, dataNhomGia, dataRecord])
+
+  const columns = [
+    {
+      title: 'STT',
+      dataIndex: 'STT',
+      key: 'STT',
+      width: 60,
+      hight: 10,
+      fixed: 'left',
+      align: 'center',
+      render: (text, record, index) => <div style={{ textAlign: 'center' }}>{index + 1}</div>,
+    },
+    {
+      title: 'Mã hàng',
+      dataIndex: 'MaHang',
+      key: 'MaHang',
+      width: 150,
+      fixed: 'left',
+      sorter: true,
+      showSorterTooltip: false,
+      align: 'center',
+      render: (text) => <div className="text-start">{text}</div>,
+    },
+    {
+      title: 'Tên Hàng',
+      dataIndex: 'TenHang',
+      key: 'TenHang',
+      width: 250,
+      align: 'center',
+      showSorterTooltip: false,
+
+      sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
+      render: (text) => (
+        <div className="text-start truncate">
+          <Tooltip title={text} color="blue">
+            {text}
+          </Tooltip>
+        </div>
+      ),
+    },
+    {
+      title: 'Đơn vị tính',
+      dataIndex: 'DVT',
+      key: 'DVT',
+      width: 150,
+      align: 'center',
+      showSorterTooltip: false,
+      sorter: (a, b) => a.DVT.localeCompare(b.DVT),
+    },
+
+    {
+      title: 'Đơn giá',
+      dataIndex: 'DonGia',
+      key: 'DonGia',
+      width: 150,
+      align: 'center',
+      showSorterTooltip: false,
+
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          {formatPrice(text, dataThongSo?.SOLESOTIEN)}
+        </div>
+      ),
+      sorter: (a, b) => a.DonGia - b.DonGia,
+    },
+    {
+      title: 'Đã có thuế',
+      dataIndex: 'CoThue',
+      key: 'CoThue',
+      width: 100,
+      align: 'center',
+      showSorterTooltip: false,
+
+      render: (text) => <Checkbox value={text} disabled={!text} checked={text} />,
+      sorter: (a, b) => {
+        const valueA = a.CoThue ? 1 : 0
+        const valueB = b.CoThue ? 1 : 0
+        return valueA - valueB
+      },
+    },
+    {
+      title: '% thuế',
+      dataIndex: 'TyLeThue',
+      key: 'TyLeThue',
+      width: 150,
+      align: 'center',
+      showSorterTooltip: false,
+
+      sorter: (a, b) => a.TyLeThue - b.TyLeThue,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          {formatQuantity(text, dataThongSo?.SOLETYLE)}
+        </div>
+      ),
+    },
+  ]
 
   const handleCreateAndClose = async () => {
     if (typePage === 'GBL') {
@@ -244,46 +333,8 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
   const handleDelete = async (dataRecord) => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
-      if (typePage === 'GBL') {
-        const response = await apis.XoaGBL(tokenLogin, dataRecord.MaHang, dataRecord.HieuLucTu)
-        if (response.data && response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription)
-          loading()
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(response.data.DataErrorDescription)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleDelete()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
-      }
-      if (typePage === 'GKH') {
-        const response = await apis.XoaGKH(tokenLogin, dataRecord.MaDoiTuong, dataRecord.HieuLucTu)
-        if (response.data && response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription)
-          loading()
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(response.data.DataErrorDescription)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleDelete()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
-      }
 
-      close()
-    } catch (error) {
-      console.error('Error while saving data:', error)
-    }
-  }
-
-  const handleDeleteDS = async () => {
-    try {
-      const tokenLogin = localStorage.getItem('TKN')
-
-      const response = await apis.XoaDSGKH(tokenLogin, formDEL)
+      const response = await apis.XoaGBS(tokenLogin, dataRecord.NhomGia)
       if (response.data && response.data.DataError === 0) {
         toast.success(response.data.DataErrorDescription)
         loading()
@@ -291,15 +342,17 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
         toast.warning(response.data.DataErrorDescription)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
-        handleDeleteDS()
+        handleDelete()
       } else {
         toast.error(response.data.DataErrorDescription)
       }
+
       close()
     } catch (error) {
       console.error('Error while saving data:', error)
     }
   }
+
   const handlePrint = async (dataRecord) => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
@@ -378,8 +431,8 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
           {actionType === 'delete' && (
             <div className=" items-center ">
               <label>
-                Bạn có chắc muốn xóa
-                <span className="font-bold mx-1"> {typePage === 'GBL' ? dataRecord.MaHang : dataRecord.MaDoiTuong}</span>
+                Bạn có chắc muốn xóa nhóm giá
+                <span className="font-bold mx-1"> {dataRecord.NhomGia}</span>
                 không ?
               </label>
               <div className="flex justify-end mt-4 gap-2">
@@ -391,20 +444,6 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
                   color_hover={'bg-main'}
                   handleAction={() => handleDelete(dataRecord)}
                 />
-
-                <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
-              </div>
-            </div>
-          )}
-          {actionType === 'deleteds' && (
-            <div className=" items-center ">
-              <label>
-                Bạn có chắc muốn xóa tổng cộng
-                <span className="font-bold mx-1">{formDEL.DanhSachMaHieuLuc.length}</span>
-                dòng dữ liệu không ?
-              </label>
-              <div className="flex justify-end mt-4 gap-2">
-                <ActionButton color={'slate-50'} title={'Xác nhận'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleDeleteDS} />
 
                 <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
               </div>
@@ -700,171 +739,102 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
             </div>
           )}
           {actionType === 'view' && (
-            <div className={`w-[700px] ${typePage === 'GBL' ? 'h-[260px]' : 'h-[300px]'}`}>
+            <div className=" w-[90vw] h-[600px]">
               <div className="flex gap-2">
                 <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
                 <label className="text-blue-700 font-semibold uppercase pb-1">thông tin - {namePage}</label>
               </div>
-              <div className="border w-full h-[78%] rounded-[4px]-sm text-sm">
-                <div className="flex flex-col px-2 ">
-                  <div className=" py-2 px-2 gap-2  grid grid-cols-1">
-                    <div className="flex flex-col gap-2">
-                      {typePage === 'GBL' && (
-                        <>
-                          <div className="flex items-center gap-1">
-                            <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Hàng hóa</label>
-                            <input
-                              type="text"
-                              value={`${dataRecord?.MaHang}-${dataRecord?.TenHang} (${dataRecord?.DVT}) `}
-                              className="h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none "
-                              disabled
-                            />
-                          </div>
-                          <div className="grid grid-cols-2  gap-2 items-center">
-                            <div className="flex items-center gap-1 whitespace-nowrap">
-                              <label className="required  min-w-[90px] text-sm flex justify-end">Kể từ ngày</label>
-                              <DateField
-                                className="DatePicker_PMH  max-w-[110px]"
-                                format="DD/MM/YYYY"
-                                value={dayjs(dataRecord?.HieuLucTu)}
-                                disabled
-                                sx={{
-                                  '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                                  '& .MuiButtonBase-root': {
-                                    padding: '4px',
-                                  },
-                                  '& .MuiSvgIcon-root': {
-                                    width: '18px',
-                                    height: '18px',
-                                  },
-                                }}
-                              />
-                            </div>
-                            <div className="flex items-center gap-1 whitespace-nowrap">
-                              <label className="required  min-w-[90px] text-sm flex justify-end">Giá bán lẻ</label>
-                              <input
-                                type="text"
-                                value={formatPrice(dataRecord?.DonGia, dataThongSo.SOLEDONGIA) || ''}
-                                className="h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate text-end"
-                                disabled
-                              />
-                            </div>
-                            <div className="flex items-center gap-1 whitespace-nowrap">
-                              <Checkbox className="min-w-[192px] text-sm flex justify-end " checked={dataRecord?.CoThue}>
-                                Đã có thuế
-                              </Checkbox>
-                            </div>
-                            <div className="flex items-center gap-1 whitespace-nowrap">
-                              <label className="  min-w-[90px] text-sm flex justify-end">% Thuế</label>
-                              <input
-                                type="text"
-                                value={formatPrice(dataRecord?.TyLeThue, dataThongSo.SOLETYLE) || ''}
-                                className="h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate  text-end"
-                                disabled
-                              />
-                            </div>
-                          </div>
-                        </>
-                      )}
-                      {typePage === 'GKH' && (
-                        <>
-                          <div className="flex items-center gap-1">
-                            <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Khách hàng</label>
-                            <input
-                              type="text"
-                              value={`${dataRecord?.MaDoiTuong}-${dataRecord?.TenDoiTuong}`}
-                              className="h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none "
-                              disabled
-                            />
-                          </div>
-                          <div className="flex items-center gap-1 whitespace-nowrap">
-                            <label className="required  min-w-[90px] text-sm flex justify-end">Hiệu lực từ</label>
-                            <DateField
-                              className="DatePicker_PMH  max-w-[110px]"
-                              format="DD/MM/YYYY"
-                              value={dayjs(dataRecord?.HieuLucTu)}
-                              disabled
-                              sx={{
-                                '& .MuiButtonBase-root': {
-                                  padding: '4px',
-                                },
-                                '& .MuiSvgIcon-root': {
-                                  width: '18px',
-                                  height: '18px',
-                                },
-                              }}
-                            />
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Nhóm giá</label>
-                            <input
-                              type="text"
-                              value={dataRecord?.ThongTinNhomGia}
-                              className="h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none "
-                              disabled
-                            />
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <label className=" whitespace-nowrap  min-w-[90px] text-sm flex justify-end">Ghi chú</label>
-                            <input
-                              type="text"
-                              value={dataRecord?.GhiChu}
-                              className="h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none "
-                              disabled
-                            />
-                          </div>
-                        </>
-                      )}
-                      {/* thong tin */}
-                      <div className="grid grid-cols-1 mt-2 gap-2 px-2 py-2.5 rounded-[4px] border-black-200 ml-[95px] relative border-[1px] border-gray-300 ">
-                        <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
-                        <div className="flex justify-between ">
-                          <div className="flex items-center gap-1.5 whitespace-nowrap">
-                            <label className=" text-sm min-w-[70px] ">Người tạo</label>
-                            <Tooltip title={dataRecord?.NguoiTao} color="blue">
+              <Spin spinning={isLoadingModal}>
+                <div className="border w-full h-[90%] rounded-sm text-sm">
+                  <div className="flex  md:gap-0 lg:gap-1 pl-1">
+                    {/* thong tin phieu */}
+                    <div className="w-[62%]">
+                      <div className="flex p-1  items-center">
+                        <label className="md:w-[107px] lg:w-[110px] pr-1">Mã B.Giá</label>
+                        <input disabled type="text" className="w-full border border-gray-300 outline-none  px-2 rounded-[4px] h-[24px]" value={dataThongTin?.NhomGia} />
+                      </div>
+                      <div className="p-1 flex justify-between items-center">
+                        <label form="doituong" className="w-[86px]">
+                          Đối tượng
+                        </label>
+                        <Select
+                          disabled
+                          showSearch
+                          size="small"
+                          optionFilterProp="children"
+                          style={{ width: '100%' }}
+                          value={`${dataThongTin.MaDoiTuong}- ${dataThongTin.TenDoiTuong}`}
+                          readOnly
+                        ></Select>
+                      </div>
+                      <div className="flex items-center justify-between p-1">
+                        <label className="w-[86px]">Tên</label>
+                        <input disabled type="text" className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" value={dataThongTin?.TenDoiTuong} />
+                      </div>
+                      <div className="flex items-center justify-between p-1">
+                        <label className="w-[86px]">Địa chỉ</label>
+                        <input disabled type="text" className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" value={dataThongTin?.DiaChi} />
+                      </div>
+                    </div>
+
+                    {/* thong tin cap nhat */}
+                    <div className="w-[38%] py-1 box_content">
+                      <div className="text-center p-1 font-medium text_capnhat">Thông tin cập nhật</div>
+                      <div className=" rounded-md w-[98%]  box_capnhat px-1 py-3">
+                        <div className="flex justify-between items-center ">
+                          <div className="flex items-center px-1  ">
+                            <label className="md:w-[134px] lg:w-[104px]">Người tạo</label>
+                            <Tooltip title={dataThongTin?.NguoiTao} color="blue">
                               <input
                                 disabled
                                 type="text"
-                                value={dataRecord?.NguoiTao}
-                                className="h-[24px] w-[20vw] lg:w-[18vw] md:w-[15vw] px-2 rounded-[4px] resize-none border-[1px] border-gray-300 outline-none truncate"
+                                className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px] truncate"
+                                value={dataThongTin?.NguoiTao}
+                                readOnly
                               />
                             </Tooltip>
                           </div>
-                          <div className="flex items-center gap-1 whitespace-nowrap">
-                            <label className=" text-sm">Lúc</label>
-                            <Tooltip title={dayjs(dataRecord?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss')} color="blue">
-                              <input
-                                disabled
-                                type="text"
-                                value={dayjs(dataRecord?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss')}
-                                className="px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none text-center truncate"
-                              />
-                            </Tooltip>
-                          </div>
-                        </div>
-                        <div className="flex justify-between ">
-                          <div className="flex items-center gap-1.5 whitespace-nowrap">
-                            <label className=" text-sm min-w-[70px]">Sửa cuối</label>
-                            <Tooltip title={dataRecord?.NguoiSuaCuoi} color="blue">
-                              <input
-                                disabled
-                                type="text"
-                                value={dataRecord?.NguoiSuaCuoi}
-                                className="h-[24px] w-[20vw] lg:w-[18vw] md:w-[15vw] px-2 rounded-[4px] resize-none border-[1px] border-gray-300 outline-none truncate"
-                              />
-                            </Tooltip>
-                          </div>
-                          <div className="flex items-center gap-1 whitespace-nowrap">
-                            <label className=" text-sm">Lúc</label>
+
+                          <div className="flex items-center p-1">
+                            <label className="w-[30px] pr-1">Lúc</label>
                             <Tooltip
-                              title={dataRecord?.NgaySuaCuoi && dayjs(dataRecord.NgaySuaCuoi).isValid() ? dayjs(dataRecord.NgaySuaCuoi).format('DD/MM/YYYY hh:mm:ss') : ''}
+                              title={dataThongTin?.NgayTao && moment(dataThongTin.NgayTao).isValid() ? moment(dataThongTin.NgayTao).format('DD/MM/YYYY hh:mm:ss') : ''}
                               color="blue"
                             >
                               <input
                                 disabled
                                 type="text"
-                                value={dataRecord?.NgaySuaCuoi && dayjs(dataRecord.NgaySuaCuoi).isValid() ? dayjs(dataRecord.NgaySuaCuoi).format('DD/MM/YYYY hh:mm:ss') : ''}
-                                className="px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none text-center truncate"
+                                className="w-full text-center border border-gray-300 outline-none px-2 rounded-[4px] h-[24px] truncate "
+                                value={dataThongTin?.NgayTao && moment(dataThongTin.NgayTao).isValid() ? moment(dataThongTin.NgayTao).format('DD/MM/YYYY hh:mm:ss') : ''}
+                              />
+                            </Tooltip>
+                          </div>
+                        </div>
+                        <div className="flex justify-between items-center ">
+                          <div className="flex items-center p-1  ">
+                            <label className="md:w-[134px] lg:w-[104px]">Sửa cuối</label>
+                            <Tooltip title={dataThongTin?.NguoiSuaCuoi} color="blue">
+                              <input
+                                disabled
+                                type="text"
+                                className="w-full  border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]  truncate"
+                                value={dataThongTin?.NguoiSuaCuoi}
+                              />
+                            </Tooltip>
+                          </div>
+                          <div className="flex items-center p-1 ">
+                            <label className="w-[30px] pr-1">Lúc</label>
+                            <Tooltip
+                              title={dataThongTin?.NgaySuaCuoi && moment(dataThongTin.NgaySuaCuoi).isValid() ? moment(dataThongTin.NgaySuaCuoi).format('DD/MM/YYYY hh:mm:ss') : ''}
+                              color="blue"
+                            >
+                              <input
+                                disabled
+                                type="text"
+                                className="w-full text-center border border-gray-300 outline-none px-2 rounded-[4px] h-[24px] truncate"
+                                value={
+                                  dataThongTin?.NgaySuaCuoi && moment(dataThongTin.NgaySuaCuoi).isValid() ? moment(dataThongTin.NgaySuaCuoi).format('DD/MM/YYYY hh:mm:ss') : ''
+                                }
                               />
                             </Tooltip>
                           </div>
@@ -872,10 +842,43 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
                       </div>
                     </div>
                   </div>
+                  {/* kho and ghi chu */}
+                  <div className="flex gap-3 pl-1 lg:pr-[6px] items-center  w-full">
+                    <div className="p-1 flex  items-center md:w-[35%] lg:w-[20%]">
+                      <label form="khohang" className="md:w-[104px] lg:w-[110px] ">
+                        Kho hàng
+                      </label>
+                      <select readOnly className="  border w-full  bg-[#fafafa] rounded-[4px] h-[24px]">
+                        <option value="ThongTinKho">
+                          {dataThongTin?.MaKho} - {dataThongTin?.TenKho}
+                        </option>
+                      </select>
+                    </div>
+                    <div className="flex items-center p-1 md:w-[65%] lg:w-[80%]">
+                      <label className="w-[70px]">Ghi chú</label>
+                      <input disabled type="are" className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" value={dataThongTin?.GhiChu} />
+                    </div>
+                  </div>
+                  {/* table */}
+                  <div className="pt-4">
+                    <Table
+                      loading={loading}
+                      className="table_view"
+                      dataSource={dataThongTin?.NhomGia_CTs}
+                      columns={columns}
+                      size="small"
+                      scroll={{
+                        x: 1000,
+                        y: 220,
+                      }}
+                      bordered
+                      pagination={false}
+                    ></Table>
+                  </div>
                 </div>
-              </div>
+              </Spin>
               {/* button */}
-              <div className="flex justify-end items-center pt-[10px] ">
+              <div className="flex justify-end items-center  pt-3">
                 <button
                   onClick={() => close()}
                   className="active:scale-[.98] active:duration-75 border-2 border-rose-500 text-slate-50 text-text-main font-bold  bg-rose-500 hover:bg-white hover:text-rose-500  rounded-md px-2 py-1 w-[80px] "
@@ -1407,4 +1410,4 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
   )
 }
 
-export default ModalTL
+export default ModalGBS

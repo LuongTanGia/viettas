@@ -29,6 +29,10 @@ export const useSearch = (data) => {
           SoTien,
           TenHangMuc,
           SoThamChieu,
+          // GiaBanSi
+          NhomGia,
+          TenNhomGia,
+          TongDoiTuong,
         } = item || {}
 
         return (
@@ -49,6 +53,10 @@ export const useSearch = (data) => {
           (TongTienThue?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (TongTienHang?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (TongThanhTien?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          // GiaBanSi
+          (TongDoiTuong?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (NhomGia || '').toLowerCase().includes(search.toLowerCase()) ||
+          (TenNhomGia || '').toLowerCase().includes(search.toLowerCase()) ||
           // PCT
           (SoTien?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (TenHangMuc || '').toLowerCase().includes(search.toLowerCase()) ||

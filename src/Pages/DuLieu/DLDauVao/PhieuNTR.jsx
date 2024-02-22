@@ -7,7 +7,7 @@ import * as apis from '../../../apis'
 import { Modals } from '../../../components_K'
 import ActionButton from '../../../components/util/Button/ActionButton'
 import dayjs from 'dayjs'
-import { RETOKEN, formatPrice, formatQuantity } from '../../../action/Actions'
+import { RETOKEN, formatCurrency, formatPrice, formatQuantity } from '../../../action/Actions'
 import SimpleBackdrop from '../../../components/util/Loading/LoadingPage'
 // import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { DateField } from '@mui/x-date-pickers/DateField'
@@ -443,11 +443,14 @@ const PhieuNTR = () => {
       dataIndex: 'TongMatHang',
       key: 'TongMatHang',
       width: 200,
-      align: 'end',
-      render: (text) => <div className="">{text} </div>,
-
+      align: 'center',
       sorter: (a, b) => a.TongMatHang - b.TongMatHang,
       showSorterTooltip: false,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatCurrency(text)} search={searchPNTR} />
+        </div>
+      ),
     },
     {
       title: 'Tổng số lượng',

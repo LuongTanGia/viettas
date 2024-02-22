@@ -7,7 +7,7 @@ import * as apis from '../../../apis'
 import { Modals } from '../../../components_K'
 import ActionButton from '../../../components/util/Button/ActionButton'
 import dayjs from 'dayjs'
-import { RETOKEN, formatPrice, formatQuantity } from '../../../action/Actions'
+import { RETOKEN, formatCurrency, formatPrice, formatQuantity } from '../../../action/Actions'
 import SimpleBackdrop from '../../../components/util/Loading/LoadingPage'
 // import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { DateField } from '@mui/x-date-pickers/DateField'
@@ -447,10 +447,14 @@ const PhieuMuaHang = () => {
       dataIndex: 'TongMatHang',
       key: 'TongMatHang',
       width: 200,
-      align: 'end',
-      render: (text) => <div className="">{text} </div>,
+      align: 'center',
       sorter: (a, b) => a.TongMatHang - b.TongMatHang,
       showSorterTooltip: false,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatCurrency(text)} search={searchPMH} />
+        </div>
+      ),
     },
     {
       title: 'Tổng số lượng',
@@ -1006,16 +1010,6 @@ const PhieuMuaHang = () => {
                       }}
                     />
                   </div>
-
-                  {/* <ActionButton
-                  color={'slate-50'}
-                  title={'Lọc'}
-                  icon={<MdFilterAlt size={20} />}
-                  background={'bg-main'}
-                  bg_hover={'white'}
-                  color_hover={'bg-main'}
-                  handleAction={handleFilterDS}
-                /> */}
                 </div>
                 <div className="flex items-center gap-2">
                   <ActionButton
