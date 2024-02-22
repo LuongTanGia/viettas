@@ -6,7 +6,7 @@ import { Input } from 'antd'
 import categoryAPI from '../../../../API/linkAPI'
 import logo from '../../../../assets/VTS-iSale.ico'
 import ActionButton from '../../../util/Button/ActionButton'
-const KHOCreate = ({ close, loadingData, setTargetRow }) => {
+const KHOCreate = ({ close, loadingData, setTargetRow, isKHO, setIsMaKHO }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const innitProduct = {
     MaKho: '',
@@ -44,6 +44,7 @@ const KHOCreate = ({ close, loadingData, setTargetRow }) => {
         loadingData()
         toast.success('Tạo thành công', { autoClose: 1000 })
         setTargetRow(KHOForm?.MaKho)
+        setIsMaKHO(KHOForm?.MaKho)
       } else {
         console.log(response.data)
         toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
@@ -194,9 +195,32 @@ const KHOCreate = ({ close, loadingData, setTargetRow }) => {
               </div>
             </div>
             <div className="flex gap-2 justify-end ">
-              <ActionButton handleAction={() => handleCreate(true)} title={'Lưu'} color={'slate-50'} background={'blue-500'} color_hover={'blue-500'} bg_hover={'white'} />
-              <ActionButton handleAction={() => handleCreate(false)} title={'Lưu & Đóng'} color={'slate-50'} background={'blue-500'} color_hover={'blue-500'} bg_hover={'white'} />
-              <ActionButton handleAction={close} title={'Đóng'} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
+              {isKHO ? (
+                <>
+                  <ActionButton
+                    handleAction={() => handleCreate(false)}
+                    title={'Lưu & Đóng'}
+                    color={'slate-50'}
+                    background={'blue-500'}
+                    color_hover={'blue-500'}
+                    bg_hover={'white'}
+                  />
+                  <ActionButton handleAction={close} title={'Đóng'} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
+                </>
+              ) : (
+                <>
+                  <ActionButton handleAction={() => handleCreate(true)} title={'Lưu'} color={'slate-50'} background={'blue-500'} color_hover={'blue-500'} bg_hover={'white'} />
+                  <ActionButton
+                    handleAction={() => handleCreate(false)}
+                    title={'Lưu & Đóng'}
+                    color={'slate-50'}
+                    background={'blue-500'}
+                    color_hover={'blue-500'}
+                    bg_hover={'white'}
+                  />
+                  <ActionButton handleAction={close} title={'Đóng'} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
+                </>
+              )}
             </div>
           </div>
         </div>

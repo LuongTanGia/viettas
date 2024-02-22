@@ -568,15 +568,17 @@ const PhieuNhapChuyenKho = () => {
                     {isShowOption && (
                       <div className="absolute flex flex-col gap-2 bg-slate-200 p-3 top-[12] right-[2.5%] rounded-lg z-10 duration-500 shadow-custom">
                         <div className={`flex ${selectVisible ? '' : 'flex-col'} items-center gap-2`}>
-                          <ActionButton
-                            handleAction={handleConfirm}
-                            title={'Xác Nhận'}
-                            icon={<FaCheck className="w-5 h-5" />}
-                            color={'slate-50'}
-                            background={'blue-500'}
-                            color_hover={'blue-500'}
-                            bg_hover={'white'}
-                          />
+                          {dataThongSo?.SUDUNG_XACNHANCHUYENKHO == true ? (
+                            <ActionButton
+                              handleAction={handleConfirm}
+                              title={'Xác Nhận'}
+                              icon={<FaCheck className="w-5 h-5" />}
+                              color={'slate-50'}
+                              background={'blue-500'}
+                              color_hover={'blue-500'}
+                              bg_hover={'white'}
+                            />
+                          ) : null}
                           <ActionButton
                             handleAction={handlePrint}
                             title={'In Phiếu'}
