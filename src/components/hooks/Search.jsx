@@ -44,6 +44,17 @@ export const useSearch = (data) => {
           TenNguoiDung,
           TuNgay,
           DenNgay,
+          // QuayTinhTIen
+          Quay,
+          TenMayTinh,
+          SQLServer,
+          SQLDatabase,
+          NhomGia,
+          DienGiaiLoai,
+          NguoiCNHTCuoi,
+          NgayCNHTCuoi,
+          NguoiCNTLCuoi,
+          NgayCNTLCuoi,
           // NTX
           TenNhomHang,
           TenKho,
@@ -126,6 +137,17 @@ export const useSearch = (data) => {
           (TenNguoiDung || '').toLowerCase().includes(search.toLowerCase()) ||
           (moment(TuNgay).format('DD/MM/YYYY') || '').toLowerCase().includes(search.toLowerCase()) ||
           (moment(DenNgay).format('DD/MM/YYYY') || '').toLowerCase().includes(search.toLowerCase()) ||
+          // QuayTinhTien
+          (DienGiaiLoai || '').toLowerCase().includes(search.toLowerCase()) ||
+          (TenMayTinh || '').toLowerCase().includes(search.toLowerCase()) ||
+          (SQLServer || '').toLowerCase().includes(search.toLowerCase()) ||
+          (SQLDatabase || '').toLowerCase().includes(search.toLowerCase()) ||
+          (NhomGia || '').toLowerCase().includes(search.toLowerCase()) ||
+          (Quay?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (NguoiCNHTCuoi || '').toLowerCase().includes(search.toLowerCase()) ||
+          (NguoiCNTLCuoi || '').toLowerCase().includes(search.toLowerCase()) ||
+          (moment(NgayCNTLCuoi).format('DD/MM/YYYY') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (moment(NgayCNHTCuoi).format('DD/MM/YYYY') || '').toLowerCase().includes(search.toLowerCase()) ||
           // NXTKho
           (TenNhomHang || '').toLowerCase().includes(search.toLowerCase()) ||
           (TenKho || '').toLowerCase().includes(search.toLowerCase()) ||

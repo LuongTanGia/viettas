@@ -12,6 +12,8 @@ import ActionButton from '../../../util/Button/ActionButton'
 import SimpleBackdrop from '../../../util/Loading/LoadingPage'
 const QLCreate = ({ close, loadingData, setTargetRow }) => {
   const TokenAccess = localStorage.getItem('TKN')
+  const ThongSo = localStorage.getItem('ThongSo')
+  const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
   const [dataUser, setDataUser] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const [DateFrom, setDateFrom] = useState(dayjs(new Date()))
@@ -58,9 +60,9 @@ const QLCreate = ({ close, loadingData, setTargetRow }) => {
   }, [isLoading])
 
   const handleCreate = async (isSave = true, isPrint = true) => {
-    if (!QLForm?.MaQuanLy?.trim() || !QLForm?.MaNguoiDung?.trim()) {
+    if ((dataThongSo?.ALLOW_MAQUANLYTUDONG ? null : !QLForm?.MaQuanLy?.trim()) || !QLForm?.MaNguoiDung?.trim()) {
       setErrors({
-        MaQuanLy: QLForm?.MaQuanLy?.trim() ? null : 'Mã không được trống',
+        MaQuanLy: dataThongSo.ALLOW_MAQUANLYTUDONG ? null : QLForm?.MaQuanLy?.trim() ? null : 'Mã không được trống',
         MaNguoiDung: QLForm?.MaNguoiDung?.trim() ? null : 'Người dùng không được trống',
       })
       return
@@ -74,7 +76,7 @@ const QLCreate = ({ close, loadingData, setTargetRow }) => {
             ? (setQLForm({ KhongKetThuc: true }), toast.success('Tạo thành công', { autoClose: 1000 }))
             : (close(), toast.success('Tạo thành công', { autoClose: 1000 }))
         loadingData()
-        setTargetRow(QLForm?.MaQuanLy)
+        dataThongSo.ALLOW_MAQUANLYTUDONG ? setTargetRow(response.data.DataResults[0].Ma) : setTargetRow(QLForm?.MaQuanLy)
       } else {
         toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
       }
@@ -116,6 +118,7 @@ const QLCreate = ({ close, loadingData, setTargetRow }) => {
                         required
                         placeholder={errors.MaQuanLy && errors.MaQuanLy}
                         size="small"
+                        disabled={dataThongSo && dataThongSo?.ALLOW_MAQUANLYTUDONG === true}
                         className={`${errors.MaQuanLy ? 'border-red-500' : ''} w-[100%] overflow-hidden whitespace-nowrap overflow-ellipsis`}
                         value={QLForm?.MaQuanLy}
                         onChange={(e) => {

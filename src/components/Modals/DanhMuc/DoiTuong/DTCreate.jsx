@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import { toast } from 'react-toastify'
+import { FaPlus } from 'react-icons/fa'
 import { useEffect, useState } from 'react'
 import { Checkbox, Input, Select, Tooltip } from 'antd'
 import categoryAPI from '../../../../API/linkAPI'
@@ -8,12 +9,13 @@ import logo from '../../../../assets/VTS-iSale.ico'
 import { RETOKEN } from '../../../../action/Actions'
 import ActionButton from '../../../util/Button/ActionButton'
 import SimpleBackdrop from '../../../util/Loading/LoadingPage'
-import { FaPlus } from 'react-icons/fa'
 import NDTCreate from '../NhomDoiTuong/NDTCreate'
 
 const DTCreate = ({ close, loadingData, setTargetRow }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const [isLoading, setIsLoading] = useState(false)
+  const ThongSo = localStorage.getItem('ThongSo')
+  const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
   const [nhomDT, setNhomDT] = useState(null)
   const [isMaNDT, setIsMaNDT] = useState('')
   const [isShowModal, setIsShowModal] = useState(false)
@@ -69,9 +71,9 @@ const DTCreate = ({ close, loadingData, setTargetRow }) => {
     setIsLoading(false)
   }
   const handleCreate = async (isSave = true) => {
-    if (!DTForm?.Ma?.trim() || !DTForm?.Ten?.trim()) {
+    if (!DTForm?.Ten?.trim() || (dataThongSo?.SUDUNG_MADOITUONGTUDONG ? null : !DTForm?.Ma?.trim())) {
       setErrors({
-        Ma: DTForm?.Ma?.trim() ? null : 'Mã không được trống',
+        Ma: dataThongSo.SUDUNG_MADOITUONGTUDONG ? null : DTForm?.Ma?.trim() ? null : 'Mã không được trống',
         Ten: DTForm?.Ten?.trim() ? null : 'Tên không được trống',
       })
       return
@@ -79,10 +81,11 @@ const DTCreate = ({ close, loadingData, setTargetRow }) => {
     try {
       const response = await categoryAPI.ThemDoiTuong({ ...DTForm, Nhom: isMaNDT ? isMaNDT : DTForm.Nhom }, TokenAccess)
       if (response.data.DataError == 0) {
-        isSave ? setDTForm({ Loai: 2 }) : close()
+        isSave ? (setDTForm({ Loai: 2 }), setIsMaNDT([])) : close()
         loadingData()
+        console.log(response.data)
         toast.success('Tạo thành công', { autoClose: 1000 })
-        setTargetRow(DTForm?.Ma)
+        dataThongSo.SUDUNG_MADOITUONGTUDONG ? setTargetRow(response.data.DataResults[0].Ma) : setTargetRow(DTForm?.Ma)
       } else {
         toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
       }
@@ -174,6 +177,7 @@ const DTCreate = ({ close, loadingData, setTargetRow }) => {
                       size="small"
                       className={`${errors.Ma ? 'border-red-500' : ''} w-full overflow-hidden whitespace-nowrap overflow-ellipsis`}
                       value={DTForm?.Ma}
+                      disabled={dataThongSo && dataThongSo?.SUDUNG_MADOITUONGTUDONG === true}
                       onChange={(e) => {
                         setDTForm({
                           ...DTForm,

@@ -197,7 +197,7 @@ const DoiTuong = () => {
       dataIndex: 'Ma',
       key: 'Ma',
       fixed: 'left',
-      width: 100,
+      width: 120,
       align: 'center',
       sorter: (a, b) => a.Ma.localeCompare(b.Ma),
       showSorterTooltip: false,

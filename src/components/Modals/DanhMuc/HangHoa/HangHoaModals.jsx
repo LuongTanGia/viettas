@@ -391,7 +391,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
         isSave ? (setHangHoaForm({ TonKho: true, LapRap: false, TyLeQuyDoi: 1 }), setSelectedRowData([])) : close()
         loadingData()
         toast.success('Thêm sản phẩm thành công', { autoClose: 1000 })
-        setTargetRow(response.data.DataResults[0].Ma)
+        dataThongSo.SUDUNG_MAHANGHOATUDONG ? setTargetRow(response.data.DataResults[0].Ma) : setTargetRow(hangHoaForm?.MaHang)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         handleCreate()
@@ -420,19 +420,12 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
     }
   }
   const handleUpdate = async () => {
-    if (
-      !hangHoaForm?.Nhom?.trim() ||
-      !hangHoaForm?.TenHang?.trim() ||
-      !hangHoaForm?.DVTKho?.trim() ||
-      !hangHoaForm?.MaVach?.trim() ||
-      (dataThongSo.SUDUNG_MAHANGHOATUDONG ? null : !hangHoaForm?.MaHang?.trim())
-    ) {
+    if (!hangHoaForm?.Nhom?.trim() || !hangHoaForm?.TenHang?.trim() || !hangHoaForm?.DVTKho?.trim() || !hangHoaForm?.MaVach?.trim()) {
       setErrors({
         Nhom: hangHoaForm?.Nhom?.trim() ? '' : 'Nhóm không được trống',
         TenHang: hangHoaForm?.TenHang?.trim() ? '' : 'Tên hàng không được trống',
         DVTKho: hangHoaForm?.DVTKho?.trim() ? '' : 'Đơn vị tính không được trống',
         MaVach: hangHoaForm?.MaVach?.trim() ? '' : 'Mã vạch không được trống',
-        MaHang: dataThongSo.SUDUNG_MAHANGHOATUDONG ? null : hangHoaForm?.MaHang?.trim() ? '' : '*Mã hàng không được trống',
       })
       return
     }
@@ -968,7 +961,6 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                           <div className="ml-[110px] xl:ml-0 flex items-center gap-2">
                             <div>
                               <Checkbox
-                                id="TonKho"
                                 checked={hangHoaForm?.TonKho || ''}
                                 disabled={dataThongSo && dataThongSo.SUDUNG_TONKHOHANGLAPRAP === false}
                                 onChange={(e) =>
@@ -983,7 +975,6 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                             </div>
                             <div>
                               <Checkbox
-                                id="LapRap"
                                 checked={hangHoaForm?.LapRap}
                                 disabled={dataThongSo && dataThongSo.SUDUNG_HANGLAPRAP === false}
                                 onChange={(e) =>
@@ -992,7 +983,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                                     TonKho: !e.target.checked,
                                     TyLeQuyDoi: 1,
                                     DVTQuyDoi: hangHoaForm.DVTKho,
-                                    [e.target.id]: e.target.checked,
+                                    LapRap: e.target.checked,
                                   })
                                 }
                               >
@@ -1001,12 +992,11 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                             </div>
                             <div>
                               <Checkbox
-                                id="NA"
                                 checked={hangHoaForm?.NA}
                                 onChange={(e) =>
                                   setHangHoaForm({
                                     ...hangHoaForm,
-                                    [e.target.id]: e.target.checked,
+                                    NA: e.target.checked,
                                   })
                                 }
                               >
@@ -1431,21 +1421,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                         <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 items-center justify-center">
                           <div className="flex items-center gap-1">
                             <label className="required  min-w-[90px] text-sm whitespace-nowrap flex justify-end">Mã hàng</label>
-                            <Input
-                              placeholder={errors.MaHang && errors.MaHang}
-                              required
-                              size="small"
-                              className={`${errors.MaHang ? 'border-red-500' : ''} w-full overflow-hidden whitespace-nowrap`}
-                              disabled={dataThongSo && dataThongSo.SUDUNG_MAHANGHOATUDONG === true}
-                              value={hangHoaForm?.MaHang}
-                              onChange={(e) => {
-                                setHangHoaForm({
-                                  ...hangHoaForm,
-                                  MaHang: e.target.value,
-                                })
-                                setErrors({ ...errors, MaHang: '' })
-                              }}
-                            />
+                            <Input required size="small" className="w-full overflow-hidden whitespace-nowrap" disabled value={hangHoaForm?.MaHang || ''} />
                           </div>
                           <div className="ml-[110px] xl:ml-0 flex items-center gap-2">
                             <div>
