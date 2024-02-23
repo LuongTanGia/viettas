@@ -2,7 +2,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
-import { Button, Checkbox, Col, Input, Row, Spin, Table, Tooltip, Typography } from 'antd'
+import { Button, Checkbox, Col, Empty, Input, Row, Spin, Table, Tooltip, Typography } from 'antd'
 const { Text } = Typography
 import dayjs from 'dayjs'
 import { CgCloseO } from 'react-icons/cg'
@@ -45,7 +45,7 @@ const PhieuNhapDieuChinh = () => {
   const [actionType, setActionType] = useState('')
   const showOption = useRef(null)
   const [hiddenRow, setHiddenRow] = useState([])
-  const [checkedList, setcheckedList] = useState([])
+  const [checkedList, setCheckedList] = useState([])
   const [selectVisible, setSelectVisible] = useState(false)
   const [options, setOptions] = useState()
   const [dateData, setDateData] = useState({})
@@ -55,8 +55,8 @@ const PhieuNhapDieuChinh = () => {
 
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
-    setcheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
-    const key = Object.keys(dataNDC ? dataNDC[0] : []).filter((key) => key !== 'SoThamChieu' && key !== 'MaKho_Nhan' && key !== 'ThongTinKhoNhan' && key !== 'MaKho')
+    setCheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
+    const key = Object?.keys(dataNDC ? dataNDC[0] : [] || []).filter((key) => key !== 'SoThamChieu' && key !== 'MaKho_Nhan' && key !== 'ThongTinKhoNhan' && key !== 'MaKho')
     setOptions(key)
   }, [selectVisible])
 
@@ -223,7 +223,7 @@ const PhieuNhapDieuChinh = () => {
     setSelectVisible(!selectVisible)
   }
   const onChange = (checkedValues) => {
-    setcheckedList(checkedValues)
+    setCheckedList(checkedValues)
   }
   const onClickSubmit = () => {
     setTableLoad(true)
@@ -640,13 +640,17 @@ const PhieuNhapDieuChinh = () => {
                                 onChange={onChange}
                               >
                                 <Row>
-                                  {options.map((item) => (
-                                    <Col span={8} key={item}>
-                                      <Checkbox value={item} checked={true}>
-                                        {nameColumsPhieuNhapDieuChinh[item]}
-                                      </Checkbox>
-                                    </Col>
-                                  ))}
+                                  {options && options.length > 0 ? (
+                                    options?.map((item, index) => (
+                                      <Col span={8} key={(item, index)}>
+                                        <Checkbox value={item} checked={true}>
+                                          {nameColumsPhieuNhapDieuChinh[item]}
+                                        </Checkbox>
+                                      </Col>
+                                    ))
+                                  ) : (
+                                    <Empty className="w-[100%] h-[100%]" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                                  )}
                                 </Row>
                                 <Spin spinning={tableLoad}>
                                   <Button className="mt-2 w-full" onClick={onClickSubmit}>
@@ -732,7 +736,7 @@ const PhieuNhapDieuChinh = () => {
                     bordered
                     className="table_DMHangHoa setHeight"
                     columns={newTitles}
-                    dataSource={filteredHangHoa.map((record, index) => ({ ...record, key: index }))}
+                    dataSource={filteredHangHoa?.map((record, index) => ({ ...record, key: index }))}
                     pagination={{
                       defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
                       showSizeChanger: true,
@@ -769,7 +773,7 @@ const PhieuNhapDieuChinh = () => {
                                     {isNumericColumn ? (
                                       column.dataIndex === 'SoMatHang' ? (
                                         <Text strong>
-                                          {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                          {Number(filteredHangHoa?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                             minimumFractionDigits: 0,
                                             maximumFractionDigits: 0,
                                           })}

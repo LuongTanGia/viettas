@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState, useRef } from 'react'
-import { Table, Select, Tooltip, Typography, Checkbox, Row, Button, Col, Spin, Input } from 'antd'
+import { Table, Select, Tooltip, Typography, Checkbox, Row, Button, Col, Spin, Input, Empty } from 'antd'
 const { Text } = Typography
 import dayjs from 'dayjs'
 import { CgCloseO } from 'react-icons/cg'
@@ -204,7 +204,7 @@ const NhapXuatTon = () => {
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
     setcheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
-    const key = Object.keys(dataNXT ? dataNXT[0] : {}).filter((key) => key !== 'MaNhomHang' && key !== 'MaKho')
+    const key = Object.keys(dataNXT ? dataNXT[0] : [] || []).filter((key) => key !== 'MaNhomHang' && key !== 'MaKho')
     setOptions(key)
   }, [selectVisible])
 
@@ -923,13 +923,17 @@ const NhapXuatTon = () => {
                                 onChange={onChange}
                               >
                                 <Row>
-                                  {options.map((item) => (
-                                    <Col span={8} key={item}>
-                                      <Checkbox value={item} checked={true}>
-                                        {nameColumsNhapXuatTon_TongKho[item]}
-                                      </Checkbox>
-                                    </Col>
-                                  ))}
+                                  {options && options.length > 0 ? (
+                                    options?.map((item, index) => (
+                                      <Col span={8} key={(item, index)}>
+                                        <Checkbox value={item} checked={true}>
+                                          {nameColumsNhapXuatTon_TongKho[item]}
+                                        </Checkbox>
+                                      </Col>
+                                    ))
+                                  ) : (
+                                    <Empty className="w-[100%] h-[100%]" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                                  )}
                                 </Row>
                                 <Spin spinning={tableLoad}>
                                   <Button className="mt-2 w-full" onClick={onClickSubmit}>

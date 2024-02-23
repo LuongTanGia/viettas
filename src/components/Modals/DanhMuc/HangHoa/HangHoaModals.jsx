@@ -1683,7 +1683,6 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                                       <td>
                                         <Checkbox checked={item.NA} onChange={(e) => handleBarcodeChange(index, 'NA', e.target.checked)}></Checkbox>
                                       </td>
-
                                       <td className="flex justify-center">
                                         <div
                                           onClick={() => removeBarcode(index)}

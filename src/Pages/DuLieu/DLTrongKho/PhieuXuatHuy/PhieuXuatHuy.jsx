@@ -2,7 +2,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
-import { Button, Checkbox, Col, Input, Row, Spin, Table, Tooltip, Typography } from 'antd'
+import { Button, Checkbox, Col, Empty, Input, Row, Spin, Table, Tooltip, Typography } from 'antd'
 const { Text } = Typography
 import dayjs from 'dayjs'
 import { CgCloseO } from 'react-icons/cg'
@@ -56,7 +56,7 @@ const PhieuXuatHuy = () => {
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
     setcheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
-    const key = Object.keys(dataHUY ? dataHUY[0] : []).filter((key) => key !== 'SoThamChieu' && key !== 'MaKho_Nhan' && key !== 'ThongTinKhoNhan' && key !== 'MaKho')
+    const key = Object.keys(dataHUY ? dataHUY[0] : [] || []).filter((key) => key !== 'SoThamChieu' && key !== 'MaKho_Nhan' && key !== 'ThongTinKhoNhan' && key !== 'MaKho')
     setOptions(key)
   }, [selectVisible])
 
@@ -640,13 +640,17 @@ const PhieuXuatHuy = () => {
                                 onChange={onChange}
                               >
                                 <Row>
-                                  {options.map((item) => (
-                                    <Col span={8} key={item}>
-                                      <Checkbox value={item} checked={true}>
-                                        {nameColumsPhieuXuatHuy[item]}
-                                      </Checkbox>
-                                    </Col>
-                                  ))}
+                                  {options && options.length > 0 ? (
+                                    options?.map((item, index) => (
+                                      <Col span={8} key={(item, index)}>
+                                        <Checkbox value={item} checked={true}>
+                                          {nameColumsPhieuXuatHuy[item]}
+                                        </Checkbox>
+                                      </Col>
+                                    ))
+                                  ) : (
+                                    <Empty className="w-[100%] h-[100%]" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                                  )}
                                 </Row>
                                 <Spin spinning={tableLoad}>
                                   <Button className="mt-2 w-full" onClick={onClickSubmit}>

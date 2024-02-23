@@ -15,7 +15,7 @@ import Model from './Model'
 import { DateField } from '@mui/x-date-pickers/DateField'
 import { BsSearch } from 'react-icons/bs'
 import dayjs from 'dayjs'
-import { Checkbox, Col, Input, Row } from 'antd'
+import { Checkbox, Col, Empty, Input, Row } from 'antd'
 import { TfiMoreAlt } from 'react-icons/tfi'
 import { RiFileExcel2Fill } from 'react-icons/ri'
 import { Button, Spin } from 'antd'
@@ -74,7 +74,7 @@ function PhieuBanHang() {
     setHiden(JSON.parse(localStorage.getItem('hiddenColumns')))
     setcheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
 
-    const key = Object.keys(data ? data[0] : []).filter((key) => key !== 'MaSoThue')
+    const key = Object.keys(data ? data[0] : [] || []).filter((key) => key !== 'MaSoThue')
     setOptions(key)
   }, [selectVisible])
   useEffect(() => {
@@ -388,13 +388,17 @@ function PhieuBanHang() {
                         onChange={onChange}
                       >
                         <Row>
-                          {options.map((item) => (
-                            <Col span={8} key={item}>
-                              <Checkbox value={item} checked={true}>
-                                {nameColumsPhieuBanHang[item]}
-                              </Checkbox>
-                            </Col>
-                          ))}
+                          {options && options.length > 0 ? (
+                            options?.map((item, index) => (
+                              <Col span={8} key={(item, index)}>
+                                <Checkbox value={item} checked={true}>
+                                  {nameColumsPhieuBanHang[item]}
+                                </Checkbox>
+                              </Col>
+                            ))
+                          ) : (
+                            <Empty className="w-[100%] h-[100%]" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                          )}
                         </Row>
                         <Spin spinning={loadingSearch}>
                           <Button className="mt-2 w-full" onClick={onClickSubmit}>

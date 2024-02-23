@@ -2,7 +2,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
-import { Button, Checkbox, Col, Input, Row, Spin, Table, Tooltip, Typography } from 'antd'
+import { Button, Checkbox, Col, Empty, Input, Row, Spin, Table, Tooltip, Typography } from 'antd'
 const { Text } = Typography
 import moment from 'moment'
 import { toast } from 'react-toastify'
@@ -43,9 +43,8 @@ const HangHoa = () => {
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [targetRow, setTargetRow] = useState([])
   const [dataCRUD, setDataCRUD] = useState()
-  // Ẩn cột
   const [hiddenRow, setHiddenRow] = useState([])
-  const [checkedList, setcheckedList] = useState([])
+  const [checkedList, setCheckedList] = useState([])
   const [selectVisible, setSelectVisible] = useState(false)
   const [options, setOptions] = useState()
 
@@ -113,8 +112,8 @@ const HangHoa = () => {
 
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
-    setcheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
-    const key = Object.keys(dataHangHoa ? dataHangHoa[0] : {}).filter(
+    setCheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
+    const key = Object.keys(dataHangHoa ? dataHangHoa[0] : [] || []).filter(
       (key) => key !== 'CoThue' && key !== 'TyLeThue' && key !== 'Nhom' && key !== 'TyLeQuyDoi' && key !== 'DienGiaiHangHoa' && key !== 'DVTQuyDoi',
     )
     setOptions(key)
@@ -233,7 +232,7 @@ const HangHoa = () => {
     setSelectVisible(!selectVisible)
   }
   const onChange = (checkedValues) => {
-    setcheckedList(checkedValues)
+    setCheckedList(checkedValues)
   }
   const onClickSubmit = () => {
     setTableLoad(true)
@@ -689,13 +688,17 @@ const HangHoa = () => {
                                 onChange={onChange}
                               >
                                 <Row>
-                                  {options.map((item) => (
-                                    <Col span={8} key={item}>
-                                      <Checkbox value={item} checked={true}>
-                                        {nameColumsHangHoa[item]}
-                                      </Checkbox>
-                                    </Col>
-                                  ))}
+                                  {options && options.length > 0 ? (
+                                    options?.map((item, index) => (
+                                      <Col span={8} key={(item, index)}>
+                                        <Checkbox value={item} checked={true}>
+                                          {nameColumsHangHoa[item]}
+                                        </Checkbox>
+                                      </Col>
+                                    ))
+                                  ) : (
+                                    <Empty className="w-[100%] h-[100%]" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                                  )}
                                 </Row>
                                 <Spin spinning={tableLoad}>
                                   <Button className="mt-2 w-full" onClick={onClickSubmit}>
