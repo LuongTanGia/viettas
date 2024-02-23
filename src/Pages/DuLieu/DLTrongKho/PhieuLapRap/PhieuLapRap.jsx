@@ -56,7 +56,7 @@ const PhieuLapRap = () => {
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
     setcheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
-    const key = Object.keys(dataPLR ? dataPLR[0] : [] || []).filter((key) => key !== 'MaKho')
+    const key = Object.keys(dataPLR[0] || []).filter((key) => key !== 'MaKho')
     setOptions(key)
   }, [selectVisible])
 

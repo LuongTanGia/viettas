@@ -170,7 +170,7 @@ const KhoHang = () => {
       dataIndex: 'MaKho',
       key: 'MaKho',
       fixed: 'left',
-      width: 80,
+      width: 120,
       align: 'center',
       sorter: (a, b) => a.MaKho.localeCompare(b.MaKho),
       showSorterTooltip: false,
