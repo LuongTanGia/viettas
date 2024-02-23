@@ -56,7 +56,7 @@ const PhieuXuatChuyenKho = () => {
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
     setcheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
-    const key = Object.keys(dataXCK ? dataXCK[0] : [] || []).filter((key) => key !== 'SoThamChieu' && key !== 'MaKho_Nhan' && key !== 'MaKho')
+    const key = Object.keys(dataXCK[0] || []).filter((key) => key !== 'SoThamChieu' && key !== 'MaKho_Nhan' && key !== 'MaKho')
     setOptions(key)
   }, [selectVisible])
 
