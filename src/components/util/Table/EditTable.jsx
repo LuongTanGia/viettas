@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
-import { Button, Form, Input, Table, Select, InputNumber, Tooltip, Typography } from 'antd'
+import { Button, Form, Input, Table, Select, InputNumber, Tooltip, Typography, Checkbox } from 'antd'
 import BtnAction from './BtnAction'
 
 const { Option } = Select
@@ -227,25 +227,27 @@ const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourT
         >
           {isSelect ? (
             <Select ref={inputRef} onPressEnter={save} onBlur={save} style={{ width: '100%' }} showSearch dropdownMatchSelectWidth={false} listHeight={310}>
-              {dataIndex === 'MaHang'
-                ? newOptions?.map((option, index) => (
-                    <Option key={index} value={option.MaHang}>
-                      {`${option.MaHang} - ${option.TenHang}`}
-                    </Option>
-                  ))
-                : dataIndex === 'TenHang'
-                  ? newOptions?.map((option, index) => (
-                      <Option key={index} value={option.TenHang}>
-                        {`${option.MaHang} - ${option.TenHang}`}
-                      </Option>
-                    ))
-                  : tableName !== 'BanHang'
-                    ? listDVT.map((option, index) => (
-                        <Option key={index} value={option}>
-                          {option}
-                        </Option>
-                      ))
-                    : null}
+              {dataIndex === 'MaHang' ? (
+                newOptions?.map((option, index) => (
+                  <Option key={index} value={option.MaHang}>
+                    {`${option.MaHang} - ${option.TenHang}`}
+                  </Option>
+                ))
+              ) : dataIndex === 'TenHang' ? (
+                newOptions?.map((option, index) => (
+                  <Option key={index} value={option.TenHang}>
+                    {`${option.MaHang} - ${option.TenHang}`}
+                  </Option>
+                ))
+              ) : tableName === 'GBS' && dataIndex === 'CoThue' ? (
+                <Checkbox value={false} />
+              ) : tableName !== 'BanHang' ? (
+                listDVT.map((option, index) => (
+                  <Option key={index} value={option}>
+                    {option}
+                  </Option>
+                ))
+              ) : null}
             </Select>
           ) : dataIndex === 'SoLuong' || dataIndex === 'DonGia' ? (
             <InputNumber
@@ -381,7 +383,24 @@ const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourT
         ),
       }
     }
+    if (item === 'CoThue' && tableName === 'GBS') {
+      return {
+        title: columName[item] || item,
+        width: 100,
+        dataIndex: item,
+        editable: true,
+        key: item,
+        align: 'center',
+        sorter: (a, b) => {
+          const valueA = a[item] ? 1 : 0
+          const valueB = b[item] ? 1 : 0
+          return valueA - valueB
+        },
+        showSorterTooltip: false,
 
+        render: (text) => <Checkbox value={text} />,
+      }
+    }
     if (item === 'DVT' && typeTable === 'BanHang') {
       return {
         title: columName[item] || item,
@@ -571,7 +590,7 @@ const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourT
     <div>
       <Table
         loading={dataSource?.length !== 0 || typeTable === 'create' ? false : true}
-        className={'h290'}
+        className={tableName === 'GBS' ? 'h340' : 'h290'}
         components={components}
         rowClassName={() => 'editable-row'}
         bordered

@@ -1485,8 +1485,6 @@ const Modals = ({
                       }}
                       bordered
                       pagination={false}
-                      Bảng
-                      Tổng
                       summary={(pageData) => {
                         let totalThanhTien = 0
                         let totalTienHang = 0
@@ -1506,7 +1504,7 @@ const Modals = ({
                         return (
                           <Table.Summary fixed="bottom">
                             <Table.Summary.Row className="text-end font-bold bg-[#f1f1f1]">
-                              <Table.Summary.Cell className="text-center  "></Table.Summary.Cell>
+                              <Table.Summary.Cell className="text-center"></Table.Summary.Cell>
                               <Table.Summary.Cell></Table.Summary.Cell>
                               <Table.Summary.Cell index={2}></Table.Summary.Cell>
                               <Table.Summary.Cell index={3}></Table.Summary.Cell>

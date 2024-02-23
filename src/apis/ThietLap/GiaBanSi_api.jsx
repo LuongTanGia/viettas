@@ -21,18 +21,16 @@ export const DanhSachGBS = (token) =>
     }
   })
 
-export const ThongTinGBS = (token, Sct) =>
+export const ThongTinGBS = (token, Ma) =>
   new Promise(async (resolve, reject) => {
     try {
       const response = await axios({
-        url: '/entries/NhomGia/ThongTin',
+        url: '/settings/NhomGia/ThongTin',
         method: 'post',
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        data: {
-          SoChungTu: Sct,
-        },
+        data: { Ma: Ma },
       })
       resolve(response)
     } catch (error) {
@@ -97,16 +95,19 @@ export const SuaGBS = (token, formEdit) =>
     }
   })
 
-export const XoaGBS = (token, Ma, HieuLuc) =>
+export const XoaGBS = (token, Ma) =>
   new Promise(async (resolve, reject) => {
     try {
+      console.log('Data to be sent to API:', {
+        Ma,
+      })
       const response = await axios({
         url: '/settings/NhomGia/Xoa',
         method: 'post',
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        data: { Ma, HieuLuc },
+        data: { Ma },
       })
       resolve(response)
     } catch (error) {
@@ -131,27 +132,19 @@ export const DieuChinhGBS = (token, formAdjustPrice) =>
     }
   })
 
-export const InGBS = (token, formPrint, SctBD, SctKT, SoLien) =>
+export const InGBS = (token, formPrint) =>
   new Promise(async (resolve, reject) => {
     try {
       console.log('Data to be sent to API:', {
-        ...formPrint,
-        SoChungTuBatDau: SctBD,
-        SoChungTuketThuc: SctKT,
-        SoLien: SoLien,
+        formPrint,
       })
       const response = await axios({
-        url: '/entries/DuLieuNhomGia/InPhieu',
+        url: '/settings/NhomGia/InBangGia',
         method: 'post',
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        data: {
-          ...formPrint,
-          SoChungTuBatDau: SctBD,
-          SoChungTuketThuc: SctKT,
-          SoLien: SoLien,
-        },
+        data: formPrint,
       })
       resolve(response)
     } catch (error) {

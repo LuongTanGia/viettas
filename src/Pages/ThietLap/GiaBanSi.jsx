@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router-dom'
 import { useSearch } from '../../components_K/myComponents/useSearch'
 
 const { Text } = Typography
-const { IoAddCircleOutline, MdDelete, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill, CgCloseO } = icons
+const { IoAddCircleOutline, MdDelete, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill, CgCloseO, TiPrinter } = icons
 const GBS = () => {
   const navigate = useNavigate()
   const optionContainerRef = useRef(null)
@@ -30,7 +30,7 @@ const GBS = () => {
   const [dataThongTin, setDataThongTin] = useState({})
 
   const [dataRecord, setDataRecord] = useState(null)
-  const [dataDoiTuong, setDataDoiTuong] = useState(null)
+  const [dataHangHoa, setDataHangHoa] = useState(null)
 
   const [actionType, setActionType] = useState('')
   const [dataQuyenHan, setDataQuyenHan] = useState({})
@@ -94,7 +94,7 @@ const GBS = () => {
           console.log('get helper  KH,DT')
           const response = await apis.ListHelperHHGBS(tokenLogin)
           if (response.data && response.data.DataError === 0) {
-            setDataDoiTuong(response.data.DataResults)
+            setDataHangHoa(response.data.DataResults)
             setIsLoadingModal(false)
           } else if (response.data.DataError === -1 || response.data.DataError === -2 || response.data.DataError === -3) {
             toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
@@ -109,7 +109,6 @@ const GBS = () => {
         }
         if (actionType === 'view') {
           console.log('get helper tt')
-
           const responseTT = await apis.ThongTinGBS(tokenLogin, dataRecord.NhomGia)
           if (responseTT.data && responseTT.data.DataError === 0) {
             setDataThongTin(responseTT.data.DataResult)
@@ -431,6 +430,11 @@ const GBS = () => {
     setIsShowModal(true)
   }
 
+  const handlePrint = () => {
+    setActionType('print')
+    setIsShowModal(true)
+  }
+
   const handleSearch = (newSearch) => {
     if (newSearch !== prevSearchValue) {
       setTableLoad(true)
@@ -490,7 +494,7 @@ const GBS = () => {
               <div className="flex items-center gap-x-4 font-bold">
                 <h1 className="text-xl uppercase">Bảng giá bán sỉ</h1>
                 <div>
-                  <BsSearch size={18} className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
+                  <BsSearch size={18} className="hover:text-red-400 cursor-pointer " onClick={() => setIsShowSearch(!isShowSearch)} />
                 </div>
               </div>
               <div className="flex  ">
@@ -529,7 +533,15 @@ const GBS = () => {
                         </div>
                         <div>Xuất excel</div>
                       </button>
-
+                      <button
+                        onClick={handlePrint}
+                        className="flex items-center py-1 px-2 rounded-md border-2 border-purple-500  text-slate-50 text-base bg-purple-500 hover:bg-white hover:text-purple-500 "
+                      >
+                        <div className="pr-1">
+                          <TiPrinter size={20} />
+                        </div>
+                        <div>In phiếu</div>
+                      </button>
                       <button
                         onClick={() => setHideColumns(!hideColumns)}
                         className="flex items-center py-1 px-2 rounded-md border-2 border-red-500  text-slate-50 text-base bg-red-500 hover:bg-white hover:text-red-500 "
@@ -660,7 +672,7 @@ const GBS = () => {
                 actionType={actionType}
                 dataRecord={dataRecord}
                 dataThongTin={dataThongTin}
-                dataDoiTuong={dataDoiTuong}
+                dataHangHoa={dataHangHoa}
                 data={data}
                 isLoadingModal={isLoadingModal}
                 isLoadingEdit={isLoadingEdit}
