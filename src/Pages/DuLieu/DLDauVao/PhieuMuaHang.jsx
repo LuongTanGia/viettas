@@ -94,11 +94,8 @@ const PhieuMuaHang = () => {
     setIsLoadingEdit(true)
     const fetchData = async () => {
       try {
-        console.log('get helper')
-
         const tokenLogin = localStorage.getItem('TKN')
         if (actionType === 'create' || actionType === 'edit') {
-          console.log('get helper  KH,DT')
           const responseKH = await apis.ListHelperKhoHangPMH(tokenLogin)
           if (responseKH.data && responseKH.data.DataError === 0) {
             setDataKhoHang(responseKH.data.DataResults)
@@ -154,7 +151,6 @@ const PhieuMuaHang = () => {
         }
 
         if (actionType === 'edit') {
-          console.log('get helper tt sua')
           const responseTTS = await apis.ThongTinSuaPMH(tokenLogin, dataRecord.SoChungTu)
           if (responseTTS.data && responseTTS.data.DataError === 0) {
             setDataThongTinSua(responseTTS.data.DataResult)
@@ -195,7 +191,6 @@ const PhieuMuaHang = () => {
   useEffect(() => {
     const getKhoanNgay = async () => {
       try {
-        console.log('get Khoảng ngày')
         const tokenLogin = localStorage.getItem('TKN')
         const response = await apis.KhoanNgay(tokenLogin)
 
@@ -225,7 +220,6 @@ const PhieuMuaHang = () => {
   useEffect(() => {
     const getChucNangQuyenHan = async () => {
       try {
-        console.log('đi')
         const tokenLogin = localStorage.getItem('TKN')
         const response = await apis.ChucNangQuyenHan(tokenLogin, 'DuLieu_PMH')
 
@@ -263,8 +257,6 @@ const PhieuMuaHang = () => {
 
   const getDSPMH = async () => {
     try {
-      console.log('đi2')
-
       const tokenLogin = localStorage.getItem('TKN')
 
       const response = await apis.DanhSachPMH(tokenLogin, formKhoanNgay)

@@ -101,7 +101,7 @@ const HMTEdit = ({ close, loadingData, setTargetRow, dataHMT }) => {
                     <Tooltip title={dataHMT?.NguoiTao} color="blue">
                       <input
                         value={dataHMT?.NguoiTao || ''}
-                        className="2xl:w-[20vw] lg:w-[18vw] md:w-[15vw] px-2 rounded resize-none border-[0.125rem] outline-none text-[1rem] truncate"
+                        className="2xl:w-[20vw] lg:w-[18vw] md:w-[15vw] px-2 rounded resize-none border outline-none text-[1rem] truncate"
                         readOnly
                       />
                     </Tooltip>
@@ -112,7 +112,7 @@ const HMTEdit = ({ close, loadingData, setTargetRow, dataHMT }) => {
                       <input
                         value={moment(dataHMT?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
                         type="text"
-                        className="px-2 rounded w-full resize-none border-[0.125rem] outline-none text-[1rem] truncate"
+                        className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
                         readOnly
                       />
                     </Tooltip>
@@ -124,7 +124,7 @@ const HMTEdit = ({ close, loadingData, setTargetRow, dataHMT }) => {
                     <Tooltip title={dataHMT?.NguoiSuaCuoi} color="blue">
                       <input
                         value={dataHMT?.NguoiSuaCuoi || ''}
-                        className="2xl:w-[20vw] lg:w-[18vw] md:w-[15vw] px-2 rounded  resize-none border-[0.125rem] outline-none text-[1rem] truncate"
+                        className="2xl:w-[20vw] lg:w-[18vw] md:w-[15vw] px-2 rounded  resize-none border outline-none text-[1rem] truncate"
                         readOnly
                       />
                     </Tooltip>
@@ -134,7 +134,7 @@ const HMTEdit = ({ close, loadingData, setTargetRow, dataHMT }) => {
                     <Tooltip title={dataHMT?.NgaySuaCuoi ? moment(dataHMT?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : ''} color="blue">
                       <input
                         value={dataHMT?.NgaySuaCuoi ? moment(dataHMT?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                        className="px-2 rounded w-full resize-none border-[0.125rem] outline-none text-[1rem] truncate"
+                        className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
                         readOnly
                       />
                     </Tooltip>

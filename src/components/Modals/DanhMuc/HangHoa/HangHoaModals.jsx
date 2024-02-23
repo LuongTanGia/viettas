@@ -739,6 +739,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
       ),
     },
   ]
+  console.log(lastNumber13Main)
   return (
     <>
       {!isLoading ? (
@@ -761,7 +762,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                       <div className="grid grid-cols-1 xl:grid-cols-2 gap-2 items-center">
                         <div className="flex items-center gap-1 whitespace-nowrap">
                           <label className="required  min-w-[90px] text-sm flex justify-end">Mã hàng</label>
-                          <Input size="small" className="w-full overflow-hidden whitespace-nowrap" required value={dataView?.MaHang || ''} readOnly />
+                          <input type="text" value={dataView?.MaHang || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" readOnly />
                         </div>
                         <div className="flex items-center ml-[110px] xl:ml-0 gap-2">
                           <div className="flex items-center">
@@ -783,36 +784,35 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                       </div>
                       <div className="flex items-center gap-1">
                         <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Tên hàng</label>
-                        <Input size="small" className="w-full overflow-hidden whitespace-nowrap" required value={dataView?.TenHang || ''} readOnly />
+                        <input type="text" value={dataView?.TenHang || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" readOnly />
                       </div>
                       <div className="flex items-center gap-1 whitespace-nowrap  ">
                         <label className="required min-w-[90px] text-sm flex justify-end">Tên nhóm</label>
-                        <Input size="small" className="w-full overflow-hidden whitespace-nowrap" required value={dataView?.TenNhom || ''} readOnly />
+                        <input type="text" value={dataView?.TenNhom || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" readOnly />
                       </div>
                       <div className="grid grid-cols-5 gap-2">
                         <div className="flex items-center gap-1 col-span-2">
                           <label className="required whitespace-nowrap min-w-[90px] text-sm flex justify-end">Đơn vị tính</label>
-                          <Input size="small" className="w-full overflow-hidden whitespace-nowrap" required value={dataView?.DVTKho || ''} readOnly />
+                          <input type="text" value={dataView?.DVTKho || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" readOnly />
                         </div>
                         <div className="flex items-center gap-1 ">
                           <label>x</label>
-                          <Input
-                            size="small"
-                            className="w-full overflow-hidden whitespace-nowrap"
-                            required
+                          <input
+                            type="text"
                             value={formatThapPhan(Number(dataView?.TyLeQuyDoi), dataThongSo?.SOLETYLE) || ''}
+                            className="px-2 w-full resize-none rounded border outline-none text-sm truncate"
                             readOnly
                           />
                         </div>
                         <div className="flex items-center gap-1 col-span-2">
                           <label className="required whitespace-nowrap text-sm">Đơn vị quy đổi</label>
-                          <Input size="small" className="w-full overflow-hidden whitespace-nowrap" required value={dataView?.DVTQuyDoi || ''} readOnly />
+                          <input type="text" value={dataView?.DVTQuyDoi || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" readOnly />
                         </div>
                       </div>
                       <div className="grid grid-cols-3">
                         <div className="flex items-center gap-1 whitespace-nowrap col-span-2">
                           <label className="required min-w-[90px] text-sm flex justify-end">Mã vạch</label>
-                          <Input size="small" className="w-full overflow-hidden whitespace-nowrap" required value={dataView?.MaVach || ''} readOnly />
+                          <input type="text" value={dataView?.MaVach || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" readOnly />
                         </div>
                       </div>
                       <div className="border ml-[95px] rounded flex flex-col items-end gap-2">
@@ -834,22 +834,11 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                       </div>
                       <div className="flex items-center gap-1">
                         <label className="whitespace-nowrap min-w-[90px] text-sm flex justify-end">Diễn giải hàng</label>
-                        <Input
-                          size="small"
-                          className="w-full overflow-hidden whitespace-nowrap"
-                          required
-                          value={dataView?.DienGiaiHangHoa == null ? 'Trống' : dataView?.DienGiaiHangHoa || ''}
-                          readOnly
-                        />
+                        <input type="text" value={dataView?.DienGiaiHangHoa || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" readOnly />
                       </div>
                       <div className="flex items-center gap-1 whitespace-nowrap">
                         <label className="min-w-[90px] text-sm flex justify-end">Ghi chú</label>
-                        <textarea
-                          type="text"
-                          value={dataView?.GhiChu == null ? 'Trống' : dataView?.GhiChu || ''}
-                          className="px-2 rounded w-full resize-none border-[0.125rem] outline-none text-[1rem] truncate"
-                          readOnly
-                        />
+                        <textarea type="text" value={dataView?.GhiChu || ''} className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate" readOnly />
                       </div>
                       <div className="grid grid-cols-1 mt-1 gap-2 px-2 py-2.5 rounded border-black-200 ml-[95px] relative border-[0.125rem]">
                         <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
@@ -1157,22 +1146,28 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                               required
                               size="small"
                               className={`${errors.MaVach ? 'border-red-500' : ''} w-full overflow-hidden whitespace-nowrap`}
-                              value={hangHoaForm?.MaVach ? `${hangHoaForm?.MaVach}${lastNumber13Main}` : ''}
+                              value={hangHoaForm?.MaVach?.length == 12 ? `${hangHoaForm?.MaVach}${lastNumber13Main}` : hangHoaForm?.MaVach || ''}
                               maxLength={12}
                               allowClear={{
                                 clearIcon: <CloseSquareFilled />,
                               }}
-                              onChange={(e) => {
-                                const inputValue = e.target.value
-                                const numericValue = inputValue.replace(/[^0-9]/g, '')
-                                if (numericValue.length <= 12) {
-                                  if (numericValue.length == 12) {
-                                    getMaVach13(numericValue).then((getLast) => {
+                              onBlur={() => {
+                                let timerId
+                                clearTimeout(timerId)
+                                timerId = setTimeout(() => {
+                                  if (hangHoaForm?.MaVach?.length == 12) {
+                                    getMaVach13(hangHoaForm.MaVach).then((getLast) => {
                                       setLastNumber13Main(getLast)
                                     })
                                   } else {
                                     setLastNumber13Main('')
                                   }
+                                }, 300)
+                              }}
+                              onChange={(e) => {
+                                const inputValue = e.target.value
+                                const numericValue = inputValue.replace(/[^0-9]/g, '')
+                                if (numericValue.length <= 12) {
                                   setHangHoaForm({
                                     ...hangHoaForm,
                                     MaVach: numericValue,
@@ -1282,13 +1277,13 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                               <label className=" text-sm">Người tạo</label>
                               <input
                                 type="text"
-                                className="2xl:w-[20vw] xl:w-[18vw] lg:w-[16vw] md:w-[10vw] px-2 rounded  resize-none border-[0.125rem] outline-none text-[1rem] truncate"
-                                disabled
+                                className="2xl:w-[20vw] xl:w-[18vw] lg:w-[16vw] md:w-[10vw] px-2 rounded  resize-none border outline-none text-[1rem] truncate"
+                                readOnly
                               />
                             </div>
                             <div className="flex items-center gap-1.5 whitespace-nowrap">
                               <label className=" text-sm">Lúc</label>
-                              <input type="text" className="px-2 w-full resize-none rounded border outline-none text-[1rem]" disabled />
+                              <input type="text" className="px-2 w-full resize-none rounded border outline-none text-[1rem]" readOnly />
                             </div>
                           </div>
                           <div className="flex gap-2">
@@ -1296,13 +1291,13 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                               <label className=" text-sm">Người sửa</label>
                               <input
                                 type="text"
-                                className="2xl:w-[20vw] xl:w-[18vw] lg:w-[16vw] md:w-[10vw] px-2 rounded  resize-none border-[0.125rem] outline-none text-[1rem] truncate "
-                                disabled
+                                className="2xl:w-[20vw] xl:w-[18vw] lg:w-[16vw] md:w-[10vw] px-2 rounded  resize-none border outline-none text-[1rem] truncate "
+                                readOnly
                               />
                             </div>
                             <div className="flex items-center gap-1.5 whitespace-nowrap">
                               <label className=" text-sm">Lúc</label>
-                              <input type="text" className="px-2 w-full resize-none rounded border outline-none text-[1rem]" disabled />
+                              <input type="text" className="px-2 w-full resize-none rounded border outline-none text-[1rem]" readOnly />
                             </div>
                           </div>
                         </div>
@@ -1622,22 +1617,28 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                               required
                               size="small"
                               className={`${errors.MaVach ? 'border-red-500' : ''} w-full overflow-hidden whitespace-nowrap`}
-                              value={hangHoaForm?.MaVach ? `${hangHoaForm?.MaVach}${lastNumber13Main}` : ''}
+                              value={hangHoaForm?.MaVach?.length == 12 ? `${hangHoaForm?.MaVach}${lastNumber13Main}` : hangHoaForm?.MaVach || ''}
                               maxLength={12}
                               allowClear={{
                                 clearIcon: <CloseSquareFilled />,
                               }}
-                              onChange={(e) => {
-                                const inputValue = e.target.value
-                                const numericValue = inputValue.replace(/[^0-9]/g, '')
-                                if (numericValue.length <= 12) {
-                                  if (numericValue.length == 12) {
-                                    getMaVach13(numericValue).then((getLast) => {
+                              onBlur={() => {
+                                let timerId
+                                clearTimeout(timerId)
+                                timerId = setTimeout(() => {
+                                  if (hangHoaForm?.MaVach?.length == 12) {
+                                    getMaVach13(hangHoaForm.MaVach).then((getLast) => {
                                       setLastNumber13Main(getLast)
                                     })
                                   } else {
                                     setLastNumber13Main('')
                                   }
+                                }, 300)
+                              }}
+                              onChange={(e) => {
+                                const inputValue = e.target.value
+                                const numericValue = inputValue.replace(/[^0-9]/g, '')
+                                if (numericValue.length <= 12) {
                                   setHangHoaForm({
                                     ...hangHoaForm,
                                     MaVach: numericValue,
@@ -1751,9 +1752,9 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                               <Tooltip title={dataView?.NguoiTao} color="blue">
                                 <input
                                   type="text"
-                                  className="2xl:w-[20vw] xl:w-[18vw] lg:w-[16vw] md:w-[10vw] px-2 rounded resize-none border-[0.125rem] outline-none text-[1rem] truncate"
+                                  className="2xl:w-[20vw] xl:w-[18vw] lg:w-[16vw] md:w-[10vw] px-2 rounded resize-none border outline-none text-[1rem] truncate"
                                   value={dataView.NguoiTao || ''}
-                                  disabled
+                                  readOnly
                                 />
                               </Tooltip>
                             </div>
@@ -1764,7 +1765,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                                   type="text"
                                   className="px-2 w-full resize-none border rounded outline-none text-[1rem] truncate"
                                   value={moment(dataView?.NgayTao).format('DD/MM/YYYY HH:mm:ss ') || ''}
-                                  disabled
+                                  readOnly
                                 />
                               </Tooltip>
                             </div>
@@ -1775,9 +1776,9 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                               <Tooltip title={dataView?.NguoiSuaCuoi} color="blue">
                                 <input
                                   type="text"
-                                  className="2xl:w-[20vw] xl:w-[18vw] lg:w-[16vw] md:w-[10vw] px-2 rounded  resize-none border-[0.125rem] outline-none text-[1rem] truncate"
+                                  className="2xl:w-[20vw] xl:w-[18vw] lg:w-[16vw] md:w-[10vw] px-2 rounded  resize-none border outline-none text-[1rem] truncate"
                                   value={dataView.NguoiSuaCuoi || ''}
-                                  disabled
+                                  readOnly
                                 />
                               </Tooltip>
                             </div>
@@ -1788,7 +1789,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                                   type="text"
                                   className="px-2 w-full resize-none border rounded outline-none text-[1rem] truncate"
                                   value={dataView?.NgaySuaCuoi ? moment(dataView?.NgaySuaCuoi).format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                                  disabled
+                                  readOnly
                                 />
                               </Tooltip>
                             </div>

@@ -175,21 +175,21 @@ const KHOCreate = ({ close, loadingData, setTargetRow, isKHO, setIsMaKHO }) => {
                 <div className="flex gap-1">
                   <div className="flex items-center gap-1.5 whitespace-nowrap">
                     <label className=" text-sm">Người tạo</label>
-                    <input className="2xl:w-[20vw] lg:w-[18vw] md:w-[15vw] px-2 rounded resize-none border-[0.125rem] outline-none text-[1rem] truncate" readOnly />
+                    <input className="2xl:w-[20vw] lg:w-[18vw] md:w-[15vw] px-2 rounded resize-none border outline-none text-[1rem] truncate" readOnly />
                   </div>
                   <div className="flex items-center gap-1 whitespace-nowrap">
                     <label className=" text-sm">Lúc</label>
-                    <input type="text" className="px-2 rounded w-full resize-none border-[0.125rem] outline-none text-[1rem] truncate" readOnly />
+                    <input type="text" className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate" readOnly />
                   </div>
                 </div>
                 <div className="flex gap-1">
                   <div className="flex items-center gap-1 whitespace-nowrap">
                     <label className=" text-sm">Người sửa</label>
-                    <input className="2xl:w-[20vw] lg:w-[18vw] md:w-[15vw] px-2 rounded  resize-none border-[0.125rem] outline-none text-[1rem] truncate" readOnly />
+                    <input className="2xl:w-[20vw] lg:w-[18vw] md:w-[15vw] px-2 rounded  resize-none border outline-none text-[1rem] truncate" readOnly />
                   </div>
                   <div className="flex items-center gap-1 whitespace-nowrap">
                     <label className=" text-sm">Lúc</label>
-                    <input className="px-2 rounded w-full resize-none border-[0.125rem] outline-none text-[1rem] truncate" readOnly />
+                    <input className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate" readOnly />
                   </div>
                 </div>
               </div>

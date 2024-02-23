@@ -120,7 +120,7 @@ const DTView = ({ close, dataDT }) => {
                         <Tooltip title={dataDTView?.NguoiTao} color="blue">
                           <input
                             value={dataDTView?.NguoiTao || ''}
-                            className="2xl:w-[20vw] lg:w-[18vw] md:w-[15vw] px-2 rounded resize-none border-[0.125rem] outline-none text-[1rem] truncate"
+                            className="2xl:w-[20vw] lg:w-[18vw] md:w-[15vw] px-2 rounded resize-none border outline-none text-[1rem] truncate"
                             readOnly
                           />
                         </Tooltip>
@@ -131,7 +131,7 @@ const DTView = ({ close, dataDT }) => {
                           <input
                             type="text"
                             value={moment(dataDTView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
-                            className="px-2 rounded w-full resize-none border-[0.125rem] outline-none text-[1rem] truncate"
+                            className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
                             readOnly
                           />
                         </Tooltip>
@@ -143,7 +143,7 @@ const DTView = ({ close, dataDT }) => {
                         <Tooltip title={dataDTView?.NguoiSuaCuoi} color="blue">
                           <input
                             value={dataDTView?.NguoiSuaCuoi || ''}
-                            className="2xl:w-[20vw] lg:w-[18vw] md:w-[15vw] px-2 rounded  resize-none border-[0.125rem] outline-none text-[1rem] truncate"
+                            className="2xl:w-[20vw] lg:w-[18vw] md:w-[15vw] px-2 rounded  resize-none border outline-none text-[1rem] truncate"
                             readOnly
                           />
                         </Tooltip>
@@ -153,7 +153,7 @@ const DTView = ({ close, dataDT }) => {
                         <Tooltip title={dataDTView?.NgaySuaCuoi ? moment(dataDTView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : ''} color="blue">
                           <input
                             value={dataDTView?.NgaySuaCuoi ? moment(dataDTView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                            className="px-2 rounded w-full resize-none border-[0.125rem] outline-none text-[1rem] truncate"
+                            className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
                             readOnly
                           />
                         </Tooltip>

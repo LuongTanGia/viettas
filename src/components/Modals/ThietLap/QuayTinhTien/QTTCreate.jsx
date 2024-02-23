@@ -98,7 +98,6 @@ const QTTCreate = ({ close, loadingData, setTargetRow, dataQTT }) => {
     setIsLoading(false)
   }
   const handleCreate = async (isSave = true) => {
-    console.log(QTTForm)
     if (!QTTForm?.Quay || !QTTForm?.TenMayTinh?.trim() || !QTTForm?.SQLServer?.trim() || !QTTForm?.SQLUser?.trim() || isMaKHO ? null : !QTTForm?.MaKho?.trim()) {
       setErrors({
         Quay: QTTForm?.Quay !== null ? null : 'Quầy không được trống',
@@ -112,10 +111,9 @@ const QTTCreate = ({ close, loadingData, setTargetRow, dataQTT }) => {
     try {
       const response = await categoryAPI.ThemQuayTinhTien({ ...QTTForm, MaKho: isMaKHO ? isMaKHO : QTTForm.MaKho }, TokenAccess)
       if (response.data.DataError == 0) {
-        isSave
-          ? (setQTTForm({ Quay: QTTForm.Quay + 1 }), setIsMaKHO([]), toast.success('Tạo thành công', { autoClose: 1000 }))
-          : (close(), toast.success('Tạo thành công', { autoClose: 1000 }))
+        isSave ? (setQTTForm({ Quay: QTTForm.Quay + 1 }), setIsMaKHO([])) : close()
         loadingData()
+        toast.success('Tạo thành công', { autoClose: 1000 })
         setTargetRow(QTTForm?.Quay)
       } else {
         toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
