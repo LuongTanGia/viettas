@@ -92,11 +92,11 @@ export const ListHelperNGGKH = (token) =>
     }
   })
 
-export const ThemGKH = (token, formGKH) =>
+export const ThemGKH = (token, formCreate) =>
   new Promise(async (resolve, reject) => {
     try {
       console.log('Data to be sent to API:', {
-        formGKH,
+        formCreate,
       })
       const response = await axios({
         url: '/settings/NhomGiaDoiTuong/Them',
@@ -104,7 +104,7 @@ export const ThemGKH = (token, formGKH) =>
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        data: formGKH,
+        data: formCreate,
       })
       resolve(response)
     } catch (error) {

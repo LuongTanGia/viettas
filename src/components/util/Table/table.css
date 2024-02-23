@@ -55,6 +55,10 @@
   max-height: 400px;
   min-height: 400px;
 }
+.h340 .ant-table-container .ant-table-body {
+  max-height: 340px;
+  min-height: 340px;
+}
 .h310 .ant-table-container .ant-table-body {
   max-height: 310px;
   min-height: 310px;

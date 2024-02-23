@@ -238,6 +238,10 @@ input.ant-input.ant-input-sm {
 }
 
 /* custom table antd */
+.table_view_GBS .ant-table-body {
+  min-height: 340px;
+  max-height: 340px;
+}
 
 .table_view .ant-table-body {
   min-height: 276px;

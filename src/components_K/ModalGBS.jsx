@@ -2,41 +2,40 @@
 
 // import ActionButton from '../components/util/Button/ActionButton'
 // import { Checkbox, Tooltip } from 'antd'
-import { Checkbox, InputNumber, Select, Spin, Table, Tooltip } from 'antd'
+import { Checkbox, FloatButton, InputNumber, Select, Spin, Table, Tooltip, Typography } from 'antd'
 import dayjs from 'dayjs'
 import logo from '../assets/VTS-iSale.ico'
 import * as apis from '../apis'
-import { RETOKEN, formatPrice, formatQuantity } from '../action/Actions'
+import icons from '../untils/icons'
+import { RETOKEN, base64ToPDF, formatPrice, formatQuantity } from '../action/Actions'
 import { DateField } from '@mui/x-date-pickers'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import ActionButton from '../components/util/Button/ActionButton'
 import { toast } from 'react-toastify'
+import TableEdit from '../components/util/Table/EditTable'
+import { nameColumsGBS } from '../components/util/Table/ColumnName'
 import moment from 'moment'
-
+import ModalHHGBS from './ModalHHGBS'
+const { Text } = Typography
 const { Option } = Select
+const { IoMdAddCircle } = icons
+const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dataThongSo, dataThongTin, dataHangHoa, dataNhomGia, loading, isLoadingModal }) => {
+  const [isShowModalHH, setIsShowModalHH] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [selectedRowData, setSelectedRowData] = useState([])
 
-const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dataThongSo, dataThongTin, dataHangHoa, dataDoiTuong, dataNhomGia, loading, isLoadingModal }) => {
   const [errors, setErrors] = useState({
-    DonGia: '',
+    NhomGia: '',
+    TenNhomGia: '',
   })
   const ngayHieuLuc = dayjs().format('YYYY-MM-DD')
   const defaultFormCreate = {
-    MaHang: '',
-    HieuLucTu: ngayHieuLuc,
-    DonGia: 0,
-    CoThue: false,
-    TyLeThue: 0,
-  }
-
-  const defaultFormCreateGKH = {
-    MaDoiTuong: '',
-    HieuLucTu: ngayHieuLuc,
     NhomGia: '',
+    TenNhomGia: '',
     GhiChu: '',
+    NhomGia_CTs: [],
   }
-
-  const [formCreate, setFormCreate] = useState(typePage === 'GBL' ? defaultFormCreate : defaultFormCreateGKH)
-
+  const [formCreate, setFormCreate] = useState(defaultFormCreate)
   const defaultFormEdit = {
     Ma: dataRecord?.MaHang,
     HieuLuc: dataRecord?.HieuLucTu,
@@ -48,16 +47,7 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
       TyLeThue: dataRecord?.TyLeThue,
     },
   }
-  const defaultFormEditGKH = {
-    Ma: dataRecord?.MaDoiTuong,
-    HieuLuc: dataRecord?.HieuLucTu,
-    Data: {
-      NhomGia: dataRecord?.NhomGia,
-      GhiChu: dataRecord?.GhiChu,
-    },
-  }
-  const [formEdit, setFormEdit] = useState(typePage === 'GBL' ? defaultFormEdit : defaultFormEditGKH)
-
+  const [formEdit, setFormEdit] = useState(defaultFormEdit)
   const [formAdjustPrice, setFormAdjustPrice] = useState({
     GiaTriTinh: 'OLDVALUE',
     ToanTu: '',
@@ -66,6 +56,36 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
     HieuLucTu: ngayHieuLuc,
     DanhSachMa: [],
   })
+
+  const [formPrint, setFormPrint] = useState({
+    CodeValue1From: data[0].NhomGia,
+    CodeValue1To: data[0].NhomGia,
+  })
+
+  const isAdd = useMemo(() => selectedRowData.map((item) => item.MaHang).includes('Chọn mã hàng'), [selectedRowData])
+
+  //  show modal HH = F9
+  const handleKeyDown = (event) => {
+    if (event.key === 'F9') {
+      setIsShowModalHH(true)
+    }
+  }
+
+  useEffect(() => {
+    if (actionType === 'create' || actionType === 'edit') {
+      window.addEventListener('keydown', handleKeyDown)
+
+      return () => {
+        window.removeEventListener('keydown', handleKeyDown)
+      }
+    }
+  }, [])
+  // get dsHH
+  useEffect(() => {
+    if (actionType === 'create' || actionType === 'edit') {
+      // handleAddInList()
+    }
+  }, [])
 
   //  set value default
   useEffect(() => {
@@ -81,26 +101,6 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
       setFormAdjustPrice({ ...formAdjustPrice, ToanTu: '=' })
     }
   }, [formAdjustPrice.GiaTriTinh])
-
-  // set value default
-  useEffect(() => {
-    if (typePage === 'GBL') {
-      if (dataHangHoa && actionType === 'create') {
-        setFormCreate({ ...formCreate, MaHang: dataHangHoa[0]?.MaHang })
-      }
-      if (dataHangHoa && actionType === 'edit') {
-        setFormEdit({ ...formEdit, MaHang: dataRecord.MaHang })
-      }
-    }
-  }, [dataHangHoa, dataRecord])
-
-  useEffect(() => {
-    if (typePage === 'GKH') {
-      if (dataDoiTuong && dataNhomGia && actionType === 'create') {
-        setFormCreate({ ...formCreate, MaDoiTuong: dataDoiTuong[0]?.Ma, NhomGia: dataNhomGia[0]?.Ma })
-      }
-    }
-  }, [dataDoiTuong, dataNhomGia, dataRecord])
 
   const columns = [
     {
@@ -131,7 +131,6 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
       width: 250,
       align: 'center',
       showSorterTooltip: false,
-
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       render: (text) => (
         <div className="text-start truncate">
@@ -197,50 +196,61 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
       ),
     },
   ]
+  const columnName = ['STT', 'MaHang', 'TenHang', 'DVT', 'DonGia', 'CoThue', 'TyLeThue']
+
+  const handleAddRow = (newRow) => {
+    let dataNewRow
+    setSelectedRowData((prevData) => {
+      dataNewRow = [...prevData, newRow]
+
+      return dataNewRow
+    })
+
+    // setFormEdit((prev) => ({ ...prev, DataDetails: dataNewRow }))
+  }
+
+  const handleAddEmptyRow = () => {
+    if (selectedRowData.map((item) => item.MaHang).includes('Chọn mã hàng')) return
+
+    let emptyRow = {
+      MaHang: 'Chọn mã hàng',
+      TenHang: 'Chọn tên hàng',
+      DVT: '',
+      DonGia: 0,
+      CoThue: false,
+      TyLeThue: 0,
+      // key: selectedRowData.length + dataHangHoa.length,
+    }
+
+    setSelectedRowData((prevData) => [...prevData, emptyRow])
+    setFormEdit((prev) => ({ ...prev, DataDetails: emptyRow }))
+  }
 
   const handleCreateAndClose = async () => {
-    if (typePage === 'GBL') {
-      if (formCreate?.DonGia === null || formCreate?.DonGia === 0) {
-        setErrors({
-          ...errors,
-          DonGia: formCreate?.DonGia === null ? null : formCreate?.DonGia === 0 && 0,
-        })
-        return
-      }
+    if (!formCreate?.NhomGia?.trim() || !formCreate?.TenNhomGia?.trim()) {
+      setErrors({
+        NhomGia: formCreate?.NhomGia?.trim() ? '' : 'Mã bảng giá không được để trống',
+        TenNhomGia: formCreate?.TenNhomGia?.trim() ? '' : 'Tên bảng giá không được để trống',
+      })
+      return
     }
 
     try {
       const tokenLogin = localStorage.getItem('TKN')
 
-      if (typePage === 'GBL') {
-        const response = await apis.ThemGBL(tokenLogin, formCreate)
-        if (response.data && response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription)
-          loading()
-          close()
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleCreateAndClose()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
-      }
-      if (typePage === 'GKH') {
-        const response = await apis.ThemGKH(tokenLogin, formCreate)
-        if (response.data && response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription)
-          loading()
-          close()
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleCreateAndClose()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
+      const response = await apis.ThemGBS(tokenLogin, { ...formCreate, NhomGia_CTs: selectedRowData })
+
+      if (response.data && response.data.DataError === 0) {
+        toast.success(response.data.DataErrorDescription)
+        loading()
+        close()
+      } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        await RETOKEN()
+        handleCreateAndClose()
+      } else {
+        toast.error(response.data.DataErrorDescription)
       }
     } catch (error) {
       console.error('Error while saving data:', error)
@@ -339,7 +349,7 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
         toast.success(response.data.DataErrorDescription)
         loading()
       } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-        toast.warning(response.data.DataErrorDescription)
+        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         handleDelete()
@@ -353,25 +363,22 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
     }
   }
 
-  const handlePrint = async (dataRecord) => {
+  const handlePrint = async () => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
-      if (typePage === 'GBL') {
-        const response = await apis.XoaGsssBL(tokenLogin, dataRecord.MaHang, dataRecord.HieuLucTu)
-        if (response.data && response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription)
-          loading()
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(response.data.DataErrorDescription)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleDelete()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
-      }
 
-      close()
+      const response = await apis.InGBS(tokenLogin, formPrint)
+      // Kiểm tra call api thành công
+      if (response.data && response.data.DataError === 0) {
+        base64ToPDF(response.data.DataResults)
+      } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+        toast.warning(response.data.DataErrorDescription)
+      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        await RETOKEN()
+        handlePrint()
+      } else {
+        toast.error(response.data.DataErrorDescription)
+      }
     } catch (error) {
       console.error('Error while saving data:', error)
     }
@@ -423,6 +430,27 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
       DanhSachMa: filteredMaHang,
     })
   }
+  const handleChangLoading = (newLoading) => {
+    setIsLoading(newLoading)
+  }
+  const handleEditData = (data) => {
+    setSelectedRowData(data)
+  }
+
+  const handleFromChange = (value) => {
+    setFormPrint({ ...formPrint, CodeValue1From: value })
+
+    if (value > formPrint.CodeValue1To) {
+      setFormPrint({ CodeValue1From: value, CodeValue1To: value })
+    }
+  }
+  const handleToChange = (value) => {
+    setFormPrint({ ...formPrint, CodeValue1To: value })
+
+    if (value < formPrint.CodeValue1From) {
+      setFormPrint({ CodeValue1From: value, CodeValue1To: value })
+    }
+  }
 
   return (
     <>
@@ -451,7 +479,7 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
           )}
 
           {actionType === 'print' && (
-            <div className="h-[300px]">
+            <div className="h-[140px]">
               <div className="flex gap-2">
                 <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
                 <label className="text-blue-700 font-semibold uppercase pb-1">In - {namePage} </label>
@@ -459,103 +487,27 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
 
               <div className="border-2 my-1 ">
                 <div className="p-4 flex flex-col gap-3 ">
-                  {/* DatePicker */}
-                  <div className=" flex  items-center gap-2 ">
-                    <label htmlFor="" className="w-[90px] text-end">
-                      Ngày
-                    </label>
-                    <DateField
-                      className="DatePicker_PMH max-w-[154px]"
-                      format="DD/MM/YYYY"
-                      // maxDate={dayjs(formPrint.NgayKetThuc)}
-                      // value={dayjs(formPrint.NgayBatDau)}
-                      // onChange={(newDate) => {
-                      //   setFormPrint({
-                      //     ...formPrint,
-                      //     NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
-                      //   })
-                      // }}
-                      // onBlur={() => {
-                      //   handleStartDateChange(formPrint.NgayBatDau)
-                      // }}
-                      // onKeyDown={(e) => {
-                      //   if (e.key === 'Enter') {
-                      //     handleStartDateChange(formPrint.NgayBatDau)
-                      //   }
-                      // }}
-                      sx={{
-                        '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                        '& .MuiButtonBase-root': {
-                          padding: '4px',
-                        },
-                        '& .MuiSvgIcon-root': {
-                          width: '18px',
-                          height: '18px',
-                        },
-                      }}
-                    />
-                  </div>
                   <div className="flex  ">
                     <div className="flex gap-2 ">
-                      <label className="w-[90px] text-end">Nhóm</label>
-                      <Select size="small" showSearch optionFilterProp="children" className="w-[170px]">
-                        {/* {newData?.map((item) => (
-                            <Option key={item.SoChungTu} value={item.SoChungTu}>
-                              {item.SoChungTu}
-                            </Option>
-                          ))} */}
+                      <label className="required w-[70px] text-end">Bảng giá</label>
+                      <Select size="small" showSearch optionFilterProp="children" className="w-[200px]" value={formPrint.CodeValue1From} onChange={handleFromChange}>
+                        {data?.map((item) => (
+                          <Option key={item.NhomGia} value={item.NhomGia}>
+                            {item.NhomGia}
+                          </Option>
+                        ))}
                       </Select>
                     </div>
                     <div className="flex gap-2">
-                      <label className="w-[50px]  text-end">Đến</label>
-                      <Select size="small" showSearch optionFilterProp="children" className="w-[170px]">
-                        {/* {newData?.map((item) => (
-                            <Option key={item.SoChungTu} value={item.SoChungTu}>
-                              {item.SoChungTu}
-                            </Option>
-                          ))} */}
+                      <label className="required w-[50px]  text-end">Đến</label>
+                      <Select size="small" showSearch optionFilterProp="children" className="w-[200px]" value={formPrint.CodeValue1To} onChange={handleToChange}>
+                        {data?.map((item) => (
+                          <Option key={item.NhomGia} value={item.NhomGia}>
+                            {item.NhomGia}
+                          </Option>
+                        ))}
                       </Select>
                     </div>
-                  </div>
-                  <div className="">
-                    <Select size="small" showSearch optionFilterProp="children" className="w-full">
-                      {/* {newData?.map((item) => (
-                            <Option key={item.SoChungTu} value={item.SoChungTu}>
-                              {item.SoChungTu}
-                            </Option>
-                          ))} */}
-                    </Select>
-                  </div>
-                  <div className="flex  ">
-                    <div className="flex gap-2 ">
-                      <label className="w-[90px] text-end">Hàng hóa</label>
-                      <Select size="small" showSearch optionFilterProp="children" className="w-[170px]">
-                        {/* {newData?.map((item) => (
-                            <Option key={item.SoChungTu} value={item.SoChungTu}>
-                              {item.SoChungTu}
-                            </Option>
-                          ))} */}
-                      </Select>
-                    </div>
-                    <div className="flex gap-2">
-                      <label className="w-[50px]  text-end">Đến</label>
-                      <Select size="small" showSearch optionFilterProp="children" className="w-[170px]">
-                        {/* {newData?.map((item) => (
-                            <Option key={item.SoChungTu} value={item.SoChungTu}>
-                              {item.SoChungTu}
-                            </Option>
-                          ))} */}
-                      </Select>
-                    </div>
-                  </div>
-                  <div className="">
-                    <Select size="small" showSearch optionFilterProp="children" className="w-full">
-                      {/* {newData?.map((item) => (
-                            <Option key={item.SoChungTu} value={item.SoChungTu}>
-                              {item.SoChungTu}
-                            </Option>
-                          ))} */}
-                    </Select>
                   </div>
                 </div>
               </div>
@@ -748,32 +700,18 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
                 <div className="border w-full h-[90%] rounded-sm text-sm">
                   <div className="flex  md:gap-0 lg:gap-1 pl-1">
                     {/* thong tin phieu */}
-                    <div className="w-[62%]">
-                      <div className="flex p-1  items-center">
-                        <label className="md:w-[107px] lg:w-[110px] pr-1">Mã B.Giá</label>
+                    <div className="w-[62%]  pt-3">
+                      <div className="flex p-1 gap-2 ">
+                        <label className="md:w-[107px] lg:w-[110px]  text-end required">Mã bảng giá</label>
                         <input disabled type="text" className="w-full border border-gray-300 outline-none  px-2 rounded-[4px] h-[24px]" value={dataThongTin?.NhomGia} />
                       </div>
-                      <div className="p-1 flex justify-between items-center">
-                        <label form="doituong" className="w-[86px]">
-                          Đối tượng
-                        </label>
-                        <Select
-                          disabled
-                          showSearch
-                          size="small"
-                          optionFilterProp="children"
-                          style={{ width: '100%' }}
-                          value={`${dataThongTin.MaDoiTuong}- ${dataThongTin.TenDoiTuong}`}
-                          readOnly
-                        ></Select>
+                      <div className="flex p-1 gap-2 ">
+                        <label className="md:w-[107px] lg:w-[110px]  text-end required">Tên bảng giá</label>
+                        <input disabled type="text" className="w-full border border-gray-300 outline-none  px-2 rounded-[4px] h-[24px]" value={dataThongTin?.TenNhomGia} />
                       </div>
-                      <div className="flex items-center justify-between p-1">
-                        <label className="w-[86px]">Tên</label>
-                        <input disabled type="text" className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" value={dataThongTin?.TenDoiTuong} />
-                      </div>
-                      <div className="flex items-center justify-between p-1">
-                        <label className="w-[86px]">Địa chỉ</label>
-                        <input disabled type="text" className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" value={dataThongTin?.DiaChi} />
+                      <div className="flex p-1 gap-2 ">
+                        <label className="md:w-[107px] lg:w-[110px]  text-end">Ghi chú</label>
+                        <input disabled type="text" className="w-full border border-gray-300 outline-none  px-2 rounded-[4px] h-[24px]" value={dataThongTin?.GhiChu} />
                       </div>
                     </div>
 
@@ -842,37 +780,64 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
                       </div>
                     </div>
                   </div>
-                  {/* kho and ghi chu */}
-                  <div className="flex gap-3 pl-1 lg:pr-[6px] items-center  w-full">
-                    <div className="p-1 flex  items-center md:w-[35%] lg:w-[20%]">
-                      <label form="khohang" className="md:w-[104px] lg:w-[110px] ">
-                        Kho hàng
-                      </label>
-                      <select readOnly className="  border w-full  bg-[#fafafa] rounded-[4px] h-[24px]">
-                        <option value="ThongTinKho">
-                          {dataThongTin?.MaKho} - {dataThongTin?.TenKho}
-                        </option>
-                      </select>
-                    </div>
-                    <div className="flex items-center p-1 md:w-[65%] lg:w-[80%]">
-                      <label className="w-[70px]">Ghi chú</label>
-                      <input disabled type="are" className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" value={dataThongTin?.GhiChu} />
-                    </div>
-                  </div>
+
                   {/* table */}
-                  <div className="pt-4">
+                  <div className="">
                     <Table
                       loading={loading}
-                      className="table_view"
+                      className="table_view_GBS "
                       dataSource={dataThongTin?.NhomGia_CTs}
                       columns={columns}
                       size="small"
                       scroll={{
                         x: 1000,
-                        y: 220,
+                        y: 340,
                       }}
                       bordered
                       pagination={false}
+                      // Bảng Tổng
+
+                      summary={
+                        dataThongTin?.NhomGia_CTs === undefined
+                          ? null
+                          : () => {
+                              return (
+                                <Table.Summary fixed="bottom">
+                                  <Table.Summary.Row>
+                                    <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"> {dataThongTin?.NhomGia_CTs?.length}</Table.Summary.Cell>
+                                    {columns
+                                      .filter((column) => column.render)
+                                      .map((column) => {
+                                        const isNumericColumn = typeof dataThongTin?.NhomGia_CTs[0]?.[column.dataIndex] === 'number'
+                                        return (
+                                          <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                                            {column.dataIndex === 'DonGia' ? (
+                                              <Text strong>
+                                                {Number(dataThongTin?.NhomGia_CTs.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                                  minimumFractionDigits: dataThongSo?.SOLESOTIEN,
+                                                  maximumFractionDigits: dataThongSo?.SOLESOTIEN,
+                                                })}
+                                              </Text>
+                                            ) : column.dataIndex === 'TyLeThue' ? (
+                                              <Text strong>
+                                                {Number(dataThongTin?.NhomGia_CTs.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                                  minimumFractionDigits: dataThongSo?.SOLETYLE,
+                                                  maximumFractionDigits: dataThongSo?.SOLETYLE,
+                                                })}
+                                              </Text>
+                                            ) : column.dataIndex === 'CoThue' ? (
+                                              <Text className="text-center" strong>
+                                                {Object.values(data).filter((value) => value.CoThue).length}
+                                              </Text>
+                                            ) : null}
+                                          </Table.Summary.Cell>
+                                        )
+                                      })}
+                                  </Table.Summary.Row>
+                                </Table.Summary>
+                              )
+                            }
+                      }
                     ></Table>
                   </div>
                 </div>
@@ -889,246 +854,135 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
             </div>
           )}
           {actionType === 'create' && (
-            <div className={`w-[700px] ${typePage === 'GBL' ? 'h-[260px]' : 'h-[300px]'}`}>
+            <div className=" w-[90vw] h-[600px] ">
               <div className="flex gap-2">
                 <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
-                <label className="text-blue-700 font-semibold uppercase pb-1">Thêm - {namePage}</label>
+                <label className="text-blue-700 font-semibold uppercase pb-1">Thêm - {namePage ? namePage : 'Phiếu ?'}</label>
               </div>
-              <div className="border w-full h-[78%] rounded-[4px]-sm text-sm">
-                <div className="flex flex-col px-2 ">
-                  <div className=" py-2 px-2 gap-2  grid grid-cols-1">
-                    <div className="flex flex-col gap-2">
-                      {typePage === 'GBL' && (
-                        <>
-                          <div className="flex items-center gap-1">
-                            <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Hàng hóa</label>
-                            <Select
-                              className="w-full truncate"
-                              showSearch
-                              size="small"
-                              optionFilterProp="children"
-                              onChange={(value) =>
-                                setFormCreate({
-                                  ...formCreate,
-                                  MaHang: value,
-                                })
-                              }
-                              value={formCreate.MaHang}
-                            >
-                              {dataHangHoa?.map((item) => (
-                                <Option key={item.MaHang} value={item.MaHang}>
-                                  {item.MaHang}- {item.TenHang} ({item.DVT})
-                                </Option>
-                              ))}
-                            </Select>
-                          </div>
-                          <div className="grid grid-cols-2  gap-2 items-center">
-                            <div className="flex items-center gap-1 whitespace-nowrap">
-                              <label className="required  min-w-[90px] text-sm flex justify-end">Kể từ ngày</label>
-                              <DateField
-                                className="DatePicker_PMH  max-w-[110px]"
-                                format="DD/MM/YYYY"
-                                defaultValue={dayjs()}
-                                onChange={(newDate) => {
-                                  setFormCreate({
-                                    ...formCreate,
-                                    HieuLucTu: dayjs(newDate).format('YYYY-MM-DD'),
-                                  })
-                                }}
-                                sx={{
-                                  '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                                  '& .MuiButtonBase-root': {
-                                    padding: '4px',
-                                  },
-                                  '& .MuiSvgIcon-root': {
-                                    width: '18px',
-                                    height: '18px',
-                                  },
-                                }}
-                              />
-                            </div>
-                            <div className="flex items-center gap-1 whitespace-nowrap">
-                              <label className="required  min-w-[90px] text-sm flex justify-end">Giá bán lẻ</label>
-                              <InputNumber
-                                className={`w-[100%]   
-                                       ${errors.DonGia === 0 || errors.DonGia === null ? 'border-red-500' : ''} `}
-                                placeholder={errors.DonGia}
-                                size="small"
-                                min={0}
-                                max={999999999999}
-                                value={formCreate.DonGia}
-                                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                                parser={(value) => {
-                                  const parsedValue = parseFloat(value.replace(/\$\s?|(,*)/g, ''))
-                                  return isNaN(parsedValue) ? null : parseFloat(parsedValue.toFixed(dataThongSo.SOLEDONGIA))
-                                }}
-                                onChange={(e) => {
-                                  setFormCreate({
-                                    ...formCreate,
-                                    DonGia: e,
-                                  })
-                                  setErrors({ ...errors, DonGia: e })
-                                }}
-                              />
-                            </div>
-                            <div className="flex items-center gap-1 whitespace-nowrap">
-                              <Checkbox className="min-w-[192px] text-sm flex justify-end " checked={formCreate?.CoThue} onChange={handleCoThue}>
-                                Đã có thuế
-                              </Checkbox>
-                            </div>
-                            <div className="flex items-center gap-1 whitespace-nowrap">
-                              <label className="  min-w-[90px] text-sm flex justify-end">% Thuế</label>
-                              <InputNumber
-                                className="w-[100%]"
-                                size="small"
-                                min={0}
-                                max={100}
-                                value={formCreate.TyLeThue}
-                                formatter={(value) => `${value}`}
-                                parser={(value) => {
-                                  const parsedValue = parseFloat(value)
-                                  return isNaN(parsedValue) ? null : parseFloat(parsedValue.toFixed(dataThongSo.SOLETYLE))
-                                }}
-                                onChange={(e) =>
-                                  setFormCreate({
-                                    ...formCreate,
-                                    TyLeThue: e,
-                                  })
-                                }
-                              />
-                            </div>
-                          </div>
-                        </>
-                      )}
-                      {typePage === 'GKH' && (
-                        <>
-                          <div className="flex items-center gap-1">
-                            <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Khách hàng</label>
-                            <Select
-                              className="w-full truncate"
-                              showSearch
-                              size="small"
-                              optionFilterProp="children"
-                              onChange={(value) =>
-                                setFormCreate({
-                                  ...formCreate,
-                                  MaDoiTuong: value,
-                                })
-                              }
-                              value={formCreate.MaDoiTuong}
-                            >
-                              {dataDoiTuong?.map((item) => (
-                                <Option key={item.Ma} value={item.Ma}>
-                                  {item.Ma}- {item.Ten}
-                                </Option>
-                              ))}
-                            </Select>
-                          </div>
-                          <div className="flex items-center gap-1 whitespace-nowrap">
-                            <label className="required  min-w-[90px] text-sm flex justify-end">Hiệu lực từ</label>
-                            <DateField
-                              className="DatePicker_PMH  max-w-[110px]"
-                              format="DD/MM/YYYY"
-                              value={dayjs()}
-                              onChange={(newDate) => {
-                                setFormCreate({
-                                  ...formCreate,
-                                  HieuLucTu: dayjs(newDate).format('YYYY-MM-DD'),
-                                })
-                              }}
-                              sx={{
-                                '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                                '& .MuiButtonBase-root': {
-                                  padding: '4px',
-                                },
-                                '& .MuiSvgIcon-root': {
-                                  width: '18px',
-                                  height: '18px',
-                                },
-                              }}
-                            />
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Nhóm giá</label>
-                            <Select
-                              className="w-full truncate"
-                              showSearch
-                              size="small"
-                              optionFilterProp="children"
-                              onChange={(value) =>
-                                setFormCreate({
-                                  ...formCreate,
-                                  NhomGia: value,
-                                })
-                              }
-                              value={formCreate.NhomGia}
-                            >
-                              {dataNhomGia?.map((item) => (
-                                <Option key={item.Ma} value={item.Ma}>
-                                  {item.Ma}- {item.Ten}
-                                </Option>
-                              ))}
-                            </Select>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <label className=" whitespace-nowrap  min-w-[90px] text-sm flex justify-end">Ghi chú</label>
-                            <input
-                              type="text"
-                              className="h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none "
-                              value={formCreate.GhiChu}
-                              onChange={(e) =>
-                                setFormCreate({
-                                  ...formCreate,
-                                  GhiChu: e.target.value,
-                                })
-                              }
-                            />
-                          </div>
-                        </>
-                      )}
 
-                      {/* thong tin */}
-                      <div className="grid grid-cols-1 mt-2 gap-2 px-2 py-2.5 rounded-[4px] border-black-200 ml-[95px] relative border-[1px] border-gray-300 ">
-                        <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
-                        <div className="flex justify-between ">
-                          <div className="flex items-center gap-1.5 whitespace-nowrap">
-                            <label className=" text-sm min-w-[70px] ">Người tạo</label>
-                            <input
-                              disabled
-                              type="text"
-                              className="h-[24px] w-[20vw] lg:w-[18vw] md:w-[15vw] px-2 rounded-[4px] resize-none border-[1px] border-gray-300 outline-none truncate"
-                            />
+              <Spin spinning={isLoadingModal}>
+                <div className="border w-full h-[89%] rounded-sm text-sm">
+                  <div className="flex md:gap-0 lg:gap-1 pl-1 ">
+                    {/* thong tin phieu */}
+                    <div className="w-[62%]">
+                      <div className="flex flex-col pt-3  ">
+                        <div className="flex items-center p-1 gap-2">
+                          <label className="required w-[120px] text-end">Mã bảng giá</label>
+                          <input
+                            placeholder={errors?.NhomGia}
+                            type="text"
+                            className={`w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] hover:border-[#4897e6] h-[24px]
+                             ${errors.NhomGia ? 'border-red-500' : ''}`}
+                            value={formCreate.NhomGia}
+                            onChange={(e) => {
+                              setFormCreate({
+                                ...formCreate,
+                                NhomGia: e.target.value,
+                              }),
+                                setErrors({ ...errors, NhomGia: '' })
+                            }}
+                          />
+                        </div>
+                        <div className="flex items-center p-1 gap-2">
+                          <label className="required w-[120px] text-end">Tên bảng giá</label>
+                          <input
+                            placeholder={errors?.TenNhomGia}
+                            type="text"
+                            className={`w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] hover:border-[#4897e6] h-[24px]
+                             ${errors.TenNhomGia ? 'border-red-500' : ''}`}
+                            value={formCreate.TenNhomGia}
+                            onChange={(e) => {
+                              setFormCreate({
+                                ...formCreate,
+                                TenNhomGia: e.target.value,
+                              }),
+                                setErrors({ ...errors, TenNhomGia: '' })
+                            }}
+                          />
+                        </div>
+                        <div className="flex items-center p-1 gap-2">
+                          <label className=" w-[120px] text-end">Ghi chú</label>
+                          <input
+                            type="text"
+                            className="w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] hover:border-[#4897e6] h-[24px]"
+                            value={formCreate.GhiChu}
+                            onChange={(e) =>
+                              setFormCreate({
+                                ...formCreate,
+                                GhiChu: e.target.value,
+                              })
+                            }
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    {/* thong tin cap nhat */}
+                    <div className="w-[38%] py-1 box_content">
+                      <div className="text-center p-1 font-medium text_capnhat">Thông tin cập nhật</div>
+                      <div className=" rounded-md w-[98%]  box_capnhat px-1 py-3">
+                        <div className="flex justify-between items-center ">
+                          <div className="flex items-center p-1  ">
+                            <label className="md:w-[134px] lg:w-[104px]">Người tạo</label>
+                            <input disabled type="text" className=" w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" />
                           </div>
-                          <div className="flex items-center gap-1 whitespace-nowrap">
-                            <label className=" text-sm">Lúc</label>
-                            <input disabled type="text" className="px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none text-center truncate" />
+
+                          <div className="flex items-center p-1 ">
+                            <label className="w-[30px] pr-1">Lúc</label>
+                            <input disabled type="text" className="w-full  border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" />
                           </div>
                         </div>
-                        <div className="flex justify-between ">
-                          <div className="flex items-center gap-1.5 whitespace-nowrap">
-                            <label className=" text-sm min-w-[70px]">Sửa cuối</label>
-
-                            <input
-                              disabled
-                              type="text"
-                              className="h-[24px] w-[20vw] lg:w-[18vw] md:w-[15vw] px-2 rounded-[4px] resize-none border-[1px] border-gray-300 outline-none truncate"
-                            />
+                        <div className="flex justify-between items-center ">
+                          <div className="flex items-center p-1  ">
+                            <label className="md:w-[134px] lg:w-[104px]">Sửa cuối</label>
+                            <input disabled type="text" className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" />
                           </div>
-                          <div className="flex items-center gap-1 whitespace-nowrap">
-                            <label className=" text-sm">Lúc</label>
-                            <input disabled type="text" className="px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none text-center truncate" />
+                          <div className="flex items-center p-1 ">
+                            <label className="w-[30px] pr-1">Lúc</label>
+                            <input disabled type="text" className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" />
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
+                  {/* table */}
+                  <div className=" pb-0  relative mt-1">
+                    <Tooltip
+                      placement="topLeft"
+                      title={isAdd ? 'Vui lòng chọn hàng hóa hoặc F9 để chọn từ danh sách' : 'Bấm vào đây để thêm hàng mới hoặc F9 để chọn từ danh sách!'}
+                      color="blue"
+                    >
+                      <FloatButton
+                        className="absolute z-3 bg-transparent w-[26px] h-[26px]"
+                        style={{
+                          right: 12,
+                          top: 8,
+                        }}
+                        type={`${isAdd ? 'default' : 'primary'}`}
+                        icon={<IoMdAddCircle />}
+                        onClick={handleAddEmptyRow}
+                      />
+                    </Tooltip>
+                    <TableEdit
+                      typeTable="create"
+                      typeAction="create"
+                      tableName="GBS"
+                      className="table_create_GBS"
+                      param={selectedRowData}
+                      handleEditData={handleEditData}
+                      ColumnTable={columnName}
+                      columName={nameColumsGBS}
+                      yourMaHangOptions={dataHangHoa}
+                      yourTenHangOptions={dataHangHoa}
+                    />
+                  </div>
                 </div>
-              </div>
-              {/* button */}
-              <div className="flex justify-end items-center pt-[10px] ">
-                <div className="flex gap-2">
+              </Spin>
+              {/* button  */}
+              <div className="flex justify-end items-center">
+                <div className="flex justify-end items-center gap-3  pt-3">
                   <ActionButton color={'slate-50'} title={'Lưu'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleCreate} />
                   <ActionButton color={'slate-50'} title={'Lưu & đóng'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleCreateAndClose} />
+
                   <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
                 </div>
               </div>
@@ -1406,6 +1260,16 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
           )}
         </div>
       </div>
+      {isShowModalHH && (
+        <ModalHHGBS
+          close={() => setIsShowModalHH(false)}
+          data={dataHangHoa}
+          onRowCreate={handleAddRow}
+          dataThongSo={dataThongSo}
+          onChangLoading={handleChangLoading}
+          loading={isLoading}
+        />
+      )}
     </>
   )
 }
