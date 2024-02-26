@@ -35,7 +35,6 @@ const KHOEdit = ({ close, loadingData, setTargetRow, dataKHO }) => {
       })
       return
     }
-    console.log(KHOForm)
     try {
       const response = await categoryAPI.SuaKhoHang({ Ma: dataKHO?.MaKho, Data: { ...KHOForm } }, TokenAccess)
       if (response.data.DataError == 0) {
@@ -49,6 +48,8 @@ const KHOEdit = ({ close, loadingData, setTargetRow, dataKHO }) => {
       }
     } catch (error) {
       console.log(error)
+      toast.error('Lỗi Server vui lòng thử lại', { autoClose: 1000 })
+      close()
     }
   }
   return (

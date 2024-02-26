@@ -44,13 +44,15 @@ const KHOCreate = ({ close, loadingData, setTargetRow, isKHO, setIsMaKHO }) => {
         loadingData()
         toast.success('Tạo thành công', { autoClose: 1000 })
         setTargetRow(KHOForm?.MaKho)
-        setIsMaKHO(KHOForm?.MaKho)
+        isKHO ? setIsMaKHO(KHOForm?.MaKho) : ''
       } else {
         console.log(response.data)
         toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
       }
     } catch (error) {
       console.log(error)
+      toast.error('Lỗi Server vui lòng thử lại', { autoClose: 1000 })
+      close()
     }
   }
   return (

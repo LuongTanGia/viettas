@@ -180,9 +180,10 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
       }
     } catch (error) {
       console.log(error)
+      toast.error('Lỗi Server vui lòng thử lại', { autoClose: 1000 })
+      close()
     }
   }
-  console.log(PLRForm)
   const handlePrint = () => {
     setIsShowModal(true)
     setActionType('print')

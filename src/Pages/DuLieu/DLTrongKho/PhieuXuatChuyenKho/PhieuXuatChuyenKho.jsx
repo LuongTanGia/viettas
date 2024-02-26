@@ -45,7 +45,7 @@ const PhieuXuatChuyenKho = () => {
   const [actionType, setActionType] = useState('')
   const showOption = useRef(null)
   const [hiddenRow, setHiddenRow] = useState([])
-  const [checkedList, setcheckedList] = useState([])
+  const [checkedList, setCheckedList] = useState([])
   const [selectVisible, setSelectVisible] = useState(false)
   const [options, setOptions] = useState()
   const [dateData, setDateData] = useState({})
@@ -55,7 +55,7 @@ const PhieuXuatChuyenKho = () => {
 
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
-    setcheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
+    setCheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
     const key = Object.keys(dataXCK[0] || []).filter((key) => key !== 'SoThamChieu' && key !== 'MaKho_Nhan' && key !== 'MaKho')
     setOptions(key)
   }, [selectVisible])
@@ -223,7 +223,7 @@ const PhieuXuatChuyenKho = () => {
     setSelectVisible(!selectVisible)
   }
   const onChange = (checkedValues) => {
-    setcheckedList(checkedValues)
+    setCheckedList(checkedValues)
   }
   const onClickSubmit = () => {
     setTableLoad(true)

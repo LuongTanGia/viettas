@@ -33,7 +33,6 @@ const NDTEdit = ({ close, loadingData, setTargetRow, dataNDT }) => {
       return
     }
     try {
-      console.log({ Ma: dataNDT?.Ma, Data: { ...NDTForm } })
       const response = await categoryAPI.SuaNhomDoiTuong({ Ma: dataNDT?.Ma, Data: { ...NDTForm } }, TokenAccess)
       if (response.data.DataError == 0) {
         close()
@@ -45,6 +44,8 @@ const NDTEdit = ({ close, loadingData, setTargetRow, dataNDT }) => {
       }
     } catch (error) {
       console.log(error)
+      toast.error('Lỗi Server vui lòng thử lại', { autoClose: 1000 })
+      close()
     }
   }
   return (

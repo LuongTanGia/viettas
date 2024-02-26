@@ -73,7 +73,9 @@ const DTGroup = ({ close, type, dataDT, loadingData, setTargetRow }) => {
         toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
       }
     } catch (error) {
-      console.error('API call failed:', error)
+      console.error(error)
+      toast.error('Lỗi Server vui lòng thử lại', { autoClose: 1000 })
+      close()
     }
   }
 
@@ -106,6 +108,8 @@ const DTGroup = ({ close, type, dataDT, loadingData, setTargetRow }) => {
       }
     } catch (error) {
       console.error('API call failed:', error)
+      toast.error('Lỗi Server vui lòng thử lại', { autoClose: 1000 })
+      close()
     }
   }
   return (

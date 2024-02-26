@@ -41,12 +41,14 @@ const NDTCreate = ({ close, loadingData, setTargetRow, isNDT, setIsMaNDT }) => {
         loadingData()
         toast.success('Tạo thành công', { autoClose: 1000 })
         setTargetRow(NDTForm?.Ma)
-        setIsMaNDT(NDTForm?.Ma)
+        isNDT ? setIsMaNDT(NDTForm?.Ma) : ''
       } else {
         toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
       }
     } catch (error) {
       console.log(error)
+      toast.error('Lỗi Server vui lòng thử lại', { autoClose: 1000 })
+      close()
     }
   }
   return (
@@ -57,7 +59,7 @@ const NDTCreate = ({ close, loadingData, setTargetRow, isNDT, setIsMaNDT }) => {
           <div className="flex flex-col gap-2 py-1 px-2 md:w-[80vw] lg:w-[60vw] xl:w-[50vw] 2xl:w-[40vw]">
             <div className="flex gap-2">
               <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
-              <p className="text-blue-700 font-semibold uppercase">Thêm -Nhóm Đối Tượng</p>
+              <p className="text-blue-700 font-semibold uppercase">Thêm - Nhóm Đối Tượng</p>
             </div>
             <div className="flex flex-col gap-2 border-2 px-3 py-2.5">
               <div className="flex items-center gap-1">

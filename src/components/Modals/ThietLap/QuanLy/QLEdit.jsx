@@ -65,7 +65,6 @@ const QLEdit = ({ close, loadingData, setTargetRow, dataQL }) => {
       return
     }
     try {
-      console.log({ Ma: dataQL?.MaQuanLy, Data: { ...QLForm } })
       const response = await categoryAPI.SuaQuanLy({ Ma: dataQL?.MaQuanLy, Data: { ...QLForm } }, TokenAccess)
       if (response.data.DataError == 0) {
         isPrint ? handlePrint() : toast.success('Sửa thành công', { autoClose: 1000 })
@@ -77,6 +76,8 @@ const QLEdit = ({ close, loadingData, setTargetRow, dataQL }) => {
       }
     } catch (error) {
       console.log(error)
+      toast.error('Lỗi Server vui lòng thử lại', { autoClose: 1000 })
+      close()
     }
   }
   const handlePrint = async () => {
@@ -89,6 +90,8 @@ const QLEdit = ({ close, loadingData, setTargetRow, dataQL }) => {
       }
     } catch (error) {
       console.log(error)
+      toast.error('Lỗi Server vui lòng thử lại', { autoClose: 1000 })
+      close()
     }
   }
   return (

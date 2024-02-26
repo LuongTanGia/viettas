@@ -110,6 +110,8 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
       }
     } catch (error) {
       console.error(error)
+      toast.error('Lỗi Server vui lòng thử lại', { autoClose: 1000 })
+      close()
     }
   }
 

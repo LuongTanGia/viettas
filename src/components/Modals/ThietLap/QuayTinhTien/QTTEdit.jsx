@@ -92,7 +92,6 @@ const QTTEdit = ({ close, loadingData, setTargetRow, dataQTT }) => {
   }
 
   const handleEdit = async () => {
-    console.log({ ...QTTForm, MaKho: isMaKHO ? isMaKHO : QTTForm.MaKho })
     if (!QTTForm?.TenMayTinh?.trim() || !QTTForm?.SQLServer?.trim() || !QTTForm?.SQLUser?.trim() || isMaKHO ? null : !QTTForm?.MaKho?.trim()) {
       setErrors({
         TenMayTinh: QTTForm?.TenMayTinh?.trim() ? null : 'Tên máy tính không được trống',
@@ -114,6 +113,8 @@ const QTTEdit = ({ close, loadingData, setTargetRow, dataQTT }) => {
       }
     } catch (error) {
       console.log(error)
+      toast.error('Lỗi Server vui lòng thử lại', { autoClose: 1000 })
+      close()
     }
   }
   return (

@@ -83,7 +83,6 @@ const DTCreate = ({ close, loadingData, setTargetRow }) => {
       if (response.data.DataError == 0) {
         isSave ? (setDTForm({ Loai: 2 }), setIsMaNDT([])) : close()
         loadingData()
-        console.log(response.data)
         toast.success('Tạo thành công', { autoClose: 1000 })
         dataThongSo.SUDUNG_MADOITUONGTUDONG ? setTargetRow(response.data.DataResults[0].Ma) : setTargetRow(DTForm?.Ma)
       } else {
@@ -91,6 +90,8 @@ const DTCreate = ({ close, loadingData, setTargetRow }) => {
       }
     } catch (error) {
       console.log(error)
+      toast.error('Lỗi Server vui lòng thử lại', { autoClose: 1000 })
+      close()
     }
   }
 

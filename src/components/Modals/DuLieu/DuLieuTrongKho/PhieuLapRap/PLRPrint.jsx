@@ -111,6 +111,8 @@ const PLRPrint = ({ close, dataPrint, type }) => {
       }
     } catch (error) {
       console.log(error)
+      toast.error('Lỗi Server vui lòng thử lại', { autoClose: 1000 })
+      close()
     }
   }
   const handlePrintImport = async () => {
@@ -140,10 +142,11 @@ const PLRPrint = ({ close, dataPrint, type }) => {
       }
     } catch (error) {
       console.log(error)
+      toast.error('Lỗi Server vui lòng thử lại', { autoClose: 1000 })
+      close()
     }
   }
   const handlePrintExport = async () => {
-    console.log('In Xuất')
     try {
       const response = await categoryAPI.PLRPrintXuat(
         dataPrint
@@ -170,6 +173,8 @@ const PLRPrint = ({ close, dataPrint, type }) => {
       }
     } catch (error) {
       console.log(error)
+      toast.error('Lỗi Server vui lòng thử lại', { autoClose: 1000 })
+      close()
     }
   }
   const handleDateChange = () => {

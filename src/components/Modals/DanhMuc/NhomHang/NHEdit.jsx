@@ -44,6 +44,8 @@ const NHEdit = ({ close, loadingData, setTargetRow, dataNH }) => {
       }
     } catch (error) {
       console.log(error)
+      toast.error('Lỗi Server vui lòng thử lại', { autoClose: 1000 })
+      close()
     }
   }
   return (

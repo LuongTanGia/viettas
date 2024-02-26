@@ -32,6 +32,7 @@ const KHOView = ({ close, dataKHO }) => {
       handleView()
     }
   }, [isLoading])
+
   return (
     <>
       {!isLoading ? (

@@ -40,13 +40,13 @@ const QuayTinhTien = () => {
   const [targetRow, setTargetRow] = useState([])
   const [dataCRUD, setDataCRUD] = useState()
   const [hiddenRow, setHiddenRow] = useState([])
-  const [checkedList, setcheckedList] = useState([])
+  const [checkedList, setCheckedList] = useState([])
   const [selectVisible, setSelectVisible] = useState(false)
   const [options, setOptions] = useState()
 
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
-    setcheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
+    setCheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
     const key = Object.keys(dataQuayTinhTien ? dataQuayTinhTien[0] : [] || []).filter((key) => key != 'SQLUser' && key != 'SQLPassword' && key != 'Loai')
     setOptions(key)
   }, [selectVisible])
@@ -147,7 +147,7 @@ const QuayTinhTien = () => {
     setSelectVisible(!selectVisible)
   }
   const onChange = (checkedValues) => {
-    setcheckedList(checkedValues)
+    setCheckedList(checkedValues)
   }
   const onClickSubmit = () => {
     setTableLoad(true)
@@ -255,16 +255,18 @@ const QuayTinhTien = () => {
       sorter: (a, b) => (a.MaKho?.toString() || '').localeCompare(b.MaKho?.toString() || ''),
       showSorterTooltip: false,
       render: (text) => (
-        <div
-          style={{
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            textAlign: 'start',
-          }}
-        >
-          <HighlightedCell text={text} search={searchQuayTinhTien} />
-        </div>
+        <Tooltip title={text} color="blue">
+          <div
+            style={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              textAlign: 'start',
+            }}
+          >
+            <HighlightedCell text={text} search={searchQuayTinhTien} />
+          </div>
+        </Tooltip>
       ),
     },
     {

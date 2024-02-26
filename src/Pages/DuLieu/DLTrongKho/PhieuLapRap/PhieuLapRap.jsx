@@ -45,7 +45,7 @@ const PhieuLapRap = () => {
   const [actionType, setActionType] = useState('')
   const showOption = useRef(null)
   const [hiddenRow, setHiddenRow] = useState([])
-  const [checkedList, setcheckedList] = useState([])
+  const [checkedList, setCheckedList] = useState([])
   const [selectVisible, setSelectVisible] = useState(false)
   const [options, setOptions] = useState()
   const [dateData, setDateData] = useState({})
@@ -55,7 +55,7 @@ const PhieuLapRap = () => {
 
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
-    setcheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
+    setCheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
     const key = Object.keys(dataPLR[0] || []).filter((key) => key !== 'MaKho')
     setOptions(key)
   }, [selectVisible])
@@ -266,7 +266,7 @@ const PhieuLapRap = () => {
     setSelectVisible(!selectVisible)
   }
   const onChange = (checkedValues) => {
-    setcheckedList(checkedValues)
+    setCheckedList(checkedValues)
   }
   const onClickSubmit = () => {
     setTableLoad(true)

@@ -113,6 +113,8 @@ const NCKPrint = ({ close, dataPrint }) => {
       }
     } catch (error) {
       console.log(error)
+      toast.error('Lỗi Server vui lòng thử lại', { autoClose: 1000 })
+      close()
     }
   }
   const handleDateChange = () => {

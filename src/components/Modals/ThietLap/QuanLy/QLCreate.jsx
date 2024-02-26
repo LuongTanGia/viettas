@@ -82,6 +82,8 @@ const QLCreate = ({ close, loadingData, setTargetRow }) => {
       }
     } catch (error) {
       console.log(error)
+      toast.error('Lỗi Server vui lòng thử lại', { autoClose: 1000 })
+      close()
     }
   }
   const handlePrint = async () => {
@@ -94,6 +96,8 @@ const QLCreate = ({ close, loadingData, setTargetRow }) => {
       }
     } catch (error) {
       console.log(error)
+      toast.error('Lỗi Server vui lòng thử lại', { autoClose: 1000 })
+      close()
     }
   }
   return (

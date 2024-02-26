@@ -401,6 +401,8 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
       }
     } catch (error) {
       console.log(error)
+      toast.error('Lỗi Server vui lòng thử lại', { autoClose: 1000 })
+      close()
     }
   }
   const handleView = async () => {
@@ -455,6 +457,8 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
       }
     } catch (error) {
       console.log(error)
+      toast.error('Lỗi Server vui lòng thử lại', { autoClose: 1000 })
+      close()
     }
   }
   const handleDelete = async () => {
@@ -473,6 +477,8 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
       }
     } catch (error) {
       console.log(error)
+      toast.error('Lỗi Server vui lòng thử lại', { autoClose: 1000 })
+      close()
     }
   }
   const handleStatus = async () => {
@@ -503,6 +509,8 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
       }
     } catch (error) {
       console.error('API call failed:', error)
+      toast.error('Lỗi Server vui lòng thử lại', { autoClose: 1000 })
+      close()
     }
   }
   const handleGroup = async () => {
@@ -531,6 +539,8 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
       }
     } catch (error) {
       console.log(error)
+      toast.error('Lỗi Server vui lòng thử lại', { autoClose: 1000 })
+      close()
     }
   }
   const handlePrintBar = async () => {
@@ -564,6 +574,8 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
       }
     } catch (error) {
       console.log(error)
+      toast.error('Lỗi Server vui lòng thử lại', { autoClose: 1000 })
+      close()
     }
   }
   const title = [
