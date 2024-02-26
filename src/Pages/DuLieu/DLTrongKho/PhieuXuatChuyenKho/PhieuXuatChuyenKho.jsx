@@ -60,7 +60,6 @@ const PhieuXuatChuyenKho = () => {
     setOptions(key)
   }, [selectVisible])
 
-  console.log(dataXCK)
   useEffect(() => {
     const getTimeSetting = async () => {
       try {
@@ -694,7 +693,7 @@ const PhieuXuatChuyenKho = () => {
                         <DateField
                           onBlur={handleDateChange}
                           onKeyDown={handleKeyDown}
-                          className="DatePicker_NXTKho max-w-[110px]"
+                          className="DatePicker_NXTKho max-w-[120px]"
                           format="DD/MM/YYYY"
                           value={khoanNgayFrom}
                           sx={{
@@ -718,7 +717,7 @@ const PhieuXuatChuyenKho = () => {
                         <DateField
                           onBlur={handleDateChange}
                           onKeyDown={handleKeyDown}
-                          className="DatePicker_NXTKho max-w-[110px]"
+                          className="DatePicker_NXTKho max-w-[120px]"
                           format="DD/MM/YYYY"
                           value={khoanNgayTo}
                           sx={{

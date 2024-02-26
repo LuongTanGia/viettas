@@ -372,18 +372,7 @@ const XCKCreate = ({ close, loadingData, setTargetRow }) => {
                       <div className="flex gap-2">
                         <div className="flex items-center gap-1">
                           <label className="text-sm whitespace-nowrap required min-w-[100px] flex justify-end">Số chứng từ</label>
-                          <Input
-                            size="small"
-                            disabled
-                            value={XCKForm?.SoChungTu || ''}
-                            onChange={(e) =>
-                              setXCKForm({
-                                ...XCKForm,
-                                SoChungTu: e.target.value,
-                              })
-                            }
-                            readOnly
-                          />
+                          <Input size="small" disabled value={XCKForm?.SoChungTu || ''} readOnly />
                         </div>
                         <div className="flex items-center gap-1">
                           <label className="required whitespace-nowrap text-sm">Ngày c.từ</label>

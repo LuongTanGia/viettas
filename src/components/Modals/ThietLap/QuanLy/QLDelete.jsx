@@ -16,7 +16,7 @@ const QLDelete = ({ close, dataQL, loadingData, setTargetRow }) => {
         setTargetRow([])
       } else {
         toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
-        console.log(response.data.DataErrorDescription)
+        console.log(response.data)
       }
     } catch (error) {
       console.log(error)

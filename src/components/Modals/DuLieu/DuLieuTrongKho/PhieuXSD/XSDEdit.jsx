@@ -2,7 +2,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import { useEffect, useState, useCallback, useMemo } from 'react'
-import { Checkbox, FloatButton, InputNumber, Select, Table, Tooltip } from 'antd'
+import { Checkbox, FloatButton, Input, InputNumber, Select, Table, Tooltip } from 'antd'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { FaSearch } from 'react-icons/fa'
 import { toast } from 'react-toastify'
@@ -377,19 +377,7 @@ const XSDEdit = ({ close, dataXSD, loadingData, setTargetRow }) => {
                       <div className="flex gap-2">
                         <div className="flex items-center gap-1">
                           <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Số chứng từ</label>
-                          <input
-                            type="text"
-                            className="px-2 w-full rounded resize-none border outline-none text-[1rem]"
-                            name="SoChungTu"
-                            value={XSDForm?.SoChungTu || ''}
-                            onChange={(e) =>
-                              setXSDForm({
-                                ...XSDForm,
-                                [e.target.name]: e.target.value,
-                              })
-                            }
-                            readOnly
-                          />
+                          <Input disabled size="small" value={XSDForm?.SoChungTu || ''} readOnly />
                         </div>
                         <div className="flex items-center gap-1">
                           <label className="required whitespace-nowrap text-sm">Ngày c.từ</label>

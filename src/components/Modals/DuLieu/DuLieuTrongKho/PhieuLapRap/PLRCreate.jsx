@@ -5,7 +5,7 @@ import { toast } from 'react-toastify'
 import { FaSearch } from 'react-icons/fa'
 import { IoMdAddCircle } from 'react-icons/io'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
-import { Checkbox, Table, Tooltip, Select, FloatButton } from 'antd'
+import { Checkbox, Table, Tooltip, Select, FloatButton, Input } from 'antd'
 import dayjs from 'dayjs'
 import PLRPrint from './PLRPrint'
 import categoryAPI from '../../../../../API/linkAPI'
@@ -364,19 +364,7 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
                       <div className="flex gap-2">
                         <div className="flex items-center gap-1">
                           <label className="text-sm  required whitespace-nowrap min-w-[100px] flex justify-end">Số chứng từ</label>
-                          <input
-                            type="text"
-                            className="px-2 w-full resize-none rounded border outline-none text-[1rem]"
-                            name="SoChungTu"
-                            value={PLRForm?.SoChungTu || ''}
-                            onChange={(e) =>
-                              setPLRForm({
-                                ...PLRForm,
-                                [e.target.name]: e.target.value,
-                              })
-                            }
-                            readOnly
-                          />
+                          <Input disabled size="small" value={PLRForm?.SoChungTu || ''} readOnly />
                         </div>
                         <div className="flex items-center gap-1">
                           <label className="required whitespace-nowrap text-sm">Ngày c.từ</label>

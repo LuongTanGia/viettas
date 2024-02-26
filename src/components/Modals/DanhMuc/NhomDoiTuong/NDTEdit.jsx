@@ -33,6 +33,7 @@ const NDTEdit = ({ close, loadingData, setTargetRow, dataNDT }) => {
       return
     }
     try {
+      console.log({ Ma: dataNDT?.Ma, Data: { ...NDTForm } })
       const response = await categoryAPI.SuaNhomDoiTuong({ Ma: dataNDT?.Ma, Data: { ...NDTForm } }, TokenAccess)
       if (response.data.DataError == 0) {
         close()
@@ -51,7 +52,7 @@ const NDTEdit = ({ close, loadingData, setTargetRow, dataNDT }) => {
       <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10">
         <div className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"></div>
         <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col bg-white p-2 rounded shadow-custom overflow-hidden">
-          <div className="flex flex-col gap-2 py-1 px-2 w-[50vw]">
+          <div className="flex flex-col gap-2 py-1 px-2 md:w-[80vw] lg:w-[60vw] xl:w-[50vw] 2xl:w-[40vw]">
             <div className="flex gap-2">
               <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
               <p className="text-blue-700 font-semibold uppercase">Sửa - Nhóm Đối Tượng</p>
@@ -101,7 +102,7 @@ const NDTEdit = ({ close, loadingData, setTargetRow, dataNDT }) => {
                     <Tooltip title={dataNDT?.NguoiTao} color="blue">
                       <input
                         value={dataNDT?.NguoiTao || ''}
-                        className="2xl:w-[20vw] lg:w-[18vw] md:w-[15vw] px-2 rounded resize-none border outline-none text-[1rem] truncate"
+                        className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded resize-none border outline-none text-[1rem] truncate"
                         readOnly
                       />
                     </Tooltip>
@@ -124,7 +125,7 @@ const NDTEdit = ({ close, loadingData, setTargetRow, dataNDT }) => {
                     <Tooltip title={dataNDT?.NguoiSuaCuoi} color="blue">
                       <input
                         value={dataNDT?.NguoiSuaCuoi || ''}
-                        className="2xl:w-[20vw] lg:w-[18vw] md:w-[15vw] px-2 rounded  resize-none border outline-none text-[1rem] truncate"
+                        className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded  resize-none border outline-none text-[1rem] truncate"
                         readOnly
                       />
                     </Tooltip>

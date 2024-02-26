@@ -955,7 +955,7 @@ const NhapXuatTon = () => {
                         <div className="flex items-center gap-1">
                           <label>Từ</label>
                           <DateField
-                            className="DatePicker_NXTKho  max-w-[110px]"
+                            className="DatePicker_NXTKho  max-w-[120px]"
                             onBlur={handleDateChange}
                             onKeyDown={handleKeyDown}
                             format="DD/MM/YYYY"
@@ -979,7 +979,7 @@ const NhapXuatTon = () => {
                         <div className=" flex items-center gap-1 ">
                           <label>Đến</label>
                           <DateField
-                            className="DatePicker_NXTKho max-w-[110px]"
+                            className="DatePicker_NXTKho max-w-[120px]"
                             onBlur={handleDateChange}
                             onKeyDown={handleKeyDown}
                             format="DD/MM/YYYY"
