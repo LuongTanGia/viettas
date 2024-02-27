@@ -76,6 +76,23 @@ export const ListHelperHHGBL = (token) =>
     }
   })
 
+export const ListHelperNhomGiaGBL = (token) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const response = await axios({
+        url: '/settings/GiaBanLe/ListHelper_NhomHang',
+        method: 'post',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        data: {},
+      })
+      resolve(response)
+    } catch (error) {
+      reject(error)
+    }
+  })
+
 export const ThemGBL = (token, formGBL) =>
   new Promise(async (resolve, reject) => {
     try {

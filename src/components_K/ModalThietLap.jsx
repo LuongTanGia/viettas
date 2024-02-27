@@ -85,7 +85,7 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
     if (formAdjustPrice?.GiaTriTinh === 'OLDVALUE') {
       setFormAdjustPrice({ ...formAdjustPrice, ToanTu: '+' })
     } else {
-      setFormAdjustPrice({ ...formAdjustPrice, ToanTu: '=' })
+      setFormAdjustPrice({ ...formAdjustPrice, ToanTu: null })
     }
   }, [formAdjustPrice.GiaTriTinh])
 
@@ -363,7 +363,6 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
 
   const filterDSMa = (date) => {
     const filteredMaHang = data.filter((item) => dayjs(item.HieuLucTu).format('YYYY-MM-DD') === dayjs(date).format('YYYY-MM-DD')).map((item) => ({ Ma: item.MaHang }))
-    console.log('aaaaaa', filteredMaHang)
     setFormAdjustPrice({
       ...formAdjustPrice,
       HieuLucTu: dayjs(date).format('YYYY-MM-DD'),
@@ -590,7 +589,7 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
                                   ToanTu: value,
                                 })
                               }
-                              value="+"
+                              value={formAdjustPrice.ToanTu}
                             >
                               <Option value="+">+</Option>
                               <Option value="-">-</Option>
@@ -610,7 +609,7 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
                               }
                               value={formAdjustPrice.ToanTu}
                             >
-                              <Option value="=">=</Option>
+                              <Option value={null}>=</Option>
                             </Select>
                           )}
                         </div>
@@ -1319,7 +1318,7 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
                             <input
                               type="text"
                               className="h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none "
-                              value={formEdit.GhiChu}
+                              value={formEdit.Data.GhiChu}
                               onChange={(e) =>
                                 setFormEdit({
                                   ...formEdit,

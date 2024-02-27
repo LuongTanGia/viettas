@@ -36,18 +36,9 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
     NhomGia_CTs: [],
   }
   const [formCreate, setFormCreate] = useState(defaultFormCreate)
-  const defaultFormEdit = {
-    Ma: dataRecord?.MaHang,
-    HieuLuc: dataRecord?.HieuLucTu,
-    Data: {
-      MaHang: dataRecord?.MaHang,
-      HieuLucTu: dataRecord?.HieuLucTu,
-      DonGia: dataRecord?.DonGia,
-      CoThue: dataRecord?.CoThue,
-      TyLeThue: dataRecord?.TyLeThue,
-    },
-  }
-  const [formEdit, setFormEdit] = useState(defaultFormEdit)
+
+  const [formEdit, setFormEdit] = useState({ ...dataThongTin })
+
   const [formAdjustPrice, setFormAdjustPrice] = useState({
     GiaTriTinh: 'OLDVALUE',
     ToanTu: '',
@@ -70,7 +61,7 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
       setIsShowModalHH(true)
     }
   }
-
+  console.log('Maaaaaaaaaaa', selectedRowData)
   useEffect(() => {
     if (actionType === 'create' || actionType === 'edit') {
       window.addEventListener('keydown', handleKeyDown)
@@ -101,6 +92,13 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
       setFormAdjustPrice({ ...formAdjustPrice, ToanTu: '=' })
     }
   }, [formAdjustPrice.GiaTriTinh])
+
+  useEffect(() => {
+    if (dataThongTin?.NhomGia_CTs && actionType === 'edit') {
+      setSelectedRowData([...dataThongTin.NhomGia_CTs])
+    }
+  }, [dataThongTin?.NhomGia_CTs])
+  // console.log(dataThongTin.NhomGia_CTs)
 
   const columns = [
     {
@@ -169,11 +167,11 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
       title: 'Đã có thuế',
       dataIndex: 'CoThue',
       key: 'CoThue',
-      width: 100,
+      width: 110,
       align: 'center',
       showSorterTooltip: false,
 
-      render: (text) => <Checkbox value={text} disabled={!text} checked={text} />,
+      render: (text) => <Checkbox disabled={!text} checked={text} />,
       sorter: (a, b) => {
         const valueA = a.CoThue ? 1 : 0
         const valueB = b.CoThue ? 1 : 0
@@ -201,12 +199,20 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
   const handleAddRow = (newRow) => {
     let dataNewRow
     setSelectedRowData((prevData) => {
-      dataNewRow = [...prevData, newRow]
-
+      if (prevData.some((item) => item.MaHang === newRow.MaHang))
+        dataNewRow = prevData.map((item) => {
+          // if (item.MaHang === newRow.MaHang) {
+          //   console.log('đã tồn tại')
+          // }
+          return item
+        })
+      else {
+        dataNewRow = [...prevData, newRow]
+      }
       return dataNewRow
     })
 
-    // setFormEdit((prev) => ({ ...prev, DataDetails: dataNewRow }))
+    setFormEdit((prev) => ({ ...prev, NhomGia_CTs: dataNewRow }))
   }
 
   const handleAddEmptyRow = () => {
@@ -215,15 +221,14 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
     let emptyRow = {
       MaHang: 'Chọn mã hàng',
       TenHang: 'Chọn tên hàng',
-      DVT: '',
       DonGia: 0,
       CoThue: false,
       TyLeThue: 0,
-      // key: selectedRowData.length + dataHangHoa.length,
+      key: selectedRowData.length + dataHangHoa.length,
     }
 
     setSelectedRowData((prevData) => [...prevData, emptyRow])
-    setFormEdit((prev) => ({ ...prev, DataDetails: emptyRow }))
+    setFormEdit((prev) => ({ ...prev, NhomGia_CTs: emptyRow }))
   }
 
   const handleCreateAndClose = async () => {
@@ -258,33 +263,31 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
   }
 
   const handleCreate = async () => {
-    if (typePage === 'GBL') {
-      if (formCreate?.DonGia === null || formCreate?.DonGia === 0) {
-        setErrors({
-          ...errors,
-          DonGia: formCreate?.DonGia === null ? null : formCreate?.DonGia === 0 && 0,
-        })
-        return
-      }
+    if (!formCreate?.NhomGia?.trim() || !formCreate?.TenNhomGia?.trim()) {
+      setErrors({
+        NhomGia: formCreate?.NhomGia?.trim() ? '' : 'Mã bảng giá không được để trống',
+        TenNhomGia: formCreate?.TenNhomGia?.trim() ? '' : 'Tên bảng giá không được để trống',
+      })
+      return
     }
 
     try {
       const tokenLogin = localStorage.getItem('TKN')
 
-      if (typePage === 'GBL') {
-        const response = await apis.ThemGBL(tokenLogin, formCreate)
-        if (response.data && response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription)
-          loading()
-          setFormCreate(defaultFormCreate)
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleCreate()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
+      const response = await apis.ThemGBS(tokenLogin, { ...formCreate, NhomGia_CTs: selectedRowData })
+
+      if (response.data && response.data.DataError === 0) {
+        toast.success(response.data.DataErrorDescription)
+        loading()
+        setFormCreate(defaultFormCreate)
+        setSelectedRowData([])
+      } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        await RETOKEN()
+        handleCreateAndClose()
+      } else {
+        toast.error(response.data.DataErrorDescription)
       }
     } catch (error) {
       console.error('Error while saving data:', error)
@@ -292,48 +295,29 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
   }
 
   const handleEdit = async () => {
-    if (typePage === 'GBL') {
-      if (formEdit?.DonGia === null || formEdit?.DonGia === 0) {
-        setErrors({
-          ...errors,
-          DonGia: formEdit?.DonGia === null ? null : formEdit?.DonGia === 0 && 0,
-        })
-        return
-      }
+    if (!formEdit?.NhomGia?.trim() || !formEdit?.TenNhomGia?.trim()) {
+      setErrors({
+        NhomGia: formEdit?.NhomGia?.trim() ? '' : 'Mã bảng giá không được để trống',
+        TenNhomGia: formEdit?.TenNhomGia?.trim() ? '' : 'Tên bảng giá không được để trống',
+      })
+      return
     }
 
     try {
       const tokenLogin = localStorage.getItem('TKN')
 
-      if (typePage === 'GBL') {
-        const response = await apis.SuaGBL(tokenLogin, formEdit)
-        if (response.data && response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription)
-          loading()
-          close()
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleEdit()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
-      }
-      if (typePage === 'GKH') {
-        const response = await apis.SuaGKH(tokenLogin, formEdit)
-        if (response.data && response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription)
-          loading()
-          close()
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleEdit()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
+      const response = await apis.SuaGBS(tokenLogin, { ...formEdit, NhomGia_CTs: selectedRowData })
+      if (response.data && response.data.DataError === 0) {
+        toast.success(response.data.DataErrorDescription)
+        loading()
+        close()
+      } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        await RETOKEN()
+        handleEdit()
+      } else {
+        toast.error(response.data.DataErrorDescription)
       }
     } catch (error) {
       console.error('Error while saving data:', error)
@@ -581,7 +565,7 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
                                   ToanTu: value,
                                 })
                               }
-                              value="+"
+                              value={formAdjustPrice.ToanTu}
                             >
                               <Option value="+">+</Option>
                               <Option value="-">-</Option>
@@ -702,15 +686,15 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
                     {/* thong tin phieu */}
                     <div className="w-[62%]  pt-3">
                       <div className="flex p-1 gap-2 ">
-                        <label className="md:w-[107px] lg:w-[110px]  text-end required">Mã bảng giá</label>
+                        <label className=" w-[120px]  text-end required">Mã bảng giá</label>
                         <input disabled type="text" className="w-full border border-gray-300 outline-none  px-2 rounded-[4px] h-[24px]" value={dataThongTin?.NhomGia} />
                       </div>
                       <div className="flex p-1 gap-2 ">
-                        <label className="md:w-[107px] lg:w-[110px]  text-end required">Tên bảng giá</label>
+                        <label className=" w-[120px]  text-end required">Tên bảng giá</label>
                         <input disabled type="text" className="w-full border border-gray-300 outline-none  px-2 rounded-[4px] h-[24px]" value={dataThongTin?.TenNhomGia} />
                       </div>
                       <div className="flex p-1 gap-2 ">
-                        <label className="md:w-[107px] lg:w-[110px]  text-end">Ghi chú</label>
+                        <label className=" w-[120px]  text-end">Ghi chú</label>
                         <input disabled type="text" className="w-full border border-gray-300 outline-none  px-2 rounded-[4px] h-[24px]" value={dataThongTin?.GhiChu} />
                       </div>
                     </div>
@@ -989,257 +973,126 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
             </div>
           )}
           {actionType === 'edit' && (
-            <div className={`w-[700px] ${typePage === 'GBL' ? 'h-[260px]' : 'h-[300px]'}`}>
+            <div className=" w-[90vw] h-[600px] ">
               <div className="flex gap-2">
                 <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
-                <label className="text-blue-700 font-semibold uppercase pb-1">Sửa - {namePage}</label>
+                <label className="text-blue-700 font-semibold uppercase pb-1">Sửa - {namePage ? namePage : 'Phiếu ?'}</label>
               </div>
-              <div className="border w-full h-[78%] rounded-[4px]-sm text-sm">
-                <div className="flex flex-col px-2 ">
-                  <div className=" py-2 px-2 gap-2  grid grid-cols-1">
-                    <div className="flex flex-col gap-2">
-                      {typePage === 'GBL' && (
-                        <>
-                          <div className="flex items-center gap-1">
-                            <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Hàng hóa</label>
-                            <Select
-                              className="w-full truncate"
-                              showSearch
-                              size="small"
-                              optionFilterProp="children"
-                              value={`${dataRecord?.MaHang}-${dataRecord?.TenHang} (${dataRecord?.DVT}) `}
-                              disabled
-                            ></Select>
-                          </div>
-                          <div className="grid grid-cols-2  gap-2 items-center">
-                            <div className="flex items-center gap-1 whitespace-nowrap">
-                              <label className="required  min-w-[90px] text-sm flex justify-end">Kể từ ngày</label>
-                              <DateField
-                                className="DatePicker_PMH  max-w-[110px]"
-                                format="DD/MM/YYYY"
-                                value={dayjs(formEdit.Data.HieuLucTu)}
-                                onChange={(newDate) => {
-                                  setFormEdit({
-                                    ...formEdit,
-                                    Data: {
-                                      ...formEdit.Data,
-                                      HieuLucTu: dayjs(newDate).format('YYYY-MM-DD'),
-                                    },
-                                  })
-                                }}
-                                sx={{
-                                  '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                                  '& .MuiButtonBase-root': {
-                                    padding: '4px',
-                                  },
-                                  '& .MuiSvgIcon-root': {
-                                    width: '18px',
-                                    height: '18px',
-                                  },
-                                }}
-                              />
-                            </div>
-                            <div className="flex items-center gap-1 whitespace-nowrap">
-                              <label className="required  min-w-[90px] text-sm flex justify-end">Giá bán lẻ</label>
-                              <InputNumber
-                                className={`w-[100%]   
-                                       ${errors.DonGia === 0 || errors.DonGia === null ? 'border-red-500' : ''} `}
-                                placeholder={errors.DonGia}
-                                size="small"
-                                min={0}
-                                max={999999999999}
-                                value={formEdit.Data.DonGia}
-                                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                                parser={(value) => {
-                                  const parsedValue = parseFloat(value.replace(/\$\s?|(,*)/g, ''))
-                                  return isNaN(parsedValue) ? null : parseFloat(parsedValue.toFixed(dataThongSo.SOLEDONGIA))
-                                }}
-                                onChange={(e) => {
-                                  setFormEdit({
-                                    ...formEdit,
-                                    Data: {
-                                      ...formEdit.Data,
-                                      DonGia: e,
-                                    },
-                                  })
-                                  setErrors({ ...errors, DonGia: e })
-                                }}
-                              />
-                            </div>
-                            <div className="flex items-center gap-1 whitespace-nowrap">
-                              <Checkbox className="min-w-[192px] text-sm flex justify-end " checked={formEdit?.Data.CoThue} onChange={handleCoThue}>
-                                Đã có thuế
-                              </Checkbox>
-                            </div>
-                            <div className="flex items-center gap-1 whitespace-nowrap">
-                              <label className="  min-w-[90px] text-sm flex justify-end">% Thuế</label>
-                              <InputNumber
-                                className="w-[100%]"
-                                size="small"
-                                min={0}
-                                max={100}
-                                value={formEdit.Data.TyLeThue}
-                                formatter={(value) => `${value}`}
-                                parser={(value) => {
-                                  const parsedValue = parseFloat(value)
-                                  return isNaN(parsedValue) ? null : parseFloat(parsedValue.toFixed(dataThongSo.SOLETYLE))
-                                }}
-                                onChange={(e) =>
-                                  setFormEdit({
-                                    ...formEdit,
-                                    Data: {
-                                      ...formEdit.Data,
-                                      TyLeThue: e,
-                                    },
-                                  })
-                                }
-                              />
-                            </div>
-                          </div>
-                        </>
-                      )}
-                      {typePage === 'GKH' && (
-                        <>
-                          <div className="flex items-center gap-1">
-                            <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Khách hàng</label>
-                            <Select
-                              className="w-full truncate"
-                              showSearch
-                              size="small"
-                              optionFilterProp="children"
-                              onChange={(value) =>
-                                setFormEdit({
-                                  ...formEdit,
-                                  Ma: value,
-                                })
-                              }
-                              value={formEdit.Ma}
-                            >
-                              {dataDoiTuong?.map((item) => (
-                                <Option key={item.Ma} value={item.Ma}>
-                                  {item.Ma} - {item.Ten}
-                                </Option>
-                              ))}
-                            </Select>
-                          </div>
-                          <div className="flex items-center gap-1 whitespace-nowrap">
-                            <label className="required  min-w-[90px] text-sm flex justify-end">Hiệu lực từ</label>
-                            <DateField
-                              className="DatePicker_PMH  max-w-[110px]"
-                              format="DD/MM/YYYY"
-                              value={dayjs(formEdit.HieuLuc)}
-                              onChange={(newDate) => {
-                                setFormEdit({
-                                  ...formEdit,
-                                  HieuLucTu: dayjs(newDate).format('YYYY-MM-DD'),
-                                })
-                              }}
-                              sx={{
-                                '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                                '& .MuiButtonBase-root': {
-                                  padding: '4px',
-                                },
-                                '& .MuiSvgIcon-root': {
-                                  width: '18px',
-                                  height: '18px',
-                                },
-                              }}
-                            />
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Nhóm giá</label>
-                            <Select
-                              className="w-full truncate"
-                              showSearch
-                              size="small"
-                              optionFilterProp="children"
-                              onChange={(value) =>
-                                setFormEdit({
-                                  ...formEdit,
-                                  Data: {
-                                    ...formEdit.Data,
-                                    NhomGia: value,
-                                  },
-                                })
-                              }
-                              value={formEdit.Data.NhomGia}
-                            >
-                              {dataNhomGia?.map((item) => (
-                                <Option key={item.Ma} value={item.Ma}>
-                                  {item.Ma} - {item.Ten}
-                                </Option>
-                              ))}
-                            </Select>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <label className=" whitespace-nowrap  min-w-[90px] text-sm flex justify-end">Ghi chú</label>
-                            <input
-                              type="text"
-                              className="h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none "
-                              value={formEdit.GhiChu}
-                              onChange={(e) =>
-                                setFormEdit({
-                                  ...formEdit,
-                                  Data: {
-                                    ...formEdit.Data,
-                                    GhiChu: e.target.value,
-                                  },
-                                })
-                              }
-                            />
-                          </div>
-                        </>
-                      )}
-                      {/* thong tin */}
-                      <div className="grid grid-cols-1 mt-2 gap-2 px-2 py-2.5 rounded-[4px] border-black-200 ml-[95px] relative border-[1px] border-gray-300 ">
-                        <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
-                        <div className="flex justify-between ">
-                          <div className="flex items-center gap-1.5 whitespace-nowrap">
-                            <label className=" text-sm min-w-[70px] ">Người tạo</label>
-                            <Tooltip title={dataRecord?.NguoiTao} color="blue">
-                              <input
-                                disabled
-                                type="text"
-                                value={dataRecord?.NguoiTao}
-                                className="h-[24px] w-[20vw] lg:w-[18vw] md:w-[15vw] px-2 rounded-[4px] resize-none border-[1px] border-gray-300 outline-none truncate"
-                              />
-                            </Tooltip>
-                          </div>
-                          <div className="flex items-center gap-1 whitespace-nowrap">
-                            <label className=" text-sm">Lúc</label>
-                            <Tooltip title={dayjs(dataRecord?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss')} color="blue">
-                              <input
-                                disabled
-                                type="text"
-                                value={dayjs(dataRecord?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss')}
-                                className="px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none text-center truncate"
-                              />
-                            </Tooltip>
-                          </div>
+
+              <Spin spinning={isLoadingModal}>
+                <div className="border w-full h-[89%] rounded-sm text-sm">
+                  <div className="flex md:gap-0 lg:gap-1 pl-1 ">
+                    {/* thong tin phieu */}
+                    <div className="w-[62%]">
+                      <div className="flex flex-col pt-3  ">
+                        <div className="flex items-center p-1 gap-2">
+                          <label className="required w-[120px] text-end">Mã bảng giá</label>
+                          <input
+                            placeholder={errors?.NhomGia}
+                            type="text"
+                            className={`w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] hover:border-[#4897e6] h-[24px]
+                             ${errors.NhomGia ? 'border-red-500' : ''}`}
+                            value={formEdit.NhomGia}
+                            onChange={(e) => {
+                              setFormEdit({
+                                ...formEdit,
+                                NhomGia: e.target.value,
+                              }),
+                                setErrors({ ...errors, NhomGia: '' })
+                            }}
+                          />
                         </div>
-                        <div className="flex justify-between ">
-                          <div className="flex items-center gap-1.5 whitespace-nowrap">
-                            <label className=" text-sm min-w-[70px]">Sửa cuối</label>
-                            <Tooltip title={dataRecord?.NguoiSuaCuoi} color="blue">
+                        <div className="flex items-center p-1 gap-2">
+                          <label className="required w-[120px] text-end">Tên bảng giá</label>
+                          <input
+                            placeholder={errors?.TenNhomGia}
+                            type="text"
+                            className={`w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] hover:border-[#4897e6] h-[24px]
+                             ${errors.TenNhomGia ? 'border-red-500' : ''}`}
+                            value={formEdit.TenNhomGia}
+                            onChange={(e) => {
+                              setFormEdit({
+                                ...formEdit,
+                                TenNhomGia: e.target.value,
+                              }),
+                                setErrors({ ...errors, TenNhomGia: '' })
+                            }}
+                          />
+                        </div>
+                        <div className="flex items-center p-1 gap-2">
+                          <label className=" w-[120px] text-end">Ghi chú</label>
+                          <input
+                            type="text"
+                            className="w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] hover:border-[#4897e6] h-[24px]"
+                            value={formEdit.GhiChu}
+                            onChange={(e) =>
+                              setFormEdit({
+                                ...formEdit,
+                                GhiChu: e.target.value,
+                              })
+                            }
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    {/* thong tin cap nhat */}
+                    <div className="w-[38%] py-1 box_content">
+                      <div className="text-center p-1 font-medium text_capnhat">Thông tin cập nhật</div>
+                      <div className=" rounded-md w-[98%]  box_capnhat px-1 py-3">
+                        <div className="flex justify-between items-center ">
+                          <div className="flex items-center px-1  ">
+                            <label className="md:w-[134px] lg:w-[104px]">Người tạo</label>
+                            <Tooltip title={dataThongTin?.NguoiTao} color="blue">
                               <input
                                 disabled
                                 type="text"
-                                value={dataRecord?.NguoiSuaCuoi}
-                                className="h-[24px] w-[20vw] lg:w-[18vw] md:w-[15vw] px-2 rounded-[4px] resize-none border-[1px] border-gray-300 outline-none truncate"
+                                className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px] truncate"
+                                value={dataThongTin?.NguoiTao}
+                                readOnly
                               />
                             </Tooltip>
                           </div>
-                          <div className="flex items-center gap-1 whitespace-nowrap">
-                            <label className=" text-sm">Lúc</label>
+
+                          <div className="flex items-center p-1">
+                            <label className="w-[30px] pr-1">Lúc</label>
                             <Tooltip
-                              title={dataRecord?.NgaySuaCuoi && dayjs(dataRecord.NgaySuaCuoi).isValid() ? dayjs(dataRecord.NgaySuaCuoi).format('DD/MM/YYYY hh:mm:ss') : ''}
+                              title={dataThongTin?.NgayTao && moment(dataThongTin.NgayTao).isValid() ? moment(dataThongTin.NgayTao).format('DD/MM/YYYY hh:mm:ss') : ''}
                               color="blue"
                             >
                               <input
                                 disabled
                                 type="text"
-                                value={dataRecord?.NgaySuaCuoi && dayjs(dataRecord.NgaySuaCuoi).isValid() ? dayjs(dataRecord.NgaySuaCuoi).format('DD/MM/YYYY hh:mm:ss') : ''}
-                                className="px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none text-center truncate"
+                                className="w-full text-center border border-gray-300 outline-none px-2 rounded-[4px] h-[24px] truncate "
+                                value={dataThongTin?.NgayTao && moment(dataThongTin.NgayTao).isValid() ? moment(dataThongTin.NgayTao).format('DD/MM/YYYY hh:mm:ss') : ''}
+                              />
+                            </Tooltip>
+                          </div>
+                        </div>
+                        <div className="flex justify-between items-center ">
+                          <div className="flex items-center p-1  ">
+                            <label className="md:w-[134px] lg:w-[104px]">Sửa cuối</label>
+                            <Tooltip title={dataThongTin?.NguoiSuaCuoi} color="blue">
+                              <input
+                                disabled
+                                type="text"
+                                className="w-full  border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]  truncate"
+                                value={dataThongTin?.NguoiSuaCuoi}
+                              />
+                            </Tooltip>
+                          </div>
+                          <div className="flex items-center p-1 ">
+                            <label className="w-[30px] pr-1">Lúc</label>
+                            <Tooltip
+                              title={dataThongTin?.NgaySuaCuoi && moment(dataThongTin.NgaySuaCuoi).isValid() ? moment(dataThongTin.NgaySuaCuoi).format('DD/MM/YYYY hh:mm:ss') : ''}
+                              color="blue"
+                            >
+                              <input
+                                disabled
+                                type="text"
+                                className="w-full text-center border border-gray-300 outline-none px-2 rounded-[4px] h-[24px] truncate"
+                                value={
+                                  dataThongTin?.NgaySuaCuoi && moment(dataThongTin.NgaySuaCuoi).isValid() ? moment(dataThongTin.NgaySuaCuoi).format('DD/MM/YYYY hh:mm:ss') : ''
+                                }
                               />
                             </Tooltip>
                           </div>
@@ -1247,12 +1100,178 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
                       </div>
                     </div>
                   </div>
+                  {/* table */}
+                  <div className=" pb-0  relative mt-1">
+                    <Tooltip
+                      placement="topLeft"
+                      title={isAdd ? 'Vui lòng chọn hàng hóa hoặc F9 để chọn từ danh sách' : 'Bấm vào đây để thêm hàng mới hoặc F9 để chọn từ danh sách!'}
+                      color="blue"
+                    >
+                      <FloatButton
+                        className="absolute z-3 bg-transparent w-[26px] h-[26px]"
+                        style={{
+                          right: 12,
+                          top: 8,
+                        }}
+                        type={`${isAdd ? 'default' : 'primary'}`}
+                        icon={<IoMdAddCircle />}
+                        onClick={handleAddEmptyRow}
+                      />
+                    </Tooltip>
+                    <TableEdit
+                      typeTable="edit"
+                      // typeAction="edit"
+                      tableName=""
+                      className="table_create_GBS"
+                      param={selectedRowData}
+                      handleEditData={handleEditData}
+                      ColumnTable={columnName}
+                      columName={nameColumsGBS}
+                      yourMaHangOptions={dataHangHoa}
+                      yourTenHangOptions={dataHangHoa}
+                      yourCoThue={selectedRowData.CoThue}
+                    />
+                  </div>
+                </div>
+              </Spin>
+              {/* button  */}
+              <div className="flex justify-end items-center">
+                <div className="flex justify-end items-center gap-3  pt-3">
+                  <ActionButton color={'slate-50'} title={'Lưu & đóng'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleEdit} />
+                  <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
                 </div>
               </div>
-              {/* button */}
-              <div className="flex justify-end items-center pt-[10px] ">
-                <div className="flex gap-2">
-                  <ActionButton color={'slate-50'} title={'Lưu & đóng'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleEdit} />
+            </div>
+          )}
+          {actionType === 'clone' && (
+            <div className=" w-[90vw] h-[600px] ">
+              <div className="flex gap-2">
+                <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
+                <label className="text-blue-700 font-semibold uppercase pb-1">Thêm - {namePage ? namePage : 'Phiếu ?'}</label>
+              </div>
+
+              <div className="border w-full h-[89%] rounded-sm text-sm">
+                <div className="flex md:gap-0 lg:gap-1 pl-1 ">
+                  {/* thong tin phieu */}
+                  <div className="w-[62%]">
+                    <div className="flex flex-col pt-3  ">
+                      <div className="flex items-center p-1 gap-2">
+                        <label className="required w-[120px] text-end">Mã bảng giá</label>
+                        <input
+                          placeholder={errors?.NhomGia}
+                          type="text"
+                          className={`w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] hover:border-[#4897e6] h-[24px]
+                             ${errors.NhomGia ? 'border-red-500' : ''}`}
+                          value={formCreate.NhomGia}
+                          onChange={(e) => {
+                            setFormCreate({
+                              ...formCreate,
+                              NhomGia: e.target.value,
+                            }),
+                              setErrors({ ...errors, NhomGia: '' })
+                          }}
+                        />
+                      </div>
+                      <div className="flex items-center p-1 gap-2">
+                        <label className="required w-[120px] text-end">Tên bảng giá</label>
+                        <input
+                          placeholder={errors?.TenNhomGia}
+                          type="text"
+                          className={`w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] hover:border-[#4897e6] h-[24px]
+                             ${errors.TenNhomGia ? 'border-red-500' : ''}`}
+                          value={formCreate.TenNhomGia}
+                          onChange={(e) => {
+                            setFormCreate({
+                              ...formCreate,
+                              TenNhomGia: e.target.value,
+                            }),
+                              setErrors({ ...errors, TenNhomGia: '' })
+                          }}
+                        />
+                      </div>
+                      <div className="flex items-center p-1 gap-2">
+                        <label className=" w-[120px] text-end">Ghi chú</label>
+                        <input
+                          type="text"
+                          className="w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] hover:border-[#4897e6] h-[24px]"
+                          value={formCreate.GhiChu}
+                          onChange={(e) =>
+                            setFormCreate({
+                              ...formCreate,
+                              GhiChu: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  {/* thong tin cap nhat */}
+                  <div className="w-[38%] py-1 box_content">
+                    <div className="text-center p-1 font-medium text_capnhat">Thông tin cập nhật</div>
+                    <div className=" rounded-md w-[98%]  box_capnhat px-1 py-3">
+                      <div className="flex justify-between items-center ">
+                        <div className="flex items-center p-1  ">
+                          <label className="md:w-[134px] lg:w-[104px]">Người tạo</label>
+                          <input disabled type="text" className=" w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" />
+                        </div>
+
+                        <div className="flex items-center p-1 ">
+                          <label className="w-[30px] pr-1">Lúc</label>
+                          <input disabled type="text" className="w-full  border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" />
+                        </div>
+                      </div>
+                      <div className="flex justify-between items-center ">
+                        <div className="flex items-center p-1  ">
+                          <label className="md:w-[134px] lg:w-[104px]">Sửa cuối</label>
+                          <input disabled type="text" className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" />
+                        </div>
+                        <div className="flex items-center p-1 ">
+                          <label className="w-[30px] pr-1">Lúc</label>
+                          <input disabled type="text" className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {/* table */}
+                <div className=" pb-0  relative mt-1">
+                  <Tooltip
+                    placement="topLeft"
+                    title={isAdd ? 'Vui lòng chọn hàng hóa hoặc F9 để chọn từ danh sách' : 'Bấm vào đây để thêm hàng mới hoặc F9 để chọn từ danh sách!'}
+                    color="blue"
+                  >
+                    <FloatButton
+                      className="absolute z-3 bg-transparent w-[26px] h-[26px]"
+                      style={{
+                        right: 12,
+                        top: 8,
+                      }}
+                      type={`${isAdd ? 'default' : 'primary'}`}
+                      icon={<IoMdAddCircle />}
+                      onClick={handleAddEmptyRow}
+                    />
+                  </Tooltip>
+                  <TableEdit
+                    typeTable="create"
+                    typeAction="create"
+                    tableName="GBS"
+                    className="table_create_GBS"
+                    param={selectedRowData}
+                    handleEditData={handleEditData}
+                    ColumnTable={columnName}
+                    columName={nameColumsGBS}
+                    yourMaHangOptions={dataHangHoa}
+                    yourTenHangOptions={dataHangHoa}
+                  />
+                </div>
+              </div>
+
+              {/* button  */}
+              <div className="flex justify-end items-center">
+                <div className="flex justify-end items-center gap-3  pt-3">
+                  <ActionButton color={'slate-50'} title={'Lưu'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleCreate} />
+                  <ActionButton color={'slate-50'} title={'Lưu & đóng'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleCreateAndClose} />
+
                   <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
                 </div>
               </div>

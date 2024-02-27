@@ -6,15 +6,18 @@ import BtnAction from './BtnAction'
 
 const { Option } = Select
 const { Text } = Typography
-const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourTenHangOptions, ColumnTable, columName, typeTable, listHP, tableName }) => {
+const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourTenHangOptions, yourCoThue, ColumnTable, columName, typeTable, listHP, tableName }) => {
   const EditableContext = React.createContext(null)
 
   const [dataSource, setDataSource] = useState(param)
   const [newOptions, setNewOptions] = useState(yourMaHangOptions)
+  const [coThue, setCoThue] = useState(yourCoThue)
   const ThongSo = JSON.parse(localStorage.getItem('ThongSo'))
+
   useEffect(() => {
     setNewOptions(yourMaHangOptions)
   }, [yourMaHangOptions])
+
   useEffect(() => {
     setDataSource(param)
 
@@ -132,9 +135,8 @@ const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourT
         const values = await form.validateFields()
         toggleEdit()
 
-        if (dataIndex === 'MaHang' || dataIndex === 'TenHang') {
+        if (dataIndex === 'MaHang' || dataIndex === 'TenHang' || dataIndex === 'CoThue') {
           const newOptions = yourMaHangOptions.filter((item) => dataSource.every((item2) => item.MaHang !== item2.MaHang))
-
           const optionsArray = dataIndex === 'MaHang' ? newOptions : newOptions
           const selectedOption = optionsArray.find((option) => option[dataIndex] === values[dataIndex]) || {}
 
@@ -159,9 +161,12 @@ const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourT
             DVTQuyDoi: selectedOption.DVTQuyDoi,
             TongCong: GiaBan * record.SoLuong || record.SoLuong * record.DonGia,
             DVTDF: selectedOption.DVT || record.DVT,
+            CoThue: !coThue,
+
             // TongCong: selectedOption.DonGia || undefined,
           }
           //
+
           handleSave(updatedRow)
         } else if (dataIndex === 'TyLeCKTT') {
           const updatedRow = {
@@ -219,7 +224,7 @@ const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourT
           name={dataIndex}
           rules={[
             {
-              required: true,
+              required: false,
               // message: `không để trống ${title}`,
             },
           ]}
@@ -227,28 +232,35 @@ const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourT
         >
           {isSelect ? (
             <Select ref={inputRef} onPressEnter={save} onBlur={save} style={{ width: '100%' }} showSearch dropdownMatchSelectWidth={false} listHeight={310}>
-              {dataIndex === 'MaHang' ? (
-                newOptions?.map((option, index) => (
-                  <Option key={index} value={option.MaHang}>
-                    {`${option.MaHang} - ${option.TenHang}`}
-                  </Option>
-                ))
-              ) : dataIndex === 'TenHang' ? (
-                newOptions?.map((option, index) => (
-                  <Option key={index} value={option.TenHang}>
-                    {`${option.MaHang} - ${option.TenHang}`}
-                  </Option>
-                ))
-              ) : tableName === 'GBS' && dataIndex === 'CoThue' ? (
-                <Checkbox value={false} />
-              ) : tableName !== 'BanHang' ? (
-                listDVT.map((option, index) => (
-                  <Option key={index} value={option}>
-                    {option}
-                  </Option>
-                ))
-              ) : null}
+              {dataIndex === 'MaHang'
+                ? newOptions?.map((option, index) => (
+                    <Option key={index} value={option.MaHang}>
+                      {`${option.MaHang} - ${option.TenHang}`}
+                    </Option>
+                  ))
+                : dataIndex === 'TenHang'
+                  ? newOptions?.map((option, index) => (
+                      <Option key={index} value={option.TenHang}>
+                        {`${option.MaHang} - ${option.TenHang}`}
+                      </Option>
+                    ))
+                  : tableName !== 'BanHang'
+                    ? listDVT.map((option, index) => (
+                        <Option key={index} value={option}>
+                          {option}
+                        </Option>
+                      ))
+                    : null}
             </Select>
+          ) : tableName === 'GBS' && dataIndex === 'CoThue' ? (
+            <Checkbox
+              ref={inputRef}
+              // onBlur={save}
+              onChange={() => {
+                setCoThue(!coThue), save()
+              }}
+              checked={coThue}
+            />
           ) : dataIndex === 'SoLuong' || dataIndex === 'DonGia' ? (
             <InputNumber
               ref={inputRef}
@@ -398,7 +410,7 @@ const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourT
         },
         showSorterTooltip: false,
 
-        render: (text) => <Checkbox value={text} />,
+        render: (text, record) => <Checkbox checked={coThue} />,
       }
     }
     if (item === 'DVT' && typeTable === 'BanHang') {

@@ -12,9 +12,9 @@ export const useSearchHH = (data) => {
           TenHang,
           DVT,
           NhomHang,
+          SoLuongTon,
           // GiaBanLe
           ThongTinNhom,
-          SoLuongTon,
           HieuLucTu,
           DonGia,
           TyLeThue,
