@@ -12,7 +12,7 @@ import { exportToExcel } from '../../action/Actions'
 import { CloseSquareFilled } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import { useSearchHH } from '../../components_K/myComponents/useSearchHH'
-
+const { Option } = Select
 const { Text } = Typography
 const { IoAddCircleOutline, TiPrinter, MdDelete, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill, CgCloseO, TiThSmall, MdFilterAlt, BsWrenchAdjustableCircle } = icons
 const GBL = () => {
@@ -28,13 +28,12 @@ const GBL = () => {
   const [data, setData] = useState([])
   const [dataFull, setDataFull] = useState([])
   const [dataThongTin, setDataThongTin] = useState({})
-
   const [dataRecord, setDataRecord] = useState(null)
   const [dataHangHoa, setDataHangHoa] = useState(null)
-
+  const [dataNhomGia, setDataNhomGia] = useState([])
   const [actionType, setActionType] = useState('')
   const [dataQuyenHan, setDataQuyenHan] = useState({})
-  const [setSearchGBL, filteredGBL, searchGBL] = useSearchHH(isShowFull ? dataFull : data)
+  const [setSearchGBL, filteredGBL, searchGBL] = useSearchHH(!isShowFull ? data : dataFull)
   const [prevSearchValue, setPrevSearchValue] = useState('')
 
   const [hideColumns, setHideColumns] = useState(false)
@@ -44,6 +43,13 @@ const GBL = () => {
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
   const [isShowNotify, setIsShowNotify] = useState(false)
+  const [hasCalledApis, setHasCalledApis] = useState(false)
+
+  const [formFilter, setFormFilter] = useState({
+    From: null,
+    To: null,
+    List: [],
+  })
 
   // bỏ focus option thì hidden
   useEffect(() => {
@@ -123,6 +129,31 @@ const GBL = () => {
     }
   }, [isShowModal])
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        console.log('get helper')
+
+        const tokenLogin = localStorage.getItem('TKN')
+
+        console.log('get helper  KH,DT')
+        const response = await apis.ListHelperNhomGiaGBL(tokenLogin)
+        if (response.data && response.data.DataError === 0) {
+          setDataNhomGia(response.data.DataResults)
+        } else if (response.data.DataError === -1 || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+        } else if (response.data.DataError === -107 || response.data.DataError === -108) {
+          await RETOKEN()
+          fetchData()
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
+      } catch (error) {
+        console.error('Lấy data thất bại', error)
+      }
+    }
+    fetchData()
+  }, [])
   // get Chức năng quyền hạn
   useEffect(() => {
     const getChucNangQuyenHan = async () => {
@@ -158,15 +189,28 @@ const GBL = () => {
   }, [dataQuyenHan])
   //get DSGBL
   useEffect(() => {
-    if (tableLoad && dataQuyenHan?.VIEW) {
-      // if (isShowFull) {
-      //   getDSFullGBL()
-      // } else {
-      //   getDSGBL()
-      // }
-      getDSFullGBL()
-      getDSGBL()
+    const callApis = () => {
+      if (dataQuyenHan?.VIEW && !hasCalledApis) {
+        getDSandDSFull()
+        setHasCalledApis(true)
+      } else if (tableLoad && dataQuyenHan?.VIEW) {
+        if (isShowFull) {
+          getDSFullGBL()
+        } else {
+          getDSGBL()
+        }
+      }
     }
+
+    callApis()
+
+    // if (tableLoad && dataQuyenHan?.VIEW) {
+    //   if (isShowFull) {
+    //     getDSFullGBL()
+    //   } else {
+    //     getDSGBL()
+    //   }
+    // }
   }, [tableLoad, dataQuyenHan?.VIEW])
 
   const getDSGBL = async () => {
@@ -181,7 +225,6 @@ const GBL = () => {
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         getDSGBL()
-        // setTableLoad(false)
       } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
         toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
         setTableLoad(false)
@@ -206,8 +249,7 @@ const GBL = () => {
         setTableLoad(false)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
-        getDSGBL()
-        // setTableLoad(false)
+        getDSFullGBL()
       } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
         toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
         setTableLoad(false)
@@ -219,6 +261,48 @@ const GBL = () => {
     } catch (error) {
       console.error('Kiểm tra token thất bại', error)
       setTableLoad(false)
+    }
+  }
+
+  const getDSandDSFull = async () => {
+    try {
+      const tokenLogin = localStorage.getItem('TKN')
+
+      const response = await apis.DanhSachGBL(tokenLogin)
+      if (response.data && response.data.DataError === 0) {
+        setData(response.data.DataResults)
+        setTableLoad(false)
+      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        await RETOKEN()
+        getDSandDSFull()
+      } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
+        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+        setTableLoad(false)
+      } else {
+        toast.error(response.data.DataErrorDescription)
+        setData([])
+        setTableLoad(false)
+      }
+
+      const responseFull = await apis.DanhSachFullGBL(tokenLogin)
+
+      if (responseFull.data && responseFull.data.DataError === 0) {
+        setDataFull(responseFull.data.DataResults)
+      } else if ((responseFull.data && responseFull.data.DataError === -107) || (responseFull.data && responseFull.data.DataError === -108)) {
+        await RETOKEN()
+        getDSandDSFull()
+      } else if (
+        (responseFull.data && responseFull.data.DataError === -1) ||
+        (responseFull.data && responseFull.data.DataError === -2) ||
+        (responseFull.data && responseFull.data.DataError === -3)
+      ) {
+        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseFull.data.DataErrorDescription}</div>)
+      } else {
+        toast.error(responseFull.data.DataErrorDescription)
+        setDataFull([])
+      }
+    } catch (error) {
+      console.error('Kiểm tra token thất bại', error)
     }
   }
 
@@ -703,28 +787,22 @@ const GBL = () => {
                   <Select
                     showSearch
                     size="small"
-                    allowClear
                     placeholder="Chọn nhóm"
-                    // value={selectedNhomFrom}
-                    // onChange={(value) => {
-                    //   setSelectedNhomFrom(value)
-                    //   selectedNhomTo == null ? setSelectedNhomTo(value) : ''
-                    //   if (selectedNhomTo !== null && nhomHangNXT.findIndex((item) => item.Ma === value) > nhomHangNXT.findIndex((item) => item.Ma === selectedNhomTo)) {
-                    //     setSelectedNhomTo(value)
-                    //   }
-                    // }}
+                    value={formFilter.From}
+                    onChange={(value) => {
+                      setFormFilter({ ...formFilter, From: value })
+                    }}
                     style={{
                       width: '10vw',
                       textOverflow: 'ellipsis',
                     }}
+                    dropdownMatchSelectWidth={false}
                   >
-                    {/* {nhomHangNXT?.map((item, index) => {
-                      return (
-                        <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomHang}>
-                          <p className="truncate">{item.Ma}</p>
-                        </Select.Option>
-                      )
-                    })} */}
+                    {dataNhomGia?.map((item) => (
+                      <Option key={item.Ma} value={item.Ma} title={item.Ten}>
+                        {item.Ma} - {item.Ten}
+                      </Option>
+                    ))}
                   </Select>
                 </div>
                 <div className="flex gap-1 items-center">
@@ -732,28 +810,22 @@ const GBL = () => {
                   <Select
                     showSearch
                     size="small"
-                    allowClear
                     placeholder="Chọn nhóm"
-                    // value={selectedNhomFrom}
-                    // onChange={(value) => {
-                    //   setSelectedNhomFrom(value)
-                    //   selectedNhomTo == null ? setSelectedNhomTo(value) : ''
-                    //   if (selectedNhomTo !== null && nhomHangNXT.findIndex((item) => item.Ma === value) > nhomHangNXT.findIndex((item) => item.Ma === selectedNhomTo)) {
-                    //     setSelectedNhomTo(value)
-                    //   }
-                    // }}
+                    value={formFilter.To}
+                    onChange={(value) => {
+                      setFormFilter({ ...formFilter, To: value })
+                    }}
                     style={{
                       width: '10vw',
                       textOverflow: 'ellipsis',
                     }}
+                    dropdownMatchSelectWidth={false}
                   >
-                    {/* {nhomHangNXT?.map((item, index) => {
-                      return (
-                        <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomHang}>
-                          <p className="truncate">{item.Ma}</p>
-                        </Select.Option>
-                      )
-                    })} */}
+                    {dataNhomGia?.map((item) => (
+                      <Option key={item.Ma} value={item.Ma} title={item.Ten}>
+                        {item.Ma} - {item.Ten}
+                      </Option>
+                    ))}
                   </Select>
                 </div>
                 <div className="flex gap-1 items-center">
@@ -765,22 +837,22 @@ const GBL = () => {
                     filterOption
                     size="small"
                     placeholder="Danh sách nhóm"
-                    // value={selectedNhomList}
-                    // onChange={(value) => setSelectedNhomList(value)}
-                    className="md:w-[20vw] lg:w-[35vw] truncate"
+                    value={formFilter.List}
+                    onChange={(value) => {
+                      setFormFilter({ ...formFilter, List: value })
+                    }}
+                    className="md:w-[32vw] lg:w-[100] truncate"
                   >
-                    {/* {nhomHangNXT?.map((item) => {
-                      return (
-                        <Select.Option key={item.Ma} value={item.Ma} title={item.ThongTinNhomHang}>
-                          <p className="truncate">{item.ThongTinNhomHang}</p>
-                        </Select.Option>
-                      )
-                    })} */}
+                    {dataNhomGia?.map((item) => (
+                      <Option key={item.Ma} value={item.Ma}>
+                        {item.Ma} - {item.Ten}
+                      </Option>
+                    ))}
                   </Select>
                 </div>
                 <div>
                   <ActionButton
-                    title={'Xem Dữ Liệu'}
+                    title={''}
                     // handleAction={handleFilterDS}
                     icon={<MdFilterAlt className="w-5 h-5" />}
                     color={'slate-50'}
@@ -835,7 +907,7 @@ const GBL = () => {
                     localStorage.setItem('pageSize', size)
                   },
                 }}
-                rowKey={(record) => `${record.MaDoiTuong}/${record.HieuLucTu}`}
+                rowKey={(record) => record.ID}
                 onRow={(record) => ({
                   onDoubleClick: () => {
                     handleView(record)
@@ -850,7 +922,6 @@ const GBL = () => {
                           .filter((column) => column.render)
                           .map((column) => {
                             const isNumericColumn = typeof filteredGBL[0]?.[column.dataIndex] === 'number'
-
                             return (
                               <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
                                 {column.dataIndex === 'STT' ? (

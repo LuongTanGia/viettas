@@ -828,7 +828,7 @@ const ModalPCT = ({
                         <input
                           type="text"
                           value={formatPrice(dataRecord?.SoTien, dataThongSo?.SOLESOTIEN)}
-                          className="h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none "
+                          className="h-[24px] px-2 rounded-[4px] w-[20%] resize-none border-[1px] border-gray-300 outline-none text-end "
                           disabled
                         />
                       </div>

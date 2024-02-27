@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router-dom'
 import { useSearch } from '../../components_K/myComponents/useSearch'
 
 const { Text } = Typography
-const { IoAddCircleOutline, MdDelete, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill, CgCloseO, TiPrinter } = icons
+const { IoAddCircleOutline, MdDelete, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill, CgCloseO, TiPrinter, FaRegCopy } = icons
 const GBS = () => {
   const navigate = useNavigate()
   const optionContainerRef = useRef(null)
@@ -107,7 +107,7 @@ const GBS = () => {
             setIsLoadingModal(false)
           }
         }
-        if (actionType === 'view') {
+        if (actionType === 'view' || actionType === 'edit') {
           console.log('get helper tt')
           const responseTT = await apis.ThongTinGBS(tokenLogin, dataRecord.NhomGia)
           if (responseTT.data && responseTT.data.DataError === 0) {
@@ -377,6 +377,14 @@ const GBS = () => {
               >
                 <MdEdit size={16} />
               </div>
+              <div
+                onClick={() => handleClone(record)}
+                title="bản sao"
+                className={`p-[3px] border-2 rounded-md text-slate-50 border-pink-500 bg-pink-500 hover:bg-white hover:text-pink-500 cursor-pointer
+                } `}
+              >
+                <FaRegCopy size={16} />
+              </div>
 
               <div
                 onClick={() => (dataQuyenHan?.DEL ? handleDelete(record) : '')}
@@ -420,6 +428,13 @@ const GBS = () => {
 
   const handleEdit = (record) => {
     setActionType('edit')
+    setDataRecord(record)
+    setDataThongTin(record)
+    setIsShowModal(true)
+  }
+
+  const handleClone = (record) => {
+    setActionType('clone')
     setDataRecord(record)
     setDataThongTin(record)
     setIsShowModal(true)
@@ -542,6 +557,7 @@ const GBS = () => {
                         </div>
                         <div>In phiếu</div>
                       </button>
+
                       <button
                         onClick={() => setHideColumns(!hideColumns)}
                         className="flex items-center py-1 px-2 rounded-md border-2 border-red-500  text-slate-50 text-base bg-red-500 hover:bg-white hover:text-red-500 "

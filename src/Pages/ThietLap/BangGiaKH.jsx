@@ -182,10 +182,12 @@ const BangGiaKH = () => {
       } else {
         getDSGKH()
       }
+      setSelectedRowKeys([])
       // getDSFullGKH()
       // getDSGKH()
     }
   }, [tableLoad, dataQuyenHan?.VIEW])
+
   // data DS delete
   useEffect(() => {
     const selectedRowObjs = selectedRowKeys.map((key) => {
@@ -194,6 +196,8 @@ const BangGiaKH = () => {
     })
     setFormDEL({ ...formDEL, DanhSachMaHieuLuc: selectedRowObjs })
   }, [selectedRowKeys])
+
+  console.log('first,', selectedRowKeys)
 
   const getDSGKH = async () => {
     try {
@@ -482,8 +486,14 @@ const BangGiaKH = () => {
   }
 
   const handleDeleteDS = () => {
-    setActionType('deleteds')
-    setIsShowModal(true)
+    if (formDEL.DanhSachMaHieuLuc.length <= 0) {
+      toast.warning('Hãy chọn mã khách hàng để xóa', {
+        autoClose: 1500,
+      })
+    } else {
+      setActionType('deleteds')
+      setIsShowModal(true)
+    }
   }
 
   const handleSearch = (newSearch) => {

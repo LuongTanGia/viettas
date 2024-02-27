@@ -1,5 +1,5 @@
 import { TfiSearch } from 'react-icons/tfi'
-import { FaRegUserCircle, FaRegEye, FaRegEdit, FaMoneyCheckAlt, FaEyeSlash } from 'react-icons/fa'
+import { FaRegUserCircle, FaRegEye, FaRegEdit, FaMoneyCheckAlt, FaEyeSlash, FaRegCopy } from 'react-icons/fa'
 import { FcGoogle, FcSearch } from 'react-icons/fc'
 import { IoMdClose, IoIosMenu, IoIosSearch } from 'react-icons/io'
 import { BsDatabase } from 'react-icons/bs'
@@ -60,5 +60,6 @@ const icons = {
   MdOutlineViewCompact,
   BsWrenchAdjustableCircle,
   IoIosRemoveCircleOutline,
+  FaRegCopy,
 }
 export default icons
