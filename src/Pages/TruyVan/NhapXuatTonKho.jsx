@@ -55,18 +55,12 @@ const NhapXuatTonKho = () => {
   useEffect(() => {
     const getDataNXTFirst = async () => {
       try {
+        setTableLoad(true)
         if (isLoading == true) {
-          setTableLoad(true)
           const response = await categoryAPI.InfoNXTTheoKho(
             {
               NgayBatDau: khoanNgayFrom.format('YYYY-MM-DD'),
               NgayKetThuc: khoanNgayTo.format('YYYY-MM-DD'),
-              CodeValue1From: null,
-              CodeValue1To: null,
-              CodeValue1List: null,
-              CodeValue2From: null,
-              CodeValue2To: null,
-              CodeValue2List: null,
             },
             TokenAccess,
           )
@@ -85,11 +79,11 @@ const NhapXuatTonKho = () => {
         }
       } catch (error) {
         console.log(error)
+        setDataNXT([])
+        setTableLoad(false)
       }
     }
-    if (searchHangHoa || isLoading) {
-      getDataNXTFirst()
-    }
+    getDataNXTFirst()
   }, [searchHangHoa, isLoading])
 
   useEffect(() => {
@@ -269,6 +263,8 @@ const NhapXuatTonKho = () => {
       }
     } catch (error) {
       console.log(error)
+      setDataNXT([])
+      setTableLoad(false)
     }
   }
   const handleFilterDS = () => {

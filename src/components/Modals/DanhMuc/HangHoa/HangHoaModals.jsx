@@ -862,7 +862,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                                 value={dataView?.NguoiTao || ''}
                                 className={`${
                                   hangHoaForm?.LapRap == true ? '2xl:w-[18vw] xl:w-[16vw] lg:w-[14vw] md:w-[12vw]' : '2xl:w-[20vw] lg:w-[18vw] md:w-[15vw]'
-                                } px-2 rounded resize-none border-[0.125rem] outline-none text-[1rem] truncate`}
+                                } px-2 rounded resize-none border outline-none text-[1rem] truncate`}
                                 readOnly
                               />
                             </Tooltip>
@@ -873,7 +873,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                               <input
                                 type="text"
                                 value={moment(dataView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
-                                className="px-2 rounded w-full resize-none border-[0.125rem] outline-none text-[1rem] truncate"
+                                className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
                                 readOnly
                               />
                             </Tooltip>
@@ -887,7 +887,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                                 value={dataView?.NguoiSuaCuoi || ' '}
                                 className={`${
                                   hangHoaForm?.LapRap == true ? '2xl:w-[18vw] xl:w-[16vw] lg:w-[14vw] md:w-[12vw]' : '2xl:w-[20vw] lg:w-[18vw] md:w-[15vw]'
-                                } px-2 rounded  resize-none border-[0.125rem] outline-none text-[1rem] truncate`}
+                                } px-2 rounded  resize-none border outline-none text-[1rem] truncate`}
                                 readOnly
                               />
                             </Tooltip>
@@ -897,7 +897,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                             <Tooltip title={dataView?.NgaySuaCuoi ? moment(dataView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : ''} color="blue">
                               <input
                                 value={dataView?.NgaySuaCuoi ? moment(dataView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                                className="px-2 rounded w-full resize-none border-[0.125rem] outline-none text-[1rem] truncate"
+                                className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
                                 readOnly
                               />
                             </Tooltip>
@@ -1270,6 +1270,9 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                         <div className="flex col-span-2 gap-1 items-center">
                           <label className=" min-w-[90px] text-sm flex justify-end whitespace-nowrap">Ghi chú</label>
                           <textarea
+                            rows="3"
+                            cols="41"
+                            wrap="soft"
                             type="text"
                             className="px-2 w-full resize-none rounded border-[1px] hover:border-blue-500 outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsispx-4  "
                             name="GhiChu"
@@ -1743,6 +1746,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                         <div className="flex col-span-2 gap-1 items-center">
                           <label className=" min-w-[90px] text-sm whitespace-nowrap flex justify-end">Ghi chú</label>
                           <textarea
+                            wrap="soft"
                             type="text"
                             className="px-2 w-full resize-none rounded border-[1px] hover:border-blue-500 outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"
                             name="GhiChu"
@@ -1929,7 +1933,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
-                      <p className="text-blue-700 font-semibold uppercase">Đổi nhóm - Hàng Hóa</p>
+                      <p className="text-blue-700 font-semibold uppercase">Đổi trạng thái - Hàng Hóa</p>
                     </div>
                   </div>
                   <div className="flex flex-col gap-2">

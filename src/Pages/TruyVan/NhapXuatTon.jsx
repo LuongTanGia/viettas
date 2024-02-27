@@ -53,8 +53,8 @@ const NhapXuatTon = () => {
   useEffect(() => {
     const getDataNXTFirst = async () => {
       try {
+        setTableLoad(true)
         if (isLoading == true) {
-          setTableLoad(true)
           const response = await categoryAPI.InfoNXTTongKho(
             {
               NgayBatDau: khoanNgayFrom.format('YYYY-MM-DD'),
@@ -79,10 +79,8 @@ const NhapXuatTon = () => {
         console.log(error)
       }
     }
-    if (searchHangHoa || isLoading) {
-      getDataNXTFirst()
-    }
-  }, [searchHangHoa, isLoading, dateData?.NgayBatDau, dateData?.NgayKetThuc])
+    getDataNXTFirst()
+  }, [searchHangHoa, isLoading])
 
   useEffect(() => {
     const handleClickOutside = (event) => {

@@ -445,6 +445,7 @@ const QuanLy = () => {
     },
   ]
   const newTitles = titles.filter((item) => !hiddenRow?.includes(item.dataIndex))
+  const maNguoiDung = dataQuanLy?.map((item) => item.MaNguoiDung)
   return (
     <>
       {dataCRUD?.VIEW == false ? (
@@ -664,11 +665,11 @@ const QuanLy = () => {
               <div>
                 {isShowModal &&
                   (actionType == 'create' ? (
-                    <QLCreate close={() => setIsShowModal(false)} loadingData={handleLoading} setTargetRow={setTargetRow} />
+                    <QLCreate close={() => setIsShowModal(false)} loadingData={handleLoading} setTargetRow={setTargetRow} maNguoiDung={maNguoiDung} />
                   ) : actionType == 'view' ? (
                     <QLView close={() => setIsShowModal(false)} dataQL={isMaHang} />
                   ) : actionType == 'edit' ? (
-                    <QLEdit close={() => setIsShowModal(false)} dataQL={isMaHang} loadingData={handleLoading} setTargetRow={setTargetRow} />
+                    <QLEdit close={() => setIsShowModal(false)} dataQL={isMaHang} loadingData={handleLoading} setTargetRow={setTargetRow} maNguoiDung={maNguoiDung} />
                   ) : actionType == 'delete' ? (
                     <QLDelete close={() => setIsShowModal(false)} dataQL={isMaHang} loadingData={handleLoading} setTargetRow={setTargetRow} />
                   ) : null)}

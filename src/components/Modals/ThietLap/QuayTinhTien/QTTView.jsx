@@ -8,11 +8,13 @@ import logo from '../../../../assets/VTS-iSale.ico'
 import { RETOKEN } from '../../../../action/Actions'
 import ActionButton from '../../../util/Button/ActionButton'
 import SimpleBackdrop from '../../../util/Loading/LoadingPage'
+import { FaEyeSlash, FaEye } from 'react-icons/fa'
+
 const QTTView = ({ close, dataQTT }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const [dataQTTView, setdataQTTView] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-
+  const [isShow, setIsShow] = useState(false)
   useEffect(() => {
     const handleView = async () => {
       try {
@@ -44,7 +46,7 @@ const QTTView = ({ close, dataQTT }) => {
           <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10">
             <div className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"></div>
             <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col bg-white p-2 rounded shadow-custom overflow-hidden">
-              <div className="flex flex-col gap-2 py-1 px-2 md:w-[80vw] lg:w-[60vw] xl:w-[50vw] 2xl:w-[40vw]">
+              <div className="flex flex-col gap-2 py-1 px-2 md:w-[85vw] lg:w-[65vw] xl:w-[50vw] 2xl:w-[40vw]">
                 <div className="flex gap-2">
                   <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
                   <p className="text-blue-700 font-semibold uppercase">Thông tin - Quầy tính tiền</p>
@@ -86,7 +88,15 @@ const QTTView = ({ close, dataQTT }) => {
                     </div>
                     <div className="flex items-center gap-1 w-[100%]">
                       <label className="whitespace-nowrap min-w-[90px] text-sm flex justify-end">SQL pass</label>
-                      <input type="text" value={dataQTTView?.SQLPassword || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" readOnly />
+                      <input
+                        type={isShow ? 'text' : 'password'}
+                        value={dataQTTView?.SQLPassword || ''}
+                        className="relative px-2 w-full resize-none rounded border outline-none text-sm truncate"
+                        readOnly
+                      />
+                      <div className="absolute right-10 text-gray-400 hover:text-blue-500 cursor-pointer" onClick={() => setIsShow(!isShow)}>
+                        {isShow ? <FaEye /> : <FaEyeSlash />}
+                      </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
@@ -118,7 +128,7 @@ const QTTView = ({ close, dataQTT }) => {
                     <label className="whitespace-nowrap min-w-[90px] text-sm flex justify-end">Nhóm giá</label>
                     <input
                       type="text"
-                      value={`${dataQTTView?.NhomGia || ''} - ${dataQTTView?.TenNhomGia || ''}`}
+                      value={dataQTTView?.NhomGia || dataQTTView?.TenNhomGia ? `${dataQTTView?.NhomGia || ''} - ${dataQTTView?.TenNhomGia || ''}` : ''}
                       className="px-2 w-full resize-none rounded border outline-none text-sm truncate"
                       readOnly
                     />

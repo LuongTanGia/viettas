@@ -6,7 +6,6 @@ import queryString from 'query-string'
 
 const axiosClient = axios.create({
   baseURL: 'https://isalewebapi.viettassaigon.vn/api',
-  timeout: 3000,
   headers: {
     'Content-Type': 'application/json',
   },

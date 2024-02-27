@@ -40,13 +40,13 @@ const NhomDoiTuong = () => {
   const [targetRow, setTargetRow] = useState([])
   const [dataCRUD, setDataCRUD] = useState()
   const [hiddenRow, setHiddenRow] = useState([])
-  const [checkedList, setcheckedList] = useState([])
+  const [checkedList, setCheckedList] = useState([])
   const [selectVisible, setSelectVisible] = useState(false)
   const [options, setOptions] = useState()
 
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
-    setcheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
+    setCheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
     const key = Object.keys(dataNhomDoiTuong ? dataNhomDoiTuong[0] : [] || []).filter((key) => key)
     setOptions(key)
   }, [selectVisible])
@@ -147,7 +147,7 @@ const NhomDoiTuong = () => {
     setSelectVisible(!selectVisible)
   }
   const onChange = (checkedValues) => {
-    setcheckedList(checkedValues)
+    setCheckedList(checkedValues)
   }
   const onClickSubmit = () => {
     setTableLoad(true)

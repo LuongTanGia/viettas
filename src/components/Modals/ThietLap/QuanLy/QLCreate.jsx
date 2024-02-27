@@ -10,7 +10,7 @@ import logo from '../../../../assets/VTS-iSale.ico'
 import { RETOKEN, base64ToPDF } from '../../../../action/Actions'
 import ActionButton from '../../../util/Button/ActionButton'
 import SimpleBackdrop from '../../../util/Loading/LoadingPage'
-const QLCreate = ({ close, loadingData, setTargetRow }) => {
+const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
@@ -27,6 +27,7 @@ const QLCreate = ({ close, loadingData, setTargetRow }) => {
     NA: false,
     GhiChu: '',
   }
+
   const [QLForm, setQLForm] = useState(() => {
     return innitProduct
   })
@@ -83,7 +84,6 @@ const QLCreate = ({ close, loadingData, setTargetRow }) => {
     } catch (error) {
       console.log(error)
       toast.error('Lỗi Server vui lòng thử lại', { autoClose: 1000 })
-      close()
     }
   }
   const handlePrint = async () => {
@@ -109,7 +109,7 @@ const QLCreate = ({ close, loadingData, setTargetRow }) => {
           <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10">
             <div className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"></div>
             <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col bg-white p-2 rounded shadow-custom overflow-hidden">
-              <div className="flex flex-col gap-2 py-1 px-2 md:w-[80vw] lg:w-[60vw] xl:w-[50vw] 2xl:w-[40vw]">
+              <div className="flex flex-col gap-2 py-1 px-2 md:w-[85vw] lg:w-[65vw] xl:w-[50vw] 2xl:w-[40vw]">
                 <div className="flex gap-2">
                   <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
                   <p className="text-blue-700 font-semibold uppercase">Thêm - Quản Lý</p>
@@ -168,18 +168,21 @@ const QLCreate = ({ close, loadingData, setTargetRow }) => {
                       }}
                     >
                       {dataUser &&
-                        dataUser?.map((item, index) => (
-                          <Select.Option key={index} value={item.Ma}>
-                            {item.ThongTinNguoiDung}
-                          </Select.Option>
-                        ))}
+                        dataUser.map(
+                          (item, index) =>
+                            !maNguoiDung.includes(item.Ma) && (
+                              <Select.Option key={index} value={item.Ma}>
+                                {item.ThongTinNguoiDung}
+                              </Select.Option>
+                            ),
+                        )}
                     </Select>
                   </div>
                   <div className="flex items-center gap-2 ml-[15px]">
                     <div className="flex items-center gap-1">
                       <label className="required whitespace-nowrap text-sm">Hiệu lực từ</label>
                       <DateField
-                        className="DatePicker_NXTKho max-w-[120px]"
+                        className="DatePicker_NXTKho max-w-[130px]"
                         format="DD/MM/YYYY"
                         value={DateFrom || null}
                         onChange={(values) => {
@@ -200,7 +203,7 @@ const QLCreate = ({ close, loadingData, setTargetRow }) => {
                     <div className="flex items-center gap-1">
                       <label className="whitespace-nowrap min-w-[90px] text-sm flex justify-end">Ngày hết hạn</label>
                       <DateField
-                        className="DatePicker_NXTKho max-w-[120px]"
+                        className="DatePicker_NXTKho max-w-[130px]"
                         format="DD/MM/YYYY"
                         value={DateTo || null}
                         onChange={(values) => {
