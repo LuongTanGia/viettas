@@ -86,6 +86,7 @@ function FilterCp({ title1, title2, title3, option1, option2, option3, dataAPI, 
           minWidth: 100,
         }}
         allowClear
+        size="small"
         value={valueFrom}
         onBlur={handleChangeFromTo}
         onChange={handleChangeValueFrom}
@@ -104,6 +105,7 @@ function FilterCp({ title1, title2, title3, option1, option2, option3, dataAPI, 
           minWidth: 100,
         }}
         allowClear
+        size="small"
         value={valueTo}
         onBlur={handleChangeFromTo}
         onChange={handleChangeValueTo}
@@ -118,6 +120,7 @@ function FilterCp({ title1, title2, title3, option1, option2, option3, dataAPI, 
       <Select
         mode="multiple"
         showSearch
+        size="small"
         style={{
           width: '70%',
         }}
@@ -130,8 +133,8 @@ function FilterCp({ title1, title2, title3, option1, option2, option3, dataAPI, 
         filterOption={(input, option) => (option?.label ?? '').includes(input)}
         filterSort={(optionA, optionB) => (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())}
         maxTagPlaceholder={(omittedValues) => (
-          <Tooltip title={omittedValues.map(({ label }) => label).join(', ')}>
-            <span>+{omittedValues.length}...</span>
+          <Tooltip title={omittedValues?.map(({ label }) => label).join(', ')}>
+            <span>+{omittedValues?.length}...</span>
           </Tooltip>
         )}
         options={options_3}

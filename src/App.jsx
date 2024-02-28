@@ -56,10 +56,14 @@ function App() {
         pauseOnHover
         theme="light"
         whiteSpace="nowrap"
+        textOverflow="ellipsis"
+        overflow="hidden"
         style={{
           width: 'fit-content',
-          maxWidth: '30rem',
+          maxWidth: '35rem',
           whiteSpace: 'nowrap',
+          textOverflow: 'ellipsis',
+          overflow: 'hidden',
         }}
       />
     </Router>

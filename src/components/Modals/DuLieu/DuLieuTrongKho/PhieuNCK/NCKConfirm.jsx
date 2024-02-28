@@ -61,6 +61,7 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
     return ''
   }
   const handleSearch = (event) => {
+    setTableLoad(true)
     setSearchHangHoa(event.target.value)
   }
   function formatDateTime(inputDate, includeTime = false) {

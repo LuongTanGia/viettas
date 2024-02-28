@@ -186,6 +186,7 @@ const PhieuNhapChuyenKho = () => {
   }
   let timerId
   const handleSearch = (event) => {
+    setTableLoad(true)
     clearTimeout(timerId)
     timerId = setTimeout(() => {
       setSearchHangHoa(event.target.value)
@@ -591,6 +592,7 @@ const PhieuNhapChuyenKho = () => {
                           <ActionButton
                             handleAction={() => (dataCRUD?.EXCEL == false ? '' : exportToExcel())}
                             title={'Xuất Excel'}
+                            quyenHan={dataCRUD?.EXCEL}
                             icon={<RiFileExcel2Fill className="w-5 h-5" />}
                             color={'slate-50'}
                             background={dataCRUD?.EXCEL == false ? 'gray-400' : 'green-500'}

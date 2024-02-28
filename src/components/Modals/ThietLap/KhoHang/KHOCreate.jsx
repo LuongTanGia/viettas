@@ -201,7 +201,7 @@ const KHOCreate = ({ close, loadingData, setTargetRow, isKHO, setIsMaKHO }) => {
                 <>
                   <ActionButton
                     handleAction={() => handleCreate(false)}
-                    title={'Lưu & Đóng'}
+                    title={'Xác nhận'}
                     color={'slate-50'}
                     background={'blue-500'}
                     color_hover={'blue-500'}

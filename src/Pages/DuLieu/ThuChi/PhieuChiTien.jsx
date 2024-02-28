@@ -505,7 +505,7 @@ const PhieuChiTien = () => {
                 className={`p-[3px] rounded-md text-slate-50 ${
                   record.TenHangMuc === 'Chi tiền tại quầy' || dataQuyenHan?.EDIT === false
                     ? 'border-2 border-gray-400 bg-gray-400 cursor-not-allowed'
-                    : ' border-2 border-yellow-500 bg-yellow-500  hover:bg-white hover:text-yellow-500 cursor-pointer'
+                    : ' border-2 border-yellow-400 bg-yellow-400  hover:bg-white hover:text-yellow-400 cursor-pointer'
                 }`}
               >
                 <MdEdit size={16} />

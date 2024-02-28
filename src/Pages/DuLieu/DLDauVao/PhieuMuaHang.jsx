@@ -627,7 +627,7 @@ const PhieuMuaHang = () => {
                 onClick={() => (dataQuyenHan?.EDIT ? handleEdit(record) : '')}
                 title="Sửa"
                 className={`p-[3px] border-2 rounded-md text-slate-50 ${
-                  dataQuyenHan?.EDIT ? 'border-yellow-500 bg-yellow-500 hover:bg-white hover:text-yellow-500 cursor-pointer' : 'border-gray-400 bg-gray-400 cursor-not-allowed'
+                  dataQuyenHan?.EDIT ? 'border-yellow-400 bg-yellow-400 hover:bg-white hover:text-yellow-400 cursor-pointer' : 'border-gray-400 bg-gray-400 cursor-not-allowed'
                 } `}
               >
                 <MdEdit size={16} />
