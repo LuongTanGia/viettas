@@ -3,6 +3,7 @@
 import { toast } from 'react-toastify'
 import { useEffect, useState } from 'react'
 import dayjs from 'dayjs'
+import { MdPrint } from 'react-icons/md'
 import { Checkbox, Input, Select } from 'antd'
 import { DateField } from '@mui/x-date-pickers'
 import categoryAPI from '../../../../API/linkAPI'
@@ -72,7 +73,7 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
       const response = await categoryAPI.ThemQuanLy({ ...QLForm, TuNgay: dayjs(DateFrom).format('YYYY-MM-DDTHH:mm:ss') }, TokenAccess)
       if (response.data.DataError == 0) {
         isPrint
-          ? (handlePrint(), setQLForm({ KhongKetThuc: true }))
+          ? (dataThongSo.ALLOW_MAQUANLYTUDONG ? handlePrint(response.data.DataResults[0].Ma) : handlePrint(), setQLForm({ KhongKetThuc: true }))
           : isSave
             ? (setQLForm({ KhongKetThuc: true }), toast.success('Tạo thành công', { autoClose: 1000 }))
             : (close(), toast.success('Tạo thành công', { autoClose: 1000 }))
@@ -86,9 +87,9 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
       toast.error('Lỗi Server vui lòng thử lại', { autoClose: 1000 })
     }
   }
-  const handlePrint = async () => {
+  const handlePrint = async (maQuanLy) => {
     try {
-      const response = await categoryAPI.InTheQuanLy(QLForm?.MaQuanLy, TokenAccess)
+      const response = await categoryAPI.InTheQuanLy(maQuanLy ? maQuanLy : QLForm?.MaQuanLy, TokenAccess)
       if (response.data.DataError == 0) {
         base64ToPDF(response.data.DataResults)
       } else {
@@ -279,6 +280,7 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
                     <ActionButton
                       handleAction={() => handleCreate(true, true)}
                       title={'In thẻ'}
+                      icon={<MdPrint className="w-5 h-5" />}
                       color={'slate-50'}
                       background={'purple-500'}
                       color_hover={'purple-500'}
