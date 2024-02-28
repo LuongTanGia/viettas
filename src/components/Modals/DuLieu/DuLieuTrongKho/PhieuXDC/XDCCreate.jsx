@@ -119,6 +119,7 @@ const XDCCreate = ({ close, loadingData, setTargetRow }) => {
   }, [isLoading])
 
   const handleSearch = (event) => {
+    setTableLoad(true)
     setSearchHangHoa(event.target.value)
   }
   const formatThapPhan = (number, decimalPlaces) => {

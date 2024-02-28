@@ -5,8 +5,9 @@ import { useEffect, useState, useCallback, useMemo } from 'react'
 import { Checkbox, FloatButton, Input, InputNumber, Select, Table, Tooltip } from 'antd'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { FaSearch } from 'react-icons/fa'
+import { MdPrint } from 'react-icons/md'
 import { toast } from 'react-toastify'
-import { IoMdClose, IoMdAddCircle } from 'react-icons/io'
+import { IoMdAddCircle } from 'react-icons/io'
 import dayjs from 'dayjs'
 import moment from 'moment'
 import HUYPrint from './HUYPrint'
@@ -529,6 +530,8 @@ const HUYEdit = ({ close, dataHUY, loadingData, setTargetRow }) => {
                               handleEdit(true)
                             }
                       }
+                      icon={<MdPrint className="w-5 h-5" />}
+                      s
                       title={'In Phiếu'}
                       color={'slate-50'}
                       background={isAdd ? 'gray-500' : 'purple-500'}

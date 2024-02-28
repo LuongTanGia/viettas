@@ -17,6 +17,7 @@ import HighlightedCell from '../../../hooks/HighlightedCell'
 import ActionButton from '../../../util/Button/ActionButton'
 import SimpleBackdrop from '../../../util/Loading/LoadingPage'
 import { RETOKEN, base64ToPDF } from '../../../../action/Actions'
+import TextArea from 'antd/es/input/TextArea'
 
 const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, setTargetRow }) => {
   const TokenAccess = localStorage.getItem('TKN')
@@ -190,6 +191,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
     return ''
   }
   const handleSearch = (event) => {
+    setTableLoad(true)
     let timerId
     clearTimeout(timerId)
     timerId = setTimeout(() => {
@@ -850,7 +852,14 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                       </div>
                       <div className="flex items-center gap-1 whitespace-nowrap">
                         <label className="min-w-[90px] text-sm flex justify-end">Ghi chú</label>
-                        <textarea type="text" value={dataView?.GhiChu || ''} className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate" readOnly />
+                        <textarea
+                          rows="2"
+                          cols="10"
+                          type="text"
+                          value={dataView?.GhiChu || ''}
+                          className="px-2 rounded w-full resize-none border outline-none text-sm truncate"
+                          readOnly
+                        />
                       </div>
                       <div className="grid grid-cols-1 mt-1 gap-2 px-2 py-2.5 rounded border-black-200 ml-[95px] relative border-[0.125rem]">
                         <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
@@ -1254,33 +1263,29 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                         </div>
                         <div className="flex col-span-2 gap-1 items-center">
                           <label className=" min-w-[90px] text-sm flex justify-end whitespace-nowrap">Diễn giải hàng</label>
-                          <input
-                            type="text"
-                            className="px-2 w-full resize-none rounded border-[1px] hover:border-blue-500 outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"
-                            name="DienGiaiHangHoa"
+                          <Input
+                            className="w-full overflow-hidden whitespace-nowrap overflow-ellipsis"
+                            size="small"
                             value={hangHoaForm?.DienGiaiHangHoa || ''}
                             onChange={(e) =>
                               setHangHoaForm({
                                 ...hangHoaForm,
-                                [e.target.name]: e.target.value,
+                                DienGiaiHangHoa: e.target.value,
                               })
                             }
                           />
                         </div>
                         <div className="flex col-span-2 gap-1 items-center">
                           <label className=" min-w-[90px] text-sm flex justify-end whitespace-nowrap">Ghi chú</label>
-                          <textarea
-                            rows="3"
-                            cols="41"
-                            wrap="soft"
-                            type="text"
-                            className="px-2 w-full resize-none rounded border-[1px] hover:border-blue-500 outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsispx-4  "
-                            name="GhiChu"
+                          <TextArea
+                            rows="2"
+                            cols="4"
+                            className="text-sm"
                             value={hangHoaForm?.GhiChu || ''}
                             onChange={(e) =>
                               setHangHoaForm({
                                 ...hangHoaForm,
-                                [e.target.name]: e.target.value,
+                                GhiChu: e.target.value,
                               })
                             }
                           />
@@ -1730,31 +1735,29 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                         </div>
                         <div className="flex col-span-2 gap-1 items-center">
                           <label className=" min-w-[90px] text-sm whitespace-nowrap flex justify-end">Diễn giải hàng</label>
-                          <input
-                            type="text"
-                            className="px-2 w-full resize-none rounded border-[1px] hover:border-blue-500 outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"
-                            name="DienGiaiHangHoa"
-                            value={hangHoaForm.DienGiaiHangHoa || ''}
+                          <Input
+                            className="w-full overflow-hidden whitespace-nowrap overflow-ellipsis"
+                            size="small"
+                            value={hangHoaForm?.DienGiaiHangHoa || ''}
                             onChange={(e) =>
                               setHangHoaForm({
                                 ...hangHoaForm,
-                                [e.target.name]: e.target.value,
+                                DienGiaiHangHoa: e.target.value,
                               })
                             }
                           />
                         </div>
                         <div className="flex col-span-2 gap-1 items-center">
                           <label className=" min-w-[90px] text-sm whitespace-nowrap flex justify-end">Ghi chú</label>
-                          <textarea
-                            wrap="soft"
-                            type="text"
-                            className="px-2 w-full resize-none rounded border-[1px] hover:border-blue-500 outline-none text-[1rem] overflow-hidden whitespace-nowrap overflow-ellipsis"
-                            name="GhiChu"
-                            value={hangHoaForm.GhiChu || ''}
+                          <TextArea
+                            rows="2"
+                            cols="4"
+                            className="text-sm"
+                            value={hangHoaForm?.GhiChu || ''}
                             onChange={(e) =>
                               setHangHoaForm({
                                 ...hangHoaForm,
-                                [e.target.name]: e.target.value,
+                                GhiChu: e.target.value,
                               })
                             }
                           />

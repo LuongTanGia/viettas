@@ -205,6 +205,7 @@ const HangHoa = () => {
     }
   }
   const handleSearch = (event) => {
+    setTableLoad(true)
     let timerId
     clearTimeout(timerId)
     timerId = setTimeout(() => {
@@ -656,6 +657,7 @@ const HangHoa = () => {
                           <ActionButton
                             handleAction={() => (dataCRUD?.EXCEL == false ? '' : exportToExcel())}
                             title={'Xuất Excel'}
+                            quyenHan={dataCRUD?.EXCEL}
                             icon={<RiFileExcel2Fill className="w-5 h-5" />}
                             color={'slate-50'}
                             background={dataCRUD?.EXCEL == false ? 'gray-400' : 'green-500'}
@@ -717,12 +719,13 @@ const HangHoa = () => {
                   <div className="flex gap-2">
                     <ActionButton
                       handleAction={() => (dataCRUD?.ADD == false ? '' : handleCreate())}
-                      title={'Thêm Sản Phẩm'}
+                      title={'Thêm Hàng Hóa'}
                       icon={<IoMdAddCircleOutline className="w-6 h-6" />}
                       color={'slate-50'}
                       background={dataCRUD?.ADD == false ? 'gray-400' : 'blue-500'}
                       color_hover={dataCRUD?.ADD == false ? 'gray-500' : 'blue-500'}
                       bg_hover={'white'}
+                      quyenHan={dataCRUD?.ADD}
                     />
                     <ActionButton
                       handleAction={() => handleStatusMany()}

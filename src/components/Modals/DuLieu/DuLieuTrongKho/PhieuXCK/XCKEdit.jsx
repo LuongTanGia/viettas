@@ -5,6 +5,7 @@ import { useEffect, useState, useCallback, useMemo } from 'react'
 import { Checkbox, FloatButton, Input, InputNumber, Select, Table, Tooltip } from 'antd'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { FaSearch } from 'react-icons/fa'
+import { MdPrint } from 'react-icons/md'
 import { toast } from 'react-toastify'
 import { IoMdClose, IoMdAddCircle } from 'react-icons/io'
 import dayjs from 'dayjs'
@@ -552,6 +553,7 @@ const XCKEdit = ({ close, dataXCK, loadingData, setTargetRow }) => {
                             }
                       }
                       title={'In Phiếu'}
+                      icon={<MdPrint className="w-5 h-5" />}
                       color={'slate-50'}
                       background={isAdd ? 'gray-500' : 'purple-500'}
                       color_hover={isAdd ? 'gray-500' : 'purple-500'}

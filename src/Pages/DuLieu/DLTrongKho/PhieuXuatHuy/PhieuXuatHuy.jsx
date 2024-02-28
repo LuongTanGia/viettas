@@ -188,6 +188,7 @@ const PhieuXuatHuy = () => {
   }
   let timerId
   const handleSearch = (event) => {
+    setTableLoad(true)
     clearTimeout(timerId)
     timerId = setTimeout(() => {
       setSearchHangHoa(event.target.value)
@@ -608,6 +609,7 @@ const PhieuXuatHuy = () => {
                           <ActionButton
                             handleAction={() => (dataCRUD?.EXCEL == false ? '' : exportToExcel())}
                             title={'Xuất Excel'}
+                            quyenHan={dataCRUD?.EXCEL}
                             icon={<RiFileExcel2Fill className="w-5 h-5" />}
                             color={'slate-50'}
                             background={dataCRUD?.EXCEL == false ? 'gray-400' : 'green-500'}
@@ -721,12 +723,13 @@ const PhieuXuatHuy = () => {
                   <div className="flex items-center gap-2">
                     <ActionButton
                       handleAction={() => (dataCRUD?.ADD == false ? '' : handleCreate())}
-                      title={'Thêm Sản Phẩm'}
+                      title={'Thêm Phiếu'}
                       icon={<IoMdAddCircleOutline className="w-6 h-6" />}
                       color={'slate-50'}
                       background={dataCRUD?.ADD == false ? 'gray-400' : 'blue-500'}
                       color_hover={dataCRUD?.ADD == false ? 'gray-500' : 'blue-500'}
                       bg_hover={'white'}
+                      quyenHan={dataCRUD?.ADD}
                     />
                   </div>
                 </div>

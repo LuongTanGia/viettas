@@ -55,7 +55,7 @@ const QTTView = ({ close, dataQTT }) => {
                   <div className="flex items-center gap-2">
                     <div className="flex items-center gap-1">
                       <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Quầy</label>
-                      <input type="text" value={dataQTTView?.Quay || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" readOnly />
+                      <input type="text" value={dataQTTView?.Quay || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate text-end" readOnly />
                     </div>
                     <div className="flex items-center">
                       <Checkbox checked={dataQTTView?.CungServer} className="text-sm whitespace-nowrap">

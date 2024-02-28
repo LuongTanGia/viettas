@@ -83,7 +83,9 @@ const NhapXuatTonKho = () => {
         setTableLoad(false)
       }
     }
-    getDataNXTFirst()
+    if (searchHangHoa || isLoading) {
+      getDataNXTFirst()
+    }
   }, [searchHangHoa, isLoading])
 
   useEffect(() => {
@@ -347,7 +349,9 @@ const NhapXuatTonKho = () => {
     }
   }
   const handleSearch = (event) => {
+    setTableLoad(true)
     clearTimeout(timerId)
+    setTableLoad(true)
     timerId = setTimeout(() => {
       setSearchHangHoa(event.target.value)
     }, 300)
@@ -774,6 +778,7 @@ const NhapXuatTonKho = () => {
                           <ActionButton
                             handleAction={() => (dataCRUD?.EXCEL == false ? '' : exportToExcel())}
                             title={'Xuất Excel'}
+                            quyenHan={dataCRUD?.EXCEL}
                             icon={<RiFileExcel2Fill className="w-5 h-5" />}
                             color={'slate-50'}
                             background={dataCRUD?.EXCEL == false ? 'gray-400' : 'green-500'}
@@ -931,7 +936,7 @@ const NhapXuatTonKho = () => {
                             {nhomHangNXT?.map((item, index) => {
                               return (
                                 <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomHang}>
-                                  <p className="truncate">{item.Ma}</p>
+                                  <p className="truncate">{item.ThongTinNhomHang}</p>
                                 </Select.Option>
                               )
                             })}
@@ -944,23 +949,24 @@ const NhapXuatTonKho = () => {
                             showSearch
                             size="small"
                             placeholder="Chọn nhóm"
-                            value={selectedNhomTo}
                             onChange={(value) => {
                               setSelectedNhomTo(value)
                               if (selectedNhomFrom !== null && nhomHangNXT.findIndex((item) => item.Ma === value) < nhomHangNXT.findIndex((item) => item.Ma === selectedNhomFrom)) {
                                 setSelectedNhomFrom(value)
                               }
                               selectedNhomFrom == null ? setSelectedNhomFrom(value) : ''
+                              console.log(selectedNhomFrom)
                             }}
                             style={{
                               width: '12vw',
                               textOverflow: 'ellipsis',
                             }}
+                            value={selectedNhomTo || ''}
                           >
                             {nhomHangNXT?.map((item, index) => {
                               return (
                                 <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomHang}>
-                                  <p className="truncate">{item.Ma}</p>
+                                  <p className="truncate">{item.ThongTinNhomHang}</p>
                                 </Select.Option>
                               )
                             })}
@@ -971,13 +977,19 @@ const NhapXuatTonKho = () => {
                           <Select
                             mode="multiple"
                             allowClear
-                            maxTagCount={1}
                             filterOption
                             size="small"
                             placeholder="Danh sách nhóm"
                             value={selectedNhomList}
                             onChange={(value) => setSelectedNhomList(value)}
-                            className="w-[30vw] "
+                            className="md:w-[30vw] lg:w-[40vw] xl:w-[50vw]"
+                            maxTagCount="responsive"
+                            optionFilterProp="children"
+                            maxTagPlaceholder={(omittedValues) => (
+                              <Tooltip title={omittedValues?.map(({ label }) => label)} color="blue">
+                                <span>+{omittedValues?.length}...</span>
+                              </Tooltip>
+                            )}
                           >
                             {nhomHangNXT?.map((item) => {
                               return (
@@ -1013,7 +1025,9 @@ const NhapXuatTonKho = () => {
                             {hangHoaNXT?.map((item, index) => {
                               return (
                                 <Select.Option key={index} value={item.MaHang} title={item.TenHang}>
-                                  <p className="truncate">{item.MaHang}</p>
+                                  <p className="truncate">
+                                    {item.MaHang} - {item.TenHang}
+                                  </p>
                                 </Select.Option>
                               )
                             })}
@@ -1045,7 +1059,9 @@ const NhapXuatTonKho = () => {
                             {hangHoaNXT?.map((item, index) => {
                               return (
                                 <Select.Option key={index} value={item.MaHang} title={item.TenHang}>
-                                  <p className="truncate">{item.MaHang}</p>
+                                  <p className="truncate">
+                                    {item.MaHang} - {item.TenHang}
+                                  </p>
                                 </Select.Option>
                               )
                             })}
@@ -1055,20 +1071,26 @@ const NhapXuatTonKho = () => {
                           <div>Chọn</div>
                           <Select
                             mode="multiple"
-                            maxTagCount={1}
                             allowClear
                             size="small"
                             filterOption
                             value={selectedMaList}
                             onChange={(value) => setSelectedMaList(value)}
                             placeholder="Chọn mã hàng"
-                            className="w-[30vw] truncate "
+                            className="md:w-[30vw] lg:w-[40vw] xl:w-[50vw]"
+                            maxTagCount="responsive"
+                            optionFilterProp="children"
+                            maxTagPlaceholder={(omittedValues) => (
+                              <Tooltip title={omittedValues?.map(({ label }) => label)} color="blue">
+                                <span>+{omittedValues?.length}...</span>
+                              </Tooltip>
+                            )}
                           >
                             {hangHoaNXT?.map((item, index) => {
                               return (
                                 <Select.Option key={index} value={item.MaHang} title={item.TenHang}>
                                   <p className="truncate">
-                                    {item.MaHang}-{item.TenHang}
+                                    {item.MaHang} - {item.TenHang}
                                   </p>
                                 </Select.Option>
                               )

@@ -139,6 +139,7 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
   }, [dataXDCView])
 
   const handleSearch = (event) => {
+    setTableLoad(true)
     setSearchHangHoa(event.target.value)
   }
   const formatThapPhan = (number, decimalPlaces) => {

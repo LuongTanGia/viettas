@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import moment from 'moment'
 const { Text } = Typography
 import { Table, Tooltip, Typography } from 'antd'
+import { MdPrint } from 'react-icons/md'
 import PLRPrint from './PLRPrint'
 import categoryAPI from '../../../../../API/linkAPI'
 import logo from '../../../../../assets/VTS-iSale.ico'
@@ -277,6 +278,7 @@ const PLRView = ({ close, dataPLR }) => {
                     <ActionButton handleAction={handlePrint} title={'In Phiếu'} color={'slate-50'} background={'purple-500'} color_hover={'purple-500'} bg_hover={'white'} />
                     <ActionButton
                       handleAction={handlePrintImport}
+                      icon={<MdPrint className="w-5 h-5" />}
                       title={'In Phiếu Nhập'}
                       color={'slate-50'}
                       background={'purple-500'}
@@ -285,6 +287,7 @@ const PLRView = ({ close, dataPLR }) => {
                     />
                     <ActionButton
                       handleAction={handlePrintExport}
+                      icon={<MdPrint className="w-5 h-5" />}
                       title={'In Phiếu Xuất'}
                       color={'slate-50'}
                       background={'purple-500'}

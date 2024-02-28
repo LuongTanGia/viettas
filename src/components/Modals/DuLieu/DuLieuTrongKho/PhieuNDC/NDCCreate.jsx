@@ -4,6 +4,7 @@
 import { useEffect, useState, useMemo } from 'react'
 import { toast } from 'react-toastify'
 import { FaSearch } from 'react-icons/fa'
+import { MdPrint } from 'react-icons/md'
 import { IoMdAddCircle } from 'react-icons/io'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { Checkbox, Table, Tooltip, Select, FloatButton, Input } from 'antd'
@@ -502,6 +503,7 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                             }
                       }
                       title={'In Phiếu'}
+                      icon={<MdPrint className="w-5 h-5" />}
                       color={'slate-50'}
                       background={isAdd ? 'gray-500' : 'purple-500'}
                       color_hover={isAdd ? 'gray-500' : 'purple-500'}

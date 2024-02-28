@@ -3,6 +3,7 @@
 import { useEffect, useState, useMemo } from 'react'
 import { toast } from 'react-toastify'
 import { FaSearch } from 'react-icons/fa'
+import { MdPrint } from 'react-icons/md'
 import { IoMdAddCircle } from 'react-icons/io'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { Checkbox, Table, Tooltip, Select, FloatButton, Input } from 'antd'
@@ -488,6 +489,7 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
                 <div className="flex justify-between">
                   <div className="flex gap-2 justify-start">
                     <ActionButton
+                      icon={<MdPrint className="w-5 h-5" />}
                       handleAction={
                         isAdd
                           ? ''
@@ -502,6 +504,7 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
                       bg_hover={isAdd ? 'gray-500' : 'white'}
                     />
                     <ActionButton
+                      icon={<MdPrint className="w-5 h-5" />}
                       handleAction={
                         isAdd
                           ? ''
@@ -523,6 +526,7 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
                               handleCreate(true, 'printExport')
                             }
                       }
+                      icon={<MdPrint className="w-5 h-5" />}
                       title={'In Phiếu Xuất'}
                       color={'slate-50'}
                       background={isAdd ? 'gray-500' : 'purple-500'}
