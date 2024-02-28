@@ -1,7 +1,7 @@
 /* eslint-disable no-async-promise-executor */
 import axios from '../../axios'
 
-export const DanhSachGBL = (token) =>
+export const DanhSachGBL = (token, formGetData) =>
   new Promise(async (resolve, reject) => {
     try {
       // console.log('Data to be sent to API:', {
@@ -13,14 +13,14 @@ export const DanhSachGBL = (token) =>
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        data: {},
+        data: formGetData,
       })
       resolve(response)
     } catch (error) {
       reject(error)
     }
   })
-export const DanhSachFullGBL = (token) =>
+export const DanhSachFullGBL = (token, formGetData) =>
   new Promise(async (resolve, reject) => {
     try {
       // console.log('Data to be sent to API:', {
@@ -32,7 +32,7 @@ export const DanhSachFullGBL = (token) =>
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        data: {},
+        data: formGetData,
       })
       resolve(response)
     } catch (error) {
@@ -167,27 +167,17 @@ export const DieuChinhGBL = (token, formAdjustPrice) =>
     }
   })
 
-export const InGBL = (token, formPrint, SctBD, SctKT, SoLien) =>
+export const InGBL = (token, formPrint) =>
   new Promise(async (resolve, reject) => {
     try {
-      console.log('Data to be sent to API:', {
-        ...formPrint,
-        SoChungTuBatDau: SctBD,
-        SoChungTuketThuc: SctKT,
-        SoLien: SoLien,
-      })
+      console.log('Data to be sent to API:', formPrint)
       const response = await axios({
-        url: '/entries/DuLieuGiaBanLe/InPhieu',
+        url: '/settings/GiaBanLe/InBangGia',
         method: 'post',
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        data: {
-          ...formPrint,
-          SoChungTuBatDau: SctBD,
-          SoChungTuketThuc: SctKT,
-          SoLien: SoLien,
-        },
+        data: formPrint,
       })
       resolve(response)
     } catch (error) {

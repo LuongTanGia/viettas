@@ -6,7 +6,7 @@ import { Checkbox, InputNumber, Select, Tooltip } from 'antd'
 import dayjs from 'dayjs'
 import logo from '../assets/VTS-iSale.ico'
 import * as apis from '../apis'
-import { RETOKEN, formatPrice } from '../action/Actions'
+import { RETOKEN, base64ToPDF, formatPrice } from '../action/Actions'
 import { DateField } from '@mui/x-date-pickers'
 import { useEffect, useState } from 'react'
 import ActionButton from '../components/util/Button/ActionButton'
@@ -15,6 +15,8 @@ import { toast } from 'react-toastify'
 const { Option } = Select
 
 const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, dataThongSo, dataHangHoa, dataDoiTuong, dataNhomGia, loading, formDEL }) => {
+  const [value1List, setValue1List] = useState(null)
+  const [value2List, setValue2List] = useState(null)
   const [errors, setErrors] = useState({
     DonGia: '',
   })
@@ -66,12 +68,12 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
     DanhSachMa: [],
   })
   const [formPrint, setFormPrint] = useState({
-    CodeValue1From: '',
-    CodeValue1To: '',
-    CodeValue1List: '',
-    CodeValue2From: '',
-    CodeValue2To: '',
-    CodeValue2List: '',
+    CodeValue1From: null,
+    CodeValue1To: null,
+    CodeValue1List: null,
+    CodeValue2From: null,
+    CodeValue2To: null,
+    CodeValue2List: null,
   })
 
   //  set value default
@@ -300,25 +302,21 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
       console.error('Error while saving data:', error)
     }
   }
-  const handlePrint = async (dataRecord) => {
+  const handlePrint = async () => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
-      if (typePage === 'GBL') {
-        const response = await apis.XoaGsssBL(tokenLogin, dataRecord.MaHang, dataRecord.HieuLucTu)
-        if (response.data && response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription)
-          loading()
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(response.data.DataErrorDescription)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleDelete()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
-      }
 
-      close()
+      const response = await apis.InGBL(tokenLogin, { ...formPrint, CodeValue1List: value1List.join(','), CodeValue2List: value2List.join(',') })
+      if (response.data && response.data.DataError === 0) {
+        base64ToPDF(response.data.DataResults)
+      } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+        toast.warning(response.data.DataErrorDescription)
+      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        await RETOKEN()
+        handlePrint()
+      } else {
+        toast.error(response.data.DataErrorDescription)
+      }
     } catch (error) {
       console.error('Error while saving data:', error)
     }
@@ -370,6 +368,32 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
     })
   }
 
+  const handleFromChange = (value) => {
+    setFormPrint({ ...formPrint, CodeValue1From: value })
+    if (formPrint.CodeValue1To === null || value > formPrint.CodeValue1To) {
+      setFormPrint({ ...formPrint, CodeValue1From: value, CodeValue1To: value })
+    }
+  }
+  const handleToChange = (value) => {
+    setFormPrint({ ...formPrint, CodeValue1To: value })
+    if (formPrint.CodeValue1From === null || value < formPrint.CodeValue1From) {
+      setFormPrint({ ...formPrint, CodeValue1From: value, CodeValue1To: value })
+    }
+  }
+
+  const handle2FromChange = (value) => {
+    setFormPrint({ ...formPrint, CodeValue2From: value })
+    if (formPrint.CodeValue2To === null || value > formPrint.CodeValue2To) {
+      setFormPrint({ ...formPrint, CodeValue2From: value, CodeValue2To: value })
+    }
+  }
+  const handle2ToChange = (value) => {
+    setFormPrint({ ...formPrint, CodeValue2To: value })
+    if (formPrint.CodeValue2From === null || value < formPrint.CodeValue2From) {
+      setFormPrint({ ...formPrint, CodeValue2From: value, CodeValue2To: value })
+    }
+  }
+  console.log(formPrint)
   return (
     <>
       <div className=" fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
@@ -427,22 +451,13 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
                     <DateField
                       className="DatePicker_PMH max-w-[154px]"
                       format="DD/MM/YYYY"
-                      // maxDate={dayjs(formPrint.NgayKetThuc)}
-                      // value={dayjs(formPrint.NgayBatDau)}
-                      // onChange={(newDate) => {
-                      //   setFormPrint({
-                      //     ...formPrint,
-                      //     NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
-                      //   })
-                      // }}
-                      // onBlur={() => {
-                      //   handleStartDateChange(formPrint.NgayBatDau)
-                      // }}
-                      // onKeyDown={(e) => {
-                      //   if (e.key === 'Enter') {
-                      //     handleStartDateChange(formPrint.NgayBatDau)
-                      //   }
-                      // }}
+                      value={dayjs(formPrint.NgayBatDau)}
+                      onChange={(newDate) => {
+                        setFormPrint({
+                          ...formPrint,
+                          NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                        })
+                      }}
                       sx={{
                         '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
                         '& .MuiButtonBase-root': {
@@ -458,63 +473,129 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
                   <div className="flex  ">
                     <div className="flex gap-2 ">
                       <label className="w-[90px] text-end">Nhóm</label>
-                      <Select size="small" showSearch optionFilterProp="children" className="w-[170px]">
-                        {/* {newData?.map((item) => (
-                            <Option key={item.SoChungTu} value={item.SoChungTu}>
-                              {item.SoChungTu}
-                            </Option>
-                          ))} */}
+                      <Select
+                        showSearch
+                        allowClear
+                        size="small"
+                        placeholder="Chọn nhóm"
+                        value={formPrint.CodeValue1From}
+                        onChange={handleFromChange}
+                        style={{
+                          width: '170px',
+                          textOverflow: 'ellipsis',
+                        }}
+                        dropdownMatchSelectWidth={false}
+                      >
+                        {dataNhomGia?.map((item) => (
+                          <Option key={item.Ma} value={item.Ma} title={item.Ten}>
+                            {item.Ma} - {item.Ten}
+                          </Option>
+                        ))}
                       </Select>
                     </div>
                     <div className="flex gap-2">
                       <label className="w-[50px]  text-end">Đến</label>
-                      <Select size="small" showSearch optionFilterProp="children" className="w-[170px]">
-                        {/* {newData?.map((item) => (
-                            <Option key={item.SoChungTu} value={item.SoChungTu}>
-                              {item.SoChungTu}
-                            </Option>
-                          ))} */}
+                      <Select
+                        showSearch
+                        allowClear
+                        size="small"
+                        placeholder="Chọn nhóm"
+                        value={formPrint.CodeValue1To}
+                        onChange={handleToChange}
+                        style={{
+                          width: '170px',
+                          textOverflow: 'ellipsis',
+                        }}
+                        dropdownMatchSelectWidth={false}
+                      >
+                        {dataNhomGia?.map((item) => (
+                          <Option key={item.Ma} value={item.Ma} title={item.Ten}>
+                            {item.Ma} - {item.Ten}
+                          </Option>
+                        ))}
                       </Select>
                     </div>
                   </div>
                   <div className="">
-                    <Select size="small" showSearch optionFilterProp="children" className="w-full">
-                      {/* {newData?.map((item) => (
-                            <Option key={item.SoChungTu} value={item.SoChungTu}>
-                              {item.SoChungTu}
-                            </Option>
-                          ))} */}
+                    <Select
+                      mode="multiple"
+                      allowClear
+                      maxTagCount={1}
+                      size="small"
+                      placeholder="Danh sách nhóm"
+                      value={value1List}
+                      onChange={(value) => setValue1List(value)}
+                      className="w-full truncate"
+                    >
+                      {dataNhomGia?.map((item) => (
+                        <Option key={item.Ma} value={item.Ma}>
+                          {item.Ma} - {item.Ten}
+                        </Option>
+                      ))}
                     </Select>
                   </div>
                   <div className="flex  ">
                     <div className="flex gap-2 ">
                       <label className="w-[90px] text-end">Hàng hóa</label>
-                      <Select size="small" showSearch optionFilterProp="children" className="w-[170px]">
-                        {/* {newData?.map((item) => (
-                            <Option key={item.SoChungTu} value={item.SoChungTu}>
-                              {item.SoChungTu}
-                            </Option>
-                          ))} */}
+                      <Select
+                        showSearch
+                        allowClear
+                        size="small"
+                        placeholder="Chọn hàng hóa"
+                        value={formPrint.CodeValue2From}
+                        onChange={handle2FromChange}
+                        style={{
+                          width: '170px',
+                          textOverflow: 'ellipsis',
+                        }}
+                        dropdownMatchSelectWidth={false}
+                      >
+                        {dataHangHoa?.map((item) => (
+                          <Option key={item.MaHang} value={item.MaHang} title={item.TenHang}>
+                            {item.MaHang} - {item.TenHang}
+                          </Option>
+                        ))}
                       </Select>
                     </div>
                     <div className="flex gap-2">
                       <label className="w-[50px]  text-end">Đến</label>
-                      <Select size="small" showSearch optionFilterProp="children" className="w-[170px]">
-                        {/* {newData?.map((item) => (
-                            <Option key={item.SoChungTu} value={item.SoChungTu}>
-                              {item.SoChungTu}
-                            </Option>
-                          ))} */}
+                      <Select
+                        showSearch
+                        allowClear
+                        size="small"
+                        placeholder="Chọn hàng hóa"
+                        value={formPrint.CodeValue2To}
+                        onChange={handle2ToChange}
+                        style={{
+                          width: '170px',
+                          textOverflow: 'ellipsis',
+                        }}
+                        dropdownMatchSelectWidth={false}
+                      >
+                        {dataHangHoa?.map((item) => (
+                          <Option key={item.MaHang} value={item.MaHang} title={item.TenHang}>
+                            {item.MaHang} - {item.TenHang}
+                          </Option>
+                        ))}
                       </Select>
                     </div>
                   </div>
                   <div className="">
-                    <Select size="small" showSearch optionFilterProp="children" className="w-full">
-                      {/* {newData?.map((item) => (
-                            <Option key={item.SoChungTu} value={item.SoChungTu}>
-                              {item.SoChungTu}
-                            </Option>
-                          ))} */}
+                    <Select
+                      mode="multiple"
+                      allowClear
+                      maxTagCount={1}
+                      size="small"
+                      placeholder="Danh sách hàng hóa"
+                      value={value2List}
+                      onChange={(value) => setValue2List(value)}
+                      className="w-full truncate"
+                    >
+                      {dataHangHoa?.map((item) => (
+                        <Option key={item.MaHang} value={item.MaHang} title={item.TenHang}>
+                          {item.MaHang} - {item.TenHang}
+                        </Option>
+                      ))}
                     </Select>
                   </div>
                 </div>
@@ -1244,25 +1325,7 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
                         <>
                           <div className="flex items-center gap-1">
                             <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Khách hàng</label>
-                            <Select
-                              className="w-full truncate"
-                              showSearch
-                              size="small"
-                              optionFilterProp="children"
-                              onChange={(value) =>
-                                setFormEdit({
-                                  ...formEdit,
-                                  Ma: value,
-                                })
-                              }
-                              value={formEdit.Ma}
-                            >
-                              {dataDoiTuong?.map((item) => (
-                                <Option key={item.Ma} value={item.Ma}>
-                                  {item.Ma} - {item.Ten}
-                                </Option>
-                              ))}
-                            </Select>
+                            <Select className="w-full truncate" showSearch size="small" optionFilterProp="children" value={formEdit.Ma} disabled></Select>
                           </div>
                           <div className="flex items-center gap-1 whitespace-nowrap">
                             <label className="required  min-w-[90px] text-sm flex justify-end">Hiệu lực từ</label>

@@ -11,7 +11,8 @@ const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourT
 
   const [dataSource, setDataSource] = useState(param)
   const [newOptions, setNewOptions] = useState(yourMaHangOptions)
-  const [coThue, setCoThue] = useState(yourCoThue)
+  const [coThue, setCoThue] = useState(false)
+
   const ThongSo = JSON.parse(localStorage.getItem('ThongSo'))
 
   useEffect(() => {
@@ -135,14 +136,12 @@ const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourT
         const values = await form.validateFields()
         toggleEdit()
 
-        if (dataIndex === 'MaHang' || dataIndex === 'TenHang' || dataIndex === 'CoThue') {
+        if (dataIndex === 'MaHang' || dataIndex === 'TenHang') {
           const newOptions = yourMaHangOptions.filter((item) => dataSource.every((item2) => item.MaHang !== item2.MaHang))
           const optionsArray = dataIndex === 'MaHang' ? newOptions : newOptions
           const selectedOption = optionsArray.find((option) => option[dataIndex] === values[dataIndex]) || {}
-
           const GiaBan = selectedOption.GiaBan
           setNewOptions([...newOptions, record.MaHang])
-
           const updatedRow = {
             ...record,
             ...values,
@@ -161,11 +160,18 @@ const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourT
             DVTQuyDoi: selectedOption.DVTQuyDoi,
             TongCong: GiaBan * record.SoLuong || record.SoLuong * record.DonGia,
             DVTDF: selectedOption.DVT || record.DVT,
-            CoThue: !coThue,
 
             // TongCong: selectedOption.DonGia || undefined,
           }
           //
+
+          handleSave(updatedRow)
+        } else if (dataIndex === 'CoThue') {
+          const updatedRow = {
+            ...record,
+            ...values,
+            CoThue: !coThue,
+          }
 
           handleSave(updatedRow)
         } else if (dataIndex === 'TyLeCKTT') {
@@ -174,7 +180,7 @@ const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourT
             ...values,
             TienCKTT: (record.ThanhTien * values.TyLeCKTT) / 100,
           }
-          console.log(updatedRow)
+
           handleSave(updatedRow)
         } else if (dataIndex === 'TienCKTT') {
           if (ThongSo.ALLOW_SUACHIETKHAUTHANHTOAN) {
@@ -255,7 +261,7 @@ const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourT
           ) : tableName === 'GBS' && dataIndex === 'CoThue' ? (
             <Checkbox
               ref={inputRef}
-              // onBlur={save}
+              onBlur={(setCoThue(!coThue), save())}
               onChange={() => {
                 setCoThue(!coThue), save()
               }}
@@ -410,7 +416,7 @@ const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourT
         },
         showSorterTooltip: false,
 
-        render: (text, record) => <Checkbox checked={coThue} />,
+        render: (text) => <Checkbox checked={text} />,
       }
     }
     if (item === 'DVT' && typeTable === 'BanHang') {
@@ -601,7 +607,7 @@ const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourT
   return (
     <div>
       <Table
-        loading={dataSource?.length !== 0 || typeTable === 'create' ? false : true}
+        // loading={dataSource?.length !== 0 || typeTable === 'create' ? false : true}
         className={tableName === 'GBS' ? 'h340' : 'h290'}
         components={components}
         rowClassName={() => 'editable-row'}
