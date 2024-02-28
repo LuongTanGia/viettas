@@ -44,11 +44,11 @@ const GBL = () => {
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
   const [isShowNotify, setIsShowNotify] = useState(false)
   const [hasCalledApis, setHasCalledApis] = useState(false)
+  const [valueList, setValueList] = useState(null)
 
   const [formFilter, setFormFilter] = useState({
-    From: null,
-    To: null,
-    List: [],
+    CodeValue1From: null,
+    CodeValue1To: null,
   })
 
   // bỏ focus option thì hidden
@@ -97,7 +97,7 @@ const GBL = () => {
         console.log('get helper')
 
         const tokenLogin = localStorage.getItem('TKN')
-        if (actionType === 'create' || actionType === 'edit') {
+        if (actionType === 'create' || actionType === 'edit' || actionType === 'print') {
           console.log('get helper  KH,DT')
           const responseKH = await apis.ListHelperHHGBL(tokenLogin)
           if (responseKH.data && responseKH.data.DataError === 0) {
@@ -217,7 +217,7 @@ const GBL = () => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
 
-      const response = await apis.DanhSachGBL(tokenLogin)
+      const response = await apis.DanhSachGBL(tokenLogin, { ...formFilter, CodeValue1List: valueList.join(',') })
 
       if (response.data && response.data.DataError === 0) {
         setData(response.data.DataResults)
@@ -242,7 +242,7 @@ const GBL = () => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
 
-      const response = await apis.DanhSachFullGBL(tokenLogin)
+      const response = await apis.DanhSachFullGBL(tokenLogin, { ...formFilter, CodeValue1List: valueList.join(',') })
 
       if (response.data && response.data.DataError === 0) {
         setDataFull(response.data.DataResults)
@@ -268,7 +268,7 @@ const GBL = () => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
 
-      const response = await apis.DanhSachGBL(tokenLogin)
+      const response = await apis.DanhSachGBL(tokenLogin, formFilter)
       if (response.data && response.data.DataError === 0) {
         setData(response.data.DataResults)
         setTableLoad(false)
@@ -284,7 +284,7 @@ const GBL = () => {
         setTableLoad(false)
       }
 
-      const responseFull = await apis.DanhSachFullGBL(tokenLogin)
+      const responseFull = await apis.DanhSachFullGBL(tokenLogin, formFilter)
 
       if (responseFull.data && responseFull.data.DataError === 0) {
         setDataFull(responseFull.data.DataResults)
@@ -621,6 +621,23 @@ const GBL = () => {
       setSearchGBL(newSearch)
     }
   }
+  const handleFilterDS = () => {
+    setTableLoad(true)
+  }
+  const handleFromChange = (value) => {
+    setFormFilter({ ...formFilter, CodeValue1From: value })
+
+    if (formFilter.CodeValue1To === null || value > formFilter.CodeValue1To) {
+      setFormFilter({ CodeValue1From: value, CodeValue1To: value })
+    }
+  }
+  const handleToChange = (value) => {
+    setFormFilter({ ...formFilter, CodeValue1To: value })
+
+    if (formFilter.CodeValue1From === null || value < formFilter.CodeValue1From) {
+      setFormFilter({ CodeValue1From: value, CodeValue1To: value })
+    }
+  }
 
   return (
     <>
@@ -787,11 +804,10 @@ const GBL = () => {
                   <Select
                     showSearch
                     size="small"
+                    allowClear
                     placeholder="Chọn nhóm"
-                    value={formFilter.From}
-                    onChange={(value) => {
-                      setFormFilter({ ...formFilter, From: value })
-                    }}
+                    value={formFilter.CodeValue1From}
+                    onChange={handleFromChange}
                     style={{
                       width: '10vw',
                       textOverflow: 'ellipsis',
@@ -809,12 +825,11 @@ const GBL = () => {
                   <div>Đến</div>
                   <Select
                     showSearch
+                    allowClear
                     size="small"
                     placeholder="Chọn nhóm"
-                    value={formFilter.To}
-                    onChange={(value) => {
-                      setFormFilter({ ...formFilter, To: value })
-                    }}
+                    value={formFilter.CodeValue1To}
+                    onChange={handleToChange}
                     style={{
                       width: '10vw',
                       textOverflow: 'ellipsis',
@@ -834,14 +849,11 @@ const GBL = () => {
                     mode="multiple"
                     allowClear
                     maxTagCount={1}
-                    filterOption
                     size="small"
                     placeholder="Danh sách nhóm"
-                    value={formFilter.List}
-                    onChange={(value) => {
-                      setFormFilter({ ...formFilter, List: value })
-                    }}
-                    className="md:w-[32vw] lg:w-[100] truncate"
+                    value={valueList}
+                    onChange={(value) => setValueList(value)}
+                    className="md:w-[28vw] lg:w-[35vw] truncate"
                   >
                     {dataNhomGia?.map((item) => (
                       <Option key={item.Ma} value={item.Ma}>
@@ -853,8 +865,8 @@ const GBL = () => {
                 <div>
                   <ActionButton
                     title={''}
-                    // handleAction={handleFilterDS}
-                    icon={<MdFilterAlt className="w-5 h-5" />}
+                    handleAction={handleFilterDS}
+                    icon={<MdFilterAlt size={14} />}
                     color={'slate-50'}
                     background={'bg-main'}
                     color_hover={'bg-main'}
@@ -949,6 +961,7 @@ const GBL = () => {
                 dataThongTin={dataThongTin}
                 dataHangHoa={dataHangHoa}
                 data={dataFull}
+                dataNhomGia={dataNhomGia}
                 isLoadingModal={isLoadingModal}
                 isLoadingEdit={isLoadingEdit}
                 dataThongSo={dataThongSo}

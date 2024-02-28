@@ -90,7 +90,7 @@ const GBS = () => {
       try {
         console.log('get helper')
         const tokenLogin = localStorage.getItem('TKN')
-        if (actionType === 'create' || actionType === 'edit') {
+        if (actionType === 'create' || actionType === 'edit' || actionType === 'clone') {
           console.log('get helper  KH,DT')
           const response = await apis.ListHelperHHGBS(tokenLogin)
           if (response.data && response.data.DataError === 0) {
@@ -107,7 +107,7 @@ const GBS = () => {
             setIsLoadingModal(false)
           }
         }
-        if (actionType === 'view' || actionType === 'edit') {
+        if (actionType === 'view' || actionType === 'edit' || actionType === 'clone') {
           console.log('get helper tt')
           const responseTT = await apis.ThongTinGBS(tokenLogin, dataRecord.NhomGia)
           if (responseTT.data && responseTT.data.DataError === 0) {
