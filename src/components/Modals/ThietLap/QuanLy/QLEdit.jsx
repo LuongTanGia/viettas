@@ -3,6 +3,7 @@
 import { toast } from 'react-toastify'
 import moment from 'moment'
 import dayjs from 'dayjs'
+import { MdPrint } from 'react-icons/md'
 import { useEffect, useState } from 'react'
 import categoryAPI from '../../../../API/linkAPI'
 import logo from '../../../../assets/VTS-iSale.ico'
@@ -282,6 +283,7 @@ const QLEdit = ({ close, loadingData, setTargetRow, dataQL, maNguoiDung }) => {
                 <div className="flex items-center justify-between">
                   <div>
                     <ActionButton
+                      icon={<MdPrint className="w-5 h-5" />}
                       handleAction={() => handleEdit(true, true)}
                       title={'In thẻ'}
                       color={'slate-50'}

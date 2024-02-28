@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import moment from 'moment'
 import { toast } from 'react-toastify'
+import { MdPrint } from 'react-icons/md'
 import categoryAPI from '../../../../API/linkAPI'
 import logo from '../../../../assets/VTS-iSale.ico'
 import { RETOKEN, base64ToPDF } from '../../../../action/Actions'
@@ -156,7 +157,15 @@ const QLView = ({ close, dataQL }) => {
                   </div>
                 </div>
                 <div className="flex gap-2 justify-between">
-                  <ActionButton handleAction={handlePrint} title={'In thẻ'} color={'slate-50'} background={'purple-500'} color_hover={'purple-500'} bg_hover={'white'} />
+                  <ActionButton
+                    icon={<MdPrint className="w-5 h-5" />}
+                    handleAction={handlePrint}
+                    title={'In thẻ'}
+                    color={'slate-50'}
+                    background={'purple-500'}
+                    color_hover={'purple-500'}
+                    bg_hover={'white'}
+                  />
                   <ActionButton handleAction={close} title={'Đóng'} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
                 </div>
               </div>
