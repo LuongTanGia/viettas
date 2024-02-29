@@ -948,6 +948,7 @@ const NhapXuatTonKho = () => {
                             allowClear
                             showSearch
                             size="small"
+                            value={selectedNhomTo}
                             placeholder="Chọn nhóm"
                             onChange={(value) => {
                               setSelectedNhomTo(value)
@@ -955,13 +956,11 @@ const NhapXuatTonKho = () => {
                                 setSelectedNhomFrom(value)
                               }
                               selectedNhomFrom == null ? setSelectedNhomFrom(value) : ''
-                              console.log(selectedNhomFrom)
                             }}
                             style={{
                               width: '12vw',
                               textOverflow: 'ellipsis',
                             }}
-                            value={selectedNhomTo || ''}
                           >
                             {nhomHangNXT?.map((item, index) => {
                               return (

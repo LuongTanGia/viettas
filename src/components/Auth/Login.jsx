@@ -37,6 +37,18 @@ const App = () => {
   }
 
   useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.keyCode === 13) {
+        handleAddUser()
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [user.User, user.Pass])
+
+  useEffect(() => {
     const authLogin = window.localStorage.getItem('authLogin')
 
     const handleLogin = async () => {
