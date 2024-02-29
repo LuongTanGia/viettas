@@ -44,7 +44,7 @@ const GBL = () => {
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
   const [isShowNotify, setIsShowNotify] = useState(false)
   const [hasCalledApis, setHasCalledApis] = useState(false)
-  const [valueList, setValueList] = useState(null)
+  const [valueList, setValueList] = useState([])
 
   const [formFilter, setFormFilter] = useState({
     CodeValue1From: null,
@@ -212,6 +212,13 @@ const GBL = () => {
     //   }
     // }
   }, [tableLoad, dataQuyenHan?.VIEW])
+
+  // default value
+  useEffect(() => {
+    if (formFilter.CodeValue1From === undefined || formFilter.CodeValue1To === undefined) {
+      setFormFilter({ CodeValue1From: null, CodeValue1To: null })
+    }
+  }, [formFilter])
 
   const getDSGBL = async () => {
     try {
@@ -480,7 +487,7 @@ const GBL = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
+        <div className="truncate ">
           <HighlightedCell text={text} search={searchGBL} />
         </div>
       ),
@@ -513,28 +520,12 @@ const GBL = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
+        <div className="truncate ">
           <HighlightedCell text={text} search={searchGBL} />
         </div>
       ),
     },
 
-    {
-      title: 'Tiền mặt',
-      key: 'TTTienMat',
-      dataIndex: 'TTTienMat',
-      fixed: 'right',
-      width: 100,
-      align: 'center',
-
-      render: (text) => <Checkbox value={text} disabled={!text} checked={text} />,
-      sorter: (a, b) => {
-        const valueA = a.TTTienMat ? 1 : 0
-        const valueB = b.TTTienMat ? 1 : 0
-        return valueA - valueB
-      },
-      showSorterTooltip: false,
-    },
     {
       title: 'Chức năng',
       key: 'ChucNang',
@@ -638,7 +629,7 @@ const GBL = () => {
       setFormFilter({ CodeValue1From: value, CodeValue1To: value })
     }
   }
-
+  console.log(formFilter)
   return (
     <>
       {dataQuyenHan?.VIEW === false ? (
@@ -850,7 +841,6 @@ const GBL = () => {
                     allowClear
                     maxTagCount={1}
                     size="small"
-                    placeholder="Danh sách nhóm"
                     value={valueList}
                     onChange={(value) => setValueList(value)}
                     className="md:w-[28vw] lg:w-[35vw] truncate"

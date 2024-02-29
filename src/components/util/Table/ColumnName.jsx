@@ -127,7 +127,7 @@ export const nameColumsPhieuMuaHang = {
   DVT: 'DVT',
   SoLuong: 'Số lượng',
   DonGia: 'Đơn giá',
-  TienHang: 'Tiền Hàng',
+  TienHang: 'Tiền hàng',
   TyLeThue: '% Thuế',
   TienThue: 'Tiền thuế',
   ThanhTien: 'Thành tiền',

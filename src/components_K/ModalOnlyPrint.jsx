@@ -18,7 +18,7 @@ const { Option } = Select
 const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCreate, typePage, namePage }) => {
   const [selectedSctBD, setSelectedSctBD] = useState()
   const [selectedSctKT, setSelectedSctKT] = useState()
-  const [newDataPMH, setNewDataPMH] = useState()
+  const [newData, setNewData] = useState()
   const startDate = dayjs(dataThongTin?.NgayCTu).format('YYYY-MM-DDTHH:mm:ss')
   const endDate = dayjs(dataThongTin?.NgayCTu).format('YYYY-MM-DDTHH:mm:ss')
 
@@ -33,7 +33,7 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
   }, [data, startDate, endDate])
 
   useEffect(() => {
-    setNewDataPMH(dataByDate)
+    setNewData(dataByDate)
   }, [dataByDate])
 
   const [formPrint, setFormPrint] = useState({ NgayBatDau: startDate, NgayKetThuc: endDate })
@@ -58,6 +58,36 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
   }, [dataThongTin, actionType])
 
   useEffect(() => {
+    // if (dataThongTin && actionType !== 'create') {
+    //   setSelectedSctBD(dataThongTin.SoChungTu)
+    //   setSelectedSctKT(dataThongTin.SoChungTu)
+    // }
+    if (actionType == 'create') {
+      setSelectedSctBD(SctCreate)
+      setSelectedSctKT(SctCreate)
+    }
+  }, [dataThongTin, SctCreate])
+
+  useEffect(() => {
+    if (newData && actionType !== 'create') {
+      setSelectedSctBD(dataThongTin.SoChungTu)
+      setSelectedSctKT(dataThongTin.SoChungTu)
+    }
+    if (newData?.length <= 0 && actionType !== 'create') {
+      setSelectedSctBD('Chọn mã hàng')
+      setSelectedSctKT('Chọn mã hàng')
+    }
+  }, [newData])
+
+  const calculateTotal = () => {
+    let total = 0
+    if (checkboxValues.checkbox1) total += 1
+    if (checkboxValues.checkbox2) total += 2
+    if (checkboxValues.checkbox3) total += 4
+    return total
+  }
+
+  useEffect(() => {
     const handleFilterPrint = () => {
       const ngayBD = dayjs(formPrintFilter.NgayBatDau)
       const ngayKT = dayjs(formPrintFilter.NgayKetThuc)
@@ -71,41 +101,11 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
           return itemDate >= ngayBD && itemDate <= ngayKT
         }
       })
-      setNewDataPMH(filteredData)
+      setNewData(filteredData)
     }
 
     handleFilterPrint()
   }, [formPrintFilter])
-
-  useEffect(() => {
-    // if (dataThongTin && actionType !== 'create') {
-    //   setSelectedSctBD(dataThongTin.SoChungTu)
-    //   setSelectedSctKT(dataThongTin.SoChungTu)
-    // }
-    if (actionType == 'create') {
-      setSelectedSctBD(SctCreate)
-      setSelectedSctKT(SctCreate)
-    }
-  }, [dataThongTin, SctCreate])
-
-  useEffect(() => {
-    if (newDataPMH && actionType !== 'create') {
-      setSelectedSctBD(dataThongTin.SoChungTu)
-      setSelectedSctKT(dataThongTin.SoChungTu)
-    }
-    if (newDataPMH?.length <= 0 && actionType !== 'create') {
-      setSelectedSctBD('Chọn mã hàng')
-      setSelectedSctKT('Chọn mã hàng')
-    }
-  }, [newDataPMH])
-
-  const calculateTotal = () => {
-    let total = 0
-    if (checkboxValues.checkbox1) total += 1
-    if (checkboxValues.checkbox2) total += 2
-    if (checkboxValues.checkbox3) total += 4
-    return total
-  }
 
   const handleStartDateChange = (newDate) => {
     const startDate = newDate
@@ -223,6 +223,20 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
           toast.error(response.data.DataErrorDescription)
         }
       }
+      if (typePage === 'PBL') {
+        const response = await apis.InPBL(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+        // Kiểm tra call api thành công
+        if (response.data && response.data.DataError === 0) {
+          base64ToPDF(response.data.DataResults)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleOnlyPrint()
+        } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
+          toast.warning(response.data.DataErrorDescription)
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
+      }
     } catch (error) {
       console.error('Error while saving data:', error)
     }
@@ -328,7 +342,7 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
                   <label className="pr-[23px]">Số chứng từ</label>
 
                   <Select size="small" showSearch optionFilterProp="children" style={{ width: '170px' }} value={selectedSctBD} onChange={handleSctBDChange}>
-                    {newDataPMH?.map((item) => (
+                    {newData?.map((item) => (
                       <Option key={item.SoChungTu} value={item.SoChungTu}>
                         {item.SoChungTu}
                       </Option>
@@ -340,7 +354,7 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
                   <label className="pl-[18px] pr-[18px]">Đến</label>
 
                   <Select size="small" showSearch optionFilterProp="children" style={{ width: '170px' }} value={selectedSctKT} onChange={handleSctKTChange}>
-                    {newDataPMH?.map((item) => (
+                    {newData?.map((item) => (
                       <Option key={item.SoChungTu} value={item.SoChungTu}>
                         {item.SoChungTu}
                       </Option>

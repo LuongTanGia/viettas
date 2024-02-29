@@ -15,9 +15,9 @@ const { Option } = Select
 import * as apis from '../apis'
 
 const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2, SctCreate, typePage, namePage }) => {
-  const [selectedSctBD, setSelectedSctBD] = useState(actionType !== 'create' ? dataThongTin?.SoChungTu : SctCreate)
-  const [selectedSctKT, setSelectedSctKT] = useState(actionType !== 'create' ? dataThongTin?.SoChungTu : SctCreate)
-  const [newDataPMH, setNewDataPMH] = useState()
+  const [selectedSctBD, setSelectedSctBD] = useState()
+  const [selectedSctKT, setSelectedSctKT] = useState()
+  const [newData, setNewData] = useState()
 
   const startDate = dayjs(dataThongTin?.NgayCTu).format('YYYY-MM-DDTHH:mm:ss')
   const endDate = dayjs(dataThongTin?.NgayCTu).format('YYYY-MM-DDTHH:mm:ss')
@@ -33,7 +33,7 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
   }, [data, startDate, endDate])
 
   useEffect(() => {
-    setNewDataPMH(dataByDate)
+    setNewData(dataByDate)
   }, [dataByDate])
 
   const [formPrint, setFormPrint] = useState({
@@ -48,6 +48,14 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
     checkbox1: true,
     checkbox2: false,
   })
+  useEffect(() => {
+    if (actionType === 'edit') {
+      setFormPrint({ NgayBatDau: startDate, NgayKetThuc: endDate })
+    }
+    if (actionType === 'create') {
+      setFormPrint({ NgayBatDau: dayjs(), NgayKetThuc: dayjs() })
+    }
+  }, [dataThongTin, actionType])
 
   useEffect(() => {
     // if (dataThongTin && actionType !== 'create') {
@@ -61,16 +69,16 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
   }, [dataThongTin, SctCreate])
 
   useEffect(() => {
-    if (newDataPMH) {
+    if (newData && actionType !== 'create') {
       setSelectedSctBD(dataThongTin.SoChungTu)
       setSelectedSctKT(dataThongTin.SoChungTu)
     }
-    if (newDataPMH?.length <= 0) {
+    if (newData?.length <= 0 && actionType !== 'create') {
       setSelectedSctBD('Chọn mã hàng')
       setSelectedSctKT('Chọn mã hàng')
     }
-  }, [newDataPMH])
-  console.log('newDataPMH', newDataPMH)
+  }, [newData])
+
   const calculateTotal = () => {
     let total = 0
     if (checkboxValues.checkbox1) total += 1
@@ -81,7 +89,6 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
 
   useEffect(() => {
     const handleFilterPrint = () => {
-      console.log('formPrint', formPrintFilter)
       const ngayBD = dayjs(formPrintFilter.NgayBatDau)
       const ngayKT = dayjs(formPrintFilter.NgayKetThuc)
       // console.log('formPrint22222222', formPrint)
@@ -94,11 +101,11 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
           return itemDate >= ngayBD && itemDate <= ngayKT
         }
       })
-      setNewDataPMH(filteredData)
+      setNewData(filteredData)
     }
 
     handleFilterPrint()
-  }, [formPrintFilter?.NgayKetThuc, formPrintFilter?.NgayBatDau])
+  }, [formPrintFilter])
 
   const handleStartDateChange = (newDate) => {
     const startDate = newDate
@@ -176,6 +183,20 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
       }
       if (typePage === 'XTR') {
         const response = await apis.InPKXTR(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+        // Kiểm tra call api thành công
+        if (response.data && response.data.DataError === 0) {
+          base64ToPDF(response.data.DataResults)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleOnlyPrintWareHouse()
+        } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
+          toast.warning(response.data.DataErrorDescription)
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
+      }
+      if (typePage === 'PBL') {
+        const response = await apis.InPKPBL(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
         // Kiểm tra call api thành công
         if (response.data && response.data.DataError === 0) {
           base64ToPDF(response.data.DataResults)
@@ -310,7 +331,7 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
                     onChange={handleSctBDChange}
                     dropdownMatchSelectWidth={false}
                   >
-                    {newDataPMH?.map((item) => (
+                    {newData?.map((item) => (
                       <Option key={item.SoChungTu} value={item.SoChungTu}>
                         {`${item.SoChungTu}_GV`}
                       </Option>
@@ -330,7 +351,7 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
                     onChange={handleSctKTChange}
                     dropdownMatchSelectWidth={false}
                   >
-                    {newDataPMH?.map((item) => (
+                    {newData?.map((item) => (
                       <Option key={item.SoChungTu} value={item.SoChungTu}>
                         {`${item.SoChungTu}_GV`}
                       </Option>

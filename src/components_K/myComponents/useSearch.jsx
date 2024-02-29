@@ -25,6 +25,10 @@ export const useSearch = (data) => {
           TongTienHang,
           TongTienThue,
           TongThanhTien,
+          //XTR
+          MaSoThue,
+          PhieuThu,
+
           // PCT
           SoTien,
           TenHangMuc,
@@ -57,6 +61,9 @@ export const useSearch = (data) => {
           (TongDoiTuong?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (NhomGia || '').toLowerCase().includes(search.toLowerCase()) ||
           (TenNhomGia || '').toLowerCase().includes(search.toLowerCase()) ||
+          //XTR
+          (MaSoThue?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (PhieuThu || '').toLowerCase().includes(search.toLowerCase()) ||
           // PCT
           (SoTien?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (TenHangMuc || '').toLowerCase().includes(search.toLowerCase()) ||
