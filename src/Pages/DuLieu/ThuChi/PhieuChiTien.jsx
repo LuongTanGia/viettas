@@ -326,7 +326,11 @@ const PhieuChiTien = () => {
       dataIndex: 'SoThamChieu',
       key: 'SoThamChieu',
       width: 200,
-      sorter: (a, b) => a.SoThamChieu.localeCompare(b.SoThamChieu),
+      sorter: (a, b) => {
+        const SoThamChieuA = a.SoThamChieu || ''
+        const SoThamChieuB = b.SoThamChieu || ''
+        return SoThamChieuA.localeCompare(SoThamChieuB)
+      },
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
@@ -394,9 +398,9 @@ const PhieuChiTien = () => {
       dataIndex: 'SoTien',
       key: 'SoTien',
       width: 200,
-      align: 'end',
+      align: 'center',
       render: (text) => (
-        <div className={`flex justify-end w-full h-full    ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`text-end   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchPCT} />
         </div>
       ),
@@ -450,7 +454,7 @@ const PhieuChiTien = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
+        <div className="truncate ">
           <HighlightedCell text={text} search={searchPCT} />
         </div>
       ),
@@ -483,7 +487,7 @@ const PhieuChiTien = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
+        <div className="truncate ">
           <HighlightedCell text={text} search={searchPCT} />
         </div>
       ),

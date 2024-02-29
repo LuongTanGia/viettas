@@ -15,8 +15,8 @@ import { toast } from 'react-toastify'
 const { Option } = Select
 
 const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, dataThongSo, dataHangHoa, dataDoiTuong, dataNhomGia, loading, formDEL }) => {
-  const [value1List, setValue1List] = useState(null)
-  const [value2List, setValue2List] = useState(null)
+  const [value1List, setValue1List] = useState([])
+  const [value2List, setValue2List] = useState([])
   const [errors, setErrors] = useState({
     DonGia: '',
   })
@@ -91,7 +91,6 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
     }
   }, [formAdjustPrice.GiaTriTinh])
 
-  // set value default
   useEffect(() => {
     if (typePage === 'GBL') {
       if (dataHangHoa && actionType === 'create') {
@@ -111,6 +110,16 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
     }
   }, [dataDoiTuong, dataNhomGia, dataRecord])
 
+  useEffect(() => {
+    if (formPrint.CodeValue1From === undefined || formPrint.CodeValue1To === undefined) {
+      setFormPrint({ ...formPrint, CodeValue1From: null, CodeValue1To: null })
+    }
+    if (formPrint.CodeValue2From === undefined || formPrint.CodeValue2To === undefined) {
+      setFormPrint({ ...formPrint, CodeValue2From: null, CodeValue2To: null })
+    }
+  }, [formPrint])
+
+  //////////////////////////////////////////////
   const handleCreateAndClose = async () => {
     if (typePage === 'GBL') {
       if (formCreate?.DonGia === null || formCreate?.DonGia === 0) {
@@ -517,16 +526,7 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
                     </div>
                   </div>
                   <div className="">
-                    <Select
-                      mode="multiple"
-                      allowClear
-                      maxTagCount={1}
-                      size="small"
-                      placeholder="Danh sách nhóm"
-                      value={value1List}
-                      onChange={(value) => setValue1List(value)}
-                      className="w-full truncate"
-                    >
+                    <Select mode="multiple" allowClear maxTagCount={1} size="small" value={value1List} onChange={(value) => setValue1List(value)} className="w-full truncate">
                       {dataNhomGia?.map((item) => (
                         <Option key={item.Ma} value={item.Ma}>
                           {item.Ma} - {item.Ten}
@@ -581,16 +581,7 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
                     </div>
                   </div>
                   <div className="">
-                    <Select
-                      mode="multiple"
-                      allowClear
-                      maxTagCount={1}
-                      size="small"
-                      placeholder="Danh sách hàng hóa"
-                      value={value2List}
-                      onChange={(value) => setValue2List(value)}
-                      className="w-full truncate"
-                    >
+                    <Select mode="multiple" allowClear maxTagCount={1} size="small" value={value2List} onChange={(value) => setValue2List(value)} className="w-full truncate">
                       {dataHangHoa?.map((item) => (
                         <Option key={item.MaHang} value={item.MaHang} title={item.TenHang}>
                           {item.MaHang} - {item.TenHang}

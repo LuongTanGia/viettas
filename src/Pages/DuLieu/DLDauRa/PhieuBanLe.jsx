@@ -552,7 +552,7 @@ const PhieuBanLe = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
+        <div className="truncate ">
           <HighlightedCell text={text} search={searchPBL} />
         </div>
       ),
@@ -585,7 +585,7 @@ const PhieuBanLe = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
+        <div className="truncate ">
           <HighlightedCell text={text} search={searchPBL} />
         </div>
       ),

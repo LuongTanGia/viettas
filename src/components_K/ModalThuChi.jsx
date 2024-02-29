@@ -437,6 +437,7 @@ const ModalPCT = ({
           toast.success(response.data.DataErrorDescription)
           loading()
           setHightLight(dataRecord.SoChungTu)
+          setIsShowModalOnlyPrint(true)
         } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
           toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
@@ -452,6 +453,7 @@ const ModalPCT = ({
           toast.success(response.data.DataErrorDescription)
           loading()
           setHightLight(dataRecord.SoChungTu)
+          setIsShowModalOnlyPrint(true)
         } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
           toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
@@ -467,8 +469,27 @@ const ModalPCT = ({
     }
   }
 
-  const handlePrintModal = () => {
-    if (!formCreate?.TenDoiTuong?.trim() || !formCreate?.DiaChi?.trim()) return
+  const handlePrintInCreate = () => {
+    if (formCreate.MaDoiTuong === 'NCVL' || formCreate.MaDoiTuong === 'KHVL') {
+      if (!formCreate?.TenDoiTuong?.trim() || !formCreate?.DiaChi?.trim() || !formCreate?.GhiChu?.trim() || formCreate?.SoTien === null || formCreate?.SoTien === 0) {
+        setErrors({
+          ...errors,
+          Ten: formCreate?.TenDoiTuong?.trim() ? '' : 'Tên không được để trống',
+          DiaChi: formCreate?.DiaChi?.trim() ? '' : 'Địa chỉ không được để trống',
+          GhiChu: formCreate?.GhiChu?.trim() ? '' : 'Ghi chú không được để trống',
+          SoTien: formCreate?.SoTien === null ? null : formCreate?.SoTien === 0 && 0,
+        })
+        return
+      }
+    }
+    if (!formCreate?.GhiChu?.trim() || formCreate?.SoTien === null || formCreate?.SoTien === 0) {
+      setErrors({
+        ...errors,
+        GhiChu: formCreate?.GhiChu?.trim() ? '' : 'Ghi chú không được để trống',
+        SoTien: formCreate?.SoTien === null ? null : formCreate?.SoTien === 0 && 0,
+      })
+      return
+    }
     setIsShowModalOnlyPrint(true)
   }
 
@@ -1150,7 +1171,7 @@ const ModalPCT = ({
                     bg_hover={'white'}
                     color_hover={'purple-500'}
                     handleAction={() => {
-                      handleCreate(), handlePrintModal()
+                      handleCreate(), handlePrintInCreate()
                     }}
                   />
                 </div>
@@ -1409,7 +1430,6 @@ const ModalPCT = ({
                         color_hover={'purple-500'}
                         handleAction={() => {
                           handlePrintInEdit(dataRecord)
-                          setIsShowModalOnlyPrint(true)
                         }}
                       />
                     </div>

@@ -388,20 +388,7 @@ const PhieuMuaHang = () => {
         </div>
       ),
     },
-    {
-      title: 'Mã kho',
-      dataIndex: 'MaKho',
-      key: 'MaKho',
-      width: 150,
-      sorter: (a, b) => a.MaKho.localeCompare(b.MaKho),
-      showSorterTooltip: false,
-      align: 'center',
-      render: (text) => (
-        <div style={{ textAlign: 'start' }}>
-          <HighlightedCell text={text} search={searchPMH} />
-        </div>
-      ),
-    },
+
     {
       title: 'Thông tin kho',
       dataIndex: 'ThongTinKho',
@@ -443,7 +430,7 @@ const PhieuMuaHang = () => {
       sorter: (a, b) => a.TongMatHang - b.TongMatHang,
       showSorterTooltip: false,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`text-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatCurrency(text)} search={searchPMH} />
         </div>
       ),
@@ -453,9 +440,9 @@ const PhieuMuaHang = () => {
       dataIndex: 'TongSoLuong',
       key: 'TongSoLuong',
       width: 200,
-      align: 'end',
+      align: 'center',
       render: (text) => (
-        <div className={`flex justify-end w-full h-full    ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`text-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatQuantity(text, dataThongSo?.SOLESOLUONG)} search={searchPMH} />
         </div>
       ),
@@ -467,9 +454,9 @@ const PhieuMuaHang = () => {
       dataIndex: 'TongTienHang',
       key: 'TongTienHang',
       width: 200,
-      align: 'end',
+      align: 'center',
       render: (text) => (
-        <div className={`flex justify-end w-full h-full ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`text-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchPMH} />
         </div>
       ),
@@ -481,9 +468,9 @@ const PhieuMuaHang = () => {
       dataIndex: 'TongTienThue',
       key: 'TongTienThue',
       width: 200,
-      align: 'end',
+      align: 'center',
       render: (text) => (
-        <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`text-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchPMH} />
         </div>
       ),
@@ -495,9 +482,9 @@ const PhieuMuaHang = () => {
       dataIndex: 'TongThanhTien',
       key: 'TongThanhTien',
       width: 200,
-      align: 'end',
+      align: 'center',
       render: (text) => (
-        <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`text-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchPMH} />
         </div>
       ),
@@ -547,7 +534,7 @@ const PhieuMuaHang = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
+        <div className="truncate ">
           <HighlightedCell text={text} search={searchPMH} />
         </div>
       ),
@@ -580,7 +567,7 @@ const PhieuMuaHang = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
+        <div className="truncate ">
           <HighlightedCell text={text} search={searchPMH} />
         </div>
       ),
@@ -616,7 +603,7 @@ const PhieuMuaHang = () => {
                 onClick={() => handlePay(record)}
                 title="Lập phiếu chi"
                 className={`p-[3px] rounded-md text-slate-50 ${
-                  record.TTTienMat
+                  record.PhieuChi
                     ? 'border-2 border-gray-400 bg-gray-400 cursor-not-allowed'
                     : ' border-2 border-blue-500 bg-blue-500  hover:bg-white hover:text-blue-500 cursor-pointer'
                 }`}
@@ -674,8 +661,8 @@ const PhieuMuaHang = () => {
   }
 
   const handleEdit = (record) => {
-    if (record.TTTienMat === true) {
-      toast.error('Phiếu mua hàng đã được lập phiếu chi! Không thể sửa.', {
+    if (record.PhieuChi) {
+      toast.error('Phiếu đã được lập phiếu chi! Không thể sửa.', {
         autoClose: 1500,
       })
     } else {
@@ -704,7 +691,7 @@ const PhieuMuaHang = () => {
   }
 
   const handlePay = (record) => {
-    if (record.TTTienMat) return
+    if (record.PhieuChi) return
     setActionType('pay')
     setDataRecord(record)
     setIsShowModal(true)

@@ -7,7 +7,7 @@ import * as apis from '../../../apis'
 import { Modals } from '../../../components_K'
 import ActionButton from '../../../components/util/Button/ActionButton'
 import dayjs from 'dayjs'
-import { RETOKEN, formatPrice, formatQuantity } from '../../../action/Actions'
+import { RETOKEN, formatCurrency, formatPrice, formatQuantity } from '../../../action/Actions'
 import SimpleBackdrop from '../../../components/util/Loading/LoadingPage'
 // import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { DateField } from '@mui/x-date-pickers/DateField'
@@ -186,14 +186,6 @@ const PhieuXTR = () => {
       fetchData()
     }
   }, [isShowModal])
-
-  useEffect(() => {
-    console.log('fix')
-    if (dataThongTin && dataRecord) {
-      // Data đã được chuyền vào, dừng loading
-      setTableLoad(false)
-    }
-  }, [dataRecord, dataThongTin])
 
   // get Khoảng ngày
   useEffect(() => {
@@ -401,20 +393,6 @@ const PhieuXTR = () => {
       ),
     },
     {
-      title: 'Mã kho',
-      dataIndex: 'MaKho',
-      key: 'MaKho',
-      width: 150,
-      sorter: (a, b) => a.MaKho.localeCompare(b.MaKho),
-      showSorterTooltip: false,
-      align: 'center',
-      render: (text) => (
-        <div style={{ textAlign: 'start' }}>
-          <HighlightedCell text={text} search={searchPXTR} />
-        </div>
-      ),
-    },
-    {
       title: 'Thông tin kho',
       dataIndex: 'ThongTinKho',
       key: 'ThongTinKho',
@@ -451,8 +429,12 @@ const PhieuXTR = () => {
       dataIndex: 'TongMatHang',
       key: 'TongMatHang',
       width: 200,
-      align: 'end',
-      render: (text) => <div className="">{text} </div>,
+      align: 'center',
+      render: (text) => (
+        <div className={`text-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatCurrency(text)} search={searchPXTR} />
+        </div>
+      ),
 
       sorter: (a, b) => a.TongMatHang - b.TongMatHang,
       showSorterTooltip: false,
@@ -462,9 +444,9 @@ const PhieuXTR = () => {
       dataIndex: 'TongSoLuong',
       key: 'TongSoLuong',
       width: 200,
-      align: 'end',
+      align: 'center',
       render: (text) => (
-        <div className={`flex justify-end w-full h-full    ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`text-end   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatQuantity(text, dataThongSo?.SOLESOLUONG)} search={searchPXTR} />
         </div>
       ),
@@ -476,9 +458,9 @@ const PhieuXTR = () => {
       dataIndex: 'TongTienHang',
       key: 'TongTienHang',
       width: 200,
-      align: 'end',
+      align: 'center',
       render: (text) => (
-        <div className={`flex justify-end w-full h-full ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`text-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchPXTR} />
         </div>
       ),
@@ -490,9 +472,9 @@ const PhieuXTR = () => {
       dataIndex: 'TongTienThue',
       key: 'TongTienThue',
       width: 200,
-      align: 'end',
+      align: 'center',
       render: (text) => (
-        <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`text-end  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchPXTR} />
         </div>
       ),
@@ -504,9 +486,9 @@ const PhieuXTR = () => {
       dataIndex: 'TongThanhTien',
       key: 'TongThanhTien',
       width: 200,
-      align: 'end',
+      align: 'center',
       render: (text) => (
-        <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`text-end  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchPXTR} />
         </div>
       ),
@@ -556,7 +538,7 @@ const PhieuXTR = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
+        <div className="truncate ">
           <HighlightedCell text={text} search={searchPXTR} />
         </div>
       ),
@@ -589,7 +571,7 @@ const PhieuXTR = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
+        <div className="truncate ">
           <HighlightedCell text={text} search={searchPXTR} />
         </div>
       ),
@@ -625,7 +607,7 @@ const PhieuXTR = () => {
                 onClick={() => handlePay(record)}
                 title="Lập phiếu thu"
                 className={`p-[3px] rounded-md text-slate-50 ${
-                  record.TTTienMat
+                  record.PhieuThu
                     ? 'border-2 border-gray-400 bg-gray-400 cursor-not-allowed'
                     : ' border-2 border-blue-500 bg-blue-500  hover:bg-white hover:text-blue-500 cursor-pointer'
                 }`}
@@ -683,8 +665,8 @@ const PhieuXTR = () => {
   }
 
   const handleEdit = (record) => {
-    if (record.TTTienMat === true) {
-      toast.error('Phiếu mua hàng đã được lập phiếu chi! Không thể sửa.', {
+    if (record.PhieuThu) {
+      toast.error('Phiếu đã được lập phiếu thu! Không thể sửa.', {
         autoClose: 1500,
       })
     } else {
@@ -757,7 +739,7 @@ const PhieuXTR = () => {
   }
 
   const handlePay = (record) => {
-    if (record.TTTienMat) return
+    if (record.PhieuThu) return
     setActionType('pay')
     setDataRecord(record)
     setIsShowModal(true)

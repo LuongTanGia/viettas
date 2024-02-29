@@ -53,6 +53,7 @@ const Modals = ({
   const [SctCreate, setSctCreate] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [errors, setErrors] = useState({
+    DoiTuong: '',
     Ten: '',
     DiaChi: '',
   })
@@ -137,9 +138,10 @@ const Modals = ({
       key: 'MaHang',
       width: 150,
       fixed: 'left',
-      sorter: true,
+      sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       editable: true,
       align: 'center',
+      showSorterTooltip: false,
       render: (text) => <div className="text-start">{text}</div>,
     },
     {
@@ -148,6 +150,7 @@ const Modals = ({
       key: 'TenHang',
       width: 250,
       align: 'center',
+      showSorterTooltip: false,
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       render: (text) => (
         <div className="text-start truncate">
@@ -163,6 +166,7 @@ const Modals = ({
       key: 'DVT',
       width: 150,
       align: 'center',
+      showSorterTooltip: false,
       sorter: (a, b) => a.DVT.localeCompare(b.DVT),
     },
     {
@@ -171,6 +175,7 @@ const Modals = ({
       key: 'SoLuong',
       width: 150,
       align: 'center',
+      showSorterTooltip: false,
       render: (text) => (
         <div className={`flex justify-end w-full h-full    ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
           {formatQuantity(text, dataThongSo?.SOLESOLUONG)}
@@ -184,6 +189,7 @@ const Modals = ({
       key: 'DonGia',
       width: 150,
       align: 'center',
+      showSorterTooltip: false,
       render: (text) => (
         <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
           {formatPrice(text, dataThongSo?.SOLESOTIEN)}
@@ -197,6 +203,7 @@ const Modals = ({
       key: 'TienHang',
       width: 150,
       align: 'center',
+      showSorterTooltip: false,
       render: (text) => (
         <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
           {formatPrice(text, dataThongSo?.SOLESOTIEN)}
@@ -210,6 +217,7 @@ const Modals = ({
       key: 'TyLeThue',
       width: 150,
       align: 'center',
+      showSorterTooltip: false,
       sorter: (a, b) => a.TyLeThue - b.TyLeThue,
       render: (text) => (
         <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
@@ -223,6 +231,7 @@ const Modals = ({
       key: 'TienThue',
       width: 150,
       align: 'center',
+      showSorterTooltip: false,
       render: (text) => (
         <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
           {formatPrice(text, dataThongSo?.SOLESOTIEN)}
@@ -237,6 +246,7 @@ const Modals = ({
       width: 150,
       align: 'center',
       fixed: 'right',
+      showSorterTooltip: false,
       render: (text) => (
         <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
           {formatPrice(text, dataThongSo?.SOLESOTIEN)}
@@ -531,6 +541,11 @@ const Modals = ({
         return
       }
     }
+    if (selectedRowData.length <= 0) {
+      toast.warning('Chi tiết phiếu không được để trống')
+      return
+    }
+
     try {
       const tokenLogin = localStorage.getItem('TKN')
       const dataAddSTT = selectedRowData.map((item, index) => {
@@ -549,7 +564,7 @@ const Modals = ({
           setHightLight(soChungTu)
           setSctCreate(soChungTu)
           setFormCreate(defaultFormCreate)
-          setSelectedDoiTuong(dataDoiTuong[0].Ma)
+          setSelectedDoiTuong('')
           setDoiTuongInfo({ Ten: '', DiaChi: '' })
           setSelectedKhoHang(dataKhoHang[0].MaKho)
           setSelectedRowData([])
@@ -572,7 +587,7 @@ const Modals = ({
           setHightLight(soChungTu)
           setSctCreate(soChungTu)
           setFormCreate(defaultFormCreate)
-          setSelectedDoiTuong(dataDoiTuong[0].Ma)
+          setSelectedDoiTuong('')
           setDoiTuongInfo({ Ten: '', DiaChi: '' })
           setSelectedKhoHang(dataKhoHang[0].MaKho)
           setSelectedRowData([])
@@ -595,7 +610,7 @@ const Modals = ({
           setHightLight(soChungTu)
           setSctCreate(soChungTu)
           setFormCreate(defaultFormCreate)
-          setSelectedDoiTuong(dataDoiTuong[0].Ma)
+          setSelectedDoiTuong('')
           setDoiTuongInfo({ Ten: '', DiaChi: '' })
           setSelectedKhoHang(dataKhoHang[0].MaKho)
           setSelectedRowData([])
@@ -1086,11 +1101,12 @@ const Modals = ({
     setIsLoading(newLoading)
   }
   const handlePrintModal = () => {
-    if (!formCreate?.TenDoiTuong?.trim() || !formCreate?.DiaChi?.trim()) return
+    if (!formCreate?.TenDoiTuong?.trim() || !formCreate?.DiaChi?.trim() || selectedRowData.length <= 0) return
     setIsShowModalOnlyPrint(true)
   }
   const handlePrintWareHouseModal = () => {
-    if (!formCreate?.TenDoiTuong?.trim() || !formCreate?.DiaChi?.trim()) return
+    if (!formCreate?.TenDoiTuong?.trim() || !formCreate?.DiaChi?.trim() || selectedRowData.length <= 0) return
+
     setIsShowModalOnlyPrintWareHouse(true)
   }
   const handleSctBDChange = (value) => {
@@ -1341,12 +1357,17 @@ const Modals = ({
                     <div className="w-[62%]">
                       <div className="flex p-1  ">
                         <div className=" flex items-center ">
-                          <label className="md:w-[107px] lg:w-[110px] pr-1">Số C.từ</label>
-                          <input disabled type="text" className="w-full border border-gray-300 outline-none  px-2 rounded-[4px] h-[24px]" value={dataThongTin?.SoChungTu} />
+                          <label className="w-[110px]">Số C.từ</label>
+                          <input
+                            disabled
+                            type="text"
+                            className="w-full border border-gray-300 outline-none  px-2 rounded-[4px] h-[24px] truncate"
+                            value={dataThongTin?.SoChungTu}
+                          />
                         </div>
                         {/* DatePicker */}
                         <div className="flex md:px-1 lg:px-4 items-center">
-                          <label className="pr-1 lg:pr-[30px] lg:pl-[8px]">Ngày</label>
+                          <label className=" px-3  text-center ">Ngày</label>
                           <DateField
                             className="DatePicker_PMH  max-w-[110px]"
                             format="DD/MM/YYYY"
@@ -1369,23 +1390,20 @@ const Modals = ({
                         <label form="doituong" className="w-[86px]">
                           Đối tượng
                         </label>
-                        <Select
+                        <input
                           disabled
-                          showSearch
-                          size="small"
-                          optionFilterProp="children"
-                          style={{ width: '100%' }}
+                          type="text"
+                          className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px] truncate"
                           value={`${dataThongTin.MaDoiTuong}- ${dataThongTin.TenDoiTuong}`}
-                          readOnly
-                        ></Select>
+                        />
                       </div>
                       <div className="flex items-center justify-between p-1">
                         <label className="w-[86px]">Tên</label>
-                        <input disabled type="text" className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" value={dataThongTin?.TenDoiTuong} />
+                        <input disabled type="text" className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px] truncate" value={dataThongTin?.TenDoiTuong} />
                       </div>
                       <div className="flex items-center justify-between p-1">
                         <label className="w-[86px]">Địa chỉ</label>
-                        <input disabled type="text" className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" value={dataThongTin?.DiaChi} />
+                        <input disabled type="text" className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px] truncate" value={dataThongTin?.DiaChi} />
                       </div>
                     </div>
 
@@ -1468,7 +1486,7 @@ const Modals = ({
                     </div>
                     <div className="flex items-center p-1 md:w-[65%] lg:w-[80%]">
                       <label className="w-[70px]">Ghi chú</label>
-                      <input disabled type="are" className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" value={dataThongTin?.GhiChu} />
+                      <input disabled type="are" className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px] truncate" value={dataThongTin?.GhiChu} />
                     </div>
                   </div>
                   {/* table */}
@@ -1610,11 +1628,11 @@ const Modals = ({
                         </label>
 
                         <Select
+                          className="w-full"
                           showSearch
                           size="small"
                           optionFilterProp="children"
                           onChange={(value) => handleDoiTuongFocus(value)}
-                          style={{ width: '100%' }}
                           value={selectedDoiTuong}
                           // listHeight={280}
                         >
