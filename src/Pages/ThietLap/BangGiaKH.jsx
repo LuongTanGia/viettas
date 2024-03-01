@@ -28,16 +28,13 @@ const BangGiaKH = () => {
   const [data, setData] = useState([])
   const [dataFull, setDataFull] = useState([])
   const [dataThongTin, setDataThongTin] = useState({})
-
   const [dataRecord, setDataRecord] = useState(null)
   const [dataDoiTuong, setDataDoiTuong] = useState(null)
   const [dataNhomGia, setDataNhomGia] = useState(null)
-
   const [actionType, setActionType] = useState('')
   const [dataQuyenHan, setDataQuyenHan] = useState({})
   const [setSearchGKH, filteredGKH, searchGKH] = useSearchHH(isShowFull ? dataFull : data)
   const [prevSearchValue, setPrevSearchValue] = useState('')
-
   const [hideColumns, setHideColumns] = useState(false)
   const [checkedList, setCheckedList] = useState([])
   const [confirmed, setConfirmed] = useState(false)
@@ -46,6 +43,7 @@ const BangGiaKH = () => {
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
   const [isShowNotify, setIsShowNotify] = useState(false)
   const [selectedRowKeys, setSelectedRowKeys] = useState([])
+  const [doneGKH, setDoneGKH] = useState(null)
   const [formDEL, setFormDEL] = useState({
     DanhSachMaHieuLuc: [],
   })
@@ -196,8 +194,6 @@ const BangGiaKH = () => {
     })
     setFormDEL({ ...formDEL, DanhSachMaHieuLuc: selectedRowObjs })
   }, [selectedRowKeys])
-
-  console.log('first,', selectedRowKeys)
 
   const getDSGKH = async () => {
     try {
@@ -374,7 +370,7 @@ const BangGiaKH = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
+        <div className="truncate ">
           <HighlightedCell text={text} search={searchGKH} />
         </div>
       ),
@@ -407,7 +403,7 @@ const BangGiaKH = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
+        <div className="truncate ">
           <HighlightedCell text={text} search={searchGKH} />
         </div>
       ),
@@ -504,6 +500,7 @@ const BangGiaKH = () => {
   }
 
   const handleRowClick = (record) => {
+    setDoneGKH(null)
     const selectedKey = `${record.MaDoiTuong}/${record.HieuLucTu}`
     const isSelected = selectedRowKeys.includes(selectedKey)
     const newSelectedRowKeys = isSelected ? selectedRowKeys.filter((key) => key !== selectedKey) : [...selectedRowKeys, selectedKey]
@@ -710,6 +707,7 @@ const BangGiaKH = () => {
                     localStorage.setItem('pageSize', size)
                   },
                 }}
+                rowClassName={(record) => (`${record.MaDoiTuong}/${record.HieuLucTu}` === doneGKH ? 'highlighted-row' : '')}
                 rowKey={(record) => `${record.MaDoiTuong}/${record.HieuLucTu}`}
                 onRow={(record) => ({
                   onClick: () => {
@@ -762,6 +760,7 @@ const BangGiaKH = () => {
                 dataThongSo={dataThongSo}
                 loading={() => setTableLoad(true)}
                 formDEL={formDEL}
+                setHightLight={setDoneGKH}
               />
             )}
           </div>

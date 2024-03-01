@@ -53,7 +53,7 @@ const Modals = ({
   const [SctCreate, setSctCreate] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [errors, setErrors] = useState({
-    DoiTuong: '',
+    DoiTuong: null,
     Ten: '',
     DiaChi: '',
   })
@@ -138,7 +138,7 @@ const Modals = ({
       key: 'MaHang',
       width: 150,
       fixed: 'left',
-      sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
+      sorter: (a, b) => a.MaHang.localeCompare(b.MaHang),
       editable: true,
       align: 'center',
       showSorterTooltip: false,
@@ -453,85 +453,13 @@ const Modals = ({
   }
 
   const handleCreateAndClose = async () => {
-    if (selectedDoiTuong === 'NCVL' || selectedDoiTuong === 'KHVL') {
-      if (!formCreate?.TenDoiTuong?.trim() || !formCreate?.DiaChi?.trim()) {
-        setErrors({
-          Ten: formCreate?.TenDoiTuong?.trim() ? '' : 'Tên đối tượng không được để trống',
-          DiaChi: formCreate?.DiaChi?.trim() ? '' : 'Địa chỉ không được để trống',
-        })
-        return
-      }
-    }
-    try {
-      const tokenLogin = localStorage.getItem('TKN')
-      const dataAddSTT = selectedRowData.map((item, index) => {
-        return {
-          ...item,
-          STT: index + 1,
-        }
+    if (!selectedDoiTuong?.trim()) {
+      setErrors({
+        ...errors,
+        DoiTuong: selectedDoiTuong?.trim() ? null : 'Đối tượng không được để trống',
       })
-      if (typePage === 'PMH') {
-        console.log('2')
-
-        const response = await apis.ThemPMH(tokenLogin, { ...formCreate, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
-
-        if (response.data && response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription)
-          const soChungTu = response.data.DataResults[0].SoChungTu
-          loading()
-          setHightLight(soChungTu)
-          close()
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleCreateAndClose()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
-      }
-      if (typePage === 'NTR') {
-        const response = await apis.ThemNTR(tokenLogin, { ...formCreate, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
-
-        if (response.data && response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription)
-          const soChungTu = response.data.DataResults[0].SoChungTu
-          loading()
-          setHightLight(soChungTu)
-          close()
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleCreateAndClose()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
-      }
-      if (typePage === 'XTR') {
-        const response = await apis.ThemXTR(tokenLogin, { ...formCreate, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
-
-        if (response.data && response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription)
-          const soChungTu = response.data.DataResults[0].SoChungTu
-          loading()
-          setHightLight(soChungTu)
-          close()
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleCreateAndClose()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
-      }
-    } catch (error) {
-      console.error('Error while saving data:', error)
+      return
     }
-  }
-
-  const handleCreate = async () => {
     if (selectedDoiTuong === 'NCVL' || selectedDoiTuong === 'KHVL') {
       if (!formCreate?.TenDoiTuong?.trim() || !formCreate?.DiaChi?.trim()) {
         setErrors({
@@ -542,89 +470,132 @@ const Modals = ({
       }
     }
     if (selectedRowData.length <= 0) {
+      toast.warning('Bảng chi tiết không được để trống')
+      return
+    }
+    try {
+      const tokenLogin = localStorage.getItem('TKN')
+      const dataAddSTT = selectedRowData.map((item, index) => ({
+        ...item,
+        STT: index + 1,
+      }))
+
+      let response
+      switch (typePage) {
+        case 'PMH':
+          response = await handleAPICreate(apis.ThemPMH, tokenLogin, formCreate, dataAddSTT, selectedDoiTuong, selectedKhoHang)
+          break
+        case 'NTR':
+          response = await handleAPICreate(apis.ThemNTR, tokenLogin, formCreate, dataAddSTT, selectedDoiTuong, selectedKhoHang)
+          break
+        case 'XTR':
+          response = await handleAPICreate(apis.ThemXTR, tokenLogin, formCreate, dataAddSTT, selectedDoiTuong, selectedKhoHang)
+          break
+        default:
+          break
+      }
+
+      if (response) {
+        const { DataError, DataErrorDescription, DataResults } = response.data
+        if (DataError === 0) {
+          const soChungTu = DataResults[0].SoChungTu
+          toast.success(DataErrorDescription)
+          loading()
+          setHightLight(soChungTu)
+          close()
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+        } else if (DataError === -107 || DataError === -108) {
+          await RETOKEN()
+          handleCreateAndClose()
+        } else {
+          toast.error(DataErrorDescription)
+        }
+      }
+    } catch (error) {
+      console.error('Error while saving data:', error)
+    }
+  }
+
+  const handleCreate = async () => {
+    if (!selectedDoiTuong?.trim()) {
+      setErrors({
+        ...errors,
+        DoiTuong: selectedDoiTuong?.trim() ? null : 'Đối tượng không được để trống',
+      })
+      return
+    }
+
+    if (selectedDoiTuong === 'NCVL' || selectedDoiTuong === 'KHVL') {
+      if (!formCreate?.TenDoiTuong?.trim() || !formCreate?.DiaChi?.trim()) {
+        setErrors({
+          Ten: formCreate?.TenDoiTuong?.trim() ? '' : 'Tên đối tượng không được để trống',
+          DiaChi: formCreate?.DiaChi?.trim() ? '' : 'Địa chỉ không được để trống',
+        })
+        return
+      }
+    }
+
+    if (selectedRowData.length <= 0) {
       toast.warning('Chi tiết phiếu không được để trống')
       return
     }
 
     try {
       const tokenLogin = localStorage.getItem('TKN')
-      const dataAddSTT = selectedRowData.map((item, index) => {
-        return {
-          ...item,
-          STT: index + 1,
-        }
-      })
-      if (typePage === 'PMH') {
-        const response = await apis.ThemPMH(tokenLogin, { ...formCreate, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
-        if (response.data && response.data.DataError === 0) {
-          const soChungTu = response.data.DataResults[0].SoChungTu
+      const dataAddSTT = selectedRowData.map((item, index) => ({
+        ...item,
+        STT: index + 1,
+      }))
 
-          toast.success(response.data.DataErrorDescription)
-          loading()
-          setHightLight(soChungTu)
-          setSctCreate(soChungTu)
-          setFormCreate(defaultFormCreate)
-          setSelectedDoiTuong('')
-          setDoiTuongInfo({ Ten: '', DiaChi: '' })
-          setSelectedKhoHang(dataKhoHang[0].MaKho)
-          setSelectedRowData([])
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleCreate()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
+      let response
+      switch (typePage) {
+        case 'PMH':
+          response = await handleAPICreate(apis.ThemPMH, tokenLogin, formCreate, dataAddSTT, selectedDoiTuong, selectedKhoHang)
+          break
+        case 'NTR':
+          response = await handleAPICreate(apis.ThemNTR, tokenLogin, formCreate, dataAddSTT, selectedDoiTuong, selectedKhoHang)
+          break
+        case 'XTR':
+          response = await handleAPICreate(apis.ThemXTR, tokenLogin, formCreate, dataAddSTT, selectedDoiTuong, selectedKhoHang)
+          break
+        default:
+          break
       }
-      if (typePage === 'NTR') {
-        const response = await apis.ThemNTR(tokenLogin, { ...formCreate, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
-        if (response.data && response.data.DataError === 0) {
-          const soChungTu = response.data.DataResults[0].SoChungTu
 
-          toast.success(response.data.DataErrorDescription)
+      if (response) {
+        const { DataError, DataErrorDescription, DataResults } = response.data
+        if (DataError === 0) {
+          const soChungTu = DataResults[0].SoChungTu
+          toast.success(DataErrorDescription)
           loading()
           setHightLight(soChungTu)
           setSctCreate(soChungTu)
           setFormCreate(defaultFormCreate)
-          setSelectedDoiTuong('')
+          setSelectedDoiTuong(null)
           setDoiTuongInfo({ Ten: '', DiaChi: '' })
           setSelectedKhoHang(dataKhoHang[0].MaKho)
           setSelectedRowData([])
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+        } else if (DataError === -107 || DataError === -108) {
           await RETOKEN()
           handleCreate()
         } else {
-          toast.error(response.data.DataErrorDescription)
-        }
-      }
-      if (typePage === 'XTR') {
-        const response = await apis.ThemXTR(tokenLogin, { ...formCreate, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
-        if (response.data && response.data.DataError === 0) {
-          const soChungTu = response.data.DataResults[0].SoChungTu
-
-          toast.success(response.data.DataErrorDescription)
-          loading()
-          setHightLight(soChungTu)
-          setSctCreate(soChungTu)
-          setFormCreate(defaultFormCreate)
-          setSelectedDoiTuong('')
-          setDoiTuongInfo({ Ten: '', DiaChi: '' })
-          setSelectedKhoHang(dataKhoHang[0].MaKho)
-          setSelectedRowData([])
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleCreate()
-        } else {
-          toast.error(response.data.DataErrorDescription)
+          toast.error(DataErrorDescription)
         }
       }
     } catch (error) {
       console.error('Error while saving data:', error)
+    }
+  }
+
+  const handleAPICreate = async (apiFunc, tokenLogin, formCreate, dataAddSTT, selectedDoiTuong, selectedKhoHang) => {
+    try {
+      return await apiFunc(tokenLogin, { ...formCreate, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
+    } catch (error) {
+      console.error('Error while adding data:', error)
+      return null
     }
   }
 
@@ -638,127 +609,144 @@ const Modals = ({
         return
       }
     }
+    if (selectedRowData.length <= 0) {
+      toast.warning('Bảng chi tiết không được để trống')
+      return
+    }
     try {
       const tokenLogin = localStorage.getItem('TKN')
-      const dataAddSTT = selectedRowData.map((item, index) => {
-        return {
-          ...item,
-          STT: index + 1,
-        }
-      })
-      if (typePage === 'PMH') {
-        const response = await apis.SuaPMH(tokenLogin, dataRecord.SoChungTu, { ...formEdit, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
+      const dataAddSTT = selectedRowData.map((item, index) => ({
+        ...item,
+        STT: index + 1,
+      }))
 
-        if (response.data && response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription)
+      let response
+      switch (typePage) {
+        case 'PMH':
+          response = await handleAPIEdit(apis.SuaPMH, tokenLogin, dataRecord.SoChungTu, formEdit, dataAddSTT, selectedDoiTuong, selectedKhoHang)
+          break
+        case 'NTR':
+          response = await handleAPIEdit(apis.SuaNTR, tokenLogin, dataRecord.SoChungTu, formEdit, dataAddSTT, selectedDoiTuong, selectedKhoHang)
+          break
+        case 'XTR':
+          response = await handleAPIEdit(apis.SuaXTR, tokenLogin, dataRecord.SoChungTu, formEdit, dataAddSTT, selectedDoiTuong, selectedKhoHang)
+          break
+        default:
+          break
+      }
+
+      if (response) {
+        const { DataError, DataErrorDescription } = response.data
+        if (DataError === 0) {
+          toast.success(DataErrorDescription)
           loading()
           setHightLight(dataRecord.SoChungTu)
-
           close()
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+        } else if (DataError === -107 || DataError === -108) {
           await RETOKEN()
           handleEdit()
         } else {
-          toast.error(response.data.DataErrorDescription)
+          toast.error(DataErrorDescription)
         }
       }
-      if (typePage === 'NTR') {
-        const response = await apis.SuaNTR(tokenLogin, dataRecord.SoChungTu, { ...formEdit, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
-
-        if (response.data && response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription)
-          loading()
-          setHightLight(dataRecord.SoChungTu)
-
-          close()
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleEdit()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
-      }
-      if (typePage === 'XTR') {
-        const response = await apis.SuaXTR(tokenLogin, dataRecord.SoChungTu, { ...formEdit, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
-
-        if (response.data && response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription)
-          loading()
-          setHightLight(dataRecord.SoChungTu)
-
-          close()
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleEdit()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
-      }
-      // close()
     } catch (error) {
       console.error('Error while saving data:', error)
+    }
+  }
+
+  const handleAPIEdit = async (apiFunc, tokenLogin, Sct, form, dataAddSTT, selectedDoiTuong, selectedKhoHang) => {
+    try {
+      return await apiFunc(tokenLogin, Sct, { ...form, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
+    } catch (error) {
+      console.error('Error while adding data:', error)
+      return null
     }
   }
 
   const handleDelete = async (dataRecord) => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
-      if (typePage === 'PMH') {
-        const response = await apis.XoaPMH(tokenLogin, dataRecord.SoChungTu)
-        // Kiểm tra call api thành công
-        if (response.data && response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription)
-          loading()
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(response.data.DataErrorDescription)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleDelete()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
-        close()
+
+      let response
+      switch (typePage) {
+        case 'PMH':
+          response = await handleAPICreateAndPay(apis.XoaPMH, tokenLogin, dataRecord.SoChungTu)
+          break
+        case 'NTR':
+          response = await handleAPICreateAndPay(apis.XoaNTR, tokenLogin, dataRecord.SoChungTu)
+          break
+        case 'XTR':
+          response = await handleAPICreateAndPay(apis.XoaXTR, tokenLogin, dataRecord.SoChungTu)
+          break
+        default:
+          break
       }
-      if (typePage === 'NTR') {
-        const response = await apis.XoaNTR(tokenLogin, dataRecord.SoChungTu)
-        // Kiểm tra call api thành công
-        if (response.data && response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription)
+
+      if (response) {
+        const { DataError, DataErrorDescription } = response.data
+        if (DataError === 0) {
+          toast.success(DataErrorDescription)
           loading()
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(response.data.DataErrorDescription)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+        } else if (DataError === -107 || DataError === -108) {
           await RETOKEN()
           handleDelete()
         } else {
-          toast.error(response.data.DataErrorDescription)
+          toast.error(DataErrorDescription)
         }
-        close()
       }
-      if (typePage === 'XTR') {
-        const response = await apis.XoaXTR(tokenLogin, dataRecord.SoChungTu)
-        // Kiểm tra call api thành công
-        if (response.data && response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription)
+      close()
+    } catch (error) {
+      console.error('Error while saving data:', error)
+    }
+  }
+  const handlePay = async (dataRecord) => {
+    try {
+      const tokenLogin = localStorage.getItem('TKN')
+
+      let response
+      switch (typePage) {
+        case 'PMH':
+          response = await handleAPICreateAndPay(apis.LapPhieuChi, tokenLogin, dataRecord.SoChungTu)
+          break
+        case 'NTR':
+          response = await handleAPICreateAndPay(apis.LapPhieuChiNTR, tokenLogin, dataRecord.SoChungTu)
+          break
+        case 'XTR':
+          response = await handleAPICreateAndPay(apis.LapPhieuThuXTR, tokenLogin, dataRecord.SoChungTu)
+          break
+        default:
+          break
+      }
+      if (response) {
+        const { DataError, DataErrorDescription } = response.data
+        if (DataError === 0) {
+          toast.success(DataErrorDescription)
           loading()
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(response.data.DataErrorDescription)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          setHightLight(dataRecord.SoChungTu)
+          close()
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+        } else if (DataError === -107 || DataError === -108) {
           await RETOKEN()
           handleDelete()
         } else {
-          toast.error(response.data.DataErrorDescription)
+          toast.error(DataErrorDescription)
         }
-        close()
       }
     } catch (error) {
       console.error('Error while saving data:', error)
+    }
+  }
+  const handleAPICreateAndPay = async (apiFunc, tokenLogin, Sct) => {
+    try {
+      return await apiFunc(tokenLogin, Sct)
+    } catch (error) {
+      console.error('Error while adding data:', error)
+      return null
     }
   }
 
@@ -766,126 +754,63 @@ const Modals = ({
     try {
       const tokenLogin = localStorage.getItem('TKN')
       const lien = calculateTotal()
-      if (typePage === 'PMH') {
-        const response = await apis.InPMH(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
-        // Kiểm tra call api thành công
-        if (response.data && response.data.DataError === 0) {
-          base64ToPDF(response.data.DataResults)
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(response.data.DataErrorDescription)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handlePrint()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
-      }
-      if (typePage === 'NTR') {
-        const response = await apis.InNTR(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
-        // Kiểm tra call api thành công
-        if (response.data && response.data.DataError === 0) {
-          base64ToPDF(response.data.DataResults)
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(response.data.DataErrorDescription)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handlePrint()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
-      }
-      if (typePage === 'XTR') {
-        const response = await apis.InXTR(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
-        // Kiểm tra call api thành công
-        if (response.data && response.data.DataError === 0) {
-          base64ToPDF(response.data.DataResults)
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(response.data.DataErrorDescription)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handlePrint()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
-      }
-      if (typePage === 'PBL') {
-        const response = await apis.InPBL(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
-        // Kiểm tra call api thành công
-        if (response.data && response.data.DataError === 0) {
-          base64ToPDF(response.data.DataResults)
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(response.data.DataErrorDescription)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handlePrint()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
-      }
-    } catch (error) {
-      console.error('Error while saving data:', error)
-    }
-  }
+      let response
+      switch (actionType) {
+        case 'print':
+          switch (typePage) {
+            case 'PMH':
+              response = await handleAPIPrint(apis.InPMH, tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+              break
+            case 'NTR':
+              response = await handleAPIPrint(apis.InNTR, tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+              break
+            case 'XTR':
+              response = await handleAPIPrint(apis.InXTR, tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+              break
+            case 'PBL':
+              response = await handleAPIPrint(apis.InPBL, tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+              break
+            default:
+              break
+          }
+          break
 
-  const handlePrintInEdit = async () => {
-    if (selectedDoiTuong === 'NCVL' || selectedDoiTuong === 'KHVL') {
-      if (!formEdit?.TenDoiTuong?.trim() || !formEdit?.DiaChi?.trim()) {
-        setErrors({
-          Ten: formEdit?.TenDoiTuong?.trim() ? '' : 'Tên đối tượng không được để trống',
-          DiaChi: formEdit?.DiaChi?.trim() ? '' : 'Địa chỉ không được để trống',
-        })
-        return
-      }
-    }
-    try {
-      const tokenLogin = localStorage.getItem('TKN')
-      if (typePage === 'PMH') {
-        const response = await apis.SuaPMH(tokenLogin, dataRecord.SoChungTu, { ...formEdit, DataDetails: selectedRowData }, selectedDoiTuong, selectedKhoHang)
-        if (response.data && response.data.DataError === 0) {
-          loading()
-          setHightLight(dataRecord.SoChungTu)
-          setSelectedRowData([])
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleEdit()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
-      }
-      if (typePage === 'NTR') {
-        const response = await apis.SuaNTR(tokenLogin, dataRecord.SoChungTu, { ...formEdit, DataDetails: selectedRowData }, selectedDoiTuong, selectedKhoHang)
-        if (response.data && response.data.DataError === 0) {
-          loading()
-          setHightLight(dataRecord.SoChungTu)
-          setSelectedRowData([])
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleEdit()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
-      }
-      if (typePage === 'XTR') {
-        const response = await apis.SuaXTR(tokenLogin, dataRecord.SoChungTu, { ...formEdit, DataDetails: selectedRowData }, selectedDoiTuong, selectedKhoHang)
-        if (response.data && response.data.DataError === 0) {
-          loading()
-          setHightLight(dataRecord.SoChungTu)
-          setSelectedRowData([])
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleEdit()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
+        case 'printWareHouse':
+          switch (typePage) {
+            case 'PMH':
+              response = await handleAPIPrint(apis.InPK, tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+              break
+            case 'NTR':
+              response = await handleAPIPrint(apis.InPKNTR, tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+              break
+            case 'XTR':
+              response = await handleAPIPrint(apis.InPKXTR, tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+              break
+            case 'PBL':
+              response = await handleAPIPrint(apis.InPKPBL, tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+              break
+            default:
+              break
+          }
+          break
+
+        default:
+          break
       }
 
-      // close()
+      if (response) {
+        const { DataError, DataErrorDescription, DataResults } = response.data
+        if (DataError === 0) {
+          base64ToPDF(DataResults)
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+        } else if (DataError === -107 || DataError === -108) {
+          await RETOKEN()
+          handlePrint()
+        } else {
+          toast.error(DataErrorDescription)
+        }
+      }
     } catch (error) {
       console.error('Error while saving data:', error)
     }
@@ -956,65 +881,78 @@ const Modals = ({
     }
   }
 
-  const handlePay = async (dataRecord) => {
+  const handleAPIPrint = async (apiFunc, tokenLogin, form, selectedSctBD, selectedSctKT, lien) => {
+    try {
+      return await apiFunc(tokenLogin, form, selectedSctBD, selectedSctKT, lien)
+    } catch (error) {
+      console.error('Error while adding data:', error)
+      return null
+    }
+  }
+
+  const handlePrintInEdit = async () => {
+    if (selectedDoiTuong === 'NCVL' || selectedDoiTuong === 'KHVL') {
+      if (!formEdit?.TenDoiTuong?.trim() || !formEdit?.DiaChi?.trim()) {
+        setErrors({
+          Ten: formEdit?.TenDoiTuong?.trim() ? '' : 'Tên đối tượng không được để trống',
+          DiaChi: formEdit?.DiaChi?.trim() ? '' : 'Địa chỉ không được để trống',
+        })
+        return
+      }
+    }
     try {
       const tokenLogin = localStorage.getItem('TKN')
-
       if (typePage === 'PMH') {
-        const response = await apis.LapPhieuChi(tokenLogin, dataRecord.SoChungTu)
-        // Kiểm tra call api thành công
+        const response = await apis.SuaPMH(tokenLogin, dataRecord.SoChungTu, { ...formEdit, DataDetails: selectedRowData }, selectedDoiTuong, selectedKhoHang)
         if (response.data && response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription)
           loading()
           setHightLight(dataRecord.SoChungTu)
-          close()
+          setSelectedRowData([])
         } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(response.data.DataErrorDescription)
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
-          handlePay()
+          handleEdit()
         } else {
           toast.error(response.data.DataErrorDescription)
         }
       }
       if (typePage === 'NTR') {
-        const response = await apis.LapPhieuChiNTR(tokenLogin, dataRecord.SoChungTu)
-        // Kiểm tra call api thành công
+        const response = await apis.SuaNTR(tokenLogin, dataRecord.SoChungTu, { ...formEdit, DataDetails: selectedRowData }, selectedDoiTuong, selectedKhoHang)
         if (response.data && response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription)
           loading()
           setHightLight(dataRecord.SoChungTu)
-          close()
+          setSelectedRowData([])
         } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(response.data.DataErrorDescription)
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
-          handlePay()
+          handleEdit()
         } else {
           toast.error(response.data.DataErrorDescription)
         }
       }
       if (typePage === 'XTR') {
-        const response = await apis.LapPhieuThuXTR(tokenLogin, dataRecord.SoChungTu)
-        // Kiểm tra call api thành công
+        const response = await apis.SuaXTR(tokenLogin, dataRecord.SoChungTu, { ...formEdit, DataDetails: selectedRowData }, selectedDoiTuong, selectedKhoHang)
         if (response.data && response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription)
           loading()
           setHightLight(dataRecord.SoChungTu)
-          close()
+          setSelectedRowData([])
         } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(response.data.DataErrorDescription)
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
-          handlePay()
+          handleEdit()
         } else {
           toast.error(response.data.DataErrorDescription)
         }
       }
+      // close()
     } catch (error) {
       console.error('Error while saving data:', error)
     }
   }
+
   const calculateTotal = () => {
     let total = 0
     if (checkboxValues.checkbox1) total += 1
@@ -1253,7 +1191,7 @@ const Modals = ({
                           optionFilterProp="children"
                           style={{ width: '170px' }}
                           value={selectedSctBD}
-                          dropdownMatchSelectWidth={false}
+                          popupMatchSelectWidth={false}
                           onChange={handleSctBDChange}
                         >
                           {newData?.map((item) => (
@@ -1273,7 +1211,7 @@ const Modals = ({
                           style={{ width: '170px' }}
                           value={selectedSctKT}
                           onChange={handleSctKTChange}
-                          dropdownMatchSelectWidth={false}
+                          popupMatchSelectWidth={false}
                         >
                           {newData?.map((item) => (
                             <Option key={item.SoChungTu} value={item.SoChungTu}>
@@ -1338,7 +1276,7 @@ const Modals = ({
                 {actionType === 'print' ? (
                   <ActionButton color={'slate-50'} title={'Xác nhận'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handlePrint} />
                 ) : (
-                  <ActionButton color={'slate-50'} title={'Xác nhận'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handlePrintWareHouse} />
+                  <ActionButton color={'slate-50'} title={'Xác nhận'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handlePrint} />
                 )}
                 <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
               </div>
@@ -1629,6 +1567,8 @@ const Modals = ({
 
                         <Select
                           className="w-full"
+                          status={errors.DoiTuong ? 'error' : ''}
+                          placeholder={errors.DoiTuong}
                           showSearch
                           size="small"
                           optionFilterProp="children"

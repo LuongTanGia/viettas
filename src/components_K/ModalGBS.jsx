@@ -19,7 +19,7 @@ import ModalHHGBS from './ModalHHGBS'
 const { Text } = Typography
 const { Option } = Select
 const { IoMdAddCircle } = icons
-const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dataThongSo, dataThongTin, dataHangHoa, dataNhomGia, loading, isLoadingModal }) => {
+const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dataThongSo, dataThongTin, dataHangHoa, dataNhomGia, loading, isLoadingModal, setHightLight }) => {
   const [isShowModalHH, setIsShowModalHH] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [selectedRowData, setSelectedRowData] = useState([])
@@ -124,7 +124,7 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
       key: 'MaHang',
       width: 150,
       fixed: 'left',
-      sorter: true,
+      sorter: (a, b) => a.MaHang.localeCompare(b.MaHang),
       showSorterTooltip: false,
       align: 'center',
       render: (text) => <div className="text-start">{text}</div>,
@@ -251,6 +251,7 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
 
       if (response.data && response.data.DataError === 0) {
         toast.success(response.data.DataErrorDescription)
+        setHightLight(formCreate.NhomGia)
         loading()
         close()
       } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
@@ -282,6 +283,7 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
 
       if (response.data && response.data.DataError === 0) {
         toast.success(response.data.DataErrorDescription)
+        setHightLight(formCreate.NhomGia)
         loading()
         setFormCreate(defaultFormCreate)
         setSelectedRowData([])
@@ -301,7 +303,7 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
   const handleEdit = async () => {
     if (!formEdit?.Data.TenNhomGia?.trim()) {
       setErrors({
-        TenNhomGia: formEdit?.TenNhomGia?.trim() ? '' : 'Tên bảng giá không được để trống',
+        TenNhomGia: formEdit.Data?.TenNhomGia?.trim() ? '' : 'Tên bảng giá không được để trống',
       })
       return
     }
@@ -312,6 +314,7 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
       const response = await apis.SuaGBS(tokenLogin, { ...formEdit, Data: { ...formEdit.Data, NhomGia_CTs: selectedRowData } })
       if (response.data && response.data.DataError === 0) {
         toast.success(response.data.DataErrorDescription)
+        setHightLight(formEdit.Ma)
         loading()
         close()
       } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
@@ -371,20 +374,20 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
     }
   }
 
-  const handleCoThue = () => {
-    if (actionType === 'create') {
-      setFormCreate({ ...formCreate, CoThue: !formCreate.CoThue })
-    }
-    if (actionType === 'edit') {
-      setFormEdit({
-        ...formEdit,
-        Data: {
-          ...formEdit.Data,
-          CoThue: !formEdit.Data.CoThue,
-        },
-      })
-    }
-  }
+  // const handleCoThue = () => {
+  //   if (actionType === 'create') {
+  //     setFormCreate({ ...formCreate, CoThue: !formCreate.CoThue })
+  //   }
+  //   if (actionType === 'edit') {
+  //     setFormEdit({
+  //       ...formEdit,
+  //       Data: {
+  //         ...formEdit.Data,
+  //         CoThue: !formEdit.Data.CoThue,
+  //       },
+  //     })
+  //   }
+  // }
   const handleAdjustPrice = async () => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
@@ -1274,7 +1277,6 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
               {/* button  */}
               <div className="flex justify-end items-center">
                 <div className="flex justify-end items-center gap-3  pt-3">
-                  <ActionButton color={'slate-50'} title={'Lưu'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleCreate} />
                   <ActionButton color={'slate-50'} title={'Lưu & đóng'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleCreateAndClose} />
 
                   <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
