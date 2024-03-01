@@ -201,7 +201,6 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
   // Table Barcode
   const isAddBarCode = useMemo(() => hangHoaForm.Barcodes?.map((item) => item.MaVach).includes(''), [hangHoaForm.Barcodes])
   const isAddBarCodeEdit = useMemo(() => dataView.Barcodes?.map((item) => item.MaVach).includes(''), [dataView.Barcodes])
-
   const handleBarcodeChange = (index, key, value) => {
     if (type == 'create') {
       const updatedBarcodes = [...hangHoaForm.Barcodes]
@@ -753,7 +752,6 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
       ),
     },
   ]
-  console.log(lastNumber13Main)
   return (
     <>
       {!isLoading ? (
@@ -2089,7 +2087,6 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                         <div>Chọn</div>
                         <Select
                           mode="multiple"
-                          maxTagCount={2}
                           filterOption
                           allowClear
                           placeholder="Danh sách nhóm"
@@ -2098,6 +2095,13 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                           style={{
                             width: '390px',
                           }}
+                          maxTagCount="responsive"
+                          optionFilterProp="children"
+                          maxTagPlaceholder={(omittedValues) => (
+                            <Tooltip title={omittedValues?.map(({ label }) => label)} color="blue">
+                              <span>+{omittedValues?.length}...</span>
+                            </Tooltip>
+                          )}
                         >
                           {nhomHang?.map((item) => {
                             return (
@@ -2175,7 +2179,6 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                         <div>Chọn</div>
                         <Select
                           mode="multiple"
-                          maxTagCount={2}
                           allowClear
                           filterOption
                           placeholder="Chọn mã hàng"
@@ -2184,6 +2187,13 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                           style={{
                             width: '400px',
                           }}
+                          maxTagCount="responsive"
+                          optionFilterProp="children"
+                          maxTagPlaceholder={(omittedValues) => (
+                            <Tooltip title={omittedValues?.map(({ label }) => label)} color="blue">
+                              <span>+{omittedValues?.length}...</span>
+                            </Tooltip>
+                          )}
                         >
                           {getDataHangHoa?.map((item, index) => {
                             return (

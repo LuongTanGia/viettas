@@ -8,7 +8,8 @@ import { CgCloseO } from 'react-icons/cg'
 import { TfiMoreAlt } from 'react-icons/tfi'
 import { RiFileExcel2Fill } from 'react-icons/ri'
 import { CloseSquareFilled } from '@ant-design/icons'
-import { FaSearch, FaEyeSlash, FaEye } from 'react-icons/fa'
+import { TbEyeDollar, TbEye } from 'react-icons/tb'
+import { FaSearch, FaEyeSlash } from 'react-icons/fa'
 import categoryAPI from '../../API/linkAPI'
 import { useSearch } from '../../components/hooks/Search'
 import { RETOKEN, exportToExcel } from '../../action/Actions'
@@ -1002,24 +1003,30 @@ const NhapXuatTon = () => {
                         </div>
                       </div>
                       <div className="flex items-center gap-1">
-                        <ActionButton
-                          title={'Xem'}
-                          handleAction={handleFilterDS}
-                          icon={<FaEye className="w-4 h-4" />}
-                          color={'slate-50'}
-                          background={'blue-500'}
-                          color_hover={'blue-500'}
-                          bg_hover={'white'}
-                        />
-                        <ActionButton
-                          title={'Xem ( ĐVT Quy Đổi )'}
-                          handleAction={handleFilterDS_DVTQD}
-                          icon={<FaEye className="w-4 h-4" />}
-                          color={'slate-50'}
-                          background={'blue-500'}
-                          color_hover={'blue-500'}
-                          bg_hover={'white'}
-                        />
+                        <Tooltip title="Xem dữ liệu" color="blue">
+                          <div>
+                            <ActionButton
+                              handleAction={handleFilterDS}
+                              icon={<TbEye className="w-5 h-5" />}
+                              color={'slate-50'}
+                              background={'blue-500'}
+                              color_hover={'blue-500'}
+                              bg_hover={'white'}
+                            />
+                          </div>
+                        </Tooltip>
+                        <Tooltip title="Xem ( ĐVT Quy Đổi )" color="blue">
+                          <div>
+                            <ActionButton
+                              handleAction={handleFilterDS_DVTQD}
+                              icon={<TbEyeDollar className="w-5 h-5" />}
+                              color={'slate-50'}
+                              background={'blue-500'}
+                              color_hover={'blue-500'}
+                              bg_hover={'white'}
+                            />
+                          </div>
+                        </Tooltip>
                       </div>
                     </div>
                     <div className=" flex flex-col gap-2">

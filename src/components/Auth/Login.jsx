@@ -9,6 +9,7 @@ import backgroundImg from '../../assets/img/backgroud.jfif'
 import CollectionCreateForm from './Popup'
 import FAQ from '../FAQ/FAQ'
 import './auth.css'
+import { toast } from 'react-toastify'
 
 const App = () => {
   const [rememberMe, setRememberMe] = useState(Cookies.get('useCookies') === 'true')
@@ -30,23 +31,25 @@ const App = () => {
   useEffect(() => {
     Cookies.set('useCookies', rememberMe)
   }, [rememberMe, token])
+
   const onChangeInput = (e) => {
     const { name, value } = e.target
     setUser({ ...user, [name]: value })
     setErrors({ ...errors, [name]: '' })
   }
-
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.keyCode === 13) {
-        handleAddUser()
+        {
+          rememberMe ? handleAddUser() : toast.warning('Chưa được cho phép sử dụng Cookie')
+        }
       }
     }
     document.addEventListener('keydown', handleKeyDown)
     return () => {
       document.removeEventListener('keydown', handleKeyDown)
     }
-  }, [user.User, user.Pass])
+  }, [user.User, user.Pass, rememberMe])
 
   useEffect(() => {
     const authLogin = window.localStorage.getItem('authLogin')
@@ -192,7 +195,6 @@ const App = () => {
                       setIsShow(true)
                     }}
                   >
-                    {' '}
                     Chính sách thu thập và sử dụng cookie của chúng tôi.
                   </a>
                 </p>
