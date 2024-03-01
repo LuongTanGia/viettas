@@ -44,6 +44,7 @@ const GBS = () => {
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
   const [isShowNotify, setIsShowNotify] = useState(false)
+  const [doneGKH, setDoneGKH] = useState(null)
 
   // bỏ focus option thì hidden
   useEffect(() => {
@@ -319,7 +320,7 @@ const GBS = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
+        <div className="truncate ">
           <HighlightedCell text={text} search={searchGBS} />
         </div>
       ),
@@ -352,7 +353,7 @@ const GBS = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
+        <div className="truncate ">
           <HighlightedCell text={text} search={searchGBS} />
         </div>
       ),
@@ -640,6 +641,7 @@ const GBS = () => {
                     localStorage.setItem('pageSize', size)
                   },
                 }}
+                rowClassName={(record) => (record.NhomGia === doneGKH ? 'highlighted-row' : '')}
                 rowKey={(record) => record.NhomGia}
                 onRow={(record) => ({
                   onDoubleClick: () => {
@@ -694,7 +696,7 @@ const GBS = () => {
                 isLoadingEdit={isLoadingEdit}
                 dataThongSo={dataThongSo}
                 loading={() => setTableLoad(true)}
-                // setHightLight={setDonePMH}
+                setHightLight={setDoneGKH}
               />
             )}
           </div>

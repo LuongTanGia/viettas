@@ -14,10 +14,11 @@ import { toast } from 'react-toastify'
 
 const { Option } = Select
 
-const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, dataThongSo, dataHangHoa, dataDoiTuong, dataNhomGia, loading, formDEL }) => {
+const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, dataThongSo, dataHangHoa, dataDoiTuong, dataNhomGia, loading, formDEL, setHightLight }) => {
   const [value1List, setValue1List] = useState([])
   const [value2List, setValue2List] = useState([])
   const [errors, setErrors] = useState({
+    MaHang: '',
     DonGia: '',
   })
   const ngayHieuLuc = dayjs().format('YYYY-MM-DD')
@@ -93,9 +94,9 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
 
   useEffect(() => {
     if (typePage === 'GBL') {
-      if (dataHangHoa && actionType === 'create') {
-        setFormCreate({ ...formCreate, MaHang: dataHangHoa[0]?.MaHang })
-      }
+      // if (dataHangHoa && actionType === 'create') {
+      //   setFormCreate({ ...formCreate, MaHang: dataHangHoa[0]?.MaHang })
+      // }
       if (dataHangHoa && actionType === 'edit') {
         setFormEdit({ ...formEdit, MaHang: dataRecord.MaHang })
       }
@@ -122,9 +123,10 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
   //////////////////////////////////////////////
   const handleCreateAndClose = async () => {
     if (typePage === 'GBL') {
-      if (formCreate?.DonGia === null || formCreate?.DonGia === 0) {
+      if (formCreate?.DonGia === null || formCreate?.DonGia === 0 || !formCreate?.MaHang?.trim()) {
         setErrors({
           ...errors,
+          MaHang: formCreate?.MaHang?.trim() ? '' : 'Mã hàng không được để trống',
           DonGia: formCreate?.DonGia === null ? null : formCreate?.DonGia === 0 && 0,
         })
         return
@@ -153,6 +155,7 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
         const response = await apis.ThemGKH(tokenLogin, formCreate)
         if (response.data && response.data.DataError === 0) {
           toast.success(response.data.DataErrorDescription)
+          setHightLight(`${formCreate.MaDoiTuong}/${formCreate.HieuLucTu}T00:00:00`)
           loading()
           close()
         } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
@@ -171,9 +174,10 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
 
   const handleCreate = async () => {
     if (typePage === 'GBL') {
-      if (formCreate?.DonGia === null || formCreate?.DonGia === 0) {
+      if (formCreate?.DonGia === null || formCreate?.DonGia === 0 || !formCreate?.MaHang?.trim()) {
         setErrors({
           ...errors,
+          MaHang: formCreate?.MaHang?.trim() ? '' : 'Mã hàng không được để trống',
           DonGia: formCreate?.DonGia === null ? null : formCreate?.DonGia === 0 && 0,
         })
         return
@@ -189,6 +193,22 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
           toast.success(response.data.DataErrorDescription)
           loading()
           setFormCreate(defaultFormCreate)
+        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          handleCreate()
+        } else {
+          toast.error(response.data.DataErrorDescription)
+        }
+      }
+      if (typePage === 'GKH') {
+        const response = await apis.ThemGKH(tokenLogin, formCreate)
+        if (response.data && response.data.DataError === 0) {
+          toast.success(response.data.DataErrorDescription)
+          setHightLight(`${formCreate.MaDoiTuong}/${formCreate.HieuLucTu}T00:00:00`)
+          loading()
+          setFormCreate(defaultFormCreateGKH)
         } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
           toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
@@ -236,6 +256,7 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
         const response = await apis.SuaGKH(tokenLogin, formEdit)
         if (response.data && response.data.DataError === 0) {
           toast.success(response.data.DataErrorDescription)
+          setHightLight(`${formEdit.Ma}/${formEdit.HieuLuc}`)
           loading()
           close()
         } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
@@ -402,7 +423,7 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
       setFormPrint({ ...formPrint, CodeValue2From: value, CodeValue2To: value })
     }
   }
-  console.log(formPrint)
+  // console.log(formPrint)
   return (
     <>
       <div className=" fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
@@ -493,7 +514,7 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
                           width: '170px',
                           textOverflow: 'ellipsis',
                         }}
-                        dropdownMatchSelectWidth={false}
+                        popupMatchSelectWidth={false}
                       >
                         {dataNhomGia?.map((item) => (
                           <Option key={item.Ma} value={item.Ma} title={item.Ten}>
@@ -515,7 +536,7 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
                           width: '170px',
                           textOverflow: 'ellipsis',
                         }}
-                        dropdownMatchSelectWidth={false}
+                        popupMatchSelectWidth={false}
                       >
                         {dataNhomGia?.map((item) => (
                           <Option key={item.Ma} value={item.Ma} title={item.Ten}>
@@ -548,7 +569,7 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
                           width: '170px',
                           textOverflow: 'ellipsis',
                         }}
-                        dropdownMatchSelectWidth={false}
+                        popupMatchSelectWidth={false}
                       >
                         {dataHangHoa?.map((item) => (
                           <Option key={item.MaHang} value={item.MaHang} title={item.TenHang}>
@@ -570,7 +591,7 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
                           width: '170px',
                           textOverflow: 'ellipsis',
                         }}
-                        dropdownMatchSelectWidth={false}
+                        popupMatchSelectWidth={false}
                       >
                         {dataHangHoa?.map((item) => (
                           <Option key={item.MaHang} value={item.MaHang} title={item.TenHang}>
@@ -972,15 +993,17 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
                             <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Hàng hóa</label>
                             <Select
                               className="w-full truncate"
+                              status={errors.MaHang ? 'error' : ''}
                               showSearch
                               size="small"
                               optionFilterProp="children"
-                              onChange={(value) =>
+                              onChange={(value) => {
                                 setFormCreate({
                                   ...formCreate,
                                   MaHang: value,
-                                })
-                              }
+                                }),
+                                  setErrors({ ...errors, MaHang: '' })
+                              }}
                               value={formCreate.MaHang}
                             >
                               {dataHangHoa?.map((item) => (
@@ -1034,8 +1057,8 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
                                   setFormCreate({
                                     ...formCreate,
                                     DonGia: e,
-                                  })
-                                  setErrors({ ...errors, DonGia: e })
+                                  }),
+                                    setErrors({ ...errors, DonGia: e })
                                 }}
                               />
                             </div>
@@ -1097,7 +1120,7 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
                             <DateField
                               className="DatePicker_PMH  max-w-[110px]"
                               format="DD/MM/YYYY"
-                              value={dayjs()}
+                              value={dayjs(formCreate.HieuLucTu)}
                               onChange={(newDate) => {
                                 setFormCreate({
                                   ...formCreate,

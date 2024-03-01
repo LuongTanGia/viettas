@@ -329,7 +329,7 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
                     style={{ width: '170px' }}
                     value={selectedSctBD}
                     onChange={handleSctBDChange}
-                    dropdownMatchSelectWidth={false}
+                    popupMatchSelectWidth={false}
                   >
                     {newData?.map((item) => (
                       <Option key={item.SoChungTu} value={item.SoChungTu}>
@@ -349,7 +349,7 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
                     style={{ width: '170px' }}
                     value={selectedSctKT}
                     onChange={handleSctKTChange}
-                    dropdownMatchSelectWidth={false}
+                    popupMatchSelectWidth={false}
                   >
                     {newData?.map((item) => (
                       <Option key={item.SoChungTu} value={item.SoChungTu}>

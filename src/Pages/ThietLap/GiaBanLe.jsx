@@ -35,7 +35,6 @@ const GBL = () => {
   const [dataQuyenHan, setDataQuyenHan] = useState({})
   const [setSearchGBL, filteredGBL, searchGBL] = useSearchHH(!isShowFull ? data : dataFull)
   const [prevSearchValue, setPrevSearchValue] = useState('')
-
   const [hideColumns, setHideColumns] = useState(false)
   const [checkedList, setCheckedList] = useState([])
   const [confirmed, setConfirmed] = useState(false)
@@ -728,7 +727,7 @@ const GBL = () => {
                         <div className="pr-1">
                           <TiPrinter size={20} />
                         </div>
-                        <div>In phiếu</div>
+                        <div>In bảng giá</div>
                       </button>
 
                       <button
@@ -803,7 +802,7 @@ const GBL = () => {
                       width: '10vw',
                       textOverflow: 'ellipsis',
                     }}
-                    dropdownMatchSelectWidth={false}
+                    popupMatchSelectWidth={false}
                   >
                     {dataNhomGia?.map((item) => (
                       <Option key={item.Ma} value={item.Ma} title={item.Ten}>
@@ -825,7 +824,7 @@ const GBL = () => {
                       width: '10vw',
                       textOverflow: 'ellipsis',
                     }}
-                    dropdownMatchSelectWidth={false}
+                    popupMatchSelectWidth={false}
                   >
                     {dataNhomGia?.map((item) => (
                       <Option key={item.Ma} value={item.Ma} title={item.Ten}>
