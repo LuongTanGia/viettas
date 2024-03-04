@@ -3,8 +3,10 @@ import Logo from '../../assets/img/logo.png'
 import LogoHeader from '../../assets/VTS-iSale.ico'
 import ChangePass from './ChangePass'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 // eslint-disable-next-line react/prop-types
 function Header({ handleToggleSidebar, refs }) {
+  const navigate = useNavigate()
   const userLogin = window.localStorage.getItem('userName')
   const userInfor = JSON.parse(window.localStorage.getItem('userInfo'))
 
@@ -30,15 +32,13 @@ function Header({ handleToggleSidebar, refs }) {
     <>
       <header id="header" className="header fixed-top d-flex align-items-center z-10 h-[50px]" ref={refs}>
         <div className="d-flex align-items-center justify-content-between">
-          <Link href="index.html" className="logo d-flex align-items-center justify-content-start" to={'/'}>
+          <Link href="index.html" className="logo d-flex align-items-center justify-content-start">
             <img src={LogoHeader} />
             <span className="d-none d-lg-block">VTS - iSale</span>
             <i className="bi bi-list toggle-sidebar-btn" onClick={handleToggleSidebar}></i>
           </Link>
         </div>
-
         <div className="search-bar"></div>
-
         <nav className="header-nav ms-auto">
           <ul className="d-flex align-items-center">
             <li className="nav-item dropdown pe-3">
