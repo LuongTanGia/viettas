@@ -25,7 +25,6 @@ import DoiTuong from '../../pages/DanhMuc/DoiTuong'
 import GiaBanLe from '../../pages/ThietLap/GiaBanLe'
 import GiaBanSi from '../../pages/ThietLap/GiaBanSi'
 import BangGiaKH from '../../pages/ThietLap/BangGiaKH'
-import NhapXuatTon from '../../pages/TruyVan/NhapXuatTon'
 import CongNoDauVao from '../CongNoDauVao/CongNoDauVao'
 import DSBHHH from '../DoanhSoBanHang/DSBH(HH)'
 import DSBHKHH from '../DoanhSoBanHang/DSBH(KH)'
@@ -37,6 +36,7 @@ import HangMucChi from '../../pages/DanhMuc/HangMucChi'
 import KhoHang from '../../pages/ThietLap/KhoHang'
 import QuanLy from '../../pages/ThietLap/QuanLy'
 import QuayTinhTien from '../../pages/ThietLap/QuayTinhTien'
+import NhapXuatTon from '../../Pages/TruyVan/NhapXuatTon'
 
 function MainPage({ isSidebarVisible }) {
   return (
@@ -74,7 +74,6 @@ function MainPage({ isSidebarVisible }) {
           <Route path="/TruyVan_CanDoiNXT_TheoKho" element={<NhapXuatTonKho />} />
           <Route path="/ThietLap_GiaLe" element={<GiaBanLe />} />
           <Route path="/ThietLap_NhomGiaDoiTuong" element={<BangGiaKH />} />
-
           <Route path="/TruyVan_CanDoiNXT_TongKho" element={<NhapXuatTon />} />
           <Route path="/ThietLap_GiaLe" element={<GiaBanLe />} />
           <Route path="/ThietLap_GiaSi" element={<GiaBanSi />} />

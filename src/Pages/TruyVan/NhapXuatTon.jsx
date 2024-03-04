@@ -375,7 +375,7 @@ const NhapXuatTon = () => {
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text}>
+        <Tooltip title={text} color="blue">
           <div
             style={{
               display: 'flex',
@@ -405,7 +405,7 @@ const NhapXuatTon = () => {
       sorter: (a, b) => a.TenNhomHang.localeCompare(b.TenNhomHang),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text}>
+        <Tooltip title={text} color="blue">
           <div
             style={{
               display: 'flex',

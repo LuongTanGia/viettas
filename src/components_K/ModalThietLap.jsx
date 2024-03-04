@@ -515,7 +515,6 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
                           width: '170px',
                           textOverflow: 'ellipsis',
                         }}
-                        dropdownMatchSelectWidth={false}
                       >
                         {dataNhomGia?.map((item) => (
                           <Option key={item.Ma} value={item.Ma} title={item.Ten}>
@@ -526,7 +525,16 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
                     </div>
                   </div>
                   <div className="">
-                    <Select mode="multiple" allowClear maxTagCount={1} size="small" value={value1List} onChange={(value) => setValue1List(value)} className="w-full truncate">
+                    <Select
+                      mode="multiple"
+                      allowClear
+                      maxTagCount={1}
+                      placeholder="Chọn nhóm"
+                      size="small"
+                      value={value1List}
+                      onChange={(value) => setValue1List(value)}
+                      className="w-full truncate"
+                    >
                       {dataNhomGia?.map((item) => (
                         <Option key={item.Ma} value={item.Ma}>
                           {item.Ma} - {item.Ten}
@@ -548,7 +556,6 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
                           width: '170px',
                           textOverflow: 'ellipsis',
                         }}
-                        dropdownMatchSelectWidth={false}
                       >
                         {dataHangHoa?.map((item) => (
                           <Option key={item.MaHang} value={item.MaHang} title={item.TenHang}>
@@ -570,7 +577,6 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
                           width: '170px',
                           textOverflow: 'ellipsis',
                         }}
-                        dropdownMatchSelectWidth={false}
                       >
                         {dataHangHoa?.map((item) => (
                           <Option key={item.MaHang} value={item.MaHang} title={item.TenHang}>
@@ -581,7 +587,16 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
                     </div>
                   </div>
                   <div className="">
-                    <Select mode="multiple" allowClear maxTagCount={1} size="small" value={value2List} onChange={(value) => setValue2List(value)} className="w-full truncate">
+                    <Select
+                      mode="multiple"
+                      allowClear
+                      maxTagCount={1}
+                      placeholder="Chọn nhóm"
+                      size="small"
+                      value={value2List}
+                      onChange={(value) => setValue2List(value)}
+                      className="w-full truncate"
+                    >
                       {dataHangHoa?.map((item) => (
                         <Option key={item.MaHang} value={item.MaHang} title={item.TenHang}>
                           {item.MaHang} - {item.TenHang}
