@@ -30,7 +30,7 @@ function Header({ handleToggleSidebar, refs }) {
     <>
       <header id="header" className="header fixed-top d-flex align-items-center z-10 h-[50px]" ref={refs}>
         <div className="d-flex align-items-center justify-content-between">
-          <Link href="index.html" className="logo d-flex align-items-center justify-content-start">
+          <Link href="index.html" className="logo d-flex align-items-center justify-content-start" to={'/'}>
             <img src={LogoHeader} />
             <span className="d-none d-lg-block">VTS - iSale</span>
             <i className="bi bi-list toggle-sidebar-btn" onClick={handleToggleSidebar}></i>

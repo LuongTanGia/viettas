@@ -4,6 +4,7 @@ import { Pie } from 'react-chartjs-2'
 import { DoanhSoHangHoa_TopChart, KHOANNGAY } from '../../../action/Actions'
 import API from '../../../API/API'
 import RateBar from './LoadingChart'
+import { Empty } from 'antd'
 
 ChartJS.register(ArcElement, Tooltip, Legend)
 
@@ -46,21 +47,25 @@ function DoughNut() {
   }
   return (
     <>
-      <div className="pt-1 pb-3 flex justify-between gap-2">
-        <div className="w-[40%] h-[40%]  pt-3">
-          <Pie data={data} options={options} />
+      {dataChart && dataChart?.length > 0 ? (
+        <div className="pt-1 pb-3 flex justify-between gap-2">
+          <div className="w-[40%] h-[40%]  pt-3">
+            <Pie data={data} options={options} />
+          </div>
+          <div className="w-[60%] flex flex-col ">
+            {dataChart?.map((item, index) => (
+              <div key={index} className="flex items-center justify-center">
+                <p className="w-[100%]" style={{ color: backgroundColor_list[index] }}>
+                  {item.ThongTinDoiTuong}
+                </p>
+                <RateBar percentage={item.TyTrong} color={backgroundColor_list[index]} title={item.ThongTinDoiTuong} />
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="w-[60%] flex flex-col ">
-          {dataChart?.map((item, index) => (
-            <div key={index} className="flex items-center justify-center">
-              <p className="w-[100%]" style={{ color: backgroundColor_list[index] }}>
-                {item.ThongTinDoiTuong}
-              </p>
-              <RateBar percentage={item.TyTrong} color={backgroundColor_list[index]} title={item.ThongTinDoiTuong} />
-            </div>
-          ))}
-        </div>
-      </div>
+      ) : (
+        <Empty className="w-[100%] h-[100%]" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+      )}
     </>
   )
 }

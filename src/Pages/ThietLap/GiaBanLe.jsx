@@ -840,6 +840,7 @@ const GBL = () => {
                     allowClear
                     maxTagCount={1}
                     size="small"
+                    placeholder="Chọn nhóm"
                     value={valueList}
                     onChange={(value) => setValueList(value)}
                     className="md:w-[28vw] lg:w-[35vw] truncate"

@@ -18,7 +18,7 @@ function ActionButton({ handleAction, title, icon, color, background, color_hove
         <button
           disabled={loading}
           onClick={handleActionLoad}
-          className={`flex justify-center items-center border-2 hover:text-${color_hover} border-${background} text-${color}  text-base font-medium bg-${background} hover:bg-${bg_hover} rounded-md px-2 py-1 flex items-center gap-1 whitespace-nowrap max-h-10 
+          className={`flex justify-center items-center border-2 hover:text-${color_hover} border-${background} text-${color}  text-base font-medium bg-${background} hover:bg-${bg_hover} hover:border-${background} rounded-md px-2 py-1 flex items-center gap-1 whitespace-nowrap max-h-10 
         `}
         >
           <i className="text-sm">{icon}</i>

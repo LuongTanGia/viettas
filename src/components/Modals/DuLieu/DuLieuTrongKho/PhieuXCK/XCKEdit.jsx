@@ -557,7 +557,8 @@ const XCKEdit = ({ close, dataXCK, loadingData, setTargetRow }) => {
                       color={'slate-50'}
                       background={isAdd ? 'gray-500' : 'purple-500'}
                       color_hover={isAdd ? 'gray-500' : 'purple-500'}
-                      bg_hover={isAdd ? 'gray-500' : 'white'}
+                      bg_hover={'white'}
+                      quyenHan={isAdd ? false : true}
                     />
                   </div>
                   <div className="flex gap-2 justify-end">
@@ -573,7 +574,8 @@ const XCKEdit = ({ close, dataXCK, loadingData, setTargetRow }) => {
                       color={'slate-50'}
                       background={isAdd ? 'gray-500' : 'blue-500'}
                       color_hover={isAdd ? 'gray-500' : 'blue-500'}
-                      bg_hover={isAdd ? 'gray-500' : 'white'}
+                      bg_hover={'white'}
+                      quyenHan={isAdd ? false : true}
                     />
                     <ActionButton handleAction={close} title={'Đóng'} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
                   </div>
