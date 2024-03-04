@@ -283,7 +283,7 @@ input.ant-input.ant-input-sm {
 
 .css-o9k5xi-MuiInputBase-root-MuiOutlinedInput-root {
   height: 24px;
-  width: 150px;
+  /* width: 150px; */
 }
 
 .css-9yxuw4-MuiAutocomplete-root .MuiOutlinedInput-root.MuiInputBase-sizeSmall {

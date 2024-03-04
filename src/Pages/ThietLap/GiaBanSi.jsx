@@ -146,7 +146,7 @@ const GBS = () => {
       try {
         console.log('đi')
         const tokenLogin = localStorage.getItem('TKN')
-        const response = await apis.ChucNangQuyenHan(tokenLogin, 'ThietLap_GiaLe')
+        const response = await apis.ChucNangQuyenHan(tokenLogin, 'ThietLap_GiaSi')
 
         if (response.data && response.data.DataError === 0) {
           setDataQuyenHan(response.data)
@@ -168,6 +168,7 @@ const GBS = () => {
 
     getChucNangQuyenHan()
   }, [])
+  console.log('quyenhan', dataQuyenHan)
   useEffect(() => {
     if (dataQuyenHan?.VIEW == false) {
       setIsShowNotify(true)
@@ -379,9 +380,10 @@ const GBS = () => {
                 <MdEdit size={16} />
               </div>
               <div
-                onClick={() => handleClone(record)}
-                title="bản sao"
-                className={`p-[3px] border-2 rounded-md text-slate-50 border-pink-500 bg-pink-500 hover:bg-white hover:text-pink-500 cursor-pointer
+                onClick={() => (dataQuyenHan?.ADD ? handleClone(record) : '')}
+                title="Bản sao"
+                className={`p-[3px] border-2 rounded-md text-slate-50 ${
+                  dataQuyenHan?.ADD ? 'border-pink-400 bg-pink-400 hover:bg-white hover:text-pink-400 cursor-pointer' : 'border-gray-400 bg-gray-400 cursor-not-allowed'
                 } `}
               >
                 <FaRegCopy size={16} />
@@ -488,7 +490,7 @@ const GBS = () => {
                       <ActionButton
                         handleAction={() => {
                           setIsShowNotify(false)
-                          navigate('/')
+                          navigate(-1)
                         }}
                         title={'Đóng'}
                         color={'slate-50'}
