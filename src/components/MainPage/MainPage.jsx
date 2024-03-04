@@ -72,9 +72,9 @@ function MainPage({ isSidebarVisible }) {
           <Route path="/TruyVan_DoanhSoBanHangKH" element={<DSBHKHH />} />
           <Route path="/TruyVan_DoanhSoBanHangKHHH" element={<DSBHKH_HH />} />
           <Route path="/TruyVan_CanDoiNXT_TheoKho" element={<NhapXuatTonKho />} />
+          <Route path="/TruyVan_CanDoiNXT_TongKho" element={<NhapXuatTon />} />
           <Route path="/ThietLap_GiaLe" element={<GiaBanLe />} />
           <Route path="/ThietLap_NhomGiaDoiTuong" element={<BangGiaKH />} />
-          <Route path="/TruyVan_CanDoiNXT_TongKho" element={<NhapXuatTon />} />
           <Route path="/ThietLap_GiaLe" element={<GiaBanLe />} />
           <Route path="/ThietLap_GiaSi" element={<GiaBanSi />} />
           <Route path="/ThietLap_KhoHang" element={<KhoHang />} />

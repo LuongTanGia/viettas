@@ -9,7 +9,6 @@ import { useEffect, useState } from 'react'
 import { FcServices } from 'react-icons/fc'
 import dayjs from 'dayjs'
 import { bool } from 'prop-types'
-
 const { Text } = Typography
 
 function Tables({
@@ -609,9 +608,9 @@ function Tables({
           // rowSelection={rowSelection}
           className={height}
           columns={title === 'DauVao' || title === 'DauRa' ? columns_2 : mergedColumns}
+          // columns={mergedColumns}
           dataSource={data}
           // rowClassName="editable-row"
-
           bordered
           onRow={(record) => ({
             ...onRowClick(record),
