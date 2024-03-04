@@ -11,6 +11,7 @@ import { DateField } from '@mui/x-date-pickers'
 import { useEffect, useState } from 'react'
 import ActionButton from '../components/util/Button/ActionButton'
 import { toast } from 'react-toastify'
+import ModalImport from './ModalImport'
 
 const { Option } = Select
 
@@ -1495,6 +1496,7 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
               </div>
             </div>
           )}
+          {actionType === 'import' && <ModalImport namePage={namePage} close={close}></ModalImport>}
         </div>
       </div>
     </>

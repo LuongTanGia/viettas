@@ -48,9 +48,11 @@ export const useSearch = (data) => {
           (MaKho || '').toLowerCase().includes(search.toLowerCase()) ||
           (ThongTinKho || '').toLowerCase().includes(search.toLowerCase()) ||
           (GhiChu || '').toLowerCase().includes(search.toLowerCase()) ||
-          (NgayTao || '').toLowerCase().includes(search.toLowerCase()) ||
+          (moment(NgayTao).format('DD/MM/YYYY hh:mm:ss') || '').toLowerCase().includes(search.toLowerCase()) ||
+          // (NgayTao || '').toLowerCase().includes(search.toLowerCase()) ||
           (NguoiTao || '').toLowerCase().includes(search.toLowerCase()) ||
-          (NgaySuaCuoi || '').toLowerCase().includes(search.toLowerCase()) ||
+          (moment(NgaySuaCuoi).format('DD/MM/YYYY hh:mm:ss') || '').toLowerCase().includes(search.toLowerCase()) ||
+          // (NgaySuaCuoi || '').toLowerCase().includes(search.toLowerCase()) ||
           (NguoiSuaCuoi || '').toLowerCase().includes(search.toLowerCase()) ||
           (TongMatHang?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (TongSoLuong?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||

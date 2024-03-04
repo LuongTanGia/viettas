@@ -13,7 +13,6 @@ import { RETOKEN, base64ToPDF, formatPrice, formatQuantity } from '../action/Act
 import ModalOnlyPrint from './ModalOnlyPrint'
 import ModalOnlyPrintWareHouse from './ModalOnlyPrintWareHouse'
 import { DateField } from '@mui/x-date-pickers/DateField'
-
 import logo from '../assets/VTS-iSale.ico'
 import { Table, Select, Tooltip, Checkbox, FloatButton, Spin } from 'antd'
 import SimpleBackdrop from '../components/util/Loading/LoadingPage'
@@ -303,57 +302,37 @@ const Modals = ({
     try {
       console.log('get HH')
       const tokenLogin = localStorage.getItem('TKN')
-      if (typePage === 'PMH') {
-        const response = await apis.ListHelperHHPMH(tokenLogin, selectedKhoHang)
-        if (response.data && response.data.DataError === 0) {
-          setDataHangHoa(response.data.DataResults)
-          setIsLoading(false)
-        } else if (response.data.DataError === -1 || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(response.data.DataErrorDescription)
-          setIsLoading(false)
-        } else if (response.data.DataError === -107 || response.data.DataError === -108) {
-          await RETOKEN()
-          handleAddInList()
-        } else {
-          setIsLoading(false)
-          toast.error(response.data.DataErrorDescription)
-        }
+      let response
+      switch (typePage) {
+        case 'PMH':
+          response = await apis.ListHelperHHPMH(tokenLogin, selectedKhoHang)
+          break
+        case 'NTR':
+          response = await apis.ListHelperHHNTR(tokenLogin, selectedKhoHang)
+          break
+        case 'XTR':
+          response = await apis.ListHelperHHXTR(tokenLogin, selectedKhoHang)
+          break
+        default:
+          break
       }
-      if (typePage === 'NTR') {
-        const response = await apis.ListHelperHHNTR(tokenLogin, selectedKhoHang)
-        if (response.data && response.data.DataError === 0) {
-          setDataHangHoa(response.data.DataResults)
+
+      if (response) {
+        const { DataError, DataErrorDescription, DataResults } = response.data
+        if (DataError === 0) {
+          setDataHangHoa(DataResults)
           setIsLoading(false)
-        } else if (response.data.DataError === -1 || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(response.data.DataErrorDescription)
-          setIsLoading(false)
-        } else if (response.data.DataError === -107 || response.data.DataError === -108) {
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+        } else if (DataError === -107 || DataError === -108) {
           await RETOKEN()
           handleAddInList()
         } else {
-          setIsLoading(false)
-          toast.error(response.data.DataErrorDescription)
-        }
-      }
-      if (typePage === 'XTR') {
-        const response = await apis.ListHelperHHXTR(tokenLogin, selectedKhoHang)
-        if (response.data && response.data.DataError === 0) {
-          setDataHangHoa(response.data.DataResults)
-          setIsLoading(false)
-        } else if (response.data.DataError === -1 || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(response.data.DataErrorDescription)
-          setIsLoading(false)
-        } else if (response.data.DataError === -107 || response.data.DataError === -108) {
-          await RETOKEN()
-          handleAddInList()
-        } else {
-          setIsLoading(false)
-          toast.error(response.data.DataErrorDescription)
+          toast.error(DataErrorDescription)
         }
       }
     } catch (error) {
       console.error('Error while saving data:', error)
-      setIsLoading(false)
     }
   }
 
@@ -774,7 +753,6 @@ const Modals = ({
               break
           }
           break
-
         case 'printWareHouse':
           switch (typePage) {
             case 'PMH':
@@ -816,71 +794,6 @@ const Modals = ({
     }
   }
 
-  const handlePrintWareHouse = async () => {
-    try {
-      const tokenLogin = localStorage.getItem('TKN')
-      const lien = calculateTotal()
-      if (typePage === 'PMH') {
-        const response = await apis.InPK(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
-        // Kiểm tra call api thành công
-        if (response.data && response.data.DataError === 0) {
-          base64ToPDF(response.data.DataResults)
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(response.data.DataErrorDescription)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handlePrintWareHouse()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
-      }
-      if (typePage === 'NTR') {
-        const response = await apis.InPKNTR(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
-        // Kiểm tra call api thành công
-        if (response.data && response.data.DataError === 0) {
-          base64ToPDF(response.data.DataResults)
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(response.data.DataErrorDescription)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handlePrintWareHouse()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
-      }
-      if (typePage === 'XTR') {
-        const response = await apis.InPKXTR(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
-        // Kiểm tra call api thành công
-        if (response.data && response.data.DataError === 0) {
-          base64ToPDF(response.data.DataResults)
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(response.data.DataErrorDescription)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handlePrintWareHouse()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
-      }
-      if (typePage === 'PBL') {
-        const response = await apis.InPKPBL(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
-        // Kiểm tra call api thành công
-        if (response.data && response.data.DataError === 0) {
-          base64ToPDF(response.data.DataResults)
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(response.data.DataErrorDescription)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handlePrintWareHouse()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
-      }
-    } catch (error) {
-      console.error('Error while saving data:', error)
-    }
-  }
-
   const handleAPIPrint = async (apiFunc, tokenLogin, form, selectedSctBD, selectedSctKT, lien) => {
     try {
       return await apiFunc(tokenLogin, form, selectedSctBD, selectedSctKT, lien)
@@ -900,54 +813,41 @@ const Modals = ({
         return
       }
     }
+    if (selectedRowData.length <= 0) {
+      toast.warning('Bảng chi tiết không được để trống')
+      return
+    }
     try {
       const tokenLogin = localStorage.getItem('TKN')
-      if (typePage === 'PMH') {
-        const response = await apis.SuaPMH(tokenLogin, dataRecord.SoChungTu, { ...formEdit, DataDetails: selectedRowData }, selectedDoiTuong, selectedKhoHang)
-        if (response.data && response.data.DataError === 0) {
+      let response
+      switch (typePage) {
+        case 'PMH':
+          response = await apis.SuaPMH(tokenLogin, dataRecord.SoChungTu, { ...formEdit, DataDetails: selectedRowData }, selectedDoiTuong, selectedKhoHang)
+          break
+        case 'NTR':
+          response = await apis.SuaNTR(tokenLogin, dataRecord.SoChungTu, { ...formEdit, DataDetails: selectedRowData }, selectedDoiTuong, selectedKhoHang)
+          break
+        case 'XTR':
+          response = await apis.SuaXTR(tokenLogin, dataRecord.SoChungTu, { ...formEdit, DataDetails: selectedRowData }, selectedDoiTuong, selectedKhoHang)
+          break
+        default:
+          break
+      }
+      if (response) {
+        const { DataError, DataErrorDescription } = response.data
+        if (DataError === 0) {
           loading()
           setHightLight(dataRecord.SoChungTu)
           setSelectedRowData([])
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+        } else if (DataError === -107 || DataError === -108) {
           await RETOKEN()
-          handleEdit()
+          handlePrintInEdit()
         } else {
-          toast.error(response.data.DataErrorDescription)
+          toast.error(DataErrorDescription)
         }
       }
-      if (typePage === 'NTR') {
-        const response = await apis.SuaNTR(tokenLogin, dataRecord.SoChungTu, { ...formEdit, DataDetails: selectedRowData }, selectedDoiTuong, selectedKhoHang)
-        if (response.data && response.data.DataError === 0) {
-          loading()
-          setHightLight(dataRecord.SoChungTu)
-          setSelectedRowData([])
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleEdit()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
-      }
-      if (typePage === 'XTR') {
-        const response = await apis.SuaXTR(tokenLogin, dataRecord.SoChungTu, { ...formEdit, DataDetails: selectedRowData }, selectedDoiTuong, selectedKhoHang)
-        if (response.data && response.data.DataError === 0) {
-          loading()
-          setHightLight(dataRecord.SoChungTu)
-          setSelectedRowData([])
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleEdit()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
-      }
-      // close()
     } catch (error) {
       console.error('Error while saving data:', error)
     }
@@ -2037,7 +1937,7 @@ const Modals = ({
                         bg_hover={'white'}
                         color_hover={'purple-500'}
                         handleAction={() => {
-                          handlePrintInEdit(dataRecord)
+                          handlePrintInEdit()
                           setIsShowModalOnlyPrint(true)
                         }}
                       />
@@ -2049,7 +1949,7 @@ const Modals = ({
                           bg_hover={'white'}
                           color_hover={'purple-500'}
                           handleAction={() => {
-                            handlePrintInEdit(dataRecord)
+                            handlePrintInEdit()
                             setIsShowModalOnlyPrintWareHouse(true)
                           }}
                         />
@@ -2072,7 +1972,6 @@ const Modals = ({
               )}
             </>
           )}
-
           {actionType === 'delete' ? (
             <div className="flex justify-end mt-4 gap-2">
               <ActionButton color={'slate-50'} title={'Xác nhận'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={() => handleDelete(dataRecord)} />

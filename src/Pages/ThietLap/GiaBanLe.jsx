@@ -604,6 +604,10 @@ const GBL = () => {
     setActionType('adjustPrice')
     setIsShowModal(true)
   }
+  const handleImport = () => {
+    setActionType('import')
+    setIsShowModal(true)
+  }
 
   const handleSearch = (newSearch) => {
     if (newSearch !== prevSearchValue) {
@@ -628,7 +632,7 @@ const GBL = () => {
       setFormFilter({ CodeValue1From: value, CodeValue1To: value })
     }
   }
-  console.log(formFilter)
+
   return (
     <>
       {dataQuyenHan?.VIEW === false ? (
@@ -659,7 +663,7 @@ const GBL = () => {
                       <ActionButton
                         handleAction={() => {
                           setIsShowNotify(false)
-                          navigate('/')
+                          navigate(-1)
                         }}
                         title={'Đóng'}
                         color={'slate-50'}
@@ -729,7 +733,16 @@ const GBL = () => {
                         </div>
                         <div>In bảng giá</div>
                       </button>
-
+                      <button
+                        onClick={handleImport}
+                        className="flex items-center py-1 px-2 rounded-md text-slate-50 text-base border-2
+                           border-green-500  bg-green-500 hover:bg-white hover:text-green-500"
+                      >
+                        <div className="pr-1">
+                          <RiFileExcel2Fill size={20} />
+                        </div>
+                        <div>Import</div>
+                      </button>
                       <button
                         onClick={handleAdjustPrice}
                         className="flex items-center  py-1 px-2  rounded-md border-2 border-orange-500  text-slate-50 text-base bg-orange-500 hover:bg-white hover:text-orange-500  "

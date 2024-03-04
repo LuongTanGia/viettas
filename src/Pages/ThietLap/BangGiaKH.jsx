@@ -145,7 +145,7 @@ const BangGiaKH = () => {
       try {
         console.log('đi')
         const tokenLogin = localStorage.getItem('TKN')
-        const response = await apis.ChucNangQuyenHan(tokenLogin, 'ThietLap_GiaLe')
+        const response = await apis.ChucNangQuyenHan(tokenLogin, 'ThietLap_NhomGiaDoiTuong')
 
         if (response.data && response.data.DataError === 0) {
           setDataQuyenHan(response.data)
@@ -537,7 +537,7 @@ const BangGiaKH = () => {
                       <ActionButton
                         handleAction={() => {
                           setIsShowNotify(false)
-                          navigate('/')
+                          navigate(-1)
                         }}
                         title={'Đóng'}
                         color={'slate-50'}

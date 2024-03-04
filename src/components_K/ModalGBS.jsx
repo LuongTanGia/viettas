@@ -16,11 +16,13 @@ import TableEdit from '../components/util/Table/EditTable'
 import { nameColumsGBS } from '../components/util/Table/ColumnName'
 import moment from 'moment'
 import ModalHHGBS from './ModalHHGBS'
+import ModalDieuChinh from './ModalDieuChinh'
 const { Text } = Typography
 const { Option } = Select
 const { IoMdAddCircle } = icons
 const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dataThongSo, dataThongTin, dataHangHoa, dataNhomGia, loading, isLoadingModal, setHightLight }) => {
   const [isShowModalHH, setIsShowModalHH] = useState(false)
+  const [isShowModalDieuChinh, setIsShowModalDieuChinh] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [selectedRowData, setSelectedRowData] = useState([])
 
@@ -430,14 +432,14 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
   const handleFromChange = (value) => {
     setFormPrint({ ...formPrint, CodeValue1From: value })
 
-    if (value > formPrint.CodeValue1To) {
+    if (data?.findIndex((item) => item.NhomGia === value) > data?.findIndex((item) => item.NhomGia === formPrint.CodeValue1To)) {
       setFormPrint({ CodeValue1From: value, CodeValue1To: value })
     }
   }
   const handleToChange = (value) => {
     setFormPrint({ ...formPrint, CodeValue1To: value })
 
-    if (value < formPrint.CodeValue1From) {
+    if (data?.findIndex((item) => item.NhomGia === value) < data?.findIndex((item) => item.NhomGia === formPrint.CodeValue1From)) {
       setFormPrint({ CodeValue1From: value, CodeValue1To: value })
     }
   }
@@ -968,11 +970,22 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
                 </div>
               </Spin>
               {/* button  */}
-              <div className="flex justify-end items-center">
-                <div className="flex justify-end items-center gap-3  pt-3">
+              <div className=" flex justify-between items-center">
+                <div className=" flex  items-center gap-3  pt-3">
+                  <ActionButton color={'slate-50'} title={'Thêm MH chưa có'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} />
+                  <ActionButton
+                    color={'slate-50'}
+                    title={'Điều chỉnh giá'}
+                    background={'bg-main'}
+                    bg_hover={'white'}
+                    color_hover={'bg-main'}
+                    handleAction={() => setIsShowModalDieuChinh(true)}
+                  />
+                  <ActionButton color={'slate-50'} title={'Import'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} />
+                </div>
+                <div className="flex  items-center gap-3  pt-3">
                   <ActionButton color={'slate-50'} title={'Lưu'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleCreate} />
                   <ActionButton color={'slate-50'} title={'Lưu & đóng'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleCreateAndClose} />
-
                   <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
                 </div>
               </div>
@@ -1296,6 +1309,8 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
           loading={isLoading}
         />
       )}
+
+      {isShowModalDieuChinh && <ModalDieuChinh close={() => setIsShowModalDieuChinh(false)} data={dataHangHoa} dataThongSo={dataThongSo} loading={isLoading} namePage={namePage} />}
     </>
   )
 }
