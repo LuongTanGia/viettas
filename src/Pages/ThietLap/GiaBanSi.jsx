@@ -168,7 +168,7 @@ const GBS = () => {
 
     getChucNangQuyenHan()
   }, [])
-  console.log('quyenhan', dataQuyenHan)
+
   useEffect(() => {
     if (dataQuyenHan?.VIEW == false) {
       setIsShowNotify(true)

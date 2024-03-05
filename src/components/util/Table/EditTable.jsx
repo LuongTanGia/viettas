@@ -12,7 +12,7 @@ const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourT
   const [dataSource, setDataSource] = useState(param)
   const [newOptions, setNewOptions] = useState(yourMaHangOptions)
   const [coThue, setCoThue] = useState(false)
-
+  const [selectedRowKeys, setSelectedRowKeys] = useState([])
   const ThongSo = JSON.parse(localStorage.getItem('ThongSo'))
 
   useEffect(() => {
@@ -604,6 +604,13 @@ const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourT
       }),
     }
   })
+
+  // const handleRowClick = (record) => {
+  //   const selectedKey = record.MaHang
+  //   const isSelected = selectedRowKeys.includes(selectedKey)
+  //   const newSelectedRowKeys = isSelected ? selectedRowKeys.filter((key) => key !== selectedKey) : [...selectedRowKeys, selectedKey]
+  //   setSelectedRowKeys(newSelectedRowKeys)
+  // }
   return (
     <div>
       <Table
@@ -618,7 +625,19 @@ const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourT
           x: tableName == 'PhieuLapRap' || tableName == 'PhieuNhapDieuChinh' ? 700 : 1500,
           y: true,
         }}
+        // rowSelection={{
+        //   selectedRowKeys,
+        //   onChange: (selectedKeys) => {
+        //     setSelectedRowKeys(selectedKeys)
+        //   },
+        // }}
+        // rowKey={(record) => record.MaHang}
         size="small"
+        // onRow={(record) => ({
+        //   onClick: () => {
+        //     handleRowClick(record)
+        //   },
+        // })}
         pagination={false}
         summary={(pageData) => {
           return pageData.length !== 0 ? (

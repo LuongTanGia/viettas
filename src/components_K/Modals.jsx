@@ -452,6 +452,10 @@ const Modals = ({
       toast.warning('Bảng chi tiết không được để trống')
       return
     }
+    if (selectedRowData.map((item) => item.MaHang).includes('Chọn mã hàng')) {
+      toast.warning('Mã hàng không được để trống, vui lòng chọn mã hàng!')
+      return
+    }
     try {
       const tokenLogin = localStorage.getItem('TKN')
       const dataAddSTT = selectedRowData.map((item, index) => ({
@@ -519,7 +523,10 @@ const Modals = ({
       toast.warning('Chi tiết phiếu không được để trống')
       return
     }
-
+    if (selectedRowData.map((item) => item.MaHang).includes('Chọn mã hàng')) {
+      toast.warning('Mã hàng không được để trống, vui lòng chọn mã hàng!')
+      return
+    }
     try {
       const tokenLogin = localStorage.getItem('TKN')
       const dataAddSTT = selectedRowData.map((item, index) => ({
@@ -590,6 +597,10 @@ const Modals = ({
     }
     if (selectedRowData.length <= 0) {
       toast.warning('Bảng chi tiết không được để trống')
+      return
+    }
+    if (selectedRowData.map((item) => item.MaHang).includes('Chọn mã hàng')) {
+      toast.warning('Mã hàng không được để trống, vui lòng chọn mã hàng!')
       return
     }
     try {
@@ -817,6 +828,10 @@ const Modals = ({
       toast.warning('Bảng chi tiết không được để trống')
       return
     }
+    if (selectedRowData.map((item) => item.MaHang).includes('Chọn mã hàng')) {
+      toast.warning('Mã hàng không được để trống, vui lòng chọn mã hàng!')
+      return
+    }
     try {
       const tokenLogin = localStorage.getItem('TKN')
       let response
@@ -940,10 +955,13 @@ const Modals = ({
   }
   const handlePrintModal = () => {
     if (!formCreate?.TenDoiTuong?.trim() || !formCreate?.DiaChi?.trim() || selectedRowData.length <= 0) return
+    if (selectedRowData.map((item) => item.MaHang).includes('Chọn mã hàng')) return
+
     setIsShowModalOnlyPrint(true)
   }
   const handlePrintWareHouseModal = () => {
     if (!formCreate?.TenDoiTuong?.trim() || !formCreate?.DiaChi?.trim() || selectedRowData.length <= 0) return
+    if (selectedRowData.map((item) => item.MaHang).includes('Chọn mã hàng')) return
 
     setIsShowModalOnlyPrintWareHouse(true)
   }
@@ -1937,8 +1955,7 @@ const Modals = ({
                         bg_hover={'white'}
                         color_hover={'purple-500'}
                         handleAction={() => {
-                          handlePrintInEdit()
-                          setIsShowModalOnlyPrint(true)
+                          handlePrintInEdit(), handlePrintModal()
                         }}
                       />
                       {dataThongSo?.ALLOW_INPHIEUKHO_DAUVAODAURA === true && (
@@ -1949,8 +1966,7 @@ const Modals = ({
                           bg_hover={'white'}
                           color_hover={'purple-500'}
                           handleAction={() => {
-                            handlePrintInEdit()
-                            setIsShowModalOnlyPrintWareHouse(true)
+                            handlePrintInEdit(), handlePrintWareHouseModal()
                           }}
                         />
                       )}
