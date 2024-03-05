@@ -752,7 +752,7 @@ const HangHoa = () => {
                       color={'slate-50'}
                       background={'purple-500'}
                       color_hover={'purple-500'}
-                      bg_hover={'slate-50'}
+                      bg_hover={'white'}
                     />
                   </div>
                 </div>

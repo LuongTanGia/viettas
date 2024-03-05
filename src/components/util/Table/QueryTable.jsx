@@ -522,6 +522,8 @@ function Tables({
       },
     }
   })
+  const mergedColumns2 = columns_2.filter((item) => !hiden?.includes(item.dataIndex))
+
   const originData = param?.map((record, index) => ({
     key: index,
     ...record,
@@ -607,7 +609,7 @@ function Tables({
           loading={loadingSearch}
           // rowSelection={rowSelection}
           className={height}
-          columns={title === 'DauVao' || title === 'DauRa' ? columns_2 : mergedColumns}
+          columns={title === 'DauVao' || title === 'DauRa' ? mergedColumns2 : mergedColumns}
           // columns={mergedColumns}
           dataSource={data}
           // rowClassName="editable-row"

@@ -167,7 +167,7 @@ function CongNoDauVao() {
           />
         </div>
         <div id="my-table">
-          <QueryTable param={data} columName={[]} height={'setHeight'} title={'DauVao'} hiden={hiddenRow} />
+          <QueryTable param={data} columName={nameColumsCongNoDauVao} height={'setHeight'} title={'DauVao'} hiden={hiddenRow} />
         </div>
       </>
     </>
