@@ -1,13 +1,15 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import logo from '../assets/VTS-iSale.ico'
-import icons from '../untils/icons'
 import { InputNumber, Select } from 'antd'
-import { DateField } from '@mui/x-date-pickers'
-import dayjs from 'dayjs'
+import { toast } from 'react-toastify'
+import * as apis from '../apis'
+import { RETOKEN } from '../action/Actions'
 const { Option } = Select
 // const { BsSearch } = icons
-const ModalDieuChinh = ({ close, data, namePage, dataThongSo }) => {
+const ModalDieuChinh = ({ close, data, namePage, dataThongSo, typePage }) => {
+  const dataMaHang = useMemo(() => data.map((item) => item.MaHang), [data])
+
   const [formAdjustPrice, setFormAdjustPrice] = useState({
     GiaTriTinh: 'OLDVALUE',
     ToanTu: '',
@@ -20,9 +22,43 @@ const ModalDieuChinh = ({ close, data, namePage, dataThongSo }) => {
     if (formAdjustPrice?.GiaTriTinh === 'OLDVALUE') {
       setFormAdjustPrice({ ...formAdjustPrice, ToanTu: '+' })
     } else {
-      setFormAdjustPrice({ ...formAdjustPrice, ToanTu: '=' })
+      setFormAdjustPrice({ ...formAdjustPrice, ToanTu: null })
     }
   }, [formAdjustPrice.GiaTriTinh])
+
+  const handleAdjustPrice = async () => {
+    try {
+      const tokenLogin = localStorage.getItem('TKN')
+      let response
+      switch (typePage) {
+        case 'GBS':
+          response = await apis.DieuChinhGBS(tokenLogin, { ...formAdjustPrice, NhomGia: dataMaHang.join(',') })
+          break
+        // case 'NTR':
+        //   response = await apis.SuaNTR(tokenLogin)
+        //   break
+
+        default:
+          break
+      }
+      if (response) {
+        const { DataError, DataErrorDescription } = response.data
+        if (DataError === 0) {
+          // loading()
+          // setHightLight(dataRecord.SoChungTu)
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+        } else if (DataError === -107 || DataError === -108) {
+          await RETOKEN()
+          handleAdjustPrice()
+        } else {
+          toast.error(DataErrorDescription)
+        }
+      }
+    } catch (error) {
+      console.error('Error while saving data:', error)
+    }
+  }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
@@ -158,7 +194,7 @@ const ModalDieuChinh = ({ close, data, namePage, dataThongSo }) => {
           {/* button */}
           <div className="flex justify-end items-center pt-[14px]  gap-x-2">
             <button
-              // onClick={handleAdjustPrice}
+              onClick={handleAdjustPrice}
               className="flex items-center  py-1 px-2  rounded-md  border-2 border-blue-500 text-slate-50 text-text-main font-bold  bg-blue-500 hover:bg-white hover:text-blue-500"
             >
               <div className="pr-1">{/* <TiPrinter size={20} /> */}</div>

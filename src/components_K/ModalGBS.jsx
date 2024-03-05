@@ -17,11 +17,13 @@ import { nameColumsGBS } from '../components/util/Table/ColumnName'
 import moment from 'moment'
 import ModalHHGBS from './ModalHHGBS'
 import ModalDieuChinh from './ModalDieuChinh'
+import ModalSelectHH from './ModalSelectHH'
 const { Text } = Typography
 const { Option } = Select
 const { IoMdAddCircle } = icons
 const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dataThongSo, dataThongTin, dataHangHoa, dataNhomGia, loading, isLoadingModal, setHightLight }) => {
   const [isShowModalHH, setIsShowModalHH] = useState(false)
+  const [isShowSelectHH, setIsShowSelectHH] = useState(false)
   const [isShowModalDieuChinh, setIsShowModalDieuChinh] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [selectedRowData, setSelectedRowData] = useState([])
@@ -412,7 +414,20 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
       console.error('Error while saving data:', error)
     }
   }
-
+  const handleDieuChinh = () => {
+    if (selectedRowData.length <= 0) {
+      toast.warning('Chi tiết  không được để trống')
+      return
+    }
+    if (selectedRowData.map((item) => item.MaHang).includes('Chọn mã hàng')) {
+      toast.warning('Chọn mã hàng để dùng chức năng này!')
+      return
+    }
+    setIsShowModalDieuChinh(true)
+  }
+  const handleSelectHH = () => {
+    setIsShowSelectHH(true)
+  }
   const filterDSMa = (date) => {
     const filteredMaHang = data.filter((item) => dayjs(item.HieuLucTu).format('YYYY-MM-DD') === dayjs(date).format('YYYY-MM-DD')).map((item) => ({ Ma: item.MaHang }))
     console.log('aaaaaa', filteredMaHang)
@@ -972,15 +987,8 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
               {/* button  */}
               <div className=" flex justify-between items-center">
                 <div className=" flex  items-center gap-3  pt-3">
-                  <ActionButton color={'slate-50'} title={'Thêm MH chưa có'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} />
-                  <ActionButton
-                    color={'slate-50'}
-                    title={'Điều chỉnh giá'}
-                    background={'bg-main'}
-                    bg_hover={'white'}
-                    color_hover={'bg-main'}
-                    handleAction={() => setIsShowModalDieuChinh(true)}
-                  />
+                  <ActionButton color={'slate-50'} title={'Thêm MH chưa có'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleSelectHH} />
+                  <ActionButton color={'slate-50'} title={'Điều chỉnh giá'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleDieuChinh} />
                   <ActionButton color={'slate-50'} title={'Import'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} />
                 </div>
                 <div className="flex  items-center gap-3  pt-3">
@@ -1309,8 +1317,19 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
           loading={isLoading}
         />
       )}
-
-      {isShowModalDieuChinh && <ModalDieuChinh close={() => setIsShowModalDieuChinh(false)} data={dataHangHoa} dataThongSo={dataThongSo} loading={isLoading} namePage={namePage} />}
+      {isShowSelectHH && (
+        <ModalSelectHH
+          close={() => setIsShowSelectHH(false)}
+          data={dataHangHoa}
+          onRowCreate={handleAddRow}
+          dataThongSo={dataThongSo}
+          onChangLoading={handleChangLoading}
+          loading={isLoading}
+        />
+      )}
+      {isShowModalDieuChinh && (
+        <ModalDieuChinh close={() => setIsShowModalDieuChinh(false)} data={selectedRowData} dataThongSo={dataThongSo} loading={isLoading} namePage={namePage} typePage={typePage} />
+      )}
     </>
   )
 }
