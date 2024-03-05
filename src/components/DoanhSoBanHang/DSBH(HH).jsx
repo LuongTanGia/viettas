@@ -164,7 +164,7 @@ function DSBHHH() {
       </div>
 
       <div id="my-table">
-        <Tables param={data} columName={[]} height={'setHeight'} selectMH={[1]} typeTable={'DSBH'} hiden={hiddenRow} />
+        <Tables param={data} columName={nameColumsDoanhSoBanHangHH} height={'setHeight'} selectMH={[1]} typeTable={'DSBH'} hiden={hiddenRow} />
       </div>
     </>
   )

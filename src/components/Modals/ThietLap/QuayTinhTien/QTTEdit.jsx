@@ -92,12 +92,12 @@ const QTTEdit = ({ close, loadingData, setTargetRow, dataQTT }) => {
   }
 
   const handleEdit = async () => {
-    if (!QTTForm?.TenMayTinh?.trim() || !QTTForm?.SQLServer?.trim() || !QTTForm?.SQLUser?.trim() || isMaKHO ? null : !QTTForm?.MaKho?.trim()) {
+    if (!QTTForm?.TenMayTinh?.trim() || !QTTForm?.SQLServer?.trim() || !QTTForm?.SQLUser?.trim() || (isMaKHO ? null : !QTTForm?.MaKho?.trim())) {
       setErrors({
         TenMayTinh: QTTForm?.TenMayTinh?.trim() ? null : 'Tên máy tính không được trống',
         SQLServer: QTTForm?.SQLServer?.trim() ? null : 'Trạm không được trống',
         SQLUser: QTTForm?.SQLUser?.trim() ? null : 'User không được trống',
-        MaKho: isMaKHO ? null : QTTForm?.MaKho?.trim() ? null : 'Kho không được trống',
+        MaKho: QTTForm?.MaKho?.trim() ? null : 'Kho không được trống',
       })
       return
     }
@@ -268,8 +268,8 @@ const QTTEdit = ({ close, loadingData, setTargetRow, dataQTT }) => {
                         showSearch
                         required
                         size="small"
-                        status={errors.MaKho ? 'error' : ''}
-                        placeholder={errors?.MaKho ? errors?.MaKho : ''}
+                        status={isMaKHO ? '' : errors.MaKho ? 'error' : ''}
+                        placeholder={isMaKHO ? '' : errors?.MaKho ? errors?.MaKho : ''}
                         value={isMaKHO ? isMaKHO : QTTForm?.MaKho || undefined}
                         onChange={(value) => {
                           setQTTForm({

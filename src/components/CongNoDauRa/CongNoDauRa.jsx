@@ -166,7 +166,7 @@ function CongNoDauRa() {
         />
       </div>
       <div id="my-table">
-        <QueryTable param={data} columName={[]} height={'setHeight'} hiden={hiddenRow} title={'DauRa'} />
+        <QueryTable param={data} columName={nameColumsCongNoDauRa} height={'setHeight'} hiden={hiddenRow} title={'DauRa'} />
       </div>
     </>
   )

@@ -97,17 +97,19 @@ const QTTCreate = ({ close, loadingData, setTargetRow, dataQTT }) => {
   const handleLoading = () => {
     setIsLoading(false)
   }
+
   const handleCreate = async (isSave = true) => {
-    if (!QTTForm?.Quay || !QTTForm?.TenMayTinh?.trim() || !QTTForm?.SQLServer?.trim() || !QTTForm?.SQLUser?.trim() || isMaKHO ? null : !QTTForm?.MaKho?.trim()) {
+    if (!QTTForm?.Quay || !QTTForm?.TenMayTinh?.trim() || !QTTForm?.SQLServer?.trim() || !QTTForm?.SQLUser?.trim() || (isMaKHO ? null : !QTTForm?.MaKho?.trim())) {
       setErrors({
         Quay: QTTForm?.Quay !== null ? null : 'Quầy không được trống',
         TenMayTinh: QTTForm?.TenMayTinh?.trim() ? null : 'Tên máy tính không được trống',
         SQLServer: QTTForm?.SQLServer?.trim() ? null : 'Trạm không được trống',
         SQLUser: QTTForm?.SQLUser?.trim() ? null : 'User không được trống',
-        MaKho: isMaKHO ? null : QTTForm?.MaKho?.trim() ? null : 'Kho không được trống',
+        MaKho: QTTForm?.MaKho?.trim() ? null : 'Kho không được trống',
       })
       return
     }
+    console.log(QTTForm)
     try {
       const response = await categoryAPI.ThemQuayTinhTien({ ...QTTForm, MaKho: isMaKHO ? isMaKHO : QTTForm.MaKho }, TokenAccess)
       if (response.data.DataError == 0) {
@@ -288,8 +290,8 @@ const QTTCreate = ({ close, loadingData, setTargetRow, dataQTT }) => {
                         showSearch
                         required
                         size="small"
-                        status={errors.MaKho ? 'error' : ''}
-                        placeholder={errors?.MaKho ? errors?.MaKho : ''}
+                        status={isMaKHO ? '' : errors.MaKho ? 'error' : ''}
+                        placeholder={isMaKHO ? '' : errors?.MaKho ? errors?.MaKho : ''}
                         value={isMaKHO ? isMaKHO : QTTForm?.MaKho || undefined}
                         onChange={(value) => {
                           setQTTForm({
