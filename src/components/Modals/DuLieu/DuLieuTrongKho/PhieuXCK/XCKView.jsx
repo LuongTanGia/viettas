@@ -288,10 +288,11 @@ const XCKXem = ({ close, dataXCK }) => {
                       background={'purple-500'}
                       color_hover={'purple-500'}
                       bg_hover={'white'}
+                      isModal={true}
                     />
                   </div>
                   <div className="flex gap-2 justify-end ">
-                    <ActionButton handleAction={close} title={'Đóng'} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
+                    <ActionButton handleAction={close} title={'Đóng'} isModal={true} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
                   </div>
                 </div>
               </div>

@@ -1,6 +1,6 @@
 import Table from '../util/Table/Table'
 import LoadingPage from '../util/Loading/LoadingPage'
-import { PrinterOutlined } from '@ant-design/icons'
+import { MdPrint } from 'react-icons/md'
 import { nameColumsPhieuBanHang } from '../util/Table/ColumnName'
 import ActionModals from './ActionModals'
 import { useEffect, useRef, useState } from 'react'
@@ -331,10 +331,10 @@ function PhieuBanHang() {
               <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
             </div>
             {isShowOption && (
-              <div className="absolute  flex flex-col gap-2 bg-slate-100 p-3  top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom ">
+              <div className="absolute flex flex-col gap-2 bg-slate-100 px-2 py-3 items-center  top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom ">
                 <div className={`flex flex-grow flex-wrap gap-1 ${!selectVisible ? 'flex-col' : ''}`}>
                   <ActionButton
-                    icon={<RiFileExcel2Fill />}
+                    icon={<RiFileExcel2Fill className="w-6 h-6" />}
                     color={'slate-50'}
                     title={'Xuất Excel'}
                     background={'green-500'}
@@ -343,7 +343,7 @@ function PhieuBanHang() {
                     handleAction={exportToExcel}
                   />
                   <ActionButton
-                    icon={<PrinterOutlined />}
+                    icon={<MdPrint className="w-6 h-6" />}
                     color={'slate-50'}
                     title={'In Phiếu'}
                     background={'purple-500'}
@@ -352,7 +352,7 @@ function PhieuBanHang() {
                     handleAction={handleShowPrint}
                   />
                   <ActionButton
-                    icon={<PrinterOutlined />}
+                    icon={<MdPrint className="w-6 h-6" />}
                     color={'slate-50'}
                     title={'In Phiếu Kho'}
                     background={'purple-500'}
@@ -362,7 +362,7 @@ function PhieuBanHang() {
                   />
                   <>
                     <ActionButton
-                      icon={<FaEyeSlash className="w-5 h-5" />}
+                      icon={<FaEyeSlash className="w-6 h-6" />}
                       color={'slate-50'}
                       title={'Ẩn cột'}
                       background={'red-500'}
@@ -372,12 +372,12 @@ function PhieuBanHang() {
                     />
                   </>
                 </div>
-                <div>
+                <div className="flex justify-center">
                   {selectVisible && (
                     <div>
                       <Checkbox.Group
                         style={{
-                          width: '470px',
+                          width: '600px',
                           background: 'white',
                           padding: 10,
                           borderRadius: 10,
@@ -390,7 +390,7 @@ function PhieuBanHang() {
                         <Row>
                           {options && options.length > 0 ? (
                             options?.map((item, index) => (
-                              <Col span={8} key={(item, index)}>
+                              <Col span={6} key={(item, index)}>
                                 <Checkbox value={item} checked={true}>
                                   {nameColumsPhieuBanHang[item]}
                                 </Checkbox>

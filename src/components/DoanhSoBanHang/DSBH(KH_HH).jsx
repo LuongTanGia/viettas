@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 // import QueryTable from '../util/Table/QueryTable'
 // import LoadingPage from '../util/Loading/LoadingPage'
-// import { PrinterOutlined } from '@ant-design/icons'
 // import ActionModals from './ActionModals'
 import { useEffect, useState, useRef } from 'react'
 // import { useDispatch } from 'react-redux'
@@ -140,12 +139,12 @@ function DSBHKH_HH() {
                     bg_hover={'white'}
                   />
                 </div>
-                <div>
+                <div className="flex justify-center">
                   {selectVisible && (
                     <div>
                       <Checkbox.Group
                         style={{
-                          width: '520px',
+                          width: '330px',
                           background: 'white',
                           padding: 10,
                           borderRadius: 10,
@@ -158,7 +157,7 @@ function DSBHKH_HH() {
                         <Row>
                           {options && options.length > 0 ? (
                             options?.map((item, index) => (
-                              <Col span={8} key={(item, index)}>
+                              <Col span={10} key={(item, index)}>
                                 <Checkbox value={item} checked={true}>
                                   {nameColumsPhieuBanHang[item]}
                                 </Checkbox>

@@ -474,13 +474,14 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
                 <ActionButton
                   color={'slate-50'}
                   title={'Xác nhận'}
+                  isModal={true}
                   background={'bg-main'}
                   bg_hover={'white'}
                   color_hover={'bg-main'}
                   handleAction={() => handleDelete(dataRecord)}
                 />
 
-                <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
+                <ActionButton color={'slate-50'} title={'Đóng'} isModal={true} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
               </div>
             </div>
           )}
@@ -520,9 +521,9 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
               </div>
 
               <div className="flex justify-end pt-1 gap-2">
-                <ActionButton color={'slate-50'} title={'Xác nhận'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handlePrint} />
+                <ActionButton color={'slate-50'} title={'Xác nhận'} isModal={true} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handlePrint} />
 
-                <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
+                <ActionButton color={'slate-50'} title={'Đóng'} isModal={true} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
               </div>
             </div>
           )}
@@ -992,9 +993,17 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
                   <ActionButton color={'slate-50'} title={'Import'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} />
                 </div>
                 <div className="flex  items-center gap-3  pt-3">
-                  <ActionButton color={'slate-50'} title={'Lưu'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleCreate} />
-                  <ActionButton color={'slate-50'} title={'Lưu & đóng'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleCreateAndClose} />
-                  <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
+                  <ActionButton color={'slate-50'} title={'Lưu'} isModal={true} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleCreate} />
+                  <ActionButton
+                    color={'slate-50'}
+                    title={'Lưu & Đóng'}
+                    isModal={true}
+                    background={'bg-main'}
+                    bg_hover={'white'}
+                    color_hover={'bg-main'}
+                    handleAction={handleCreateAndClose}
+                  />
+                  <ActionButton color={'slate-50'} title={'Đóng'} isModal={true} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
                 </div>
               </div>
             </div>
@@ -1164,8 +1173,16 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
               {/* button  */}
               <div className="flex justify-end items-center">
                 <div className="flex justify-end items-center gap-3  pt-3">
-                  <ActionButton color={'slate-50'} title={'Lưu & đóng'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleEdit} />
-                  <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
+                  <ActionButton
+                    color={'slate-50'}
+                    title={'Lưu & Đóng'}
+                    isModal={true}
+                    background={'bg-main'}
+                    bg_hover={'white'}
+                    color_hover={'bg-main'}
+                    handleAction={handleEdit}
+                  />
+                  <ActionButton color={'slate-50'} title={'Đóng'} isModal={true} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
                 </div>
               </div>
             </div>
@@ -1298,9 +1315,17 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
               {/* button  */}
               <div className="flex justify-end items-center">
                 <div className="flex justify-end items-center gap-3  pt-3">
-                  <ActionButton color={'slate-50'} title={'Lưu & đóng'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleCreateAndClose} />
+                  <ActionButton
+                    color={'slate-50'}
+                    title={'Lưu & Đóng'}
+                    isModal={true}
+                    background={'bg-main'}
+                    bg_hover={'white'}
+                    color_hover={'bg-main'}
+                    handleAction={handleCreateAndClose}
+                  />
 
-                  <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
+                  <ActionButton color={'slate-50'} title={'Đóng'} isModal={true} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
                 </div>
               </div>
             </div>

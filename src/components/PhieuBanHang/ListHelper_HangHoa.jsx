@@ -116,7 +116,7 @@ function ListHelper_HangHoa({ data, close, handleAddData, form }) {
               textSearch={searchText}
             />
           </div>
-          <ActionButton color={'slate-50'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} title={'Đóng'} handleAction={close} />
+          <ActionButton color={'slate-50'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} title={'Đóng'} isModal={true} handleAction={close} />
         </div>
       </div>
     </div>

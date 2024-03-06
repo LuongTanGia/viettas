@@ -661,6 +661,7 @@ const PhieuThuTien = () => {
                           navigate(-1)
                         }}
                         title={'Đóng'}
+                        isModal={true}
                         color={'slate-50'}
                         background={'red-500'}
                         color_hover={'red-500'}
@@ -709,7 +710,7 @@ const PhieuThuTien = () => {
                     <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
                   </div>
                   {isShowOption && (
-                    <div className=" absolute flex flex-col gap-2 bg-slate-100 p-3  top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom ">
+                    <div className=" absolute flex flex-col gap-2 bg-slate-100 px-2 py-3 items-center top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom ">
                       <div className={`flex flex-grow flex-wrap gap-1 ${!hideColumns ? 'flex-col' : ''}`}>
                         <button
                           onClick={dataQuyenHan?.EXCEL ? exportToExcel : ''}
@@ -742,12 +743,12 @@ const PhieuThuTien = () => {
                           <div>Ẩn cột</div>
                         </button>
                       </div>
-                      <div>
+                      <div className="flex justify-center">
                         {hideColumns && (
                           <div>
                             <Checkbox.Group
                               style={{
-                                width: '470px',
+                                width: '350px',
                                 background: 'white',
                                 padding: 10,
                                 borderRadius: 10,
@@ -762,7 +763,7 @@ const PhieuThuTien = () => {
                             >
                               <Row>
                                 {options.map((item) => (
-                                  <Col span={8} key={item.value}>
+                                  <Col span={10} key={item.value}>
                                     <Checkbox value={item.value}>{item.label}</Checkbox>
                                   </Col>
                                 ))}
@@ -867,7 +868,7 @@ const PhieuThuTien = () => {
                     background={!dataQuyenHan?.ADD ? 'gray-400' : 'bg-main'}
                     color_hover={!dataQuyenHan?.ADD ? '' : 'bg-main'}
                     handleAction={() => (!dataQuyenHan?.ADD ? '' : handleCreate())}
-                    quyenHan={dataQuyenHan?.ADD}
+                    isPermission={dataQuyenHan?.ADD}
                   />
                 </div>
               </div>

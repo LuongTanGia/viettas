@@ -305,8 +305,17 @@ const XCKPrint = ({ close, dataPrint }) => {
                 </div>
               </div>
               <div className="flex gap-2 justify-end">
-                <ActionButton handleAction={handlePrint} title={'Xác nhận'} color={'slate-50'} background={'blue-500'} color_hover={'blue-500'} bg_hover={'white'} disable />
-                <ActionButton handleAction={close} title={'Đóng'} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
+                <ActionButton
+                  handleAction={handlePrint}
+                  title={'Xác nhận'}
+                  isModal={true}
+                  color={'slate-50'}
+                  background={'blue-500'}
+                  color_hover={'blue-500'}
+                  bg_hover={'white'}
+                  disable
+                />
+                <ActionButton handleAction={close} title={'Đóng'} isModal={true} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
               </div>
             </div>
           </div>

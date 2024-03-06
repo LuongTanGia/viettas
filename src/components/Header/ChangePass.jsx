@@ -95,8 +95,8 @@ function ChangePass({ isShow, close }) {
                 }}
               >
                 <div className="flex justify-end gap-4  absolute right-0 ">
-                  <ActionButton color={'slate-50'} title={'Xác Nhận'} background={'blue-500'} bg_hover={'white'} color_hover={'blue-500'} type="primary" />
-                  <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={close} />
+                  <ActionButton color={'slate-50'} title={'Xác nhận'} isModal={true} background={'blue-500'} bg_hover={'white'} color_hover={'blue-500'} type="primary" />
+                  <ActionButton color={'slate-50'} title={'Đóng'} isModal={true} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={close} />
                 </div>
               </Form.Item>
             </Form>

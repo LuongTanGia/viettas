@@ -389,7 +389,7 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
                 </div>
                 <div className="flex justify-end gap-2">
                   <div className="flex gap-2 justify-end ">
-                    <ActionButton handleAction={close} title={'Đóng'} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
+                    <ActionButton handleAction={close} title={'Đóng'} isModal={true} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
                   </div>
                 </div>
               </div>
@@ -536,8 +536,24 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
                     </div>
                   </div>
                   <div className="flex gap-2 justify-end ">
-                    <ActionButton handleAction={handleConfirm} title={'Xác nhận'} color={'slate-50'} background={'blue-500'} color_hover={'blue-500'} bg_hover={'white'} />
-                    <ActionButton handleAction={() => setIsShowModal(false)} title={'Đóng'} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
+                    <ActionButton
+                      handleAction={handleConfirm}
+                      title={'Xác nhận'}
+                      isModal={true}
+                      color={'slate-50'}
+                      background={'blue-500'}
+                      color_hover={'blue-500'}
+                      bg_hover={'white'}
+                    />
+                    <ActionButton
+                      handleAction={() => setIsShowModal(false)}
+                      title={'Đóng'}
+                      isModal={true}
+                      color={'slate-50'}
+                      background={'red-500'}
+                      color_hover={'red-500'}
+                      bg_hover={'white'}
+                    />
                   </div>
                 </div>
               </div>

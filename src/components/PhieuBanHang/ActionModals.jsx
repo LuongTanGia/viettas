@@ -19,7 +19,7 @@ import { Select } from 'antd'
 import ActionButton from '../util/Button/ActionButton'
 import { nameColumsPhieuBanHangChiTiet } from '../util/Table/ColumnName'
 import { IoMdAddCircle } from 'react-icons/io'
-import { PrinterOutlined } from '@ant-design/icons'
+import { MdPrint } from 'react-icons/md'
 
 const { Option } = Select
 
@@ -475,32 +475,42 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
             <div className=" w-full flex justify-between  gap-2 ">
               <div className="w-full flex justify-start  gap-2">
                 <ActionButton
-                  icon={<PrinterOutlined />}
+                  icon={<MdPrint className="w-6 h-6" />}
                   color={'slate-50'}
                   title={'In Phiếu'}
                   background={'purple-500'}
                   bg_hover={'white'}
                   color_hover={'purple-500'}
                   handleAction={Print}
+                  isModal={true}
                 />
                 <ActionButton
-                  icon={<PrinterOutlined />}
+                  icon={<MdPrint className="w-6 h-6" />}
                   color={'slate-50'}
                   title={'In Phiếu Kho'}
                   background={'purple-500'}
                   bg_hover={'white'}
                   color_hover={'purple-500'}
                   handleAction={Print_kho}
+                  isModal={true}
                 />
               </div>
               <div className="w-full flex justify-end  gap-2">
                 {typeAction === 'edit' || typeAction === 'view' ? null : (
-                  <ActionButton color={'slate-50'} background={'blue-500'} bg_hover={'white'} color_hover={'blue-500'} title={'Lưu'} handleAction={handleSubmit} />
+                  <ActionButton color={'slate-50'} background={'blue-500'} bg_hover={'white'} color_hover={'blue-500'} title={'Lưu'} isModal={true} handleAction={handleSubmit} />
                 )}
                 {typeAction === 'view' ? null : (
-                  <ActionButton color={'slate-50'} background={'blue-500'} bg_hover={'white'} color_hover={'blue-500'} title={'Lưu & Đóng'} handleAction={handleSubmitAndClose} />
+                  <ActionButton
+                    color={'slate-50'}
+                    background={'blue-500'}
+                    bg_hover={'white'}
+                    color_hover={'blue-500'}
+                    title={'Lưu & Đóng'}
+                    isModal={true}
+                    handleAction={handleSubmitAndClose}
+                  />
                 )}
-                <ActionButton color={'slate-50'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} title={'Đóng'} handleAction={handleClose} />
+                <ActionButton color={'slate-50'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} title={'Đóng'} isModal={true} handleAction={handleClose} />
               </div>
             </div>
           </div>

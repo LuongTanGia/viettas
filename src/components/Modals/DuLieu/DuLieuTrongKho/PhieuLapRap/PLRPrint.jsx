@@ -370,13 +370,14 @@ const PLRPrint = ({ close, dataPrint, type }) => {
                     type == 'print' ? () => handlePrint() : type == 'printImport' ? () => handlePrintImport() : type == 'printExport' ? () => handlePrintExport() : null
                   }
                   title={'Xác nhận'}
+                  isModal={true}
                   color={'slate-50'}
                   background={'blue-500'}
                   color_hover={'blue-500'}
                   bg_hover={'white'}
                   disable
                 />
-                <ActionButton handleAction={close} title={'Đóng'} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
+                <ActionButton handleAction={close} title={'Đóng'} isModal={true} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
               </div>
             </div>
           </div>

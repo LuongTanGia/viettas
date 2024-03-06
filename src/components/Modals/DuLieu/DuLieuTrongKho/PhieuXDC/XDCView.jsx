@@ -5,6 +5,7 @@ import moment from 'moment'
 const { Text } = Typography
 import { Table, Tooltip, Typography } from 'antd'
 import XDCPrint from './XDCPrint'
+import { MdPrint } from 'react-icons/md'
 import categoryAPI from '../../../../../API/linkAPI'
 import logo from '../../../../../assets/VTS-iSale.ico'
 import { RETOKEN } from '../../../../../action/Actions'
@@ -267,10 +268,19 @@ const XDCXem = ({ close, dataXDC }) => {
                 </div>
                 <div className="flex justify-between">
                   <div>
-                    <ActionButton handleAction={handlePrint} title={'In Phiếu'} color={'slate-50'} background={'purple-500'} color_hover={'purple-500'} bg_hover={'white'} />
+                    <ActionButton
+                      handleAction={handlePrint}
+                      title={'In Phiếu'}
+                      isModal={true}
+                      color={'slate-50'}
+                      background={'purple-500'}
+                      color_hover={'purple-500'}
+                      bg_hover={'white'}
+                      icon={<MdPrint className="w-5 h-5" />}
+                    />
                   </div>
                   <div className="flex gap-2 justify-end ">
-                    <ActionButton handleAction={close} title={'Đóng'} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
+                    <ActionButton handleAction={close} title={'Đóng'} isModal={true} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
                   </div>
                 </div>
               </div>

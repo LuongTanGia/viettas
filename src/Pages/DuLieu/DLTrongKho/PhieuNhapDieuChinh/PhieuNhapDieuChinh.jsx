@@ -547,6 +547,7 @@ const PhieuNhapDieuChinh = () => {
                           navigate(-1)
                         }}
                         title={'Đóng'}
+                        isModal={true}
                         color={'slate-50'}
                         background={'red-500'}
                         color_hover={'red-500'}
@@ -609,7 +610,7 @@ const PhieuNhapDieuChinh = () => {
                           <ActionButton
                             handleAction={() => (dataCRUD?.EXCEL == false ? '' : exportToExcel())}
                             title={'Xuất Excel'}
-                            quyenHan={dataCRUD?.EXCEL}
+                            isPermission={dataCRUD?.EXCEL}
                             icon={<RiFileExcel2Fill className="w-5 h-5" />}
                             color={'slate-50'}
                             background={dataCRUD?.EXCEL == false ? 'gray-400' : 'green-500'}
@@ -626,7 +627,7 @@ const PhieuNhapDieuChinh = () => {
                             bg_hover={'white'}
                           />
                         </div>
-                        <div>
+                        <div className="flex justify-center">
                           {selectVisible && (
                             <div>
                               <Checkbox.Group
@@ -729,7 +730,7 @@ const PhieuNhapDieuChinh = () => {
                       background={dataCRUD?.ADD == false ? 'gray-400' : 'blue-500'}
                       color_hover={dataCRUD?.ADD == false ? 'gray-500' : 'blue-500'}
                       bg_hover={'white'}
-                      quyenHan={dataCRUD?.ADD}
+                      isPermission={dataCRUD?.ADD}
                     />
                   </div>
                 </div>

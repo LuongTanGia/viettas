@@ -181,6 +181,7 @@ const SiderMenu = ({ refs }) => {
                         setIsShowNotify(false)
                       }}
                       title={'Đóng'}
+                      isModal={true}
                       color={'slate-50'}
                       background={'red-500'}
                       color_hover={'red-500'}

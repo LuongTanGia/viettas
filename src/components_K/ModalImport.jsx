@@ -106,7 +106,7 @@ const ModalImport = ({ close }) => {
           <ActionButton color={'slate-50'} title={'Kiểm tra'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} />
           <ActionButton color={'slate-50'} title={'Điều chỉnh'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} />
           <ActionButton color={'slate-50'} title={'Import'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} />
-          <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
+          <ActionButton color={'slate-50'} title={'Đóng'} isModal={true} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
         </div>
       </div>
     </div>

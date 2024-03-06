@@ -414,6 +414,7 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
               <ActionButton
                 color={'slate-50'}
                 title={'Xác nhận'}
+                isModal={true}
                 background={'bg-main'}
                 bg_hover={'white'}
                 color_hover={'bg-main'}
@@ -425,6 +426,7 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
               <ActionButton
                 color={'slate-50'}
                 title={'Đóng'}
+                isModal={true}
                 background={'red-500'}
                 bg_hover={'white'}
                 color_hover={'red-500'}
@@ -435,8 +437,8 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
             </div>
           ) : (
             <div className="flex justify-end pt-2 gap-2">
-              <ActionButton color={'slate-50'} title={'Xác nhận'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleOnlyPrint} />
-              <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
+              <ActionButton color={'slate-50'} title={'Xác nhận'} isModal={true} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleOnlyPrint} />
+              <ActionButton color={'slate-50'} title={'Đóng'} isModal={true} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
             </div>
           )}
         </div>

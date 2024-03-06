@@ -89,7 +89,7 @@ function DSBHKHH() {
               <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
             </div>
             {isShowOption && (
-              <div className="absolute flex flex-col gap-2 bg-slate-200 p-3 top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom">
+              <div className="absolute flex flex-col gap-2 bg-slate-200 px-2 py-3 items-center top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom">
                 <div className={`flex ${selectVisible ? '' : 'flex-col'} items-center gap-2`}>
                   <ActionButton
                     handleAction={() => exportToExcel()}
@@ -110,12 +110,12 @@ function DSBHKHH() {
                     bg_hover={'white'}
                   />
                 </div>
-                <div>
+                <div className="flex justify-center">
                   {selectVisible && (
                     <div>
                       <Checkbox.Group
                         style={{
-                          width: '520px',
+                          width: '300px',
                           background: 'white',
                           padding: 10,
                           borderRadius: 10,
@@ -125,10 +125,10 @@ function DSBHKHH() {
                         defaultValue={checkedList}
                         onChange={onChange}
                       >
-                        <Row>
+                        <Row className="flex justify-center">
                           {options && options.length > 0 ? (
                             options?.map((item, index) => (
-                              <Col span={8} key={(item, index)}>
+                              <Col span={10} key={(item, index)}>
                                 <Checkbox value={item} checked={true}>
                                   {nameColumsDoanhSoBanHangKH[item]}
                                 </Checkbox>

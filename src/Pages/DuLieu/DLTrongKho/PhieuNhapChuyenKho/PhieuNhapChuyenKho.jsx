@@ -519,6 +519,7 @@ const PhieuNhapChuyenKho = () => {
                           navigate(-1)
                         }}
                         title={'Đóng'}
+                        isModal={true}
                         color={'slate-50'}
                         background={'red-500'}
                         color_hover={'red-500'}
@@ -567,12 +568,12 @@ const PhieuNhapChuyenKho = () => {
                       <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
                     </div>
                     {isShowOption && (
-                      <div className="absolute flex flex-col gap-2 bg-slate-200 p-3 top-[12] right-[2.5%] rounded-lg z-10 duration-500 shadow-custom">
+                      <div className="absolute flex flex-col gap-2 bg-slate-200 px-2 py-3 top-[12] right-[2.5%] rounded-lg z-10 duration-500 shadow-custom">
                         <div className={`flex ${selectVisible ? '' : 'flex-col'} items-center gap-2`}>
                           {dataThongSo?.SUDUNG_XACNHANCHUYENKHO == true ? (
                             <ActionButton
                               handleAction={handleConfirm}
-                              title={'Xác Nhận'}
+                              title={'Xác nhận'}
                               icon={<FaCheck className="w-5 h-5" />}
                               color={'slate-50'}
                               background={'blue-500'}
@@ -592,7 +593,7 @@ const PhieuNhapChuyenKho = () => {
                           <ActionButton
                             handleAction={() => (dataCRUD?.EXCEL == false ? '' : exportToExcel())}
                             title={'Xuất Excel'}
-                            quyenHan={dataCRUD?.EXCEL}
+                            isPermission={dataCRUD?.EXCEL}
                             icon={<RiFileExcel2Fill className="w-5 h-5" />}
                             color={'slate-50'}
                             background={dataCRUD?.EXCEL == false ? 'gray-400' : 'green-500'}
@@ -609,7 +610,7 @@ const PhieuNhapChuyenKho = () => {
                             bg_hover={'white'}
                           />
                         </div>
-                        <div>
+                        <div className="flex justify-center">
                           {selectVisible && (
                             <div>
                               <Checkbox.Group

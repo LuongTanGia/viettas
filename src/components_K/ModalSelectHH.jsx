@@ -171,7 +171,7 @@ const ModalSelectHH = ({ close, data, onRowCreate, onChangLoading }) => {
 
           <div className="flex justify-end mt-1 gap-x-2">
             <ActionButton color={'slate-50'} title={'Xong'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} />
-            <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
+            <ActionButton color={'slate-50'} title={'Đóng'} isModal={true} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
           </div>
         </div>
       </div>

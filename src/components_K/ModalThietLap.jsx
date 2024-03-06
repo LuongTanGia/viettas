@@ -440,13 +440,14 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
                 <ActionButton
                   color={'slate-50'}
                   title={'Xác nhận'}
+                  isModal={true}
                   background={'bg-main'}
                   bg_hover={'white'}
                   color_hover={'bg-main'}
                   handleAction={() => handleDelete(dataRecord)}
                 />
 
-                <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
+                <ActionButton color={'slate-50'} title={'Đóng'} isModal={true} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
               </div>
             </div>
           )}
@@ -458,9 +459,17 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
                 dòng dữ liệu không ?
               </label>
               <div className="flex justify-end mt-4 gap-2">
-                <ActionButton color={'slate-50'} title={'Xác nhận'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleDeleteDS} />
+                <ActionButton
+                  color={'slate-50'}
+                  title={'Xác nhận'}
+                  isModal={true}
+                  background={'bg-main'}
+                  bg_hover={'white'}
+                  color_hover={'bg-main'}
+                  handleAction={handleDeleteDS}
+                />
 
-                <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
+                <ActionButton color={'slate-50'} title={'Đóng'} isModal={true} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
               </div>
             </div>
           )}
@@ -633,9 +642,9 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
               </div>
 
               <div className="flex justify-end pt-1 gap-2">
-                <ActionButton color={'slate-50'} title={'Xác nhận'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handlePrint} />
+                <ActionButton color={'slate-50'} title={'Xác nhận'} isModal={true} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handlePrint} />
 
-                <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
+                <ActionButton color={'slate-50'} title={'Đóng'} isModal={true} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
               </div>
             </div>
           )}
@@ -1237,9 +1246,17 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
               {/* button */}
               <div className="flex justify-end items-center pt-[10px] ">
                 <div className="flex gap-2">
-                  <ActionButton color={'slate-50'} title={'Lưu'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleCreate} />
-                  <ActionButton color={'slate-50'} title={'Lưu & đóng'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleCreateAndClose} />
-                  <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
+                  <ActionButton color={'slate-50'} title={'Lưu'} isModal={true} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleCreate} />
+                  <ActionButton
+                    color={'slate-50'}
+                    title={'Lưu & Đóng'}
+                    isModal={true}
+                    background={'bg-main'}
+                    bg_hover={'white'}
+                    color_hover={'bg-main'}
+                    handleAction={handleCreateAndClose}
+                  />
+                  <ActionButton color={'slate-50'} title={'Đóng'} isModal={true} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
                 </div>
               </div>
             </div>
@@ -1490,8 +1507,16 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
               {/* button */}
               <div className="flex justify-end items-center pt-[10px] ">
                 <div className="flex gap-2">
-                  <ActionButton color={'slate-50'} title={'Lưu & đóng'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleEdit} />
-                  <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
+                  <ActionButton
+                    color={'slate-50'}
+                    title={'Lưu & Đóng'}
+                    isModal={true}
+                    background={'bg-main'}
+                    bg_hover={'white'}
+                    color_hover={'bg-main'}
+                    handleAction={handleEdit}
+                  />
+                  <ActionButton color={'slate-50'} title={'Đóng'} isModal={true} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
                 </div>
               </div>
             </div>

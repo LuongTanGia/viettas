@@ -247,6 +247,7 @@ function ModelPrint({ soChungTuPrint, isShowModel, handleCloseAction, data, mode
                   <ActionButton
                     color={'slate-50'}
                     title={'Đóng'}
+                    isModal={true}
                     background={'red-500'}
                     icon={<IoIosCloseCircleOutline />}
                     bg_hover={'white'}

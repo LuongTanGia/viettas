@@ -537,7 +537,8 @@ const HUYEdit = ({ close, dataHUY, loadingData, setTargetRow }) => {
                       background={isAdd ? 'gray-500' : 'purple-500'}
                       color_hover={isAdd ? 'gray-500' : 'purple-500'}
                       bg_hover={'white'}
-                      quyenHan={isAdd ? false : true}
+                      isPermission={isAdd ? false : true}
+                      isModal={true}
                     />
                   </div>
                   <div className="flex gap-2 justify-end">
@@ -550,13 +551,14 @@ const HUYEdit = ({ close, dataHUY, loadingData, setTargetRow }) => {
                             }
                       }
                       title={'Xác nhận'}
+                      isModal={true}
                       color={'slate-50'}
                       background={isAdd ? 'gray-500' : 'blue-500'}
                       color_hover={isAdd ? 'gray-500' : 'blue-500'}
                       bg_hover={'white'}
-                      quyenHan={isAdd ? false : true}
+                      isPermission={isAdd ? false : true}
                     />
-                    <ActionButton handleAction={close} title={'Đóng'} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
+                    <ActionButton handleAction={close} title={'Đóng'} isModal={true} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
                   </div>
                 </div>
               </div>
@@ -621,6 +623,7 @@ const HUYEdit = ({ close, dataHUY, loadingData, setTargetRow }) => {
                       <ActionButton
                         handleAction={() => setIsShowModal(false)}
                         title={'Đóng'}
+                        isModal={true}
                         color={'slate-50'}
                         background={'red-500'}
                         color_hover={'red-500'}

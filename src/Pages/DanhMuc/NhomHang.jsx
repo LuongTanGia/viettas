@@ -263,7 +263,7 @@ const NhomHang = () => {
         const dateB = new Date(b.NgayTao)
         return dateA - dateB
       },
-      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss.SS')} search={searchNhomHang} />,
+      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss')} search={searchNhomHang} />,
     },
     {
       title: 'Người sửa',
@@ -302,7 +302,7 @@ const NhomHang = () => {
       },
       render: (text) => {
         if (text) {
-          return <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss.SS')} search={searchNhomHang} />
+          return <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss')} search={searchNhomHang} />
         } else {
           return ''
         }
@@ -390,6 +390,7 @@ const NhomHang = () => {
                           navigate(-1)
                         }}
                         title={'Đóng'}
+                        isModal={true}
                         color={'slate-50'}
                         background={'red-500'}
                         color_hover={'red-500'}
@@ -440,12 +441,12 @@ const NhomHang = () => {
                       <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
                     </div>
                     {isShowOption && (
-                      <div className="absolute flex flex-col gap-2 bg-slate-200 p-3 top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom">
+                      <div className="absolute flex flex-col gap-2 items-center bg-slate-200 px-2 py-3 top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom">
                         <div className={`flex ${selectVisible ? '' : 'flex-col'} items-center gap-2`}>
                           <ActionButton
                             handleAction={() => (dataCRUD?.EXCEL == false ? '' : exportToExcel())}
                             title={'Xuất Excel'}
-                            quyenHan={dataCRUD?.EXCEL}
+                            isPermission={dataCRUD?.EXCEL}
                             icon={<RiFileExcel2Fill className="w-5 h-5" />}
                             color={'slate-50'}
                             background={dataCRUD?.EXCEL == false ? 'gray-400' : 'green-500'}
@@ -462,12 +463,12 @@ const NhomHang = () => {
                             bg_hover={'white'}
                           />
                         </div>
-                        <div>
+                        <div className="flex justify-center">
                           {selectVisible && (
                             <div>
                               <Checkbox.Group
                                 style={{
-                                  width: '520px',
+                                  width: '340px',
                                   background: 'white',
                                   padding: 10,
                                   borderRadius: 10,
@@ -477,10 +478,10 @@ const NhomHang = () => {
                                 defaultValue={checkedList}
                                 onChange={onChange}
                               >
-                                <Row>
+                                <Row className="flex justify-center">
                                   {options && options.length > 0 ? (
                                     options?.map((item, index) => (
-                                      <Col span={8} key={(item, index)}>
+                                      <Col span={10} key={(item, index)}>
                                         <Checkbox value={item} checked={true}>
                                           {nameColumsNhomHang[item]}
                                         </Checkbox>
@@ -513,7 +514,7 @@ const NhomHang = () => {
                       background={dataCRUD?.ADD == false ? 'gray-400' : 'blue-500'}
                       color_hover={dataCRUD?.ADD == false ? 'gray-500' : 'blue-500'}
                       bg_hover={'white'}
-                      quyenHan={dataCRUD?.ADD}
+                      isPermission={dataCRUD?.ADD}
                     />
                   </div>
                 </div>

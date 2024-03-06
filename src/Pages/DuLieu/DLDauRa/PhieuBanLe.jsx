@@ -302,7 +302,7 @@ const PhieuBanLe = () => {
       render: (text, record, index) => <div style={{ textAlign: 'center' }}>{index + 1}</div>,
     },
     {
-      title: 'Số Chứng Từ',
+      title: 'Số chứng từ',
       dataIndex: 'SoChungTu',
       key: 'SoChungTu',
       width: 150,
@@ -317,7 +317,7 @@ const PhieuBanLe = () => {
       ),
     },
     {
-      title: 'Ngày Chứng Từ',
+      title: 'Ngày chứng từ',
       dataIndex: 'NgayCTu',
       key: 'NgayCTu',
       align: 'center',
@@ -332,7 +332,7 @@ const PhieuBanLe = () => {
     },
 
     {
-      title: 'Mã Đối Tượng',
+      title: 'Mã đối tượng',
       dataIndex: 'MaDoiTuong',
       key: 'MaDoiTuong',
       width: 150,
@@ -725,6 +725,7 @@ const PhieuBanLe = () => {
                           navigate(-1)
                         }}
                         title={'Đóng'}
+                        isModal={true}
                         color={'slate-50'}
                         background={'red-500'}
                         color_hover={'red-500'}
@@ -773,7 +774,7 @@ const PhieuBanLe = () => {
                     <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
                   </div>
                   {isShowOption && (
-                    <div className=" absolute flex flex-col gap-2 bg-slate-100 p-3  top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom ">
+                    <div className=" absolute flex flex-col gap-2 bg-slate-100 px-2 py-3 items-center top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom ">
                       <div className={`flex flex-grow flex-wrap gap-1 ${!hideColumns ? 'flex-col' : ''}`}>
                         <button
                           onClick={dataQuyenHan?.EXCEL ? exportToExcel : ''}
@@ -816,7 +817,7 @@ const PhieuBanLe = () => {
                           <div>Ẩn cột</div>
                         </button>
                       </div>
-                      <div>
+                      <div className="flex justify-center">
                         {hideColumns && (
                           <div>
                             <Checkbox.Group
