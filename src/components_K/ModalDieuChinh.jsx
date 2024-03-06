@@ -7,7 +7,7 @@ import * as apis from '../apis'
 import { RETOKEN } from '../action/Actions'
 const { Option } = Select
 // const { BsSearch } = icons
-const ModalDieuChinh = ({ close, data, namePage, dataThongSo, typePage }) => {
+const ModalDieuChinh = ({ close, data, namePage, dataThongSo, typePage, dataNhomGia }) => {
   const dataMaHang = useMemo(() => data.map((item) => item.MaHang), [data])
 
   const [formAdjustPrice, setFormAdjustPrice] = useState({
@@ -17,7 +17,7 @@ const ModalDieuChinh = ({ close, data, namePage, dataThongSo, typePage }) => {
     GiaTri: 0,
     NhomGia: null,
   })
-
+  // default value
   useEffect(() => {
     if (formAdjustPrice?.GiaTriTinh === 'OLDVALUE') {
       setFormAdjustPrice({ ...formAdjustPrice, ToanTu: '+' })
@@ -26,13 +26,17 @@ const ModalDieuChinh = ({ close, data, namePage, dataThongSo, typePage }) => {
     }
   }, [formAdjustPrice.GiaTriTinh])
 
+  useEffect(() => {
+    if (dataNhomGia) setFormAdjustPrice({ ...formAdjustPrice, NhomGia: dataMaHang.join(',') })
+  }, [dataNhomGia])
+  ///////////////////////////////////
   const handleAdjustPrice = async () => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
       let response
       switch (typePage) {
         case 'GBS':
-          response = await apis.DieuChinhGBS(tokenLogin, { ...formAdjustPrice, NhomGia: dataMaHang.join(',') })
+          response = await apis.DieuChinhGBS(tokenLogin, formAdjustPrice)
           break
         // case 'NTR':
         //   response = await apis.SuaNTR(tokenLogin)

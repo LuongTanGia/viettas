@@ -2,12 +2,12 @@
 import { useState } from 'react'
 import logo from '../assets/VTS-iSale.ico'
 import icons from '../untils/icons'
-import { Table, Input } from 'antd'
+import { Table, Input, Typography } from 'antd'
 import { useSearchHH } from './myComponents/useSearchHH'
 import ActionButton from '../components/util/Button/ActionButton'
 import HighlightedCell from '../components/hooks/HighlightedCell'
 import { CloseSquareFilled } from '@ant-design/icons'
-
+const { Text } = Typography
 const { BsSearch } = icons
 const ModalSelectHH = ({ close, data, onRowCreate, onChangLoading }) => {
   const [isShowSearch, setIsShowSearch] = useState(false)
@@ -15,22 +15,32 @@ const ModalSelectHH = ({ close, data, onRowCreate, onChangLoading }) => {
   const [prevSearchValue, setPrevSearchValue] = useState('')
   const [lastSearchTime, setLastSearchTime] = useState(0)
   const [selectedRowKeys, setSelectedRowKeys] = useState([])
-  const dataTable = filteredHH?.map((record, index) => ({
-    key: index,
+  const [selectedRows, setSelectedRows] = useState([])
+  const [selectedRowTotal, setSelectedRowTotal] = useState(0)
+
+  const dataTable = filteredHH?.map((record) => ({
+    key: record.MaHang,
     ...record,
   }))
-  const handleChoose = (dataRow) => {
+
+  const handleChoose = () => {
     const defaultValues = {
       DonGia: 0,
       CoThue: false,
       TyLeThue: 0,
     }
-    const newRow = { ...dataRow, ...defaultValues }
+    const newRow = selectedRows.map((row) => ({
+      ...row,
+      ...defaultValues,
+    }))
     onRowCreate(newRow)
     // toast.success('Chọn hàng hóa thành công', {
     //   autoClose: 1000,
     // })
+
+    close()
   }
+
   const columns = [
     {
       title: 'STT',
@@ -95,12 +105,28 @@ const ModalSelectHH = ({ close, data, onRowCreate, onChangLoading }) => {
     const isSelected = selectedRowKeys.includes(selectedKey)
     const newSelectedRowKeys = isSelected ? selectedRowKeys.filter((key) => key !== selectedKey) : [...selectedRowKeys, selectedKey]
     setSelectedRowKeys(newSelectedRowKeys)
+
+    const isDataRow = selectedRows.map((item) => item.MaHang).includes(selectedKey)
+    let newSelectedRows = [...selectedRows]
+    if (isDataRow) {
+      newSelectedRows = selectedRows.filter((item) => item.MaHang !== selectedKey)
+    } else {
+      newSelectedRows.push(record)
+    }
+    setSelectedRows(newSelectedRows)
+    setSelectedRowTotal(newSelectedRows.length)
+  }
+
+  const handleSelectAllRows = (selected, selectedRows, changeRows) => {
+    const selectedRowKeys = selected ? changeRows.map((row) => row) : []
+    setSelectedRows(selectedRowKeys)
+    setSelectedRowTotal(selectedRowKeys.length)
   }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
       <div className="  m-6  p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
-        <div className=" w-[50vw] h-[600px] ">
+        <div className="md:w-[80vw] lg:w-[50vw] h-[600px] ">
           <div className="flex gap-2 items-center ">
             <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
             <label className="text-blue-700 font-semibold uppercase pb-1">danh sách hàng hóa</label>
@@ -127,7 +153,6 @@ const ModalSelectHH = ({ close, data, onRowCreate, onChangLoading }) => {
             )}
           </div>
           {/* table */}
-
           <Table
             // loading={isLoading}
             className="table_HH"
@@ -137,27 +162,15 @@ const ModalSelectHH = ({ close, data, onRowCreate, onChangLoading }) => {
               onChange: (selectedKeys) => {
                 setSelectedRowKeys(selectedKeys)
               },
+              onSelectAll: handleSelectAllRows,
             }}
             dataSource={dataTable}
             size="small"
             scroll={{
               y: 410,
             }}
+            pagination={false}
             bordered
-            pagination={{
-              defaultPageSize: 50,
-              showSizeChanger: true,
-              pageSizeOptions: ['50', '100', '1000'],
-              // onShowSizeChange: (current, size) => {
-              //   console.log(size, '???')
-              //   // setPageSize(parseInt(size, 10))
-              //   // setPageSize(size === 'All' ? -1 : parseInt(size, 10))
-              // },
-              // // pageSize,
-              onShowSizeChange: (current, size) => {
-                console.log(size, ':', current, ':')
-              },
-            }}
             rowKey={(record) => record.MaHang}
             onRow={(record) => ({
               // onDoubleClick: () => {
@@ -167,10 +180,24 @@ const ModalSelectHH = ({ close, data, onRowCreate, onChangLoading }) => {
                 handleRowClick(record)
               },
             })}
+            // Bảng Tổng
+            summary={
+              data === undefined
+                ? null
+                : () => {
+                    return (
+                      <Table.Summary fixed="bottom">
+                        <Table.Summary.Row>
+                          <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"> {selectedRowTotal}</Table.Summary.Cell>
+                        </Table.Summary.Row>
+                      </Table.Summary>
+                    )
+                  }
+            }
           />
 
           <div className="flex justify-end mt-1 gap-x-2">
-            <ActionButton color={'slate-50'} title={'Xong'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} />
+            <ActionButton color={'slate-50'} title={'Xong'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleChoose} />
             <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
           </div>
         </div>

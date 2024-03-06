@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router-dom'
 import { useSearch } from '../../components_K/myComponents/useSearch'
 
 const { Text } = Typography
-const { IoAddCircleOutline, MdDelete, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill, CgCloseO, TiPrinter, FaRegCopy } = icons
+const { IoAddCircleOutline, MdDelete, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill, CgCloseO, TiPrinter, FaRegCopy, BsWrenchAdjustableCircle } = icons
 const GBS = () => {
   const navigate = useNavigate()
   const optionContainerRef = useRef(null)
@@ -22,21 +22,16 @@ const GBS = () => {
   const [isLoadingEdit, setIsLoadingEdit] = useState(true)
   const [isLoadingModal, setIsLoadingModal] = useState(true)
   const [isShowModal, setIsShowModal] = useState(false)
-
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [isShowOption, setIsShowOption] = useState(false)
   const [data, setData] = useState([])
-
   const [dataThongTin, setDataThongTin] = useState({})
-
   const [dataRecord, setDataRecord] = useState(null)
   const [dataHangHoa, setDataHangHoa] = useState(null)
-
   const [actionType, setActionType] = useState('')
   const [dataQuyenHan, setDataQuyenHan] = useState({})
   const [setSearchGBS, filteredGBS, searchGBS] = useSearch(data)
   const [prevSearchValue, setPrevSearchValue] = useState('')
-
   const [hideColumns, setHideColumns] = useState(false)
   const [checkedList, setCheckedList] = useState([])
   const [confirmed, setConfirmed] = useState(false)
@@ -45,6 +40,7 @@ const GBS = () => {
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
   const [isShowNotify, setIsShowNotify] = useState(false)
   const [doneGKH, setDoneGKH] = useState(null)
+  const [selectedRowKeys, setSelectedRowKeys] = useState([])
 
   // bỏ focus option thì hidden
   useEffect(() => {
@@ -452,12 +448,30 @@ const GBS = () => {
     setActionType('print')
     setIsShowModal(true)
   }
+  const handleAdjustPrice = () => {
+    if (selectedRowKeys.length <= 0) {
+      toast.warning('Hãy chọn mã để điều chỉnh giá bán!', {
+        autoClose: 1500,
+      })
+    } else {
+      setActionType('adjustPrice')
+      setIsShowModal(true)
+    }
+  }
 
   const handleSearch = (newSearch) => {
     if (newSearch !== prevSearchValue) {
       setTableLoad(true)
       setSearchGBS(newSearch)
     }
+  }
+
+  const handleRowClick = (record) => {
+    setDoneGKH(null)
+    const selectedKey = record.NhomGia
+    const isSelected = selectedRowKeys.includes(selectedKey)
+    const newSelectedRowKeys = isSelected ? selectedRowKeys.filter((key) => key !== selectedKey) : [...selectedRowKeys, selectedKey]
+    setSelectedRowKeys(newSelectedRowKeys)
   }
 
   return (
@@ -612,6 +626,15 @@ const GBS = () => {
               <div className="flex items-center gap-2">
                 <ActionButton
                   color={'slate-50'}
+                  title={'Điều chỉnh giá'}
+                  icon={<BsWrenchAdjustableCircle size={20} />}
+                  bg_hover={'white'}
+                  background={'orange-500'}
+                  color_hover={'orange-500'}
+                  handleAction={handleAdjustPrice}
+                />
+                <ActionButton
+                  color={'slate-50'}
                   title={'Thêm'}
                   icon={<IoAddCircleOutline size={20} />}
                   bg_hover={!dataQuyenHan?.ADD ? '' : 'white'}
@@ -630,6 +653,12 @@ const GBS = () => {
                 columns={newColumnsHide}
                 dataSource={filteredGBS}
                 size="small"
+                rowSelection={{
+                  selectedRowKeys,
+                  onChange: (selectedKeys) => {
+                    setSelectedRowKeys(selectedKeys)
+                  },
+                }}
                 scroll={{
                   x: 1500,
                   y: 410,
@@ -648,6 +677,9 @@ const GBS = () => {
                 onRow={(record) => ({
                   onDoubleClick: () => {
                     handleView(record)
+                  },
+                  onClick: () => {
+                    handleRowClick(record)
                   },
                 })}
                 // Bảng Tổng
@@ -697,6 +729,7 @@ const GBS = () => {
                 isLoadingModal={isLoadingModal}
                 isLoadingEdit={isLoadingEdit}
                 dataThongSo={dataThongSo}
+                dataNhomGia={selectedRowKeys}
                 loading={() => setTableLoad(true)}
                 setHightLight={setDoneGKH}
               />

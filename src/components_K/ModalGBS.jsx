@@ -18,12 +18,14 @@ import moment from 'moment'
 import ModalHHGBS from './ModalHHGBS'
 import ModalDieuChinh from './ModalDieuChinh'
 import ModalSelectHH from './ModalSelectHH'
+import ModalImport from './ModalImport'
 const { Text } = Typography
 const { Option } = Select
 const { IoMdAddCircle } = icons
 const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dataThongSo, dataThongTin, dataHangHoa, dataNhomGia, loading, isLoadingModal, setHightLight }) => {
   const [isShowModalHH, setIsShowModalHH] = useState(false)
   const [isShowSelectHH, setIsShowSelectHH] = useState(false)
+  const [isShowImport, setIsShowImport] = useState(false)
   const [isShowModalDieuChinh, setIsShowModalDieuChinh] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [selectedRowData, setSelectedRowData] = useState([])
@@ -65,7 +67,10 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
   })
 
   const isAdd = useMemo(() => selectedRowData.map((item) => item.MaHang).includes('Chọn mã hàng'), [selectedRowData])
-
+  const datafilterHH = useMemo(
+    () => (selectedRowData && dataHangHoa ? dataHangHoa.filter((item) => !selectedRowData.some((row) => row.MaHang === item.MaHang)) : dataHangHoa),
+    [dataHangHoa, selectedRowData],
+  )
   //  show modal HH = F9
   const handleKeyDown = (event) => {
     if (event.key === 'F9') {
@@ -74,7 +79,7 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
   }
 
   useEffect(() => {
-    if (actionType === 'create' || actionType === 'edit') {
+    if (actionType === 'create' || actionType === 'edit' || actionType === 'clone') {
       window.addEventListener('keydown', handleKeyDown)
 
       return () => {
@@ -222,6 +227,11 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
       }
       return dataNewRow
     })
+  }
+  const handleAddSelectedRow = (newRow) => {
+    // const newRowFiltered = newRow.filter((item) => !selectedRowData.some((row) => row.MaHang === item.MaHang))
+    // setSelectedRowData([...selectedRowData, ...newRowFiltered])
+    setSelectedRowData([...selectedRowData, ...newRow])
   }
 
   const handleAddEmptyRow = () => {
@@ -378,20 +388,6 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
     }
   }
 
-  // const handleCoThue = () => {
-  //   if (actionType === 'create') {
-  //     setFormCreate({ ...formCreate, CoThue: !formCreate.CoThue })
-  //   }
-  //   if (actionType === 'edit') {
-  //     setFormEdit({
-  //       ...formEdit,
-  //       Data: {
-  //         ...formEdit.Data,
-  //         CoThue: !formEdit.Data.CoThue,
-  //       },
-  //     })
-  //   }
-  // }
   const handleAdjustPrice = async () => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
@@ -428,6 +424,10 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
   const handleSelectHH = () => {
     setIsShowSelectHH(true)
   }
+  const handleImport = () => {
+    setIsShowImport(true)
+  }
+
   const filterDSMa = (date) => {
     const filteredMaHang = data.filter((item) => dayjs(item.HieuLucTu).format('YYYY-MM-DD') === dayjs(date).format('YYYY-MM-DD')).map((item) => ({ Ma: item.MaHang }))
     console.log('aaaaaa', filteredMaHang)
@@ -458,7 +458,14 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
       setFormPrint({ CodeValue1From: value, CodeValue1To: value })
     }
   }
-
+  const handleCloseDieuChinh = () => {
+    if (isShowModalDieuChinh) {
+      setIsShowModalDieuChinh(false)
+    }
+    if (actionType === 'adjustPrice') {
+      close()
+    }
+  }
   return (
     <>
       <div className=" fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
@@ -484,7 +491,6 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
               </div>
             </div>
           )}
-
           {actionType === 'print' && (
             <div className="h-[140px]">
               <div className="flex gap-2">
@@ -523,177 +529,6 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
                 <ActionButton color={'slate-50'} title={'Xác nhận'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handlePrint} />
 
                 <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
-              </div>
-            </div>
-          )}
-          {actionType === 'adjustPrice' && (
-            <div className="w-[700px] h-[160px]">
-              <div className="flex gap-2">
-                <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
-                <label className="text-blue-700 font-semibold uppercase pb-1">Điều chỉnh giá - {namePage}</label>
-              </div>
-              <div className="border w-full h-[60%] rounded-[4px]-sm text-sm">
-                <div className="flex flex-col px-2 ">
-                  <div className=" py-3 px-2 gap-2  grid grid-cols-1">
-                    <div className="flex flex-col gap-3">
-                      <div className="flex items-center gap-1">
-                        <label className="required  min-w-[70px] text-sm flex justify-end">Hiệu lực từ</label>
-                        <DateField
-                          className="DatePicker_PMH  max-w-[110px]"
-                          format="DD/MM/YYYY"
-                          value={dayjs(formAdjustPrice?.HieuLucTu)}
-                          onChange={filterDSMa}
-                          sx={{
-                            '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                            '& .MuiButtonBase-root': {
-                              padding: '4px',
-                            },
-                            '& .MuiSvgIcon-root': {
-                              width: '18px',
-                              height: '18px',
-                            },
-                          }}
-                        />
-                      </div>
-                      <div className="flex  gap-2 items-center">
-                        <div className="flex items-center gap-1">
-                          <label className=" whitespace-nowrap  min-w-[74px] text-sm flex justify-end">Trị giá tính</label>
-                          <Select
-                            className="w-[140px] truncate"
-                            showSearch
-                            size="small"
-                            optionFilterProp="children"
-                            onChange={(value) =>
-                              setFormAdjustPrice({
-                                ...formAdjustPrice,
-                                GiaTriTinh: value,
-                              })
-                            }
-                            value={formAdjustPrice.GiaTriTinh}
-                          >
-                            <Option value="OLDVALUE">Từ giá trị cũ</Option>
-                            <Option value="NEWVALUE">Thay giá trị mới</Option>
-                          </Select>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <label className=" whitespace-nowrap   text-sm flex justify-end">Toán tử</label>
-                          {formAdjustPrice.GiaTriTinh === 'OLDVALUE' ? (
-                            <Select
-                              className="w-[50px] truncate"
-                              showSearch
-                              size="small"
-                              onChange={(value) =>
-                                setFormAdjustPrice({
-                                  ...formAdjustPrice,
-                                  ToanTu: value,
-                                })
-                              }
-                              value={formAdjustPrice.ToanTu}
-                            >
-                              <Option value="+">+</Option>
-                              <Option value="-">-</Option>
-                              <Option value="*">*</Option>
-                              <Option value="/">/</Option>
-                            </Select>
-                          ) : (
-                            <Select
-                              className="w-[50px] truncate"
-                              showSearch
-                              size="small"
-                              onChange={(value) =>
-                                setFormAdjustPrice({
-                                  ...formAdjustPrice,
-                                  ToanTu: value,
-                                })
-                              }
-                              value={formAdjustPrice.ToanTu}
-                            >
-                              <Option value="=">=</Option>
-                            </Select>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <label className=" whitespace-nowrap   text-sm flex justify-end">Loại</label>
-                          <Select
-                            className="w-[100px] truncate"
-                            showSearch
-                            size="small"
-                            optionFilterProp="children"
-                            onChange={(value) =>
-                              setFormAdjustPrice({
-                                ...formAdjustPrice,
-                                LoaiGiaTri: value,
-                              })
-                            }
-                            value={formAdjustPrice.LoaiGiaTri}
-                          >
-                            <Option value="TYLE">Tỷ lệ %</Option>
-                            <Option value="HANGSO">Hằng số</Option>
-                          </Select>
-                        </div>
-                        <div className="flex items-center gap-1 whitespace-nowrap">
-                          <label className=" text-sm flex justify-end">Giá trị</label>
-                          {formAdjustPrice.LoaiGiaTri === 'TYLE' ? (
-                            <InputNumber
-                              className="w-[100%]"
-                              size="small"
-                              min={0}
-                              max={100}
-                              value={formAdjustPrice.GiaTri}
-                              formatter={(value) => `${value}`}
-                              parser={(value) => {
-                                const parsedValue = parseFloat(value)
-                                return isNaN(parsedValue) ? null : parseFloat(parsedValue.toFixed(dataThongSo.SOLETYLE))
-                              }}
-                              onChange={(e) =>
-                                setFormAdjustPrice({
-                                  ...formAdjustPrice,
-                                  GiaTri: e,
-                                })
-                              }
-                            />
-                          ) : (
-                            <InputNumber
-                              className="w-[100%]"
-                              size="small"
-                              min={0}
-                              max={999999999999}
-                              value={formAdjustPrice.GiaTri}
-                              formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                              parser={(value) => {
-                                const parsedValue = parseFloat(value.replace(/\$\s?|(,*)/g, ''))
-                                return isNaN(parsedValue) ? null : parseFloat(parsedValue.toFixed(dataThongSo.SOLEDONGIA))
-                              }}
-                              onChange={(e) =>
-                                setFormAdjustPrice({
-                                  ...formAdjustPrice,
-                                  GiaTri: e,
-                                })
-                              }
-                            />
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              {/* button */}
-              <div className="flex justify-end items-center pt-[14px]  gap-x-2">
-                <button
-                  onClick={handleAdjustPrice}
-                  className="flex items-center  py-1 px-2  rounded-md  border-2 border-blue-500 text-slate-50 text-text-main font-bold  bg-blue-500 hover:bg-white hover:text-blue-500"
-                >
-                  <div className="pr-1">{/* <TiPrinter size={20} /> */}</div>
-                  <div>Xử lý</div>
-                </button>
-
-                <button
-                  onClick={() => close()}
-                  className="active:scale-[.98] active:duration-75 border-2 border-rose-500 text-slate-50 text-text-main font-bold  bg-rose-500 hover:bg-white hover:text-rose-500  rounded-md px-2 py-1 w-[80px] "
-                >
-                  Đóng
-                </button>
               </div>
             </div>
           )}
@@ -803,7 +638,6 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
                       bordered
                       pagination={false}
                       // Bảng Tổng
-
                       summary={
                         dataThongTin?.NhomGia_CTs === undefined
                           ? null
@@ -860,7 +694,7 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
               </div>
             </div>
           )}
-          {actionType === 'create' && (
+          {(actionType === 'create' || actionType === 'clone') && (
             <div className=" w-[90vw] h-[600px] ">
               <div className="flex gap-2">
                 <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
@@ -987,9 +821,26 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
               {/* button  */}
               <div className=" flex justify-between items-center">
                 <div className=" flex  items-center gap-3  pt-3">
-                  <ActionButton color={'slate-50'} title={'Thêm MH chưa có'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleSelectHH} />
-                  <ActionButton color={'slate-50'} title={'Điều chỉnh giá'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleDieuChinh} />
-                  <ActionButton color={'slate-50'} title={'Import'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} />
+                  <ActionButton
+                    color={'slate-50'}
+                    title={'Thêm MH chưa có'}
+                    background={'bg-main'}
+                    bg_hover={'white'}
+                    color_hover={'bg-main'}
+                    isModal={true}
+                    handleAction={handleSelectHH}
+                  />
+                  <ActionButton
+                    color={'slate-50'}
+                    title={'Điều chỉnh giá'}
+                    background={'bg-main'}
+                    bg_hover={'white'}
+                    color_hover={'bg-main'}
+                    isModal={true}
+                    handleAction={handleDieuChinh}
+                  />
+
+                  <ActionButton color={'slate-50'} title={'Import'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} isModal={true} handleAction={handleImport} />
                 </div>
                 <div className="flex  items-center gap-3  pt-3">
                   <ActionButton color={'slate-50'} title={'Lưu'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleCreate} />
@@ -1170,141 +1021,6 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
               </div>
             </div>
           )}
-          {actionType === 'clone' && (
-            <div className=" w-[90vw] h-[600px] ">
-              <div className="flex gap-2">
-                <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
-                <label className="text-blue-700 font-semibold uppercase pb-1">Thêm - {namePage ? namePage : 'Phiếu ?'}</label>
-              </div>
-
-              <Spin spinning={isLoadingModal}>
-                <div className="border w-full h-[89%] rounded-sm text-sm">
-                  <div className="flex md:gap-0 lg:gap-1 pl-1 ">
-                    {/* thong tin phieu */}
-                    <div className="w-[62%]">
-                      <div className="flex flex-col pt-3  ">
-                        <div className="flex items-center p-1 gap-2">
-                          <label className="required w-[120px] text-end">Mã bảng giá</label>
-                          <input
-                            placeholder={errors?.NhomGia}
-                            type="text"
-                            className={`w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] hover:border-[#4897e6] h-[24px]
-                             ${errors.NhomGia ? 'border-red-500' : ''}`}
-                            value={formCreate.NhomGia}
-                            onChange={(e) => {
-                              setFormCreate({
-                                ...formCreate,
-                                NhomGia: e.target.value,
-                              }),
-                                setErrors({ ...errors, NhomGia: '' })
-                            }}
-                          />
-                        </div>
-                        <div className="flex items-center p-1 gap-2">
-                          <label className="required w-[120px] text-end">Tên bảng giá</label>
-                          <input
-                            placeholder={errors?.TenNhomGia}
-                            type="text"
-                            className={`w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] hover:border-[#4897e6] h-[24px]
-                             ${errors.TenNhomGia ? 'border-red-500' : ''}`}
-                            value={formCreate.TenNhomGia}
-                            onChange={(e) => {
-                              setFormCreate({
-                                ...formCreate,
-                                TenNhomGia: e.target.value,
-                              }),
-                                setErrors({ ...errors, TenNhomGia: '' })
-                            }}
-                          />
-                        </div>
-                        <div className="flex items-center p-1 gap-2">
-                          <label className=" w-[120px] text-end">Ghi chú</label>
-                          <input
-                            type="text"
-                            className="w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] hover:border-[#4897e6] h-[24px]"
-                            value={formCreate.GhiChu}
-                            onChange={(e) =>
-                              setFormCreate({
-                                ...formCreate,
-                                GhiChu: e.target.value,
-                              })
-                            }
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    {/* thong tin cap nhat */}
-                    <div className="w-[38%] py-1 box_content">
-                      <div className="text-center p-1 font-medium text_capnhat">Thông tin cập nhật</div>
-                      <div className=" rounded-md w-[98%]  box_capnhat px-1 py-3">
-                        <div className="flex justify-between items-center ">
-                          <div className="flex items-center p-1  ">
-                            <label className="md:w-[134px] lg:w-[104px]">Người tạo</label>
-                            <input disabled type="text" className=" w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" />
-                          </div>
-
-                          <div className="flex items-center p-1 ">
-                            <label className="w-[30px] pr-1">Lúc</label>
-                            <input disabled type="text" className="w-full  border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" />
-                          </div>
-                        </div>
-                        <div className="flex justify-between items-center ">
-                          <div className="flex items-center p-1  ">
-                            <label className="md:w-[134px] lg:w-[104px]">Sửa cuối</label>
-                            <input disabled type="text" className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" />
-                          </div>
-                          <div className="flex items-center p-1 ">
-                            <label className="w-[30px] pr-1">Lúc</label>
-                            <input disabled type="text" className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]" />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  {/* table */}
-                  <div className=" pb-0  relative mt-1">
-                    <Tooltip
-                      placement="topLeft"
-                      title={isAdd ? 'Vui lòng chọn hàng hóa hoặc F9 để chọn từ danh sách' : 'Bấm vào đây để thêm hàng mới hoặc F9 để chọn từ danh sách!'}
-                      color="blue"
-                    >
-                      <FloatButton
-                        className="absolute z-3 bg-transparent w-[26px] h-[26px]"
-                        style={{
-                          right: 12,
-                          top: 8,
-                        }}
-                        type={`${isAdd ? 'default' : 'primary'}`}
-                        icon={<IoMdAddCircle />}
-                        onClick={handleAddEmptyRow}
-                      />
-                    </Tooltip>
-                    <TableEdit
-                      typeTable="edit"
-                      // typeAction="edit"
-                      tableName="GBS"
-                      className="table_create_GBS"
-                      param={selectedRowData}
-                      handleEditData={handleEditData}
-                      ColumnTable={columnName}
-                      columName={nameColumsGBS}
-                      yourMaHangOptions={dataHangHoa}
-                      yourTenHangOptions={dataHangHoa}
-                      yourCoThue={selectedRowData.CoThue}
-                    />
-                  </div>
-                </div>
-              </Spin>
-              {/* button  */}
-              <div className="flex justify-end items-center">
-                <div className="flex justify-end items-center gap-3  pt-3">
-                  <ActionButton color={'slate-50'} title={'Lưu & đóng'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleCreateAndClose} />
-
-                  <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </div>
       {isShowModalHH && (
@@ -1320,16 +1036,25 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
       {isShowSelectHH && (
         <ModalSelectHH
           close={() => setIsShowSelectHH(false)}
-          data={dataHangHoa}
-          onRowCreate={handleAddRow}
+          data={datafilterHH}
+          onRowCreate={handleAddSelectedRow}
           dataThongSo={dataThongSo}
           onChangLoading={handleChangLoading}
           loading={isLoading}
         />
       )}
-      {isShowModalDieuChinh && (
-        <ModalDieuChinh close={() => setIsShowModalDieuChinh(false)} data={selectedRowData} dataThongSo={dataThongSo} loading={isLoading} namePage={namePage} typePage={typePage} />
+      {(isShowModalDieuChinh || actionType === 'adjustPrice') && (
+        <ModalDieuChinh
+          close={handleCloseDieuChinh}
+          data={selectedRowData}
+          dataThongSo={dataThongSo}
+          loading={isLoading}
+          namePage={namePage}
+          typePage={typePage}
+          dataNhomGia={dataNhomGia}
+        />
       )}
+      {isShowImport && <ModalImport close={() => setIsShowImport(false)} namePage={namePage} loading={isLoading} />}
     </>
   )
 }
