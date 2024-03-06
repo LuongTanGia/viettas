@@ -76,6 +76,7 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
     CodeValue2From: null,
     CodeValue2To: null,
     CodeValue2List: null,
+    NgayHieuLuc: ngayHieuLuc,
   })
 
   //  set value default
@@ -491,11 +492,11 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
                     <DateField
                       className="DatePicker_PMH max-w-[154px]"
                       format="DD/MM/YYYY"
-                      value={dayjs(formPrint.NgayBatDau)}
+                      value={dayjs(formPrint.ngayHieuLuc)}
                       onChange={(newDate) => {
                         setFormPrint({
                           ...formPrint,
-                          NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                          ngayHieuLuc: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
                         })
                       }}
                       sx={{
@@ -1521,9 +1522,9 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
               </div>
             </div>
           )}
-          {actionType === 'import' && <ModalImport namePage={namePage} close={close}></ModalImport>}
         </div>
       </div>
+      {actionType === 'import' && <ModalImport namePage={namePage} close={close}></ModalImport>}
     </>
   )
 }

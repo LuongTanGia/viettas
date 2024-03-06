@@ -1174,6 +1174,7 @@ const ModalPCT = ({
                     handleAction={() => {
                       handleCreate(), handlePrintInCreate()
                     }}
+                    isModal={true}
                   />
                 </div>
                 <div className="flex gap-2">
@@ -1440,6 +1441,7 @@ const ModalPCT = ({
                         handleAction={() => {
                           handlePrintInEdit(dataRecord)
                         }}
+                        isModal={true}
                       />
                     </div>
                     <div className="flex gap-2">

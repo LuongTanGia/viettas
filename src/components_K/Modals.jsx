@@ -1665,6 +1665,7 @@ const Modals = ({
                     handleAction={() => {
                       handleCreate(), handlePrintModal()
                     }}
+                    isModal={true}
                   />
                   {dataThongSo?.ALLOW_INPHIEUKHO_DAUVAODAURA === true && (
                     <ActionButton
@@ -1676,6 +1677,7 @@ const Modals = ({
                       handleAction={() => {
                         handleCreate(), handlePrintWareHouseModal()
                       }}
+                      isModal={true}
                     />
                   )}
                 </div>
@@ -1965,6 +1967,7 @@ const Modals = ({
                         handleAction={() => {
                           handlePrintInEdit(), handlePrintModal()
                         }}
+                        isModal={true}
                       />
                       {dataThongSo?.ALLOW_INPHIEUKHO_DAUVAODAURA === true && (
                         <ActionButton
@@ -1976,6 +1979,7 @@ const Modals = ({
                           handleAction={() => {
                             handlePrintInEdit(), handlePrintWareHouseModal()
                           }}
+                          isModal={true}
                         />
                       )}
                     </div>
