@@ -5,17 +5,16 @@ import { InputNumber, Select } from 'antd'
 import { toast } from 'react-toastify'
 import * as apis from '../apis'
 import { RETOKEN } from '../action/Actions'
+import ActionButton from '../components/util/Button/ActionButton'
 const { Option } = Select
 // const { BsSearch } = icons
-const ModalDieuChinh = ({ close, data, namePage, dataThongSo, typePage, dataNhomGia }) => {
-  const dataMaHang = useMemo(() => data.map((item) => item.MaHang), [data])
-
+const ModalDieuChinh = ({ type, close, data, onAdjustRow, namePage, dataThongSo, typePage, dataRecord, setHightLight }) => {
   const [formAdjustPrice, setFormAdjustPrice] = useState({
     GiaTriTinh: 'OLDVALUE',
-    ToanTu: '',
+    ToanTu: '+',
     LoaiGiaTri: 'TYLE',
     GiaTri: 0,
-    NhomGia: null,
+    NhomGia: dataRecord?.NhomGia,
   })
   // default value
   useEffect(() => {
@@ -26,9 +25,6 @@ const ModalDieuChinh = ({ close, data, namePage, dataThongSo, typePage, dataNhom
     }
   }, [formAdjustPrice.GiaTriTinh])
 
-  useEffect(() => {
-    if (dataNhomGia) setFormAdjustPrice({ ...formAdjustPrice, NhomGia: dataMaHang.join(',') })
-  }, [dataNhomGia])
   ///////////////////////////////////
   const handleAdjustPrice = async () => {
     try {
@@ -48,8 +44,10 @@ const ModalDieuChinh = ({ close, data, namePage, dataThongSo, typePage, dataNhom
       if (response) {
         const { DataError, DataErrorDescription } = response.data
         if (DataError === 0) {
+          toast.success(DataErrorDescription)
           // loading()
-          // setHightLight(dataRecord.SoChungTu)
+          setHightLight(formAdjustPrice.NhomGia)
+          close()
         } else if (DataError === -1 || DataError === -2 || DataError === -3) {
           toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
         } else if (DataError === -107 || DataError === -108) {
@@ -61,6 +59,78 @@ const ModalDieuChinh = ({ close, data, namePage, dataThongSo, typePage, dataNhom
       }
     } catch (error) {
       console.error('Error while saving data:', error)
+    }
+  }
+  const calculatePrice = (DFvalue, GiaTriTinh, ToanTu, LoaiGiaTri, GiaTri) => {
+    let result
+
+    switch (LoaiGiaTri) {
+      case 'TYLE':
+        GiaTri = DFvalue * (GiaTri / 100)
+        break
+      case 'HANGSO':
+        break
+      default:
+        console.error('Error: Invalid LoaiGiaTri!')
+        return NaN
+    }
+
+    // Thực hiện tính toán dựa trên GiaTriTinh
+    switch (GiaTriTinh) {
+      case 'OLDVALUE':
+        // Thực hiện tính toán dựa trên toán tử
+        switch (ToanTu) {
+          case '+':
+            result = DFvalue + GiaTri
+            break
+          case '-':
+            result = DFvalue - GiaTri
+            break
+          case '*':
+            result = DFvalue * GiaTri
+            break
+          case '/':
+            if (GiaTri !== 0) {
+              result = DFvalue / GiaTri
+            } else {
+              // Xử lý trường hợp chia cho 0
+              console.error('Error: Division by zero!')
+              result = GiaTri
+            }
+            break
+          default:
+            console.error('Error: Invalid operator!')
+            result = GiaTri
+        }
+        break
+      case 'NEWVALUE':
+        result = GiaTri
+        break
+      default:
+        console.error('Error: Invalid operator!')
+        result = GiaTri
+    }
+    return result
+  }
+
+  const handleAdjustRow = () => {
+    const newRow = data.map((row) => ({
+      ...row,
+      DonGia: calculatePrice(row.DonGia, formAdjustPrice.GiaTriTinh, formAdjustPrice.ToanTu, formAdjustPrice.LoaiGiaTri, formAdjustPrice.GiaTri),
+    }))
+    onAdjustRow(newRow)
+    // toast.success('Chọn hàng hóa thành công', {
+    //   autoClose: 1000,
+    // })
+    console.log('newRow', newRow)
+    close()
+  }
+
+  const handleAction = () => {
+    if (type === 'adjustAction') {
+      handleAdjustPrice()
+    } else {
+      handleAdjustRow()
     }
   }
 
@@ -197,20 +267,8 @@ const ModalDieuChinh = ({ close, data, namePage, dataThongSo, typePage, dataNhom
           </div>
           {/* button */}
           <div className="flex justify-end items-center pt-[14px]  gap-x-2">
-            <button
-              onClick={handleAdjustPrice}
-              className="flex items-center  py-1 px-2  rounded-md  border-2 border-blue-500 text-slate-50 text-text-main font-bold  bg-blue-500 hover:bg-white hover:text-blue-500"
-            >
-              <div className="pr-1">{/* <TiPrinter size={20} /> */}</div>
-              <div>Xử lý</div>
-            </button>
-
-            <button
-              onClick={() => close()}
-              className="active:scale-[.98] active:duration-75 border-2 border-rose-500 text-slate-50 text-text-main font-bold  bg-rose-500 hover:bg-white hover:text-rose-500  rounded-md px-2 py-1 w-[80px] "
-            >
-              Đóng
-            </button>
+            <ActionButton color={'slate-50'} title={'Xử lý'} bg_hover={'white'} background={'bg-main'} color_hover={'bg-main'} handleAction={handleAction} isModal={true} />
+            <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} isModal={true} />
           </div>
         </div>
       </div>

@@ -668,6 +668,7 @@ const BangGiaKH = () => {
                   color_hover={!dataQuyenHan?.DEL ? '' : 'red-500'}
                   handleAction={() => (!dataQuyenHan?.DEL ? '' : handleDeleteDS())}
                   isPermission={dataQuyenHan?.DEL}
+                  isModal={true}
                 />
                 <ActionButton
                   color={'slate-50'}
@@ -678,6 +679,7 @@ const BangGiaKH = () => {
                   color_hover={!dataQuyenHan?.ADD ? '' : 'bg-main'}
                   handleAction={() => (!dataQuyenHan?.ADD ? '' : handleCreate())}
                   isPermission={dataQuyenHan?.ADD}
+                  isModal={true}
                 />
               </div>
             </div>

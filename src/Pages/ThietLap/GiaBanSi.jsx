@@ -40,7 +40,6 @@ const GBS = () => {
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
   const [isShowNotify, setIsShowNotify] = useState(false)
   const [doneGKH, setDoneGKH] = useState(null)
-  const [selectedRowKeys, setSelectedRowKeys] = useState([])
 
   // bỏ focus option thì hidden
   useEffect(() => {
@@ -85,7 +84,6 @@ const GBS = () => {
     setIsLoadingEdit(true)
     const fetchData = async () => {
       try {
-        console.log('get helper')
         const tokenLogin = localStorage.getItem('TKN')
         if (actionType === 'create' || actionType === 'edit' || actionType === 'clone') {
           console.log('get helper  KH,DT')
@@ -360,7 +358,7 @@ const GBS = () => {
       title: 'Chức năng',
       key: 'ChucNang',
       fixed: 'right',
-      width: 100,
+      width: 130,
       align: 'center',
       render: (record) => {
         return (
@@ -375,6 +373,7 @@ const GBS = () => {
               >
                 <MdEdit size={16} />
               </div>
+
               <div
                 onClick={() => (dataQuyenHan?.ADD ? handleClone(record) : '')}
                 title="Bản sao"
@@ -383,6 +382,14 @@ const GBS = () => {
                 } `}
               >
                 <FaRegCopy size={16} />
+              </div>
+              <div
+                onClick={() => handleAdjustPrice(record)}
+                title="Điều chỉnh giá"
+                className="p-[3px] border-2 rounded-md text-slate-50 border-orange-400 bg-orange-400 hover:bg-white hover:text-orange-400 cursor-pointer
+                "
+              >
+                <BsWrenchAdjustableCircle size={16} />
               </div>
 
               <div
@@ -448,15 +455,11 @@ const GBS = () => {
     setActionType('print')
     setIsShowModal(true)
   }
-  const handleAdjustPrice = () => {
-    if (selectedRowKeys.length <= 0) {
-      toast.warning('Hãy chọn mã để điều chỉnh giá bán!', {
-        autoClose: 1500,
-      })
-    } else {
-      setActionType('adjustPrice')
-      setIsShowModal(true)
-    }
+  const handleAdjustPrice = (record) => {
+    setActionType('adjustPrice')
+    setDataRecord(record)
+
+    setIsShowModal(true)
   }
 
   const handleSearch = (newSearch) => {
@@ -464,14 +467,6 @@ const GBS = () => {
       setTableLoad(true)
       setSearchGBS(newSearch)
     }
-  }
-
-  const handleRowClick = (record) => {
-    setDoneGKH(null)
-    const selectedKey = record.NhomGia
-    const isSelected = selectedRowKeys.includes(selectedKey)
-    const newSelectedRowKeys = isSelected ? selectedRowKeys.filter((key) => key !== selectedKey) : [...selectedRowKeys, selectedKey]
-    setSelectedRowKeys(newSelectedRowKeys)
   }
 
   return (
@@ -627,15 +622,6 @@ const GBS = () => {
               <div className="flex items-center gap-2">
                 <ActionButton
                   color={'slate-50'}
-                  title={'Điều chỉnh giá'}
-                  icon={<BsWrenchAdjustableCircle size={20} />}
-                  bg_hover={'white'}
-                  background={'orange-500'}
-                  color_hover={'orange-500'}
-                  handleAction={handleAdjustPrice}
-                />
-                <ActionButton
-                  color={'slate-50'}
                   title={'Thêm'}
                   icon={<IoAddCircleOutline size={20} />}
                   bg_hover={!dataQuyenHan?.ADD ? '' : 'white'}
@@ -643,6 +629,7 @@ const GBS = () => {
                   color_hover={!dataQuyenHan?.ADD ? '' : 'bg-main'}
                   handleAction={() => (!dataQuyenHan?.ADD ? '' : handleCreate())}
                   isPermission={dataQuyenHan?.ADD}
+                  isModal={true}
                 />
               </div>
             </div>
@@ -654,12 +641,6 @@ const GBS = () => {
                 columns={newColumnsHide}
                 dataSource={filteredGBS}
                 size="small"
-                rowSelection={{
-                  selectedRowKeys,
-                  onChange: (selectedKeys) => {
-                    setSelectedRowKeys(selectedKeys)
-                  },
-                }}
                 scroll={{
                   x: 1500,
                   y: 410,
@@ -678,9 +659,6 @@ const GBS = () => {
                 onRow={(record) => ({
                   onDoubleClick: () => {
                     handleView(record)
-                  },
-                  onClick: () => {
-                    handleRowClick(record)
                   },
                 })}
                 // Bảng Tổng
@@ -730,7 +708,6 @@ const GBS = () => {
                 isLoadingModal={isLoadingModal}
                 isLoadingEdit={isLoadingEdit}
                 dataThongSo={dataThongSo}
-                dataNhomGia={selectedRowKeys}
                 loading={() => setTableLoad(true)}
                 setHightLight={setDoneGKH}
               />
