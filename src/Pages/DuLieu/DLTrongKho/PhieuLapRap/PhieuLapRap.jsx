@@ -600,7 +600,7 @@ const PhieuLapRap = () => {
                           />
                           <ActionButton
                             handleAction={handlePrintImport}
-                            title={'In Phiếu Nhập'}
+                            title={'In Nhập Kho'}
                             icon={<MdPrint className="w-6 h-6" />}
                             color={'slate-50'}
                             background={'purple-500'}
@@ -609,7 +609,7 @@ const PhieuLapRap = () => {
                           />
                           <ActionButton
                             handleAction={handlePrintExport}
-                            title={'In Phiếu Xuất'}
+                            title={'In Xuất Kho'}
                             icon={<MdPrint className="w-6 h-6" />}
                             color={'slate-50'}
                             background={'purple-500'}

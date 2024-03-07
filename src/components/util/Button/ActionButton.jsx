@@ -19,7 +19,7 @@ function ActionButton({ handleAction, title, icon, color, background, color_hove
           disabled={loading}
           onClick={handleActionLoad}
           className={` flex justify-center items-center ${
-            isModal ? '' : 'min-w-[10rem]'
+            isModal ? '' : 'min-w-[8rem]'
           }  border-2 shadow hover:text-${color_hover} border-${background} text-${color} text-base font-medium bg-${background} hover:bg-${bg_hover} rounded-md px-2 py-1 flex items-center gap-1 whitespace-nowrap max-h-10 
         `}
         >

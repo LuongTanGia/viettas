@@ -648,7 +648,7 @@ const HangHoa = () => {
                         <div className={`flex ${selectVisible ? '' : 'flex-col'} items-center gap-2`}>
                           <ActionButton
                             handleAction={() => handlePrintBar()}
-                            title={'In Theo Số Tem'}
+                            title={'In Theo Tem'}
                             icon={<CiBarcode className="w-6 h-6" />}
                             color={'slate-50'}
                             background={'purple-500'}
