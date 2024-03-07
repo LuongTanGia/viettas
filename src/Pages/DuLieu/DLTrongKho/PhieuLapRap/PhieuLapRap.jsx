@@ -587,7 +587,7 @@ const PhieuLapRap = () => {
                       <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
                     </div>
                     {isShowOption && (
-                      <div className="absolute flex flex-col gap-2 bg-slate-200 p-3 top-[12] right-[2.5%] rounded-lg z-10 duration-500 shadow-custom">
+                      <div className="absolute flex flex-col gap-2 bg-slate-200 px-3 py-2 items-center top-[12] right-[2.5%] rounded-lg z-10 duration-500 shadow-custom">
                         <div className={`flex ${selectVisible ? '' : 'flex-col'} items-center gap-2`}>
                           <ActionButton
                             handleAction={handlePrint}

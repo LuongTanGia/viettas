@@ -652,7 +652,7 @@ const PhieuXuatChuyenKho = () => {
                             <div>
                               <Checkbox.Group
                                 style={{
-                                  width: '500px',
+                                  width: '350px',
                                   background: 'white',
                                   padding: 10,
                                   borderRadius: 10,
@@ -662,10 +662,10 @@ const PhieuXuatChuyenKho = () => {
                                 defaultValue={checkedList}
                                 onChange={onChange}
                               >
-                                <Row>
+                                <Row className="flex justify-center">
                                   {options && options.length > 0 ? (
                                     options?.map((item, index) => (
-                                      <Col span={8} key={(item, index)}>
+                                      <Col span={10} key={(item, index)}>
                                         <Checkbox value={item} checked={true}>
                                           {nameColumsPhieuXuatChuyenKho[item]}
                                         </Checkbox>

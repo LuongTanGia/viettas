@@ -633,7 +633,7 @@ const PhieuXuatDieuChinh = () => {
                             <div>
                               <Checkbox.Group
                                 style={{
-                                  width: '500px',
+                                  width: '370px',
                                   background: 'white',
                                   padding: 10,
                                   borderRadius: 10,
@@ -646,7 +646,7 @@ const PhieuXuatDieuChinh = () => {
                                 <Row>
                                   {options && options.length > 0 ? (
                                     options?.map((item, index) => (
-                                      <Col span={8} key={(item, index)}>
+                                      <Col span={10} key={(item, index)}>
                                         <Checkbox value={item} checked={true}>
                                           {nameColumsPhieuXuatDieuChinh[item]}
                                         </Checkbox>

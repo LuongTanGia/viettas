@@ -596,7 +596,7 @@ const PhieuNhapDieuChinh = () => {
                       <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
                     </div>
                     {isShowOption && (
-                      <div className="absolute flex flex-col gap-2 bg-slate-200 p-3 top-[12] right-[2.5%] rounded-lg z-10 duration-500 shadow-custom">
+                      <div className="absolute flex flex-col gap-2 bg-slate-200 py-3 px-2 items-center top-[12] right-[2.5%] rounded-lg z-10 duration-500 shadow-custom">
                         <div className={`flex ${selectVisible ? '' : 'flex-col'} items-center gap-2`}>
                           <ActionButton
                             handleAction={handlePrint}
@@ -632,7 +632,7 @@ const PhieuNhapDieuChinh = () => {
                             <div>
                               <Checkbox.Group
                                 style={{
-                                  width: '500px',
+                                  width: '350px',
                                   background: 'white',
                                   padding: 10,
                                   borderRadius: 10,
@@ -645,7 +645,7 @@ const PhieuNhapDieuChinh = () => {
                                 <Row>
                                   {options && options.length > 0 ? (
                                     options?.map((item, index) => (
-                                      <Col span={8} key={(item, index)}>
+                                      <Col span={10} key={(item, index)}>
                                         <Checkbox value={item} checked={true}>
                                           {nameColumsPhieuNhapDieuChinh[item]}
                                         </Checkbox>
