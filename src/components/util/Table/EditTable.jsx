@@ -6,13 +6,27 @@ import BtnAction from './BtnAction'
 
 const { Option } = Select
 const { Text } = Typography
-const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourTenHangOptions, yourCoThue, ColumnTable, columName, typeTable, listHP, tableName }) => {
+const EditTable = ({
+  typeAction,
+  param,
+  handleEditData,
+  handleSelectRow,
+  yourMaHangOptions,
+  yourTenHangOptions,
+  yourCoThue,
+  ColumnTable,
+  columName,
+  typeTable,
+  listHP,
+  tableName,
+}) => {
   const EditableContext = React.createContext(null)
 
   const [dataSource, setDataSource] = useState(param)
   const [newOptions, setNewOptions] = useState(yourMaHangOptions)
   const [coThue, setCoThue] = useState(false)
   const [selectedRowKeys, setSelectedRowKeys] = useState([])
+  const [selectedRows, setSelectedRows] = useState([])
   const ThongSo = JSON.parse(localStorage.getItem('ThongSo'))
 
   useEffect(() => {
@@ -388,7 +402,7 @@ const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourT
         dataIndex: item,
         editable: true,
         key: item,
-        fixed: 'left',
+        fixed: tableName === 'GBS' ? 'none' : 'left',
         align: 'center',
         sorter: (a, b) => a[item].localeCompare(b[item]),
         showSorterTooltip: false,
@@ -605,12 +619,6 @@ const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourT
     }
   })
 
-  // const handleRowClick = (record) => {
-  //   const selectedKey = record.MaHang
-  //   const isSelected = selectedRowKeys.includes(selectedKey)
-  //   const newSelectedRowKeys = isSelected ? selectedRowKeys.filter((key) => key !== selectedKey) : [...selectedRowKeys, selectedKey]
-  //   setSelectedRowKeys(newSelectedRowKeys)
-  // }
   return (
     <div>
       <Table
@@ -625,25 +633,26 @@ const EditTable = ({ typeAction, param, handleEditData, yourMaHangOptions, yourT
           x: tableName == 'PhieuLapRap' || tableName == 'PhieuNhapDieuChinh' ? 700 : 1500,
           y: true,
         }}
-        // rowSelection={{
-        //   selectedRowKeys,
-        //   onChange: (selectedKeys) => {
-        //     setSelectedRowKeys(selectedKeys)
-        //   },
-        // }}
-        // rowKey={(record) => record.MaHang}
+        // rowSelection={
+        //   tableName === 'GBS'
+        //     ? {
+        //         selectedRowKeys,
+        //         onChange: (selectedKeys, selectedRows) => {
+        //           handleSelectRow(selectedRows)
+        //           setSelectedRowKeys(selectedKeys)
+        //         },
+        //       }
+        //     : undefined
+        // }
+        rowKey={(record) => record.MaHang}
         size="small"
-        // onRow={(record) => ({
-        //   onClick: () => {
-        //     handleRowClick(record)
-        //   },
-        // })}
         pagination={false}
         summary={(pageData) => {
           return pageData.length !== 0 ? (
             <Table.Summary fixed="bottom">
               <Table.Summary.Row>
                 <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell>
+                {/* {tableName === 'GBS' && <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell>} */}
                 {/* <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell> */}
                 {/* <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell> */}
 

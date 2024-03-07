@@ -870,6 +870,7 @@ const PhieuChiTien = () => {
                     color_hover={!dataQuyenHan?.ADD ? '' : 'bg-main'}
                     handleAction={() => (!dataQuyenHan?.ADD ? '' : handleCreate())}
                     isPermission={dataQuyenHan?.ADD}
+                    isModal={true}
                   />
                 </div>
               </div>

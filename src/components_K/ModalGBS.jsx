@@ -29,6 +29,7 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
   const [isShowModalDieuChinh, setIsShowModalDieuChinh] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [selectedRowData, setSelectedRowData] = useState([])
+  const [typeAdjust, setTypeAdjust] = useState('')
 
   const [errors, setErrors] = useState({
     NhomGia: '',
@@ -94,6 +95,14 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
       filterDSMa(ngayHieuLuc)
     }
   }, [])
+  useEffect(() => {
+    if (isShowModalDieuChinh) {
+      setTypeAdjust('adjustModal')
+    }
+    if (actionType === 'adjustPrice') {
+      setTypeAdjust('adjustAction')
+    }
+  }, [isShowModalDieuChinh, actionType])
 
   useEffect(() => {
     if (formAdjustPrice?.GiaTriTinh === 'OLDVALUE') {
@@ -248,7 +257,9 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
 
     setSelectedRowData((prevData) => [...prevData, emptyRow])
   }
-
+  const handleAdjustRow = (newRow) => {
+    setSelectedRowData([...newRow])
+  }
   const handleCreateAndClose = async () => {
     if (!formCreate?.NhomGia?.trim() || !formCreate?.TenNhomGia?.trim()) {
       setErrors({
@@ -388,35 +399,9 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
     }
   }
 
-  const handleAdjustPrice = async () => {
-    try {
-      const tokenLogin = localStorage.getItem('TKN')
-
-      const response = await apis.DieuChinhGBL(tokenLogin, formAdjustPrice)
-      if (response.data && response.data.DataError === 0) {
-        toast.success(response.data.DataErrorDescription)
-        loading()
-      } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-        toast.warning(response.data.DataErrorDescription)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        handleAdjustPrice()
-      } else {
-        toast.error(response.data.DataErrorDescription)
-      }
-
-      close()
-    } catch (error) {
-      console.error('Error while saving data:', error)
-    }
-  }
   const handleDieuChinh = () => {
-    if (selectedRowData.length <= 0) {
-      toast.warning('Chi tiết  không được để trống')
-      return
-    }
-    if (selectedRowData.map((item) => item.MaHang).includes('Chọn mã hàng')) {
-      toast.warning('Chọn mã hàng để dùng chức năng này!')
+    if (selectedRowData.length <= 0 || selectedRowData.map((item) => item.MaHang).includes('Chọn mã hàng')) {
+      toast.warning('Chọn hàng hóa để dùng chức năng này!')
       return
     }
     setIsShowModalDieuChinh(true)
@@ -430,7 +415,6 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
 
   const filterDSMa = (date) => {
     const filteredMaHang = data.filter((item) => dayjs(item.HieuLucTu).format('YYYY-MM-DD') === dayjs(date).format('YYYY-MM-DD')).map((item) => ({ Ma: item.MaHang }))
-    console.log('aaaaaa', filteredMaHang)
     setFormAdjustPrice({
       ...formAdjustPrice,
       HieuLucTu: dayjs(date).format('YYYY-MM-DD'),
@@ -443,6 +427,10 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
   const handleEditData = (data) => {
     setSelectedRowData(data)
   }
+  // const handleSelectRow = (data) => {
+  //   setSelectedRowData(...data)
+  //   console.log(data)
+  // }
 
   const handleFromChange = (value) => {
     setFormPrint({ ...formPrint, CodeValue1From: value })
@@ -466,6 +454,7 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
       close()
     }
   }
+
   return (
     <>
       <div className=" fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
@@ -811,6 +800,7 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
                       className="table_create_GBS"
                       param={selectedRowData}
                       handleEditData={handleEditData}
+                      // handleSelectRow={handleSelectRow}
                       ColumnTable={columnName}
                       columName={nameColumsGBS}
                       yourMaHangOptions={dataHangHoa}
@@ -1062,13 +1052,16 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
       )}
       {(isShowModalDieuChinh || actionType === 'adjustPrice') && (
         <ModalDieuChinh
+          type={typeAdjust}
           close={handleCloseDieuChinh}
           data={selectedRowData}
           dataThongSo={dataThongSo}
           loading={isLoading}
           namePage={namePage}
           typePage={typePage}
-          dataNhomGia={dataNhomGia}
+          dataRecord={dataRecord}
+          setHightLight={setHightLight}
+          onAdjustRow={handleAdjustRow}
         />
       )}
       {isShowImport && <ModalImport close={() => setIsShowImport(false)} namePage={namePage} loading={isLoading} />}
