@@ -1,36 +1,32 @@
-/* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
 import { Button, Checkbox, Col, Empty, Input, Row, Spin, Table, Tooltip, Typography } from 'antd'
 const { Text } = Typography
 import moment from 'moment'
-import { toast } from 'react-toastify'
 import { CgCloseO } from 'react-icons/cg'
-import { CiBarcode } from 'react-icons/ci'
 import { TfiMoreAlt } from 'react-icons/tfi'
-import { GrStatusUnknown } from 'react-icons/gr'
 import { RiFileExcel2Fill } from 'react-icons/ri'
 import { IoMdAddCircleOutline } from 'react-icons/io'
 import { FaSearch, FaEyeSlash } from 'react-icons/fa'
 import { CloseSquareFilled } from '@ant-design/icons'
-import { MdEdit, MdDelete, MdOutlineGroupAdd } from 'react-icons/md'
-import categoryAPI from '../../API/linkAPI'
+import { MdEdit, MdDelete } from 'react-icons/md'
 import { useSearch } from '../../components/hooks/Search'
-import ActionButton from '../../components/util/Button/ActionButton'
+import { RETOKEN, exportToExcel } from '../../action/Actions'
+import categoryAPI from '../../API/linkAPI'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
+import ActionButton from '../../components/util/Button/ActionButton'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
-import { nameColumsHangHoa } from '../../components/util/Table/ColumnName'
-import { RETOKEN, base64ToPDF, exportToExcel } from '../../action/Actions'
-import HangHoaModals from '../../components/Modals/DanhMuc/HangHoa/HangHoaModals'
-
-const HangHoa = () => {
+import { nameColumsPhanCaDS } from '../../components/util/Table/ColumnName'
+import PCCreate from '../../components/Modals/ThietLap/PhanCaDS/PCCreate'
+import PCView from '../../components/Modals/ThietLap/PhanCaDS/PCView'
+import PCEdit from '../../components/Modals/ThietLap/PhanCaDS/PCEdit'
+import PCDelete from '../../components/Modals/ThietLap/PhanCaDS/PCDelete'
+const PhanCaDS = () => {
   const navigate = useNavigate()
   const TokenAccess = localStorage.getItem('TKN')
-  const ThongSo = localStorage.getItem('ThongSo')
-  const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
-  const [dataHangHoa, setDataHangHoa] = useState()
-  const [setSearchHangHoa, filteredHangHoa, searchHangHoa] = useSearch(dataHangHoa)
+  const [dataPhanCa, setDataPhanCa] = useState()
+  const [setSearchPhanCa, filteredPhanCa, searchPhanCa] = useSearch(dataPhanCa)
   const [isMaHang, setIsMaHang] = useState()
   const [actionType, setActionType] = useState('')
   const [isShowModal, setIsShowModal] = useState(false)
@@ -39,7 +35,6 @@ const HangHoa = () => {
   const showOption = useRef(null)
   const [isLoading, setIsLoading] = useState(false)
   const [tableLoad, setTableLoad] = useState(true)
-  const [selectedRowKeys, setSelectedRowKeys] = useState([])
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [targetRow, setTargetRow] = useState([])
   const [dataCRUD, setDataCRUD] = useState()
@@ -47,31 +42,17 @@ const HangHoa = () => {
   const [checkedList, setCheckedList] = useState([])
   const [selectVisible, setSelectVisible] = useState(false)
   const [options, setOptions] = useState()
+  const [checked, setChecked] = useState({
+    List: true,
+    ListFull: false,
+  })
 
   useEffect(() => {
-    const getListHangHoa = async () => {
-      try {
-        setTableLoad(true)
-        const response = await categoryAPI.HangHoa(TokenAccess)
-        if (response.data.DataError === 0) {
-          setDataHangHoa(response.data.DataResults)
-          setTableLoad(false)
-          setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getListHangHoa()
-        } else {
-          setDataHangHoa([])
-          setTableLoad(false)
-          setIsLoading(true)
-        }
-      } catch (error) {
-        console.log(error)
-        setTableLoad(false)
-      }
-    }
-    getListHangHoa()
-  }, [searchHangHoa, targetRow])
+    setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
+    setCheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
+    const key = Object.keys(dataPhanCa ? dataPhanCa[0] : [] || []).filter((key) => key != 'SQLUser' && key != 'SQLPassword' && key != 'Loai')
+    setOptions(key)
+  }, [selectVisible])
 
   useEffect(() => {
     if (dataCRUD?.VIEW == false) {
@@ -80,9 +61,63 @@ const HangHoa = () => {
   }, [dataCRUD])
 
   useEffect(() => {
+    let timerId
+    clearTimeout(timerId)
+    checked.List == true
+      ? (timerId = setTimeout(() => {
+          getListPhanCa()
+        }, 1000))
+      : (timerId = setTimeout(() => {
+          getListPhanCaFull()
+        }, 1000))
+  }, [searchPhanCa, targetRow, checked])
+
+  const getListPhanCa = async () => {
+    try {
+      setTableLoad(true)
+      const response = await categoryAPI.PhanCa(TokenAccess)
+      if (response.data.DataError === 0) {
+        setDataPhanCa(response.data.DataResults)
+        setTableLoad(false)
+        setIsLoading(true)
+      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        await RETOKEN()
+        getListPhanCa()
+      } else {
+        setDataPhanCa([])
+        setTableLoad(false)
+        setIsLoading(true)
+      }
+    } catch (error) {
+      console.log(error)
+      setTableLoad(false)
+    }
+  }
+  const getListPhanCaFull = async () => {
+    try {
+      setTableLoad(true)
+      const response = await categoryAPI.PhanCaFull(TokenAccess)
+      if (response.data.DataError === 0) {
+        setDataPhanCa(response.data.DataResults)
+        setTableLoad(false)
+        setIsLoading(true)
+      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        await RETOKEN()
+        getListPhanCa()
+      } else {
+        setDataPhanCa([])
+        setTableLoad(false)
+        setIsLoading(true)
+      }
+    } catch (error) {
+      console.log(error)
+      setTableLoad(false)
+    }
+  }
+  useEffect(() => {
     const getDataQuyenHan = async () => {
       try {
-        const response = await categoryAPI.QuyenHan('DanhMuc_HangHoa', TokenAccess)
+        const response = await categoryAPI.QuyenHan('ThietLap_PhanCa', TokenAccess)
         if (response.data.DataError === 0) {
           setDataCRUD(response.data)
           setIsLoading(true)
@@ -110,17 +145,15 @@ const HangHoa = () => {
     }
   }, [])
 
-  useEffect(() => {
-    setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
-    setCheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
-    const key = Object.keys(dataHangHoa ? dataHangHoa[0] : [] || []).filter(
-      (key) => key !== 'CoThue' && key !== 'TyLeThue' && key !== 'Nhom' && key !== 'TyLeQuyDoi' && key !== 'DienGiaiHangHoa' && key !== 'DVTQuyDoi',
-    )
-    setOptions(key)
-  }, [selectVisible])
-
   const handleLoading = () => {
     setTableLoad(true)
+  }
+  const handleSearch = (event) => {
+    let timerId
+    clearTimeout(timerId)
+    timerId = setTimeout(() => {
+      setSearchPhanCa(event.target.value)
+    }, 300)
   }
   const handleCreate = () => {
     setActionType('create')
@@ -141,92 +174,6 @@ const HangHoa = () => {
     setActionType('edit')
     setIsMaHang(record)
     setIsShowModal(true)
-  }
-  const handleStatusMany = () => {
-    if (selectedRowKeys.length > 0) {
-      setActionType('statusMany')
-      setIsShowModal(true)
-      setIsMaHang(selectedRowKeys)
-    } else {
-      toast.warning('Vui Lòng Chọn Mã Hàng Muốn Đổi', { autoClose: 1000 })
-    }
-  }
-  const handleGroupMany = () => {
-    if (selectedRowKeys.length > 0) {
-      setActionType('groupMany')
-      setIsShowModal(true)
-      setIsMaHang(selectedRowKeys)
-    } else {
-      toast.warning('Vui Lòng Chọn Mã Hàng Muốn Đổi', { autoClose: 1000 })
-    }
-  }
-  const handlePrintBar = () => {
-    setActionType('print')
-    setIsShowModal(true)
-  }
-  const handlePrintABarcode = async (record) => {
-    try {
-      if (record) {
-        const response = await categoryAPI.InMaVach(
-          {
-            CodeValue2From: record.MaHang,
-            CodeValue2To: record.MaHang,
-            SoTem: 1,
-          },
-          TokenAccess,
-        )
-        if (response.data.DataError === 0) {
-          base64ToPDF(response.data.DataResults)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handlePrintABarcode()
-        } else {
-          toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
-        }
-      } else {
-        const response = await categoryAPI.InMaVach(
-          {
-            CodeValue2List: selectedRowKeys.map((key) => key.toString()).join(','),
-            SoTem: 1,
-          },
-          TokenAccess,
-        )
-        if (response.data.DataError === 0) {
-          base64ToPDF(response.data.DataResults)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handlePrintABarcode()
-        } else {
-          toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
-        }
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
-  const handleSearch = (event) => {
-    let timerId
-    clearTimeout(timerId)
-    timerId = setTimeout(() => {
-      setSearchHangHoa(event.target.value)
-    }, 300)
-  }
-  const formatCurrency = (value) => {
-    return Number(value).toLocaleString('en-US')
-  }
-  const formatThapPhan = (number, decimalPlaces) => {
-    if (typeof number === 'number' && !isNaN(number)) {
-      const formatter = new Intl.NumberFormat('en-US', {
-        minimumFractionDigits: decimalPlaces,
-      })
-      return formatter.format(number)
-    }
-    return ''
-  }
-  const handleRowClick = (record) => {
-    const isSelected = selectedRowKeys.includes(record.key)
-    const newSelectedRowKeys = isSelected ? selectedRowKeys.filter((key) => key !== record.key) : [...selectedRowKeys, record.key]
-    setSelectedRowKeys(newSelectedRowKeys)
   }
   const handleHidden = () => {
     setSelectVisible(!selectVisible)
@@ -252,185 +199,125 @@ const HangHoa = () => {
       align: 'center',
     },
     {
-      title: 'Mã hàng',
-      dataIndex: 'MaHang',
-      key: 'MaHang',
-      fixed: 'left',
+      title: 'Người dùng',
+      dataIndex: 'MaNguoiDung',
+      key: 'MaNguoiDung',
       width: 150,
-      align: 'center',
-      sorter: (a, b) => a.MaHang.localeCompare(b.MaHang),
-      showSorterTooltip: false,
-      render: (text) => <HighlightedCell text={text} search={searchHangHoa} />,
-    },
-    {
-      title: 'Tên hàng',
-      dataIndex: 'TenHang',
-      key: 'TenHang',
       fixed: 'left',
-      width: 220,
-      align: 'center',
-      sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       showSorterTooltip: false,
+      align: 'center',
+      sorter: (a, b) => (a.MaNguoiDung?.toString() || '').localeCompare(b.MaNguoiDung?.toString() || ''),
       render: (text) => (
         <Tooltip title={text} color="blue">
           <div
             style={{
+              display: 'flex',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
-              cursor: 'pointer',
-              textAlign: 'start',
+              justifyContent: 'start',
             }}
           >
-            <HighlightedCell text={text} search={searchHangHoa} />
+            <HighlightedCell text={text} search={searchPhanCa} />
           </div>
         </Tooltip>
       ),
     },
     {
-      title: 'Tên nhóm',
-      dataIndex: 'TenNhom',
-      key: 'TenNhom',
-      width: 150,
-      align: 'center',
-      sorter: (a, b) => a.TenNhom.localeCompare(b.TenNhom),
+      title: 'Tên người dùng',
+      dataIndex: 'TenNguoiDung',
+      width: 200,
+      key: 'TenNguoiDung',
       showSorterTooltip: false,
+      align: 'center',
+      sorter: (a, b) => (a.TenNguoiDung?.toString() || '').localeCompare(b.TenNguoiDung?.toString() || ''),
       render: (text) => (
         <Tooltip title={text} color="blue">
           <div
             style={{
+              display: 'flex',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
-              textAlign: 'start',
+              justifyContent: 'start',
             }}
           >
-            <HighlightedCell text={text} search={searchHangHoa} />
+            <HighlightedCell text={text} search={searchPhanCa} />
           </div>
         </Tooltip>
       ),
     },
     {
-      title: 'Đơn vị tính',
-      dataIndex: 'DVTKho',
-      key: 'DVTKho',
+      title: 'Kể từ ngày',
+      dataIndex: 'HieuLucTu',
+      key: 'HieuLucTu',
+      width: 200,
       align: 'center',
-      width: 120,
-      sorter: (a, b) => a.DVTKho.localeCompare(b.DVTKho),
-      showSorterTooltip: false,
-      render: (text) => <HighlightedCell text={text} search={searchHangHoa} />,
-    },
-    {
-      title: 'Quy đổi Đơn vị tính',
-      dataIndex: 'DienGiaiDVTQuyDoi',
-      key: 'DienGiaiDVTQuyDoi',
-      align: 'center',
-      showSorterTooltip: false,
-      sorter: (a, b) => a.DienGiaiDVTQuyDoi - b.DienGiaiDVTQuyDoi,
-      render: (text) => (
-        <span className="flex text-start">
-          <HighlightedCell text={text} search={searchHangHoa} />
-        </span>
-      ),
-    },
-    {
-      title: 'Mã vạch',
-      dataIndex: 'MaVach',
-      key: 'MaVach',
-      align: 'center',
-      width: 150,
-      sorter: (a, b) => a.MaVach - b.MaVach,
-      showSorterTooltip: false,
-      render: (text) => <HighlightedCell text={text} search={searchHangHoa} />,
-    },
-    {
-      title: 'Lắp ráp',
-      dataIndex: 'LapRap',
-      key: 'LapRap',
-      align: 'center',
-      width: 100,
       showSorterTooltip: false,
       sorter: (a, b) => {
-        const valueA = a.LapRap ? 1 : 0
-        const valueB = b.LapRap ? 1 : 0
-        return valueA - valueB
+        const dateA = new Date(a.HieuLucTu)
+        const dateB = new Date(b.HieuLucTu)
+        return dateA - dateB
       },
-      render: (text, record) => <Checkbox className="justify-center" id={`LapRap_${record.key}`} checked={text} />,
+      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY')} search={searchPhanCa} />,
     },
     {
-      title: 'Tồn kho',
-      dataIndex: 'TonKho',
-      key: 'TonKho',
+      title: 'Quầy',
+      dataIndex: 'SoQuay',
+      key: 'SoQuay',
+      width: 80,
       align: 'center',
-      width: 100,
+      sorter: (a, b) => a.SoQuay - b.SoQuay,
       showSorterTooltip: false,
-      sorter: (a, b) => {
-        const valueA = a.TonKho ? 1 : 0
-        const valueB = b.TonKho ? 1 : 0
-        return valueA - valueB
-      },
-      render: (text, record) => <Checkbox className=" justify-center" id={`TonKho_${record.key}`} checked={text} />,
-    },
-    {
-      title: 'Giá bán lẻ',
-      dataIndex: 'GiaBanLe',
-      key: 'GiaBanLe',
-      align: 'center',
-      width: 120,
-      showSorterTooltip: false,
-      sorter: (a, b) => a.GiaBanLe - b.GiaBanLe,
       render: (text) => (
-        <span className={`flex justify-end  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''}`}>
-          <HighlightedCell text={formatThapPhan(Number(text), dataThongSo.SOLEDONGIA)} search={searchHangHoa} />
-        </span>
+        <div>
+          <HighlightedCell text={Number(text).toLocaleString('en-US')} search={searchPhanCa} />
+        </div>
       ),
     },
     {
-      title: 'Số bảng giá',
-      dataIndex: 'BangGiaSi',
-      key: 'BangGiaSi',
-      width: 120,
-      showSorterTooltip: false,
-      sorter: (a, b) => a.BangGiaSi - b.BangGiaSi,
+      title: 'Ca',
+      dataIndex: 'MaCa',
+      key: 'MaCa',
+      width: 80,
       align: 'center',
+      sorter: (a, b) => a.MaCa - b.MaCa,
+      showSorterTooltip: false,
       render: (text) => (
-        <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base' : text === 0 || text === null ? 'text-gray-300' : ''}`}>
-          <HighlightedCell text={formatCurrency(text)} search={searchHangHoa} />
-        </span>
+        <div>
+          <HighlightedCell text={Number(text).toLocaleString('en-US')} search={searchPhanCa} />
+        </div>
       ),
     },
+
     {
-      title: 'Giá sỉ thấp',
-      dataIndex: 'BangGiaSi_Min',
-      key: 'BangGiaSi_Min',
-      width: 150,
-      align: 'center',
+      title: 'Ghi chú',
+      dataIndex: 'GhiChu',
+      key: 'GhiChu',
       showSorterTooltip: false,
-      sorter: (a, b) => a.BangGiaSi_Min - b.BangGiaSi_Min,
-      render: (text) => (
-        <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base' : text === 0 || text === null ? 'text-gray-300' : ''}`}>
-          <HighlightedCell text={formatThapPhan(Number(text), dataThongSo.SOLEDONGIA)} search={searchHangHoa} />
-        </span>
-      ),
-    },
-    {
-      title: 'Giá sỉ cao',
-      dataIndex: 'BangGiaSi_Max',
-      key: 'BangGiaSi_Max',
-      width: 150,
       align: 'center',
-      showSorterTooltip: false,
-      sorter: (a, b) => a.BangGiaSi_Max - b.BangGiaSi_Max,
+      sorter: (a, b) => (a.GhiChu?.toString() || '').localeCompare(b.GhiChu?.toString() || ''),
       render: (text) => (
-        <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base' : text === 0 || text === null ? 'text-gray-300' : ''}`}>
-          <HighlightedCell text={formatThapPhan(Number(text), dataThongSo.SOLEDONGIA)} search={searchHangHoa} />
-        </span>
+        <Tooltip title={text} color="blue">
+          <div
+            style={{
+              display: 'flex',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              justifyContent: 'start',
+            }}
+          >
+            <HighlightedCell text={text} search={searchPhanCa} />
+          </div>
+        </Tooltip>
       ),
     },
     {
       title: 'Người tạo',
       dataIndex: 'NguoiTao',
       key: 'NguoiTao',
+      width: 250,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => a.NguoiTao.localeCompare(b.NguoiTao),
@@ -443,7 +330,7 @@ const HangHoa = () => {
               whiteSpace: 'nowrap',
             }}
           >
-            <HighlightedCell text={text} search={searchHangHoa} />
+            <HighlightedCell text={text} search={searchPhanCa} />
           </div>
         </Tooltip>
       ),
@@ -452,6 +339,7 @@ const HangHoa = () => {
       title: 'Ngày tạo',
       dataIndex: 'NgayTao',
       key: 'NgayTao',
+      width: 200,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => {
@@ -459,13 +347,14 @@ const HangHoa = () => {
         const dateB = new Date(b.NgayTao)
         return dateA - dateB
       },
-      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss.SS')} search={searchHangHoa} />,
+      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss')} search={searchPhanCa} />,
     },
     {
       title: 'Người sửa',
       dataIndex: 'NguoiSuaCuoi',
       key: 'NguoiSuaCuoi',
       align: 'center',
+      width: 250,
       ellipsis: 'true',
       showSorterTooltip: false,
       sorter: (a, b) => (a.NguoiSuaCuoi?.toString() || '').localeCompare(b.NguoiSuaCuoi?.toString() || ''),
@@ -478,7 +367,7 @@ const HangHoa = () => {
               whiteSpace: 'nowrap',
             }}
           >
-            <HighlightedCell text={text} search={searchHangHoa} />
+            <HighlightedCell text={text} search={searchPhanCa} />
           </div>
         </Tooltip>
       ),
@@ -488,6 +377,7 @@ const HangHoa = () => {
       dataIndex: 'NgaySuaCuoi',
       key: 'NgaySuaCuoi',
       align: 'center',
+      width: 200,
       showSorterTooltip: false,
       sorter: (a, b) => {
         const dateA = new Date(a.NgaySuaCuoi)
@@ -496,31 +386,18 @@ const HangHoa = () => {
       },
       render: (text) => {
         if (text) {
-          return <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss.SS')} search={searchHangHoa} />
+          return <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss')} search={searchPhanCa} />
         } else {
           return ''
         }
       },
     },
+
     {
-      title: 'Ngưng dùng',
-      dataIndex: 'NA',
-      key: 'NA',
-      width: 120,
-      align: 'center',
-      showSorterTooltip: false,
-      sorter: (a, b) => {
-        const valueA = a.NA ? 1 : 0
-        const valueB = b.NA ? 1 : 0
-        return valueA - valueB
-      },
-      render: (text, record) => <Checkbox className="justify-center" id={`NA_${record.key}`} checked={text} />,
-    },
-    {
-      title: ' ',
+      title: '',
       key: 'operation',
       fixed: 'right',
-      width: 120,
+      width: 80,
       align: 'center',
       render: (record) => {
         return (
@@ -534,13 +411,6 @@ const HangHoa = () => {
                 } ' p-[4px] border-2 rounded text-slate-50 hover:bg-white cursor-pointer'`}
               >
                 <MdEdit />
-              </div>
-              <div
-                onClick={() => handlePrintABarcode(record)}
-                title="In"
-                className="p-[4px] border-2 rounded text-slate-50 border-purple-500 bg-purple-500 hover:bg-white hover:text-purple-500 cursor-pointer"
-              >
-                <CiBarcode />
               </div>
               <div
                 onClick={() => (dataCRUD?.DEL == false ? '' : handleDelete(record))}
@@ -558,7 +428,6 @@ const HangHoa = () => {
     },
   ]
   const newTitles = titles.filter((item) => !hiddenRow?.includes(item.dataIndex))
-
   return (
     <>
       {dataCRUD?.VIEW == false ? (
@@ -615,7 +484,7 @@ const HangHoa = () => {
                 <div className="flex justify-between gap-2 relative">
                   <div className="flex gap-2 items-center">
                     <div className="flex items-center gap-2 mt-1">
-                      <h1 className="text-xl font-black uppercase">Hàng Hóa</h1>
+                      <h1 className="text-xl font-black uppercase">Phân Ca (Danh Sách)</h1>
                       <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
                     </div>
                     <div className="flex">
@@ -643,17 +512,8 @@ const HangHoa = () => {
                       <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
                     </div>
                     {isShowOption && (
-                      <div className="absolute flex flex-col justify-center  items-center gap-2 bg-slate-200 px-2 py-3 top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom">
+                      <div className="absolute flex flex-col gap-2 bg-slate-200 px-3 py-2 items-center top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom">
                         <div className={`flex ${selectVisible ? '' : 'flex-col'} items-center gap-2`}>
-                          <ActionButton
-                            handleAction={() => handlePrintBar()}
-                            title={'In Theo Tem'}
-                            icon={<CiBarcode className="w-6 h-6" />}
-                            color={'slate-50'}
-                            background={'purple-500'}
-                            color_hover={'purple-500'}
-                            bg_hover={'white'}
-                          />
                           <ActionButton
                             handleAction={() => (dataCRUD?.EXCEL == false ? '' : exportToExcel())}
                             title={'Xuất Excel'}
@@ -679,7 +539,7 @@ const HangHoa = () => {
                             <div>
                               <Checkbox.Group
                                 style={{
-                                  width: '480px',
+                                  width: '380px',
                                   background: 'white',
                                   padding: 10,
                                   borderRadius: 10,
@@ -689,12 +549,12 @@ const HangHoa = () => {
                                 defaultValue={checkedList}
                                 onChange={onChange}
                               >
-                                <Row>
+                                <Row className="flex justify-center ">
                                   {options && options.length > 0 ? (
                                     options?.map((item, index) => (
-                                      <Col span={8} key={(item, index)}>
+                                      <Col span={10} key={(item, index)}>
                                         <Checkbox value={item} checked={true}>
-                                          {nameColumsHangHoa[item]}
+                                          {nameColumsPhanCaDS[item]}
                                         </Checkbox>
                                       </Col>
                                     ))
@@ -715,11 +575,43 @@ const HangHoa = () => {
                     )}
                   </div>
                 </div>
-                <div className="flex justify-end ">
+                <div className="flex justify-between">
+                  <div className="flex items-center">
+                    <div className="flex items-center">
+                      <Checkbox
+                        checked={checked.List}
+                        className="text-sm whitespace-nowrap"
+                        onChange={(e) =>
+                          setChecked({
+                            ...checked,
+                            List: e.target.checked,
+                            ListFull: !e.target.checked,
+                          })
+                        }
+                      >
+                        Hiện hành
+                      </Checkbox>
+                    </div>
+                    <div className="flex items-center">
+                      <Checkbox
+                        checked={checked.ListFull}
+                        className="text-sm whitespace-nowrap"
+                        onChange={(e) =>
+                          setChecked({
+                            ...checked,
+                            ListFull: e.target.checked,
+                            List: !e.target.checked,
+                          })
+                        }
+                      >
+                        Tất cả
+                      </Checkbox>
+                    </div>
+                  </div>
                   <div className="flex gap-2">
                     <ActionButton
                       handleAction={() => (dataCRUD?.ADD == false ? '' : handleCreate())}
-                      title={'Thêm Hàng Hóa'}
+                      title={'Thêm Phân Ca'}
                       icon={<IoMdAddCircleOutline className="w-6 h-6" />}
                       color={'slate-50'}
                       background={dataCRUD?.ADD == false ? 'gray-400' : 'blue-500'}
@@ -727,69 +619,27 @@ const HangHoa = () => {
                       bg_hover={'white'}
                       isPermission={dataCRUD?.ADD}
                     />
-                    <ActionButton
-                      handleAction={() => handleStatusMany()}
-                      title={'Đổi Trạng Thái'}
-                      icon={<GrStatusUnknown className="w-6 h-6" />}
-                      color={'slate-50'}
-                      background={'blue-500'}
-                      color_hover={'blue-500'}
-                      bg_hover={'white'}
-                    />
-                    <ActionButton
-                      handleAction={() => handleGroupMany()}
-                      title={'Đổi Nhóm Hàng'}
-                      icon={<MdOutlineGroupAdd className="w-6 h-6" />}
-                      color={'slate-50'}
-                      background={'blue-500'}
-                      color_hover={'blue-500'}
-                      bg_hover={'white'}
-                    />
-                    <ActionButton
-                      handleAction={() => handlePrintABarcode()}
-                      title={'In Mã Vạch '}
-                      icon={<CiBarcode className="w-6 h-6" />}
-                      color={'slate-50'}
-                      background={'purple-500'}
-                      color_hover={'purple-500'}
-                      bg_hover={'white'}
-                    />
                   </div>
                 </div>
                 <div id="my-table">
                   <Table
                     loading={tableLoad}
                     bordered
-                    rowSelection={{
-                      selectedRowKeys,
-                      showSizeChanger: true,
-                      onChange: (selectedKeys) => {
-                        setSelectedRowKeys(selectedKeys)
-                      },
-                    }}
-                    rowKey={(record) => record.MaHang}
                     onRow={(record) => ({
-                      onClick: () => {
-                        handleRowClick(record)
-                        const selected = selectedRowKeys.includes(record.MaHang)
-                        if (selected) {
-                          setSelectedRowKeys(selectedRowKeys.filter((key) => key !== record.MaHang))
-                        } else {
-                          setSelectedRowKeys([...selectedRowKeys, record.MaHang])
-                        }
+                      onDoubleClick: () => {
+                        handleView(record)
                       },
-                      onDoubleClick: () => handleView(record),
                     })}
-                    rowClassName={(record) => (record.MaHang === targetRow ? 'highlighted-row' : '')}
+                    rowClassName={(record) => (record?.MaNguoiDung == targetRow ? 'highlighted-row' : '')}
                     className="setHeight"
                     columns={newTitles}
-                    dataSource={filteredHangHoa.map((item, index) => ({
+                    dataSource={filteredPhanCa.map((item, index) => ({
                       ...item,
-                      modifiedIndex: index + 1,
+                      key: index,
                     }))}
                     size="small"
                     scroll={{
-                      x: 3000,
+                      x: 2200,
                       y: 400,
                     }}
                     pagination={{
@@ -808,32 +658,15 @@ const HangHoa = () => {
                       return (
                         <Table.Summary fixed="bottom">
                           <Table.Summary.Row>
-                            <Table.Summary.Cell className="bg-gray-100"></Table.Summary.Cell>
                             {newTitles
                               .filter((column) => column.render)
                               .map((column, index) => {
-                                const isNumericColumn = typeof filteredHangHoa[0]?.[column.dataIndex] === 'number'
+                                const isNumericColumn = typeof filteredPhanCa[0]?.[column.dataIndex] === 'number'
                                 return (
                                   <Table.Summary.Cell key={`summary-cell-${index + 1}`} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
-                                    {isNumericColumn ? (
-                                      column.dataIndex === 'GiaBanLe' || column.dataIndex === 'BangGiaSi_Min' || column.dataIndex === 'BangGiaSi_Max' ? (
-                                        <Text strong>
-                                          {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                            minimumFractionDigits: dataThongSo.SOLEDONGIA,
-                                            maximumFractionDigits: dataThongSo.SOLEDONGIA,
-                                          })}
-                                        </Text>
-                                      ) : (
-                                        <Text strong>
-                                          {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                            minimumFractionDigits: 0,
-                                            maximumFractionDigits: 0,
-                                          })}
-                                        </Text>
-                                      )
-                                    ) : column.dataIndex == 'STT' ? (
+                                    {column.dataIndex == 'STT' ? (
                                       <Text className="text-center" strong>
-                                        {dataHangHoa?.length}
+                                        {dataPhanCa?.length}
                                       </Text>
                                     ) : null}
                                   </Table.Summary.Cell>
@@ -847,16 +680,16 @@ const HangHoa = () => {
                 </div>
               </div>
               <div>
-                {isShowModal && (
-                  <HangHoaModals
-                    type={actionType}
-                    close={() => setIsShowModal(false)}
-                    getMaHang={isMaHang}
-                    getDataHangHoa={dataHangHoa}
-                    loadingData={() => handleLoading()}
-                    setTargetRow={setTargetRow}
-                  />
-                )}
+                {isShowModal &&
+                  (actionType == 'create' ? (
+                    <PCCreate close={() => setIsShowModal(false)} loadingData={handleLoading} setTargetRow={setTargetRow} dataPC={dataPhanCa} />
+                  ) : actionType == 'view' ? (
+                    <PCView close={() => setIsShowModal(false)} dataPC={isMaHang} />
+                  ) : actionType == 'edit' ? (
+                    <PCEdit close={() => setIsShowModal(false)} dataPC={isMaHang} loadingData={handleLoading} setTargetRow={setTargetRow} />
+                  ) : actionType == 'delete' ? (
+                    <PCDelete close={() => setIsShowModal(false)} dataPC={isMaHang} loadingData={handleLoading} setTargetRow={setTargetRow} />
+                  ) : null)}
               </div>
             </>
           )}
@@ -866,4 +699,4 @@ const HangHoa = () => {
   )
 }
 
-export default HangHoa
+export default PhanCaDS

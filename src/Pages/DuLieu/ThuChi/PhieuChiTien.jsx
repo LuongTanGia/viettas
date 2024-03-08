@@ -400,7 +400,7 @@ const PhieuChiTien = () => {
       width: 200,
       align: 'center',
       render: (text) => (
-        <div className={`text-end   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`text-end   ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchPCT} />
         </div>
       ),

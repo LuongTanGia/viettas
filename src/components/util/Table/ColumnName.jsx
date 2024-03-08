@@ -449,6 +449,18 @@ export const nameColumsQuayTinhTien = {
   NguoiCNTLCuoi: 'Người C.nhật T.lập',
   NgayCNTLCuoi: 'Ngày C.nhật T.lập',
 }
+export const nameColumsPhanCaDS = {
+  SoQuay: 'Quầy',
+  MaNguoiDung: 'Người dùng',
+  TenNguoiDung: 'Tên người dùng',
+  HieuLucTu: 'Kể từ ngày',
+  MaCa: 'Ca',
+  GhiChu: 'Ghi chú',
+  NguoiTao: 'Người tạo',
+  NgayTao: 'Ngày tạo',
+  NguoiSuaCuoi: 'Người sửa cuối',
+  NgaySuaCuoi: 'Ngày sửa cuối',
+}
 export const nameColumsCongNoDauRa = {
   MaDoiTuong: 'Mã khách hàng',
   TenDoiTuong: 'Tên khách hàng',

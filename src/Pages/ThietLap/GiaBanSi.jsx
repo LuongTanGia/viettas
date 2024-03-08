@@ -273,7 +273,7 @@ const GBS = () => {
       sorter: (a, b) => a.TongMatHang - b.TongMatHang,
       showSorterTooltip: false,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatCurrency(text)} search={searchGBS} />
         </div>
       ),
@@ -287,7 +287,7 @@ const GBS = () => {
       sorter: (a, b) => a.TongDoiTuong - b.TongDoiTuong,
       showSorterTooltip: false,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatCurrency(text)} search={searchGBS} />
         </div>
       ),

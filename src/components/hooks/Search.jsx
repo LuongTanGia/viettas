@@ -55,6 +55,10 @@ export const useSearch = (data) => {
           NgayCNHTCuoi,
           NguoiCNTLCuoi,
           NgayCNTLCuoi,
+          // Phân ca (Danh sách)
+          SoQuay,
+          HieuLucTu,
+          MaCa,
           // NTX
           TenNhomHang,
           TenKho,
@@ -148,6 +152,10 @@ export const useSearch = (data) => {
           (NguoiCNTLCuoi || '').toLowerCase().includes(search.toLowerCase()) ||
           (moment(NgayCNTLCuoi).format('DD/MM/YYYY') || '').toLowerCase().includes(search.toLowerCase()) ||
           (moment(NgayCNHTCuoi).format('DD/MM/YYYY') || '').toLowerCase().includes(search.toLowerCase()) ||
+          // PhanCa
+          (moment(HieuLucTu).format('DD/MM/YYYY') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (SoQuay?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (MaCa?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           // NXTKho
           (TenNhomHang || '').toLowerCase().includes(search.toLowerCase()) ||
           (TenKho || '').toLowerCase().includes(search.toLowerCase()) ||

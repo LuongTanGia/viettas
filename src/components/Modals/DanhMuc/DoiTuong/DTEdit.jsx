@@ -7,16 +7,12 @@ import { Checkbox, Input, Select, Tooltip } from 'antd'
 import categoryAPI from '../../../../API/linkAPI'
 import logo from '../../../../assets/VTS-iSale.ico'
 import { RETOKEN } from '../../../../action/Actions'
-import { FaPlus } from 'react-icons/fa'
 import ActionButton from '../../../util/Button/ActionButton'
 import SimpleBackdrop from '../../../util/Loading/LoadingPage'
-import NDTCreate from '../NhomDoiTuong/NDTCreate'
 const DTEdit = ({ close, loadingData, setTargetRow, dataDT }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const [isLoading, setIsLoading] = useState(false)
   const [nhomDT, setNhomDT] = useState()
-  const [isMaNDT, setIsMaNDT] = useState('')
-  const [isShowModal, setIsShowModal] = useState(false)
   const innitProduct = {
     Loai: 2,
     Nhom: '',
@@ -63,10 +59,6 @@ const DTEdit = ({ close, loadingData, setTargetRow, dataDT }) => {
     }
   }, [isLoading])
 
-  const handleLoading = () => {
-    setIsLoading(false)
-  }
-
   const handleEdit = async () => {
     if (!DTForm?.Ten?.trim()) {
       setErrors({
@@ -75,7 +67,7 @@ const DTEdit = ({ close, loadingData, setTargetRow, dataDT }) => {
       return
     }
     try {
-      const response = await categoryAPI.SuaDoiTuong({ Ma: dataDT?.Ma, Data: { ...DTForm, Nhom: isMaNDT ? isMaNDT : DTForm.Nhom } }, TokenAccess)
+      const response = await categoryAPI.SuaDoiTuong({ Ma: dataDT?.Ma, Data: { ...DTForm, Nhom: DTForm.Nhom } }, TokenAccess)
       if (response.data.DataError == 0) {
         close()
         loadingData()
@@ -136,35 +128,28 @@ const DTEdit = ({ close, loadingData, setTargetRow, dataDT }) => {
                       </Checkbox>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-1 w-[100%]">
-                      <label className=" whitespace-nowrap min-w-[90px] text-sm flex justify-end">Nhóm</label>
-                      <Select
-                        style={{ width: '100%' }}
-                        showSearch
-                        required
-                        size="small"
-                        value={isMaNDT ? isMaNDT : DTForm?.Nhom || undefined}
-                        onChange={(value) => {
-                          setDTForm({
-                            ...DTForm,
-                            Nhom: value,
-                          })
-                        }}
-                      >
-                        {nhomDT &&
-                          nhomDT?.map((item) => (
-                            <Select.Option key={item.Ma} value={item.Ma}>
-                              {item.ThongTinNhomDoiTuong}
-                            </Select.Option>
-                          ))}
-                      </Select>
-                    </div>
-                    <div onClick={() => setIsShowModal(true)}>
-                      <Tooltip title="Tạo đối tượng mới" color="blue">
-                        <FaPlus className=" w-5 h-5 cursor-pointer text-blue-500 border-2 border-blue-500 hover:bg-blue-500 hover:text-white" />
-                      </Tooltip>
-                    </div>
+                  <div className="flex items-center gap-1 w-[100%]">
+                    <label className=" whitespace-nowrap min-w-[90px] text-sm flex justify-end">Nhóm</label>
+                    <Select
+                      style={{ width: '100%' }}
+                      showSearch
+                      required
+                      size="small"
+                      value={DTForm?.Nhom || undefined}
+                      onChange={(value) => {
+                        setDTForm({
+                          ...DTForm,
+                          Nhom: value,
+                        })
+                      }}
+                    >
+                      {nhomDT &&
+                        nhomDT?.map((item) => (
+                          <Select.Option key={item.Ma} value={item.Ma}>
+                            {item.ThongTinNhomDoiTuong}
+                          </Select.Option>
+                        ))}
+                    </Select>
                   </div>
                   <div className="flex items-center gap-1">
                     <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Mã</label>
@@ -373,7 +358,6 @@ const DTEdit = ({ close, loadingData, setTargetRow, dataDT }) => {
               </div>
             </div>
           </div>
-          <div>{isShowModal && <NDTCreate close={() => setIsShowModal(false)} loadingData={handleLoading} setTargetRow={setTargetRow} isNDT={true} setIsMaNDT={setIsMaNDT} />}</div>
         </>
       )}
     </>

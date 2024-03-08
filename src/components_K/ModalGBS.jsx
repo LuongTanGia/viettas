@@ -182,7 +182,7 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
       showSorterTooltip: false,
 
       render: (text) => (
-        <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           {formatPrice(text, dataThongSo?.SOLESOTIEN)}
         </div>
       ),
@@ -213,7 +213,7 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
 
       sorter: (a, b) => a.TyLeThue - b.TyLeThue,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           {formatQuantity(text, dataThongSo?.SOLETYLE)}
         </div>
       ),

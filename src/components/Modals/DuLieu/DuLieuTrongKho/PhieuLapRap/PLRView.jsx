@@ -123,7 +123,7 @@ const PLRView = ({ close, dataPLR }) => {
       sorter: (a, b) => a.SoLuong - b.SoLuong,
       align: 'center',
       render: (text) => (
-        <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 || text === null ? 'text-gray-300' : ''}`}>
+        <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base' : text === 0 || text === null ? 'text-gray-300' : ''}`}>
           {formatThapPhan(text, dataThongSo.SOLESOLUONG)}
         </span>
       ),

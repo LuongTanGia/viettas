@@ -460,7 +460,7 @@ const PhieuBanLe = () => {
       width: 200,
       align: 'end',
       render: (text) => (
-        <div className={`flex justify-end w-full h-full    ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full    ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatQuantity(text, dataThongSo?.SOLESOLUONG)} search={searchPBL} />
         </div>
       ),
@@ -474,7 +474,7 @@ const PhieuBanLe = () => {
       width: 200,
       align: 'end',
       render: (text) => (
-        <div className={`flex justify-end w-full h-full ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchPBL} />
         </div>
       ),
@@ -488,7 +488,7 @@ const PhieuBanLe = () => {
       width: 200,
       align: 'end',
       render: (text) => (
-        <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchPBL} />
         </div>
       ),
@@ -502,7 +502,7 @@ const PhieuBanLe = () => {
       width: 200,
       align: 'end',
       render: (text) => (
-        <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchPBL} />
         </div>
       ),

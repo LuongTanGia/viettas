@@ -116,7 +116,6 @@ const KhoHang = () => {
     setTableLoad(true)
   }
   const handleSearch = (event) => {
-    setTableLoad(true)
     let timerId
     clearTimeout(timerId)
     timerId = setTimeout(() => {

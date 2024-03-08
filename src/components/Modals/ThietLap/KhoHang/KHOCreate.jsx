@@ -6,7 +6,7 @@ import { Input } from 'antd'
 import categoryAPI from '../../../../API/linkAPI'
 import logo from '../../../../assets/VTS-iSale.ico'
 import ActionButton from '../../../util/Button/ActionButton'
-const KHOCreate = ({ close, loadingData, setTargetRow, isKHO, setIsMaKHO }) => {
+const KHOCreate = ({ close, loadingData, setTargetRow }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const innitProduct = {
     MaKho: '',
@@ -44,7 +44,6 @@ const KHOCreate = ({ close, loadingData, setTargetRow, isKHO, setIsMaKHO }) => {
         loadingData()
         toast.success('Tạo thành công', { autoClose: 1000 })
         setTargetRow(KHOForm?.MaKho)
-        isKHO ? setIsMaKHO(KHOForm?.MaKho) : ''
       } else {
         console.log(response.data)
         toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
@@ -197,42 +196,25 @@ const KHOCreate = ({ close, loadingData, setTargetRow, isKHO, setIsMaKHO }) => {
               </div>
             </div>
             <div className="flex gap-2 justify-end ">
-              {isKHO ? (
-                <>
-                  <ActionButton
-                    handleAction={() => handleCreate(false)}
-                    title={'Xác nhận'}
-                    isModal={true}
-                    color={'slate-50'}
-                    background={'blue-500'}
-                    color_hover={'blue-500'}
-                    bg_hover={'white'}
-                  />
-                  <ActionButton handleAction={close} title={'Đóng'} isModal={true} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
-                </>
-              ) : (
-                <>
-                  <ActionButton
-                    handleAction={() => handleCreate(true)}
-                    title={'Lưu'}
-                    isModal={true}
-                    color={'slate-50'}
-                    background={'blue-500'}
-                    color_hover={'blue-500'}
-                    bg_hover={'white'}
-                  />
-                  <ActionButton
-                    handleAction={() => handleCreate(false)}
-                    title={'Lưu & Đóng'}
-                    isModal={true}
-                    color={'slate-50'}
-                    background={'blue-500'}
-                    color_hover={'blue-500'}
-                    bg_hover={'white'}
-                  />
-                  <ActionButton handleAction={close} title={'Đóng'} isModal={true} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
-                </>
-              )}
+              <ActionButton
+                handleAction={() => handleCreate(true)}
+                title={'Lưu'}
+                isModal={true}
+                color={'slate-50'}
+                background={'blue-500'}
+                color_hover={'blue-500'}
+                bg_hover={'white'}
+              />
+              <ActionButton
+                handleAction={() => handleCreate(false)}
+                title={'Lưu & Đóng'}
+                isModal={true}
+                color={'slate-50'}
+                background={'blue-500'}
+                color_hover={'blue-500'}
+                bg_hover={'white'}
+              />
+              <ActionButton handleAction={close} title={'Đóng'} isModal={true} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
             </div>
           </div>
         </div>

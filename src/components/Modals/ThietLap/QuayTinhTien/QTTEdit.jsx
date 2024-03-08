@@ -2,7 +2,6 @@
 /* eslint-disable react/prop-types */
 import moment from 'moment'
 import { toast } from 'react-toastify'
-import { FaPlus } from 'react-icons/fa'
 import { useEffect, useState } from 'react'
 import { Checkbox, Input, InputNumber, Select, Tooltip } from 'antd'
 import categoryAPI from '../../../../API/linkAPI'
@@ -10,14 +9,12 @@ import logo from '../../../../assets/VTS-iSale.ico'
 import { RETOKEN } from '../../../../action/Actions'
 import ActionButton from '../../../util/Button/ActionButton'
 import SimpleBackdrop from '../../../util/Loading/LoadingPage'
-import KHOCreate from '../KhoHang/KHOCreate'
 const QTTEdit = ({ close, loadingData, setTargetRow, dataQTT }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const [dataKho, setDataKho] = useState(null)
   const [dataNhomGia, setDataNhomGia] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [isShowModal, setIsShowModal] = useState(false)
-  const [isMaKHO, setIsMaKHO] = useState('')
+
   const innitProduct = {
     Quay: '',
     TenMayTinh: '',
@@ -87,12 +84,8 @@ const QTTEdit = ({ close, loadingData, setTargetRow, dataQTT }) => {
     }
   }, [isLoading])
 
-  const handleLoading = () => {
-    setIsLoading(false)
-  }
-
   const handleEdit = async () => {
-    if (!QTTForm?.TenMayTinh?.trim() || !QTTForm?.SQLServer?.trim() || !QTTForm?.SQLUser?.trim() || (isMaKHO ? null : !QTTForm?.MaKho?.trim())) {
+    if (!QTTForm?.TenMayTinh?.trim() || !QTTForm?.SQLServer?.trim() || !QTTForm?.SQLUser?.trim() || !QTTForm?.MaKho?.trim()) {
       setErrors({
         TenMayTinh: QTTForm?.TenMayTinh?.trim() ? null : 'Tên máy tính không được trống',
         SQLServer: QTTForm?.SQLServer?.trim() ? null : 'Trạm không được trống',
@@ -102,7 +95,7 @@ const QTTEdit = ({ close, loadingData, setTargetRow, dataQTT }) => {
       return
     }
     try {
-      const response = await categoryAPI.SuaQuayTinhTien({ Ma: dataQTT?.Quay, Data: { ...QTTForm, MaKho: isMaKHO ? isMaKHO : QTTForm.MaKho } }, TokenAccess)
+      const response = await categoryAPI.SuaQuayTinhTien({ Ma: dataQTT?.Quay, Data: { ...QTTForm, MaKho: QTTForm.MaKho } }, TokenAccess)
       if (response.data.DataError == 0) {
         close()
         loadingData()
@@ -260,38 +253,31 @@ const QTTEdit = ({ close, loadingData, setTargetRow, dataQTT }) => {
                       }}
                     />
                   </div>
-                  <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-1 w-[100%]">
-                      <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Kho</label>
-                      <Select
-                        style={{ width: '100%' }}
-                        showSearch
-                        required
-                        size="small"
-                        status={isMaKHO ? '' : errors.MaKho ? 'error' : ''}
-                        placeholder={isMaKHO ? '' : errors?.MaKho ? errors?.MaKho : ''}
-                        value={isMaKHO ? isMaKHO : QTTForm?.MaKho || undefined}
-                        onChange={(value) => {
-                          setQTTForm({
-                            ...QTTForm,
-                            MaKho: value,
-                          })
-                          setErrors({ ...errors, MaKho: '' })
-                        }}
-                      >
-                        {dataKho &&
-                          dataKho?.map((item, index) => (
-                            <Select.Option key={index} value={item.MaKho}>
-                              {item.ThongTinKho}
-                            </Select.Option>
-                          ))}
-                      </Select>
-                    </div>
-                    <div onClick={() => setIsShowModal(true)}>
-                      <Tooltip title="Tạo kho mới" color="blue">
-                        <FaPlus className=" w-5 h-5 cursor-pointer text-blue-500 border-2 border-blue-500 hover:bg-blue-500 hover:text-white" />
-                      </Tooltip>
-                    </div>
+                  <div className="flex items-center gap-1 w-[100%]">
+                    <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Kho</label>
+                    <Select
+                      style={{ width: '100%' }}
+                      showSearch
+                      required
+                      size="small"
+                      status={errors.MaKho ? 'error' : ''}
+                      placeholder={errors?.MaKho ? errors?.MaKho : ''}
+                      value={QTTForm?.MaKho || undefined}
+                      onChange={(value) => {
+                        setQTTForm({
+                          ...QTTForm,
+                          MaKho: value,
+                        })
+                        setErrors({ ...errors, MaKho: '' })
+                      }}
+                    >
+                      {dataKho &&
+                        dataKho?.map((item, index) => (
+                          <Select.Option key={index} value={item.MaKho}>
+                            {item.ThongTinKho}
+                          </Select.Option>
+                        ))}
+                    </Select>
                   </div>
 
                   <div className="flex items-center gap-12 ml-[100px]">
@@ -415,7 +401,6 @@ const QTTEdit = ({ close, loadingData, setTargetRow, dataQTT }) => {
               </div>
             </div>
           </div>
-          <div>{isShowModal && <KHOCreate close={() => setIsShowModal(false)} loadingData={handleLoading} setTargetRow={setTargetRow} isKHO={true} setIsMaKHO={setIsMaKHO} />}</div>
         </>
       )}
     </>

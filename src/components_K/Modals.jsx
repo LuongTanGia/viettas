@@ -176,7 +176,7 @@ const Modals = ({
       align: 'center',
       showSorterTooltip: false,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full    ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full    ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           {formatQuantity(text, dataThongSo?.SOLESOLUONG)}
         </div>
       ),
@@ -190,7 +190,7 @@ const Modals = ({
       align: 'center',
       showSorterTooltip: false,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           {formatPrice(text, dataThongSo?.SOLESOTIEN)}
         </div>
       ),
@@ -204,7 +204,7 @@ const Modals = ({
       align: 'center',
       showSorterTooltip: false,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           {formatPrice(text, dataThongSo?.SOLESOTIEN)}
         </div>
       ),
@@ -219,7 +219,7 @@ const Modals = ({
       showSorterTooltip: false,
       sorter: (a, b) => a.TyLeThue - b.TyLeThue,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           {formatQuantity(text, dataThongSo?.SOLETYLE)}
         </div>
       ),
@@ -232,7 +232,7 @@ const Modals = ({
       align: 'center',
       showSorterTooltip: false,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           {formatPrice(text, dataThongSo?.SOLESOTIEN)}
         </div>
       ),
@@ -247,7 +247,7 @@ const Modals = ({
       fixed: 'right',
       showSorterTooltip: false,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full   ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           {formatPrice(text, dataThongSo?.SOLESOTIEN)}
         </div>
       ),

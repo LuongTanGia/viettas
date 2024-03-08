@@ -429,7 +429,7 @@ const GBL = () => {
       sorter: (a, b) => a.DonGia - b.DonGia,
       showSorterTooltip: false,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatCurrency(text)} search={searchGBL} />
         </div>
       ),
@@ -456,7 +456,7 @@ const GBL = () => {
       width: 120,
       align: 'end',
       render: (text) => (
-        <div className={`flex justify-end w-full h-full    ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full    ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatCurrency(text)} search={searchGBL} />
         </div>
       ),

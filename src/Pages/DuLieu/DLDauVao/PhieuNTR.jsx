@@ -427,7 +427,7 @@ const PhieuNTR = () => {
       sorter: (a, b) => a.TongMatHang - b.TongMatHang,
       showSorterTooltip: false,
       render: (text) => (
-        <div className={`text-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`text-end ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatCurrency(text)} search={searchPNTR} />
         </div>
       ),
@@ -439,7 +439,7 @@ const PhieuNTR = () => {
       width: 200,
       align: 'center',
       render: (text) => (
-        <div className={`text-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`text-end ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatQuantity(text, dataThongSo?.SOLESOLUONG)} search={searchPNTR} />
         </div>
       ),
@@ -453,7 +453,7 @@ const PhieuNTR = () => {
       width: 200,
       align: 'center',
       render: (text) => (
-        <div className={`text-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`text-end ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchPNTR} />
         </div>
       ),
@@ -467,7 +467,7 @@ const PhieuNTR = () => {
       width: 200,
       align: 'center',
       render: (text) => (
-        <div className={`text-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`text-end ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchPNTR} />
         </div>
       ),
@@ -481,7 +481,7 @@ const PhieuNTR = () => {
       width: 200,
       align: 'center',
       render: (text) => (
-        <div className={`text-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`text-end ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchPNTR} />
         </div>
       ),

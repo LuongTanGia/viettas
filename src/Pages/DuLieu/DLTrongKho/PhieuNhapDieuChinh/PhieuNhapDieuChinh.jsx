@@ -188,7 +188,6 @@ const PhieuNhapDieuChinh = () => {
   }
   let timerId
   const handleSearch = (event) => {
-    setTableLoad(true)
     clearTimeout(timerId)
     timerId = setTimeout(() => {
       setSearchHangHoa(event.target.value)
@@ -345,7 +344,7 @@ const PhieuNhapDieuChinh = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.SoMatHang - b.SoMatHang,
       render: (text) => (
-        <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 || text === null ? 'text-gray-300' : ''}`}>
+        <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base' : text === 0 || text === null ? 'text-gray-300' : ''}`}>
           <HighlightedCell text={formatCurrency(text)} search={searchHangHoa} />
         </span>
       ),
@@ -359,7 +358,7 @@ const PhieuNhapDieuChinh = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.TongSoLuong - b.TongSoLuong,
       render: (text) => (
-        <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 || text === null ? 'text-gray-300' : ''}`}>
+        <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base' : text === 0 || text === null ? 'text-gray-300' : ''}`}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </span>
       ),
@@ -375,7 +374,7 @@ const PhieuNhapDieuChinh = () => {
             showSorterTooltip: false,
             sorter: (a, b) => a.TongSoLuong - b.TongSoLuong,
             render: (text) => (
-              <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 || text === null ? 'text-gray-300' : ''}`}>
+              <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base' : text === 0 || text === null ? 'text-gray-300' : ''}`}>
                 <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOTIEN)} search={searchHangHoa} />
               </span>
             ),

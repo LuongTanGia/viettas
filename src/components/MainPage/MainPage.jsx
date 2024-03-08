@@ -37,6 +37,7 @@ import KhoHang from '../../Pages/ThietLap/KhoHang'
 import QuanLy from '../../Pages/ThietLap/QuanLy'
 import QuayTinhTien from '../../Pages/ThietLap/QuayTinhTien'
 import NhapXuatTon from '../../Pages/TruyVan/NhapXuatTon'
+import PhanCaDS from '../../Pages/ThietLap/PhanCaDS'
 
 function MainPage({ isSidebarVisible }) {
   return (
@@ -78,6 +79,7 @@ function MainPage({ isSidebarVisible }) {
           <Route path="/ThietLap_GiaLe" element={<GiaBanLe />} />
           <Route path="/ThietLap_GiaSi" element={<GiaBanSi />} />
           <Route path="/ThietLap_KhoHang" element={<KhoHang />} />
+          <Route path="/ThietLap_PhanCongCa_DS" element={<PhanCaDS />} />
           <Route path="/ThietLap_QuanLy" element={<QuanLy />} />
           <Route path="/ThietLap_QuayTinhTien" element={<QuayTinhTien />} />
           <Route path="*" element={<ErrorPage />} />

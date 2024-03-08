@@ -117,7 +117,6 @@ const QuayTinhTien = () => {
     setTableLoad(true)
   }
   const handleSearch = (event) => {
-    setTableLoad(true)
     let timerId
     clearTimeout(timerId)
     timerId = setTimeout(() => {
@@ -703,7 +702,7 @@ const QuayTinhTien = () => {
                             <div>
                               <Checkbox.Group
                                 style={{
-                                  width: '450px',
+                                  width: '380px',
                                   background: 'white',
                                   padding: 10,
                                   borderRadius: 10,
@@ -713,7 +712,7 @@ const QuayTinhTien = () => {
                                 defaultValue={checkedList}
                                 onChange={onChange}
                               >
-                                <Row className="flex  ">
+                                <Row className="flex justify-center ">
                                   {options && options.length > 0 ? (
                                     options?.map((item, index) => (
                                       <Col span={10} key={(item, index)}>

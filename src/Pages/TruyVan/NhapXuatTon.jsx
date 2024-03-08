@@ -444,7 +444,7 @@ const NhapXuatTon = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongTonDK - b.SoLuongTonDK,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full px-2 ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full px-2 ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -457,7 +457,7 @@ const NhapXuatTon = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.TriGiaTonDK - b.TriGiaTonDK,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full px-2 ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full px-2 ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -470,7 +470,7 @@ const NhapXuatTon = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongNhap_PMH - b.SoLuongNhap_PMH,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -483,7 +483,7 @@ const NhapXuatTon = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.TriGiaNhap_PMH - b.TriGiaNhap_PMH,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -496,7 +496,7 @@ const NhapXuatTon = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongNhap_NTR - b.SoLuongNhap_NTR,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -509,7 +509,7 @@ const NhapXuatTon = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.TriGiaNhap_NTR - b.TriGiaNhap_NTR,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -522,7 +522,7 @@ const NhapXuatTon = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongNhap_NDC - b.SoLuongNhap_NDC,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -535,7 +535,7 @@ const NhapXuatTon = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.TriGiaNhap_NDC - b.TriGiaNhap_NDC,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -548,7 +548,7 @@ const NhapXuatTon = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongNhap - b.SoLuongNhap,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -561,7 +561,7 @@ const NhapXuatTon = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.TriGiaNhap - b.TriGiaNhap,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -574,7 +574,7 @@ const NhapXuatTon = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongXuat_PBS - b.SoLuongXuat_PBS,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -587,7 +587,7 @@ const NhapXuatTon = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.TriGiaXuat_PBS - b.TriGiaXuat_PBS,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -600,7 +600,7 @@ const NhapXuatTon = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongXuat_PBL - b.SoLuongXuat_PBL,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -613,7 +613,7 @@ const NhapXuatTon = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.TriGiaXuat_PBL - b.TriGiaXuat_PBL,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -626,7 +626,7 @@ const NhapXuatTon = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongXuat_PBQ - b.SoLuongXuat_PBQ,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -639,7 +639,7 @@ const NhapXuatTon = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.TriGiaXuat_PBQ - b.TriGiaXuat_PBQ,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -652,7 +652,7 @@ const NhapXuatTon = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongXuat_XTR - b.SoLuongXuat_XTR,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -665,7 +665,7 @@ const NhapXuatTon = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.TriGiaXuat_XTR - b.TriGiaXuat_XTR,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -678,7 +678,7 @@ const NhapXuatTon = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongXuat_XSD - b.SoLuongXuat_XSD,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -691,7 +691,7 @@ const NhapXuatTon = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.TriGiaXuat_XSD - b.TriGiaXuat_XSD,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -704,7 +704,7 @@ const NhapXuatTon = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongXuat_HUY - b.SoLuongXuat_HUY,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -717,7 +717,7 @@ const NhapXuatTon = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.TriGiaXuat_HUY - b.TriGiaXuat_HUY,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -730,7 +730,7 @@ const NhapXuatTon = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongXuat_XDC - b.SoLuongXuat_XDC,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -743,7 +743,7 @@ const NhapXuatTon = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.TriGiaXuat_XDC - b.TriGiaXuat_XDC,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -756,7 +756,7 @@ const NhapXuatTon = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongXuat - b.SoLuongXuat,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -769,7 +769,7 @@ const NhapXuatTon = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.TriGiaXuat - b.TriGiaXuat,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -782,7 +782,7 @@ const NhapXuatTon = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongTonCK - b.SoLuongTonCK,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -795,7 +795,7 @@ const NhapXuatTon = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.TriGiaTonCK - b.TriGiaTonCK,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),

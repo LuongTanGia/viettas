@@ -987,6 +987,70 @@ const categoryAPI = {
     }
     return axiosClient.post(url, {}, { headers })
   },
+  // ThietLap/PhanCa
+  PhanCa(accessToken) {
+    const url = '/settings/PhanCa/DanhSach'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, {}, { headers })
+  },
+  PhanCaFull(accessToken) {
+    const url = '/settings/PhanCa/DanhSachFull'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, {}, { headers })
+  },
+  InfoPhanCa(body, accessToken) {
+    const url = '/settings/PhanCa/ThongTin'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  ThemPhanCa(body, accessToken) {
+    const url = '/settings/PhanCa/Them'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  SuaPhanCa(body, accessToken) {
+    const url = '/settings/PhanCa/Sua'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  XoaPhanCa(body, accessToken) {
+    const url = '/settings/PhanCa/Xoa'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  ListHelperPC_NguoiDung(accessToken) {
+    const url = '/settings/PhanCa/ListHelper_NguoiDung'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, {}, { headers })
+  },
+  ListHelperPC_QuayTinhTien(accessToken) {
+    const url = '/settings/PhanCa/ListHelper_QuayTinhTien'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, {}, { headers })
+  },
+  ListHelperPC_CaLamViec(accessToken) {
+    const url = '/settings/PhanCa/ListHelper_CaLamViec'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, {}, { headers })
+  },
   // Hethong/KhoanNgay
   KhoanNgay(accessToken) {
     const url = '/settings/GiaTriHeThong/KhoanNgay'

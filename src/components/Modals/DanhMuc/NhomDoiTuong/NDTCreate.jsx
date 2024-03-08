@@ -7,7 +7,7 @@ import categoryAPI from '../../../../API/linkAPI'
 import logo from '../../../../assets/VTS-iSale.ico'
 import ActionButton from '../../../util/Button/ActionButton'
 
-const NDTCreate = ({ close, loadingData, setTargetRow, isNDT, setIsMaNDT }) => {
+const NDTCreate = ({ close, loadingData, setTargetRow }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const innitProduct = {
     Ma: '',
@@ -41,7 +41,6 @@ const NDTCreate = ({ close, loadingData, setTargetRow, isNDT, setIsMaNDT }) => {
         loadingData()
         toast.success('Tạo thành công', { autoClose: 1000 })
         setTargetRow(NDTForm?.Ma)
-        isNDT ? setIsMaNDT(NDTForm?.Ma) : ''
       } else {
         toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
       }
@@ -136,42 +135,25 @@ const NDTCreate = ({ close, loadingData, setTargetRow, isNDT, setIsMaNDT }) => {
               </div>
             </div>
             <div className="flex gap-2 justify-end ">
-              {isNDT ? (
-                <>
-                  <ActionButton
-                    handleAction={() => handleCreate(false)}
-                    title={'Lưu & Đóng'}
-                    isModal={true}
-                    color={'slate-50'}
-                    background={'blue-500'}
-                    color_hover={'blue-500'}
-                    bg_hover={'white'}
-                  />
-                  <ActionButton handleAction={close} title={'Đóng'} isModal={true} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
-                </>
-              ) : (
-                <>
-                  <ActionButton
-                    handleAction={() => handleCreate(true)}
-                    title={'Lưu'}
-                    isModal={true}
-                    color={'slate-50'}
-                    background={'blue-500'}
-                    color_hover={'blue-500'}
-                    bg_hover={'white'}
-                  />
-                  <ActionButton
-                    handleAction={() => handleCreate(false)}
-                    title={'Lưu & Đóng'}
-                    isModal={true}
-                    color={'slate-50'}
-                    background={'blue-500'}
-                    color_hover={'blue-500'}
-                    bg_hover={'white'}
-                  />
-                  <ActionButton handleAction={close} title={'Đóng'} isModal={true} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
-                </>
-              )}
+              <ActionButton
+                handleAction={() => handleCreate(true)}
+                title={'Lưu'}
+                isModal={true}
+                color={'slate-50'}
+                background={'blue-500'}
+                color_hover={'blue-500'}
+                bg_hover={'white'}
+              />
+              <ActionButton
+                handleAction={() => handleCreate(false)}
+                title={'Lưu & Đóng'}
+                isModal={true}
+                color={'slate-50'}
+                background={'blue-500'}
+                color_hover={'blue-500'}
+                bg_hover={'white'}
+              />
+              <ActionButton handleAction={close} title={'Đóng'} isModal={true} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
             </div>
           </div>
         </div>
