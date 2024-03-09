@@ -28,6 +28,8 @@ export const useSearchHH = (data) => {
           TenDoiTuong,
           ThongTinNhomGia,
           GhiChu,
+          // SoSanhBG
+          GiaLe,
         } = item || {}
 
         return (
@@ -48,6 +50,8 @@ export const useSearchHH = (data) => {
           // (NgaySuaCuoi || '').toLowerCase().includes(search.toLowerCase()) ||
           (NguoiSuaCuoi || '').toLowerCase().includes(search.toLowerCase()) ||
           (MaVach?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          // SoSanhGB
+          (GiaLe?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           // GiaKH
           (MaDoiTuong || '').toLowerCase().includes(search.toLowerCase()) ||
           (TenDoiTuong || '').toLowerCase().includes(search.toLowerCase()) ||

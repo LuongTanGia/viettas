@@ -10,14 +10,12 @@ import { RETOKEN, formatCurrency } from '../../action/Actions'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
 import { exportToExcel } from '../../action/Actions'
 import { CloseSquareFilled } from '@ant-design/icons'
-import { useNavigate } from 'react-router-dom'
 import { useSearchHH } from '../../components_K/myComponents/useSearchHH'
 import { Segmented } from 'antd'
 const { Option } = Select
 const { Text } = Typography
-const { IoAddCircleOutline, TiPrinter, MdDelete, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill, CgCloseO, MdFilterAlt, BsWrenchAdjustableCircle } = icons
+const { IoAddCircleOutline, TiPrinter, MdDelete, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill, MdFilterAlt, BsWrenchAdjustableCircle } = icons
 const GBL = () => {
-  const navigate = useNavigate()
   const optionContainerRef = useRef(null)
   const [tableLoad, setTableLoad] = useState(true)
   const [isLoadingEdit, setIsLoadingEdit] = useState(true)
@@ -31,6 +29,7 @@ const GBL = () => {
   const [dataThongTin, setDataThongTin] = useState({})
   const [dataRecord, setDataRecord] = useState(null)
   const [dataHangHoa, setDataHangHoa] = useState(null)
+  const [dataMaHang, setDataMaHang] = useState([])
   const [dataNhomGia, setDataNhomGia] = useState([])
   const [actionType, setActionType] = useState('')
   const [dataQuyenHan, setDataQuyenHan] = useState({})
@@ -53,8 +52,6 @@ const GBL = () => {
     CodeValue1From: null,
     CodeValue1To: null,
   })
-
-  const [dataMaHang, setDataMaHang] = useState([])
 
   // bỏ focus option thì hidden
   useEffect(() => {
@@ -101,7 +98,12 @@ const GBL = () => {
     })
     setDataMaHang(selectedRowObjs)
   }, [selectedRowKeys])
-
+  // default showFull
+  useEffect(() => {
+    if (formFilter.CodeValue1From === undefined || formFilter.CodeValue1To === undefined) {
+      setFormFilter({ CodeValue1From: null, CodeValue1To: null })
+    }
+  }, [formFilter])
   // get helper
   useEffect(() => {
     setIsLoadingModal(true)
@@ -226,13 +228,6 @@ const GBL = () => {
     //   }
     // }
   }, [tableLoad, dataQuyenHan?.VIEW])
-
-  // default showFull
-  useEffect(() => {
-    if (formFilter.CodeValue1From === undefined || formFilter.CodeValue1To === undefined) {
-      setFormFilter({ CodeValue1From: null, CodeValue1To: null })
-    }
-  }, [formFilter])
 
   const getDSGBL = async () => {
     try {

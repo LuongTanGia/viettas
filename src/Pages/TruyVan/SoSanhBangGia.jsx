@@ -1,19 +1,20 @@
 import { useEffect, useState, useRef } from 'react'
 import { Table, Checkbox, Tooltip, Row, Col, Typography, Input, Select } from 'antd'
-import moment from 'moment'
 import icons from '../../untils/icons'
 import { toast } from 'react-toastify'
 import * as apis from '../../apis'
 import ActionButton from '../../components/util/Button/ActionButton'
-import { RETOKEN, formatCurrency } from '../../action/Actions'
+import { RETOKEN, formatPrice } from '../../action/Actions'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
 import { exportToExcel } from '../../action/Actions'
 import { CloseSquareFilled } from '@ant-design/icons'
 import { useSearchHH } from '../../components_K/myComponents/useSearchHH'
 import { PermissionView } from '../../components_K'
+
 const { Option } = Select
 const { Text } = Typography
 const { BsSearch, TfiMoreAlt, FaEyeSlash, RiFileExcel2Fill, MdFilterAlt } = icons
+
 const SoSanhBG = () => {
   const optionContainerRef = useRef(null)
   const [tableLoad, setTableLoad] = useState(true)
@@ -21,10 +22,9 @@ const SoSanhBG = () => {
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [isShowOption, setIsShowOption] = useState(false)
   const [data, setData] = useState([])
-
-  // const [dataHangHoa, setDataHangHoa] = useState(null)
-  const [dataNhomGia, setDataNhomGia] = useState([])
-
+  const [dataHangHoa, setDataHangHoa] = useState(null)
+  // const [dataNhomGia, setDataNhomGia] = useState([])
+  const [dataNhomHang, setDataNhomHang] = useState([])
   const [dataQuyenHan, setDataQuyenHan] = useState({})
   const [setSearchSoSanhBG, filteredSoSanhBG, searchSoSanhBG] = useSearchHH(data)
   const [prevSearchValue, setPrevSearchValue] = useState('')
@@ -35,11 +35,18 @@ const SoSanhBG = () => {
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
   const [isShowNotify, setIsShowNotify] = useState(false)
-  const [valueList, setValueList] = useState([])
-
+  const [valueList1, setValueList1] = useState([])
+  const [valueList2, setValueList2] = useState([])
   const [formFilter, setFormFilter] = useState({
     CodeValue1From: null,
     CodeValue1To: null,
+    CodeValue2From: null,
+    CodeValue2To: null,
+    CodeValue3From: null,
+    CodeValue3To: null,
+    CodeValue3List: null,
+    CodeValue1List: null,
+    CodeValue2List: null,
   })
 
   // bỏ focus option thì hidden
@@ -80,23 +87,18 @@ const SoSanhBG = () => {
   }, [confirmed])
 
   // get helper
-
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = async (apiFunc, setDataFunc) => {
       try {
-        console.log('get helper')
-
         const tokenLogin = localStorage.getItem('TKN')
-
-        console.log('get helper  KH,DT')
-        const response = await apis.ListHelperNhomGiaSoSanhBG(tokenLogin)
+        const response = await apiFunc(tokenLogin)
         if (response.data && response.data.DataError === 0) {
-          setDataNhomGia(response.data.DataResults)
+          setDataFunc(response.data.DataResults)
         } else if (response.data.DataError === -1 || response.data.DataError === -2 || response.data.DataError === -3) {
           toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
         } else if (response.data.DataError === -107 || response.data.DataError === -108) {
           await RETOKEN()
-          fetchData()
+          fetchData(apiFunc, setDataFunc) // Thực hiện lại gọi API nếu cần
         } else {
           toast.error(response.data.DataErrorDescription)
         }
@@ -104,8 +106,12 @@ const SoSanhBG = () => {
         console.error('Lấy data thất bại', error)
       }
     }
-    fetchData()
+
+    fetchData(apis.ListHelperNhomHangSoSanhGB, setDataNhomHang)
+    fetchData(apis.ListHelperHHSoSanhGB, setDataHangHoa)
+    // fetchData(apis.ListHelperNhomGiaSoSanhGB, setDataNhomGia)
   }, [])
+
   // get Chức năng quyền hạn
   useEffect(() => {
     const getChucNangQuyenHan = async () => {
@@ -139,6 +145,17 @@ const SoSanhBG = () => {
       setIsShowNotify(true)
     }
   }, [dataQuyenHan])
+
+  // handle Nhóm undefined
+  useEffect(() => {
+    if (formFilter.CodeValue1From === undefined || formFilter.CodeValue1To === undefined) {
+      setFormFilter({ ...formFilter, CodeValue1From: null, CodeValue1To: null })
+    }
+    if (formFilter.CodeValue2From === undefined || formFilter.CodeValue2To === undefined) {
+      setFormFilter({ ...formFilter, CodeValue2From: null, CodeValue2To: null })
+    }
+  }, [formFilter])
+
   //get DSSoSanhBG
   useEffect(() => {
     if (tableLoad && dataQuyenHan?.VIEW) {
@@ -146,19 +163,11 @@ const SoSanhBG = () => {
     }
   }, [tableLoad, dataQuyenHan?.VIEW])
 
-  // default showFull
-  useEffect(() => {
-    if (formFilter.CodeValue1From === undefined || formFilter.CodeValue1To === undefined) {
-      setFormFilter({ CodeValue1From: null, CodeValue1To: null })
-    }
-  }, [formFilter])
-
   const getDSSoSanhBG = async () => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
 
-      const response = await apis.DanhSachSoSanhBG(tokenLogin, { ...formFilter, CodeValue1List: valueList.join(',') })
-
+      const response = await apis.DanhSachSoSanhGB(tokenLogin, { ...formFilter, CodeValue1List: valueList1.join(','), CodeValue2List: valueList2.join(',') })
       if (response.data && response.data.DataError === 0) {
         setData(response.data.DataResults)
         setTableLoad(false)
@@ -179,6 +188,30 @@ const SoSanhBG = () => {
     }
   }
 
+  // Extract dynamic columns from the data
+  const dynamicColumns =
+    filteredSoSanhBG && filteredSoSanhBG.length > 0
+      ? Object.keys(filteredSoSanhBG[0])
+          .filter((key) => key.startsWith('Col_'))
+          .map((colKey) => {
+            const columnName = colKey.substring(4) // Extract column name after 'Col_'
+            return {
+              title: columnName,
+              dataIndex: colKey,
+              key: colKey,
+              width: 150,
+              align: 'center',
+              render: (text) => (
+                <div className={`text-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+                  <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchSoSanhBG} />
+                </div>
+              ),
+              sorter: (a, b) => a[colKey] - b[colKey],
+              showSorterTooltip: false,
+            }
+          })
+      : []
+
   const columns = [
     {
       title: 'STT',
@@ -191,12 +224,11 @@ const SoSanhBG = () => {
       render: (text, record, index) => <div style={{ textAlign: 'center' }}>{index + 1}</div>,
     },
     {
-      title: 'Nhóm hàng',
-      dataIndex: 'ThongTinNhom',
-      key: 'ThongTinNhom',
-      width: 250,
-      fixed: 'left',
-      sorter: (a, b) => a.ThongTinNhom.localeCompare(b.ThongTinNhom),
+      title: 'Mã hàng',
+      dataIndex: 'MaHang',
+      key: 'MaHang',
+      width: 150,
+      sorter: (a, b) => a.MaHang.localeCompare(b.MaHang),
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
@@ -209,26 +241,12 @@ const SoSanhBG = () => {
         </div>
       ),
     },
-    {
-      title: 'Mã hàng',
-      dataIndex: 'MaHang',
-      key: 'MaHang',
-      width: 150,
-      fixed: 'left',
-      sorter: (a, b) => a.MaHang.localeCompare(b.MaHang),
-      showSorterTooltip: false,
-      align: 'center',
-      render: (text) => (
-        <div style={{ textAlign: 'start' }}>
-          <HighlightedCell text={text} search={searchSoSanhBG} />
-        </div>
-      ),
-    },
+
     {
       title: 'Tên hàng',
       dataIndex: 'TenHang',
       key: 'TenHang',
-      width: 250,
+      width: 200,
       align: 'center',
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       showSorterTooltip: false,
@@ -267,130 +285,28 @@ const SoSanhBG = () => {
           <HighlightedCell text={text} search={searchSoSanhBG} />
         </div>
       ),
-
       sorter: (a, b) => {
         return a.MaVach - b.MaVach
       },
       showSorterTooltip: false,
     },
     {
-      title: 'Kể từ ngày',
-      dataIndex: 'HieuLucTu',
-      key: 'HieuLucTu',
-      align: 'center',
-      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY')} search={searchSoSanhBG} />,
-      width: 120,
-      sorter: (a, b) => {
-        const dateA = new Date(a.HieuLucTu)
-        const dateB = new Date(b.HieuLucTu)
-        return dateA - dateB
-      },
-      showSorterTooltip: false,
-    },
-    {
       title: 'Giá bán lẻ',
-      dataIndex: 'DonGia',
-      key: 'DonGia',
-      width: 200,
+      dataIndex: 'GiaLe',
+      key: 'GiaLe',
       align: 'center',
-      sorter: (a, b) => a.DonGia - b.DonGia,
-      showSorterTooltip: false,
-      render: (text) => (
-        <div className={`flex justify-end w-full h-full ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatCurrency(text)} search={searchSoSanhBG} />
-        </div>
-      ),
-    },
-    {
-      title: 'Đã có thuế',
-      key: 'CoThue',
-      dataIndex: 'CoThue',
       width: 120,
-      align: 'center',
-      render: (text) => <Checkbox value={text} disabled={!text} checked={text} />,
-      sorter: (a, b) => {
-        const valueA = a.CoThue ? 1 : 0
-        const valueB = b.CoThue ? 1 : 0
-        return valueA - valueB
-      },
-      showSorterTooltip: false,
-    },
-
-    {
-      title: '% Thuế',
-      dataIndex: 'TyLeThue',
-      key: 'TyLeThue',
-      width: 120,
-      align: 'end',
       render: (text) => (
-        <div className={`flex justify-end w-full h-full    ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatCurrency(text)} search={searchSoSanhBG} />
+        <div className={`text-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchSoSanhBG} />
         </div>
       ),
-      sorter: (a, b) => a.TyLeThue - b.TyLeThue,
-      showSorterTooltip: false,
-    },
-    {
-      title: 'Ngày tạo',
-      dataIndex: 'NgayTao',
-      key: 'NgayTao',
-      align: 'center',
-      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY hh:mm:ss')} search={searchSoSanhBG} />,
-      width: 200,
       sorter: (a, b) => {
-        const dateA = new Date(a.NgayTao)
-        const dateB = new Date(b.NgayTao)
-        return dateA - dateB
+        return a.GiaLe - b.GiaLe
       },
       showSorterTooltip: false,
     },
-    {
-      title: 'Người tạo',
-      dataIndex: 'NguoiTao',
-      key: 'NguoiTao',
-      width: 250,
-      sorter: (a, b) => a.NguoiTao.localeCompare(b.NguoiTao),
-      showSorterTooltip: false,
-      align: 'center',
-      render: (text) => (
-        <div className="truncate ">
-          <HighlightedCell text={text} search={searchSoSanhBG} />
-        </div>
-      ),
-    },
-    {
-      title: 'Ngày sửa cuối',
-      dataIndex: 'NgaySuaCuoi',
-      key: 'NgaySuaCuoi',
-      align: 'center',
-      render: (text) => <HighlightedCell text={text ? moment(text).format('DD/MM/YYYY hh:mm:ss') : null} search={searchSoSanhBG} />,
-      width: 200,
-      sorter: (a, b) => {
-        const dateA = new Date(a.NgaySuaCuoi)
-        const dateB = new Date(b.NgaySuaCuoi)
-        return dateA - dateB
-      },
-      showSorterTooltip: false,
-    },
-    {
-      title: 'Người sửa cuối',
-      dataIndex: 'NguoiSuaCuoi',
-      key: 'NguoiSuaCuoi',
-      width: 250,
-      sorter: (a, b) => {
-        const NguoiSuaCuoiA = a.NguoiSuaCuoi || ''
-        const NguoiSuaCuoiB = b.NguoiSuaCuoi || ''
-
-        return NguoiSuaCuoiA.localeCompare(NguoiSuaCuoiB)
-      },
-      showSorterTooltip: false,
-      align: 'center',
-      render: (text) => (
-        <div className="truncate ">
-          <HighlightedCell text={text} search={searchSoSanhBG} />
-        </div>
-      ),
-    },
+    ...dynamicColumns,
   ]
 
   const options = columns.slice(0, -1).map(({ key, title }) => ({
@@ -418,14 +334,29 @@ const SoSanhBG = () => {
     setFormFilter({ ...formFilter, CodeValue1From: value })
 
     if (formFilter.CodeValue1To === null || value > formFilter.CodeValue1To) {
-      setFormFilter({ CodeValue1From: value, CodeValue1To: value })
+      setFormFilter({ ...formFilter, CodeValue1From: value, CodeValue1To: value })
     }
   }
   const handleToChange = (value) => {
     setFormFilter({ ...formFilter, CodeValue1To: value })
 
     if (formFilter.CodeValue1From === null || value < formFilter.CodeValue1From) {
-      setFormFilter({ CodeValue1From: value, CodeValue1To: value })
+      setFormFilter({ ...formFilter, CodeValue1From: value, CodeValue1To: value })
+    }
+  }
+
+  const handleFrom2Change = (value) => {
+    setFormFilter({ ...formFilter, CodeValue2From: value })
+
+    if (formFilter.CodeValue2To === null || value > formFilter.CodeValue2To) {
+      setFormFilter({ ...formFilter, CodeValue2From: value, CodeValue2To: value })
+    }
+  }
+  const handleTo2Change = (value) => {
+    setFormFilter({ ...formFilter, CodeValue2To: value })
+
+    if (formFilter.CodeValue2From === null || value < formFilter.CodeValue2From) {
+      setFormFilter({ ...formFilter, CodeValue2From: value, CodeValue2To: value })
     }
   }
 
@@ -445,7 +376,7 @@ const SoSanhBG = () => {
               </div>
               <div className="flex  ">
                 {isShowSearch && (
-                  <div className={`flex absolute left-[14rem] -top-[2px] transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
+                  <div className={`flex absolute left-[18rem] -top-[2px] transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
                     <Input
                       allowClear={{
                         clearIcon: <CloseSquareFilled />,
@@ -529,7 +460,7 @@ const SoSanhBG = () => {
             </div>
             <div className="flex  items-center px-2  gap-2">
               <div className="flex flex-col gap-y-2 ">
-                <div className="flex  justify-between gap-1">
+                <div className="flex  gap-1">
                   <div className="flex gap-1 items-center">
                     <div className="w-[42px] text-end">Nhóm</div>
                     <Select
@@ -540,12 +471,12 @@ const SoSanhBG = () => {
                       value={formFilter.CodeValue1From}
                       onChange={handleFromChange}
                       style={{
-                        width: '12vw',
+                        width: '14vw',
                         textOverflow: 'ellipsis',
                       }}
                       popupMatchSelectWidth={false}
                     >
-                      {dataNhomGia?.map((item) => (
+                      {dataNhomHang?.map((item) => (
                         <Option key={item.Ma} value={item.Ma} title={item.Ten}>
                           {item.Ma} - {item.Ten}
                         </Option>
@@ -562,12 +493,12 @@ const SoSanhBG = () => {
                       value={formFilter.CodeValue1To}
                       onChange={handleToChange}
                       style={{
-                        width: '12vw',
+                        width: '14vw',
                         textOverflow: 'ellipsis',
                       }}
                       popupMatchSelectWidth={false}
                     >
-                      {dataNhomGia?.map((item) => (
+                      {dataNhomHang?.map((item) => (
                         <Option key={item.Ma} value={item.Ma} title={item.Ten}>
                           {item.Ma} - {item.Ten}
                         </Option>
@@ -579,14 +510,14 @@ const SoSanhBG = () => {
                     <Select
                       mode="multiple"
                       allowClear
-                      maxTagCount={1}
+                      maxTagCount={2}
                       size="small"
                       placeholder="Chọn nhóm"
-                      value={valueList}
-                      onChange={(value) => setValueList(value)}
-                      className="w-[60vw] truncate"
+                      value={valueList1}
+                      onChange={(value) => setValueList1(value)}
+                      className="md:w-[40vw] lg:w-[50vw] truncate"
                     >
-                      {dataNhomGia?.map((item) => (
+                      {dataNhomHang?.map((item) => (
                         <Option key={item.Ma} value={item.Ma}>
                           {item.Ma} - {item.Ten}
                         </Option>
@@ -594,25 +525,26 @@ const SoSanhBG = () => {
                     </Select>
                   </div>
                 </div>
+                {/*  */}
                 <div className="flex  justify-between gap-1">
                   <div className="flex gap-1 items-center">
-                    <div className="w-[42px] text-end">Nhóm</div>
+                    <div className="w-[42px] text-end">H.Hóa</div>
                     <Select
                       showSearch
                       size="small"
                       allowClear
                       placeholder="Chọn nhóm"
-                      value={formFilter.CodeValue1From}
-                      onChange={handleFromChange}
+                      value={formFilter.CodeValue2From}
+                      onChange={handleFrom2Change}
                       style={{
-                        width: '12vw',
+                        width: '14vw',
                         textOverflow: 'ellipsis',
                       }}
                       popupMatchSelectWidth={false}
                     >
-                      {dataNhomGia?.map((item) => (
-                        <Option key={item.Ma} value={item.Ma} title={item.Ten}>
-                          {item.Ma} - {item.Ten}
+                      {dataHangHoa?.map((item) => (
+                        <Option key={item.MaHang} value={item.MaHang} title={item.TenHang}>
+                          {item.MaHang} - {item.TenHang}
                         </Option>
                       ))}
                     </Select>
@@ -624,17 +556,17 @@ const SoSanhBG = () => {
                       allowClear
                       size="small"
                       placeholder="Chọn nhóm"
-                      value={formFilter.CodeValue1To}
-                      onChange={handleToChange}
+                      value={formFilter.CodeValue2To}
+                      onChange={handleTo2Change}
                       style={{
-                        width: '12vw',
+                        width: '14vw',
                         textOverflow: 'ellipsis',
                       }}
                       popupMatchSelectWidth={false}
                     >
-                      {dataNhomGia?.map((item) => (
-                        <Option key={item.Ma} value={item.Ma} title={item.Ten}>
-                          {item.Ma} - {item.Ten}
+                      {dataHangHoa?.map((item) => (
+                        <Option key={item.MaHang} value={item.MaHang} title={item.TenHang}>
+                          {item.MaHang} - {item.TenHang}
                         </Option>
                       ))}
                     </Select>
@@ -644,16 +576,16 @@ const SoSanhBG = () => {
                     <Select
                       mode="multiple"
                       allowClear
-                      maxTagCount={1}
+                      maxTagCount={3}
                       size="small"
                       placeholder="Chọn nhóm"
-                      value={valueList}
-                      onChange={(value) => setValueList(value)}
-                      className="w-[60vw] truncate"
+                      value={valueList2}
+                      onChange={(value) => setValueList2(value)}
+                      className="md:w-[40vw] lg:w-[50vw] truncate"
                     >
-                      {dataNhomGia?.map((item) => (
-                        <Option key={item.Ma} value={item.Ma}>
-                          {item.Ma} - {item.Ten}
+                      {dataHangHoa?.map((item) => (
+                        <Option key={item.MaHang} value={item.MaHang} title={item.TenHang}>
+                          {item.MaHang} - {item.TenHang}
                         </Option>
                       ))}
                     </Select>
@@ -681,7 +613,7 @@ const SoSanhBG = () => {
             <div id="my-table" className="relative px-2 py-1 ">
               <Table
                 loading={tableLoad}
-                className=" setHeight"
+                className="GBL"
                 columns={newColumnsHide}
                 dataSource={filteredSoSanhBG}
                 size="small"
@@ -703,7 +635,6 @@ const SoSanhBG = () => {
                   return (
                     <Table.Summary fixed="bottom">
                       <Table.Summary.Row>
-                        <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell>
                         {newColumnsHide
                           .filter((column) => column.render)
                           .map((column) => {
