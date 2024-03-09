@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
-import { Button, Checkbox, Col, Empty, Input, Row, Spin, Table, Tooltip, Typography } from 'antd'
+import { Button, Checkbox, Col, Empty, Input, Row, Segmented, Spin, Table, Tooltip, Typography } from 'antd'
 const { Text } = Typography
 import moment from 'moment'
 import { CgCloseO } from 'react-icons/cg'
@@ -22,6 +22,8 @@ import PCCreate from '../../components/Modals/ThietLap/PhanCaDS/PCCreate'
 import PCView from '../../components/Modals/ThietLap/PhanCaDS/PCView'
 import PCEdit from '../../components/Modals/ThietLap/PhanCaDS/PCEdit'
 import PCDelete from '../../components/Modals/ThietLap/PhanCaDS/PCDelete'
+import { toast } from 'react-toastify'
+
 const PhanCaDS = () => {
   const navigate = useNavigate()
   const TokenAccess = localStorage.getItem('TKN')
@@ -42,10 +44,8 @@ const PhanCaDS = () => {
   const [checkedList, setCheckedList] = useState([])
   const [selectVisible, setSelectVisible] = useState(false)
   const [options, setOptions] = useState()
-  const [checked, setChecked] = useState({
-    List: true,
-    ListFull: false,
-  })
+  const [checked, setChecked] = useState('Hiện hành')
+  const [timerId, setTimerId] = useState(null)
 
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
@@ -61,15 +61,20 @@ const PhanCaDS = () => {
   }, [dataCRUD])
 
   useEffect(() => {
-    let timerId
     clearTimeout(timerId)
-    checked.List == true
-      ? (timerId = setTimeout(() => {
-          getListPhanCa()
-        }, 1000))
-      : (timerId = setTimeout(() => {
-          getListPhanCaFull()
-        }, 1000))
+    if (timerId) {
+      toast.warn('Bạn đang thao tác quá nhanh !', { autoClose: 1000 })
+    }
+    const newTimerId = setTimeout(() => {
+      if (checked === 'Hiện hành') {
+        getListPhanCa()
+      } else {
+        getListPhanCaFull()
+      }
+      setTimerId(null)
+    }, 1000)
+    setTimerId(newTimerId)
+    return () => clearTimeout(newTimerId)
   }, [searchPhanCa, targetRow, checked])
 
   const getListPhanCa = async () => {
@@ -117,7 +122,7 @@ const PhanCaDS = () => {
   useEffect(() => {
     const getDataQuyenHan = async () => {
       try {
-        const response = await categoryAPI.QuyenHan('ThietLap_PhanCa', TokenAccess)
+        const response = await categoryAPI.QuyenHan('ThietLap_PhanCongCa_DS', TokenAccess)
         if (response.data.DataError === 0) {
           setDataCRUD(response.data)
           setIsLoading(true)
@@ -428,6 +433,7 @@ const PhanCaDS = () => {
     },
   ]
   const newTitles = titles.filter((item) => !hiddenRow?.includes(item.dataIndex))
+  const maNguoiDung = dataPhanCa?.map((item) => item.MaNguoiDung)
   return (
     <>
       {dataCRUD?.VIEW == false ? (
@@ -577,7 +583,7 @@ const PhanCaDS = () => {
                 </div>
                 <div className="flex justify-between">
                   <div className="flex items-center">
-                    <div className="flex items-center">
+                    {/* <div className="flex items-center">
                       <Checkbox
                         checked={checked.List}
                         className="text-sm whitespace-nowrap"
@@ -606,7 +612,14 @@ const PhanCaDS = () => {
                       >
                         Tất cả
                       </Checkbox>
-                    </div>
+                    </div> */}
+                    <Segmented
+                      options={['Hiện hành', 'Tất cả']}
+                      value={checked}
+                      onChange={(value) => {
+                        setChecked(value)
+                      }}
+                    />
                   </div>
                   <div className="flex gap-2">
                     <ActionButton
@@ -682,11 +695,11 @@ const PhanCaDS = () => {
               <div>
                 {isShowModal &&
                   (actionType == 'create' ? (
-                    <PCCreate close={() => setIsShowModal(false)} loadingData={handleLoading} setTargetRow={setTargetRow} dataPC={dataPhanCa} />
+                    <PCCreate close={() => setIsShowModal(false)} loadingData={handleLoading} setTargetRow={setTargetRow} dataPC={dataPhanCa} maNguoiDung={maNguoiDung} />
                   ) : actionType == 'view' ? (
                     <PCView close={() => setIsShowModal(false)} dataPC={isMaHang} />
                   ) : actionType == 'edit' ? (
-                    <PCEdit close={() => setIsShowModal(false)} dataPC={isMaHang} loadingData={handleLoading} setTargetRow={setTargetRow} />
+                    <PCEdit close={() => setIsShowModal(false)} dataPC={isMaHang} loadingData={handleLoading} setTargetRow={setTargetRow} maNguoiDung={maNguoiDung} />
                   ) : actionType == 'delete' ? (
                     <PCDelete close={() => setIsShowModal(false)} dataPC={isMaHang} loadingData={handleLoading} setTargetRow={setTargetRow} />
                   ) : null)}

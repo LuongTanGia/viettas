@@ -360,7 +360,14 @@ const categoryAPI = {
     }
     return axiosClient.post(url, {}, { headers })
   },
-
+  // DoanhSo/ DoanhSoBanHangKho
+  InfoBSDHKHO(body, accessToken) {
+    const url = '/inquiries/DoanhSo/KhoHang'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
   // DuLieu/DLTK/PhieuNDC
   GetDataNDC(body, accessToken) {
     const url = '/entries/DuLieuNDC/DanhSach'
