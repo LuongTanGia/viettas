@@ -1,36 +1,32 @@
 import { useEffect, useState, useRef } from 'react'
-import { Table, Checkbox, Tooltip, Row, Col, Typography, Input } from 'antd'
+import { Table, Checkbox, Tooltip, Row, Col, Typography, Input, Select } from 'antd'
 import moment from 'moment'
 import icons from '../../untils/icons'
 import { toast } from 'react-toastify'
 import * as apis from '../../apis'
-import { ModalGBS, PermissionView } from '../../components_K'
 import ActionButton from '../../components/util/Button/ActionButton'
 import { RETOKEN, formatCurrency } from '../../action/Actions'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
 import { exportToExcel } from '../../action/Actions'
 import { CloseSquareFilled } from '@ant-design/icons'
-import { useNavigate } from 'react-router-dom'
-import { useSearch } from '../../components_K/myComponents/useSearch'
-
+import { useSearchHH } from '../../components_K/myComponents/useSearchHH'
+import { PermissionView } from '../../components_K'
+const { Option } = Select
 const { Text } = Typography
-const { IoAddCircleOutline, MdDelete, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill, CgCloseO, TiPrinter, FaRegCopy, BsWrenchAdjustableCircle } = icons
-const GBS = () => {
-  const navigate = useNavigate()
+const { BsSearch, TfiMoreAlt, FaEyeSlash, RiFileExcel2Fill, MdFilterAlt } = icons
+const SoSanhBG = () => {
   const optionContainerRef = useRef(null)
   const [tableLoad, setTableLoad] = useState(true)
-  const [isLoadingEdit, setIsLoadingEdit] = useState(true)
-  const [isLoadingModal, setIsLoadingModal] = useState(true)
-  const [isShowModal, setIsShowModal] = useState(false)
+
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [isShowOption, setIsShowOption] = useState(false)
   const [data, setData] = useState([])
-  const [dataThongTin, setDataThongTin] = useState({})
-  const [dataRecord, setDataRecord] = useState(null)
-  const [dataHangHoa, setDataHangHoa] = useState(null)
-  const [actionType, setActionType] = useState('')
+
+  // const [dataHangHoa, setDataHangHoa] = useState(null)
+  const [dataNhomGia, setDataNhomGia] = useState([])
+
   const [dataQuyenHan, setDataQuyenHan] = useState({})
-  const [setSearchGBS, filteredGBS, searchGBS] = useSearch(data)
+  const [setSearchSoSanhBG, filteredSoSanhBG, searchSoSanhBG] = useSearchHH(data)
   const [prevSearchValue, setPrevSearchValue] = useState('')
   const [hideColumns, setHideColumns] = useState(false)
   const [checkedList, setCheckedList] = useState([])
@@ -39,7 +35,12 @@ const GBS = () => {
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
   const [isShowNotify, setIsShowNotify] = useState(false)
-  const [doneGKH, setDoneGKH] = useState(null)
+  const [valueList, setValueList] = useState([])
+
+  const [formFilter, setFormFilter] = useState({
+    CodeValue1From: null,
+    CodeValue1To: null,
+  })
 
   // bỏ focus option thì hidden
   useEffect(() => {
@@ -61,7 +62,7 @@ const GBS = () => {
   useEffect(() => {
     setNewColumns(columns)
     // Lấy thông tin từ local storage sau khi đăng nhập
-    const storedHiddenColumns = localStorage.getItem('hidenColumnGBS')
+    const storedHiddenColumns = localStorage.getItem('hidenColumnSoSanhBG')
     const parsedHiddenColumns = storedHiddenColumns ? JSON.parse(storedHiddenColumns) : null
 
     // Áp dụng thông tin đã lưu vào checkedList và setConfirmed để ẩn cột
@@ -73,74 +74,45 @@ const GBS = () => {
 
   useEffect(() => {
     if (confirmed) {
-      setCheckedList(JSON.parse(localStorage.getItem('hidenColumnGBS')))
-      setNewColumns(JSON.parse(localStorage.getItem('hidenColumnGBS')))
+      setCheckedList(JSON.parse(localStorage.getItem('hidenColumnSoSanhBG')))
+      setNewColumns(JSON.parse(localStorage.getItem('hidenColumnSoSanhBG')))
     }
   }, [confirmed])
 
   // get helper
+
   useEffect(() => {
-    setIsLoadingModal(true)
-    setIsLoadingEdit(true)
     const fetchData = async () => {
       try {
+        console.log('get helper')
+
         const tokenLogin = localStorage.getItem('TKN')
-        if (actionType === 'create' || actionType === 'edit' || actionType === 'clone') {
-          console.log('get helper  KH,DT')
-          const response = await apis.ListHelperHHGBS(tokenLogin)
-          if (response.data && response.data.DataError === 0) {
-            setDataHangHoa(response.data.DataResults)
-            setIsLoadingModal(false)
-          } else if (response.data.DataError === -1 || response.data.DataError === -2 || response.data.DataError === -3) {
-            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-            setIsLoadingModal(false)
-          } else if (response.data.DataError === -107 || response.data.DataError === -108) {
-            await RETOKEN()
-            fetchData()
-          } else {
-            toast.error(response.data.DataErrorDescription)
-            setIsLoadingModal(false)
-          }
-        }
-        if (actionType === 'view' || actionType === 'edit' || actionType === 'clone') {
-          console.log('get helper tt')
-          const responseTT = await apis.ThongTinGBS(tokenLogin, dataRecord.NhomGia)
-          if (responseTT.data && responseTT.data.DataError === 0) {
-            setDataThongTin(responseTT.data.DataResult)
-            setIsLoadingModal(false)
-          } else if (responseTT.data.DataError === -1 || responseTT.data.DataError === -2 || responseTT.data.DataError === -3) {
-            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseTT.data.DataErrorDescription}</div>)
-            setIsLoadingModal(false)
-          } else if (responseTT.data.DataError === -107 || responseTT.data.DataError === -108) {
-            await RETOKEN()
-            fetchData()
-          } else {
-            toast.error(responseTT.data.DataErrorDescription)
-            setIsLoadingModal(false)
-          }
+
+        console.log('get helper  KH,DT')
+        const response = await apis.ListHelperNhomGiaSoSanhBG(tokenLogin)
+        if (response.data && response.data.DataError === 0) {
+          setDataNhomGia(response.data.DataResults)
+        } else if (response.data.DataError === -1 || response.data.DataError === -2 || response.data.DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+        } else if (response.data.DataError === -107 || response.data.DataError === -108) {
+          await RETOKEN()
+          fetchData()
+        } else {
+          toast.error(response.data.DataErrorDescription)
         }
       } catch (error) {
         console.error('Lấy data thất bại', error)
-        setIsLoadingModal(false)
-        // setIsShowModal(false)
-        setIsLoadingEdit(false)
-
-        // toast.error('Lấy data thất bại. Vui lòng thử lại sau.')
       }
     }
-
-    if (isShowModal) {
-      fetchData()
-    }
-  }, [isShowModal])
-
+    fetchData()
+  }, [])
   // get Chức năng quyền hạn
   useEffect(() => {
     const getChucNangQuyenHan = async () => {
       try {
         console.log('đi')
         const tokenLogin = localStorage.getItem('TKN')
-        const response = await apis.ChucNangQuyenHan(tokenLogin, 'ThietLap_GiaSi')
+        const response = await apis.ChucNangQuyenHan(tokenLogin, 'ThietLap_GiaLe')
 
         if (response.data && response.data.DataError === 0) {
           setDataQuyenHan(response.data)
@@ -162,31 +134,37 @@ const GBS = () => {
 
     getChucNangQuyenHan()
   }, [])
-
   useEffect(() => {
     if (dataQuyenHan?.VIEW == false) {
       setIsShowNotify(true)
     }
   }, [dataQuyenHan])
-  //get DSGBS
+  //get DSSoSanhBG
   useEffect(() => {
     if (tableLoad && dataQuyenHan?.VIEW) {
-      getDSGBS()
+      getDSSoSanhBG()
     }
   }, [tableLoad, dataQuyenHan?.VIEW])
 
-  const getDSGBS = async () => {
+  // default showFull
+  useEffect(() => {
+    if (formFilter.CodeValue1From === undefined || formFilter.CodeValue1To === undefined) {
+      setFormFilter({ CodeValue1From: null, CodeValue1To: null })
+    }
+  }, [formFilter])
+
+  const getDSSoSanhBG = async () => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
 
-      const response = await apis.DanhSachGBS(tokenLogin)
+      const response = await apis.DanhSachSoSanhBG(tokenLogin, { ...formFilter, CodeValue1List: valueList.join(',') })
 
       if (response.data && response.data.DataError === 0) {
         setData(response.data.DataResults)
         setTableLoad(false)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
-        getDSGBS()
+        getDSSoSanhBG()
       } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
         toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
         setTableLoad(false)
@@ -213,92 +191,151 @@ const GBS = () => {
       render: (text, record, index) => <div style={{ textAlign: 'center' }}>{index + 1}</div>,
     },
     {
-      title: 'Mã bảng giá',
-      dataIndex: 'NhomGia',
-      key: 'NhomGia',
-      width: 150,
+      title: 'Nhóm hàng',
+      dataIndex: 'ThongTinNhom',
+      key: 'ThongTinNhom',
+      width: 250,
       fixed: 'left',
-      sorter: (a, b) => a.NhomGia.localeCompare(b.NhomGia),
+      sorter: (a, b) => a.ThongTinNhom.localeCompare(b.ThongTinNhom),
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
         <div className="truncate text-start">
           <Tooltip title={text} color="blue" placement="top">
             <span>
-              <HighlightedCell text={text} search={searchGBS} />
+              <HighlightedCell text={text} search={searchSoSanhBG} />
             </span>
           </Tooltip>
         </div>
       ),
     },
     {
-      title: 'Tên bảng giá',
-      dataIndex: 'TenNhomGia',
-      key: 'TenNhomGia',
-      width: 250,
-
-      sorter: (a, b) => a.TenNhomGia.localeCompare(b.TenNhomGia),
+      title: 'Mã hàng',
+      dataIndex: 'MaHang',
+      key: 'MaHang',
+      width: 150,
+      fixed: 'left',
+      sorter: (a, b) => a.MaHang.localeCompare(b.MaHang),
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
         <div style={{ textAlign: 'start' }}>
-          <HighlightedCell text={text} search={searchGBS} />
+          <HighlightedCell text={text} search={searchSoSanhBG} />
         </div>
       ),
     },
-
     {
-      title: 'Tổng mặt hàng',
-      dataIndex: 'TongMatHang',
-      key: 'TongMatHang',
-      width: 200,
+      title: 'Tên hàng',
+      dataIndex: 'TenHang',
+      key: 'TenHang',
+      width: 250,
       align: 'center',
-      sorter: (a, b) => a.TongMatHang - b.TongMatHang,
+      sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       showSorterTooltip: false,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatCurrency(text)} search={searchGBS} />
+        <div className="truncate text-start">
+          <Tooltip title={text} color="blue" placement="top">
+            <span>
+              <HighlightedCell text={text} search={searchSoSanhBG} />
+            </span>
+          </Tooltip>
         </div>
       ),
     },
     {
-      title: 'Tổng khách hàng',
-      dataIndex: 'TongDoiTuong',
-      key: 'TongDoiTuong',
-      width: 200,
+      title: 'DVT',
+      dataIndex: 'DVT',
+      key: 'DVT',
+      width: 100,
       align: 'center',
-      sorter: (a, b) => a.TongDoiTuong - b.TongDoiTuong,
-      showSorterTooltip: false,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatCurrency(text)} search={searchGBS} />
+        <div>
+          <HighlightedCell text={text} search={searchSoSanhBG} />
         </div>
       ),
+      sorter: (a, b) => a.DVT.localeCompare(b.DVT),
+      showSorterTooltip: false,
     },
     {
-      title: 'Ghi chú ',
-      dataIndex: 'GhiChu',
-      key: 'GhiChu',
-      width: 200,
-      sorter: (a, b) => {
-        const GhiChuA = a.GhiChu || ''
-        const GhiChuB = b.GhiChu || ''
-        return GhiChuA.localeCompare(GhiChuB)
-      },
-      showSorterTooltip: false,
+      title: 'Mã vạch',
+      dataIndex: 'MaVach',
+      key: 'MaVach',
+      width: 150,
       align: 'center',
       render: (text) => (
         <div className="truncate text-start">
-          <HighlightedCell text={text} search={searchGBS} />
+          <HighlightedCell text={text} search={searchSoSanhBG} />
         </div>
       ),
+
+      sorter: (a, b) => {
+        return a.MaVach - b.MaVach
+      },
+      showSorterTooltip: false,
+    },
+    {
+      title: 'Kể từ ngày',
+      dataIndex: 'HieuLucTu',
+      key: 'HieuLucTu',
+      align: 'center',
+      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY')} search={searchSoSanhBG} />,
+      width: 120,
+      sorter: (a, b) => {
+        const dateA = new Date(a.HieuLucTu)
+        const dateB = new Date(b.HieuLucTu)
+        return dateA - dateB
+      },
+      showSorterTooltip: false,
+    },
+    {
+      title: 'Giá bán lẻ',
+      dataIndex: 'DonGia',
+      key: 'DonGia',
+      width: 200,
+      align: 'center',
+      sorter: (a, b) => a.DonGia - b.DonGia,
+      showSorterTooltip: false,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatCurrency(text)} search={searchSoSanhBG} />
+        </div>
+      ),
+    },
+    {
+      title: 'Đã có thuế',
+      key: 'CoThue',
+      dataIndex: 'CoThue',
+      width: 120,
+      align: 'center',
+      render: (text) => <Checkbox value={text} disabled={!text} checked={text} />,
+      sorter: (a, b) => {
+        const valueA = a.CoThue ? 1 : 0
+        const valueB = b.CoThue ? 1 : 0
+        return valueA - valueB
+      },
+      showSorterTooltip: false,
+    },
+
+    {
+      title: '% Thuế',
+      dataIndex: 'TyLeThue',
+      key: 'TyLeThue',
+      width: 120,
+      align: 'end',
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full    ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatCurrency(text)} search={searchSoSanhBG} />
+        </div>
+      ),
+      sorter: (a, b) => a.TyLeThue - b.TyLeThue,
+      showSorterTooltip: false,
     },
     {
       title: 'Ngày tạo',
       dataIndex: 'NgayTao',
       key: 'NgayTao',
       align: 'center',
-      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY hh:mm:ss')} search={searchGBS} />,
+      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY hh:mm:ss')} search={searchSoSanhBG} />,
       width: 200,
       sorter: (a, b) => {
         const dateA = new Date(a.NgayTao)
@@ -317,7 +354,7 @@ const GBS = () => {
       align: 'center',
       render: (text) => (
         <div className="truncate ">
-          <HighlightedCell text={text} search={searchGBS} />
+          <HighlightedCell text={text} search={searchSoSanhBG} />
         </div>
       ),
     },
@@ -326,7 +363,7 @@ const GBS = () => {
       dataIndex: 'NgaySuaCuoi',
       key: 'NgaySuaCuoi',
       align: 'center',
-      render: (text) => <HighlightedCell text={text ? moment(text).format('DD/MM/YYYY hh:mm:ss') : null} search={searchGBS} />,
+      render: (text) => <HighlightedCell text={text ? moment(text).format('DD/MM/YYYY hh:mm:ss') : null} search={searchSoSanhBG} />,
       width: 200,
       sorter: (a, b) => {
         const dateA = new Date(a.NgaySuaCuoi)
@@ -350,62 +387,9 @@ const GBS = () => {
       align: 'center',
       render: (text) => (
         <div className="truncate ">
-          <HighlightedCell text={text} search={searchGBS} />
+          <HighlightedCell text={text} search={searchSoSanhBG} />
         </div>
       ),
-    },
-
-    {
-      title: 'Chức năng',
-      key: 'ChucNang',
-      fixed: 'right',
-      width: 130,
-      align: 'center',
-      render: (record) => {
-        return (
-          <>
-            <div className=" flex gap-1 items-center justify-center  ">
-              <div
-                onClick={() => (dataQuyenHan?.EDIT ? handleEdit(record) : '')}
-                title="Sửa"
-                className={`p-[3px] border-2 rounded-md text-slate-50 ${
-                  dataQuyenHan?.EDIT ? 'border-yellow-400 bg-yellow-400 hover:bg-white hover:text-yellow-400 cursor-pointer' : 'border-gray-400 bg-gray-400 cursor-not-allowed'
-                } `}
-              >
-                <MdEdit size={16} />
-              </div>
-
-              <div
-                onClick={() => (dataQuyenHan?.ADD ? handleClone(record) : '')}
-                title="Bản sao"
-                className={`p-[3px] border-2 rounded-md text-slate-50 ${
-                  dataQuyenHan?.ADD ? 'border-pink-400 bg-pink-400 hover:bg-white hover:text-pink-400 cursor-pointer' : 'border-gray-400 bg-gray-400 cursor-not-allowed'
-                } `}
-              >
-                <FaRegCopy size={16} />
-              </div>
-              <div
-                onClick={() => handleAdjustPrice(record)}
-                title="Điều chỉnh giá"
-                className="p-[3px] border-2 rounded-md text-slate-50 border-orange-400 bg-orange-400 hover:bg-white hover:text-orange-400 cursor-pointer
-                "
-              >
-                <BsWrenchAdjustableCircle size={16} />
-              </div>
-
-              <div
-                onClick={() => (dataQuyenHan?.DEL ? handleDelete(record) : '')}
-                title="Xóa"
-                className={`p-[3px] border-2 rounded-md text-slate-50 ${
-                  dataQuyenHan?.DEL ? 'border-red-500 bg-red-500 hover:bg-white hover:text-red-500 cursor-pointer' : 'border-gray-400 bg-gray-400 cursor-not-allowed'
-                } `}
-              >
-                <MdDelete size={16} />
-              </div>
-            </div>
-          </>
-        )
-      },
     },
   ]
 
@@ -421,52 +405,27 @@ const GBS = () => {
     setConfirmed(true)
   }
 
-  const handleDelete = (record) => {
-    setActionType('delete')
-    setDataRecord(record)
-    setIsShowModal(true)
-  }
-
-  const handleView = (record) => {
-    setActionType('view')
-    setDataRecord(record)
-    setIsShowModal(true)
-  }
-
-  const handleEdit = (record) => {
-    setActionType('edit')
-    setDataRecord(record)
-    setDataThongTin(record)
-    setIsShowModal(true)
-  }
-
-  const handleClone = (record) => {
-    setActionType('clone')
-    setDataRecord(record)
-    setDataThongTin(record)
-    setIsShowModal(true)
-  }
-
-  const handleCreate = () => {
-    setActionType('create')
-    setIsShowModal(true)
-  }
-
-  const handlePrint = () => {
-    setActionType('print')
-    setIsShowModal(true)
-  }
-  const handleAdjustPrice = (record) => {
-    setActionType('adjustPrice')
-    setDataRecord(record)
-
-    setIsShowModal(true)
-  }
-
   const handleSearch = (newSearch) => {
     if (newSearch !== prevSearchValue) {
       setTableLoad(true)
-      setSearchGBS(newSearch)
+      setSearchSoSanhBG(newSearch)
+    }
+  }
+  const handleFilterDS = () => {
+    setTableLoad(true)
+  }
+  const handleFromChange = (value) => {
+    setFormFilter({ ...formFilter, CodeValue1From: value })
+
+    if (formFilter.CodeValue1To === null || value > formFilter.CodeValue1To) {
+      setFormFilter({ CodeValue1From: value, CodeValue1To: value })
+    }
+  }
+  const handleToChange = (value) => {
+    setFormFilter({ ...formFilter, CodeValue1To: value })
+
+    if (formFilter.CodeValue1From === null || value < formFilter.CodeValue1From) {
+      setFormFilter({ CodeValue1From: value, CodeValue1To: value })
     }
   }
 
@@ -479,9 +438,9 @@ const GBS = () => {
           <div className="w-auto">
             <div className="relative text-lg flex justify-between items-center mb-1">
               <div className="flex items-center gap-x-4 font-bold">
-                <h1 className="text-xl uppercase">Bảng giá bán sỉ</h1>
+                <h1 className="text-xl uppercase">So sánh các bảng giá</h1>
                 <div>
-                  <BsSearch size={18} className="hover:text-red-400 cursor-pointer " onClick={() => setIsShowSearch(!isShowSearch)} />
+                  <BsSearch size={18} className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
                 </div>
               </div>
               <div className="flex  ">
@@ -520,15 +479,6 @@ const GBS = () => {
                         </div>
                         <div>Xuất excel</div>
                       </button>
-                      <button
-                        onClick={handlePrint}
-                        className="flex items-center py-1 px-2 rounded-md border-2 border-purple-500  text-slate-50 text-base bg-purple-500 hover:bg-white hover:text-purple-500 "
-                      >
-                        <div className="pr-1">
-                          <TiPrinter size={20} />
-                        </div>
-                        <div>In phiếu</div>
-                      </button>
 
                       <button
                         onClick={() => setHideColumns(!hideColumns)}
@@ -555,12 +505,12 @@ const GBS = () => {
                             defaultValue={checkedList}
                             onChange={(value) => {
                               setCheckedList(value)
-                              localStorage.setItem('hidenColumnGBS', JSON.stringify(value))
+                              localStorage.setItem('hidenColumnSoSanhBG', JSON.stringify(value))
                             }}
                           >
-                            <Row className="flex justify-center">
+                            <Row>
                               {options.map((item) => (
-                                <Col span={10} key={item.value}>
+                                <Col span={8} key={item.value}>
                                   <Checkbox value={item.value}>{item.label}</Checkbox>
                                 </Col>
                               ))}
@@ -577,32 +527,167 @@ const GBS = () => {
                 )}
               </div>
             </div>
-            <div className="flex justify-end items-center px-3 ">
-              <div className="flex items-center gap-2">
-                <ActionButton
-                  color={'slate-50'}
-                  title={'Thêm'}
-                  icon={<IoAddCircleOutline size={20} />}
-                  bg_hover={!dataQuyenHan?.ADD ? '' : 'white'}
-                  background={!dataQuyenHan?.ADD ? 'gray-400' : 'bg-main'}
-                  color_hover={!dataQuyenHan?.ADD ? '' : 'bg-main'}
-                  handleAction={() => (!dataQuyenHan?.ADD ? '' : handleCreate())}
-                  isPermission={dataQuyenHan?.ADD}
-                  isModal={true}
-                />
+            <div className="flex  items-center px-2  gap-2">
+              <div className="flex flex-col gap-y-2 ">
+                <div className="flex  justify-between gap-1">
+                  <div className="flex gap-1 items-center">
+                    <div className="w-[42px] text-end">Nhóm</div>
+                    <Select
+                      showSearch
+                      size="small"
+                      allowClear
+                      placeholder="Chọn nhóm"
+                      value={formFilter.CodeValue1From}
+                      onChange={handleFromChange}
+                      style={{
+                        width: '12vw',
+                        textOverflow: 'ellipsis',
+                      }}
+                      popupMatchSelectWidth={false}
+                    >
+                      {dataNhomGia?.map((item) => (
+                        <Option key={item.Ma} value={item.Ma} title={item.Ten}>
+                          {item.Ma} - {item.Ten}
+                        </Option>
+                      ))}
+                    </Select>
+                  </div>
+                  <div className="flex gap-1 items-center">
+                    <div className=" text-center">Đến</div>
+                    <Select
+                      showSearch
+                      allowClear
+                      size="small"
+                      placeholder="Chọn nhóm"
+                      value={formFilter.CodeValue1To}
+                      onChange={handleToChange}
+                      style={{
+                        width: '12vw',
+                        textOverflow: 'ellipsis',
+                      }}
+                      popupMatchSelectWidth={false}
+                    >
+                      {dataNhomGia?.map((item) => (
+                        <Option key={item.Ma} value={item.Ma} title={item.Ten}>
+                          {item.Ma} - {item.Ten}
+                        </Option>
+                      ))}
+                    </Select>
+                  </div>
+                  <div className="flex gap-1 ">
+                    <div className="w-[42px] text-end">Chọn</div>
+                    <Select
+                      mode="multiple"
+                      allowClear
+                      maxTagCount={1}
+                      size="small"
+                      placeholder="Chọn nhóm"
+                      value={valueList}
+                      onChange={(value) => setValueList(value)}
+                      className="w-[60vw] truncate"
+                    >
+                      {dataNhomGia?.map((item) => (
+                        <Option key={item.Ma} value={item.Ma}>
+                          {item.Ma} - {item.Ten}
+                        </Option>
+                      ))}
+                    </Select>
+                  </div>
+                </div>
+                <div className="flex  justify-between gap-1">
+                  <div className="flex gap-1 items-center">
+                    <div className="w-[42px] text-end">Nhóm</div>
+                    <Select
+                      showSearch
+                      size="small"
+                      allowClear
+                      placeholder="Chọn nhóm"
+                      value={formFilter.CodeValue1From}
+                      onChange={handleFromChange}
+                      style={{
+                        width: '12vw',
+                        textOverflow: 'ellipsis',
+                      }}
+                      popupMatchSelectWidth={false}
+                    >
+                      {dataNhomGia?.map((item) => (
+                        <Option key={item.Ma} value={item.Ma} title={item.Ten}>
+                          {item.Ma} - {item.Ten}
+                        </Option>
+                      ))}
+                    </Select>
+                  </div>
+                  <div className="flex gap-1 items-center">
+                    <div className=" text-center">Đến</div>
+                    <Select
+                      showSearch
+                      allowClear
+                      size="small"
+                      placeholder="Chọn nhóm"
+                      value={formFilter.CodeValue1To}
+                      onChange={handleToChange}
+                      style={{
+                        width: '12vw',
+                        textOverflow: 'ellipsis',
+                      }}
+                      popupMatchSelectWidth={false}
+                    >
+                      {dataNhomGia?.map((item) => (
+                        <Option key={item.Ma} value={item.Ma} title={item.Ten}>
+                          {item.Ma} - {item.Ten}
+                        </Option>
+                      ))}
+                    </Select>
+                  </div>
+                  <div className="flex gap-1 ">
+                    <div className="w-[42px] text-end">Chọn</div>
+                    <Select
+                      mode="multiple"
+                      allowClear
+                      maxTagCount={1}
+                      size="small"
+                      placeholder="Chọn nhóm"
+                      value={valueList}
+                      onChange={(value) => setValueList(value)}
+                      className="w-[60vw] truncate"
+                    >
+                      {dataNhomGia?.map((item) => (
+                        <Option key={item.Ma} value={item.Ma}>
+                          {item.Ma} - {item.Ten}
+                        </Option>
+                      ))}
+                    </Select>
+                  </div>
+                </div>
+              </div>
+              <div className="">
+                <Tooltip title="Xem dữ liệu" color="blue">
+                  <div>
+                    <ActionButton
+                      title={''}
+                      handleAction={handleFilterDS}
+                      icon={<MdFilterAlt size={20} />}
+                      color={'slate-50'}
+                      background={'bg-main'}
+                      color_hover={'bg-main'}
+                      bg_hover={'white'}
+                      isModal={true}
+                    />
+                  </div>
+                </Tooltip>
               </div>
             </div>
 
             <div id="my-table" className="relative px-2 py-1 ">
               <Table
                 loading={tableLoad}
-                className="table_pmh setHeight"
+                className=" setHeight"
                 columns={newColumnsHide}
-                dataSource={filteredGBS}
+                dataSource={filteredSoSanhBG}
                 size="small"
                 scroll={{
                   x: 1500,
-                  y: 410,
+                  y: 300,
                 }}
                 bordered
                 pagination={{
@@ -613,35 +698,21 @@ const GBS = () => {
                     localStorage.setItem('pageSize', size)
                   },
                 }}
-                rowClassName={(record) => (record.NhomGia === doneGKH ? 'highlighted-row' : '')}
-                rowKey={(record) => record.NhomGia}
-                onRow={(record) => ({
-                  onDoubleClick: () => {
-                    handleView(record)
-                  },
-                })}
                 // Bảng Tổng
                 summary={() => {
                   return (
                     <Table.Summary fixed="bottom">
                       <Table.Summary.Row>
+                        <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell>
                         {newColumnsHide
                           .filter((column) => column.render)
                           .map((column) => {
-                            const isNumericColumn = typeof filteredGBS[0]?.[column.dataIndex] === 'number'
-
+                            const isNumericColumn = typeof filteredSoSanhBG[0]?.[column.dataIndex] === 'number'
                             return (
                               <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
                                 {column.dataIndex === 'STT' ? (
                                   <Text className="text-center" strong>
                                     {data.length}
-                                  </Text>
-                                ) : column.dataIndex === 'TongMatHang' || column.dataIndex === 'TongDoiTuong' ? (
-                                  <Text strong>
-                                    {Number(filteredGBS.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                      minimumFractionDigits: 0,
-                                      maximumFractionDigits: 0,
-                                    })}
                                   </Text>
                                 ) : null}
                               </Table.Summary.Cell>
@@ -653,24 +724,6 @@ const GBS = () => {
                 }}
               ></Table>
             </div>
-
-            {isShowModal && (
-              <ModalGBS
-                namePage={'Bảng Giá Bán Sỉ'}
-                typePage={'GBS'}
-                close={() => setIsShowModal(false)}
-                actionType={actionType}
-                dataRecord={dataRecord}
-                dataThongTin={dataThongTin}
-                dataHangHoa={dataHangHoa}
-                data={data}
-                isLoadingModal={isLoadingModal}
-                isLoadingEdit={isLoadingEdit}
-                dataThongSo={dataThongSo}
-                loading={() => setTableLoad(true)}
-                setHightLight={setDoneGKH}
-              />
-            )}
           </div>
         </>
       )}
@@ -678,4 +731,4 @@ const GBS = () => {
   )
 }
 
-export default GBS
+export default SoSanhBG

@@ -1,10 +1,10 @@
 import { useEffect, useState, useRef } from 'react'
-import { Table, Checkbox, Tooltip, Row, Col, Typography, Input } from 'antd'
+import { Table, Checkbox, Tooltip, Row, Col, Typography, Input, Segmented } from 'antd'
 import moment from 'moment'
 import icons from '../../untils/icons'
 import { toast } from 'react-toastify'
 import * as apis from '../../apis'
-import { ModalTL } from '../../components_K'
+import { ModalTL, PermissionView } from '../../components_K'
 import ActionButton from '../../components/util/Button/ActionButton'
 import { RETOKEN } from '../../action/Actions'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router-dom'
 import { useSearchHH } from '../../components_K/myComponents/useSearchHH'
 
 const { Text } = Typography
-const { IoAddCircleOutline, IoIosRemoveCircleOutline, MdDelete, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill, CgCloseO, TiThSmall } = icons
+const { IoAddCircleOutline, IoIosRemoveCircleOutline, MdDelete, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill, CgCloseO } = icons
 const BangGiaKH = () => {
   const navigate = useNavigate()
   const optionContainerRef = useRef(null)
@@ -22,7 +22,7 @@ const BangGiaKH = () => {
   const [isLoadingEdit, setIsLoadingEdit] = useState(true)
   const [isLoadingModal, setIsLoadingModal] = useState(true)
   const [isShowModal, setIsShowModal] = useState(false)
-  const [isShowFull, setIsShowFull] = useState(false)
+  const [showFull, setShowFull] = useState('Hiện hành')
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [isShowOption, setIsShowOption] = useState(false)
   const [data, setData] = useState([])
@@ -33,7 +33,7 @@ const BangGiaKH = () => {
   const [dataNhomGia, setDataNhomGia] = useState(null)
   const [actionType, setActionType] = useState('')
   const [dataQuyenHan, setDataQuyenHan] = useState({})
-  const [setSearchGKH, filteredGKH, searchGKH] = useSearchHH(isShowFull ? dataFull : data)
+  const [setSearchGKH, filteredGKH, searchGKH] = useSearchHH(showFull === 'Hiện hành' ? data : dataFull)
   const [prevSearchValue, setPrevSearchValue] = useState('')
   const [hideColumns, setHideColumns] = useState(false)
   const [checkedList, setCheckedList] = useState([])
@@ -44,6 +44,7 @@ const BangGiaKH = () => {
   const [isShowNotify, setIsShowNotify] = useState(false)
   const [selectedRowKeys, setSelectedRowKeys] = useState([])
   const [doneGKH, setDoneGKH] = useState(null)
+  const [isChanging, setIsChanging] = useState(false)
   const [formDEL, setFormDEL] = useState({
     DanhSachMaHieuLuc: [],
   })
@@ -175,7 +176,7 @@ const BangGiaKH = () => {
   //get DSGKH
   useEffect(() => {
     if (tableLoad && dataQuyenHan?.VIEW) {
-      if (isShowFull) {
+      if (showFull === 'Tất cả') {
         getDSFullGKH()
       } else {
         getDSGKH()
@@ -308,24 +309,6 @@ const BangGiaKH = () => {
       },
       showSorterTooltip: false,
     },
-    {
-      title: 'Ghi chú ',
-      dataIndex: 'GhiChu',
-      key: 'GhiChu',
-      width: 200,
-      sorter: (a, b) => {
-        const GhiChuA = a.GhiChu || ''
-        const GhiChuB = b.GhiChu || ''
-        return GhiChuA.localeCompare(GhiChuB)
-      },
-      showSorterTooltip: false,
-      align: 'center',
-      render: (text) => (
-        <div className="truncate text-start">
-          <HighlightedCell text={text} search={searchGKH} />
-        </div>
-      ),
-    },
 
     {
       title: 'Nhóm giá',
@@ -346,7 +329,24 @@ const BangGiaKH = () => {
         </div>
       ),
     },
-
+    {
+      title: 'Ghi chú ',
+      dataIndex: 'GhiChu',
+      key: 'GhiChu',
+      width: 200,
+      sorter: (a, b) => {
+        const GhiChuA = a.GhiChu || ''
+        const GhiChuB = b.GhiChu || ''
+        return GhiChuA.localeCompare(GhiChuB)
+      },
+      showSorterTooltip: false,
+      align: 'center',
+      render: (text) => (
+        <div className="truncate text-start">
+          <HighlightedCell text={text} search={searchGKH} />
+        </div>
+      ),
+    },
     {
       title: 'Ngày tạo',
       dataIndex: 'NgayTao',
@@ -510,49 +510,7 @@ const BangGiaKH = () => {
   return (
     <>
       {dataQuyenHan?.VIEW === false ? (
-        <>
-          {isShowNotify && (
-            <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10">
-              <div className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"></div>
-              <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col bg-white px-2 rounded shadow-custom overflow-hidden">
-                <div className="flex flex-col gap-2 p-2 justify-between ">
-                  <div className="flex flex-col gap-2 p-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex gap-2">
-                        <p className="text-blue-700 font-semibold uppercase">Kiểm tra quyền hạn người dùng</p>
-                      </div>
-                    </div>
-                    <div className="flex gap-2 border-2 p-3 items-center">
-                      <div>
-                        <CgCloseO className="w-8 h-8 text-red-500" />
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        <p className="whitespace-nowrap">Bạn không có quyền thực hiện chức năng này!</p>
-                        <p className="whitespace-nowrap">
-                          Vui lòng liên hệ <span className="font-bold">Người Quản Trị</span> để được cấp quyền
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex gap-2 justify-end">
-                      <ActionButton
-                        handleAction={() => {
-                          setIsShowNotify(false)
-                          navigate(-1)
-                        }}
-                        title={'Đóng'}
-                        isModal={true}
-                        color={'slate-50'}
-                        background={'red-500'}
-                        color_hover={'red-500'}
-                        bg_hover={'white'}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </>
+        <>{isShowNotify && <PermissionView close={() => setIsShowNotify(false)} />}</>
       ) : (
         <>
           <div className="w-auto">
@@ -649,16 +607,20 @@ const BangGiaKH = () => {
             </div>
             <div className="flex justify-end items-center px-3 ">
               <div className="flex items-center gap-2">
-                <div
-                  className={`cursor-pointer hover:bg-slate-200 rounded-full p-2 ${isShowFull ? 'text-bg-main' : ''} `}
-                  onClick={() => {
-                    setIsShowFull(!isShowFull), setTableLoad(true)
+                <Segmented
+                  options={['Hiện hành', 'Tất cả']}
+                  value={showFull}
+                  onChange={(value) => {
+                    if (!isChanging) {
+                      setIsChanging(true)
+                      setShowFull(value)
+                      setTableLoad(true)
+                      setTimeout(() => {
+                        setIsChanging(false)
+                      }, 1000)
+                    }
                   }}
-                >
-                  <Tooltip title={`${!isShowFull ? ' Bật hiện tất cả' : 'Tắt hiện tất cả'} `} color="blue">
-                    <TiThSmall size={20} className=""></TiThSmall>
-                  </Tooltip>
-                </div>
+                />
                 <ActionButton
                   color={'slate-50'}
                   title={'Xóa'}
@@ -734,7 +696,7 @@ const BangGiaKH = () => {
                               <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
                                 {column.dataIndex === 'STT' ? (
                                   <Text className="text-center" strong>
-                                    {!isShowFull ? data.length : dataFull.length}
+                                    {showFull === 'Hiện hành' ? data.length : dataFull.length}
                                   </Text>
                                 ) : null}
                               </Table.Summary.Cell>

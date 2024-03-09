@@ -3,13 +3,13 @@
 
 import logo from '../assets/VTS-iSale.ico'
 import icons from '../untils/icons'
-
+import TableEdit from '../components/util/Table/EditTable'
 // import { DateField } from '@mui/x-date-pickers'
 import dayjs from 'dayjs'
 import ActionButton from '../components/util/Button/ActionButton'
 import { DateField } from '@mui/x-date-pickers'
 import { useRef, useState } from 'react'
-
+import * as XLSX from 'xlsx'
 const { MdOutlineFileUpload } = icons
 const ModalImport = ({ close }) => {
   const [fileName, setFileName] = useState('')
@@ -51,8 +51,9 @@ const ModalImport = ({ close }) => {
                       bg_hover={'white'}
                       color_hover={'bg-main'}
                       handleAction={handleButtonClick}
+                      isModal={true}
                     />
-                    <ActionButton color={'slate-50'} title={'Nạp dữ liệu'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} />
+                    <ActionButton color={'slate-50'} title={'Nạp dữ liệu'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} isModal={true} />
                   </div>
 
                   <div className="flex items-center p-1 gap-2">
@@ -85,30 +86,28 @@ const ModalImport = ({ close }) => {
             {/* table */}
             <div className=" pb-0  relative mt-1">
               {/* <TableEdit
-            typeTable="create"
-            typeAction="create"
-            tableName="GBS"
-            className="table_create_GBS"
-            param={selectedRowData}
-            handleEditData={handleEditData}
-            ColumnTable={columnName}
-            columName={nameColumsGBS}
-            yourMaHangOptions={dataHangHoa}
-            yourTenHangOptions={dataHangHoa}
-          /> */}
+                typeTable={'edit'}
+                tableName="Import"
+                param={selectedRowData}
+                handleEditData={handleEditData}
+                ColumnTable={columnName}
+                columName={nameColumsGBS}
+                yourMaHangOptions={dataHangHoa}
+                yourTenHangOptions={dataHangHoa}
+              /> */}
             </div>
           </div>
           {/* </Spin> */}
           {/* button  */}
           <div className=" flex justify-between items-center">
             <div className=" flex  items-center gap-3  pt-3">
-              <ActionButton color={'slate-50'} title={'Xuất file mẫu'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} />
+              <ActionButton color={'slate-50'} title={'Xuất file mẫu'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} isModal={true} />
             </div>
             <div className="flex  items-center gap-3  pt-3">
-              <ActionButton color={'slate-50'} title={'Kiểm tra'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} />
-              <ActionButton color={'slate-50'} title={'Điều chỉnh'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} />
-              <ActionButton color={'slate-50'} title={'Import'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} />
-              <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
+              <ActionButton color={'slate-50'} title={'Kiểm tra'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} isModal={true} />
+              <ActionButton color={'slate-50'} title={'Điều chỉnh'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} isModal={true} />
+              <ActionButton color={'slate-50'} title={'Import'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} isModal={true} />
+              <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} isModal={true} />
             </div>
           </div>
         </div>
