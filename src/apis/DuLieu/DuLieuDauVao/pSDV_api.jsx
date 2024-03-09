@@ -1,14 +1,14 @@
 /* eslint-disable no-async-promise-executor */
-import axios from '../../axios'
+import axios from '../../../axios'
 
-export const DanhSachPCT = (token, formKhoanNgay) =>
+export const DanhSachSDV = (token, formKhoanNgay) =>
   new Promise(async (resolve, reject) => {
     try {
       // console.log('Data to be sent to API:', {
       //   formKhoanNgay,
       // })
       const response = await axios({
-        url: '/entries/DuLieuPCT/DanhSach',
+        url: '/entries/DuLieuSDV/DanhSach',
         method: 'post',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -21,11 +21,11 @@ export const DanhSachPCT = (token, formKhoanNgay) =>
     }
   })
 
-export const ThongTinPCT = (token, Sct) =>
+export const ThongTinSDV = (token, Sct) =>
   new Promise(async (resolve, reject) => {
     try {
       const response = await axios({
-        url: '/entries/DuLieuPCT/ThongTin',
+        url: '/entries/DuLieuSDV/ThongTin',
         method: 'post',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -39,11 +39,11 @@ export const ThongTinPCT = (token, Sct) =>
       reject(error)
     }
   })
-export const ThongTinSuaPCT = (token, Sct) =>
+export const ThongTinSuaSDV = (token, Sct) =>
   new Promise(async (resolve, reject) => {
     try {
       const response = await axios({
-        url: '/entries/DuLieuPCT/ThongTinSua',
+        url: '/entries/DuLieuSDV/ThongTinSua',
         method: 'post',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -57,11 +57,11 @@ export const ThongTinSuaPCT = (token, Sct) =>
       reject(error)
     }
   })
-export const ListHelperDoiTuongPCT = (token) =>
+export const ListHelperDoiTuongSDV = (token) =>
   new Promise(async (resolve, reject) => {
     try {
       const response = await axios({
-        url: '/entries/DuLieuPCT/ListHelper_DoiTuong',
+        url: '/entries/DuLieuSDV/ListHelper_DoiTuong',
         method: 'post',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -74,31 +74,14 @@ export const ListHelperDoiTuongPCT = (token) =>
     }
   })
 
-export const ListHelperHangMucPCT = (token) =>
-  new Promise(async (resolve, reject) => {
-    try {
-      const response = await axios({
-        url: '/entries/DuLieuPCT/ListHelper_HangMuc',
-        method: 'post',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        data: {},
-      })
-      resolve(response)
-    } catch (error) {
-      reject(error)
-    }
-  })
-
-export const ThemPCT = (token, formCreate) =>
+export const ThemSDV = (token, formCreate) =>
   new Promise(async (resolve, reject) => {
     try {
       console.log('Data to be sent to API:', {
         formCreate,
       })
       const response = await axios({
-        url: '/entries/DuLieuPCT/Them',
+        url: '/entries/DuLieuSDV/Them',
         method: 'post',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -111,22 +94,22 @@ export const ThemPCT = (token, formCreate) =>
     }
   })
 
-export const SuaPCT = (token, Sct, formPCTEdit) =>
+export const SuaSDV = (token, Sct, formSDVEdit) =>
   new Promise(async (resolve, reject) => {
     try {
       console.log('Data to be sent to API:', {
         SoChungTu: Sct,
-        Data: formPCTEdit,
+        Data: formSDVEdit,
       })
       const response = await axios({
-        url: '/entries/DuLieuPCT/Sua',
+        url: '/entries/DuLieuSDV/Sua',
         method: 'post',
         headers: {
           Authorization: `Bearer ${token}`,
         },
         data: {
           SoChungTu: Sct,
-          Data: formPCTEdit,
+          Data: formSDVEdit,
         },
       })
       resolve(response)
@@ -135,60 +118,16 @@ export const SuaPCT = (token, Sct, formPCTEdit) =>
     }
   })
 
-export const XoaPCT = (token, Sct) =>
+export const XoaSDV = (token, Sct) =>
   new Promise(async (resolve, reject) => {
     try {
       const response = await axios({
-        url: '/entries/DuLieuPCT/Xoa',
+        url: '/entries/DuLieuSDV/Xoa',
         method: 'post',
         headers: {
           Authorization: `Bearer ${token}`,
         },
         data: { SoChungTu: Sct },
-      })
-      resolve(response)
-    } catch (error) {
-      reject(error)
-    }
-  })
-
-export const InPCT = (token, formPrint, SctBD, SctKT, SoLien) =>
-  new Promise(async (resolve, reject) => {
-    try {
-      console.log('Data to be sent to API:', {
-        ...formPrint,
-        SoChungTuBatDau: SctBD,
-        SoChungTuketThuc: SctKT,
-        SoLien: SoLien,
-      })
-      const response = await axios({
-        url: '/entries/DuLieuPCT/InPhieu',
-        method: 'post',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        data: {
-          ...formPrint,
-          SoChungTuBatDau: SctBD,
-          SoChungTuketThuc: SctKT,
-          SoLien: SoLien,
-        },
-      })
-      resolve(response)
-    } catch (error) {
-      reject(error)
-    }
-  })
-export const FilterPrint = (token, formPrint) =>
-  new Promise(async (resolve, reject) => {
-    try {
-      const response = await axios({
-        url: '/entries/DuLieuPCT/ListHelper_ChungTuTheoNgay',
-        method: 'post',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        data: formPrint,
       })
       resolve(response)
     } catch (error) {

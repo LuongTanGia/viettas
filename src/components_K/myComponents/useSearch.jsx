@@ -37,6 +37,8 @@ export const useSearch = (data) => {
           NhomGia,
           TenNhomGia,
           TongDoiTuong,
+          // SDV
+          DiaChiDoiTuong,
         } = item || {}
 
         return (
@@ -69,7 +71,9 @@ export const useSearch = (data) => {
           // PCT
           (SoTien?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (TenHangMuc || '').toLowerCase().includes(search.toLowerCase()) ||
-          (SoThamChieu || '').toLowerCase().includes(search.toLowerCase())
+          (SoThamChieu || '').toLowerCase().includes(search.toLowerCase()) ||
+          // SDV
+          (DiaChiDoiTuong || '').toLowerCase().includes(search.toLowerCase())
         )
       })
     else return []

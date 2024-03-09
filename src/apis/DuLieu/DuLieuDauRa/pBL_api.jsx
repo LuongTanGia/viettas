@@ -1,5 +1,5 @@
 /* eslint-disable no-async-promise-executor */
-import axios from '../../axios'
+import axios from '../../../axios'
 
 export const DanhSachPBL = (token, formKhoanNgay) =>
   new Promise(async (resolve, reject) => {

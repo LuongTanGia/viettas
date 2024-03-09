@@ -4,44 +4,41 @@ import moment from 'moment'
 import icons from '../../../untils/icons'
 import { toast } from 'react-toastify'
 import * as apis from '../../../apis'
-import { Modals, PermissionView } from '../../../components_K'
 import ActionButton from '../../../components/util/Button/ActionButton'
 import dayjs from 'dayjs'
-import { RETOKEN, formatCurrency, formatPrice, formatQuantity } from '../../../action/Actions'
+import { RETOKEN, formatPrice } from '../../../action/Actions'
 import SimpleBackdrop from '../../../components/util/Loading/LoadingPage'
-// import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { DateField } from '@mui/x-date-pickers/DateField'
 import { useSearch } from '../../../components_K/myComponents/useSearch'
 import HighlightedCell from '../../../components/hooks/HighlightedCell'
 import { exportToExcel } from '../../../action/Actions'
 import { CloseSquareFilled } from '@ant-design/icons'
-import { useNavigate } from 'react-router-dom'
+
+import { ModalSDV, PermissionView } from '../../../components_K'
 
 const { Text } = Typography
-const { IoAddCircleOutline, TiPrinter, MdDelete, GiPayMoney, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill, CgCloseO } = icons
-const PhieuMuaHang = () => {
-  const navigate = useNavigate()
+const { IoAddCircleOutline, MdDelete, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill } = icons
+const PhieuSDV = () => {
   const optionContainerRef = useRef(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [tableLoad, setTableLoad] = useState(true)
   const [isLoadingEdit, setIsLoadingEdit] = useState(true)
   const [isLoadingModal, setIsLoadingModal] = useState(true)
+  const [tableLoad, setTableLoad] = useState(true)
   const [isShowModal, setIsShowModal] = useState(false)
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [isShowOption, setIsShowOption] = useState(false)
   const [data, setData] = useState([])
-  const [dataThongTin, setDataThongTin] = useState({})
-  const [dataThongTinSua, setDataThongTinSua] = useState({})
+  const [dataThongTinSua, setDataThongTinSua] = useState([])
   const [dataRecord, setDataRecord] = useState(null)
-  const [dataKhoHang, setDataKhoHang] = useState(null)
-  const [dataDoiTuong, setDataDoiTuong] = useState(null)
-  const [actionType, setActionType] = useState('')
-  const [formKhoanNgay, setFormKhoanNgay] = useState({})
+
+  const [dataDoiTuong, setDataDoiTuong] = useState([])
   const [dataQuyenHan, setDataQuyenHan] = useState({})
-  const [setSearchPMH, filteredPMH, searchPMH] = useSearch(data)
+  const [actionType, setActionType] = useState('')
+  const [formKhoanNgay, setFormKhoanNgay] = useState([])
+  const [setSearchSDV, filteredSDV, searchSDV] = useSearch(data)
   const [prevSearchValue, setPrevSearchValue] = useState('')
   const [prevdateValue, setPrevDateValue] = useState({})
-  const [donePMH, setDonePMH] = useState(null)
+  const [doneNTR, setDoneNTR] = useState(null)
   const [hideColumns, setHideColumns] = useState(false)
   const [checkedList, setCheckedList] = useState([])
   const [confirmed, setConfirmed] = useState(false)
@@ -71,7 +68,7 @@ const PhieuMuaHang = () => {
   useEffect(() => {
     setNewColumns(columns)
     // Lấy thông tin từ local storage sau khi đăng nhập
-    const storedHiddenColumns = localStorage.getItem('hidenColumnPMH')
+    const storedHiddenColumns = localStorage.getItem('hidenColumnSDV')
     const parsedHiddenColumns = storedHiddenColumns ? JSON.parse(storedHiddenColumns) : null
 
     // Áp dụng thông tin đã lưu vào checkedList và setConfirmed để ẩn cột
@@ -83,8 +80,8 @@ const PhieuMuaHang = () => {
 
   useEffect(() => {
     if (confirmed) {
-      setCheckedList(JSON.parse(localStorage.getItem('hidenColumnPMH')))
-      setNewColumns(JSON.parse(localStorage.getItem('hidenColumnPMH')))
+      setCheckedList(JSON.parse(localStorage.getItem('hidenColumnSDV')))
+      setNewColumns(JSON.parse(localStorage.getItem('hidenColumnSDV')))
     }
   }, [confirmed])
 
@@ -94,23 +91,10 @@ const PhieuMuaHang = () => {
     setIsLoadingEdit(true)
     const fetchData = async () => {
       try {
+        console.log('get helper')
         const tokenLogin = localStorage.getItem('TKN')
         if (actionType === 'create' || actionType === 'edit') {
-          const responseKH = await apis.ListHelperKhoHangPMH(tokenLogin)
-          if (responseKH.data && responseKH.data.DataError === 0) {
-            setDataKhoHang(responseKH.data.DataResults)
-            setIsLoadingModal(false)
-          } else if (responseKH.data.DataError === -1 || responseKH.data.DataError === -2 || responseKH.data.DataError === -3) {
-            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseKH.data.DataErrorDescription}</div>)
-            setIsLoadingModal(false)
-          } else if (responseKH.data.DataError === -107 || responseKH.data.DataError === -108) {
-            await RETOKEN()
-            fetchData()
-          } else {
-            toast.error(responseKH.data.DataErrorDescription)
-            setIsLoadingModal(false)
-          }
-          const responseDT = await apis.ListHelperDoiTuongPMH(tokenLogin)
+          const responseDT = await apis.ListHelperDoiTuongSDV(tokenLogin)
           if (responseDT.data && responseDT.data.DataError === 0) {
             setDataDoiTuong(responseDT.data.DataResults)
             setIsLoadingModal(false)
@@ -131,53 +115,33 @@ const PhieuMuaHang = () => {
             setIsLoadingModal(false)
           }
         }
-        if (actionType === 'view') {
+        if (actionType === 'edit') {
           console.log('get helper tt')
-
-          const responseTT = await apis.ThongTinPMH(tokenLogin, dataRecord.SoChungTu)
+          const responseTT = await apis.ThongTinSuaSDV(tokenLogin, dataRecord.SoChungTu)
           if (responseTT.data && responseTT.data.DataError === 0) {
-            setDataThongTin(responseTT.data.DataResult)
+            setDataThongTinSua(responseTT.data.DataResult)
             setIsLoadingModal(false)
+            setIsLoadingEdit(false)
           } else if (responseTT.data.DataError === -1 || responseTT.data.DataError === -2 || responseTT.data.DataError === -3) {
-            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseTT.data.DataErrorDescription}</div>)
+            setIsShowModal(false)
             setIsLoadingModal(false)
+            setIsLoadingEdit(false)
+            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseTT.data.DataErrorDescription}</div>)
           } else if (responseTT.data.DataError === -107 || responseTT.data.DataError === -108) {
             await RETOKEN()
             fetchData()
           } else {
+            setIsShowModal(false)
+            setIsLoadingModal(false)
+            setIsLoadingEdit(false)
             toast.error(responseTT.data.DataErrorDescription)
-            setIsLoadingModal(false)
-          }
-        }
-
-        if (actionType === 'edit') {
-          const responseTTS = await apis.ThongTinSuaPMH(tokenLogin, dataRecord.SoChungTu)
-          if (responseTTS.data && responseTTS.data.DataError === 0) {
-            setDataThongTinSua(responseTTS.data.DataResult)
-            setIsLoadingEdit(false)
-            setIsLoadingModal(false)
-          } else if (responseTTS.data.DataError === -1 || responseTTS.data.DataError === -2 || responseTTS.data.DataError === -3) {
-            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseTTS.data.DataErrorDescription}</div>)
-            setIsLoadingModal(false)
-            setIsLoadingEdit(false)
-
-            setIsShowModal(false)
-          } else if (responseTTS.data.DataError === -107 || responseTTS.data.DataError === -108) {
-            await RETOKEN()
-            fetchData()
-          } else {
-            toast.error(responseTTS.data.DataErrorDescription)
-            setIsLoadingModal(false)
-            setIsShowModal(false)
-            setIsLoadingEdit(false)
           }
         }
       } catch (error) {
         console.error('Lấy data thất bại', error)
-        setIsLoadingModal(false)
         setIsShowModal(false)
+        setIsLoadingModal(false)
         setIsLoadingEdit(false)
-
         // toast.error('Lấy data thất bại. Vui lòng thử lại sau.')
       }
     }
@@ -191,6 +155,7 @@ const PhieuMuaHang = () => {
   useEffect(() => {
     const getKhoanNgay = async () => {
       try {
+        console.log('get Khoảng ngày')
         const tokenLogin = localStorage.getItem('TKN')
         const response = await apis.KhoanNgay(tokenLogin)
 
@@ -198,7 +163,7 @@ const PhieuMuaHang = () => {
           setFormKhoanNgay(response.data)
           setIsLoading(false)
         } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+          toast.warning(response.data.DataErrorDescription)
           setIsLoading(false)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
@@ -220,22 +185,16 @@ const PhieuMuaHang = () => {
   useEffect(() => {
     const getChucNangQuyenHan = async () => {
       try {
+        console.log('đi')
         const tokenLogin = localStorage.getItem('TKN')
-        const response = await apis.ChucNangQuyenHan(tokenLogin, 'DuLieu_PMH')
+        const response = await apis.ChucNangQuyenHan(tokenLogin, 'DuLieu_SDV')
 
         if (response.data && response.data.DataError === 0) {
           setDataQuyenHan(response.data)
-        }
-        // else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        //   toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        // }
-        else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
           getChucNangQuyenHan()
         }
-        // else {
-        //   toast.error(response.data.DataErrorDescription)
-        // }
       } catch (error) {
         console.error('Kiểm tra token thất bại', error)
       }
@@ -248,28 +207,26 @@ const PhieuMuaHang = () => {
       setIsShowNotify(true)
     }
   }, [dataQuyenHan])
+
   //get DSPMH
   useEffect(() => {
     if (tableLoad && dataQuyenHan?.VIEW) {
-      getDSPMH()
+      getDSSDV()
     }
   }, [tableLoad, dataQuyenHan?.VIEW])
 
-  const getDSPMH = async () => {
+  const getDSSDV = async () => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
-
-      const response = await apis.DanhSachPMH(tokenLogin, formKhoanNgay)
-
+      const response = await apis.DanhSachSDV(tokenLogin, formKhoanNgay)
       if (response.data && response.data.DataError === 0) {
         setData(response.data.DataResults)
         setTableLoad(false)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
-        getDSPMH()
-        // setTableLoad(false)
+        getDSSDV()
       } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+        toast.warning(response.data.DataErrorDescription)
         setTableLoad(false)
       } else {
         toast.error(response.data.DataErrorDescription)
@@ -294,7 +251,7 @@ const PhieuMuaHang = () => {
       render: (text, record, index) => <div style={{ textAlign: 'center' }}>{index + 1}</div>,
     },
     {
-      title: 'Số Chứng Từ',
+      title: 'Số chứng từ',
       dataIndex: 'SoChungTu',
       key: 'SoChungTu',
       width: 150,
@@ -304,16 +261,16 @@ const PhieuMuaHang = () => {
       align: 'center',
       render: (text) => (
         <div style={{ textAlign: 'start' }}>
-          <HighlightedCell text={text} search={searchPMH} />
+          <HighlightedCell text={text} search={searchSDV} />
         </div>
       ),
     },
     {
-      title: 'Ngày Chứng Từ',
+      title: 'Ngày',
       dataIndex: 'NgayCTu',
       key: 'NgayCTu',
       align: 'center',
-      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY')} search={searchPMH} />,
+      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY')} search={searchSDV} />,
       width: 150,
       sorter: (a, b) => {
         const dateA = new Date(a.NgayCTu)
@@ -324,21 +281,22 @@ const PhieuMuaHang = () => {
     },
 
     {
-      title: 'Mã Đối Tượng',
+      title: 'Mã nhà C.Cấp',
       dataIndex: 'MaDoiTuong',
       key: 'MaDoiTuong',
-      width: 150,
+      width: 200,
       sorter: (a, b) => a.MaDoiTuong.localeCompare(b.MaDoiTuong),
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div style={{ textAlign: 'start' }}>
-          <HighlightedCell text={text} search={searchPMH} />
+        <div className="truncate text-start">
+          <HighlightedCell text={text} search={searchSDV} />
         </div>
       ),
     },
+
     {
-      title: 'Tên đối tượng',
+      title: 'Tên nhà C.Cấp',
       dataIndex: 'TenDoiTuong',
       key: 'TenDoiTuong',
       width: 200,
@@ -347,18 +305,18 @@ const PhieuMuaHang = () => {
       align: 'center',
       render: (text) => (
         <div className="truncate text-start">
-          <HighlightedCell text={text} search={searchPMH} />
+          <HighlightedCell text={text} search={searchSDV} />
         </div>
       ),
     },
     {
       title: 'Địa chỉ ',
-      dataIndex: 'DiaChi',
-      key: 'DiaChi',
-      width: 250,
+      dataIndex: 'DiaChiDoiTuong',
+      key: 'DiaChiDoiTuong',
+      width: 300,
       sorter: (a, b) => {
-        const diaChiA = a.DiaChi || ''
-        const diaChiB = b.DiaChi || ''
+        const diaChiA = a.DiaChiDoiTuong || ''
+        const diaChiB = b.DiaChiDoiTuong || ''
 
         return diaChiA.localeCompare(diaChiB)
       },
@@ -368,46 +326,33 @@ const PhieuMuaHang = () => {
         <div className="truncate text-start">
           <Tooltip title={text} color="blue">
             <span>
-              <HighlightedCell text={text} search={searchPMH} />
+              <HighlightedCell text={text} search={searchSDV} />
             </span>
           </Tooltip>
         </div>
       ),
     },
-    {
-      title: 'Mã số thuế',
-      dataIndex: 'MaSoThue',
-      key: 'MaSoThue',
-      width: 150,
-      sorter: (a, b) => a.MaSoThue - b.MaSoThue,
-      showSorterTooltip: false,
-      align: 'center',
-      render: (text) => (
-        <div style={{ textAlign: 'start' }}>
-          <HighlightedCell text={text} search={searchPMH} />
-        </div>
-      ),
-    },
 
     {
-      title: 'Thông tin kho',
-      dataIndex: 'ThongTinKho',
-      key: 'ThongTinKho',
-      width: 150,
-      sorter: (a, b) => a.ThongTinKho.localeCompare(b.ThongTinKho),
-      showSorterTooltip: false,
+      title: 'Số Tiền',
+      dataIndex: 'SoTien',
+      key: 'SoTien',
+      width: 200,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
-          <HighlightedCell text={text} search={searchPMH} />
+        <div className={`text-end   ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchSDV} />
         </div>
       ),
+      sorter: (a, b) => a.SoTien - b.SoTien,
+      showSorterTooltip: false,
     },
+
     {
       title: 'Ghi chú ',
       dataIndex: 'GhiChu',
       key: 'GhiChu',
-      width: 200,
+      width: 300,
       sorter: (a, b) => {
         const GhiChuA = a.GhiChu || ''
         const GhiChuB = b.GhiChu || ''
@@ -417,106 +362,21 @@ const PhieuMuaHang = () => {
       align: 'center',
       render: (text) => (
         <div className="truncate text-start">
-          <HighlightedCell text={text} search={searchPMH} />
+          <Tooltip title={text} color="blue">
+            <span>
+              <HighlightedCell text={text} search={searchSDV} />
+            </span>
+          </Tooltip>
         </div>
       ),
-    },
-    {
-      title: 'Tổng mặt hàng',
-      dataIndex: 'TongMatHang',
-      key: 'TongMatHang',
-      width: 200,
-      align: 'center',
-      sorter: (a, b) => a.TongMatHang - b.TongMatHang,
-      showSorterTooltip: false,
-      render: (text) => (
-        <div className={`text-end ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatCurrency(text)} search={searchPMH} />
-        </div>
-      ),
-    },
-    {
-      title: 'Tổng số lượng',
-      dataIndex: 'TongSoLuong',
-      key: 'TongSoLuong',
-      width: 200,
-      align: 'center',
-      render: (text) => (
-        <div className={`text-end ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatQuantity(text, dataThongSo?.SOLESOLUONG)} search={searchPMH} />
-        </div>
-      ),
-      sorter: (a, b) => a.TongSoLuong - b.TongSoLuong,
-      showSorterTooltip: false,
-    },
-    {
-      title: 'Tổng tiền hàng',
-      dataIndex: 'TongTienHang',
-      key: 'TongTienHang',
-      width: 200,
-      align: 'center',
-      render: (text) => (
-        <div className={`text-end ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchPMH} />
-        </div>
-      ),
-      sorter: (a, b) => a.TongTienHang - b.TongTienHang,
-      showSorterTooltip: false,
-    },
-    {
-      title: 'Tổng tiền thuế',
-      dataIndex: 'TongTienThue',
-      key: 'TongTienThue',
-      width: 200,
-      align: 'center',
-      render: (text) => (
-        <div className={`text-end ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchPMH} />
-        </div>
-      ),
-      sorter: (a, b) => a.TongTienThue - b.TongTienThue,
-      showSorterTooltip: false,
-    },
-    {
-      title: 'Tổng thành tiền',
-      dataIndex: 'TongThanhTien',
-      key: 'TongThanhTien',
-      width: 200,
-      align: 'center',
-      render: (text) => (
-        <div className={`text-end ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchPMH} />
-        </div>
-      ),
-      sorter: (a, b) => a.TongThanhTien - b.TongThanhTien,
-      showSorterTooltip: false,
     },
 
-    {
-      title: 'Phiếu chi',
-      dataIndex: 'PhieuChi',
-      key: 'PhieuChi',
-      width: 150,
-      sorter: (a, b) => {
-        const PhieuChiA = a.PhieuChi || ''
-        const PhieuChiB = b.PhieuChi || ''
-        return PhieuChiA.localeCompare(PhieuChiB)
-      },
-      showSorterTooltip: false,
-      align: 'center',
-      render: (text) => (
-        <div style={{ textAlign: 'start' }}>
-          {' '}
-          <HighlightedCell text={text} search={searchPMH} />
-        </div>
-      ),
-    },
     {
       title: 'Ngày tạo',
       dataIndex: 'NgayTao',
       key: 'NgayTao',
       align: 'center',
-      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY hh:mm:ss')} search={searchPMH} />,
+      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY hh:mm:ss')} search={searchSDV} />,
       width: 200,
       sorter: (a, b) => {
         const dateA = new Date(a.NgayTao)
@@ -535,7 +395,7 @@ const PhieuMuaHang = () => {
       align: 'center',
       render: (text) => (
         <div className="truncate ">
-          <HighlightedCell text={text} search={searchPMH} />
+          <HighlightedCell text={text} search={searchSDV} />
         </div>
       ),
     },
@@ -544,7 +404,7 @@ const PhieuMuaHang = () => {
       dataIndex: 'NgaySuaCuoi',
       key: 'NgaySuaCuoi',
       align: 'center',
-      render: (text) => <HighlightedCell text={text ? moment(text).format('DD/MM/YYYY hh:mm:ss') : null} search={searchPMH} />,
+      render: (text) => <HighlightedCell text={text ? moment(text).format('DD/MM/YYYY hh:mm:ss') : null} search={searchSDV} />,
       width: 200,
       sorter: (a, b) => {
         const dateA = new Date(a.NgaySuaCuoi)
@@ -568,27 +428,11 @@ const PhieuMuaHang = () => {
       align: 'center',
       render: (text) => (
         <div className="truncate ">
-          <HighlightedCell text={text} search={searchPMH} />
+          <HighlightedCell text={text} search={searchSDV} />
         </div>
       ),
     },
 
-    {
-      title: 'Tiền mặt',
-      key: 'TTTienMat',
-      dataIndex: 'TTTienMat',
-      fixed: 'right',
-      width: 100,
-      align: 'center',
-
-      render: (text) => <Checkbox value={text} disabled={!text} checked={text} />,
-      sorter: (a, b) => {
-        const valueA = a.TTTienMat ? 1 : 0
-        const valueB = b.TTTienMat ? 1 : 0
-        return valueA - valueB
-      },
-      showSorterTooltip: false,
-    },
     {
       title: 'Chức năng',
       key: 'ChucNang',
@@ -600,22 +444,13 @@ const PhieuMuaHang = () => {
           <>
             <div className=" flex gap-1 items-center justify-center  ">
               <div
-                onClick={() => handlePay(record)}
-                title="Lập phiếu chi"
-                className={`p-[3px] rounded-md text-slate-50 ${
-                  record.PhieuChi
-                    ? 'border-2 border-gray-400 bg-gray-400 cursor-not-allowed'
-                    : ' border-2 border-blue-500 bg-blue-500  hover:bg-white hover:text-blue-500 cursor-pointer'
-                }`}
-              >
-                <GiPayMoney size={16} />
-              </div>
-              <div
                 onClick={() => (dataQuyenHan?.EDIT ? handleEdit(record) : '')}
                 title="Sửa"
-                className={`p-[3px] border-2 rounded-md text-slate-50 ${
-                  dataQuyenHan?.EDIT ? 'border-yellow-400 bg-yellow-400 hover:bg-white hover:text-yellow-400 cursor-pointer' : 'border-gray-400 bg-gray-400 cursor-not-allowed'
-                } `}
+                className={`p-[3px] rounded-md text-slate-50 ${
+                  record.TenHangMuc === 'Chi tiền tại quầy' || dataQuyenHan?.EDIT === false
+                    ? 'border-2 border-gray-400 bg-gray-400 cursor-not-allowed'
+                    : ' border-2 border-yellow-400 bg-yellow-400  hover:bg-white hover:text-yellow-400 cursor-pointer'
+                }`}
               >
                 <MdEdit size={16} />
               </div>
@@ -661,38 +496,15 @@ const PhieuMuaHang = () => {
   }
 
   const handleEdit = (record) => {
-    if (record.PhieuChi) {
-      toast.error('Phiếu đã được lập phiếu chi! Không thể sửa.', {
-        autoClose: 1500,
-      })
-    } else {
-      setActionType('edit')
-      setDataRecord(record)
-      setDataThongTinSua(record)
-      setIsShowModal(true)
-    }
+    if (record.TenHangMuc === 'Chi tiền tại quầy') return
+    setActionType('edit')
+    setDataRecord(record)
+    setDataThongTinSua(record)
+    setIsShowModal(true)
   }
 
   const handleCreate = (record) => {
     setActionType('create')
-    setDataRecord(record)
-    setIsShowModal(true)
-  }
-  const handlePrint = (record) => {
-    setActionType('print')
-    setDataRecord(record)
-    setIsShowModal(true)
-  }
-  const handlePrintWareHouse = (record) => {
-    setActionType('printWareHouse')
-    setDataRecord(record)
-    setIsShowModal(true)
-    setIsLoadingModal(false)
-  }
-
-  const handlePay = (record) => {
-    if (record.PhieuChi) return
-    setActionType('pay')
     setDataRecord(record)
     setIsShowModal(true)
   }
@@ -744,9 +556,11 @@ const PhieuMuaHang = () => {
   }
 
   const handleSearch = (newSearch) => {
-    if (newSearch !== prevSearchValue) {
+    const currentTime = new Date().getTime()
+    if (currentTime - lastSearchTime >= 1000 && newSearch !== prevSearchValue) {
       setTableLoad(true)
-      setSearchPMH(newSearch)
+      setSearchSDV(newSearch)
+      setLastSearchTime(currentTime)
     }
   }
 
@@ -762,14 +576,16 @@ const PhieuMuaHang = () => {
             <div className="w-auto">
               <div className="relative text-lg flex justify-between items-center mb-1">
                 <div className="flex items-center gap-x-4 font-bold">
-                  <h1 className="text-xl uppercase">Phiếu mua hàng </h1>
+                  <h1 className="text-xl uppercase">Phiếu điều chỉnh công nợ nhà cung cấp </h1>
                   <div>
                     <BsSearch size={18} className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
                   </div>
                 </div>
                 <div className="flex  ">
                   {isShowSearch && (
-                    <div className={`flex absolute left-[14rem] -top-[2px] transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
+                    <div
+                      className={`flex absolute left-[30.6rem] -top-[2px] transition-all linear duration-700 ${isShowSearch ? 'md:w-[12rem] lg:w-[20rem]' : 'w-0'} overflow-hidden`}
+                    >
                       <Input
                         allowClear={{
                           clearIcon: <CloseSquareFilled />,
@@ -790,7 +606,7 @@ const PhieuMuaHang = () => {
                     <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
                   </div>
                   {isShowOption && (
-                    <div className=" absolute flex flex-col items-center gap-2 bg-slate-100 px-2 py-3 top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom ">
+                    <div className=" absolute flex flex-col gap-2 bg-slate-100 px-2 py-3 items-center top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom ">
                       <div className={`flex flex-grow flex-wrap gap-1 ${!hideColumns ? 'flex-col' : ''}`}>
                         <button
                           onClick={dataQuyenHan?.EXCEL ? exportToExcel : ''}
@@ -803,26 +619,7 @@ const PhieuMuaHang = () => {
                           </div>
                           <div>Xuất excel</div>
                         </button>
-                        <button
-                          onClick={handlePrint}
-                          className="flex items-center py-1 px-2 rounded-md border-2 border-purple-500  text-slate-50 text-base bg-purple-500 hover:bg-white hover:text-purple-500 "
-                        >
-                          <div className="pr-1">
-                            <TiPrinter size={20} />
-                          </div>
-                          <div>In phiếu</div>
-                        </button>
-                        {dataThongSo?.ALLOW_INPHIEUKHO_DAUVAODAURA === true && (
-                          <button
-                            onClick={handlePrintWareHouse}
-                            className="flex items-center  py-1 px-2  rounded-md border-2 border-purple-500  text-slate-50 text-base bg-purple-500 hover:bg-white hover:text-purple-500  "
-                          >
-                            <div className="pr-1">
-                              <TiPrinter size={20} />
-                            </div>
-                            <div>In phiếu kho</div>
-                          </button>
-                        )}
+
                         <button
                           onClick={() => setHideColumns(!hideColumns)}
                           className="flex items-center py-1 px-2 rounded-md border-2 border-red-500  text-slate-50 text-base bg-red-500 hover:bg-white hover:text-red-500 "
@@ -838,7 +635,7 @@ const PhieuMuaHang = () => {
                           <div>
                             <Checkbox.Group
                               style={{
-                                width: '470px',
+                                width: '350px',
                                 background: 'white',
                                 padding: 10,
                                 borderRadius: 10,
@@ -848,12 +645,12 @@ const PhieuMuaHang = () => {
                               defaultValue={checkedList}
                               onChange={(value) => {
                                 setCheckedList(value)
-                                localStorage.setItem('hidenColumnPMH', JSON.stringify(value))
+                                localStorage.setItem('hidenColumnSDV', JSON.stringify(value))
                               }}
                             >
-                              <Row>
+                              <Row className="flex justify-center">
                                 {options.map((item) => (
-                                  <Col span={8} key={item.value}>
+                                  <Col span={10} key={item.value}>
                                     <Checkbox value={item.value}>{item.label}</Checkbox>
                                   </Col>
                                 ))}
@@ -970,7 +767,7 @@ const PhieuMuaHang = () => {
                   className="table_pmh setHeight"
                   // rowSelection={rowSelection}
                   columns={newColumnsHide}
-                  dataSource={filteredPMH}
+                  dataSource={filteredSDV}
                   size="small"
                   scroll={{
                     x: 1500,
@@ -991,7 +788,7 @@ const PhieuMuaHang = () => {
                       handleView(record)
                     },
                   })}
-                  rowClassName={(record) => (record.SoChungTu === donePMH ? 'highlighted-row' : '')}
+                  rowClassName={(record) => (record.SoChungTu === doneNTR ? 'highlighted-row' : '')}
                   // Bảng Tổng
                   summary={() => {
                     return (
@@ -999,38 +796,27 @@ const PhieuMuaHang = () => {
                         <Table.Summary.Row>
                           {newColumnsHide
                             .filter((column) => column.render)
-                            .map((column) => {
-                              const isNumericColumn = typeof filteredPMH[0]?.[column.dataIndex] === 'number'
+                            .map((column, index) => {
+                              const isNumericColumn = typeof filteredSDV[0]?.[column.dataIndex] === 'number'
 
                               return (
-                                <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                                <Table.Summary.Cell key={`summary-cell-${index + 1}`} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
                                   {isNumericColumn ? (
-                                    column.dataIndex === 'TongTienHang' || column.dataIndex === 'TongTienThue' || column.dataIndex === 'TongThanhTien' ? (
+                                    column.dataIndex === 'SoTien' ? (
                                       <Text strong>
-                                        {Number(filteredPMH.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                        {Number(filteredSDV.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                           minimumFractionDigits: dataThongSo?.SOLESOTIEN,
                                           maximumFractionDigits: dataThongSo?.SOLESOTIEN,
                                         })}
                                       </Text>
-                                    ) : column.dataIndex === 'TongSoLuong' ? (
-                                      <Text strong>
-                                        {Number(filteredPMH.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                          minimumFractionDigits: dataThongSo?.SOLESOLUONG,
-                                          maximumFractionDigits: dataThongSo?.SOLESOLUONG,
-                                        })}
-                                      </Text>
                                     ) : (
                                       <Text strong>
-                                        {Number(filteredPMH.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                        {Number(filteredSDV.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                           minimumFractionDigits: 0,
                                           maximumFractionDigits: 0,
                                         })}
                                       </Text>
                                     )
-                                  ) : column.dataIndex === 'TTTienMat' ? (
-                                    <Text className="text-center" strong>
-                                      {Object.values(data).filter((value) => value.TTTienMat).length}
-                                    </Text>
                                   ) : column.dataIndex === 'STT' ? (
                                     <Text className="text-center" strong>
                                       {data.length}
@@ -1047,23 +833,22 @@ const PhieuMuaHang = () => {
               </div>
 
               {isShowModal && (
-                <Modals
-                  namePage={'Phiếu Mua Hàng'}
-                  typePage={'PMH'}
+                <ModalSDV
+                  namePage={'Phiếu điều chỉnh công nợ nhà cung cấp'}
+                  typePage={'SDV'}
                   close={() => setIsShowModal(false)}
                   actionType={actionType}
                   dataRecord={dataRecord}
-                  dataThongTin={dataThongTin}
+                  // dataThongTin={dataThongTin}
                   dataThongTinSua={dataThongTinSua}
-                  dataKhoHang={dataKhoHang}
                   dataDoiTuong={dataDoiTuong}
                   data={data}
-                  isLoadingModal={isLoadingModal}
-                  isLoadingEdit={isLoadingEdit}
                   controlDate={formKhoanNgay}
                   dataThongSo={dataThongSo}
                   loading={() => setTableLoad(true)}
-                  setHightLight={setDonePMH}
+                  isLoadingModal={isLoadingModal}
+                  isLoadingEdit={isLoadingEdit}
+                  setHightLight={setDoneNTR}
                 />
               )}
             </div>
@@ -1074,4 +859,4 @@ const PhieuMuaHang = () => {
   )
 }
 
-export default PhieuMuaHang
+export default PhieuSDV

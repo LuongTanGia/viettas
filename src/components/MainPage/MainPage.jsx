@@ -8,6 +8,8 @@ import HangHoa from '../../Pages/DanhMuc/HangHoa'
 import PhieuMuaHang from '../../Pages/DuLieu/DLDauVao/PhieuMuaHang'
 import PhieuBanLe from '../../Pages/DuLieu/DLDauRa/PhieuBanLe'
 import PhieuNTR from '../../Pages/DuLieu/DLDauVao/PhieuNTR'
+import PhieuSDV from '../../Pages/DuLieu/DLDauVao/PhieuSDV'
+import PhieuSDR from '../../Pages/DuLieu/DLDauRa/PhieuSDR'
 import PhieuXTR from '../../Pages/DuLieu/DLDauRa/PhieuXTR'
 import PhieuChiTien from '../../Pages/DuLieu/ThuChi/PhieuChiTien'
 import PhieuThuTien from '../../Pages/DuLieu/ThuChi/PhieuThuTien'
@@ -37,6 +39,7 @@ import KhoHang from '../../Pages/ThietLap/KhoHang'
 import QuanLy from '../../Pages/ThietLap/QuanLy'
 import QuayTinhTien from '../../Pages/ThietLap/QuayTinhTien'
 import NhapXuatTon from '../../Pages/TruyVan/NhapXuatTon'
+import SoSanhGB from '../../Pages/TruyVan/SoSanhBangGia'
 import PhanCaDS from '../../Pages/ThietLap/PhanCaDS'
 
 function MainPage({ isSidebarVisible }) {
@@ -55,6 +58,8 @@ function MainPage({ isSidebarVisible }) {
           <Route path="/DanhMuc_HangMucChi" element={<HangMucChi />} />
           <Route path="/DuLieuDV/DuLieu_PMH" element={<PhieuMuaHang />} />
           <Route path="/DuLieuDV/DuLieu_NTR" element={<PhieuNTR />} />
+          <Route path="/DuLieuDV/DuLieu_SDV" element={<PhieuSDV />} />
+          <Route path="/DuLieuDR/DuLieu_SDR" element={<PhieuSDR />} />
           <Route path="/DuLieuDR/DuLieu_XTR" element={<PhieuXTR />} />
           <Route path="/DuLieuTK/DuLieu_NDC" element={<PhieuNhapDieuChinh />} />
           <Route path="/DuLieuTK/DuLieu_XSD" element={<PhieuXuatSuDung />} />
@@ -74,6 +79,7 @@ function MainPage({ isSidebarVisible }) {
           <Route path="/TruyVan_DoanhSoBanHangKHHH" element={<DSBHKH_HH />} />
           <Route path="/TruyVan_CanDoiNXT_TheoKho" element={<NhapXuatTonKho />} />
           <Route path="/TruyVan_CanDoiNXT_TongKho" element={<NhapXuatTon />} />
+          <Route path="/TruyVan_SoSanhBangGia" element={<SoSanhGB />} />
           <Route path="/ThietLap_GiaLe" element={<GiaBanLe />} />
           <Route path="/ThietLap_NhomGiaDoiTuong" element={<BangGiaKH />} />
           <Route path="/ThietLap_GiaLe" element={<GiaBanLe />} />

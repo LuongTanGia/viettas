@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import logo from '../assets/VTS-iSale.ico'
 import { InputNumber, Select } from 'antd'
 import { toast } from 'react-toastify'
@@ -8,7 +8,7 @@ import { RETOKEN } from '../action/Actions'
 import ActionButton from '../components/util/Button/ActionButton'
 const { Option } = Select
 // const { BsSearch } = icons
-const ModalDieuChinh = ({ type, close, data, onAdjustRow, namePage, dataThongSo, typePage, dataRecord, setHightLight }) => {
+const ModalDieuChinh = ({ close, namePage, dataThongSo, typePage, dataRecord, setHightLight }) => {
   const [formAdjustPrice, setFormAdjustPrice] = useState({
     GiaTriTinh: 'OLDVALUE',
     ToanTu: '+',
@@ -59,78 +59,6 @@ const ModalDieuChinh = ({ type, close, data, onAdjustRow, namePage, dataThongSo,
       }
     } catch (error) {
       console.error('Error while saving data:', error)
-    }
-  }
-  const calculatePrice = (DFvalue, GiaTriTinh, ToanTu, LoaiGiaTri, GiaTri) => {
-    let result
-
-    switch (LoaiGiaTri) {
-      case 'TYLE':
-        GiaTri = DFvalue * (GiaTri / 100)
-        break
-      case 'HANGSO':
-        break
-      default:
-        console.error('Error: Invalid LoaiGiaTri!')
-        return NaN
-    }
-
-    // Thực hiện tính toán dựa trên GiaTriTinh
-    switch (GiaTriTinh) {
-      case 'OLDVALUE':
-        // Thực hiện tính toán dựa trên toán tử
-        switch (ToanTu) {
-          case '+':
-            result = DFvalue + GiaTri
-            break
-          case '-':
-            result = DFvalue - GiaTri
-            break
-          case '*':
-            result = DFvalue * GiaTri
-            break
-          case '/':
-            if (GiaTri !== 0) {
-              result = DFvalue / GiaTri
-            } else {
-              // Xử lý trường hợp chia cho 0
-              console.error('Error: Division by zero!')
-              result = GiaTri
-            }
-            break
-          default:
-            console.error('Error: Invalid operator!')
-            result = GiaTri
-        }
-        break
-      case 'NEWVALUE':
-        result = GiaTri
-        break
-      default:
-        console.error('Error: Invalid operator!')
-        result = GiaTri
-    }
-    return result
-  }
-
-  const handleAdjustRow = () => {
-    const newRow = data.map((row) => ({
-      ...row,
-      DonGia: calculatePrice(row.DonGia, formAdjustPrice.GiaTriTinh, formAdjustPrice.ToanTu, formAdjustPrice.LoaiGiaTri, formAdjustPrice.GiaTri),
-    }))
-    onAdjustRow(newRow)
-    // toast.success('Chọn hàng hóa thành công', {
-    //   autoClose: 1000,
-    // })
-    console.log('newRow', newRow)
-    close()
-  }
-
-  const handleAction = () => {
-    if (type === 'adjustAction') {
-      handleAdjustPrice()
-    } else {
-      handleAdjustRow()
     }
   }
 
@@ -267,7 +195,7 @@ const ModalDieuChinh = ({ type, close, data, onAdjustRow, namePage, dataThongSo,
           </div>
           {/* button */}
           <div className="flex justify-end items-center pt-[14px]  gap-x-2">
-            <ActionButton color={'slate-50'} title={'Xử lý'} bg_hover={'white'} background={'bg-main'} color_hover={'bg-main'} handleAction={handleAction} isModal={true} />
+            <ActionButton color={'slate-50'} title={'Xử lý'} bg_hover={'white'} background={'bg-main'} color_hover={'bg-main'} handleAction={handleAdjustPrice} isModal={true} />
             <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} isModal={true} />
           </div>
         </div>

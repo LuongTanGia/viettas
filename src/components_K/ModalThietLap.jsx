@@ -15,7 +15,7 @@ import ModalImport from './ModalImport'
 
 const { Option } = Select
 
-const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, dataThongSo, dataHangHoa, dataDoiTuong, dataNhomGia, loading, formDEL, setHightLight }) => {
+const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongSo, dataHangHoa, dataDoiTuong, dataNhomGia, loading, formDEL, setHightLight, dataMaHang }) => {
   const [value1List, setValue1List] = useState([])
   const [value2List, setValue2List] = useState([])
   const [errors, setErrors] = useState({
@@ -67,8 +67,9 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
     LoaiGiaTri: 'TYLE',
     GiaTri: 0,
     HieuLucTu: ngayHieuLuc,
-    DanhSachMa: [],
+    DanhSachMa: dataMaHang,
   })
+
   const [formPrint, setFormPrint] = useState({
     CodeValue1From: null,
     CodeValue1To: null,
@@ -80,12 +81,6 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
   })
 
   //  set value default
-  useEffect(() => {
-    if (data && actionType === 'adjustPrice') {
-      filterDSMa(ngayHieuLuc)
-    }
-  }, [])
-
   useEffect(() => {
     if (formAdjustPrice?.GiaTriTinh === 'OLDVALUE') {
       setFormAdjustPrice({ ...formAdjustPrice, ToanTu: '+' })
@@ -306,7 +301,6 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
           toast.error(response.data.DataErrorDescription)
         }
       }
-
       close()
     } catch (error) {
       console.error('Error while saving data:', error)
@@ -375,6 +369,8 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
       const response = await apis.DieuChinhGBL(tokenLogin, formAdjustPrice)
       if (response.data && response.data.DataError === 0) {
         toast.success(response.data.DataErrorDescription)
+        // const soChungTu = response.data.DataResults.map((obj) => `${obj.Ma}/${obj.HieuLuc}`)
+        // setHightLight(soChungTu)
         loading()
       } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
         toast.warning(response.data.DataErrorDescription)
@@ -389,15 +385,6 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
     } catch (error) {
       console.error('Error while saving data:', error)
     }
-  }
-
-  const filterDSMa = (date) => {
-    const filteredMaHang = data.filter((item) => dayjs(item.HieuLucTu).format('YYYY-MM-DD') === dayjs(date).format('YYYY-MM-DD')).map((item) => ({ Ma: item.MaHang }))
-    setFormAdjustPrice({
-      ...formAdjustPrice,
-      HieuLucTu: dayjs(date).format('YYYY-MM-DD'),
-      DanhSachMa: filteredMaHang,
-    })
   }
 
   const handleFromChange = (value) => {
@@ -425,7 +412,7 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
       setFormPrint({ ...formPrint, CodeValue2From: value, CodeValue2To: value })
     }
   }
-  // console.log(formPrint)
+
   return (
     <>
       <div className=" fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
@@ -665,7 +652,12 @@ const ModalTL = ({ data, actionType, typePage, namePage, close, dataRecord, data
                           className="DatePicker_PMH  max-w-[110px]"
                           format="DD/MM/YYYY"
                           value={dayjs(formAdjustPrice?.HieuLucTu)}
-                          onChange={filterDSMa}
+                          onChange={(newDate) => {
+                            setFormAdjustPrice({
+                              ...formAdjustPrice,
+                              HieuLucTu: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                            })
+                          }}
                           sx={{
                             '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
                             '& .MuiButtonBase-root': {

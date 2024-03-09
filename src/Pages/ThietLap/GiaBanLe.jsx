@@ -4,25 +4,24 @@ import moment from 'moment'
 import icons from '../../untils/icons'
 import { toast } from 'react-toastify'
 import * as apis from '../../apis'
-import { ModalTL } from '../../components_K'
+import { ModalTL, PermissionView } from '../../components_K'
 import ActionButton from '../../components/util/Button/ActionButton'
 import { RETOKEN, formatCurrency } from '../../action/Actions'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
 import { exportToExcel } from '../../action/Actions'
 import { CloseSquareFilled } from '@ant-design/icons'
-import { useNavigate } from 'react-router-dom'
 import { useSearchHH } from '../../components_K/myComponents/useSearchHH'
+import { Segmented } from 'antd'
 const { Option } = Select
 const { Text } = Typography
-const { IoAddCircleOutline, TiPrinter, MdDelete, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill, CgCloseO, TiThSmall, MdFilterAlt, BsWrenchAdjustableCircle } = icons
+const { IoAddCircleOutline, TiPrinter, MdDelete, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill, MdFilterAlt, BsWrenchAdjustableCircle } = icons
 const GBL = () => {
-  const navigate = useNavigate()
   const optionContainerRef = useRef(null)
   const [tableLoad, setTableLoad] = useState(true)
   const [isLoadingEdit, setIsLoadingEdit] = useState(true)
   const [isLoadingModal, setIsLoadingModal] = useState(true)
   const [isShowModal, setIsShowModal] = useState(false)
-  const [isShowFull, setIsShowFull] = useState(false)
+  const [showFull, setShowFull] = useState('Hiện hành')
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [isShowOption, setIsShowOption] = useState(false)
   const [data, setData] = useState([])
@@ -30,10 +29,11 @@ const GBL = () => {
   const [dataThongTin, setDataThongTin] = useState({})
   const [dataRecord, setDataRecord] = useState(null)
   const [dataHangHoa, setDataHangHoa] = useState(null)
+  const [dataMaHang, setDataMaHang] = useState([])
   const [dataNhomGia, setDataNhomGia] = useState([])
   const [actionType, setActionType] = useState('')
   const [dataQuyenHan, setDataQuyenHan] = useState({})
-  const [setSearchGBL, filteredGBL, searchGBL] = useSearchHH(!isShowFull ? data : dataFull)
+  const [setSearchGBL, filteredGBL, searchGBL] = useSearchHH(showFull === 'Hiện hành' ? data : dataFull)
   const [prevSearchValue, setPrevSearchValue] = useState('')
   const [hideColumns, setHideColumns] = useState(false)
   const [checkedList, setCheckedList] = useState([])
@@ -44,6 +44,9 @@ const GBL = () => {
   const [isShowNotify, setIsShowNotify] = useState(false)
   const [hasCalledApis, setHasCalledApis] = useState(false)
   const [valueList, setValueList] = useState([])
+  const [selectedRowKeys, setSelectedRowKeys] = useState([])
+  const [isChanging, setIsChanging] = useState(false)
+  // const [doneGBL, setDoneGBL] = useState([])
 
   const [formFilter, setFormFilter] = useState({
     CodeValue1From: null,
@@ -87,6 +90,20 @@ const GBL = () => {
     }
   }, [confirmed])
 
+  // data DS adjustPrice
+  useEffect(() => {
+    const selectedRowObjs = selectedRowKeys.map((key) => {
+      const [Ma] = key.split('/')
+      return { Ma }
+    })
+    setDataMaHang(selectedRowObjs)
+  }, [selectedRowKeys])
+  // default showFull
+  useEffect(() => {
+    if (formFilter.CodeValue1From === undefined || formFilter.CodeValue1To === undefined) {
+      setFormFilter({ CodeValue1From: null, CodeValue1To: null })
+    }
+  }, [formFilter])
   // get helper
   useEffect(() => {
     setIsLoadingModal(true)
@@ -193,7 +210,7 @@ const GBL = () => {
         getDSandDSFull()
         setHasCalledApis(true)
       } else if (tableLoad && dataQuyenHan?.VIEW) {
-        if (isShowFull) {
+        if (showFull === 'Tất cả') {
           getDSFullGBL()
         } else {
           getDSGBL()
@@ -211,13 +228,6 @@ const GBL = () => {
     //   }
     // }
   }, [tableLoad, dataQuyenHan?.VIEW])
-
-  // default value
-  useEffect(() => {
-    if (formFilter.CodeValue1From === undefined || formFilter.CodeValue1To === undefined) {
-      setFormFilter({ CodeValue1From: null, CodeValue1To: null })
-    }
-  }, [formFilter])
 
   const getDSGBL = async () => {
     try {
@@ -633,52 +643,18 @@ const GBL = () => {
     }
   }
 
+  const handleRowClick = (record) => {
+    // setDoneGBL([])
+    const selectedKey = `${record.MaHang}/${record.HieuLucTu}`
+    const isSelected = selectedRowKeys.includes(selectedKey)
+    const newSelectedRowKeys = isSelected ? selectedRowKeys.filter((key) => key !== selectedKey) : [...selectedRowKeys, selectedKey]
+    setSelectedRowKeys(newSelectedRowKeys)
+  }
+
   return (
     <>
       {dataQuyenHan?.VIEW === false ? (
-        <>
-          {isShowNotify && (
-            <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10">
-              <div className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"></div>
-              <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col bg-white px-2 rounded shadow-custom overflow-hidden">
-                <div className="flex flex-col gap-2 p-2 justify-between ">
-                  <div className="flex flex-col gap-2 p-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex gap-2">
-                        <p className="text-blue-700 font-semibold uppercase">Kiểm tra quyền hạn người dùng</p>
-                      </div>
-                    </div>
-                    <div className="flex gap-2 border-2 p-3 items-center">
-                      <div>
-                        <CgCloseO className="w-8 h-8 text-red-500" />
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        <p className="whitespace-nowrap">Bạn không có quyền thực hiện chức năng này!</p>
-                        <p className="whitespace-nowrap">
-                          Vui lòng liên hệ <span className="font-bold">Người Quản Trị</span> để được cấp quyền
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex gap-2 justify-end">
-                      <ActionButton
-                        handleAction={() => {
-                          setIsShowNotify(false)
-                          navigate(-1)
-                        }}
-                        title={'Đóng'}
-                        isModal={true}
-                        color={'slate-50'}
-                        background={'red-500'}
-                        color_hover={'red-500'}
-                        bg_hover={'white'}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </>
+        <>{isShowNotify && <PermissionView close={() => setIsShowNotify(false)} />}</>
       ) : (
         <>
           <div className="w-auto">
@@ -744,15 +720,6 @@ const GBL = () => {
                         </div>
                         <div>Import</div>
                       </button>
-                      <button
-                        onClick={handleAdjustPrice}
-                        className="flex items-center  py-1 px-2  rounded-md border-2 border-orange-500  text-slate-50 text-base bg-orange-500 hover:bg-white hover:text-orange-500  "
-                      >
-                        <div className="pr-1">
-                          <BsWrenchAdjustableCircle size={20} />
-                        </div>
-                        <div>Điều chỉnh giá</div>
-                      </button>
 
                       <button
                         onClick={() => setHideColumns(!hideColumns)}
@@ -801,54 +768,72 @@ const GBL = () => {
                 )}
               </div>
             </div>
-            <div className="flex justify-between items-center px-3 ">
-              <div className="flex gap-1">
-                <div className="flex gap-1 items-center">
-                  <div>Nhóm</div>
-                  <Select
-                    showSearch
-                    size="small"
-                    allowClear
-                    placeholder="Chọn nhóm"
-                    value={formFilter.CodeValue1From}
-                    onChange={handleFromChange}
-                    style={{
-                      width: '10vw',
-                      textOverflow: 'ellipsis',
-                    }}
-                    popupMatchSelectWidth={false}
-                  >
-                    {dataNhomGia?.map((item) => (
-                      <Option key={item.Ma} value={item.Ma} title={item.Ten}>
-                        {item.Ma} - {item.Ten}
-                      </Option>
-                    ))}
-                  </Select>
+            <div className="flex justify-between items-center px-2 ">
+              <div className="flex flex-col gap-1 ">
+                <div className="flex  justify-between gap-1">
+                  <div className="flex gap-1 items-center">
+                    <div className="w-[42px] text-end">Nhóm</div>
+                    <Select
+                      showSearch
+                      size="small"
+                      allowClear
+                      placeholder="Chọn nhóm"
+                      value={formFilter.CodeValue1From}
+                      onChange={handleFromChange}
+                      style={{
+                        width: '12vw',
+                        textOverflow: 'ellipsis',
+                      }}
+                      popupMatchSelectWidth={false}
+                    >
+                      {dataNhomGia?.map((item) => (
+                        <Option key={item.Ma} value={item.Ma} title={item.Ten}>
+                          {item.Ma} - {item.Ten}
+                        </Option>
+                      ))}
+                    </Select>
+                  </div>
+                  <div className="flex gap-1 items-center">
+                    <div className=" text-center">Đến</div>
+                    <Select
+                      showSearch
+                      allowClear
+                      size="small"
+                      placeholder="Chọn nhóm"
+                      value={formFilter.CodeValue1To}
+                      onChange={handleToChange}
+                      style={{
+                        width: '12vw',
+                        textOverflow: 'ellipsis',
+                      }}
+                      popupMatchSelectWidth={false}
+                    >
+                      {dataNhomGia?.map((item) => (
+                        <Option key={item.Ma} value={item.Ma} title={item.Ten}>
+                          {item.Ma} - {item.Ten}
+                        </Option>
+                      ))}
+                    </Select>
+                  </div>
+                  <div className="">
+                    <Tooltip title="Xem dữ liệu" color="blue">
+                      <div>
+                        <ActionButton
+                          title={''}
+                          handleAction={handleFilterDS}
+                          icon={<MdFilterAlt size={14} />}
+                          color={'slate-50'}
+                          background={'bg-main'}
+                          color_hover={'bg-main'}
+                          bg_hover={'white'}
+                          isModal={true}
+                        />
+                      </div>
+                    </Tooltip>
+                  </div>
                 </div>
-                <div className="flex gap-1 items-center">
-                  <div>Đến</div>
-                  <Select
-                    showSearch
-                    allowClear
-                    size="small"
-                    placeholder="Chọn nhóm"
-                    value={formFilter.CodeValue1To}
-                    onChange={handleToChange}
-                    style={{
-                      width: '10vw',
-                      textOverflow: 'ellipsis',
-                    }}
-                    popupMatchSelectWidth={false}
-                  >
-                    {dataNhomGia?.map((item) => (
-                      <Option key={item.Ma} value={item.Ma} title={item.Ten}>
-                        {item.Ma} - {item.Ten}
-                      </Option>
-                    ))}
-                  </Select>
-                </div>
-                <div className="flex gap-1 items-center">
-                  <div>Chọn</div>
+                <div className="flex gap-1 ">
+                  <div className="w-[42px] text-end">Chọn</div>
                   <Select
                     mode="multiple"
                     allowClear
@@ -857,7 +842,7 @@ const GBL = () => {
                     placeholder="Chọn nhóm"
                     value={valueList}
                     onChange={(value) => setValueList(value)}
-                    className="md:w-[28vw] lg:w-[35vw] truncate"
+                    className="w-[30vw] truncate"
                   >
                     {dataNhomGia?.map((item) => (
                       <Option key={item.Ma} value={item.Ma}>
@@ -866,30 +851,32 @@ const GBL = () => {
                     ))}
                   </Select>
                 </div>
-                <div>
-                  <ActionButton
-                    title={''}
-                    handleAction={handleFilterDS}
-                    icon={<MdFilterAlt size={14} />}
-                    color={'slate-50'}
-                    background={'bg-main'}
-                    color_hover={'bg-main'}
-                    bg_hover={'white'}
-                    isModal={true}
-                  />
-                </div>
               </div>
               <div className="flex items-center gap-2">
-                <div
-                  className={`cursor-pointer hover:bg-slate-200 rounded-full p-2 ${isShowFull ? 'text-bg-main' : ''} `}
-                  onClick={() => {
-                    setIsShowFull(!isShowFull), setTableLoad(true)
+                <Segmented
+                  options={['Hiện hành', 'Tất cả']}
+                  value={showFull}
+                  onChange={(value) => {
+                    if (!isChanging) {
+                      setIsChanging(true)
+                      setShowFull(value)
+                      setTableLoad(true)
+                      setTimeout(() => {
+                        setIsChanging(false)
+                      }, 1000)
+                    }
                   }}
-                >
-                  <Tooltip title={`${!isShowFull ? ' Bật hiện tất cả' : 'Tắt hiện tất cả'} `} color="blue">
-                    <TiThSmall size={20} className=""></TiThSmall>
-                  </Tooltip>
-                </div>
+                />
+                <ActionButton
+                  color={'slate-50'}
+                  title={'Điều chỉnh giá'}
+                  icon={<BsWrenchAdjustableCircle size={20} />}
+                  bg_hover={'white'}
+                  background={'orange-500'}
+                  color_hover={'orange-500'}
+                  handleAction={handleAdjustPrice}
+                  isModal={true}
+                />
                 <ActionButton
                   color={'slate-50'}
                   title={'Thêm'}
@@ -907,14 +894,19 @@ const GBL = () => {
             <div id="my-table" className="relative px-2 py-1 ">
               <Table
                 loading={tableLoad}
-                className="table_pmh setHeight"
-                // rowSelection={rowSelection}
+                className="GBL"
                 columns={newColumnsHide}
                 dataSource={filteredGBL}
                 size="small"
+                rowSelection={{
+                  selectedRowKeys,
+                  onChange: (selectedKeys) => {
+                    setSelectedRowKeys(selectedKeys)
+                  },
+                }}
                 scroll={{
                   x: 1500,
-                  y: 410,
+                  y: 300,
                 }}
                 bordered
                 pagination={{
@@ -925,8 +917,12 @@ const GBL = () => {
                     localStorage.setItem('pageSize', size)
                   },
                 }}
-                rowKey={(record) => record.ID}
+                // rowClassName={(record) => (`${record.MaHang}/${record.HieuLucTu}` === doneGBL ? 'highlighted-row' : '')}
+                rowKey={(record) => `${record.MaHang}/${record.HieuLucTu}`}
                 onRow={(record) => ({
+                  onClick: () => {
+                    handleRowClick(record)
+                  },
                   onDoubleClick: () => {
                     handleView(record)
                   },
@@ -936,6 +932,7 @@ const GBL = () => {
                   return (
                     <Table.Summary fixed="bottom">
                       <Table.Summary.Row>
+                        <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell>
                         {newColumnsHide
                           .filter((column) => column.render)
                           .map((column) => {
@@ -944,7 +941,7 @@ const GBL = () => {
                               <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
                                 {column.dataIndex === 'STT' ? (
                                   <Text className="text-center" strong>
-                                    {!isShowFull ? data.length : dataFull.length}
+                                    {showFull === 'Hiện hành' ? data.length : dataFull.length}
                                   </Text>
                                 ) : null}
                               </Table.Summary.Cell>
@@ -966,12 +963,14 @@ const GBL = () => {
                 dataRecord={dataRecord}
                 dataThongTin={dataThongTin}
                 dataHangHoa={dataHangHoa}
+                dataMaHang={dataMaHang}
                 data={dataFull}
                 dataNhomGia={dataNhomGia}
                 isLoadingModal={isLoadingModal}
                 isLoadingEdit={isLoadingEdit}
                 dataThongSo={dataThongSo}
                 loading={() => setTableLoad(true)}
+                // setHightLight={setDoneGBL}
               />
             )}
           </div>

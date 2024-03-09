@@ -2,13 +2,13 @@
 
 // import ActionButton from '../components/util/Button/ActionButton'
 // import { Checkbox, Tooltip } from 'antd'
-import { Checkbox, FloatButton, InputNumber, Select, Spin, Table, Tooltip, Typography } from 'antd'
+import { Checkbox, FloatButton, Select, Spin, Table, Tooltip, Typography } from 'antd'
 import dayjs from 'dayjs'
 import logo from '../assets/VTS-iSale.ico'
 import * as apis from '../apis'
 import icons from '../untils/icons'
 import { RETOKEN, base64ToPDF, formatPrice, formatQuantity } from '../action/Actions'
-import { DateField } from '@mui/x-date-pickers'
+
 import { useEffect, useMemo, useState } from 'react'
 import ActionButton from '../components/util/Button/ActionButton'
 import { toast } from 'react-toastify'
@@ -22,15 +22,12 @@ import ModalImport from './ModalImport'
 const { Text } = Typography
 const { Option } = Select
 const { IoMdAddCircle } = icons
-const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dataThongSo, dataThongTin, dataHangHoa, dataNhomGia, loading, isLoadingModal, setHightLight }) => {
+const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dataThongSo, dataThongTin, dataHangHoa, loading, isLoadingModal, setHightLight }) => {
   const [isShowModalHH, setIsShowModalHH] = useState(false)
   const [isShowSelectHH, setIsShowSelectHH] = useState(false)
   const [isShowImport, setIsShowImport] = useState(false)
-  const [isShowModalDieuChinh, setIsShowModalDieuChinh] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [selectedRowData, setSelectedRowData] = useState([])
-  const [typeAdjust, setTypeAdjust] = useState('')
-
   const [errors, setErrors] = useState({
     NhomGia: '',
     TenNhomGia: '',
@@ -95,14 +92,6 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
       filterDSMa(ngayHieuLuc)
     }
   }, [])
-  useEffect(() => {
-    if (isShowModalDieuChinh) {
-      setTypeAdjust('adjustModal')
-    }
-    if (actionType === 'adjustPrice') {
-      setTypeAdjust('adjustAction')
-    }
-  }, [isShowModalDieuChinh, actionType])
 
   useEffect(() => {
     if (formAdjustPrice?.GiaTriTinh === 'OLDVALUE') {
@@ -257,9 +246,7 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
 
     setSelectedRowData((prevData) => [...prevData, emptyRow])
   }
-  const handleAdjustRow = (newRow) => {
-    setSelectedRowData([...newRow])
-  }
+
   const handleCreateAndClose = async () => {
     if (!formCreate?.NhomGia?.trim() || !formCreate?.TenNhomGia?.trim()) {
       setErrors({
@@ -399,13 +386,6 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
     }
   }
 
-  const handleDieuChinh = () => {
-    if (selectedRowData.length <= 0 || selectedRowData.map((item) => item.MaHang).includes('Chọn mã hàng')) {
-      toast.warning('Chọn hàng hóa để dùng chức năng này!')
-      return
-    }
-    setIsShowModalDieuChinh(true)
-  }
   const handleSelectHH = () => {
     setIsShowSelectHH(true)
   }
@@ -427,10 +407,6 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
   const handleEditData = (data) => {
     setSelectedRowData(data)
   }
-  // const handleSelectRow = (data) => {
-  //   setSelectedRowData(...data)
-  //   console.log(data)
-  // }
 
   const handleFromChange = (value) => {
     setFormPrint({ ...formPrint, CodeValue1From: value })
@@ -444,14 +420,6 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
 
     if (data?.findIndex((item) => item.NhomGia === value) < data?.findIndex((item) => item.NhomGia === formPrint.CodeValue1From)) {
       setFormPrint({ CodeValue1From: value, CodeValue1To: value })
-    }
-  }
-  const handleCloseDieuChinh = () => {
-    if (isShowModalDieuChinh) {
-      setIsShowModalDieuChinh(false)
-    }
-    if (actionType === 'adjustPrice') {
-      close()
     }
   }
 
@@ -800,7 +768,6 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
                       className="table_create_GBS"
                       param={selectedRowData}
                       handleEditData={handleEditData}
-                      // handleSelectRow={handleSelectRow}
                       ColumnTable={columnName}
                       columName={nameColumsGBS}
                       yourMaHangOptions={dataHangHoa}
@@ -820,15 +787,6 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
                     color_hover={'bg-main'}
                     isModal={true}
                     handleAction={handleSelectHH}
-                  />
-                  <ActionButton
-                    color={'slate-50'}
-                    title={'Điều chỉnh giá'}
-                    background={'bg-main'}
-                    bg_hover={'white'}
-                    color_hover={'bg-main'}
-                    isModal={true}
-                    handleAction={handleDieuChinh}
                   />
 
                   <ActionButton color={'slate-50'} title={'Import'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} isModal={true} handleAction={handleImport} />
@@ -1050,18 +1008,15 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
           loading={isLoading}
         />
       )}
-      {(isShowModalDieuChinh || actionType === 'adjustPrice') && (
+      {actionType === 'adjustPrice' && (
         <ModalDieuChinh
-          type={typeAdjust}
-          close={handleCloseDieuChinh}
-          data={selectedRowData}
+          close={() => close()}
           dataThongSo={dataThongSo}
           loading={isLoading}
           namePage={namePage}
           typePage={typePage}
           dataRecord={dataRecord}
           setHightLight={setHightLight}
-          onAdjustRow={handleAdjustRow}
         />
       )}
       {isShowImport && <ModalImport close={() => setIsShowImport(false)} namePage={namePage} loading={isLoading} />}
