@@ -48,13 +48,13 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
   keysOnly?.unshift('STT')
   const listColumns = keysOnly?.filter((value) => !hiden?.includes(value))
   const newColumns = listColumns?.map((item, index) => {
+    console.log(item)
     if (item === 'STT') {
       return {
         title: columName[item] || item,
         width: 70,
         dataIndex: 'key',
         key: index,
-
         showSorterTooltip: false,
         align: 'center',
         ellipsis: {
@@ -90,7 +90,7 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
     if (item === 'NhomHang') {
       return {
         title: columName[item] || item,
-        width: 290,
+        width: 250,
         dataIndex: item,
         key: index,
         sorter: (a, b) => a.NhomHang.localeCompare(b.NhomHang),
@@ -102,7 +102,16 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
         },
         render: (address) => (
           <Tooltip placement="topLeft" title={address} className=" truncate" color="blue">
-            {renderHighlightedCell(address)}
+            <div
+              style={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                textAlign: 'start',
+              }}
+            >
+              {renderHighlightedCell(address)}
+            </div>
           </Tooltip>
         ),
       }
@@ -110,20 +119,27 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
     if (item === 'TenHang' || item === 'ThongTinHangHoa' || item === 'DiaChiDoiTuong') {
       return {
         title: columName[item] || item,
-        width: 250,
+        width: 290,
         dataIndex: item,
-
         key: index,
         sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
         showSorterTooltip: false,
         align: 'center',
-        // fixed: 'left',
         ellipsis: {
           showTitle: false,
         },
         render: (address) => (
           <Tooltip placement="topLeft" title={address} className=" truncate" color="blue">
-            {address}
+            <div
+              style={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                textAlign: 'start',
+              }}
+            >
+              {address}
+            </div>
           </Tooltip>
         ),
       }
@@ -168,13 +184,11 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
         title: columName[item] || item,
         width: 150,
         dataIndex: item,
-
         key: index,
         align: 'center',
         sorter: (a, b) => {
           const dateA = new Date(a[item])
           const dateB = new Date(b[item])
-
           if (!isNaN(dateA.getTime()) && !isNaN(dateB.getTime())) {
             return dateA.getTime() - dateB.getTime()
           } else if (!isNaN(dateA.getTime())) {
@@ -222,7 +236,6 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
         width: 282,
         dataIndex: item,
         key: index,
-
         showSorterTooltip: false,
         align: 'center',
         ellipsis: {
@@ -252,9 +265,7 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
     const isTienColumn2 = item.includes('TongTongCong')
     const isTyLe = item.includes('TyLeCKTT')
     const isTongSoLuong = item.includes('SoLuong')
-
     const isNumericColumn = isTienColumn || item.includes('Gia') || item.includes('Thue') || item.includes('TyLeCKTT') //TyLeCKTT
-
     return {
       title: columName[item] || item,
       width:
@@ -301,7 +312,6 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
             </div>
           )
         }
-
         const formattedValue =
           isTienColumn || isTienColumn2
             ? Number(text).toLocaleString('en-US', { minimumFractionDigits: ThongSo.SOLESOTIEN, maximumFractionDigits: ThongSo.SOLESOTIEN })

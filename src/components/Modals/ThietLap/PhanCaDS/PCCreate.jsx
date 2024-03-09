@@ -3,21 +3,20 @@
 import { toast } from 'react-toastify'
 import { useEffect, useState } from 'react'
 import dayjs from 'dayjs'
-import { Checkbox, Input, Select } from 'antd'
+import { Input, Select } from 'antd'
 import { DateField } from '@mui/x-date-pickers'
 import categoryAPI from '../../../../API/linkAPI'
 import logo from '../../../../assets/VTS-iSale.ico'
 import { RETOKEN } from '../../../../action/Actions'
 import ActionButton from '../../../util/Button/ActionButton'
 import SimpleBackdrop from '../../../util/Loading/LoadingPage'
-const PCCreate = ({ close, loadingData, setTargetRow }) => {
+const PCCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const [dataUser, setDataUser] = useState(null)
   const [dataQuay, setDataQuay] = useState(null)
   const [dataCa, setDataCa] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const [DateFrom, setDateFrom] = useState(dayjs(new Date()))
-  const [DateTo, setDateTo] = useState(null)
   const innitProduct = {
     SoQuay: 0,
     MaNguoiDung: '',
@@ -31,6 +30,7 @@ const PCCreate = ({ close, loadingData, setTargetRow }) => {
   })
   const [errors, setErrors] = useState({
     MaNguoiDung: '',
+    SoQuay: '',
   })
 
   useEffect(() => {
@@ -64,7 +64,6 @@ const PCCreate = ({ close, loadingData, setTargetRow }) => {
         if (response.data.DataError == 0) {
           setDataQuay(response.data.DataResults)
           setIsLoading(true)
-          console.log('Quay', response.data)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
           getListHelperQuay()
@@ -85,7 +84,6 @@ const PCCreate = ({ close, loadingData, setTargetRow }) => {
         if (response.data.DataError == 0) {
           setDataCa(response.data.DataResults)
           setIsLoading(true)
-          console.log('Ca', response.data)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
           getListHelperCa()
@@ -100,16 +98,17 @@ const PCCreate = ({ close, loadingData, setTargetRow }) => {
   }, [isLoading])
 
   const handleCreate = async (isSave = true) => {
-    if (!PCForm?.MaNguoiDung?.trim()) {
+    if (!PCForm?.MaNguoiDung?.trim() || !PCForm?.SoQuay) {
       setErrors({
         MaNguoiDung: PCForm?.MaNguoiDung?.trim() ? null : 'Người dùng không được trống',
+        SoQuay: PCForm?.SoQuay ? null : 'Quầy không được trống',
       })
       return
     }
     try {
-      const response = await categoryAPI.ThemQuanLy({ ...PCForm, TuNgay: dayjs(DateFrom).format('YYYY-MM-DDTHH:mm:ss') }, TokenAccess)
+      const response = await categoryAPI.ThemPhanCa({ ...PCForm, HieuLucTu: dayjs(DateFrom).format('YYYY-MM-DDTHH:mm:ss') }, TokenAccess)
       if (response.data.DataError == 0) {
-        isSave ? setPCForm({ KhongKetThuc: true }) : close()
+        isSave ? setPCForm([]) : close()
         loadingData()
         toast.success('Tạo thành công', { autoClose: 1000 })
         setTargetRow(PCForm?.MaNguoiDung)
@@ -156,22 +155,25 @@ const PCCreate = ({ close, loadingData, setTargetRow }) => {
                       }}
                     >
                       {dataUser &&
-                        dataUser.map((item, index) => (
-                          <Select.Option key={index} value={item.Ma}>
-                            {item.ThongTinNguoiDung}
-                          </Select.Option>
-                        ))}
+                        dataUser.map(
+                          (item, index) =>
+                            !maNguoiDung.includes(item.Ma) && (
+                              <Select.Option key={index} value={item.Ma}>
+                                {item.ThongTinNguoiDung}
+                              </Select.Option>
+                            ),
+                        )}
                     </Select>
                   </div>
-                  <div className="flex items-center gap-2 ml-[15px]">
+                  <div className="flex items-center ml-[15px] ">
                     <div className="flex items-center gap-1 w-full">
-                      <label className="required whitespace-nowrap text-sm">Hiệu lực từ</label>
+                      <label className="required whitespace-nowrap text-sm">Kể từ ngày</label>
                       <DateField
-                        className="DatePicker_NXTKho max-w-[130px]"
+                        className="DatePicker_NXTKho max-w-[130px] "
                         format="DD/MM/YYYY"
                         value={DateFrom || null}
                         onChange={(values) => {
-                          setPCForm({ ...PCForm, TuNgay: dayjs(setDateFrom(values)).format('YYYY-MM-DD') })
+                          setPCForm({ ...PCForm, HieuLucTu: dayjs(setDateFrom(values)).format('YYYY-MM-DD') })
                         }}
                         sx={{
                           '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
@@ -191,36 +193,49 @@ const PCCreate = ({ close, loadingData, setTargetRow }) => {
                         style={{ width: '100%' }}
                         showSearch
                         required
+                        className="text-end"
                         size="small"
+                        status={errors.SoQuay ? 'error' : ''}
+                        placeholder={errors?.SoQuay ? errors?.SoQuay : ''}
                         value={PCForm?.SoQuay || undefined}
                         onChange={(value) => {
                           setPCForm({
                             ...PCForm,
                             SoQuay: value,
                           })
+                          setErrors({ ...errors, SoQuay: '' })
                         }}
                       >
                         {dataQuay &&
                           dataQuay.map((item, index) => (
                             <Select.Option key={index} value={item.Quay}>
-                              {item.TenMayTinh}
+                              {item.Quay}
                             </Select.Option>
                           ))}
                       </Select>
                     </div>
-                    <div className="flex items-center">
-                      <Checkbox
-                        checked={PCForm?.KhongKetThuc}
-                        className="text-sm whitespace-nowrap"
-                        onChange={(e) =>
+                    <div className="flex items-center gap-1 w-[90%]">
+                      <label className=" whitespace-nowrap min-w-[90px] text-sm flex justify-end">Ca</label>
+                      <Select
+                        style={{ width: '100%' }}
+                        showSearch
+                        required
+                        size="small"
+                        value={PCForm?.MaCa || undefined}
+                        onChange={(value) => {
                           setPCForm({
                             ...PCForm,
-                            KhongKetThuc: e.target.checked,
+                            MaCa: value,
                           })
-                        }
+                        }}
                       >
-                        Không kết thúc
-                      </Checkbox>
+                        {dataCa &&
+                          dataCa.map((item, index) => (
+                            <Select.Option key={index} value={item.Ma}>
+                              {item.ThongTinCaLamViec}
+                            </Select.Option>
+                          ))}
+                      </Select>
                     </div>
                   </div>
                   <div className="flex items-center gap-1">

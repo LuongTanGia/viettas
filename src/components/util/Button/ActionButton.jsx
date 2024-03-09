@@ -13,7 +13,7 @@ function ActionButton({ handleAction, title, icon, color, background, color_hove
     }, 1000)
   }
   return (
-    <div className="flex justify-end" onDoubleClick={() => toast.info('Bạn đang bấm quá nhanh !!')}>
+    <div className="flex justify-end" onDoubleClick={() => toast.info('Bạn đang bấm quá nhanh !!', { autoClose: 1000 })}>
       <Spin spinning={loading}>
         <button
           disabled={loading}

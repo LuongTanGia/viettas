@@ -219,6 +219,28 @@ export const nameColumsNhapXuatTon_TongKho = {
   SoLuongXuat_XTR: 'Phiếu trả',
   TriGiaXuat_XTR: 'T.Giá phiếu trả',
 }
+export const nameColumsDSBHKHO = {
+  STT: 'STT',
+  NhomHang: 'Nhóm',
+  MaHang: 'Mã hàng',
+  TenHang: 'Tên hàng',
+  DVT: 'Đơn vị tính',
+  Le_TienHang: 'Lẻ - Tiền hàng',
+  Si_TienHang: 'Sỉ - Tiền hàng',
+  TienHang: 'Tiền hàng',
+  Le_TienThue: 'Lẻ - Tiền thuế',
+  Si_TienThue: 'Sỉ - Tiền thuế',
+  TienThue: 'Tiền thuế',
+  Le_ThanhTien: 'Lẻ - Thành tiền',
+  Si_ThanhTien: 'Sỉ - Thành tiền',
+  ThanhTien: 'Thành tiền',
+  Le_ChietKhau: 'Lẻ - Chiết khấu',
+  Si_ChietKhau: 'Sỉ - Chiết khấu',
+  ChietKhau: 'Chiết khấu',
+  Le_TongCong: 'Lẻ - Tổng Cộng',
+  Si_TongCong: 'Sỉ - Tổng cộng',
+  TongCong: 'Tổng cộng',
+}
 export const nameColumsPhieuNTR = {
   STT: 'STT',
   SoChungTu: 'Số chứng từ',
