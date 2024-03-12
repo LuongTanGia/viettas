@@ -1,27 +1,24 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState, useRef } from 'react'
-import { Table, Select, Tooltip, Typography, Checkbox, Row, Button, Col, Spin, Input, Empty } from 'antd'
+import { Select, Tooltip, Typography, Checkbox, Row, Button, Col, Spin, Input, Empty, Table, Segmented } from 'antd'
 const { Text } = Typography
 import dayjs from 'dayjs'
-import { CgCloseO } from 'react-icons/cg'
+import { TbEye } from 'react-icons/tb'
 import { TfiMoreAlt } from 'react-icons/tfi'
 import { RiFileExcel2Fill } from 'react-icons/ri'
 import { CloseSquareFilled } from '@ant-design/icons'
-import { TbEyeDollar, TbEye } from 'react-icons/tb'
 import { FaSearch, FaEyeSlash } from 'react-icons/fa'
 import categoryAPI from '../../API/linkAPI'
 import { useSearch } from '../../components/hooks/Search'
 import { RETOKEN, exportToExcel } from '../../action/Actions'
 import ActionButton from '../../components/util/Button/ActionButton'
-import HighlightedCell from '../../components/hooks/HighlightedCell'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
-import { nameColumsNhapXuatTon_TongKho } from '../../components/util/Table/ColumnName'
-import { useNavigate } from 'react-router-dom'
+import { nameColumsDSBHQUAY } from '../../components/util/Table/ColumnName'
 import { DateField } from '@mui/x-date-pickers'
-
-const NhapXuatTon = () => {
-  const navigate = useNavigate()
+import HighlightedCell from '../../components/hooks/HighlightedCell'
+import { PermissionView } from '../../components_K'
+const DoanhSoBanHangQuay = () => {
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
@@ -50,6 +47,9 @@ const NhapXuatTon = () => {
   const [dataCRUD, setDataCRUD] = useState()
   const [dateData, setDateData] = useState({})
   const [dateChange, setDateChange] = useState(false)
+  const [dataQuay, setDataQuay] = useState(null)
+  const [check, setCheck] = useState('Tiền hàng')
+  const [valueCheck, setValueCheck] = useState(null)
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -72,7 +72,7 @@ const NhapXuatTon = () => {
   useEffect(() => {
     const getDataQuyenHan = async () => {
       try {
-        const response = await categoryAPI.QuyenHan('TruyVan_CanDoiNXT_TongKho', TokenAccess)
+        const response = await categoryAPI.QuyenHan('TruyVan_DoanhSoBanHangQuay', TokenAccess)
         if (response.data.DataError === 0) {
           setDataCRUD(response.data)
           setIsLoading(true)
@@ -147,6 +147,8 @@ const NhapXuatTon = () => {
         const response = await categoryAPI.KhoanNgay(TokenAccess)
         if (response.data.DataError == 0) {
           setDateData(response.data)
+          setKhoanNgayFrom(dayjs(response.data.NgayBatDau))
+          setKhoanNgayTo(dayjs(response.data.NgayKetThuc))
           setIsLoading(true)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
@@ -160,25 +162,17 @@ const NhapXuatTon = () => {
         setIsLoading(true)
       }
     }
-
     if (!isLoading) {
       getTimeSetting()
     }
   }, [isLoading])
 
   useEffect(() => {
-    setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
-    setcheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
-    const key = Object.keys(dataNXT ? dataNXT[0] : [] || []).filter((key) => key !== 'MaNhomHang' && key !== 'MaKho')
-    setOptions(key)
-  }, [selectVisible])
-
-  useEffect(() => {
     const getDataNXTFirst = async () => {
       try {
-        if (isLoading === true) {
+        if (isLoading == true) {
           setTableLoad(true)
-          const response = await categoryAPI.InfoNXTTongKho(
+          const response = await categoryAPI.InfoBSDHQuay(
             {
               NgayBatDau: dayjs(khoanNgayFrom).format('YYYY-MM-DD'),
               NgayKetThuc: dayjs(khoanNgayTo).format('YYYY-MM-DD'),
@@ -189,7 +183,7 @@ const NhapXuatTon = () => {
             setDataNXT(response.data.DataResults)
             setIsLoading(true)
             setTableLoad(false)
-          } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          } else if ((response.data && response.data.DataError == -107) || (response.data && response.data.DataError == -108)) {
             await RETOKEN()
             getDataNXTFirst()
           } else {
@@ -202,12 +196,21 @@ const NhapXuatTon = () => {
         console.log(error)
       }
     }
+
     getDataNXTFirst()
-  }, [searchHangHoa, isLoading, khoanNgayFrom, khoanNgayTo])
+  }, [searchHangHoa, isLoading])
+
+  useEffect(() => {
+    setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
+    setcheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
+    const ColKey = filteredHangHoa && filteredHangHoa[0] && Object.keys(filteredHangHoa[0]).filter((item) => typeof item == 'string' && item.includes(`Col_`))
+    const key = Object.keys(dataNXT[0] || []).filter((key) => !ColKey.includes(key))
+    setOptions(key)
+  }, [selectVisible])
 
   const getDataNXT = async () => {
     try {
-      const response = await categoryAPI.InfoNXTTongKho(
+      const response = await categoryAPI.InfoBSDHQuay(
         {
           NgayBatDau: dateData.NgayBatDau,
           NgayKetThuc: dateData.NgayKetThuc,
@@ -240,42 +243,30 @@ const NhapXuatTon = () => {
       getDataNXT()
     }
   }
-  const getDataNXT_DVTQD = async () => {
-    try {
-      const response = await categoryAPI.InfoNXTTongKho_DVTQD(
-        {
-          NgayBatDau: dateData.NgayBatDau,
-          NgayKetThuc: dateData.NgayKetThuc,
-          CodeValue1From: selectedNhomFrom,
-          CodeValue1To: selectedNhomTo,
-          CodeValue1List: selectedNhomList.join(', '),
-          CodeValue2From: selectedMaFrom,
-          CodeValue2To: selectedMaTo,
-          CodeValue2List: selectedMaList.join(', '),
-        },
-        TokenAccess,
-      )
-      if (response.data.DataError == 0) {
-        setDataNXT(response.data.DataResults)
-        setTableLoad(false)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getDataNXT_DVTQD()
-      } else {
-        setDataNXT([])
-        setTableLoad(false)
+  useEffect(() => {
+    const getListKhoNXT = async () => {
+      try {
+        const response = await categoryAPI.ListQuayTinhTien(TokenAccess)
+        if (response.data.DataError == 0) {
+          setDataQuay(response.data.DataResults)
+          setIsLoading(true)
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          await RETOKEN()
+          getListKhoNXT()
+        } else {
+          console.log(response.data)
+          setIsLoading(true)
+        }
+      } catch (error) {
+        console.log(error)
+        setIsLoading(true)
       }
-    } catch (error) {
-      console.log(error)
     }
-  }
-  const handleFilterDS_DVTQD = () => {
-    setTableLoad(true)
-    if (!tableLoad) {
-      getDataNXT_DVTQD()
+
+    if (!isLoading) {
+      getListKhoNXT()
     }
-  }
-  let timerId
+  }, [isLoading])
 
   const handleDateChange = () => {
     clearTimeout(timerId)
@@ -312,12 +303,6 @@ const NhapXuatTon = () => {
       handleDateChange()
     }
   }
-  const handleSearch = (event) => {
-    clearTimeout(timerId)
-    timerId = setTimeout(() => {
-      setSearchHangHoa(event.target.value)
-    }, 300)
-  }
   const formatThapPhan = (number, decimalPlaces) => {
     if (typeof number === 'number' && !isNaN(number)) {
       const formatter = new Intl.NumberFormat('en-US', {
@@ -326,6 +311,13 @@ const NhapXuatTon = () => {
       return formatter.format(number)
     }
     return ''
+  }
+  let timerId
+  const handleSearch = (event) => {
+    clearTimeout()
+    timerId = setTimeout(() => {
+      setSearchHangHoa(event.target.value)
+    }, 300)
   }
   const handleHidden = () => {
     setSelectVisible(!selectVisible)
@@ -341,13 +333,80 @@ const NhapXuatTon = () => {
       localStorage.setItem('hiddenColumns', JSON.stringify(checkedList))
     }, 1000)
   }
+  useEffect(() => {
+    if (check) {
+      if (check == 'Tiền hàng') {
+        setValueCheck('TienHang')
+      } else if (check == 'Tiền ttimerIdhuế') {
+        setValueCheck('TienThue')
+      } else if (check == 'Thành tiền') {
+        setValueCheck('ThanhTien')
+      } else if (check == 'Chiết khấu') {
+        setValueCheck('ChietKhau')
+      } else if (check == 'Tổng cộng') {
+        setValueCheck('TongCong')
+      }
+    }
+  }, [check])
+
+  const dynamicColumns = () => {
+    const maQuay = dataQuay && dataQuay.map((item) => item.Quay)
+    return filteredHangHoa && filteredHangHoa?.length > 0
+      ? maQuay.reduce((columns, ma) => {
+          const ColKey =
+            filteredHangHoa &&
+            filteredHangHoa[0] &&
+            Object.keys(filteredHangHoa[0]).filter((item) => typeof item == 'string' && item.includes(`Col_${ma}_`) && item.includes(valueCheck))
+          const tenQuayMatch = maQuay[maQuay.indexOf(ma)]
+          columns.push(
+            ...ColKey.map((colKey) => ({
+              title: ` Quầy ${tenQuayMatch} `,
+              dataIndex: colKey,
+              key: colKey,
+              width: 180,
+              ellipsis: true,
+              align: 'center',
+              render: (text) => (
+                <div className={`text-end ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+                  <HighlightedCell text={formatThapPhan(text, dataThongSo?.SOLESOTIEN)} search={searchHangHoa} />
+                </div>
+              ),
+              sorter: (a, b) => a[colKey] - b[colKey],
+              showSorterTooltip: false,
+            })),
+          )
+          return columns
+        }, [])
+      : []
+  }
+  const lastCols = () => {
+    const lastColumns =
+      filteredHangHoa && filteredHangHoa[0] && Object.keys(filteredHangHoa[0]).filter((item) => typeof item === 'string' && !item.startsWith(`Col_`) && item.includes(valueCheck))
+    return lastColumns
+      ? lastColumns.map((colKey) => ({
+          title: `${check}`,
+          dataIndex: colKey,
+          key: colKey,
+          width: 120,
+          fixed: 'right',
+          align: 'center',
+          render: (text) => (
+            <div className={`text-end ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo?.SOLESOTIEN)} search={searchHangHoa} />
+            </div>
+          ),
+          sorter: (a, b) => a[colKey] - b[colKey],
+          showSorterTooltip: false,
+        }))
+      : []
+  }
   const titles = [
     {
       title: 'STT',
       dataIndex: 'STT',
       render: (text, record, index) => index + 1,
-      with: 10,
       fixed: 'left',
+      key: 'STT',
       width: 50,
       align: 'center',
     },
@@ -356,7 +415,7 @@ const NhapXuatTon = () => {
       dataIndex: 'MaHang',
       key: 'MaHang',
       fixed: 'left',
-      width: 150,
+      width: 100,
       align: 'center',
       sorter: (a, b) => a.MaHang.localeCompare(b.MaHang),
       showSorterTooltip: false,
@@ -366,9 +425,8 @@ const NhapXuatTon = () => {
       title: 'Tên hàng',
       dataIndex: 'TenHang',
       key: 'TenHang',
-      fixed: 'left',
       align: 'center',
-      width: 220,
+      width: 180,
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       showSorterTooltip: false,
       render: (text) => (
@@ -395,11 +453,11 @@ const NhapXuatTon = () => {
     },
     {
       title: 'Nhóm',
-      dataIndex: 'TenNhomHang',
-      key: 'TenNhomHang',
+      dataIndex: 'NhomHang',
+      key: 'NhomHang',
       align: 'center',
       width: 150,
-      sorter: (a, b) => a.TenNhomHang.localeCompare(b.TenNhomHang),
+      sorter: (a, b) => a.NhomHang.localeCompare(b.NhomHang),
       showSorterTooltip: false,
       render: (text) => (
         <Tooltip title={text} color="blue">
@@ -424,427 +482,23 @@ const NhapXuatTon = () => {
       ),
     },
     {
-      title: 'Đơn vị tính',
+      title: 'ĐVT',
       dataIndex: 'DVT',
       key: 'DVT',
-      width: 120,
+      width: 80,
       align: 'center',
       sorter: (a, b) => a.DVT.localeCompare(b.DVT),
       showSorterTooltip: false,
       render: (text) => <HighlightedCell text={text} search={searchHangHoa} />,
     },
-    {
-      title: 'Số lượng - Tồn đầu',
-      dataIndex: 'SoLuongTonDK',
-      key: 'SoLuongTonDK',
-      align: 'center',
-      showSorterTooltip: false,
-      sorter: (a, b) => a.SoLuongTonDK - b.SoLuongTonDK,
-      render: (text) => (
-        <div className={`flex justify-end w-full h-full px-2 ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
-        </div>
-      ),
-    },
-    {
-      title: 'Trị giá - Tồn đầu',
-      dataIndex: 'TriGiaTonDK',
-      key: 'TriGiaTonDK',
-      align: 'center',
-      showSorterTooltip: false,
-      sorter: (a, b) => a.TriGiaTonDK - b.TriGiaTonDK,
-      render: (text) => (
-        <div className={`flex justify-end w-full h-full px-2 ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
-        </div>
-      ),
-    },
-    {
-      title: 'Số lượng - Mua hàng',
-      dataIndex: 'SoLuongNhap_PMH',
-      key: 'SoLuongNhap_PMH',
-      align: 'center',
-      showSorterTooltip: false,
-      sorter: (a, b) => a.SoLuongNhap_PMH - b.SoLuongNhap_PMH,
-      render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
-        </div>
-      ),
-    },
-    {
-      title: 'Trị giá - Mua hàng',
-      dataIndex: 'TriGiaNhap_PMH',
-      key: 'TriGiaNhap_PMH',
-      align: 'center',
-      showSorterTooltip: false,
-      sorter: (a, b) => a.TriGiaNhap_PMH - b.TriGiaNhap_PMH,
-      render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
-        </div>
-      ),
-    },
-    {
-      title: 'Số lượng - Trả hàng',
-      dataIndex: 'SoLuongNhap_NTR',
-      key: 'SoLuongNhap_NTR',
-      align: 'center',
-      showSorterTooltip: false,
-      sorter: (a, b) => a.SoLuongNhap_NTR - b.SoLuongNhap_NTR,
-      render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
-        </div>
-      ),
-    },
-    {
-      title: 'Trị giá - Trả hàng',
-      dataIndex: 'TriGiaNhap_NTR',
-      key: 'TriGiaNhap_NTR',
-      align: 'center',
-      showSorterTooltip: false,
-      sorter: (a, b) => a.TriGiaNhap_NTR - b.TriGiaNhap_NTR,
-      render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
-        </div>
-      ),
-    },
-    {
-      title: 'Số lượng - Nhập Điều chỉnh',
-      dataIndex: 'SoLuongNhap_NDC',
-      key: 'SoLuongNhap_NDC',
-      align: 'center',
-      showSorterTooltip: false,
-      sorter: (a, b) => a.SoLuongNhap_NDC - b.SoLuongNhap_NDC,
-      render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
-        </div>
-      ),
-    },
-    {
-      title: 'Trị giá - Nhập Điều chỉnh',
-      dataIndex: 'TriGiaNhap_NDC',
-      key: 'TriGiaNhap_NDC',
-      align: 'center',
-      showSorterTooltip: false,
-      sorter: (a, b) => a.TriGiaNhap_NDC - b.TriGiaNhap_NDC,
-      render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
-        </div>
-      ),
-    },
-    {
-      title: 'Số lượng - Tổng nhập',
-      dataIndex: 'SoLuongNhap',
-      key: 'SoLuongNhap',
-      align: 'center',
-      showSorterTooltip: false,
-      sorter: (a, b) => a.SoLuongNhap - b.SoLuongNhap,
-      render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
-        </div>
-      ),
-    },
-    {
-      title: 'Trị giá - Tổng nhập',
-      dataIndex: 'TriGiaNhap',
-      key: 'TriGiaNhap',
-      align: 'center',
-      showSorterTooltip: false,
-      sorter: (a, b) => a.TriGiaNhap - b.TriGiaNhap,
-      render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
-        </div>
-      ),
-    },
-    {
-      title: 'Số lượng - Bán sỉ',
-      dataIndex: 'SoLuongXuat_PBS',
-      key: 'SoLuongXuat_PBS',
-      align: 'center',
-      showSorterTooltip: false,
-      sorter: (a, b) => a.SoLuongXuat_PBS - b.SoLuongXuat_PBS,
-      render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
-        </div>
-      ),
-    },
-    {
-      title: 'Trị giá - Bán sỉ',
-      dataIndex: 'TriGiaXuat_PBS',
-      key: 'TriGiaXuat_PBS',
-      align: 'center',
-      showSorterTooltip: false,
-      sorter: (a, b) => a.TriGiaXuat_PBS - b.TriGiaXuat_PBS,
-      render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
-        </div>
-      ),
-    },
-    {
-      title: 'Số lượng - Bán lẻ',
-      dataIndex: 'SoLuongXuat_PBL',
-      key: 'SoLuongXuat_PBL',
-      align: 'center',
-      showSorterTooltip: false,
-      sorter: (a, b) => a.SoLuongXuat_PBL - b.SoLuongXuat_PBL,
-      render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
-        </div>
-      ),
-    },
-    {
-      title: 'Trị giá - Bán lẻ',
-      dataIndex: 'TriGiaXuat_PBL',
-      key: 'TriGiaXuat_PBL',
-      align: 'center',
-      showSorterTooltip: false,
-      sorter: (a, b) => a.TriGiaXuat_PBL - b.TriGiaXuat_PBL,
-      render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
-        </div>
-      ),
-    },
-    {
-      title: 'Số lượng - Bán lẻ (Quầy)',
-      dataIndex: 'SoLuongXuat_PBQ',
-      key: 'SoLuongXuat_PBQ',
-      align: 'center',
-      showSorterTooltip: false,
-      sorter: (a, b) => a.SoLuongXuat_PBQ - b.SoLuongXuat_PBQ,
-      render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
-        </div>
-      ),
-    },
-    {
-      title: 'Trị giá - Bán lẻ (Quầy)',
-      dataIndex: 'TriGiaXuat_PBQ',
-      key: 'TriGiaXuat_PBQ',
-      align: 'center',
-      showSorterTooltip: false,
-      sorter: (a, b) => a.TriGiaXuat_PBQ - b.TriGiaXuat_PBQ,
-      render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
-        </div>
-      ),
-    },
-    {
-      title: 'Số lượng - Trả hàng',
-      dataIndex: 'SoLuongXuat_XTR',
-      key: 'SoLuongXuat_XTR',
-      align: 'center',
-      showSorterTooltip: false,
-      sorter: (a, b) => a.SoLuongXuat_XTR - b.SoLuongXuat_XTR,
-      render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
-        </div>
-      ),
-    },
-    {
-      title: 'Trị giá - Trả hàng',
-      dataIndex: 'TriGiaXuat_XTR',
-      key: 'TriGiaXuat_XTR',
-      align: 'center',
-      showSorterTooltip: false,
-      sorter: (a, b) => a.TriGiaXuat_XTR - b.TriGiaXuat_XTR,
-      render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
-        </div>
-      ),
-    },
-    {
-      title: 'Số lượng - Sử dụng',
-      dataIndex: 'SoLuongXuat_XSD',
-      key: 'SoLuongXuat_XSD',
-      align: 'center',
-      showSorterTooltip: false,
-      sorter: (a, b) => a.SoLuongXuat_XSD - b.SoLuongXuat_XSD,
-      render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
-        </div>
-      ),
-    },
-    {
-      title: 'Trị giá - Sử dụng',
-      dataIndex: 'TriGiaXuat_XSD',
-      key: 'TriGiaXuat_XSD',
-      align: 'center',
-      showSorterTooltip: false,
-      sorter: (a, b) => a.TriGiaXuat_XSD - b.TriGiaXuat_XSD,
-      render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
-        </div>
-      ),
-    },
-    {
-      title: 'Số lượng - Hủy',
-      dataIndex: 'SoLuongXuat_HUY',
-      key: 'SoLuongXuat_HUY',
-      align: 'center',
-      showSorterTooltip: false,
-      sorter: (a, b) => a.SoLuongXuat_HUY - b.SoLuongXuat_HUY,
-      render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
-        </div>
-      ),
-    },
-    {
-      title: 'Trị giá - Hủy',
-      dataIndex: 'TriGiaXuat_HUY',
-      key: 'TriGiaXuat_HUY',
-      align: 'center',
-      showSorterTooltip: false,
-      sorter: (a, b) => a.TriGiaXuat_HUY - b.TriGiaXuat_HUY,
-      render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
-        </div>
-      ),
-    },
-    {
-      title: 'Số lượng - Xuất Điều chỉnh',
-      dataIndex: 'SoLuongXuat_XDC',
-      key: 'SoLuongXuat_XDC',
-      align: 'center',
-      showSorterTooltip: false,
-      sorter: (a, b) => a.SoLuongXuat_XDC - b.SoLuongXuat_XDC,
-      render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
-        </div>
-      ),
-    },
-    {
-      title: 'Trị giá - Xuất Điều chỉnh',
-      dataIndex: 'TriGiaXuat_XDC',
-      key: 'TriGiaXuat_XDC',
-      align: 'center',
-      showSorterTooltip: false,
-      sorter: (a, b) => a.TriGiaXuat_XDC - b.TriGiaXuat_XDC,
-      render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
-        </div>
-      ),
-    },
-    {
-      title: 'Số lượng - Xuất',
-      dataIndex: 'SoLuongXuat',
-      key: 'SoLuongXuat',
-      align: 'center',
-      showSorterTooltip: false,
-      sorter: (a, b) => a.SoLuongXuat - b.SoLuongXuat,
-      render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
-        </div>
-      ),
-    },
-    {
-      title: 'Trị giá - Xuất',
-      dataIndex: 'TriGiaXuat',
-      key: 'TriGiaXuat',
-      align: 'center',
-      showSorterTooltip: false,
-      sorter: (a, b) => a.TriGiaXuat - b.TriGiaXuat,
-      render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
-        </div>
-      ),
-    },
-    {
-      title: 'Số lượng - Tồn Cuối',
-      dataIndex: 'SoLuongTonCK',
-      key: 'SoLuongTonCK',
-      align: 'center',
-      showSorterTooltip: false,
-      sorter: (a, b) => a.SoLuongTonCK - b.SoLuongTonCK,
-      render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
-        </div>
-      ),
-    },
-    {
-      title: 'Trị giá - Tồn Cuối',
-      dataIndex: 'TriGiaTonCK',
-      key: 'TriGiaTonCK',
-      align: 'center',
-      showSorterTooltip: false,
-      sorter: (a, b) => a.TriGiaTonCK - b.TriGiaTonCK,
-      render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
-        </div>
-      ),
-    },
+    ...dynamicColumns(),
+    ...lastCols(),
   ]
   const newTitles = titles.filter((item) => !hiddenRow?.includes(item.dataIndex))
   return (
     <>
       {dataCRUD?.VIEW == false ? (
-        <>
-          {isShowNotify && (
-            <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10">
-              <div className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"></div>
-              <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col bg-white px-2 rounded shadow-custom overflow-hidden">
-                <div className="flex flex-col gap-2 p-2 justify-between ">
-                  <div className="flex flex-col gap-2 p-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex gap-2">
-                        <p className="text-blue-700 font-semibold uppercase">Kiểm tra quyền hạn người dùng</p>
-                      </div>
-                    </div>
-                    <div className="flex gap-2 border-2 p-3 items-center">
-                      <div>
-                        <CgCloseO className="w-8 h-8 text-red-500" />
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        <p className="whitespace-nowrap">Bạn không có quyền thực hiện chức năng này!</p>
-                        <p className="whitespace-nowrap">
-                          Vui lòng liên hệ <span className="font-bold">Người Quản Trị</span> để được cấp quyền
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex gap-2 justify-end">
-                      <ActionButton
-                        handleAction={() => {
-                          setIsShowNotify(false)
-                          navigate(-1)
-                        }}
-                        title={'Đóng'}
-                        isModal={true}
-                        color={'slate-50'}
-                        background={'red-500'}
-                        color_hover={'red-500'}
-                        bg_hover={'white'}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </>
+        <>{isShowNotify && <PermissionView close={() => setIsShowNotify(false)} />}</>
       ) : (
         <>
           {!isLoading ? (
@@ -855,7 +509,7 @@ const NhapXuatTon = () => {
                 <div className="flex justify-between">
                   <div className="flex gap-2 items-center ">
                     <div className="flex items-center gap-2 py-1">
-                      <h1 className="text-lg font-bold text-black-600 uppercase">Nhập Xuất Tồn</h1>
+                      <h1 className="text-lg font-bold text-black-600 uppercase">Doanh số bán hàng (Quầy)</h1>
                       <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
                     </div>
                     <div className="flex ">
@@ -910,7 +564,7 @@ const NhapXuatTon = () => {
                             <div>
                               <Checkbox.Group
                                 style={{
-                                  width: '380px',
+                                  width: '320px',
                                   background: 'white',
                                   padding: 10,
                                   borderRadius: 10,
@@ -926,7 +580,7 @@ const NhapXuatTon = () => {
                                     options?.map((item, index) => (
                                       <Col span={10} key={(item, index)}>
                                         <Checkbox value={item} checked={true}>
-                                          {nameColumsNhapXuatTon_TongKho[item]}
+                                          {nameColumsDSBHQUAY[item]}
                                         </Checkbox>
                                       </Col>
                                     ))
@@ -947,9 +601,9 @@ const NhapXuatTon = () => {
                     )}
                   </div>
                 </div>
-                <div className="flex justify-between  gap-2 w-[95vw]">
+                <div className="flex justify-between gap-2 w-[95vw]">
                   <div className="flex flex-col gap-1 items-start">
-                    <div className="flex gap-2 justify-between">
+                    <div className="flex gap-2 justify-between items-center">
                       <div className="flex gap-1">
                         <div className="flex items-center gap-1">
                           <label>Từ</label>
@@ -1000,34 +654,30 @@ const NhapXuatTon = () => {
                           />
                         </div>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <Tooltip title="Xem dữ liệu" color="blue">
-                          <div>
-                            <ActionButton
-                              handleAction={handleFilterDS}
-                              icon={<TbEye className="w-5 h-5" />}
-                              color={'slate-50'}
-                              background={'blue-500'}
-                              color_hover={'blue-500'}
-                              bg_hover={'white'}
-                              isModal={true}
-                            />
-                          </div>
-                        </Tooltip>
-                        <Tooltip title="Xem ( ĐVT Quy Đổi )" color="blue">
-                          <div>
-                            <ActionButton
-                              handleAction={handleFilterDS_DVTQD}
-                              icon={<TbEyeDollar className="w-5 h-5" />}
-                              color={'slate-50'}
-                              background={'blue-500'}
-                              color_hover={'blue-500'}
-                              bg_hover={'white'}
-                              isModal={true}
-                            />
-                          </div>
-                        </Tooltip>
+                      <div className="flex items-center">
+                        <div className="flex items-center">
+                          <Segmented
+                            options={['Tiền hàng', 'Tiền thuế', 'Thành tiền', 'Chiết khấu', 'Tổng cộng']}
+                            value={check}
+                            onChange={(value) => {
+                              setCheck(value)
+                            }}
+                          />
+                        </div>
                       </div>
+                      <Tooltip title="Xem dữ liệu" color="blue">
+                        <div>
+                          <ActionButton
+                            handleAction={handleFilterDS}
+                            icon={<TbEye className="w-5 h-5" />}
+                            color={'slate-50'}
+                            background={'blue-500'}
+                            color_hover={'blue-500'}
+                            bg_hover={'white'}
+                            isModal={true}
+                          />
+                        </div>
+                      </Tooltip>
                     </div>
                     <div className=" flex flex-col gap-2">
                       <div className="flex gap-1">
@@ -1227,7 +877,7 @@ const NhapXuatTon = () => {
                   dataSource={filteredHangHoa.map((item, index) => ({ ...item, key: index }))}
                   size="small"
                   scroll={{
-                    x: 6500,
+                    x: 'max-content',
                     y: 300,
                   }}
                   pagination={{
@@ -1238,6 +888,7 @@ const NhapXuatTon = () => {
                       localStorage.setItem('pageSize', size)
                     },
                   }}
+                  scrollToFirstRowOnChange
                   bordered
                   style={{
                     whiteSpace: 'nowrap',
@@ -1246,12 +897,12 @@ const NhapXuatTon = () => {
                   }}
                   summary={() => {
                     return (
-                      <Table.Summary fixed="bottom">
+                      <Table.Summary fixed>
                         <Table.Summary.Row>
                           {newTitles
                             .filter((column) => column.render)
                             .map((column, index) => {
-                              const isNumericColumn = typeof filteredHangHoa[0]?.[column.dataIndex] === 'number'
+                              const isNumericColumn = typeof filteredHangHoa[0]?.[column.dataIndex] == 'number'
                               return (
                                 <Table.Summary.Cell
                                   index={index}
@@ -1262,8 +913,8 @@ const NhapXuatTon = () => {
                                   {isNumericColumn ? (
                                     <Text strong>
                                       {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                        minimumFractionDigits: dataThongSo.SOLESOLUONG,
-                                        maximumFractionDigits: dataThongSo.SOLESOLUONG,
+                                        minimumFractionDigits: dataThongSo.SOLESOTIEN,
+                                        maximumFractionDigits: dataThongSo.SOLESOTIEN,
                                       })}
                                     </Text>
                                   ) : column.dataIndex == 'STT' ? (
@@ -1288,4 +939,4 @@ const NhapXuatTon = () => {
   )
 }
 
-export default NhapXuatTon
+export default DoanhSoBanHangQuay

@@ -56,12 +56,12 @@ const NhapXuatTonKho = () => {
   useEffect(() => {
     const getDataNXTFirst = async () => {
       try {
-        setTableLoad(true)
         if (isLoading == true) {
+          setTableLoad(true)
           const response = await categoryAPI.InfoNXTTheoKho(
             {
-              NgayBatDau: khoanNgayFrom.format('YYYY-MM-DD'),
-              NgayKetThuc: khoanNgayTo.format('YYYY-MM-DD'),
+              NgayBatDau: dayjs(khoanNgayFrom).format('YYYY-MM-DD'),
+              NgayKetThuc: dayjs(khoanNgayTo).format('YYYY-MM-DD'),
             },
             TokenAccess,
           )
@@ -84,10 +84,8 @@ const NhapXuatTonKho = () => {
         setTableLoad(false)
       }
     }
-    if (searchHangHoa || isLoading) {
-      getDataNXTFirst()
-    }
-  }, [searchHangHoa, isLoading])
+    getDataNXTFirst()
+  }, [searchHangHoa, isLoading, khoanNgayFrom, khoanNgayTo])
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -211,8 +209,6 @@ const NhapXuatTonKho = () => {
         const response = await categoryAPI.KhoanNgay(TokenAccess)
         if (response.data.DataError == 0) {
           setDateData(response.data)
-          setKhoanNgayFrom(dayjs(response.data.NgayBatDau))
-          setKhoanNgayTo(dayjs(response.data.NgayKetThuc))
           setIsLoading(true)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
@@ -349,9 +345,7 @@ const NhapXuatTonKho = () => {
     }
   }
   const handleSearch = (event) => {
-    setTableLoad(true)
     clearTimeout(timerId)
-    setTableLoad(true)
     timerId = setTimeout(() => {
       setSearchHangHoa(event.target.value)
     }, 300)
@@ -1165,7 +1159,12 @@ const NhapXuatTonKho = () => {
                             .map((column, index) => {
                               const isNumericColumn = typeof filteredHangHoa[0]?.[column.dataIndex] === 'number'
                               return (
-                                <Table.Summary.Cell key={`summary-cell-${index + 1}`} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                                <Table.Summary.Cell
+                                  index={index}
+                                  key={`summary-cell-${index + 1}`}
+                                  align={isNumericColumn ? 'right' : 'left'}
+                                  className="text-end font-bold  bg-[#f1f1f1]"
+                                >
                                   {isNumericColumn ? (
                                     <Text strong>
                                       {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {

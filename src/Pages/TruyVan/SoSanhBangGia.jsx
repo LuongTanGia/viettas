@@ -609,7 +609,6 @@ const SoSanhBG = () => {
                 </Tooltip>
               </div>
             </div>
-
             <div id="my-table" className="relative px-2 py-1 ">
               <Table
                 loading={tableLoad}

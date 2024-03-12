@@ -360,9 +360,31 @@ const categoryAPI = {
     }
     return axiosClient.post(url, {}, { headers })
   },
+  ListQuayTinhTien(accessToken) {
+    const url = '/inquiries/DoanhSo/ListHelper_QuayTinhTien'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, {}, { headers })
+  },
   // DoanhSo/ DoanhSoBanHangKho
   InfoBSDHKHO(body, accessToken) {
     const url = '/inquiries/DoanhSo/KhoHang'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  InfoBSDHQuay(body, accessToken) {
+    const url = '/inquiries/DoanhSo/Quay'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  // DoanhSo/ DoanhSoBanHangKho
+  InfoSoQuy(body, accessToken) {
+    const url = '/inquiries/SoQuyTienMat/DanhSach'
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     }

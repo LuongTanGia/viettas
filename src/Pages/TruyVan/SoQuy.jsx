@@ -5,58 +5,56 @@ import { useState, useEffect, useRef } from 'react'
 import { Button, Checkbox, Col, Empty, Input, Row, Spin, Table, Tooltip, Typography } from 'antd'
 const { Text } = Typography
 import dayjs from 'dayjs'
+import moment from 'moment'
 import { CgCloseO } from 'react-icons/cg'
 import { TfiMoreAlt } from 'react-icons/tfi'
 import { DateField } from '@mui/x-date-pickers'
 import { RiFileExcel2Fill } from 'react-icons/ri'
 import { FaSearch, FaEyeSlash } from 'react-icons/fa'
-import { IoMdAddCircleOutline } from 'react-icons/io'
 import { CloseSquareFilled } from '@ant-design/icons'
-import { MdEdit, MdDelete, MdPrint } from 'react-icons/md'
-import categoryAPI from '../../../../API/linkAPI'
-import { useSearch } from '../../../../components/hooks/Search'
-import { RETOKEN, exportToExcel } from '../../../../action/Actions'
-import ActionButton from '../../../../components/util/Button/ActionButton'
-import HighlightedCell from '../../../../components/hooks/HighlightedCell'
-import SimpleBackdrop from '../../../../components/util/Loading/LoadingPage'
-import { nameColumsPhieuXuatHuy } from '../../../../components/util/Table/ColumnName'
-import HUYCreate from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuXHuy/HUYCreate'
-import HUYXem from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuXHuy/HUYXem'
-import HUYEdit from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuXHuy/HUYEdit'
-import HUYXoa from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuXHuy/HUYXoa'
-import HUYPrint from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuXHuy/HUYPrint'
+import HighlightedCell from '../../components/hooks/HighlightedCell'
+import categoryAPI from '../../API/linkAPI'
+import { RETOKEN, exportToExcel } from '../../action/Actions'
+import { useSearch } from '../../components/hooks/Search'
+import { nameColumsSoQuy } from '../../components/util/Table/ColumnName'
+import ActionButton from '../../components/util/Button/ActionButton'
+import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
 
-const PhieuXuatHuy = () => {
+const SoQuy = () => {
   const navigate = useNavigate()
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
-  const [dataHUY, setDataHUY] = useState('')
-  const [isDataKhoDC, setIsDataKhoDC] = useState('')
-  const [setSearchHangHoa, filteredHangHoa, searchHangHoa] = useSearch(dataHUY)
+  const [dataSoQuy, setDataSoQuy] = useState('')
+  const [setSearchHangHoa, filteredHangHoa, searchHangHoa] = useSearch(dataSoQuy)
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [isShowOption, setIsShowOption] = useState(false)
-  const [isShowModal, setIsShowModal] = useState(false)
   const [isShowNotify, setIsShowNotify] = useState(false)
   const [khoanNgayFrom, setKhoanNgayFrom] = useState('')
   const [khoanNgayTo, setKhoanNgayTo] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [tableLoad, setTableLoad] = useState(true)
-  const [actionType, setActionType] = useState('')
   const showOption = useRef(null)
   const [hiddenRow, setHiddenRow] = useState([])
   const [checkedList, setCheckedList] = useState([])
   const [selectVisible, setSelectVisible] = useState(false)
   const [options, setOptions] = useState()
   const [dateData, setDateData] = useState({})
-  const [targetRow, setTargetRow] = useState([])
   const [dateChange, setDateChange] = useState(false)
   const [dataCRUD, setDataCRUD] = useState()
-
+  const formatThapPhan = (number, decimalPlaces) => {
+    if (typeof number === 'number' && !isNaN(number)) {
+      const formatter = new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: decimalPlaces,
+      })
+      return formatter.format(number)
+    }
+    return ''
+  }
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
     setCheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
-    const key = Object.keys(dataHUY[0] || []).filter((key) => key !== 'SoThamChieu' && key !== 'MaKho_Nhan' && key !== 'ThongTinKhoNhan' && key !== 'MaKho')
+    const key = Object?.keys(dataSoQuy[0] || []).filter((key) => key)
     setOptions(key)
   }, [selectVisible])
 
@@ -90,11 +88,11 @@ const PhieuXuatHuy = () => {
   }, [dateData?.NgayBatDau, dateData?.NgayKetThuc])
 
   useEffect(() => {
-    const getDataHUY = async () => {
+    const getDataSoQuy = async () => {
       try {
         if (isLoading == true) {
           setTableLoad(true)
-          const response = await categoryAPI.GetDataHUY(
+          const response = await categoryAPI.InfoSoQuy(
             dateData == {}
               ? {}
               : {
@@ -104,14 +102,14 @@ const PhieuXuatHuy = () => {
             TokenAccess,
           )
           if (response.data.DataError == 0) {
-            setDataHUY(response.data.DataResults)
+            setDataSoQuy(response.data.DataResults)
             setTableLoad(false)
           } else if (response.data.DataError == -104) {
-            setDataHUY([])
+            setDataSoQuy([])
             setTableLoad(false)
           } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
             await RETOKEN()
-            getDataHUY()
+            getDataSoQuy()
           }
         }
       } catch (error) {
@@ -119,8 +117,8 @@ const PhieuXuatHuy = () => {
         setTableLoad(false)
       }
     }
-    getDataHUY()
-  }, [searchHangHoa, targetRow, dateData?.NgayBatDau, dateData?.NgayKetThuc])
+    getDataSoQuy()
+  }, [searchHangHoa, dateData?.NgayBatDau, dateData?.NgayKetThuc])
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -143,7 +141,7 @@ const PhieuXuatHuy = () => {
   useEffect(() => {
     const getDataQuyenHan = async () => {
       try {
-        const response = await categoryAPI.QuyenHan('DuLieu_HUY', TokenAccess)
+        const response = await categoryAPI.QuyenHan('TruyVan_SoQuy', TokenAccess)
         if (response.data.DataError === 0) {
           setDataCRUD(response.data)
           setIsLoading(true)
@@ -159,65 +157,12 @@ const PhieuXuatHuy = () => {
     getDataQuyenHan()
   }, [])
 
-  function formatDateTime(inputDate, includeTime = false) {
-    const date = new Date(inputDate)
-    const day = date.getDate().toString().padStart(2, '0')
-    const month = (date.getMonth() + 1).toString().padStart(2, '0')
-    const year = date.getFullYear()
-    let formattedDateTime = `${day}/${month}/${year}`
-    if (includeTime) {
-      const hours = date.getHours().toString().padStart(2, '0')
-      const minutes = date.getMinutes().toString().padStart(2, '0')
-      const seconds = date.getSeconds().toString().padStart(2, '0')
-      formattedDateTime += ` ${hours}:${minutes}:${seconds} `
-    }
-    return formattedDateTime
-  }
-  const formatCurrency = (value) => {
-    return Number(value).toLocaleString('en-US')
-  }
-  const formatThapPhan = (number, decimalPlaces) => {
-    if (typeof number === 'number' && !isNaN(number)) {
-      const formatter = new Intl.NumberFormat('en-US', {
-        minimumFractionDigits: decimalPlaces,
-        maximumFractionDigits: decimalPlaces,
-      })
-      return formatter.format(number)
-    }
-    return ''
-  }
   let timerId
   const handleSearch = (event) => {
     clearTimeout(timerId)
     timerId = setTimeout(() => {
       setSearchHangHoa(event.target.value)
     }, 300)
-  }
-  const handleCreate = () => {
-    setIsShowModal(true)
-    setActionType('create')
-  }
-  const handleEdit = (record) => {
-    setIsShowModal(true)
-    setActionType('edit')
-    setIsDataKhoDC(record)
-  }
-  const handleView = (record) => {
-    setIsShowModal(true)
-    setIsDataKhoDC(record)
-    setActionType('view')
-  }
-  const handleDelete = (record) => {
-    setIsShowModal(true)
-    setIsDataKhoDC(record)
-    setActionType('delete')
-  }
-  const handlePrint = () => {
-    setIsShowModal(true)
-    setActionType('print')
-  }
-  const handleLoading = () => {
-    setTableLoad(true)
   }
   const handleHidden = () => {
     setSelectVisible(!selectVisible)
@@ -279,21 +224,6 @@ const PhieuXuatHuy = () => {
       fixed: 'left',
     },
     {
-      title: 'Số chứng từ',
-      dataIndex: 'SoChungTu',
-      key: 'SoChungTu',
-      width: 150,
-      align: 'center',
-      fixed: 'left',
-      showSorterTooltip: false,
-      sorter: (a, b) => a.SoChungTu.localeCompare(b.SoChungTu),
-      render: (text) => (
-        <span className="flex ">
-          <HighlightedCell text={text} search={searchHangHoa} />
-        </span>
-      ),
-    },
-    {
       title: 'Ngày chứng từ',
       dataIndex: 'NgayCTu',
       key: 'NgayCTu',
@@ -307,80 +237,24 @@ const PhieuXuatHuy = () => {
       },
       render: (text) => (
         <span className="flex justify-center">
-          <HighlightedCell text={formatDateTime(text)} search={searchHangHoa} />
+          <HighlightedCell text={text ? moment(text).format('DD/MM/YYYY') : ''} search={searchHangHoa} />
         </span>
       ),
     },
     {
-      title: 'Thông tin kho',
-      dataIndex: 'ThongTinKho',
-      key: 'ThongTinKho',
+      title: 'Số chứng từ',
+      dataIndex: 'SoChungTu',
+      key: 'SoChungTu',
       width: 150,
       align: 'center',
       showSorterTooltip: false,
-      sorter: (a, b) => a.ThongTinKho.localeCompare(b.ThongTinKho),
+      sorter: (a, b) => a.SoChungTu.localeCompare(b.SoChungTu),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchHangHoa} />
-          </div>
-        </Tooltip>
-      ),
-    },
-    {
-      title: 'Số mặt hàng',
-      dataIndex: 'SoMatHang',
-      key: 'SoMatHang',
-      align: 'center',
-      width: 120,
-      showSorterTooltip: false,
-      sorter: (a, b) => a.SoMatHang - b.SoMatHang,
-      render: (text) => (
-        <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base' : text === 0 || text === null ? 'text-gray-300' : ''}`}>
-          <HighlightedCell text={formatCurrency(text)} search={searchHangHoa} />
+        <span className="flex ">
+          <HighlightedCell text={text} search={searchHangHoa} />
         </span>
       ),
     },
-    {
-      title: 'Số lượng',
-      dataIndex: 'TongSoLuong',
-      key: 'TongSoLuong',
-      align: 'center',
-      width: 120,
-      showSorterTooltip: false,
-      sorter: (a, b) => a.TongSoLuong - b.TongSoLuong,
-      render: (text) => (
-        <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base' : text === 0 || text === null ? 'text-gray-300' : ''}`}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
-        </span>
-      ),
-    },
-    ...(dataThongSo.HIENTHIGIATRIKHO == true
-      ? [
-          {
-            title: 'Trị Giá',
-            dataIndex: 'TongTriGiaKho',
-            key: 'TongTriGiaKho',
-            align: 'center',
-            width: 120,
-            showSorterTooltip: false,
-            sorter: (a, b) => a.TongSoLuong - b.TongSoLuong,
-            render: (text) => (
-              <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base' : text === 0 || text === null ? 'text-gray-300' : ''}`}>
-                <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOTIEN)} search={searchHangHoa} />
-              </span>
-            ),
-          },
-        ]
-      : []),
     {
       title: 'Ghi chú',
       dataIndex: 'GhiChu',
@@ -404,112 +278,134 @@ const PhieuXuatHuy = () => {
         </Tooltip>
       ),
     },
+
     {
-      title: 'Người tạo',
-      dataIndex: 'NguoiTao',
-      key: 'NguoiTao',
+      title: 'Thu - Công nợ',
+      dataIndex: 'THUCONGNO',
+      key: 'THUCONGNO',
+      width: 150,
       align: 'center',
       showSorterTooltip: false,
-      sorter: (a, b) => a.NguoiTao.localeCompare(b.NguoiTao),
+      sorter: (a, b) => a.THUCONGNO - b.THUCONGNO,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-            }}
-          >
-            <HighlightedCell text={text} search={searchHangHoa} />
-          </div>
-        </Tooltip>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
+        </div>
       ),
     },
     {
-      title: 'Ngày tạo',
-      dataIndex: 'NgayTao',
-      key: 'NgayTao',
+      title: 'Thu - Trả hàng',
+      dataIndex: 'THUTRAHANG',
+      key: 'THUTRAHANG',
+      width: 150,
       align: 'center',
       showSorterTooltip: false,
-      sorter: (a, b) => {
-        const dateA = new Date(a.NgayTao)
-        const dateB = new Date(b.NgayTao)
-        return dateA - dateB
-      },
+      sorter: (a, b) => a.THUTRAHANG - b.THUTRAHANG,
       render: (text) => (
-        <span className="flex justify-center">
-          <HighlightedCell text={formatDateTime(text, true)} search={searchHangHoa} />
-        </span>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
+        </div>
       ),
     },
     {
-      title: 'Người sửa',
-      dataIndex: 'NguoiSuaCuoi',
-      key: 'NguoiSuaCuoi',
+      title: 'Thu - Khác',
+      dataIndex: 'THUKHAC',
+      key: 'THUKHAC',
+      width: 150,
       align: 'center',
       showSorterTooltip: false,
-      sorter: (a, b) => (a.NguoiSuaCuoi?.toString() || '').localeCompare(b.NguoiSuaCuoi?.toString() || ''),
+      sorter: (a, b) => a.THUKHAC - b.THUKHAC,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-            }}
-          >
-            <HighlightedCell text={text} search={searchHangHoa} />
-          </div>
-        </Tooltip>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
+        </div>
+      ),
+    },
+
+    {
+      title: 'Chi - Công nợ',
+      dataIndex: 'CHICONGNO',
+      key: 'CHICONGNO',
+      width: 150,
+      align: 'center',
+      showSorterTooltip: false,
+      sorter: (a, b) => a.CHICONGNO - b.CHICONGNO,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
+        </div>
       ),
     },
     {
-      title: 'Sửa lúc',
-      dataIndex: 'NgaySuaCuoi',
-      key: 'NgaySuaCuoi',
+      title: 'Chi - Trả hàng',
+      dataIndex: 'CHITRAHANG',
+      key: 'CHITRAHANG',
+      width: 150,
       align: 'center',
       showSorterTooltip: false,
-      sorter: (a, b) => {
-        const dateA = new Date(a.NgaySuaCuoi)
-        const dateB = new Date(b.NgaySuaCuoi)
-        return dateA - dateB
-      },
-      render: (text) => <span className="flex justify-center">{text ? formatDateTime(text, true) : ''}</span>,
+      sorter: (a, b) => a.CHITRAHANG - b.CHITRAHANG,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
+        </div>
+      ),
     },
     {
-      title: ' ',
-      key: 'operation',
-      fixed: 'right',
-      width: 100,
+      title: 'Chi - Khác',
+      dataIndex: 'CHIKHAC',
+      key: 'CHIKHAC',
+      width: 150,
       align: 'center',
-      render: (record) => {
-        return (
-          <>
-            <div className="flex gap-2 items-center justify-center">
-              <div
-                className={`${
-                  dataCRUD?.EDIT == false ? 'border-gray-400 bg-gray-400 hover:text-gray-500' : 'border-yellow-400 bg-yellow-400 hover:text-yellow-400'
-                } ' p-[4px] border-2 rounded text-slate-50 hover:bg-white cursor-pointer'`}
-                title="Sửa"
-                onClick={() => (dataCRUD?.EDIT == false ? '' : handleEdit(record))}
-              >
-                <MdEdit />
-              </div>
-              <div
-                className={`${
-                  dataCRUD?.DEL == false ? 'border-gray-400 bg-gray-400 hover:text-gray-500' : 'border-red-500 bg-red-500 hover:text-red-500'
-                } ' p-[4px] border-2 rounded text-slate-50 hover:bg-white cursor-pointer'`}
-                title="Xóa"
-                onClick={() => (dataCRUD?.DEL == false ? '' : handleDelete(record))}
-              >
-                <MdDelete />
-              </div>
-            </div>
-          </>
-        )
-      },
+      showSorterTooltip: false,
+      sorter: (a, b) => a.CHIKHAC - b.CHIKHAC,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
+        </div>
+      ),
+    },
+
+    {
+      title: 'Đầu kỳ',
+      dataIndex: 'DauKy',
+      key: 'DauKy',
+      width: 150,
+      align: 'center',
+      showSorterTooltip: false,
+      sorter: (a, b) => a.DauKy - b.DauKy,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
+        </div>
+      ),
+    },
+    {
+      title: 'Cuối kỳ',
+      dataIndex: 'CuoiKy',
+      key: 'CuoiKy',
+      width: 150,
+      align: 'center',
+      showSorterTooltip: false,
+      sorter: (a, b) => a.CuoiKy - b.CuoiKy,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
+        </div>
+      ),
+    },
+    {
+      title: 'Còn lại',
+      dataIndex: 'ConLai',
+      key: 'ConLai',
+      width: 150,
+      align: 'center',
+      showSorterTooltip: false,
+      sorter: (a, b) => a.ConLai - b.ConLai,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
+        </div>
+      ),
     },
   ]
   const newTitles = titles.filter((item) => !hiddenRow?.includes(item.dataIndex))
@@ -569,7 +465,7 @@ const PhieuXuatHuy = () => {
                 <div className="flex justify-between gap-2 relative">
                   <div className="flex gap-1">
                     <div className="flex items-center gap-2 py-0.5">
-                      <h1 className="text-lg font-bold uppercase">Phiếu Xuất Kho Hủy</h1>
+                      <h1 className="text-lg font-bold uppercase">Sổ Quỹ Tiền Mặt</h1>
                       <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
                     </div>
                     {isShowSearch && (
@@ -595,17 +491,8 @@ const PhieuXuatHuy = () => {
                       <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
                     </div>
                     {isShowOption && (
-                      <div className="absolute flex flex-col gap-2 bg-slate-200 px-2 py-3 items-center top-[12] right-[2.5%] rounded-lg z-10 duration-500 shadow-custom">
+                      <div className="absolute flex flex-col gap-2 bg-slate-200 py-3 px-2 items-center top-[12] right-[2.5%] rounded-lg z-10 duration-500 shadow-custom">
                         <div className={`flex ${selectVisible ? '' : 'flex-col'} items-center gap-2`}>
-                          <ActionButton
-                            handleAction={handlePrint}
-                            title={'In Phiếu'}
-                            icon={<MdPrint className="w-6 h-6" />}
-                            color={'slate-50'}
-                            background={'purple-500'}
-                            color_hover={'purple-500'}
-                            bg_hover={'white'}
-                          />
                           <ActionButton
                             handleAction={() => (dataCRUD?.EXCEL == false ? '' : exportToExcel())}
                             title={'Xuất Excel'}
@@ -626,12 +513,12 @@ const PhieuXuatHuy = () => {
                             bg_hover={'white'}
                           />
                         </div>
-                        <div>
+                        <div className="flex justify-center">
                           {selectVisible && (
                             <div>
                               <Checkbox.Group
                                 style={{
-                                  width: '370px',
+                                  width: '330px',
                                   background: 'white',
                                   padding: 10,
                                   borderRadius: 10,
@@ -646,7 +533,7 @@ const PhieuXuatHuy = () => {
                                     options?.map((item, index) => (
                                       <Col span={10} key={(item, index)}>
                                         <Checkbox value={item} checked={true}>
-                                          {nameColumsPhieuXuatHuy[item]}
+                                          {nameColumsSoQuy[item]}
                                         </Checkbox>
                                       </Col>
                                     ))
@@ -667,70 +554,57 @@ const PhieuXuatHuy = () => {
                     )}
                   </div>
                 </div>
-                <div className="flex justify-between gap-1">
-                  <div className="flex items-center gap-2">
-                    <div className="flex gap-1">
-                      <div className="flex items-center gap-1">
-                        <label>Từ</label>
-                        <DateField
-                          onBlur={handleDateChange}
-                          onKeyDown={handleKeyDown}
-                          className="DatePicker_NXTKho max-w-[120px]"
-                          format="DD/MM/YYYY"
-                          value={khoanNgayFrom}
-                          sx={{
-                            '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                            '& .MuiButtonBase-root': {
-                              padding: '4px',
-                            },
-                            '& .MuiSvgIcon-root': {
-                              width: '18px',
-                              height: '18px',
-                            },
-                          }}
-                          onChange={(values) => {
-                            setKhoanNgayFrom(values)
-                            setDateChange(false)
-                          }}
-                        />
-                      </div>
-                      <div className=" flex items-center gap-1 ">
-                        <label>Đến</label>
-                        <DateField
-                          onBlur={handleDateChange}
-                          onKeyDown={handleKeyDown}
-                          className="DatePicker_NXTKho max-w-[120px]"
-                          format="DD/MM/YYYY"
-                          value={khoanNgayTo}
-                          sx={{
-                            '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                            '& .MuiButtonBase-root': {
-                              padding: '4px',
-                            },
-                            '& .MuiSvgIcon-root': {
-                              width: '18px',
-                              height: '18px',
-                            },
-                          }}
-                          onChange={(values) => {
-                            setKhoanNgayTo(values)
-                            setDateChange(true)
-                          }}
-                        />
-                      </div>
+
+                <div className="flex items-center gap-2">
+                  <div className="flex gap-1">
+                    <div className="flex items-center gap-1">
+                      <label>Từ</label>
+                      <DateField
+                        onBlur={handleDateChange}
+                        onKeyDown={handleKeyDown}
+                        className="DatePicker_NXTKho max-w-[120px]"
+                        format="DD/MM/YYYY"
+                        value={khoanNgayFrom}
+                        sx={{
+                          '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                          '& .MuiButtonBase-root': {
+                            padding: '4px',
+                          },
+                          '& .MuiSvgIcon-root': {
+                            width: '18px',
+                            height: '18px',
+                          },
+                        }}
+                        onChange={(values) => {
+                          setKhoanNgayFrom(values)
+                          setDateChange(false)
+                        }}
+                      />
                     </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <ActionButton
-                      handleAction={() => (dataCRUD?.ADD == false ? '' : handleCreate())}
-                      title={'Thêm Phiếu'}
-                      icon={<IoMdAddCircleOutline className="w-6 h-6" />}
-                      color={'slate-50'}
-                      background={dataCRUD?.ADD == false ? 'gray-400' : 'blue-500'}
-                      color_hover={dataCRUD?.ADD == false ? 'gray-500' : 'blue-500'}
-                      bg_hover={'white'}
-                      isPermission={dataCRUD?.ADD}
-                    />
+                    <div className=" flex items-center gap-1 ">
+                      <label>Đến</label>
+                      <DateField
+                        onBlur={handleDateChange}
+                        onKeyDown={handleKeyDown}
+                        className="DatePicker_NXTKho max-w-[120px]"
+                        format="DD/MM/YYYY"
+                        value={khoanNgayTo}
+                        sx={{
+                          '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                          '& .MuiButtonBase-root': {
+                            padding: '4px',
+                          },
+                          '& .MuiSvgIcon-root': {
+                            width: '18px',
+                            height: '18px',
+                          },
+                        }}
+                        onChange={(values) => {
+                          setKhoanNgayTo(values)
+                          setDateChange(true)
+                        }}
+                      />
+                    </div>
                   </div>
                 </div>
                 <div id="my-table">
@@ -739,7 +613,7 @@ const PhieuXuatHuy = () => {
                     bordered
                     className="table_DMHangHoa setHeight"
                     columns={newTitles}
-                    dataSource={filteredHangHoa.map((record, index) => ({ ...record, key: index }))}
+                    dataSource={filteredHangHoa?.map((record, index) => ({ ...record, key: index }))}
                     pagination={{
                       defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
                       showSizeChanger: true,
@@ -748,15 +622,9 @@ const PhieuXuatHuy = () => {
                         localStorage.setItem('pageSize', size)
                       },
                     }}
-                    onRow={(record) => ({
-                      onDoubleClick: () => {
-                        handleView(record)
-                      },
-                    })}
-                    rowClassName={(record) => (record.SoChungTu === targetRow ? 'highlighted-row' : '')}
                     size="small"
                     scroll={{
-                      x: 2000,
+                      x: 'max-content',
                       y: 400,
                     }}
                     style={{
@@ -771,7 +639,6 @@ const PhieuXuatHuy = () => {
                               .filter((column) => column.render)
                               .map((column, index) => {
                                 const isNumericColumn = typeof filteredHangHoa[0]?.[column.dataIndex] === 'number'
-
                                 return (
                                   <Table.Summary.Cell
                                     index={index}
@@ -780,31 +647,15 @@ const PhieuXuatHuy = () => {
                                     className="text-end font-bold  bg-[#f1f1f1]"
                                   >
                                     {isNumericColumn ? (
-                                      column.dataIndex === 'SoMatHang' ? (
-                                        <Text strong>
-                                          {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                            minimumFractionDigits: 0,
-                                            maximumFractionDigits: 0,
-                                          })}
-                                        </Text>
-                                      ) : column.dataIndex === 'TongTriGiaKho' ? (
-                                        <Text strong>
-                                          {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                            minimumFractionDigits: dataThongSo.SOLESOTIEN,
-                                            maximumFractionDigits: dataThongSo.SOLESOTIEN,
-                                          })}
-                                        </Text>
-                                      ) : (
-                                        <Text strong>
-                                          {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                            minimumFractionDigits: dataThongSo.SOLESOLUONG,
-                                            maximumFractionDigits: dataThongSo.SOLESOLUONG,
-                                          })}
-                                        </Text>
-                                      )
+                                      <Text strong>
+                                        {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                          minimumFractionDigits: dataThongSo.SOLESOTIEN,
+                                          maximumFractionDigits: dataThongSo.SOLESOTIEN,
+                                        })}
+                                      </Text>
                                     ) : column.dataIndex == 'STT' ? (
                                       <Text className="text-center" strong>
-                                        {dataHUY?.length}
+                                        {dataSoQuy?.length}
                                       </Text>
                                     ) : null}
                                   </Table.Summary.Cell>
@@ -817,20 +668,6 @@ const PhieuXuatHuy = () => {
                   />
                 </div>
               </div>
-              <div>
-                {isShowModal &&
-                  (actionType == 'create' ? (
-                    <HUYCreate close={() => setIsShowModal(false)} loadingData={handleLoading} setTargetRow={setTargetRow} />
-                  ) : actionType == 'view' ? (
-                    <HUYXem close={() => setIsShowModal(false)} dataHUY={isDataKhoDC} />
-                  ) : actionType == 'edit' ? (
-                    <HUYEdit close={() => setIsShowModal(false)} dataHUY={isDataKhoDC} loadingData={handleLoading} setTargetRow={setTargetRow} />
-                  ) : actionType == 'delete' ? (
-                    <HUYXoa close={() => setIsShowModal(false)} dataHUY={isDataKhoDC} loadingData={handleLoading} setTargetRow={setTargetRow} />
-                  ) : actionType == 'print' ? (
-                    <HUYPrint close={() => setIsShowModal(false)} />
-                  ) : null)}
-              </div>
             </>
           )}
         </>
@@ -839,4 +676,4 @@ const PhieuXuatHuy = () => {
   )
 }
 
-export default PhieuXuatHuy
+export default SoQuy

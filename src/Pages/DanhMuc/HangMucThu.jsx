@@ -544,7 +544,12 @@ const HangMucThu = () => {
                               .map((column, index) => {
                                 const isNumericColumn = typeof filteredHangMucThu[0]?.[column.dataIndex] === 'number'
                                 return (
-                                  <Table.Summary.Cell key={`summary-cell-${index + 1}`} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                                  <Table.Summary.Cell
+                                    index={index}
+                                    key={`summary-cell-${index + 1}`}
+                                    align={isNumericColumn ? 'right' : 'left'}
+                                    className="text-end font-bold  bg-[#f1f1f1]"
+                                  >
                                     {column.dataIndex == 'STT' ? (
                                       <Text className="text-center" strong>
                                         {dataHangMucThu?.length}
