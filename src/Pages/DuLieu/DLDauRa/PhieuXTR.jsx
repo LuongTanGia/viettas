@@ -15,12 +15,10 @@ import { useSearch } from '../../../components_K/myComponents/useSearch'
 import HighlightedCell from '../../../components/hooks/HighlightedCell'
 import { exportToExcel } from '../../../action/Actions'
 import { CloseSquareFilled } from '@ant-design/icons'
-import { useNavigate } from 'react-router-dom'
 
 const { Text } = Typography
 const { IoAddCircleOutline, TiPrinter, MdDelete, GiReceiveMoney, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill, CgCloseO } = icons
 const PhieuXTR = () => {
-  const navigate = useNavigate()
   const optionContainerRef = useRef(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isLoadingModal, setIsLoadingModal] = useState(true)
@@ -740,6 +738,13 @@ const PhieuXTR = () => {
 
   const handlePay = (record) => {
     if (record.PhieuThu) return
+    if (record.TongThanhTien <= 0) {
+      toast.error('Thành tiền phiếu này phải lớn hơn 0. Vui lòng thêm đơn giá ! ', {
+        autoClose: 1500,
+      })
+      return
+    }
+
     setActionType('pay')
     setDataRecord(record)
     setIsShowModal(true)

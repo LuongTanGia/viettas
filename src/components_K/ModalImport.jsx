@@ -2,33 +2,147 @@
 // import { useEffect, useState } from 'react'
 
 import logo from '../assets/VTS-iSale.ico'
-import icons from '../untils/icons'
-import TableEdit from '../components/util/Table/EditTable'
-// import { DateField } from '@mui/x-date-pickers'
+// import icons from '../untils/icons'
 import dayjs from 'dayjs'
 import ActionButton from '../components/util/Button/ActionButton'
 import { DateField } from '@mui/x-date-pickers'
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import * as XLSX from 'xlsx'
-const { MdOutlineFileUpload } = icons
-const ModalImport = ({ close }) => {
-  const [fileName, setFileName] = useState('')
+import { toast } from 'react-toastify'
+import TableEdit from '../components/util/Table/EditTable'
+import { nameColumsImport } from '../components/util/Table/ColumnName'
+import { RETOKEN, exportSampleExcel } from '../action/Actions'
+import * as apis from '../apis'
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0]
-    if (file) {
-      setFileName(file.name)
+// const { MdDelete } = icons
+const ModalImport = ({ close, dataHangHoa, typePage, loading }) => {
+  const [excelFile, setExcelFile] = useState(null)
+  const [excelData, setExcelData] = useState(null)
+
+  const ngayhieuluc = dayjs().format('YYYY-MM-DDTHH:mm:ss')
+
+  const [formImport, setFormImport] = useState({
+    HieuLucTu: ngayhieuluc,
+    Datas: [],
+  })
+
+  const columnName = ['STT', 'MaHang', 'TenHang', 'DVT', 'DonGia', 'CoThue', 'TyLeThue']
+
+  const sheet1Data = [['MAHANG', 'GIABAN']]
+
+  const sheet2Data = [
+    ['Mã', 'Tên hàng', 'ĐVT'],
+    ['mã hàng 1', 'tên hàng 1', 'đơn vị tính 1'],
+  ]
+
+  // Duyệt qua từng phần tử trong HangHoa để thay thế giá trị tương ứng trong sheet2Data
+  for (let i = 0; i < dataHangHoa?.length; i++) {
+    sheet2Data[i + 1] = [dataHangHoa[i].MaHang, dataHangHoa[i].TenHang, dataHangHoa[i].DVT]
+  }
+
+  const handleFile = (e) => {
+    let fileTypes = ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'text/csv']
+    let selectedFile = e.target.files[0]
+    if (selectedFile) {
+      if (selectedFile && fileTypes.includes(selectedFile.type)) {
+        // setTypeError(null)
+
+        let reader = new FileReader()
+        reader.readAsArrayBuffer(selectedFile)
+        reader.onload = (e) => {
+          setExcelFile(e.target.result)
+        }
+      } else {
+        toast.error('Vui lòng chỉ chọn loại file excel')
+        setExcelFile([])
+      }
+    } else {
+      toast.error('Vui lòng chọn file')
+      setExcelFile([])
     }
   }
 
-  const handleButtonClick = () => {
-    document.getElementById('fileInput').click()
+  const handleFileSubmit = (e) => {
+    e.preventDefault()
+    if (excelFile !== null) {
+      const workbook = XLSX.read(excelFile, { type: 'buffer' })
+      const sheet1Name = workbook.SheetNames[0]
+      const sheet1 = workbook.Sheets[sheet1Name]
+      const dataSheet1 = XLSX.utils.sheet_to_json(sheet1)
+
+      // Tạo một đối tượng để lưu trữ thông tin từ sheet 2 dựa trên Mahang
+      const mahangInfo = {}
+      dataHangHoa.forEach((item) => {
+        const mahang = item['MaHang']
+        const tenhang = item['TenHang']
+        const dvt = item['DVT']
+        mahangInfo[mahang] = { tenhang, dvt }
+      })
+
+      // Xử lý dữ liệu từ sheet 1 và kết hợp với thông tin từ dataHangHoa
+      const processedData = dataSheet1.map((item, index) => ({
+        STT: index + 1,
+        MaHang: item['MAHANG'] ? item['MAHANG'].toString().trim() : null,
+        DonGia: item[' GIABAN '] ? item[' GIABAN '].toString().trim() : item['GIABAN'] ? item['GIABAN'].toString().trim() : null,
+        TenHang: mahangInfo[item['MAHANG']] ? mahangInfo[item['MAHANG']].tenhang : '',
+        DVT: mahangInfo[item['MAHANG']] ? mahangInfo[item['MAHANG']].dvt : '',
+        TyLeThue: 0,
+        CoThue: false,
+      }))
+
+      // Loại bỏ các MaHang không hợp lệ từ processedData
+
+      const validProcessedData = processedData.filter((item) => mahangInfo[item.MaHang] && parseFloat(item.DonGia) > 0)
+
+      // Kiểm tra nếu không có dữ liệu MAHANG hoặc GIABAN
+      if (processedData.some((item) => !item.MaHang || !item.DonGia)) {
+        toast.error('Không có dữ liệu mã hàng hoặc giá bán trong file')
+        setExcelData([])
+      } else {
+        setExcelData(validProcessedData)
+      }
+    }
+  }
+  const handleEditData = (data) => {
+    setExcelData(data)
+  }
+
+  const handleImport = async () => {
+    try {
+      const tokenLogin = localStorage.getItem('TKN')
+      let response
+      switch (typePage) {
+        case 'GBL':
+          response = await apis.ImportGBL(tokenLogin, { ...formImport, Datas: excelData })
+          break
+
+        default:
+          break
+      }
+      if (response) {
+        const { DataError, DataErrorDescription } = response.data
+        if (DataError === 0) {
+          toast.success(DataErrorDescription)
+          loading()
+          close()
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+        } else if (DataError === -107 || DataError === -108) {
+          await RETOKEN()
+          handleImport()
+        } else {
+          toast.error(DataErrorDescription)
+        }
+      }
+    } catch (error) {
+      console.error('Error while saving data:', error)
+    }
   }
 
   return (
     <div className=" fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
       <div className="p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
-        <div className=" w-[90vw] h-[600px] ">
+        <div className="md:w-[90vw] lg:w-[70vw] h-[600px] ">
           <div className="flex gap-2">
             <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
             <label className="text-blue-700 font-semibold uppercase pb-1">Nhập dữ liệu bảng giá thay đổi từ tập tin Excel</label>
@@ -41,72 +155,82 @@ const ModalImport = ({ close }) => {
               <div className="w-full">
                 <div className="flex flex-col pt-3  ">
                   <div className="flex items-center p-1 gap-2">
-                    <label className=" whitespace-nowrap  min-w-[90px] text-sm flex justify-end">Tập tin</label>
-                    <input readOnly type="text" value={fileName} className="h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none  " />
-                    <input type="file" style={{ display: 'none' }} id="fileInput" accept=".xlsx" onChange={handleFileChange} />
-                    <ActionButton
-                      color={'slate-50'}
-                      icon={<MdOutlineFileUpload size={24} />}
-                      background={'bg-main'}
-                      bg_hover={'white'}
-                      color_hover={'bg-main'}
-                      handleAction={handleButtonClick}
-                      isModal={true}
+                    <label className=" w-[120px] text-sm flex justify-end">Tập tin</label>
+                    <input
+                      type="file"
+                      className=" rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none text-center truncate"
+                      accept=".xlsx,.xls"
+                      onChange={handleFile}
                     />
-                    <ActionButton color={'slate-50'} title={'Nạp dữ liệu'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} isModal={true} />
+
+                    <button
+                      onClick={(e) => handleFileSubmit(e)}
+                      className="flex items-center py-1 px-2 rounded-md text-slate-50 text-base border-2 border-bg-main bg-bg-main hover:bg-white hover:text-bg-main"
+                    >
+                      Upload
+                    </button>
                   </div>
 
-                  <div className="flex items-center p-1 gap-2">
-                    <label className="required w-[120px] text-end">Áp dụng từ ngày</label>
-                    <DateField
-                      className="DatePicker_PMH max-w-[110px]"
-                      format="DD/MM/YYYY"
-                      value={dayjs()}
-                      // onChange={(newDate) => {
-                      //   setFormPrint({
-                      //     ...formPrint,
-                      //     NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
-                      //   })
-                      // }}
-                      sx={{
-                        '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                        '& .MuiButtonBase-root': {
-                          padding: '4px',
-                        },
-                        '& .MuiSvgIcon-root': {
-                          width: '18px',
-                          height: '18px',
-                        },
-                      }}
-                    />
+                  <div className="flex justify-between items-center p-1 gap-2">
+                    <div>
+                      <label className="required w-[120px] text-end">Áp dụng từ ngày</label>
+                      <DateField
+                        className="DatePicker_PMH max-w-[110px]"
+                        format="DD/MM/YYYY"
+                        value={dayjs()}
+                        onChange={(newDate) => {
+                          setFormImport({
+                            ...formImport,
+                            HieuLucTu: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                          })
+                        }}
+                        sx={{
+                          '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                          '& .MuiButtonBase-root': {
+                            padding: '4px',
+                          },
+                          '& .MuiSvgIcon-root': {
+                            width: '18px',
+                            height: '18px',
+                          },
+                        }}
+                      />
+                    </div>
+                    <div className="italic font-bold text-red-400">( Những hàng hóa không hợp lệ trong file Excel sẽ bị loại bỏ )</div>
                   </div>
                 </div>
               </div>
             </div>
             {/* table */}
             <div className=" pb-0  relative mt-1">
-              {/* <TableEdit
-                typeTable={'edit'}
-                tableName="Import"
-                param={selectedRowData}
+              <TableEdit
+                param={excelData}
                 handleEditData={handleEditData}
                 ColumnTable={columnName}
-                columName={nameColumsGBS}
+                typeTable={'edit'}
+                tableName="Import"
+                columName={nameColumsImport}
                 yourMaHangOptions={dataHangHoa}
                 yourTenHangOptions={dataHangHoa}
-              /> */}
+              />
             </div>
           </div>
           {/* </Spin> */}
           {/* button  */}
           <div className=" flex justify-between items-center">
-            <div className=" flex  items-center gap-3  pt-3">
-              <ActionButton color={'slate-50'} title={'Xuất file mẫu'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} isModal={true} />
+            <div className="flex items-center gap-3 pt-3">
+              <ActionButton
+                color={'slate-50'}
+                title={'Xuất file mẫu'}
+                background={'bg-main'}
+                bg_hover={'white'}
+                color_hover={'bg-main'}
+                isModal={true}
+                handleAction={() => exportSampleExcel(sheet1Data, sheet2Data)}
+              />
             </div>
             <div className="flex  items-center gap-3  pt-3">
-              <ActionButton color={'slate-50'} title={'Kiểm tra'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} isModal={true} />
-              <ActionButton color={'slate-50'} title={'Điều chỉnh'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} isModal={true} />
-              <ActionButton color={'slate-50'} title={'Import'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} isModal={true} />
+              <ActionButton color={'slate-50'} title={'Import'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} isModal={true} handleAction={handleImport} />
               <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} isModal={true} />
             </div>
           </div>

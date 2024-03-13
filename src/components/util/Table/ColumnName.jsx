@@ -129,6 +129,8 @@ export const nameColumsPhieuMuaHang = {
   DVT: 'ĐVT',
   SoLuong: 'Số lượng',
   DonGia: 'Đơn giá',
+  GiaBan: 'Giá bán',
+  CoThue: 'Đã có thuế',
   TienHang: 'Tiền hàng',
   TyLeThue: '% Thuế',
   TienThue: 'Tiền thuế',
@@ -534,4 +536,13 @@ export const nameColumsDoanhSoBanHangKH = {
   TongCong: 'Tổng cộng',
   TongCong_TM: 'Tiền mặt',
   TongCong_CN: 'Công nợ',
+}
+export const nameColumsImport = {
+  STT: 'STT',
+  MaHang: 'Mã hàng',
+  TenHang: 'Tên hàng',
+  DVT: 'ĐVT',
+  DonGia: 'Giá bán',
+  CoThue: 'Đã có thuế',
+  TyLeThue: '% Thuế',
 }

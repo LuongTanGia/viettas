@@ -184,3 +184,22 @@ export const InGBL = (token, formPrint) =>
       reject(error)
     }
   })
+export const ImportGBL = (token, formGBL) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      console.log('Data to be sent to API:', {
+        formGBL,
+      })
+      const response = await axios({
+        url: '/settings/GiaBanLe/Import',
+        method: 'post',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        data: formGBL,
+      })
+      resolve(response)
+    } catch (error) {
+      reject(error)
+    }
+  })

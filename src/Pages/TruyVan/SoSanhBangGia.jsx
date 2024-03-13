@@ -576,7 +576,7 @@ const SoSanhBG = () => {
                     <Select
                       mode="multiple"
                       allowClear
-                      maxTagCount={3}
+                      maxTagCount={2}
                       size="small"
                       placeholder="Chọn nhóm"
                       value={valueList2}

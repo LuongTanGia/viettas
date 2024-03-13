@@ -4,7 +4,18 @@ import { useMemo, useState } from 'react'
 
 export const useSearchHH = (data) => {
   const [search, setSearch] = useState('')
+
   const filteredData = useMemo(() => {
+    const dynamicColumns =
+      data && data.length > 0
+        ? Object.keys(data[0])
+            .filter((key) => key.startsWith('Col_'))
+            .map((colKey) => {
+              const columnName = colKey.substring(4) // Extract column name after 'Col_'
+              return columnName
+            })
+        : []
+
     if (data)
       return data.filter((item) => {
         const {

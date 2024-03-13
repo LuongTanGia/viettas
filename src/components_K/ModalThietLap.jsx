@@ -461,7 +461,6 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
               </div>
             </div>
           )}
-
           {actionType === 'print' && (
             <div className="h-[300px]">
               <div className="flex gap-2">
@@ -1516,7 +1515,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
           )}
         </div>
       </div>
-      {actionType === 'import' && <ModalImport namePage={namePage} close={close}></ModalImport>}
+      {actionType === 'import' && <ModalImport typePage={typePage} namePage={namePage} close={close} dataHangHoa={dataHangHoa} loading={loading}></ModalImport>}
     </>
   )
 }

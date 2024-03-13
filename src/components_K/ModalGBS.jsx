@@ -1019,7 +1019,7 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
           setHightLight={setHightLight}
         />
       )}
-      {isShowImport && <ModalImport close={() => setIsShowImport(false)} namePage={namePage} loading={isLoading} />}
+      {isShowImport && <ModalImport close={() => setIsShowImport(false)} dataHangHoa={dataHangHoa} namePage={namePage} loading={isLoading} />}
     </>
   )
 }

@@ -857,3 +857,18 @@ export const exportToExcel = () => {
   XLSX.utils.book_append_sheet(wb, ws, 'DanhSach')
   XLSX.writeFile(wb, 'du_lieu.xlsx')
 }
+export const exportSampleExcel = (sheet1Data, sheet2Data) => {
+  // Tạo workbook và thêm sheet
+  const wb = XLSX.utils.book_new()
+  const ws1 = XLSX.utils.aoa_to_sheet(sheet1Data)
+  ws1['!cols'] = [{ width: 30 }, { width: 30 }]
+
+  const ws2 = XLSX.utils.aoa_to_sheet(sheet2Data)
+  ws2['!cols'] = [{ width: 30 }, { width: 40 }, { width: 10 }]
+
+  XLSX.utils.book_append_sheet(wb, ws1, 'Thay đổi bảng giá')
+  XLSX.utils.book_append_sheet(wb, ws2, 'Danh sách hàng hóa')
+
+  // Xuất file Excel
+  XLSX.writeFile(wb, 'fileSampleExcel.xlsx')
+}

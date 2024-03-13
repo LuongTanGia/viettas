@@ -111,9 +111,8 @@ const GBL = () => {
     const fetchData = async () => {
       try {
         console.log('get helper')
-
         const tokenLogin = localStorage.getItem('TKN')
-        if (actionType === 'create' || actionType === 'edit' || actionType === 'print') {
+        if (actionType === 'create' || actionType === 'edit' || actionType === 'print' || actionType === 'import') {
           console.log('get helper  KH,DT')
           const responseKH = await apis.ListHelperHHGBL(tokenLogin)
           if (responseKH.data && responseKH.data.DataError === 0) {

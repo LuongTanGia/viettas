@@ -211,7 +211,7 @@ const Modals = ({
       sorter: (a, b) => a.TienHang - b.TienHang,
     },
     {
-      title: '% thuế',
+      title: '% Thuế',
       dataIndex: 'TyLeThue',
       key: 'TyLeThue',
       width: 150,

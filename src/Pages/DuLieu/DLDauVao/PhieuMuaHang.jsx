@@ -692,6 +692,12 @@ const PhieuMuaHang = () => {
 
   const handlePay = (record) => {
     if (record.PhieuChi) return
+    if (record.TongThanhTien <= 0) {
+      toast.error('Thành tiền phiếu này phải lớn hơn 0. Vui lòng thêm đơn giá ! ', {
+        autoClose: 1500,
+      })
+      return
+    }
     setActionType('pay')
     setDataRecord(record)
     setIsShowModal(true)

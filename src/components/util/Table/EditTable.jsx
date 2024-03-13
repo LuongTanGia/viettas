@@ -271,7 +271,7 @@ const EditTable = ({
                       ))
                     : null}
             </Select>
-          ) : tableName === 'GBS' && dataIndex === 'CoThue' ? (
+          ) : (tableName === 'GBS' || tableName === 'Import') && dataIndex === 'CoThue' ? (
             <Checkbox
               ref={inputRef}
               onBlur={(setCoThue(!coThue), save())}
@@ -401,7 +401,7 @@ const EditTable = ({
         dataIndex: item,
         editable: true,
         key: item,
-        fixed: tableName === 'GBS' ? 'none' : 'left',
+        fixed: tableName === 'GBS' || tableName === 'Import' ? 'none' : 'left',
         align: 'center',
         sorter: (a, b) => a[item].localeCompare(b[item]),
         showSorterTooltip: false,
@@ -414,7 +414,7 @@ const EditTable = ({
         ),
       }
     }
-    if (item === 'CoThue' && tableName === 'GBS') {
+    if (item === 'CoThue' && (tableName === 'GBS' || tableName === 'Import')) {
       return {
         title: columName[item] || item,
         width: 100,
@@ -484,10 +484,11 @@ const EditTable = ({
         showSorterTooltip: false,
       }
     }
+
     if (item === 'TyLeThue') {
       return {
         title: columName[item] || item,
-        width: 150,
+        width: 100,
         dataIndex: item,
         editable: true,
         key: item,
@@ -622,21 +623,21 @@ const EditTable = ({
     <div>
       <Table
         // loading={dataSource?.length !== 0 || typeTable === 'create' ? false : true}
-        className={tableName === 'GBS' ? 'h340' : 'h290'}
+        className={tableName === 'GBS' ? 'h340' : tableName === 'Import' ? 'h396' : 'h290'}
         components={components}
         rowClassName={() => 'editable-row'}
         bordered
         dataSource={dataSource}
         columns={columns}
         scroll={{
-          x: tableName == 'PhieuLapRap' || tableName == 'PhieuNhapDieuChinh' ? 700 : 1500,
+          x: tableName === 'PhieuLapRap' || tableName === 'PhieuNhapDieuChinh' ? 700 : 1500,
           y: true,
         }}
         rowKey={(record) => record.MaHang}
         size="small"
         pagination={false}
         summary={(pageData) => {
-          return pageData.length !== 0 ? (
+          return pageData.length !== 0 && tableName !== 'Import' ? (
             <Table.Summary fixed="bottom">
               <Table.Summary.Row>
                 <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell>
@@ -697,7 +698,7 @@ const EditTable = ({
                   })}
               </Table.Summary.Row>
             </Table.Summary>
-          ) : (
+          ) : tableName === 'Import' ? null : (
             <Table.Summary fixed="bottom">
               <Table.Summary.Row>
                 <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell>
