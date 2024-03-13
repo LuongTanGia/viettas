@@ -15,7 +15,7 @@ import { RETOKEN, exportSampleExcel } from '../action/Actions'
 import * as apis from '../apis'
 
 // const { MdDelete } = icons
-const ModalImport = ({ close, dataHangHoa, typePage, loading }) => {
+const ModalImport = ({ close, dataHangHoa, typePage, loading, onRowCreate }) => {
   const [excelFile, setExcelFile] = useState(null)
   const [excelData, setExcelData] = useState(null)
 
@@ -83,7 +83,7 @@ const ModalImport = ({ close, dataHangHoa, typePage, loading }) => {
       const processedData = dataSheet1.map((item, index) => ({
         STT: index + 1,
         MaHang: item['MAHANG'] ? item['MAHANG'].toString().trim() : null,
-        DonGia: item[' GIABAN '] ? item[' GIABAN '].toString().trim() : item['GIABAN'] ? item['GIABAN'].toString().trim() : null,
+        DonGia: item[' GIABAN '] ? parseFloat(item[' GIABAN '].toString().trim()) : item['GIABAN'] ? parseFloat(item['GIABAN'].toString().trim()) : null,
         TenHang: mahangInfo[item['MAHANG']] ? mahangInfo[item['MAHANG']].tenhang : '',
         DVT: mahangInfo[item['MAHANG']] ? mahangInfo[item['MAHANG']].dvt : '',
         TyLeThue: 0,
@@ -92,8 +92,7 @@ const ModalImport = ({ close, dataHangHoa, typePage, loading }) => {
 
       // Loại bỏ các MaHang không hợp lệ từ processedData
 
-      const validProcessedData = processedData.filter((item) => mahangInfo[item.MaHang] && parseFloat(item.DonGia) > 0)
-
+      const validProcessedData = processedData.filter((item) => mahangInfo[item.MaHang] && !isNaN(item.DonGia) && item.DonGia > 0)
       // Kiểm tra nếu không có dữ liệu MAHANG hoặc GIABAN
       if (processedData.some((item) => !item.MaHang || !item.DonGia)) {
         toast.error('Không có dữ liệu mã hàng hoặc giá bán trong file')
@@ -105,6 +104,14 @@ const ModalImport = ({ close, dataHangHoa, typePage, loading }) => {
   }
   const handleEditData = (data) => {
     setExcelData(data)
+  }
+
+  const controlImport = () => {
+    if (typePage === 'GBS') {
+      handleImportClipboard()
+    } else {
+      handleImport()
+    }
   }
 
   const handleImport = async () => {
@@ -139,6 +146,14 @@ const ModalImport = ({ close, dataHangHoa, typePage, loading }) => {
     }
   }
 
+  const handleImportClipboard = () => {
+    const dataTable = excelData?.map((item) => ({
+      key: item.MaHang,
+      ...item,
+    }))
+    onRowCreate(dataTable)
+    close()
+  }
   return (
     <div className=" fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
       <div className="p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
@@ -230,7 +245,7 @@ const ModalImport = ({ close, dataHangHoa, typePage, loading }) => {
               />
             </div>
             <div className="flex  items-center gap-3  pt-3">
-              <ActionButton color={'slate-50'} title={'Import'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} isModal={true} handleAction={handleImport} />
+              <ActionButton color={'slate-50'} title={'Import'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} isModal={true} handleAction={controlImport} />
               <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} isModal={true} />
             </div>
           </div>

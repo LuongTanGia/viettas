@@ -9,6 +9,7 @@ import categoryAPI from '../../API/linkAPI'
 import { RETOKEN } from '../../action/Actions'
 import ActionButton from '../util/Button/ActionButton'
 import { CgCloseO } from 'react-icons/cg'
+import { ModalHeThong } from '../../components_K'
 
 const SiderMenu = ({ refs }) => {
   const TokenAccess = localStorage.getItem('TKN')
@@ -16,13 +17,14 @@ const SiderMenu = ({ refs }) => {
   const navigate = useNavigate()
   const [string] = useState([])
   const [isShowNotify, setIsShowNotify] = useState(false)
+  const [isShowModal, setIsShowModal] = useState(false)
 
   const getQuyenHan = async (Ma) => {
     try {
       const response = await categoryAPI.QuyenHan(Ma, TokenAccess)
       if (response.data.DataError === 0) {
-        console.log(Ma, response.data)
-        response.data.VIEW == false ? setIsShowNotify(true) : navigate(`/${string.includes(Ma) ? '' : Ma}`)
+        console.log('Ma1', Ma, response.data)
+        response.data.VIEW == false ? setIsShowNotify(true) : Ma === 'HeThong_ThongSoHeThong' ? setIsShowModal(true) : navigate(`/${string.includes(Ma) ? '' : Ma}`)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         getQuyenHan()
@@ -35,7 +37,7 @@ const SiderMenu = ({ refs }) => {
     try {
       const response = await categoryAPI.QuyenHan(Ma2, TokenAccess)
       if (response.data.DataError === 0) {
-        console.log(Ma2, response.data)
+        console.log('Ma2', Ma2, response.data)
         response.data.VIEW == false ? setIsShowNotify(true) : navigate(`/${Ma1}/${Ma2}`)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
@@ -194,6 +196,7 @@ const SiderMenu = ({ refs }) => {
           </div>
         )}
       </div>
+      {isShowModal && <ModalHeThong close={() => setIsShowModal(false)} />}
     </>
   )
 }

@@ -10,13 +10,11 @@ import { RETOKEN, formatCurrency } from '../../action/Actions'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
 import { exportToExcel } from '../../action/Actions'
 import { CloseSquareFilled } from '@ant-design/icons'
-import { useNavigate } from 'react-router-dom'
 import { useSearch } from '../../components_K/myComponents/useSearch'
 
 const { Text } = Typography
-const { IoAddCircleOutline, MdDelete, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill, CgCloseO, TiPrinter, FaRegCopy, BsWrenchAdjustableCircle } = icons
+const { IoAddCircleOutline, MdDelete, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill, TiPrinter, FaRegCopy, BsWrenchAdjustableCircle } = icons
 const GBS = () => {
-  const navigate = useNavigate()
   const optionContainerRef = useRef(null)
   const [tableLoad, setTableLoad] = useState(true)
   const [isLoadingEdit, setIsLoadingEdit] = useState(true)

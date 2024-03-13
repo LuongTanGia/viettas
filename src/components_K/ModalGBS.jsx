@@ -232,6 +232,11 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
     setSelectedRowData([...selectedRowData, ...newRow])
   }
 
+  const handleAddImportRow = (newRow) => {
+    const newRowFiltered = newRow.filter((item) => !selectedRowData.some((row) => row.MaHang === item.MaHang))
+    setSelectedRowData([...selectedRowData, ...newRowFiltered])
+  }
+
   const handleAddEmptyRow = () => {
     if (selectedRowData.map((item) => item.MaHang).includes('Chọn mã hàng')) return
 
@@ -970,8 +975,21 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
                 </div>
               </Spin>
               {/* button  */}
-              <div className="flex justify-end items-center">
-                <div className="flex justify-end items-center gap-3  pt-3">
+              <div className="flex justify-between items-center">
+                <div className=" flex  items-center gap-3  pt-3">
+                  <ActionButton
+                    color={'slate-50'}
+                    title={'Thêm MH chưa có'}
+                    background={'bg-main'}
+                    bg_hover={'white'}
+                    color_hover={'bg-main'}
+                    isModal={true}
+                    handleAction={handleSelectHH}
+                  />
+
+                  <ActionButton color={'slate-50'} title={'Import'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} isModal={true} handleAction={handleImport} />
+                </div>
+                <div className="flex items-center gap-3  pt-3">
                   <ActionButton
                     color={'slate-50'}
                     title={'Lưu & Đóng'}
@@ -1019,7 +1037,9 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
           setHightLight={setHightLight}
         />
       )}
-      {isShowImport && <ModalImport close={() => setIsShowImport(false)} dataHangHoa={dataHangHoa} namePage={namePage} loading={isLoading} />}
+      {isShowImport && (
+        <ModalImport typePage={typePage} close={() => setIsShowImport(false)} dataHangHoa={dataHangHoa} namePage={namePage} loading={isLoading} onRowCreate={handleAddImportRow} />
+      )}
     </>
   )
 }

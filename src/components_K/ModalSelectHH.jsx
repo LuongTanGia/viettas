@@ -2,12 +2,12 @@
 import { useState } from 'react'
 import logo from '../assets/VTS-iSale.ico'
 import icons from '../untils/icons'
-import { Table, Input, Typography } from 'antd'
+import { Table, Input } from 'antd'
 import { useSearchHH } from './myComponents/useSearchHH'
 import ActionButton from '../components/util/Button/ActionButton'
 import HighlightedCell from '../components/hooks/HighlightedCell'
 import { CloseSquareFilled } from '@ant-design/icons'
-const { Text } = Typography
+
 const { BsSearch } = icons
 const ModalSelectHH = ({ close, data, onRowCreate, onChangLoading }) => {
   const [isShowSearch, setIsShowSearch] = useState(false)
