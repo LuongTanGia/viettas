@@ -14,11 +14,11 @@ import { useSearch } from '../../components/hooks/Search'
 import { RETOKEN, exportToExcel } from '../../action/Actions'
 import ActionButton from '../../components/util/Button/ActionButton'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
-import { nameColumsDSBHKHO } from '../../components/util/Table/ColumnName'
+import { nameColumsDSBHQUAY } from '../../components/util/Table/ColumnName'
 import { DateField } from '@mui/x-date-pickers'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
 import { PermissionView } from '../../components_K'
-const DoanhSoBanHangKho = () => {
+const DoanhSoBanHangQuay = () => {
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
@@ -47,7 +47,7 @@ const DoanhSoBanHangKho = () => {
   const [dataCRUD, setDataCRUD] = useState()
   const [dateData, setDateData] = useState({})
   const [dateChange, setDateChange] = useState(false)
-  const [dataKhoHang, setDataKhoHang] = useState(null)
+  const [dataQuay, setDataQuay] = useState(null)
   const [check, setCheck] = useState('Tiền hàng')
   const [valueCheck, setValueCheck] = useState(null)
 
@@ -72,7 +72,7 @@ const DoanhSoBanHangKho = () => {
   useEffect(() => {
     const getDataQuyenHan = async () => {
       try {
-        const response = await categoryAPI.QuyenHan('TruyVan_DoanhSoBanHangKhoHang', TokenAccess)
+        const response = await categoryAPI.QuyenHan('TruyVan_DoanhSoBanHangQuay', TokenAccess)
         if (response.data.DataError === 0) {
           setDataCRUD(response.data)
           setIsLoading(true)
@@ -172,7 +172,7 @@ const DoanhSoBanHangKho = () => {
       try {
         if (isLoading == true) {
           setTableLoad(true)
-          const response = await categoryAPI.InfoBSDHKHO(
+          const response = await categoryAPI.InfoBSDHQuay(
             {
               NgayBatDau: dayjs(khoanNgayFrom).format('YYYY-MM-DD'),
               NgayKetThuc: dayjs(khoanNgayTo).format('YYYY-MM-DD'),
@@ -210,7 +210,7 @@ const DoanhSoBanHangKho = () => {
 
   const getDataNXT = async () => {
     try {
-      const response = await categoryAPI.InfoBSDHKHO(
+      const response = await categoryAPI.InfoBSDHQuay(
         {
           NgayBatDau: dateData.NgayBatDau,
           NgayKetThuc: dateData.NgayKetThuc,
@@ -246,9 +246,9 @@ const DoanhSoBanHangKho = () => {
   useEffect(() => {
     const getListKhoNXT = async () => {
       try {
-        const response = await categoryAPI.ListKhoHangNXT(TokenAccess)
+        const response = await categoryAPI.ListQuayTinhTien(TokenAccess)
         if (response.data.DataError == 0) {
-          setDataKhoHang(response.data.DataResults)
+          setDataQuay(response.data.DataResults)
           setIsLoading(true)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
@@ -350,144 +350,31 @@ const DoanhSoBanHangKho = () => {
   }, [check])
 
   const dynamicColumns = () => {
-    const maKho = dataKhoHang && dataKhoHang.map((item) => item.MaKho)
+    const maQuay = dataQuay && dataQuay.map((item) => item.Quay)
     return filteredHangHoa && filteredHangHoa?.length > 0
-      ? maKho.reduce((columns, ma) => {
-          const leColKey = Object.keys(filteredHangHoa[0]).filter((item) => typeof item == 'string' && item.includes(`Col_${ma}_Le_`))
-          const siColKey = Object.keys(filteredHangHoa[0]).filter((item) => typeof item == 'string' && item.includes(`Col_${ma}_Si_`))
-          const tienColKey =
+      ? maQuay.reduce((columns, ma) => {
+          const ColKey =
             filteredHangHoa &&
             filteredHangHoa[0] &&
             Object.keys(filteredHangHoa[0]).filter((item) => typeof item == 'string' && item.includes(`Col_${ma}_`) && item.includes(valueCheck))
+          const tenQuayMatch = maQuay[maQuay.indexOf(ma)]
           columns.push(
-            ...tienColKey
-              .filter((key) => leColKey.includes(key))
-              .map((colKey) => ({
-                title: `Lẻ`,
-                dataIndex: colKey,
-                key: colKey,
-                width: 150,
-                align: 'center',
-                render: (text) => (
-                  <div className={`text-end ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
-                    <HighlightedCell text={formatThapPhan(text, dataThongSo?.SOLESOTIEN)} search={searchHangHoa} />
-                  </div>
-                ),
-                sorter: (a, b) => a[colKey] - b[colKey],
-                showSorterTooltip: false,
-                ellipsis: true,
-              })),
-            ...tienColKey
-              .filter((key) => siColKey.includes(key))
-              .map((colKey) => ({
-                title: `Sỉ`,
-                dataIndex: colKey,
-                key: colKey,
-                width: 150,
-                align: 'center',
-                ellipsis: {
-                  showTitle: false,
-                },
-                render: (text) => (
-                  <div className={`text-end ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
-                    <HighlightedCell text={formatThapPhan(text, dataThongSo?.SOLESOTIEN)} search={searchHangHoa} />
-                  </div>
-                ),
-                sorter: (a, b) => a[colKey] - b[colKey],
-                showSorterTooltip: false,
-              })),
-            ...tienColKey
-              .filter((key) => !siColKey.includes(key) && !leColKey.includes(key))
-              .map((colKey) => ({
-                title: `${check}`,
-                dataIndex: colKey,
-                key: colKey,
-                width: 150,
-                ellipsis: true,
-                align: 'center',
-                render: (text) => (
-                  <div className={`text-end ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
-                    <HighlightedCell text={formatThapPhan(text, dataThongSo?.SOLESOTIEN)} search={searchHangHoa} />
-                  </div>
-                ),
-                sorter: (a, b) => a[colKey] - b[colKey],
-                showSorterTooltip: false,
-              })),
+            ...ColKey.map((colKey) => ({
+              title: ` Quầy ${tenQuayMatch} `,
+              dataIndex: colKey,
+              key: colKey,
+              width: 180,
+              ellipsis: true,
+              align: 'center',
+              render: (text) => (
+                <div className={`text-end ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+                  <HighlightedCell text={formatThapPhan(text, dataThongSo?.SOLESOTIEN)} search={searchHangHoa} />
+                </div>
+              ),
+              sorter: (a, b) => a[colKey] - b[colKey],
+              showSorterTooltip: false,
+            })),
           )
-          return columns
-        }, [])
-      : []
-  }
-  const dynamicColumnsChildren = () => {
-    const maKho = dataKhoHang && dataKhoHang.map((item) => item.MaKho)
-    const tenKho = dataKhoHang && dataKhoHang.map((item) => item.TenKho)
-    return filteredHangHoa && filteredHangHoa?.length > 0
-      ? maKho.reduce((columns, ma) => {
-          const leColKey = Object.keys(filteredHangHoa[0]).filter((item) => typeof item == 'string' && item.includes(`Col_${ma}_Le_`))
-          const siColKey = Object.keys(filteredHangHoa[0]).filter((item) => typeof item == 'string' && item.includes(`Col_${ma}_Si_`))
-          const tienColKey =
-            filteredHangHoa &&
-            filteredHangHoa[0] &&
-            Object.keys(filteredHangHoa[0]).filter((item) => typeof item == 'string' && item.includes(`Col_${ma}_`) && item.includes(valueCheck))
-          const tenKhoMatch = tenKho[maKho.indexOf(ma)]
-          columns.push({
-            title: `${tenKhoMatch}`,
-            children: [
-              ...tienColKey
-                .filter((key) => leColKey.includes(key))
-                .map((colKey) => ({
-                  title: `Lẻ`,
-                  dataIndex: colKey,
-                  key: colKey,
-                  width: 150,
-                  align: 'center',
-                  render: (text) => (
-                    <div className={`text-end ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
-                      <HighlightedCell text={formatThapPhan(text, dataThongSo?.SOLESOTIEN)} search={searchHangHoa} />
-                    </div>
-                  ),
-                  sorter: (a, b) => a[colKey] - b[colKey],
-                  showSorterTooltip: false,
-                  ellipsis: true,
-                })),
-              ...tienColKey
-                .filter((key) => siColKey.includes(key))
-                .map((colKey) => ({
-                  title: `Sỉ`,
-                  dataIndex: colKey,
-                  key: colKey,
-                  width: 150,
-                  align: 'center',
-                  ellipsis: {
-                    showTitle: false,
-                  },
-                  render: (text) => (
-                    <div className={`text-end ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
-                      <HighlightedCell text={formatThapPhan(text, dataThongSo?.SOLESOTIEN)} search={searchHangHoa} />
-                    </div>
-                  ),
-                  sorter: (a, b) => a[colKey] - b[colKey],
-                  showSorterTooltip: false,
-                })),
-              ...tienColKey
-                .filter((key) => !siColKey.includes(key) && !leColKey.includes(key))
-                .map((colKey) => ({
-                  title: `${check}`,
-                  dataIndex: colKey,
-                  key: colKey,
-                  width: 150,
-                  ellipsis: true,
-                  align: 'center',
-                  render: (text) => (
-                    <div className={`text-end ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
-                      <HighlightedCell text={formatThapPhan(text, dataThongSo?.SOLESOTIEN)} search={searchHangHoa} />
-                    </div>
-                  ),
-                  sorter: (a, b) => a[colKey] - b[colKey],
-                  showSorterTooltip: false,
-                })),
-            ],
-          })
           return columns
         }, [])
       : []
@@ -497,7 +384,7 @@ const DoanhSoBanHangKho = () => {
       filteredHangHoa && filteredHangHoa[0] && Object.keys(filteredHangHoa[0]).filter((item) => typeof item === 'string' && !item.startsWith(`Col_`) && item.includes(valueCheck))
     return lastColumns
       ? lastColumns.map((colKey) => ({
-          title: `${colKey.includes('Le_') ? 'Lẻ' : colKey.includes('Si_') ? 'Sỉ' : check}`,
+          title: `${check}`,
           dataIndex: colKey,
           key: colKey,
           width: 120,
@@ -539,7 +426,7 @@ const DoanhSoBanHangKho = () => {
       dataIndex: 'TenHang',
       key: 'TenHang',
       align: 'center',
-      width: 150,
+      width: 180,
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       showSorterTooltip: false,
       render: (text) => (
@@ -607,101 +494,7 @@ const DoanhSoBanHangKho = () => {
     ...dynamicColumns(),
     ...lastCols(),
   ]
-  const titlesChildren = [
-    {
-      title: 'STT',
-      dataIndex: 'STT',
-      render: (text, record, index) => index + 1,
-      fixed: 'left',
-      key: 'STT',
-      width: 50,
-      align: 'center',
-    },
-    {
-      title: 'Mã hàng',
-      dataIndex: 'MaHang',
-      key: 'MaHang',
-      fixed: 'left',
-      width: 100,
-      align: 'center',
-      sorter: (a, b) => a.MaHang.localeCompare(b.MaHang),
-      showSorterTooltip: false,
-      render: (text) => <HighlightedCell text={text} search={searchHangHoa} />,
-    },
-    {
-      title: 'Tên hàng',
-      dataIndex: 'TenHang',
-      key: 'TenHang',
-      align: 'center',
-      width: 150,
-      sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
-      showSorterTooltip: false,
-      render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'start',
-            }}
-          >
-            <div
-              style={{
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                cursor: 'pointer',
-              }}
-            >
-              <HighlightedCell text={text} search={searchHangHoa} />
-            </div>
-          </div>
-        </Tooltip>
-      ),
-    },
-    {
-      title: 'Nhóm',
-      dataIndex: 'NhomHang',
-      key: 'NhomHang',
-      align: 'center',
-      width: 150,
-      sorter: (a, b) => a.NhomHang.localeCompare(b.NhomHang),
-      showSorterTooltip: false,
-      render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'start',
-            }}
-          >
-            <div
-              style={{
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                cursor: 'pointer',
-              }}
-            >
-              <HighlightedCell text={text} search={searchHangHoa} />
-            </div>
-          </div>
-        </Tooltip>
-      ),
-    },
-    {
-      title: 'ĐVT',
-      dataIndex: 'DVT',
-      key: 'DVT',
-      width: 80,
-      align: 'center',
-      sorter: (a, b) => a.DVT.localeCompare(b.DVT),
-      showSorterTooltip: false,
-      render: (text) => <HighlightedCell text={text} search={searchHangHoa} />,
-    },
-    ...dynamicColumnsChildren(),
-    ...lastCols(),
-  ]
-  const newTitles = titlesChildren.filter((item) => !hiddenRow?.includes(item.dataIndex))
+  const newTitles = titles.filter((item) => !hiddenRow?.includes(item.dataIndex))
   return (
     <>
       {dataCRUD?.VIEW == false ? (
@@ -716,7 +509,7 @@ const DoanhSoBanHangKho = () => {
                 <div className="flex justify-between">
                   <div className="flex gap-2 items-center ">
                     <div className="flex items-center gap-2 py-1">
-                      <h1 className="text-lg font-bold text-black-600 uppercase">Doanh số bán hàng (Kho Hàng)</h1>
+                      <h1 className="text-lg font-bold text-black-600 uppercase">Doanh số bán hàng (Quầy)</h1>
                       <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
                     </div>
                     <div className="flex ">
@@ -785,7 +578,7 @@ const DoanhSoBanHangKho = () => {
                                     options?.map((item, index) => (
                                       <Col span={10} key={(item, index)}>
                                         <Checkbox value={item} checked={true}>
-                                          {nameColumsDSBHKHO[item]}
+                                          {nameColumsDSBHQUAY[item]}
                                         </Checkbox>
                                       </Col>
                                     ))
@@ -1074,7 +867,7 @@ const DoanhSoBanHangKho = () => {
                   </div>
                 </div>
               </div>
-              <div className="TruyVanDSKho_Child" id="my-table">
+              <div className="TruyVan" id="my-table">
                 <Table
                   loading={tableLoad}
                   className="setHeight"
@@ -1104,7 +897,7 @@ const DoanhSoBanHangKho = () => {
                     return (
                       <Table.Summary fixed>
                         <Table.Summary.Row>
-                          {titles
+                          {newTitles
                             .filter((column) => column.render)
                             .map((column, index) => {
                               const isNumericColumn = typeof filteredHangHoa[0]?.[column.dataIndex] == 'number'
@@ -1144,4 +937,4 @@ const DoanhSoBanHangKho = () => {
   )
 }
 
-export default DoanhSoBanHangKho
+export default DoanhSoBanHangQuay

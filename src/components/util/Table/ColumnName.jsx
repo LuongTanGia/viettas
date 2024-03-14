@@ -243,6 +243,35 @@ export const nameColumsDSBHKHO = {
   Si_TongCong: 'Sỉ - Tổng cộng',
   TongCong: 'Tổng cộng',
 }
+export const nameColumsDSBHQUAY = {
+  STT: 'STT',
+  NhomHang: 'Nhóm',
+  MaHang: 'Mã hàng',
+  TenHang: 'Tên hàng',
+  DVT: 'Đơn vị tính',
+  TienHang: 'Tiền hàng',
+  TienThue: 'Tiền thuế',
+  ThanhTien: 'Thành tiền',
+  ChietKhau: 'Chiết khấu',
+  TongCong: 'Tổng cộng',
+}
+export const nameColumsSoQuy = {
+  ID: 'ID',
+  Loai: 'Loại',
+  SapXep: 'Sắp xếp',
+  NgayCTu: 'Ngày chứng từ',
+  SoChungTu: 'Số chứng từ',
+  GhiChu: 'Ghi chú',
+  THUCONGNO: 'Thu công nợ',
+  THUTRAHANG: 'Thu trả hàng',
+  THUKHAC: 'Thu khác',
+  CHICONGNO: 'Chi công nợ',
+  CHITRAHANG: 'Chi trả hàng',
+  CHIKHAC: 'Chi khác',
+  DauKy: 'Đầu kỳ',
+  CuoiKy: 'Cuối kỳ',
+  ConLai: 'Còn lại',
+}
 export const nameColumsPhieuNTR = {
   STT: 'STT',
   SoChungTu: 'Số chứng từ',
@@ -545,4 +574,18 @@ export const nameColumsImport = {
   DonGia: 'Giá bán',
   CoThue: 'Đã có thuế',
   TyLeThue: '% Thuế',
+}
+export const nameColumsBinhQuanXuatKho = {
+  Thang: 'Tháng',
+  ThangFormat: 'Tháng',
+  NhomHang: 'Nhóm hàng',
+  MaHang: 'Mã hàng',
+  TenHang: 'Tên hàng',
+  DVT: 'ĐVT',
+  DonGia: 'Đơn giá',
+  NgayTao: 'Ngày tạo',
+  NguoiTao: 'Người tạo',
+  DaXuLy: 'Xử lý',
+  NguoiThucHien: 'Thực hiện',
+  ThoiGianThucHien: 'Lúc',
 }

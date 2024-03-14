@@ -56,12 +56,12 @@ const NhapXuatTonKho = () => {
   useEffect(() => {
     const getDataNXTFirst = async () => {
       try {
-        setTableLoad(true)
         if (isLoading == true) {
+          setTableLoad(true)
           const response = await categoryAPI.InfoNXTTheoKho(
             {
-              NgayBatDau: khoanNgayFrom.format('YYYY-MM-DD'),
-              NgayKetThuc: khoanNgayTo.format('YYYY-MM-DD'),
+              NgayBatDau: dayjs(khoanNgayFrom).format('YYYY-MM-DD'),
+              NgayKetThuc: dayjs(khoanNgayTo).format('YYYY-MM-DD'),
             },
             TokenAccess,
           )
@@ -84,10 +84,8 @@ const NhapXuatTonKho = () => {
         setTableLoad(false)
       }
     }
-    if (searchHangHoa || isLoading) {
-      getDataNXTFirst()
-    }
-  }, [searchHangHoa, isLoading])
+    getDataNXTFirst()
+  }, [searchHangHoa, isLoading, khoanNgayFrom, khoanNgayTo])
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -211,8 +209,6 @@ const NhapXuatTonKho = () => {
         const response = await categoryAPI.KhoanNgay(TokenAccess)
         if (response.data.DataError == 0) {
           setDateData(response.data)
-          setKhoanNgayFrom(dayjs(response.data.NgayBatDau))
-          setKhoanNgayTo(dayjs(response.data.NgayKetThuc))
           setIsLoading(true)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
@@ -349,9 +345,7 @@ const NhapXuatTonKho = () => {
     }
   }
   const handleSearch = (event) => {
-    setTableLoad(true)
     clearTimeout(timerId)
-    setTableLoad(true)
     timerId = setTimeout(() => {
       setSearchHangHoa(event.target.value)
     }, 300)
@@ -766,13 +760,11 @@ const NhapXuatTonKho = () => {
                     </div>
                   </div>
                   <div ref={showOption}>
-                    <div
-                      className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5  "
-                      onClick={() => setIsShowOption(!isShowOption)}
-                      title="Chức năng khác"
-                    >
-                      <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
-                    </div>
+                    <Tooltip title="Chức năng khác" color="blue">
+                      <div className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5  " onClick={() => setIsShowOption(!isShowOption)}>
+                        <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
+                      </div>
+                    </Tooltip>
                     {isShowOption && (
                       <div className="absolute flex flex-col gap-2 bg-slate-200 px-2 py-3 items-center top-16 right-[4.5%] rounded-lg z-10 duration-500 shadow-custom  ">
                         <div className={`flex ${selectVisible ? '' : 'flex-col'} items-center gap-2`}>
@@ -1131,7 +1123,7 @@ const NhapXuatTonKho = () => {
                   </div>
                 </div>
               </div>
-              <div className="NhapXuatTonKho" id="my-table">
+              <div className="TruyVan" id="my-table">
                 <Table
                   loading={tableLoad}
                   className="setHeight"
@@ -1165,7 +1157,12 @@ const NhapXuatTonKho = () => {
                             .map((column, index) => {
                               const isNumericColumn = typeof filteredHangHoa[0]?.[column.dataIndex] === 'number'
                               return (
-                                <Table.Summary.Cell key={`summary-cell-${index + 1}`} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                                <Table.Summary.Cell
+                                  index={index}
+                                  key={`summary-cell-${index + 1}`}
+                                  align={isNumericColumn ? 'right' : 'left'}
+                                  className="text-end font-bold  bg-[#f1f1f1]"
+                                >
                                   {isNumericColumn ? (
                                     <Text strong>
                                       {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
@@ -1174,7 +1171,7 @@ const NhapXuatTonKho = () => {
                                       })}
                                     </Text>
                                   ) : column.dataIndex == 'STT' ? (
-                                    <Text className="text-center" strong>
+                                    <Text className="text-center flex justify-center" strong>
                                       {dataNXT?.length}
                                     </Text>
                                   ) : null}

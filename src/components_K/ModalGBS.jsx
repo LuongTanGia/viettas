@@ -630,7 +630,7 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
                                                 })}
                                               </Text>
                                             ) : column.dataIndex === 'CoThue' ? (
-                                              <Text className="text-center" strong>
+                                              <Text className="text-center flex justify-center" strong>
                                                 {Object.values(data).filter((value) => value.CoThue).length}
                                               </Text>
                                             ) : null}

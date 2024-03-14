@@ -58,7 +58,7 @@ const PCView = ({ close, dataPC }) => {
                       <label className="required whitespace-nowrap text-sm">Kể từ ngày</label>
                       <input
                         type="text"
-                        value={moment(dataPCView?.HieuLucTu)?.format('DD/MM/YYYY HH:mm:ss') || ''}
+                        value={moment(dataPCView?.HieuLucTu)?.format('DD/MM/YYYY') || ''}
                         className="px-2 w-full resize-none rounded border outline-none text-sm truncate"
                         readOnly
                       />

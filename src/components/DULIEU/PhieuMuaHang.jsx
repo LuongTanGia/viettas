@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Form, DatePicker, Space, Table } from 'antd'
+import { Form, DatePicker, Space, Table, Tooltip } from 'antd'
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons'
 import moment from 'moment'
 const { RangePicker } = DatePicker
@@ -187,41 +187,45 @@ const PhieuMuaHang = () => {
         return (
           <>
             <div className=" flex gap-1 items-center justify-center ">
-              <div
-                onClick={() => handelView(record)}
-                type="button"
-                data-bs-toggle="modal"
-                data-bs-target="#verticalycentered"
-                title="Xem"
-                className="p-[3px] border border-yellow-400 rounded-md text-yellow-400 hover:text-white hover:bg-yellow-400 cursor-pointer"
-              >
-                <FaRegEye size={16} />
-              </div>
-              <div
-                onClick={() => handleEdit(record)}
-                title="Sửa"
-                data-bs-toggle="modal"
-                data-bs-target="#verticalycentered"
-                className="p-[3px] text-purple-500 border  border-purple-500 rounded-md hover:text-white hover:bg-purple-500  "
-              >
-                <FaRegEdit size={16} />
-              </div>
-              <div
-                onClick={() => handleDelete()}
-                title="Xóa"
-                data-bs-toggle="modal"
-                data-bs-target="#verticalycentered"
-                className="p-[3px] text-red-500 border  border-red-500 rounded-md hover:text-white hover:bg-red-500  "
-              >
-                <MdDelete size={16} />
-              </div>
-              <div
-                //   onClick={() => handlePrint(record)}
-                title="In phiếu"
-                className="p-[3px] text-blue-500 border  border-blue-500 rounded-md hover:text-white hover:bg-blue-500  "
-              >
-                <TiPrinter size={16} />
-              </div>
+              <Tooltip title="Xem" color="blue">
+                <div
+                  onClick={() => handelView(record)}
+                  type="button"
+                  data-bs-toggle="modal"
+                  data-bs-target="#verticalycentered"
+                  className="p-[3px] border border-yellow-400 rounded-md text-yellow-400 hover:text-white hover:bg-yellow-400 cursor-pointer"
+                >
+                  <FaRegEye size={16} />
+                </div>
+              </Tooltip>
+              <Tooltip title="Sửa" color="blue">
+                <div
+                  onClick={() => handleEdit(record)}
+                  data-bs-toggle="modal"
+                  data-bs-target="#verticalycentered"
+                  className="p-[3px] text-purple-500 border  border-purple-500 rounded-md hover:text-white hover:bg-purple-500  "
+                >
+                  <FaRegEdit size={16} />
+                </div>
+              </Tooltip>
+              <Tooltip title="Xóa" color="blue">
+                <div
+                  onClick={() => handleDelete()}
+                  data-bs-toggle="modal"
+                  data-bs-target="#verticalycentered"
+                  className="p-[3px] text-red-500 border  border-red-500 rounded-md hover:text-white hover:bg-red-500  "
+                >
+                  <MdDelete size={16} />
+                </div>
+              </Tooltip>
+              <Tooltip title="In phiếu" color="blue">
+                <div
+                  //   onClick={() => handlePrint(record)}
+                  className="p-[3px] text-blue-500 border  border-blue-500 rounded-md hover:text-white hover:bg-blue-500  "
+                >
+                  <TiPrinter size={16} />
+                </div>
+              </Tooltip>
               {/* <div
                       onClick={() => setIsOption(!isOption)}
                       title="option"

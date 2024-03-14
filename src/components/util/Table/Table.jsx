@@ -48,7 +48,6 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
   keysOnly?.unshift('STT')
   const listColumns = keysOnly?.filter((value) => !hiden?.includes(value))
   const newColumns = listColumns?.map((item, index) => {
-    console.log(item)
     if (item === 'STT') {
       return {
         title: columName[item] || item,
@@ -499,7 +498,12 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
                           .map((column, index) => {
                             const isNumericColumn = typeof data[0]?.[column.dataIndex] === 'number'
                             return (
-                              <Table.Summary.Cell key={`summary-cell-${index + 1}`} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                              <Table.Summary.Cell
+                                index={index}
+                                key={`summary-cell-${index + 1}`}
+                                align={isNumericColumn ? 'right' : 'left'}
+                                className="text-end font-bold  bg-[#f1f1f1]"
+                              >
                                 {isNumericColumn ? (
                                   column.dataIndex === 'TongSoLuong' ? (
                                     <Text strong>

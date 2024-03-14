@@ -23,21 +23,77 @@
   height: calc(100vh - 370px);
 }
 /* NXT */
-.NhapXuatTonKho .ant-table-wrapper.setHeight,
-.NhapXuatTonKho .setHeight .ant-spin-container,
-.NhapXuatTonKho .setHeight .ant-table,
-.NhapXuatTonKho .setHeight .ant-table-container .ant-table-body {
+.TruyVan .ant-table-wrapper.setHeight,
+.TruyVan .setHeight .ant-spin-container,
+.TruyVan .setHeight .ant-table,
+.TruyVan .setHeight .ant-table-container .ant-table-body {
   /* max-height: unset !important; */
   height: calc(100vh - 365px);
 }
-.NhapXuatTonKho .setHeight .ant-table-container .ant-table-body {
+.TruyVan .setHeight .ant-table-container .ant-table-body {
   max-height: unset !important;
   /* height: calc(100vh - 500px); */
 }
-.NhapXuatTonKho .setHeight .ant-table {
+.TruyVan .setHeight .ant-table {
   height: calc(100vh - 290px);
 }
-
+/* XuLy */
+.XuLy_BinhQuan .ant-table-wrapper.setHeight,
+.XuLy_BinhQuan .setHeight .ant-spin-container,
+.XuLy_BinhQuan .setHeight .ant-table,
+.XuLy_BinhQuan .setHeight .ant-table-container .ant-table-body {
+  /* max-height: unset !important; */
+  height: calc(100vh - 270px);
+}
+.XuLy_BinhQuan .setHeight .ant-table-container .ant-table-body {
+  max-height: unset !important;
+  /* height: calc(100vh - 500px); */
+}
+.XuLy_BinhQuan .setHeight .ant-table {
+  height: calc(100vh - 200px);
+}
+/* DoanhSo */
+.TruyVan_Child .ant-table-wrapper.setHeight,
+.TruyVan_Child .setHeight .ant-spin-container,
+.TruyVan_Child .setHeight .ant-table,
+.TruyVan_Child .setHeight .ant-table-container .ant-table-body {
+  /* max-height: unset !important; */
+  height: calc(100vh - 400px);
+}
+.TruyVan_Child .setHeight .ant-table-container .ant-table-body {
+  max-height: unset !important;
+}
+.TruyVan_Child .setHeight .ant-table {
+  height: calc(100vh - 290px);
+}
+/* DoanhSo */
+.TruyVanDSKho_Child .ant-table-wrapper.setHeight,
+.TruyVanDSKho_Child .setHeight .ant-spin-container,
+.TruyVanDSKho_Child .setHeight .ant-table,
+.TruyVanDSKho_Child .setHeight .ant-table-container .ant-table-body {
+  /* max-height: unset !important; */
+  height: calc(100vh - 400px);
+}
+.TruyVanDSKho_Child .setHeight .ant-table-container .ant-table-body {
+  max-height: unset !important;
+}
+.TruyVanDSKho_Child .setHeight .ant-table {
+  height: calc(100vh - 290px);
+}
+/* SoQuy */
+.TruyVanSoQuy_Child .ant-table-wrapper.setHeight,
+.TruyVanSoQuy_Child .setHeight .ant-spin-container,
+.TruyVanSoQuy_Child .setHeight .ant-table,
+.TruyVanSoQuy_Child .setHeight .ant-table-container .ant-table-body {
+  /* max-height: unset !important; */
+  height: calc(100vh - 330px);
+}
+.TruyVanSoQuy_Child .setHeight .ant-table-container .ant-table-body {
+  max-height: unset !important;
+}
+.TruyVanSoQuy_Child .setHeight .ant-table {
+  height: calc(100vh - 220px);
+}
 /*  GBL */
 .GBL .ant-table-wrapper,
 .GBL .ant-spin-container,

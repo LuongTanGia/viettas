@@ -1,5 +1,4 @@
 import './index.css'
-import './App.css'
 import { Route, Routes, BrowserRouter as Router, Navigate } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'

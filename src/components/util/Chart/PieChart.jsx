@@ -45,7 +45,6 @@ function DoughNut() {
       },
     ],
   }
-  console.log(dataChart)
   return (
     <>
       {dataChart && dataChart?.length > 0 ? (
