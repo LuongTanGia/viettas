@@ -753,7 +753,7 @@ const SoQuy = () => {
                                         })}
                                       </Text>
                                     ) : column.dataIndex == 'STT' ? (
-                                      <Text className="text-center flex justify-center flex justify-center" strong>
+                                      <Text className="text-center flex justify-center" strong>
                                         {dataSoQuy?.length}
                                       </Text>
                                     ) : null}

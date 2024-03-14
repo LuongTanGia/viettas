@@ -58,6 +58,11 @@ export const useSearch = (data) => {
           SoQuay,
           HieuLucTu,
           MaCa,
+          // Xử lý/ Bình Quân Xuất Kho
+          ThangFormat,
+          NguoiThucHien,
+          ThoiGianThucHien,
+          DonGia,
           // NTX
           TenNhomHang,
           TenKho,
@@ -159,12 +164,17 @@ export const useSearch = (data) => {
           (Quay?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (NguoiCNHTCuoi || '').toLowerCase().includes(search.toLowerCase()) ||
           (NguoiCNTLCuoi || '').toLowerCase().includes(search.toLowerCase()) ||
-          (moment(NgayCNTLCuoi).format('DD/MM/YYYY') || '').toLowerCase().includes(search.toLowerCase()) ||
-          (moment(NgayCNHTCuoi).format('DD/MM/YYYY') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (moment(NgayCNTLCuoi).format('DD/MM/YYYY HH:mm:ss') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (moment(NgayCNHTCuoi).format('DD/MM/YYYY HH:mm:ss') || '').toLowerCase().includes(search.toLowerCase()) ||
           // PhanCa
           (moment(HieuLucTu).format('DD/MM/YYYY') || '').toLowerCase().includes(search.toLowerCase()) ||
           (SoQuay?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (MaCa?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          // BinhQuanXuatKho
+          (NguoiThucHien || '').toLowerCase().includes(search.toLowerCase()) ||
+          (moment(ThoiGianThucHien).format('DD/MM/YYYY HH:mm:ss') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (DonGia?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (moment(ThangFormat).format('MM/YYYY') || '').toLowerCase().includes(search.toLowerCase()) ||
           // NXTKho
           (TenNhomHang || '').toLowerCase().includes(search.toLowerCase()) ||
           (TenKho || '').toLowerCase().includes(search.toLowerCase()) ||

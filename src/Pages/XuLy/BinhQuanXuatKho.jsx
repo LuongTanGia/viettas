@@ -415,7 +415,6 @@ const BinhQuanXuatKho = () => {
   ]
   const newTitles = titlesList.filter((item) => !hiddenRow?.includes(item.dataIndex))
   const newTitlesBinhQuan = titlesBinhQuan.filter((item) => !hiddenRow?.includes(item.dataIndex))
-
   return (
     <>
       {dataCRUD?.VIEW == false ? (
