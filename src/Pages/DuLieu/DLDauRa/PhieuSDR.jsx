@@ -441,27 +441,28 @@ const PhieuSDR = () => {
         return (
           <>
             <div className=" flex gap-1 items-center justify-center  ">
-              <div
-                onClick={() => (dataQuyenHan?.EDIT ? handleEdit(record) : '')}
-                title="Sửa"
-                className={`p-[3px] rounded-md text-slate-50 ${
-                  record.TenHangMuc === 'Chi tiền tại quầy' || dataQuyenHan?.EDIT === false
-                    ? 'border-2 border-gray-400 bg-gray-400 cursor-not-allowed'
-                    : ' border-2 border-yellow-400 bg-yellow-400  hover:bg-white hover:text-yellow-400 cursor-pointer'
-                }`}
-              >
-                <MdEdit size={16} />
-              </div>
-
-              <div
-                onClick={() => (dataQuyenHan?.DEL ? handleDelete(record) : '')}
-                title="Xóa"
-                className={`p-[3px] border-2 rounded-md text-slate-50 ${
-                  dataQuyenHan?.DEL ? 'border-red-500 bg-red-500 hover:bg-white hover:text-red-500 cursor-pointer' : 'border-gray-400 bg-gray-400 cursor-not-allowed'
-                } `}
-              >
-                <MdDelete size={16} />
-              </div>
+              <Tooltip title="Sửa" color="blue">
+                <div
+                  onClick={() => (dataQuyenHan?.EDIT ? handleEdit(record) : '')}
+                  className={`p-[3px] rounded-md text-slate-50 ${
+                    record.TenHangMuc === 'Chi tiền tại quầy' || dataQuyenHan?.EDIT === false
+                      ? 'border-2 border-gray-400 bg-gray-400 cursor-not-allowed'
+                      : ' border-2 border-yellow-400 bg-yellow-400  hover:bg-white hover:text-yellow-400 cursor-pointer'
+                  }`}
+                >
+                  <MdEdit size={16} />
+                </div>
+              </Tooltip>
+              <Tooltip title="Xóa" color="blue">
+                <div
+                  onClick={() => (dataQuyenHan?.DEL ? handleDelete(record) : '')}
+                  className={`p-[3px] border-2 rounded-md text-slate-50 ${
+                    dataQuyenHan?.DEL ? 'border-red-500 bg-red-500 hover:bg-white hover:text-red-500 cursor-pointer' : 'border-gray-400 bg-gray-400 cursor-not-allowed'
+                  } `}
+                >
+                  <MdDelete size={16} />
+                </div>
+              </Tooltip>
             </div>
           </>
         )
@@ -600,9 +601,11 @@ const PhieuSDR = () => {
                   )}
                 </div>
                 <div ref={optionContainerRef}>
-                  <div className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5  " onClick={() => setIsShowOption(!isShowOption)} title="Chức năng khác">
-                    <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
-                  </div>
+                  <Tooltip title="Chức năng khác" color="blue">
+                    <div className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5  " onClick={() => setIsShowOption(!isShowOption)}>
+                      <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
+                    </div>
+                  </Tooltip>
                   {isShowOption && (
                     <div className=" absolute flex flex-col gap-2 bg-slate-100 px-2 py-3 items-center top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom ">
                       <div className={`flex flex-grow flex-wrap gap-1 ${!hideColumns ? 'flex-col' : ''}`}>
@@ -821,7 +824,7 @@ const PhieuSDR = () => {
                                       </Text>
                                     )
                                   ) : column.dataIndex === 'STT' ? (
-                                    <Text className="text-center" strong>
+                                    <Text className="text-center flex justify-center" strong>
                                       {data.length}
                                     </Text>
                                   ) : null}

@@ -44,6 +44,7 @@ import PhanCaDS from '../../Pages/ThietLap/PhanCaDS'
 import DoanhSoBanHangKho from '../../Pages/TruyVan/DoanhSoBanHangKho'
 import DoanhSoBanHangQuay from '../../Pages/TruyVan/DoanhSoBanHangQuay'
 import SoQuy from '../../Pages/TruyVan/SoQuy'
+import BinhQuanXuatKho from '../../Pages/XuLy/BinhQuanXuatKho'
 
 function MainPage({ isSidebarVisible }) {
   return (
@@ -75,6 +76,7 @@ function MainPage({ isSidebarVisible }) {
           <Route path="/DuLieuDR/DuLieu_PBL" element={<PhieuBanLe />} />
           <Route path="/DuLieuTC/DuLieu_PCT" element={<PhieuChiTien />} />
           <Route path="/DuLieuTC/DuLieu_PTT" element={<PhieuThuTien />} />
+          <Route path="/XuLy_BinhQuanXuatKho" element={<BinhQuanXuatKho />} />
           <Route path="/TruyVan_CongNoDauRa" element={<CongNoDauRa />} />
           <Route path="/TruyVan_CongNoDauVao" element={<CongNoDauVao />} />
           <Route path="/TruyVan_DoanhSoBanHangHH" element={<DSBHHH />} />

@@ -21,8 +21,11 @@ const SiderMenu = ({ refs }) => {
     try {
       const response = await categoryAPI.QuyenHan(Ma, TokenAccess)
       if (response.data.DataError === 0) {
-        console.log(Ma, response.data)
-        response.data.VIEW == false ? setIsShowNotify(true) : navigate(`/${string.includes(Ma) ? '' : Ma}`)
+        Ma.includes('XuLy_') && response.data.RUN === false
+          ? setIsShowNotify(true)
+          : !Ma.includes('XuLy_') && response.data.VIEW === false
+            ? setIsShowNotify(true)
+            : navigate(`/${string.includes(Ma) ? '' : Ma}`)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         getQuyenHan()
@@ -33,9 +36,9 @@ const SiderMenu = ({ refs }) => {
   }
   const getQuyenHanChild = async (Ma1, Ma2) => {
     try {
+      console.log('2')
       const response = await categoryAPI.QuyenHan(Ma2, TokenAccess)
       if (response.data.DataError === 0) {
-        console.log(Ma2, response.data)
         response.data.VIEW == false ? setIsShowNotify(true) : navigate(`/${Ma1}/${Ma2}`)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()

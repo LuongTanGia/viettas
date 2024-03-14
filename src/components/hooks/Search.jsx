@@ -92,6 +92,16 @@ export const useSearch = (data) => {
           TriGiaTonCK,
           SoLuongXuat,
           TriGiaXuat,
+          // SoQuy
+          THUCONGNO,
+          THUTRAHANG,
+          THUKHAC,
+          CHICONGNO,
+          CHITRAHANG,
+          CHIKHAC,
+          DauKy,
+          CuoiKy,
+          ConLai,
           // NDC, PLR , XDC, XCK, NCK
           SoChungTu,
           NgayCTu,
@@ -189,6 +199,16 @@ export const useSearch = (data) => {
           (TriGiaTonCK?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (SoLuongXuat?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (TriGiaXuat?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          // SoQuy
+          (THUCONGNO?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (THUTRAHANG?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (THUKHAC?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (CHICONGNO?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (CHITRAHANG?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (CHIKHAC?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (DauKy?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (CuoiKy?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (ConLai?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           // NDC
           (SoChungTu || '').toLowerCase().includes(search.toLowerCase()) ||
           (NgayCTu?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||

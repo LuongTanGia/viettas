@@ -48,7 +48,6 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
   keysOnly?.unshift('STT')
   const listColumns = keysOnly?.filter((value) => !hiden?.includes(value))
   const newColumns = listColumns?.map((item, index) => {
-    console.log(item)
     if (item === 'STT') {
       return {
         title: columName[item] || item,

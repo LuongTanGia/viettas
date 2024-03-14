@@ -309,7 +309,21 @@ const categoryAPI = {
     }
     return axiosClient.post(url, { Ma }, { headers })
   },
-
+  // XuLy/BinhQuanXuatKho
+  BinhQuanXuatKhoList(accessToken) {
+    const url = '/processes/GiaXuatKho/DanhSach'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, {}, { headers })
+  },
+  TinhBinhQuanXuatKhoList(Thang_YYYYMM, accessToken) {
+    const url = '/processes/GiaXuatKho/TinhGiaBinhQuanThang'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, { Thang_YYYYMM }, { headers })
+  },
   // TruyVan/NhapXuatTonKho
   InfoNXTTheoKho(body, accessToken) {
     const url = '/inquiries/NhapXuatTon/TheoKho'

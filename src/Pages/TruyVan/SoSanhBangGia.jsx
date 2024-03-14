@@ -393,9 +393,11 @@ const SoSanhBG = () => {
                 )}
               </div>
               <div ref={optionContainerRef}>
-                <div className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5" onClick={() => setIsShowOption(!isShowOption)} title="Chức năng khác">
-                  <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
-                </div>
+                <Tooltip title="Chức năng khác" color="blue">
+                  <div className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5" onClick={() => setIsShowOption(!isShowOption)}>
+                    <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
+                  </div>
+                </Tooltip>
                 {isShowOption && (
                   <div className=" absolute flex flex-col gap-2 bg-slate-100 px-3 py-2 items-center top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom ">
                     <div className={`flex flex-grow flex-wrap gap-1 ${!hideColumns ? 'flex-col' : ''}`}>
@@ -592,7 +594,7 @@ const SoSanhBG = () => {
                   </div>
                 </div>
               </div>
-              <div className="">
+              <div>
                 <Tooltip title="Xem dữ liệu" color="blue">
                   <div>
                     <ActionButton
@@ -641,7 +643,7 @@ const SoSanhBG = () => {
                             return (
                               <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
                                 {column.dataIndex === 'STT' ? (
-                                  <Text className="text-center" strong>
+                                  <Text className="text-center flex justify-center" strong>
                                     {data.length}
                                   </Text>
                                 ) : null}

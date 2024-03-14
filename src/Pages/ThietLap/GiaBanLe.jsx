@@ -545,25 +545,26 @@ const GBL = () => {
         return (
           <>
             <div className=" flex gap-1 items-center justify-center  ">
-              <div
-                onClick={() => (dataQuyenHan?.EDIT ? handleEdit(record) : '')}
-                title="Sửa"
-                className={`p-[3px] border-2 rounded-md text-slate-50 ${
-                  dataQuyenHan?.EDIT ? 'border-yellow-400 bg-yellow-400 hover:bg-white hover:text-yellow-400 cursor-pointer' : 'border-gray-400 bg-gray-400 cursor-not-allowed'
-                } `}
-              >
-                <MdEdit size={16} />
-              </div>
-
-              <div
-                onClick={() => (dataQuyenHan?.DEL ? handleDelete(record) : '')}
-                title="Xóa"
-                className={`p-[3px] border-2 rounded-md text-slate-50 ${
-                  dataQuyenHan?.DEL ? 'border-red-500 bg-red-500 hover:bg-white hover:text-red-500 cursor-pointer' : 'border-gray-400 bg-gray-400 cursor-not-allowed'
-                } `}
-              >
-                <MdDelete size={16} />
-              </div>
+              <Tooltip title="Sửa" color="blue">
+                <div
+                  onClick={() => (dataQuyenHan?.EDIT ? handleEdit(record) : '')}
+                  className={`p-[3px] border-2 rounded-md text-slate-50 ${
+                    dataQuyenHan?.EDIT ? 'border-yellow-400 bg-yellow-400 hover:bg-white hover:text-yellow-400 cursor-pointer' : 'border-gray-400 bg-gray-400 cursor-not-allowed'
+                  } `}
+                >
+                  <MdEdit size={16} />
+                </div>
+              </Tooltip>
+              <Tooltip title="Xóa" color="blue">
+                <div
+                  onClick={() => (dataQuyenHan?.DEL ? handleDelete(record) : '')}
+                  className={`p-[3px] border-2 rounded-md text-slate-50 ${
+                    dataQuyenHan?.DEL ? 'border-red-500 bg-red-500 hover:bg-white hover:text-red-500 cursor-pointer' : 'border-gray-400 bg-gray-400 cursor-not-allowed'
+                  } `}
+                >
+                  <MdDelete size={16} />
+                </div>
+              </Tooltip>
             </div>
           </>
         )
@@ -684,9 +685,11 @@ const GBL = () => {
                 )}
               </div>
               <div ref={optionContainerRef}>
-                <div className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5" onClick={() => setIsShowOption(!isShowOption)} title="Chức năng khác">
-                  <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
-                </div>
+                <Tooltip title="Chức năng khác" color="blue">
+                  <div className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5" onClick={() => setIsShowOption(!isShowOption)}>
+                    <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
+                  </div>
+                </Tooltip>
                 {isShowOption && (
                   <div className=" absolute flex flex-col gap-2 bg-slate-100 px-3 py-2 items-center top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom ">
                     <div className={`flex flex-grow flex-wrap gap-1 ${!hideColumns ? 'flex-col' : ''}`}>
@@ -940,7 +943,7 @@ const GBL = () => {
                             return (
                               <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
                                 {column.dataIndex === 'STT' ? (
-                                  <Text className="text-center" strong>
+                                  <Text className="text-center flex justify-center" strong>
                                     {showFull === 'Hiện hành' ? data.length : dataFull.length}
                                   </Text>
                                 ) : null}

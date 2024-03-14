@@ -5,7 +5,7 @@ import { CNDRTONGHOP, CNDRTONGHOP_listHelper, exportToExcel } from '../../action
 import API from '../../API/API'
 import FilterCp from '../util/filterCP/FilterCp'
 import Date from '../util/DateCP/DateCP'
-import { Button, Checkbox, Col, Empty, Row, Spin } from 'antd'
+import { Button, Checkbox, Col, Empty, Row, Spin, Tooltip } from 'antd'
 import ActionButton from '../util/Button/ActionButton'
 import { RiFileExcel2Fill } from 'react-icons/ri'
 import { FaEyeSlash } from 'react-icons/fa'
@@ -86,9 +86,11 @@ function CongNoDauRa() {
           <h1 className="text-xl font-black uppercase">Công Nợ Khách Hàng </h1>
         </div>
         <div className="flex justify-between" ref={showOption}>
-          <div className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5  " onClick={() => setIsShowOption(!isShowOption)} title="Chức năng khác">
-            <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
-          </div>
+          <Tooltip title="Chức năng khác" color="blue">
+            <div className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5  " onClick={() => setIsShowOption(!isShowOption)}>
+              <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
+            </div>
+          </Tooltip>
           {isShowOption && (
             <div className="absolute flex flex-col gap-2 bg-slate-200 px-2 py-3 items-center top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom">
               <div className={`flex ${selectVisible ? '' : 'flex-col'} items-center gap-2`}>

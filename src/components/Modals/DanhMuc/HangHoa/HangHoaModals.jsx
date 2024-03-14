@@ -1231,13 +1231,14 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                                       <Checkbox checked={barcode.NA} onChange={(e) => handleBarcodeChange(index, 'NA', e.target.checked)}></Checkbox>
                                     </td>
                                     <td className="flex justify-center">
-                                      <div
-                                        onClick={() => removeBarcode(index)}
-                                        title="Xóa"
-                                        className="p-[3px] w-[fit-content] border-2 border-red-500 rounded text-slate-50 bg-red-500  hover:bg-white hover:text-red-500  cursor-pointer "
-                                      >
-                                        <MdDelete />
-                                      </div>
+                                      <Tooltip title="Xóa" color="blue">
+                                        <div
+                                          onClick={() => removeBarcode(index)}
+                                          className="p-[3px] w-[fit-content] border-2 border-red-500 rounded text-slate-50 bg-red-500  hover:bg-white hover:text-red-500  cursor-pointer "
+                                        >
+                                          <MdDelete />
+                                        </div>
+                                      </Tooltip>
                                     </td>
                                   </tr>
                                 ))}
@@ -1377,13 +1378,14 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                                       />
                                     </td>
                                     <td className="flex justify-center">
-                                      <div
-                                        onClick={() => removeHangHoaCT(index)}
-                                        title="Xóa"
-                                        className="p-[3px] w-[fit-content] border-2 border-red-500 rounded text-slate-50 bg-red-500  hover:bg-white hover:text-red-500  cursor-pointer "
-                                      >
-                                        <MdDelete />
-                                      </div>
+                                      <Tooltip title="Xóa" color="blue">
+                                        <div
+                                          onClick={() => removeHangHoaCT(index)}
+                                          className="p-[3px] w-[fit-content] border-2 border-red-500 rounded text-slate-50 bg-red-500  hover:bg-white hover:text-red-500  cursor-pointer "
+                                        >
+                                          <MdDelete />
+                                        </div>
+                                      </Tooltip>
                                     </td>
                                   </tr>
                                 ))}
@@ -1711,13 +1713,14 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                                         <Checkbox checked={item.NA} onChange={(e) => handleBarcodeChange(index, 'NA', e.target.checked)}></Checkbox>
                                       </td>
                                       <td className="flex justify-center">
-                                        <div
-                                          onClick={() => removeBarcode(index)}
-                                          title="Xóa"
-                                          className="p-[3px] w-[fit-content] border-2 border-red-500 rounded text-slate-50 bg-red-500  hover:bg-white hover:text-red-500  cursor-pointer "
-                                        >
-                                          <MdDelete />
-                                        </div>
+                                        <Tooltip title="Xóa" color="blue">
+                                          <div
+                                            onClick={() => removeBarcode(index)}
+                                            className="p-[3px] w-[fit-content] border-2 border-red-500 rounded text-slate-50 bg-red-500  hover:bg-white hover:text-red-500  cursor-pointer "
+                                          >
+                                            <MdDelete />
+                                          </div>
+                                        </Tooltip>
                                       </td>
                                     </>
                                   </tr>
@@ -1879,13 +1882,14 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                                       />
                                     </td>
                                     <td className="flex justify-center">
-                                      <div
-                                        onClick={() => removeHangHoaCT(index)}
-                                        title="Xóa"
-                                        className="p-[3px] w-[fit-content] border-2 border-red-500 rounded text-slate-50 bg-red-500  hover:bg-white hover:text-red-500  cursor-pointer "
-                                      >
-                                        <MdDelete />
-                                      </div>
+                                      <Tooltip title="Xóa" color="blue">
+                                        <div
+                                          onClick={() => removeHangHoaCT(index)}
+                                          className="p-[3px] w-[fit-content] border-2 border-red-500 rounded text-slate-50 bg-red-500  hover:bg-white hover:text-red-500  cursor-pointer "
+                                        >
+                                          <MdDelete />
+                                        </div>
+                                      </Tooltip>
                                     </td>
                                   </tr>
                                 </tbody>

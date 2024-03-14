@@ -875,13 +875,11 @@ const NhapXuatTon = () => {
                     </div>
                   </div>
                   <div ref={showOption}>
-                    <div
-                      className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5  "
-                      onClick={() => setIsShowOption(!isShowOption)}
-                      title="Chức năng khác"
-                    >
-                      <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
-                    </div>
+                    <Tooltip title="Chức năng khác" color="blue">
+                      <div className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5  " onClick={() => setIsShowOption(!isShowOption)}>
+                        <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
+                      </div>
+                    </Tooltip>
                     {isShowOption && (
                       <div className="absolute flex flex-col gap-2 bg-slate-200 px-3 py-2 items-center top-16 right-[4.5%] rounded-lg z-10 duration-500 shadow-custom  ">
                         <div className={`flex ${selectVisible ? '' : 'flex-col'} items-center gap-2`}>
@@ -1219,7 +1217,7 @@ const NhapXuatTon = () => {
                   </div>
                 </div>
               </div>
-              <div className="NhapXuatTonKho" id="my-table">
+              <div className="TruyVan" id="my-table">
                 <Table
                   loading={tableLoad}
                   className="setHeight"
@@ -1267,7 +1265,7 @@ const NhapXuatTon = () => {
                                       })}
                                     </Text>
                                   ) : column.dataIndex == 'STT' ? (
-                                    <Text className="text-center" strong>
+                                    <Text className="text-center flex justify-center" strong>
                                       {dataNXT?.length}
                                     </Text>
                                   ) : null}

@@ -459,7 +459,7 @@ const HangHoa = () => {
         const dateB = new Date(b.NgayTao)
         return dateA - dateB
       },
-      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss.SS')} search={searchHangHoa} />,
+      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss')} search={searchHangHoa} />,
     },
     {
       title: 'Người sửa',
@@ -496,7 +496,7 @@ const HangHoa = () => {
       },
       render: (text) => {
         if (text) {
-          return <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss.SS')} search={searchHangHoa} />
+          return <HighlightedCell text={text ? moment(text).format('DD/MM/YYYY HH:mm:ss') : ''} search={searchHangHoa} />
         } else {
           return ''
         }
@@ -526,31 +526,34 @@ const HangHoa = () => {
         return (
           <>
             <div className=" flex gap-1 items-center justify-center ">
-              <div
-                onClick={() => (dataCRUD?.EDIT == false ? '' : handleUpdate(record))}
-                title="Sửa"
-                className={`${
-                  dataCRUD?.EDIT == false ? 'border-gray-400 bg-gray-400  hover:text-gray-500' : 'border-yellow-400 bg-yellow-400 hover:text-yellow-400'
-                } ' p-[4px] border-2 rounded text-slate-50 hover:bg-white cursor-pointer'`}
-              >
-                <MdEdit />
-              </div>
-              <div
-                onClick={() => handlePrintABarcode(record)}
-                title="In"
-                className="p-[4px] border-2 rounded text-slate-50 border-purple-500 bg-purple-500 hover:bg-white hover:text-purple-500 cursor-pointer"
-              >
-                <CiBarcode />
-              </div>
-              <div
-                onClick={() => (dataCRUD?.DEL == false ? '' : handleDelete(record))}
-                title="Xóa"
-                className={`${
-                  dataCRUD?.DEL == false ? 'border-gray-400 bg-gray-400 hover:text-gray-500' : 'border-red-500 bg-red-500 hover:text-red-500'
-                } ' p-[4px] border-2 rounded text-slate-50 hover:bg-white cursor-pointer'`}
-              >
-                <MdDelete />
-              </div>
+              <Tooltip title="Sửa" color="blue">
+                <div
+                  onClick={() => (dataCRUD?.EDIT == false ? '' : handleUpdate(record))}
+                  className={`${
+                    dataCRUD?.EDIT == false ? 'border-gray-400 bg-gray-400  hover:text-gray-500' : 'border-yellow-400 bg-yellow-400 hover:text-yellow-400'
+                  } ' p-[4px] border-2 rounded text-slate-50 hover:bg-white cursor-pointer'`}
+                >
+                  <MdEdit />
+                </div>
+              </Tooltip>
+              <Tooltip title="In" color="blue">
+                <div
+                  onClick={() => handlePrintABarcode(record)}
+                  className="p-[4px] border-2 rounded text-slate-50 border-purple-500 bg-purple-500 hover:bg-white hover:text-purple-500 cursor-pointer"
+                >
+                  <CiBarcode />
+                </div>
+              </Tooltip>
+              <Tooltip title="Xóa" color="blue">
+                <div
+                  onClick={() => (dataCRUD?.DEL == false ? '' : handleDelete(record))}
+                  className={`${
+                    dataCRUD?.DEL == false ? 'border-gray-400 bg-gray-400 hover:text-gray-500' : 'border-red-500 bg-red-500 hover:text-red-500'
+                  } ' p-[4px] border-2 rounded text-slate-50 hover:bg-white cursor-pointer'`}
+                >
+                  <MdDelete />
+                </div>
+              </Tooltip>
             </div>
           </>
         )
@@ -635,13 +638,11 @@ const HangHoa = () => {
                     </div>
                   </div>
                   <div className="flex justify-between" ref={showOption}>
-                    <div
-                      className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5  "
-                      onClick={() => setIsShowOption(!isShowOption)}
-                      title="Chức năng khác"
-                    >
-                      <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
-                    </div>
+                    <Tooltip title="Chức năng khác" color="blue">
+                      <div className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5  " onClick={() => setIsShowOption(!isShowOption)}>
+                        <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
+                      </div>
+                    </Tooltip>
                     {isShowOption && (
                       <div className="absolute flex flex-col justify-center  items-center gap-2 bg-slate-200 px-2 py-3 top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom">
                         <div className={`flex ${selectVisible ? '' : 'flex-col'} items-center gap-2`}>
@@ -837,7 +838,7 @@ const HangHoa = () => {
                                         </Text>
                                       )
                                     ) : column.dataIndex == 'STT' ? (
-                                      <Text className="text-center" strong>
+                                      <Text className="text-center flex justify-center" strong>
                                         {dataHangHoa?.length}
                                       </Text>
                                     ) : null}

@@ -316,24 +316,26 @@ const NhomDoiTuong = () => {
         return (
           <>
             <div className=" flex gap-1 items-center justify-center ">
-              <div
-                onClick={() => (dataCRUD?.EDIT == false ? '' : handleUpdate(record))}
-                title="Sửa"
-                className={`${
-                  dataCRUD?.EDIT == false ? 'border-gray-400 bg-gray-400  hover:text-gray-500' : 'border-yellow-400 bg-yellow-400 hover:text-yellow-400'
-                } ' p-[4px] border-2 rounded text-slate-50 hover:bg-white cursor-pointer'`}
-              >
-                <MdEdit />
-              </div>
-              <div
-                onClick={() => (dataCRUD?.DEL == false ? '' : handleDelete(record))}
-                title="Xóa"
-                className={`${
-                  dataCRUD?.DEL == false ? 'border-gray-400 bg-gray-400 hover:text-gray-500' : 'border-red-500 bg-red-500 hover:text-red-500'
-                } ' p-[4px] border-2 rounded text-slate-50 hover:bg-white cursor-pointer'`}
-              >
-                <MdDelete />
-              </div>
+              <Tooltip title="Sửa" color="blue">
+                <div
+                  onClick={() => (dataCRUD?.EDIT == false ? '' : handleUpdate(record))}
+                  className={`${
+                    dataCRUD?.EDIT == false ? 'border-gray-400 bg-gray-400  hover:text-gray-500' : 'border-yellow-400 bg-yellow-400 hover:text-yellow-400'
+                  } ' p-[4px] border-2 rounded text-slate-50 hover:bg-white cursor-pointer'`}
+                >
+                  <MdEdit />
+                </div>
+              </Tooltip>
+              <Tooltip title="Xóa" color="blue">
+                <div
+                  onClick={() => (dataCRUD?.DEL == false ? '' : handleDelete(record))}
+                  className={`${
+                    dataCRUD?.DEL == false ? 'border-gray-400 bg-gray-400 hover:text-gray-500' : 'border-red-500 bg-red-500 hover:text-red-500'
+                  } ' p-[4px] border-2 rounded text-slate-50 hover:bg-white cursor-pointer'`}
+                >
+                  <MdDelete />
+                </div>
+              </Tooltip>
             </div>
           </>
         )
@@ -417,13 +419,11 @@ const NhomDoiTuong = () => {
                     </div>
                   </div>
                   <div className="flex justify-between" ref={showOption}>
-                    <div
-                      className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5  "
-                      onClick={() => setIsShowOption(!isShowOption)}
-                      title="Chức năng khác"
-                    >
-                      <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
-                    </div>
+                    <Tooltip title="Chức năng khác" color="blue">
+                      <div className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5  " onClick={() => setIsShowOption(!isShowOption)}>
+                        <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
+                      </div>
+                    </Tooltip>
                     {isShowOption && (
                       <div className="absolute flex flex-col gap-2 justify-center items-center bg-slate-200 px-2 py-3 top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom">
                         <div className={`flex ${selectVisible ? '' : 'flex-col'} items-center gap-2`}>
@@ -551,7 +551,7 @@ const NhomDoiTuong = () => {
                                     className="text-end font-bold  bg-[#f1f1f1]"
                                   >
                                     {column.dataIndex == 'STT' ? (
-                                      <Text className="text-center" strong>
+                                      <Text className="text-center flex justify-center" strong>
                                         {dataNhomDoiTuong?.length}
                                       </Text>
                                     ) : null}

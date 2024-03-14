@@ -564,3 +564,17 @@ export const nameColumsDoanhSoBanHangKH = {
   TongCong_TM: 'Tiền mặt',
   TongCong_CN: 'Công nợ',
 }
+export const nameColumsBinhQuanXuatKho = {
+  Thang: 'Tháng',
+  ThangFormat: 'Tháng',
+  NhomHang: 'Nhóm hàng',
+  MaHang: 'Mã hàng',
+  TenHang: 'Tên hàng',
+  DVT: 'ĐVT',
+  DonGia: 'Đơn giá',
+  NgayTao: 'Ngày tạo',
+  NguoiTao: 'Người tạo',
+  DaXuLy: 'Xử lý',
+  NguoiThucHien: 'Thực hiện',
+  ThoiGianThucHien: 'Lúc',
+}

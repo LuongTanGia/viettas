@@ -9,7 +9,7 @@ import { RiFileExcel2Fill } from 'react-icons/ri'
 import { TfiMoreAlt } from 'react-icons/tfi'
 import ActionButton from '../util/Button/ActionButton'
 import { FaEyeSlash } from 'react-icons/fa'
-import { Button, Checkbox, Col, Empty, Row } from 'antd'
+import { Button, Checkbox, Col, Empty, Row, Tooltip } from 'antd'
 import { nameColumsDoanhSoBanHangHH } from '../util/Table/ColumnName'
 
 function DSBHHH() {
@@ -83,9 +83,11 @@ function DSBHHH() {
           <h1 className="text-xl font-black uppercase">Doanh số bán hàng (hàng hóa) </h1>
         </div>
         <div className="flex justify-between" ref={showOption}>
-          <div className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5  " onClick={() => setIsShowOption(!isShowOption)} title="Chức năng khác">
-            <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
-          </div>
+          <Tooltip title="Chức năng khác" color="blue">
+            <div className="cursor-pointer hover:bg-slate-200 items-center rounded-full px-2 py-1.5  " onClick={() => setIsShowOption(!isShowOption)}>
+              <TfiMoreAlt className={`duration-300 rotate-${isShowOption ? '0' : '90'}`} />
+            </div>
+          </Tooltip>
           {isShowOption && (
             <div className="absolute flex flex-col gap-2 bg-slate-200 px-2 py-3 items-center top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom">
               <div className={`flex ${selectVisible ? '' : 'flex-col'} items-center gap-2`}>
