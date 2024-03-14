@@ -311,7 +311,14 @@ const categoryAPI = {
   },
   // XuLy/BinhQuanXuatKho
   BinhQuanXuatKhoList(accessToken) {
-    const url = '/processes/GiaXuatKho/DanhSach'
+    const url = '/processes/GiaXuatKho/ListHelper_Thang'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, {}, { headers })
+  },
+  BinhQuanXuatKhoList_HangHoa(accessToken) {
+    const url = '/processes/GiaXuatKho/ListHelper_HangHoa'
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     }
