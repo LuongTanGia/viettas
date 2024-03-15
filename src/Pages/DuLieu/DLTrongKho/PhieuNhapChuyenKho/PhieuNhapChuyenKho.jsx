@@ -24,7 +24,7 @@ import NCKDel from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuNCK
 import NCKPrint from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuNCK/NCKPrint'
 import NCKConfirm from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuNCK/NCKConfirm'
 
-const PhieuNhapChuyenKho = () => {
+const PhieuNhapChuyenKho = ({ isTableLoad, isTargetRow }) => {
   const navigate = useNavigate()
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
@@ -39,7 +39,6 @@ const PhieuNhapChuyenKho = () => {
   const [khoanNgayFrom, setKhoanNgayFrom] = useState('')
   const [khoanNgayTo, setKhoanNgayTo] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [tableLoad, setTableLoad] = useState(true)
   const [actionType, setActionType] = useState('')
   const showOption = useRef(null)
   const [hiddenRow, setHiddenRow] = useState([])
@@ -47,7 +46,8 @@ const PhieuNhapChuyenKho = () => {
   const [selectVisible, setSelectVisible] = useState(false)
   const [options, setOptions] = useState()
   const [dateData, setDateData] = useState({})
-  const [targetRow, setTargetRow] = useState([])
+  const [tableLoad, setTableLoad] = useState(isTableLoad ? isTableLoad : true)
+  const [targetRow, setTargetRow] = useState(isTargetRow ? isTargetRow : [])
   const [dateChange, setDateChange] = useState(false)
   const [dataCRUD, setDataCRUD] = useState()
 
@@ -118,7 +118,7 @@ const PhieuNhapChuyenKho = () => {
       }
     }
     getDataNCK()
-  }, [searchHangHoa, isLoading, targetRow, dateData?.NgayBatDau, dateData?.NgayKetThuc])
+  }, [searchHangHoa, isLoading, targetRow, dateData?.NgayBatDau, dateData?.NgayKetThuc, isTargetRow])
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -313,6 +313,30 @@ const PhieuNhapChuyenKho = () => {
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => a.ThongTinKho.localeCompare(b.ThongTinKho),
+      render: (text) => (
+        <Tooltip title={text} color="blue">
+          <div
+            style={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              cursor: 'pointer',
+              textAlign: 'start',
+            }}
+          >
+            <HighlightedCell text={text} search={searchHangHoa} />
+          </div>
+        </Tooltip>
+      ),
+    },
+    {
+      title: 'Chứng từ gốc',
+      dataIndex: 'SoThamChieu',
+      key: 'SoThamChieu',
+      width: 150,
+      align: 'center',
+      showSorterTooltip: false,
+      sorter: (a, b) => (a.SoThamChieu?.toString() || '').localeCompare(b.SoThamChieu?.toString() || ''),
       render: (text) => (
         <Tooltip title={text} color="blue">
           <div

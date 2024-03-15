@@ -50,6 +50,10 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
     }
   }, [isLoading, tableLoad])
 
+  useEffect(() => {
+    setTargetRow([])
+  }, [])
+
   const formatThapPhan = (number, decimalPlaces) => {
     if (typeof number === 'number' && !isNaN(number)) {
       const formatter = new Intl.NumberFormat('en-US', {
@@ -78,6 +82,7 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
     }
     return formattedDateTime
   }
+
   const handleView = async (record) => {
     setIsShowModal(true)
     try {
@@ -95,7 +100,6 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
       setTableLoad(false)
     }
   }
-
   const handleConfirm = async () => {
     try {
       const response = await categoryAPI.DuyetPhieuNCK(dataXCKView?.SoChungTu, TokenAccess)
@@ -381,7 +385,6 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
                     onRow={(record) => ({
                       onDoubleClick: () => {
                         handleView(record)
-                        console.log(record)
                       },
                     })}
                     pagination={false}
@@ -505,7 +508,6 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
                         //           .filter((column) => column.render)
                         //           .map((column, index) => {
                         //             const isNumericColumn = typeof dataXCKView?.DataDetails[0]?.[column.dataIndex] === 'number'
-
                         //             return (
                         //               <Table.Summary.Cell index={index} key={`summary-cell-${index + 1}`} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
                         //                 {isNumericColumn ? (

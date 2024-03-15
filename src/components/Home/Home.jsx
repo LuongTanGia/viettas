@@ -20,6 +20,8 @@ function Home({ handleToggleSidebar, isSidebarVisible }) {
   const token = localStorage.getItem('TKN')
   const KhoanNgay = useSelector(khoanNgaySelect)
   const sidebarRef = useRef(null)
+  const [targetRow, setTargetRow] = useState()
+  const [tableLoad, setTableLoad] = useState()
   const [isClosingSidebarFromHeader, setIsClosingSidebarFromHeader] = useState(false)
 
   useEffect(() => {
@@ -72,9 +74,9 @@ function Home({ handleToggleSidebar, isSidebarVisible }) {
         }}
       />
       <div className={isSidebarVisible ? 'toggle-sidebar' : 'mainSider'} ref={sidebarRef}>
-        <SiderMenu refs={sidebarRef} />
+        <SiderMenu refs={sidebarRef} isTargetRow={setTargetRow} isTableLoad={setTableLoad} />
       </div>
-      <MainPage isSidebarVisible={isSidebarVisible} />
+      <MainPage isSidebarVisible={isSidebarVisible} isTargetRow={targetRow} isTableLoad={tableLoad} />
       <Footer />
       {isCookie === 'true' ? (
         <div className="card cook_tag">

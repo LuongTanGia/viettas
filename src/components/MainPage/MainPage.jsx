@@ -46,7 +46,7 @@ import DoanhSoBanHangQuay from '../../Pages/TruyVan/DoanhSoBanHangQuay'
 import SoQuy from '../../Pages/TruyVan/SoQuy'
 import BinhQuanXuatKho from '../../Pages/XuLy/BinhQuanXuatKho'
 
-function MainPage({ isSidebarVisible }) {
+function MainPage({ isSidebarVisible, isTableLoad, isTargetRow }) {
   return (
     <>
       <main id="main" className={isSidebarVisible ? 'main' : 'main show_main'}>
@@ -69,9 +69,9 @@ function MainPage({ isSidebarVisible }) {
           <Route path="/DuLieuTK/DuLieu_XSD" element={<PhieuXuatSuDung />} />
           <Route path="/DuLieuTK/DuLieu_HUY" element={<PhieuXuatHuy />} />
           <Route path="/DuLieuTK/DuLieu_PLR" element={<PhieuLapRap />} />
-          <Route path="/DuLieuTK/DuLieu_NCK" element={<PhieuNhapChuyenKho />} />
+          <Route path="/DuLieuTK/DuLieu_NCK" element={<PhieuNhapChuyenKho isTableLoad={isTableLoad} isTargetRow={isTargetRow} />} />
           <Route path="/DuLieuTK/DuLieu_XDC" element={<PhieuXuatDieuChinh />} />
-          <Route path="/DuLieuTK/DuLieu_XCK" element={<PhieuXuatChuyenKho />} />
+          <Route path="/DuLieuTK/DuLieu_XCK" element={<PhieuXuatChuyenKho isTableLoad={isTableLoad} isTargetRow={isTargetRow} />} />
           <Route path="/DuLieuDR/DuLieu_PBS" element={<PhieuBanHang />} />
           <Route path="/DuLieuDR/DuLieu_PBL" element={<PhieuBanLe />} />
           <Route path="/DuLieuTC/DuLieu_PCT" element={<PhieuChiTien />} />

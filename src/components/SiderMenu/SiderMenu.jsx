@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { dataSelector } from '../../redux/selector'
@@ -10,14 +11,18 @@ import { RETOKEN } from '../../action/Actions'
 import ActionButton from '../util/Button/ActionButton'
 import { CgCloseO } from 'react-icons/cg'
 import { ModalHeThong } from '../../components_K'
+import NCKConfirm from '../Modals/DuLieu/DuLieuTrongKho/PhieuNCK/NCKConfirm'
 
-const SiderMenu = ({ refs }) => {
+const SiderMenu = ({ refs, isTargetRow, isTableLoad }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const data = useSelector(dataSelector)
   const navigate = useNavigate()
   const [string] = useState([])
   const [isShowNotify, setIsShowNotify] = useState(false)
   const [isShowModal, setIsShowModal] = useState(false)
+  const [type, setType] = useState('')
+  const [targetRow, setTargetRow] = useState([])
+  const [tableLoad, setTableLoad] = useState(true)
 
   const getQuyenHan = async (Ma) => {
     try {
@@ -28,8 +33,10 @@ const SiderMenu = ({ refs }) => {
           : !Ma.includes('XuLy_') && response.data.VIEW === false
             ? setIsShowNotify(true)
             : Ma === 'HeThong_ThongSoHeThong'
-              ? setIsShowModal(true)
-              : navigate(`/${string.includes(Ma) ? '' : Ma}`)
+              ? (setIsShowModal(true), setType('ThongSoHeThong'))
+              : Ma === 'XuLy_DuyetPhieu_XCK'
+                ? (setIsShowModal(true), setType('DuyetPhieu_XCK'))
+                : navigate(`/${string.includes(Ma) ? '' : Ma}`)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
         getQuyenHan()
@@ -40,7 +47,6 @@ const SiderMenu = ({ refs }) => {
   }
   const getQuyenHanChild = async (Ma1, Ma2) => {
     try {
-      console.log('2')
       const response = await categoryAPI.QuyenHan(Ma2, TokenAccess)
       if (response.data.DataError === 0) {
         response.data.VIEW == false ? setIsShowNotify(true) : navigate(`/${Ma1}/${Ma2}`)
@@ -52,6 +58,14 @@ const SiderMenu = ({ refs }) => {
       console.log(error)
     }
   }
+  const handleLoading = () => {
+    setTableLoad(true)
+  }
+  useEffect(() => {
+    isTargetRow(targetRow)
+    isTableLoad(tableLoad)
+  }, [tableLoad, targetRow])
+
   return (
     <>
       <aside id="sidebar" className="sidebar" ref={refs}>
@@ -201,7 +215,12 @@ const SiderMenu = ({ refs }) => {
           </div>
         )}
       </div>
-      {isShowModal && <ModalHeThong close={() => setIsShowModal(false)} />}
+      {isShowModal &&
+        (type == 'ThongSoHeThong' ? (
+          <ModalHeThong close={() => setIsShowModal(false)} />
+        ) : type == 'DuyetPhieu_XCK' ? (
+          <NCKConfirm close={() => setIsShowModal(false)} loadingData={handleLoading} setTargetRow={setTargetRow} />
+        ) : null)}
     </>
   )
 }

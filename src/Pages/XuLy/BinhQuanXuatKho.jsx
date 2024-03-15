@@ -1,3 +1,4 @@
+/* eslint-disable no-unsafe-optional-chaining */
 /* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from 'react'
@@ -32,7 +33,8 @@ const BinhQuanXuatKho = () => {
   const [isShowOption, setIsShowOption] = useState(false)
   const [isShowNotify, setIsShowNotify] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [tableLoad, setTableLoad] = useState(true)
+  const [tableLoadLeft, setTableLoadLeft] = useState(true)
+  const [tableLoadRight, setTableLoadRight] = useState(true)
   const showOption = useRef(null)
   const [hiddenRow, setHiddenRow] = useState([])
   const [checkedList, setCheckedList] = useState([])
@@ -42,6 +44,8 @@ const BinhQuanXuatKho = () => {
   const [isMaHang, setIsMaHang] = useState()
   const [isShowModal, setIsShowModal] = useState(false)
   const [targetRow, setTargetRow] = useState([])
+  const [timerId, setTimerId] = useState(null)
+  const [isShowList, setIsShowList] = useState(false)
 
   const formatThapPhan = (number, decimalPlaces) => {
     if (typeof number === 'number' && !isNaN(number)) {
@@ -55,8 +59,8 @@ const BinhQuanXuatKho = () => {
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
     setCheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
-    const key = Object?.keys(dataGiaXuatKho ? dataGiaXuatKho[0] : [] || []).filter((key) => key != 'Thang')
-    const key2 = Object?.keys(dataBinhQuan ? dataBinhQuan[0] : [] || []).filter((key) => key != 'Thang' && key != 'ThangFormat')
+    const key = Object?.keys(dataGiaXuatKho ? dataGiaXuatKho[0] : [] || []).filter((key) => key != 'ThangFormat')
+    const key2 = Object?.keys((dataBinhQuan && dataBinhQuan[0]) || []).filter((key) => key != 'Thang' && key != 'ThangFormat')
     setOptions(key.length > 0 && key2.length > 0 ? [...key, ...key2] : [])
   }, [selectVisible])
 
@@ -78,11 +82,12 @@ const BinhQuanXuatKho = () => {
         const response = await categoryAPI.BinhQuanXuatKhoList(TokenAccess)
         if (response.data.DataError == 0) {
           setDataGiaXuatKho(response.data.DataResults)
-          setTableLoad(false)
+          setTableLoadLeft(false)
+          setTableLoadRight(false)
           setIsLoading(true)
         } else if (response.data.DataError == -104) {
           setDataGiaXuatKho([])
-          setTableLoad(false)
+          setTableLoadLeft(false)
           setIsLoading(true)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
@@ -90,7 +95,7 @@ const BinhQuanXuatKho = () => {
         }
       } catch (error) {
         console.log(error)
-        setTableLoad(false)
+        setTableLoadLeft(false)
       }
     }
     getDataGiaXuatKho()
@@ -125,26 +130,51 @@ const BinhQuanXuatKho = () => {
     setIsMaHang(record)
     setIsShowModal(true)
   }
+  const handleDoubleClick = (record) => {
+    clearTimeout(timerId)
+    if (timerId) {
+      toast.warn('Bạn đang thao tác quá nhanh !', { autoClose: 1000 })
+    }
+    const newTimerId = setTimeout(() => {
+      handleView(record)
+      setTimerId(null)
+    }, 700)
+    setTimerId(newTimerId)
+    return () => clearTimeout(newTimerId)
+  }
   const handleView = async (record) => {
     try {
-      if (record.DaXuLy) {
-        setTableLoad(true)
+      if (!record?.DaXuLy && record?.Thang == null) {
+        setTableLoadRight(true)
+        const response = await categoryAPI.BinhQuanXuatKhoList_HangHoa(TokenAccess)
+        if (response.data.DataError === 0) {
+          setDataBinhQuan(response.data.DataResults)
+          setTableLoadRight(false)
+          setIsLoading(true)
+          setIsShowList(true)
+          console.log(dataBinhQuan)
+        }
+      }
+      if (record?.DaXuLy == true) {
+        setTableLoadRight(true)
         const response = await categoryAPI.TinhBinhQuanXuatKhoList(record?.Thang, TokenAccess)
         if (response.data.DataError === 0) {
           setDataBinhQuan(response.data.DataResults)
-          setTableLoad(false)
+          setTableLoadRight(false)
           setIsLoading(true)
+          setIsShowList(false)
         } else if (response.data && (response.data.DataError === -107 || response.data.DataError === -108)) {
           await RETOKEN()
           await handleView(record)
         } else {
-          console.log(response.data)
           setDataBinhQuan([])
-          setTableLoad(false)
+          setTableLoadRight(false)
           setIsLoading(true)
+          setIsShowList(false)
         }
-      } else {
+      } else if (record?.DaXuLy == false) {
         setDataBinhQuan([])
+        setIsShowList(false)
       }
     } catch (error) {
       console.error(error)
@@ -152,7 +182,8 @@ const BinhQuanXuatKho = () => {
     }
   }
   const handleLoading = () => {
-    setTableLoad(true)
+    setTableLoadLeft(true)
+    setTableLoadRight(true)
   }
   const handleSearch = (event) => {
     let timerId
@@ -169,10 +200,12 @@ const BinhQuanXuatKho = () => {
     setCheckedList(checkedValues)
   }
   const onClickSubmit = () => {
-    setTableLoad(true)
+    setTableLoadLeft(true)
+    setTableLoadRight(true)
     setTimeout(() => {
       setHiddenRow(checkedList)
-      setTableLoad(false)
+      setTableLoadLeft(false)
+      setTableLoadRight(false)
       localStorage.setItem('hiddenColumns', JSON.stringify(checkedList))
     }, 1000)
   }
@@ -180,10 +213,15 @@ const BinhQuanXuatKho = () => {
     {
       title: 'STT',
       dataIndex: 'STT',
-      render: (text, record, index) => index + 1,
       with: 10,
       width: 50,
       align: 'center',
+      render: (text, record, index) => {
+        if (record.Thang === null) {
+          return '#'
+        }
+        return index
+      },
     },
     {
       title: 'Tháng',
@@ -215,7 +253,12 @@ const BinhQuanXuatKho = () => {
         const valueB = b.DaXuLy ? 1 : 0
         return valueA - valueB
       },
-      render: (text, record) => <Checkbox className=" justify-center" id={`DaXuLy_${record.key}`} checked={text} />,
+      render: (text, record) => {
+        if (record.Thang === null) {
+          return null
+        }
+        return <Checkbox className=" justify-center" id={`DaXuLy_${record.key}`} checked={text} />
+      },
     },
     {
       title: 'Thực hiện',
@@ -253,7 +296,12 @@ const BinhQuanXuatKho = () => {
         const dateB = new Date(b.ThoiGianThucHien)
         return dateA - dateB
       },
-      render: (text) => <HighlightedCell text={text ? moment(text).format('DD/MM/YYYY HH:mm:ss') : ''} search={searchGiaXuatKho} />,
+      render: (text, record) => {
+        if (record.Thang === null) {
+          return null
+        }
+        return <HighlightedCell text={text ? moment(text).format('DD/MM/YYYY HH:mm:ss') : ''} search={searchGiaXuatKho} />
+      },
     },
     {
       title: ' ',
@@ -262,9 +310,12 @@ const BinhQuanXuatKho = () => {
       width: 40,
       align: 'center',
       render: (record) => {
+        if (record?.Thang === null) {
+          return null
+        }
         return (
           <>
-            <div className=" flex gap-1 items-center justify-center ">
+            <div className=" flex gap-1 items-center justify-center">
               <Tooltip title="Xử lý" color="blue">
                 <div
                   onClick={() => handleSetting(record)}
@@ -288,6 +339,28 @@ const BinhQuanXuatKho = () => {
       width: 50,
       align: 'center',
     },
+    ...(isShowList == true
+      ? [
+          {
+            title: 'Tháng',
+            dataIndex: 'Thang',
+            key: 'Thang',
+            width: 100,
+            align: 'center',
+            showSorterTooltip: false,
+            sorter: (a, b) => {
+              const dateA = new Date(a.Thang)
+              const dateB = new Date(b.Thang)
+              return dateA - dateB
+            },
+            render: (text) => (
+              <span className="flex justify-center">
+                <HighlightedCell text={text ? moment(text).format('MM/YYYY') : ''} search={searchGiaXuatKho} />
+              </span>
+            ),
+          },
+        ]
+      : []),
     {
       title: 'Mã hàng',
       dataIndex: 'MaHang',
@@ -506,7 +579,7 @@ const BinhQuanXuatKho = () => {
                                     <Empty className="w-[100%] h-[100%]" image={Empty.PRESENTED_IMAGE_SIMPLE} />
                                   )}
                                 </Row>
-                                <Spin spinning={tableLoad}>
+                                <Spin spinning={tableLoadLeft || tableLoadRight}>
                                   <Button className="mt-2 w-full" onClick={onClickSubmit}>
                                     Xác Nhận
                                   </Button>
@@ -522,10 +595,10 @@ const BinhQuanXuatKho = () => {
                 <div className="flex gap-2" id="my-table">
                   <div className="XuLy_BinhQuan w-[30vw]">
                     <Table
-                      loading={tableLoad}
+                      loading={tableLoadLeft}
                       className="setHeight"
                       columns={newTitles}
-                      dataSource={filteredGiaXuatKho?.map((record, index) => ({ ...record, key: index }))}
+                      dataSource={[{ key: 'empty', Thang: null, fixed: 'top' }, ...filteredGiaXuatKho?.map((record, index) => ({ ...record, key: index }))]}
                       size="small"
                       scroll={{
                         x: 'max-content',
@@ -541,8 +614,7 @@ const BinhQuanXuatKho = () => {
                       }}
                       rowClassName={(record) => (record.Thang == targetRow ? 'highlighted-row' : '')}
                       onRow={(record) => ({
-                        onClick: () => handleView(record),
-                        onDoubleClick: () => toast.info('Bạn đang bấm quá nhanh !!', { autoClose: 1000 }),
+                        onDoubleClick: () => handleDoubleClick(record),
                       })}
                       scrollToFirstRowOnChange
                       bordered
@@ -577,7 +649,7 @@ const BinhQuanXuatKho = () => {
                   </div>
                   <div className="XuLy_BinhQuan w-[67vw]">
                     <Table
-                      loading={tableLoad}
+                      loading={tableLoadRight}
                       className="setHeight"
                       columns={newTitlesBinhQuan}
                       dataSource={filteredHangHoa.map((item, index) => ({ ...item, key: index }))}

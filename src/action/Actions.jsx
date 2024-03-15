@@ -257,10 +257,10 @@ export const THAYDOIRMATKHAU = async (API, data, token) => {
       },
     })
     if (response.data.DataError === 0) {
-      toast(response.data.DataErrorDescription)
+      toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
       return 0
     } else {
-      toast(response.data.DataErrorDescription)
+      toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
       return 1
     }
   } catch (error) {
@@ -322,7 +322,7 @@ export const DANHSACHPHIEUBANHANG = async (API, token, data, dispatch) => {
       }
     }
     if (response.data.DataError === -104) {
-      toast.error(response.data.DataErrorDescription)
+      toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
       return -1
     }
     return response.data.DataResults
@@ -497,12 +497,12 @@ export const THEMPHIEUBANHANG = async (API, token, data) => {
       }
 
       if (response.data) {
-        toast.success(response.data.DataErrorDescription)
+        toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
       } else {
-        toast.error('DataResults is undefined or null.')
+        toast.error('DataResults is undefined or null.', { autoClose: 1000 })
       }
     } else {
-      toast.error('Response or response.data is undefined or null.')
+      toast.error('Response or response.data is undefined or null.', { autoClose: 1000 })
     }
     return response.data.DataResults
   } catch (error) {

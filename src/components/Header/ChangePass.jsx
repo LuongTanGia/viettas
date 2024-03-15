@@ -1,9 +1,10 @@
+/* eslint-disable react/prop-types */
 import { Form, Input, Typography } from 'antd'
 import { THAYDOIRMATKHAU } from '../../action/Actions'
 import API from '../../API/API'
 import ActionButton from '../util/Button/ActionButton'
+import { toast } from 'react-toastify'
 
-// eslint-disable-next-line react/prop-types
 function ChangePass({ isShow, close }) {
   const onFinish = async (values) => {
     const token = localStorage.getItem('TKN')
@@ -14,7 +15,7 @@ function ChangePass({ isShow, close }) {
   }
   const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo)
-    alert('Mật khẩu không trùng khớp !')
+    toast.warn('Mật khẩu không trùng khớp !', { autoClose: 1000 })
   }
   const { Title } = Typography
   return (
@@ -94,8 +95,17 @@ function ChangePass({ isShow, close }) {
                   span: 16,
                 }}
               >
-                <div className="flex justify-end gap-4  absolute right-0 ">
-                  <ActionButton color={'slate-50'} title={'Xác nhận'} isModal={true} background={'blue-500'} bg_hover={'white'} color_hover={'blue-500'} type="primary" />
+                <div className="flex justify-end gap-2 absolute right-0 ">
+                  <ActionButton
+                    color={'slate-50'}
+                    title={'Xác nhận'}
+                    isModal={true}
+                    background={'blue-500'}
+                    bg_hover={'white'}
+                    color_hover={'blue-500'}
+                    type="primary"
+                    isPermission={false}
+                  />
                   <ActionButton color={'slate-50'} title={'Đóng'} isModal={true} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={close} />
                 </div>
               </Form.Item>

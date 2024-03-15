@@ -26,7 +26,7 @@ import XCKEdit from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuXC
 import XCKDel from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuXCK/XCKDel'
 import XCKPrint from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuXCK/XCKPrint'
 
-const PhieuXuatChuyenKho = () => {
+const PhieuXuatChuyenKho = ({ isTableLoad, isTargetRow }) => {
   const navigate = useNavigate()
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
@@ -41,7 +41,6 @@ const PhieuXuatChuyenKho = () => {
   const [khoanNgayFrom, setKhoanNgayFrom] = useState('')
   const [khoanNgayTo, setKhoanNgayTo] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [tableLoad, setTableLoad] = useState(true)
   const [actionType, setActionType] = useState('')
   const showOption = useRef(null)
   const [hiddenRow, setHiddenRow] = useState([])
@@ -49,7 +48,8 @@ const PhieuXuatChuyenKho = () => {
   const [selectVisible, setSelectVisible] = useState(false)
   const [options, setOptions] = useState()
   const [dateData, setDateData] = useState({})
-  const [targetRow, setTargetRow] = useState([])
+  const [tableLoad, setTableLoad] = useState(isTableLoad ? isTableLoad : true)
+  const [targetRow, setTargetRow] = useState(isTargetRow ? isTargetRow : [])
   const [dateChange, setDateChange] = useState(false)
   const [dataCRUD, setDataCRUD] = useState()
 
@@ -120,7 +120,7 @@ const PhieuXuatChuyenKho = () => {
       }
     }
     getDataXCK()
-  }, [searchHangHoa, isLoading, targetRow, dateData?.NgayBatDau, dateData?.NgayKetThuc])
+  }, [searchHangHoa, isLoading, targetRow, dateData?.NgayBatDau, dateData?.NgayKetThuc, isTargetRow])
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -490,6 +490,7 @@ const PhieuXuatChuyenKho = () => {
       key: 'XacNhan',
       align: 'center',
       width: 100,
+      fixed: 'right',
       showSorterTooltip: false,
       sorter: (a, b) => {
         const valueA = a.XacNhan ? 1 : 0

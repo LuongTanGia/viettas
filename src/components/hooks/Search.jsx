@@ -59,7 +59,7 @@ export const useSearch = (data) => {
           HieuLucTu,
           MaCa,
           // Xử lý/ Bình Quân Xuất Kho
-          ThangFormat,
+          Thang,
           NguoiThucHien,
           ThoiGianThucHien,
           DonGia,
@@ -174,7 +174,7 @@ export const useSearch = (data) => {
           (NguoiThucHien || '').toLowerCase().includes(search.toLowerCase()) ||
           (moment(ThoiGianThucHien).format('DD/MM/YYYY HH:mm:ss') || '').toLowerCase().includes(search.toLowerCase()) ||
           (DonGia?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
-          (moment(ThangFormat).format('MM/YYYY') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (moment(Thang).format('MM/YYYY') || '').toLowerCase().includes(search.toLowerCase()) ||
           // NXTKho
           (TenNhomHang || '').toLowerCase().includes(search.toLowerCase()) ||
           (TenKho || '').toLowerCase().includes(search.toLowerCase()) ||

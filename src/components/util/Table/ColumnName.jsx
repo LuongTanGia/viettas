@@ -392,7 +392,7 @@ export const nameColumsPhieuNhapChuyenKho = {
   SoLuong: 'Số lượng',
   SoChungTu: 'Số chứng từ',
   NgayCTu: 'Ngày chứng từ',
-  SoThamChieu: 'Số tham chiếu',
+  SoThamChieu: 'Chứng từ gốc',
   MaKho: 'Mã kho',
   ThongTinKho: 'Thông tin kho',
   MaKho_Nhan: 'Mã kho nhận',
