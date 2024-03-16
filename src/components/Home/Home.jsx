@@ -74,7 +74,16 @@ function Home({ handleToggleSidebar, isSidebarVisible }) {
         }}
       />
       <div className={isSidebarVisible ? 'toggle-sidebar' : 'mainSider'} ref={sidebarRef}>
-        <SiderMenu refs={sidebarRef} isTargetRow={setTargetRow} isTableLoad={setTableLoad} />
+        <SiderMenu
+          handleToggleSidebar={() => {
+            setIsClosingSidebarFromHeader(true)
+            handleToggleSidebar()
+          }}
+          refs={sidebarRef}
+          isTargetRow={setTargetRow}
+          isTableLoad={setTableLoad}
+          isSidebarVisible={isSidebarVisible}
+        />
       </div>
       <MainPage isSidebarVisible={isSidebarVisible} isTargetRow={targetRow} isTableLoad={tableLoad} />
       <Footer />
