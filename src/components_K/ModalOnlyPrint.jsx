@@ -19,8 +19,8 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
   const [selectedSctBD, setSelectedSctBD] = useState()
   const [selectedSctKT, setSelectedSctKT] = useState()
   const [newData, setNewData] = useState()
-  const startDate = dayjs(dataThongTin?.NgayCTu).format('YYYY-MM-DDTHH:mm:ss')
-  const endDate = dayjs(dataThongTin?.NgayCTu).format('YYYY-MM-DDTHH:mm:ss')
+  const startDate = dayjs(dataThongTin?.NgayCTu).format('YYYY-MM-DD')
+  const endDate = dayjs(dataThongTin?.NgayCTu).format('YYYY-MM-DD')
 
   const dataByDate = useMemo(() => {
     return data.filter((item) => {
@@ -130,7 +130,7 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
 
   const handleEndDateChange = (newDate) => {
     const startDate = formPrint.NgayBatDau
-    const endDate = dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss')
+    const endDate = dayjs(newDate).format('YYYY-MM-DD')
 
     if (dayjs(startDate).isAfter(dayjs(endDate))) {
       // Nếu ngày kết thúc nhỏ hơn ngày bắt đầu, cập nhật ngày bắt đầu
@@ -280,7 +280,7 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
                     onChange={(newDate) => {
                       setFormPrint({
                         ...formPrint,
-                        NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                        NgayBatDau: dayjs(newDate).format('YYYY-MM-DD'),
                       })
                     }}
                     onBlur={() => {
@@ -313,7 +313,7 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
                     onChange={(newDate) => {
                       setFormPrint({
                         ...formPrint,
-                        NgayKetThuc: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                        NgayKetThuc: dayjs(newDate).format('YYYY-MM-DD'),
                       })
                     }}
                     onBlur={() => {

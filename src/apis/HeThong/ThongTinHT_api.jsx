@@ -18,18 +18,17 @@ export const DSThongSo = (token) =>
     }
   })
 
-export const DieuChinhThongSo = (token, Sct) =>
+export const DieuChinhThongSo = (token, formHT) =>
   new Promise(async (resolve, reject) => {
     try {
+      console.log('Data to be sent to API:', formHT)
       const response = await axios({
-        url: '/entries/GiaBanLe/ThongTin',
+        url: '/settings/GiaTriHeThong/DieuChinhThongSo',
         method: 'post',
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        data: {
-          SoChungTu: Sct,
-        },
+        data: formHT,
       })
       resolve(response)
     } catch (error) {

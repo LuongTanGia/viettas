@@ -41,7 +41,7 @@ const ModalSDV = ({
     SoTien: '',
   })
 
-  const ngayChungTu = dayjs().format('YYYY-MM-DDTHH:mm:ss')
+  const ngayChungTu = dayjs().format('YYYY-MM-DD')
   const defaultFormCreate = {
     NgayCTu: ngayChungTu,
     MaDoiTuong: null,
@@ -475,7 +475,7 @@ const ModalSDV = ({
                               onChange={(newDate) => {
                                 setFormCreate({
                                   ...formCreate,
-                                  NgayCTu: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                                  NgayCTu: dayjs(newDate).format('YYYY-MM-DD'),
                                 })
                               }}
                               sx={{
@@ -679,7 +679,7 @@ const ModalSDV = ({
                                 onChange={(newDate) => {
                                   setFormEdit({
                                     ...formEdit,
-                                    NgayCTu: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                                    NgayCTu: dayjs(newDate).format('YYYY-MM-DD'),
                                   })
                                 }}
                                 sx={{

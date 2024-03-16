@@ -47,7 +47,7 @@ const ModalPCT = ({
     SoTien: '',
   })
 
-  const ngayChungTu = dayjs().format('YYYY-MM-DDTHH:mm:ss')
+  const ngayChungTu = dayjs().format('YYYY-MM-DD')
   const defaultFormCreate = {
     NgayCTu: ngayChungTu,
     HangMuc: '',
@@ -60,8 +60,8 @@ const ModalPCT = ({
 
   const [formCreate, setFormCreate] = useState(defaultFormCreate)
   const [formEdit, setFormEdit] = useState({ ...dataThongTinSua })
-  const startDate = dayjs(controlDate.NgayBatDau).format('YYYY-MM-DDTHH:mm:ss')
-  const endDate = dayjs(controlDate.NgayKetThuc).format('YYYY-MM-DDTHH:mm:ss')
+  const startDate = dayjs(controlDate.NgayBatDau).format('YYYY-MM-DD')
+  const endDate = dayjs(controlDate.NgayKetThuc).format('YYYY-MM-DD')
   const [formPrint, setFormPrint] = useState({
     NgayBatDau: startDate,
     NgayKetThuc: endDate,
@@ -536,7 +536,7 @@ const ModalPCT = ({
 
   const handleEndDateChange = (newDate) => {
     const startDate = formPrint.NgayBatDau
-    const endDate = dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss')
+    const endDate = dayjs(newDate).format('YYYY-MM-DD')
 
     if (dayjs(startDate).isAfter(dayjs(endDate))) {
       // Nếu ngày kết thúc nhỏ hơn ngày bắt đầu, cập nhật ngày bắt đầu
@@ -618,7 +618,7 @@ const ModalPCT = ({
                         onChange={(newDate) => {
                           setFormPrint({
                             ...formPrint,
-                            NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                            NgayBatDau: dayjs(newDate).format('YYYY-MM-DD'),
                           })
                         }}
                         onBlur={() => {
@@ -651,7 +651,7 @@ const ModalPCT = ({
                         onChange={(newDate) => {
                           setFormPrint({
                             ...formPrint,
-                            NgayKetThuc: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                            NgayKetThuc: dayjs(newDate).format('YYYY-MM-DD'),
                           })
                         }}
                         onBlur={() => {
@@ -968,7 +968,7 @@ const ModalPCT = ({
                               onChange={(newDate) => {
                                 setFormCreate({
                                   ...formCreate,
-                                  NgayCTu: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                                  NgayCTu: dayjs(newDate).format('YYYY-MM-DD'),
                                 })
                               }}
                               sx={{
@@ -1227,7 +1227,7 @@ const ModalPCT = ({
                                 onChange={(newDate) => {
                                   setFormEdit({
                                     ...formEdit,
-                                    NgayCTu: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                                    NgayCTu: dayjs(newDate).format('YYYY-MM-DD'),
                                   })
                                 }}
                                 sx={{
