@@ -482,7 +482,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                       onChange={(newDate) => {
                         setFormPrint({
                           ...formPrint,
-                          ngayHieuLuc: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                          ngayHieuLuc: dayjs(newDate).format('YYYY-MM-DD'),
                         })
                       }}
                       sx={{
@@ -654,7 +654,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                           onChange={(newDate) => {
                             setFormAdjustPrice({
                               ...formAdjustPrice,
-                              HieuLucTu: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                              HieuLucTu: dayjs(newDate).format('YYYY-MM-DD'),
                             })
                           }}
                           sx={{

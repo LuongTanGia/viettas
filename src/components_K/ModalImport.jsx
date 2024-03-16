@@ -13,13 +13,15 @@ import TableEdit from '../components/util/Table/EditTable'
 import { nameColumsImport } from '../components/util/Table/ColumnName'
 import { RETOKEN, exportSampleExcel } from '../action/Actions'
 import * as apis from '../apis'
+import { Input } from 'antd'
 
 // const { MdDelete } = icons
 const ModalImport = ({ close, dataHangHoa, typePage, loading, onRowCreate }) => {
   const [excelFile, setExcelFile] = useState(null)
   const [excelData, setExcelData] = useState(null)
+  const [fileName, setFileName] = useState('')
 
-  const ngayhieuluc = dayjs().format('YYYY-MM-DDTHH:mm:ss')
+  const ngayhieuluc = dayjs().format('YYYY-MM-DD')
 
   const [formImport, setFormImport] = useState({
     HieuLucTu: ngayhieuluc,
@@ -43,6 +45,7 @@ const ModalImport = ({ close, dataHangHoa, typePage, loading, onRowCreate }) => 
   const handleFile = (e) => {
     let fileTypes = ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'text/csv']
     let selectedFile = e.target.files[0]
+    console.table(selectedFile)
     if (selectedFile) {
       if (selectedFile && fileTypes.includes(selectedFile.type)) {
         // setTypeError(null)
@@ -52,17 +55,24 @@ const ModalImport = ({ close, dataHangHoa, typePage, loading, onRowCreate }) => 
         reader.onload = (e) => {
           setExcelFile(e.target.result)
         }
+        setFileName(selectedFile.name)
       } else {
         toast.error('Vui lòng chỉ chọn loại file excel')
         setExcelFile([])
+        setFileName('')
       }
     } else {
       toast.error('Vui lòng chọn file')
       setExcelFile([])
+      setFileName('')
     }
   }
 
   const handleFileSubmit = (e) => {
+    if (fileName === '') {
+      toast.error('Vui lòng chọn file!')
+      return
+    }
     e.preventDefault()
     if (excelFile !== null) {
       const workbook = XLSX.read(excelFile, { type: 'buffer' })
@@ -91,17 +101,25 @@ const ModalImport = ({ close, dataHangHoa, typePage, loading, onRowCreate }) => 
       }))
 
       // Loại bỏ các MaHang không hợp lệ từ processedData
-
-      const validProcessedData = processedData.filter((item) => mahangInfo[item.MaHang] && !isNaN(item.DonGia) && item.DonGia > 0)
+      const mahangSet = new Set()
+      const validProcessedData = processedData.filter((item) => {
+        if (!mahangSet.has(item.MaHang) && mahangInfo[item.MaHang] && !isNaN(item.DonGia) && item.DonGia > 0) {
+          mahangSet.add(item.MaHang)
+          return true
+        }
+        return false
+      })
       // Kiểm tra nếu không có dữ liệu MAHANG hoặc GIABAN
-      if (processedData.some((item) => !item.MaHang || !item.DonGia)) {
+      if (validProcessedData.length <= 0) {
         toast.error('Không có dữ liệu mã hàng hoặc giá bán trong file')
         setExcelData([])
+        setFileName('')
       } else {
         setExcelData(validProcessedData)
       }
     }
   }
+
   const handleEditData = (data) => {
     setExcelData(data)
   }
@@ -154,6 +172,11 @@ const ModalImport = ({ close, dataHangHoa, typePage, loading, onRowCreate }) => 
     onRowCreate(dataTable)
     close()
   }
+
+  const handleCustomFileUpload = () => {
+    document.getElementById('fileInput').click()
+  }
+
   return (
     <div className=" fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
       <div className="p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
@@ -171,13 +194,14 @@ const ModalImport = ({ close, dataHangHoa, typePage, loading, onRowCreate }) => 
                 <div className="flex flex-col pt-3  ">
                   <div className="flex items-center p-1 gap-2">
                     <label className=" w-[120px] text-sm flex justify-end">Tập tin</label>
-                    <input
-                      type="file"
-                      className=" rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none text-center truncate"
-                      accept=".xlsx,.xls"
-                      onChange={handleFile}
-                    />
-
+                    <Input value={fileName} readOnly />
+                    <input id="fileInput" type="file" className="hidden" accept=".xlsx,.xls" onChange={handleFile} value="" />
+                    <button
+                      onClick={handleCustomFileUpload}
+                      className="w-[130px] flex justify-center py-1 px-2 rounded-md text-slate-50 text-base border-2 border-bg-main bg-bg-main hover:bg-white hover:text-bg-main"
+                    >
+                      Chọn File
+                    </button>
                     <button
                       onClick={(e) => handleFileSubmit(e)}
                       className="flex items-center py-1 px-2 rounded-md text-slate-50 text-base border-2 border-bg-main bg-bg-main hover:bg-white hover:text-bg-main"
@@ -190,16 +214,17 @@ const ModalImport = ({ close, dataHangHoa, typePage, loading, onRowCreate }) => 
                     <div>
                       <label className="required w-[120px] text-end">Áp dụng từ ngày</label>
                       <DateField
-                        className="DatePicker_PMH max-w-[110px]"
+                        // className="DatePicker_PMH max-w-[110px]"
                         format="DD/MM/YYYY"
                         value={dayjs()}
                         onChange={(newDate) => {
                           setFormImport({
                             ...formImport,
-                            HieuLucTu: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                            HieuLucTu: dayjs(newDate).format('YYYY-MM-DD'),
                           })
                         }}
                         sx={{
+                          width: '120px',
                           '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
                           '& .MuiButtonBase-root': {
                             padding: '4px',
