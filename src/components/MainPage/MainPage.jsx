@@ -49,7 +49,7 @@ import BinhQuanXuatKho from '../../Pages/XuLy/BinhQuanXuatKho'
 function MainPage({ isSidebarVisible, isTableLoad, isTargetRow }) {
   return (
     <>
-      <main id="main" className={isSidebarVisible ? 'main' : 'main show_main'}>
+      <main id="main" className={isSidebarVisible ? 'main' : 'main '}>
         <Routes>
           <Route path="/" element={<DashBoar />} />
           <Route path="/FAQ" element={<FAQ />} />
