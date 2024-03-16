@@ -1,3 +1,4 @@
+/* eslint-disable no-extra-semi */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from 'react'
@@ -28,9 +29,9 @@ const SiderMenu = ({ refs, isTargetRow, isTableLoad }) => {
     try {
       const response = await categoryAPI.QuyenHan(Ma, TokenAccess)
       if (response.data.DataError === 0) {
-        Ma.includes('XuLy_') && response.data.RUN === false
+        Ma.includes('XuLy_') && Ma.includes('_PhanQuyen') && response.data.RUN === false
           ? setIsShowNotify(true)
-          : !Ma.includes('XuLy_') && response.data.VIEW === false
+          : !Ma.includes('XuLy_') && !Ma.includes('_PhanQuyen') && response.data.VIEW === false
             ? setIsShowNotify(true)
             : Ma === 'HeThong_ThongSoHeThong'
               ? (setIsShowModal(true), setType('ThongSoHeThong'))

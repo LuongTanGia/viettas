@@ -7,12 +7,11 @@ const { Text } = Typography
 import moment from 'moment'
 import { toast } from 'react-toastify'
 import { TfiMoreAlt } from 'react-icons/tfi'
-import { RiFileExcel2Fill } from 'react-icons/ri'
 import { FaSearch, FaEyeSlash } from 'react-icons/fa'
 import { CloseSquareFilled } from '@ant-design/icons'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
 import categoryAPI from '../../API/linkAPI'
-import { RETOKEN, exportToExcel } from '../../action/Actions'
+import { RETOKEN } from '../../action/Actions'
 import { useSearch } from '../../components/hooks/Search'
 import ActionButton from '../../components/util/Button/ActionButton'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
@@ -102,7 +101,7 @@ const BinhQuanXuatKho = () => {
   }, [searchGiaXuatKho, targetRow])
 
   useEffect(() => {
-    if (dataCRUD?.VIEW == false) {
+    if (dataCRUD?.RUN == false) {
       setIsShowNotify(true)
     }
   }, [dataCRUD])
@@ -110,7 +109,7 @@ const BinhQuanXuatKho = () => {
   useEffect(() => {
     const getDataQuyenHan = async () => {
       try {
-        const response = await categoryAPI.QuyenHan('/XuLy_BinhQuanXuatKho', TokenAccess)
+        const response = await categoryAPI.QuyenHan('XuLy_BinhQuanXuatKho', TokenAccess)
         if (response.data.DataError === 0) {
           setDataCRUD(response.data)
           setIsLoading(true)
@@ -125,7 +124,6 @@ const BinhQuanXuatKho = () => {
     }
     getDataQuyenHan()
   }, [])
-
   const handleSetting = (record) => {
     setIsMaHang(record)
     setIsShowModal(true)
@@ -152,7 +150,6 @@ const BinhQuanXuatKho = () => {
           setTableLoadRight(false)
           setIsLoading(true)
           setIsShowList(true)
-          console.log(dataBinhQuan)
         }
       }
       if (record?.DaXuLy == true) {
@@ -490,7 +487,7 @@ const BinhQuanXuatKho = () => {
   const newTitlesBinhQuan = titlesBinhQuan.filter((item) => !hiddenRow?.includes(item.dataIndex))
   return (
     <>
-      {dataCRUD?.VIEW == false ? (
+      {dataCRUD?.RUN == false ? (
         <>{isShowNotify && <PermissionView close={() => setIsShowNotify(false)} />}</>
       ) : (
         <>
@@ -528,18 +525,8 @@ const BinhQuanXuatKho = () => {
                       </div>
                     </Tooltip>
                     {isShowOption && (
-                      <div className="absolute flex flex-col gap-2 bg-slate-200 px-3 py-2 items-center top-16 right-[4.5%] rounded-lg z-10 duration-500 shadow-custom  ">
+                      <div className="absolute flex flex-col gap-2 bg-slate-200 px-3 py-2 items-center top-16 right-[4.5%] rounded-lg z-10 duration-500 shadow-custom">
                         <div className={`flex ${selectVisible ? '' : 'flex-col'} items-center gap-2`}>
-                          <ActionButton
-                            handleAction={() => (dataCRUD?.EXCEL == false ? '' : exportToExcel())}
-                            title={'Xuất Excel'}
-                            isPermission={dataCRUD?.EXCEL}
-                            icon={<RiFileExcel2Fill className="w-5 h-5" />}
-                            color={'slate-50'}
-                            background={dataCRUD?.EXCEL == false ? 'gray-400' : 'green-500'}
-                            color_hover={dataCRUD?.EXCEL == false ? 'gray-500' : 'green-500'}
-                            bg_hover={'white'}
-                          />
                           <ActionButton
                             handleAction={handleHidden}
                             title={'Ẩn Cột'}

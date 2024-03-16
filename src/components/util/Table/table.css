@@ -52,6 +52,21 @@
 .XuLy_BinhQuan .setHeight .ant-table {
   height: calc(100vh - 200px);
 }
+/* PhanQuyen */
+.PhanQuyen .ant-table-wrapper.setHeight,
+.PhanQuyen .setHeight .ant-spin-container,
+.PhanQuyen .setHeight .ant-table,
+.PhanQuyen .setHeight .ant-table-container .ant-table-body {
+  /* max-height: unset !important; */
+  height: calc(100vh - 240px);
+}
+.PhanQuyen .setHeight .ant-table-container .ant-table-body {
+  max-height: unset !important;
+  /* height: calc(100vh - 500px); */
+}
+.PhanQuyen .setHeight .ant-table {
+  height: calc(100vh - 200px);
+}
 /* DoanhSo */
 .TruyVan_Child .ant-table-wrapper.setHeight,
 .TruyVan_Child .setHeight .ant-spin-container,

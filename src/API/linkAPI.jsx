@@ -1101,6 +1101,35 @@ const categoryAPI = {
     }
     return axiosClient.post(url, {}, { headers })
   },
+  // Hethong/PhanQuyen
+  ThongKeQuyenHan(accessToken) {
+    const url = '/settings/PhanQuyen/ThongKeQuyenHan'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, {}, { headers })
+  },
+  DieuChinhQuyenHan(body, accessToken) {
+    const url = '/settings/PhanQuyen/DieuChinhQuyenHan'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, { body }, { headers })
+  },
+  ListHelperPhanQuyen_NguoiDung(accessToken) {
+    const url = '/settings/PhanQuyen/ListHelper_NguoiDung'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, {}, { headers })
+  },
+  ListHelperPhanQuyen_ChucNang(accessToken) {
+    const url = '/settings/PhanQuyen/ListHelper_ChucNang'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, {}, { headers })
+  },
   // Hethong/KhoanNgay
   KhoanNgay(accessToken) {
     const url = '/settings/GiaTriHeThong/KhoanNgay'
