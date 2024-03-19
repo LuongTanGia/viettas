@@ -29,6 +29,7 @@ const API = {
   INPHIEUKHO: `${BASE_URL}/api/entries/DuLieuPBS/InPhieuKho`,
   //Lấy danh sách giá trị hệ thống
   THONGSO: `${BASE_URL}/api/settings/GiaTriHeThong/ThongSo`,
+  QUYENHAN: `${BASE_URL}/api/settings/GiaTriHeThong/ChucNang_QuyenHan`,
 
   //CongNoDauRa-CongNoDauVao
   CNDRTONGHOP: `${BASE_URL}/api/inquiries/CongNoDauRa/TongHop`,

@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import QueryTable from '../util/Table/QueryTable'
 import { useEffect, useState, useRef } from 'react'
-import { CNDRTONGHOP, CNDRTONGHOP_listHelper, exportToExcel } from '../../action/Actions'
+import { APIPHANQUYEN, CNDRTONGHOP, CNDRTONGHOP_listHelper, exportToExcel } from '../../action/Actions'
 import API from '../../API/API'
 import FilterCp from '../util/filterCP/FilterCp'
 import Date from '../util/DateCP/DateCP'
@@ -30,7 +30,18 @@ function CongNoDauVao() {
   const [selectVisible, setSelectVisible] = useState(false)
   const [tableLoad, setTableLoad] = useState(true)
   const [options, setOptions] = useState()
+  const [DataQuyenHan, setDataQuyenHan] = useState([])
 
+  useEffect(() => {
+    const getDate = async () => {
+      const quyenHan = await APIPHANQUYEN(token, {
+        Ma: 'TruyVan_CongNoDauVao',
+      })
+      setDataQuyenHan(quyenHan)
+    }
+    getDate()
+    console.log(DataQuyenHan)
+  }, [])
   useEffect(() => {
     const getDate = async () => {
       const listTongHop = await CNDRTONGHOP(API.CNDVTONGHOP, token, dataAPI)
@@ -69,6 +80,7 @@ function CongNoDauVao() {
   const handleHidden = () => {
     setSelectVisible(!selectVisible)
   }
+  console.log(checkedList)
   const onClickSubmit = () => {
     setTableLoad(true)
     setTimeout(() => {

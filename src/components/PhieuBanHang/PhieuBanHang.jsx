@@ -5,7 +5,7 @@ import { nameColumsPhieuBanHang } from '../util/Table/ColumnName'
 import ActionModals from './ActionModals'
 import { useEffect, useRef, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { THONGTINPHIEU, DANHSACHPHIEUBANHANG, XOAPHIEUBANHANG, LAPPHIEUTHU, KHOANNGAY, exportToExcel } from '../../action/Actions'
+import { THONGTINPHIEU, DANHSACHPHIEUBANHANG, XOAPHIEUBANHANG, LAPPHIEUTHU, KHOANNGAY, exportToExcel, APIPHANQUYEN } from '../../action/Actions'
 import API from '../../API/API'
 import { toast } from 'react-toastify'
 import ModelPrint from './PrintModel'
@@ -48,6 +48,7 @@ function PhieuBanHang() {
   const [hiden, setHiden] = useState([])
   const [checkedList, setcheckedList] = useState([])
   const [searchData, setSearchData] = useState([])
+  const [DataQuyenHan, setDataQuyenHan] = useState([])
 
   // const [searchTimeout, setSearchTimeout] = useState(null)
 
@@ -77,12 +78,18 @@ function PhieuBanHang() {
     const key = Object.keys(data ? data[0] : [] || []).filter((key) => key !== 'MaSoThue')
     setOptions(key)
   }, [selectVisible])
+
   useEffect(() => {
     const getDate = async () => {
       const date = await KHOANNGAY(API.KHOANNGAY, token)
+      const quyenHan = await APIPHANQUYEN(token, {
+        Ma: 'DuLieu_PBS',
+      })
+      setDataQuyenHan(quyenHan)
       setDataDate(date)
     }
     getDate()
+    console.log(DataQuyenHan)
   }, [])
 
   let timerId

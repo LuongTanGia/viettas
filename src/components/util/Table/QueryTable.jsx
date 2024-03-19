@@ -522,7 +522,18 @@ function Tables({
       },
     }
   })
-  const mergedColumns2 = columns_2.filter((item) => !hiden?.includes(item.dataIndex))
+  // const mergedColumns2 = columns_2.filter((item) => !hiden?.includes(item.dataIndex))
+  const columns_2_copy = columns_2
+  console.log(columns_2_copy)
+  const dataIndexToRemove = hiden
+  function filterChildren(children) {
+    return children.filter((item) => !dataIndexToRemove.includes(item.dataIndex))
+  }
+
+  columns_2_copy[5].children = filterChildren(columns_2_copy[5].children)
+  columns_2_copy[6].children = filterChildren(columns_2_copy[6].children)
+
+  const mergedColumns2 = columns_2_copy?.filter((value) => !hiden?.includes(value.dataIndex))
 
   const originData = param?.map((record, index) => ({
     key: index,
