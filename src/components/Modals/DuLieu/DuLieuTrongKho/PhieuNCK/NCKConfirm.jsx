@@ -45,10 +45,10 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
         setIsLoading(true)
       }
     }
-    if (tableLoad || !isLoading) {
+    if (!isLoading) {
       listUnconfirmed()
     }
-  }, [isLoading, tableLoad])
+  }, [isLoading])
 
   useEffect(() => {
     setTargetRow([])

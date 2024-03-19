@@ -173,10 +173,12 @@ const DoanhSoBanHangKho = () => {
         if (isLoading == true) {
           setTableLoad(true)
           const response = await categoryAPI.InfoBSDHKHO(
-            {
-              NgayBatDau: dayjs(khoanNgayFrom).format('YYYY-MM-DD'),
-              NgayKetThuc: dayjs(khoanNgayTo).format('YYYY-MM-DD'),
-            },
+            dateData == {}
+              ? {}
+              : {
+                  NgayBatDau: dateData.NgayBatDau,
+                  NgayKetThuc: dateData.NgayKetThuc,
+                },
             TokenAccess,
           )
           if (response.data.DataError == 0) {
@@ -196,7 +198,6 @@ const DoanhSoBanHangKho = () => {
         console.log(error)
       }
     }
-
     getDataNXTFirst()
   }, [searchHangHoa, isLoading])
 

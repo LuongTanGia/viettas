@@ -76,11 +76,11 @@ const SiderMenu = ({ handleToggleSidebar, isTargetRow, isTableLoad, isSidebarVis
     isTargetRow(targetRow)
     isTableLoad(tableLoad)
   }, [tableLoad, targetRow])
+
   const [open, setOpen] = useState(!isSidebarVisible)
   useEffect(() => {
     setOpen(!isSidebarVisible)
   }, [isSidebarVisible])
-  console.log(isSidebarVisible)
   const onClose = () => {
     setOpen(false)
     handleToggleSidebar()

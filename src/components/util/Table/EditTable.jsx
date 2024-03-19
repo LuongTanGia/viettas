@@ -62,9 +62,9 @@ const EditTable = ({
         return newData
       })
     }
-
     updatePrices()
   }, [param, listHP])
+
   const EditableRow = ({ index, ...props }) => {
     const [form] = Form.useForm()
     return (
@@ -143,7 +143,6 @@ const EditTable = ({
         [dataIndex]: record[dataIndex],
       })
     }
-
     const save = async () => {
       try {
         const values = await form.validateFields()
@@ -244,7 +243,6 @@ const EditTable = ({
           rules={[
             {
               required: false,
-              // message: `không để trống ${title}`,
             },
           ]}
           initialValue={record[dataIndex]}

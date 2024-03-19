@@ -1,8 +1,9 @@
-/* eslint-disable no-constant-condition */
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useNavigate } from 'react-router-dom'
-import { useState, useEffect } from 'react'
-import { Checkbox, Input, Table, Tooltip, Typography } from 'antd'
+import React, { useState, useEffect, useContext, useRef } from 'react'
+import { Checkbox, Form, Input, Table, Tooltip, Typography } from 'antd'
 const { Text } = Typography
 import { CgCloseO } from 'react-icons/cg'
 import { FaSearch } from 'react-icons/fa'
@@ -13,6 +14,7 @@ import categoryAPI from '../../API/linkAPI'
 import ActionButton from '../../components/util/Button/ActionButton'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
+
 const PhanQuyen = () => {
   const navigate = useNavigate()
   const TokenAccess = localStorage.getItem('TKN')
@@ -28,7 +30,7 @@ const PhanQuyen = () => {
   const [targetRow, setTargetRow] = useState([])
   const [dataCRUD, setDataCRUD] = useState()
   const innitProduct = {
-    MaChucNang: '',
+    TenChucNang: '',
     VISIBLE: true,
     VIEW: true,
     ADD: true,
@@ -41,6 +43,7 @@ const PhanQuyen = () => {
   const [PQForm, setPQForm] = useState(() => {
     return dataChucNang ? { ...dataChucNang } : innitProduct
   })
+
   useEffect(() => {
     const getDataQuyenHan = async () => {
       try {
@@ -91,7 +94,6 @@ const PhanQuyen = () => {
         if (response.data.DataError === 0) {
           setDataChucNang(response.data.DataResults)
           setIsLoading(true)
-          setIsLoading(true)
           setTableLoadRight(false)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
@@ -112,7 +114,6 @@ const PhanQuyen = () => {
   const handleCreate = () => {
     console.log('hi')
   }
-
   const handleSearch = (event) => {
     let timerId
     clearTimeout(timerId)
@@ -220,7 +221,17 @@ const PhanQuyen = () => {
       width: 70,
       showSorterTooltip: false,
       render: (text, record) => {
-        return <Checkbox className=" justify-center" id={`VISIBLE_${record.key}`} checked={text} disabled={record.ALLOW_VISIBLE == false} />
+        return (
+          <Checkbox
+            className=" justify-center"
+            id={`VISIBLE_${record.key}`}
+            checked={PQForm.VISIBLE}
+            disabled={record.ALLOW_VISIBLE == false}
+            onChange={() => {
+              setPQForm({ ...record, VISIBLE: !PQForm.VISIBLE })
+            }}
+          />
+        )
       },
     },
     {
@@ -231,7 +242,17 @@ const PhanQuyen = () => {
       width: 70,
       showSorterTooltip: false,
       render: (text, record) => {
-        return <Checkbox className=" justify-center" id={`VIEW_${record.key}`} checked={text} disabled={record.ALLOW_VIEW == false} />
+        return (
+          <Checkbox
+            className=" justify-center"
+            id={`VIEW_${record.key}`}
+            checked={PQForm.VIEW}
+            disabled={record.ALLOW_VIEW == false}
+            onChange={() => {
+              setPQForm({ ...record, VIEW: !PQForm.VIEW })
+            }}
+          />
+        )
       },
     },
     {
@@ -241,9 +262,17 @@ const PhanQuyen = () => {
       align: 'center',
       width: 70,
       showSorterTooltip: false,
-      render: (text, record) => {
-        return <Checkbox className=" justify-center" id={`ADD_${record.key}`} checked={text} disabled={record.ALLOW_ADD == false} />
-      },
+      render: (text, record) => (
+        <Checkbox
+          className=" justify-center"
+          id={`ADD_${record.key}`}
+          checked={PQForm.ADD}
+          disabled={record.ALLOW_ADD == false}
+          onChange={() => {
+            setPQForm({ ...record, ADD: !PQForm.ADD })
+          }}
+        />
+      ),
     },
     {
       title: 'Xóa',
