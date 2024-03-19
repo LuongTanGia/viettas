@@ -331,6 +331,21 @@ const categoryAPI = {
     }
     return axiosClient.post(url, { Thang_YYYYMM }, { headers })
   },
+  // XuLy/Duyệt phiếu xuất chuyển kho
+  ListChuaDuyet(accessToken) {
+    const url = '/processes/DuLieuXuatChuyenKhoChuaDuyet/DanhSach'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, {}, { headers })
+  },
+  DuyetPhieuXuLy(SoChungTu, accessToken) {
+    const url = '/processes/DuLieuXuatChuyenKhoChuaDuyet/DuyetPhieu'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, { SoChungTu }, { headers })
+  },
   // TruyVan/NhapXuatTonKho
   InfoNXTTheoKho(body, accessToken) {
     const url = '/inquiries/NhapXuatTon/TheoKho'

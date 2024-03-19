@@ -12,7 +12,7 @@ import SimpleBackdrop from '../../../../util/Loading/LoadingPage'
 import { useSearch } from '../../../../hooks/Search'
 import { toast } from 'react-toastify'
 
-const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
+const NCKConfirm = ({ close, loadingData, setTargetRow, isXuLy }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
@@ -27,7 +27,7 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
   useEffect(() => {
     const listUnconfirmed = async () => {
       try {
-        const response = await categoryAPI.ListChuaDuyetNCK(TokenAccess)
+        const response = !isXuLy ? await categoryAPI.ListChuaDuyetNCK(TokenAccess) : await categoryAPI.ListChuaDuyet(TokenAccess)
         if (response.data.DataError == 0) {
           setDataNCKUnconfirm(response.data.DataResults)
           setIsLoading(true)
@@ -82,7 +82,6 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
     }
     return formattedDateTime
   }
-
   const handleView = async (record) => {
     setIsShowModal(true)
     try {
@@ -102,7 +101,7 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
   }
   const handleConfirm = async () => {
     try {
-      const response = await categoryAPI.DuyetPhieuNCK(dataXCKView?.SoChungTu, TokenAccess)
+      const response = !isXuLy ? await categoryAPI.DuyetPhieuNCK(dataXCKView?.SoChungTu, TokenAccess) : await categoryAPI.DuyetPhieuXuLy(dataXCKView.SoChungTu, TokenAccess)
       if (response.data.DataError == 0) {
         loadingData()
         setTableLoad(true)

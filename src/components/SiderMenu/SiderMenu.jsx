@@ -253,7 +253,7 @@ const SiderMenu = ({ handleToggleSidebar, isTargetRow, isTableLoad, isSidebarVis
         (type == 'ThongSoHeThong' ? (
           <ModalHeThong close={() => setIsShowModal(false)} />
         ) : type == 'DuyetPhieu_XCK' ? (
-          <NCKConfirm close={() => setIsShowModal(false)} loadingData={handleLoading} setTargetRow={setTargetRow} />
+          <NCKConfirm close={() => setIsShowModal(false)} loadingData={handleLoading} setTargetRow={setTargetRow} isXuLy={true} />
         ) : null)}
     </Drawer>
   )
