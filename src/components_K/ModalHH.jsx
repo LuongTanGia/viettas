@@ -135,7 +135,7 @@ const ModalHH = ({ close, data, onRowCreate, dataThongSo, onChangLoading }) => {
       width: 50,
       align: 'center',
       render: (text) => (
-        <div className={`flex justify-end w-full h-full    ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full    ${text < 0 ? 'text-red-600 ' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatQuantity(text, dataThongSo?.SOLESOLUONG)} search={searchHH} />
         </div>
       ),

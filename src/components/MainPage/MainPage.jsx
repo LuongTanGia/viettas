@@ -40,6 +40,8 @@ import QuanLy from '../../Pages/ThietLap/QuanLy'
 import QuayTinhTien from '../../Pages/ThietLap/QuayTinhTien'
 import NhapXuatTon from '../../Pages/TruyVan/NhapXuatTon'
 import SoSanhGB from '../../Pages/TruyVan/SoSanhBangGia'
+import HangHoaTKTT from '../../Pages/TruyVan/HangHoaTonKhoTamTinh'
+import DLBanLeQuay from '../../Pages/TruyVan/DuLieuBanLeQuay'
 import PhanCaDS from '../../Pages/ThietLap/PhanCaDS'
 import DoanhSoBanHangKho from '../../Pages/TruyVan/DoanhSoBanHangKho'
 import DoanhSoBanHangQuay from '../../Pages/TruyVan/DoanhSoBanHangQuay'
@@ -90,6 +92,8 @@ function MainPage({ isSidebarVisible, isTableLoad, isTargetRow }) {
           <Route path="/TruyVan_CanDoiNXT_TongKho" element={<NhapXuatTon />} />
           <Route path="/TruyVan_SoSanhBangGia" element={<SoSanhGB />} />
           <Route path="/ThietLap_GiaLe" element={<GiaBanLe />} />
+          <Route path="/TruyVan_TonKho_TheoKho" element={<HangHoaTKTT />} />
+          <Route path="/TruyVan_DuLieuBanLeQuay" element={<DLBanLeQuay />} />
           <Route path="/ThietLap_NhomGiaDoiTuong" element={<BangGiaKH />} />
           <Route path="/ThietLap_GiaLe" element={<GiaBanLe />} />
           <Route path="/ThietLap_GiaSi" element={<GiaBanSi />} />

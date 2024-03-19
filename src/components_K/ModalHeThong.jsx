@@ -9,6 +9,7 @@ import { Checkbox, InputNumber, Select, Spin, Tooltip } from 'antd'
 import { TimeField } from '@mui/x-date-pickers/TimeField'
 import { RETOKEN } from '../action/Actions'
 import { toast } from 'react-toastify'
+import ActionCheckBox from '../components/util/CheckBox/ActionCheckBox'
 
 const { Option } = Select
 
@@ -130,6 +131,10 @@ const ModalHeThong = ({ close }) => {
   const convertHHMMToMinutes = (time) => {
     const [hours, mins] = time.split(':').map(Number)
     return hours * 60 + mins
+  }
+
+  const handleCheckBoxChange = (e, value) => {
+    setFormHT({ ...formHT, [value]: e.target.checked })
   }
 
   return (
@@ -259,27 +264,40 @@ const ModalHeThong = ({ close }) => {
                     <label className="font-medium pl-5 my-2">
                       Các thông số khác <hr />
                     </label>
-                    <div className=" md:ml-0 lg:ml-16 flex flex-col  gap-2  truncate">
-                      <Checkbox checked={formHT?.SUDUNG_GIALENEUKHONGCOGIASI} onChange={(e) => setFormHT({ ...formHT, SUDUNG_GIALENEUKHONGCOGIASI: e.target.checked })}>
-                        Tự động lấy giá bán lẻ nếu chưa có giá sỉ
-                      </Checkbox>
-                      <Checkbox checked={formHT?.ALLOW_SUAGIABAN} onChange={(e) => setFormHT({ ...formHT, ALLOW_SUAGIABAN: e.target.checked })}>
-                        Cho phép sửa giá bán
-                      </Checkbox>
-                      <Checkbox checked={formHT?.HIENTHIGIATRICONGNOTRENPHIEUBANSI} onChange={(e) => setFormHT({ ...formHT, HIENTHIGIATRICONGNOTRENPHIEUBANSI: e.target.checked })}>
-                        Hiện số dư công nợ trên phiếu bán sỉ
-                      </Checkbox>
-
-                      <Checkbox checked={formHT?.SUDUNG_GIAMUAGANNHAT} onChange={(e) => setFormHT({ ...formHT, SUDUNG_GIAMUAGANNHAT: e.target.checked })}>
-                        Đơn giá mua hàng sử dụng đơn giá mua gần nhất
-                      </Checkbox>
-
+                    <div className=" w-full md:ml-0 lg:ml-16 flex flex-col  gap-2  truncate">
+                      <ActionCheckBox
+                        id="checkboxHT1"
+                        label="Tự động lấy giá bán lẻ nếu chưa có giá sỉ"
+                        checked={formHT?.SUDUNG_GIALENEUKHONGCOGIASI}
+                        onChange={handleCheckBoxChange}
+                        value="SUDUNG_GIALENEUKHONGCOGIASI"
+                      />
+                      <ActionCheckBox id="checkboxHT2" label="Cho phép sửa giá bán" checked={formHT?.ALLOW_SUAGIABAN} onChange={handleCheckBoxChange} value="ALLOW_SUAGIABAN" />
+                      <ActionCheckBox
+                        id="checkboxHT3"
+                        label="Hiện số dư công nợ trên phiếu bán sỉ"
+                        checked={formHT?.HIENTHIGIATRICONGNOTRENPHIEUBANSI}
+                        onChange={handleCheckBoxChange}
+                        value="HIENTHIGIATRICONGNOTRENPHIEUBANSI"
+                      />
+                      <ActionCheckBox
+                        id="checkboxHT4"
+                        label="Đơn giá mua hàng sử dụng đơn giá mua gần nhất"
+                        checked={formHT?.SUDUNG_GIAMUAGANNHAT}
+                        onChange={handleCheckBoxChange}
+                        value="SUDUNG_GIAMUAGANNHAT"
+                      />
                       {/* <Checkbox checked={formHT?.SUDUNG_CHIETKHAUTHANHTOAN} onChange={(e) => setFormHT({ ...formHT, SUDUNG_CHIETKHAUTHANHTOAN: e.target.checked })}>
                         Sử dụng chiết khấu thanh toán
                       </Checkbox> */}
-                      <Checkbox checked={formHT?.ALLOW_SUACHIETKHAUTHANHTOAN} onChange={(e) => setFormHT({ ...formHT, ALLOW_SUACHIETKHAUTHANHTOAN: e.target.checked })}>
-                        Cho phép sửa chiết khấu thanh toán
-                      </Checkbox>
+
+                      <ActionCheckBox
+                        id="checkboxHT5"
+                        label="Cho phép sửa chiết khấu thanh toán"
+                        checked={formHT?.ALLOW_SUACHIETKHAUTHANHTOAN}
+                        onChange={handleCheckBoxChange}
+                        value="ALLOW_SUACHIETKHAUTHANHTOAN"
+                      />
                     </div>
                   </div>
                 </div>
@@ -293,38 +311,83 @@ const ModalHeThong = ({ close }) => {
                       Các thông số <hr />
                     </label>
                     <div className=" flex mt-2 md:ml-0 lg:ml-16 flex-col  gap-2 truncate ">
-                      <Checkbox checked={formHT?.NEED_TERMINAL_CONFIRMSUABILL} onChange={(e) => setFormHT({ ...formHT, NEED_TERMINAL_CONFIRMSUABILL: e.target.checked })}>
-                        Yêu cầu xác nhận của quản lý khi sửa phiếu chi tiền
-                      </Checkbox>
-                      <Checkbox checked={formHT?.NEED_TERMINAL_CONFIRMGIAMSOLUONG} onChange={(e) => setFormHT({ ...formHT, NEED_TERMINAL_CONFIRMGIAMSOLUONG: e.target.checked })}>
-                        Yêu cầu xác nhận của quản lý khi trả hàng khi tính tiền
-                      </Checkbox>
-                      <Checkbox checked={formHT?.NEED_TERMINAL_CONFIRMXOABILL} onChange={(e) => setFormHT({ ...formHT, NEED_TERMINAL_CONFIRMXOABILL: e.target.checked })}>
-                        Yêu cầu xác nhận của quản lý khi xóa phiếu tính tiền
-                      </Checkbox>
-                      <Checkbox checked={formHT?.NEED_TERMINAL_CONFIRMINLAIBILL} onChange={(e) => setFormHT({ ...formHT, NEED_TERMINAL_CONFIRMINLAIBILL: e.target.checked })}>
-                        Yêu cầu xác nhận của quản lý khi in lại phiếu tính tiền
-                      </Checkbox>
-                      <Checkbox checked={formHT?.GOPCHITIETTHEOMAHANG} onChange={(e) => setFormHT({ ...formHT, GOPCHITIETTHEOMAHANG: e.target.checked })}>
-                        Tự cộng số lượng theo mã hàng trên phiếu tính tiền
-                      </Checkbox>
-                      <Checkbox checked={formHT?.ALLOW_XULYCHUYENDOIMAHANGDONGGOI} onChange={(e) => setFormHT({ ...formHT, ALLOW_XULYCHUYENDOIMAHANGDONGGOI: e.target.checked })}>
-                        Tự động chuyển đổi mã hàng đóng gói theo số lượng
-                      </Checkbox>
+                      <ActionCheckBox
+                        id="checkboxHT6"
+                        label="Yêu cầu xác nhận của quản lý khi sửa phiếu chi tiền"
+                        checked={formHT?.NEED_TERMINAL_CONFIRMSUABILL}
+                        onChange={handleCheckBoxChange}
+                        value="NEED_TERMINAL_CONFIRMSUABILL"
+                        disabled={!formHT?.SUDUNG_BANLE}
+                      />
+                      <ActionCheckBox
+                        id="checkboxHT7"
+                        label="Yêu cầu xác nhận của quản lý khi trả hàng khi tính tiền"
+                        checked={formHT?.NEED_TERMINAL_CONFIRMGIAMSOLUONG}
+                        onChange={handleCheckBoxChange}
+                        value="NEED_TERMINAL_CONFIRMGIAMSOLUONG"
+                        disabled={!formHT?.SUDUNG_BANLE}
+                      />
+                      <ActionCheckBox
+                        id="checkboxHT8"
+                        label="Yêu cầu xác nhận của quản lý khi xóa phiếu tính tiền"
+                        checked={formHT?.NEED_TERMINAL_CONFIRMXOABILL}
+                        onChange={handleCheckBoxChange}
+                        value="NEED_TERMINAL_CONFIRMXOABILL"
+                        disabled={!formHT?.SUDUNG_BANLE}
+                      />
+                      <ActionCheckBox
+                        id="checkboxHT9"
+                        label="Yêu cầu xác nhận của quản lý khi in lại phiếu tính tiền"
+                        checked={formHT?.NEED_TERMINAL_CONFIRMINLAIBILL}
+                        onChange={handleCheckBoxChange}
+                        value="NEED_TERMINAL_CONFIRMINLAIBILL"
+                        disabled={!formHT?.SUDUNG_BANLE}
+                      />
+                      <ActionCheckBox
+                        id="checkboxHT10"
+                        label="Tự cộng số lượng theo mã hàng trên phiếu tính tiền"
+                        checked={formHT?.GOPCHITIETTHEOMAHANG}
+                        onChange={handleCheckBoxChange}
+                        value="GOPCHITIETTHEOMAHANG"
+                        disabled={!formHT?.SUDUNG_BANLE}
+                      />
+                      <ActionCheckBox
+                        id="checkboxHT11"
+                        label="Tự động chuyển đổi mã hàng đóng gói theo số lượng"
+                        checked={formHT?.ALLOW_XULYCHUYENDOIMAHANGDONGGOI}
+                        onChange={handleCheckBoxChange}
+                        value="ALLOW_XULYCHUYENDOIMAHANGDONGGOI"
+                        disabled={!formHT?.SUDUNG_BANLE}
+                      />
                       {/* <Checkbox checked={formHT?.SUDUNG_CHIETKHAUTHANHTOAN_BANLE} onChange={(e) => setFormHT({ ...formHT, SUDUNG_CHIETKHAUTHANHTOAN_BANLE: e.target.checked })}>
                         Quầy bán lẻ sử dụng chiết khấu thanh toán
                       </Checkbox> */}
-                      <Checkbox checked={formHT?.ALLOW_SUACHIETKHAUTHANHTOAN_BANLE} onChange={(e) => setFormHT({ ...formHT, ALLOW_SUACHIETKHAUTHANHTOAN_BANLE: e.target.checked })}>
-                        Quầy bán lẻ có thể sửa chiết khấu thanh toán
-                      </Checkbox>
-                      <Checkbox checked={formHT?.SUDUNG_THONGTINCUAHANGTRENPHIEU} onChange={(e) => setFormHT({ ...formHT, SUDUNG_THONGTINCUAHANGTRENPHIEU: e.target.checked })}>
-                        Sử dụng thông tin cửa hàng trên phiếu
-                      </Checkbox>
-                      <Checkbox checked={formHT?.NEED_TERMINAL_INPHIEUCHOCA} onChange={(e) => setFormHT({ ...formHT, NEED_TERMINAL_INPHIEUCHOCA: e.target.checked })}>
-                        Quầy bán lẻ phải in phiếu chốt ca
-                      </Checkbox>
+                      <ActionCheckBox
+                        id="checkboxHT12"
+                        label="Quầy bán lẻ có thể sửa chiết khấu thanh toán"
+                        checked={formHT?.ALLOW_SUACHIETKHAUTHANHTOAN_BANLE}
+                        onChange={handleCheckBoxChange}
+                        value="ALLOW_SUACHIETKHAUTHANHTOAN_BANLE"
+                        disabled={!formHT?.SUDUNG_BANLE || !formHT?.SUDUNG_CHIETKHAUTHANHTOAN_BANLE}
+                      />
+                      <ActionCheckBox
+                        id="checkboxHT13"
+                        label="Sử dụng thông tin cửa hàng trên phiếu"
+                        checked={formHT?.SUDUNG_THONGTINCUAHANGTRENPHIEU}
+                        onChange={handleCheckBoxChange}
+                        value="SUDUNG_THONGTINCUAHANGTRENPHIEU"
+                        disabled={!formHT?.SUDUNG_BANLE}
+                      />
+                      <ActionCheckBox
+                        id="checkboxHT14"
+                        label="Quầy bán lẻ phải in phiếu chốt ca"
+                        checked={formHT?.NEED_TERMINAL_INPHIEUCHOCA}
+                        onChange={handleCheckBoxChange}
+                        value="NEED_TERMINAL_INPHIEUCHOCA"
+                        disabled={!formHT?.SUDUNG_BANLE}
+                      />
                       <div className="flex md:gap-1  lg:gap-3">
-                        <Checkbox checked={formHT?.Ca1} onChange={(e) => setFormHT({ ...formHT, Ca1: e.target.checked })}>
+                        <Checkbox disabled={!formHT?.SUDUNG_BANLE} checked={formHT?.Ca1} onChange={(e) => setFormHT({ ...formHT, Ca1: e.target.checked })}>
                           Ca 1
                         </Checkbox>
                         <div className="flex gap-2 items-center">
@@ -347,7 +410,7 @@ const ModalHeThong = ({ close }) => {
                               const convertNewDate = convertHHMMToMinutes(dayjs(newDate).format('HH:mm'))
                               setFormHT({ ...formHT, Ca1_BatDau: convertNewDate })
                             }}
-                            disabled={!formHT?.Ca1}
+                            disabled={!formHT?.SUDUNG_BANLE || !formHT?.Ca1}
                           />
                         </div>
                         <div className="flex gap-2 items-center">
@@ -370,11 +433,12 @@ const ModalHeThong = ({ close }) => {
                               const convertNewDate = convertHHMMToMinutes(dayjs(newDate).format('HH:mm'))
                               setFormHT({ ...formHT, Ca1_KetThuc: convertNewDate })
                             }}
-                            disabled={!formHT?.Ca1}
+                            disabled={!formHT?.SUDUNG_BANLE || !formHT?.Ca1}
                           />
                         </div>
                         <Tooltip title="Hôm sau" color="blue">
                           <Checkbox
+                            disabled={!formHT?.SUDUNG_BANLE || !formHT?.Ca1}
                             checked={formHT.Ca1_KetThuc >= 1440 ? true : false}
                             onChange={(e) => {
                               const newValue = e.target.checked ? formHT.Ca1_KetThuc + 1440 : formHT.Ca1_KetThuc - 1440
@@ -386,7 +450,7 @@ const ModalHeThong = ({ close }) => {
                         </Tooltip>
                       </div>
                       <div className="flex md:gap-1  lg:gap-3">
-                        <Checkbox checked={formHT?.Ca2} onChange={(e) => setFormHT({ ...formHT, Ca2: e.target.checked })}>
+                        <Checkbox disabled={!formHT?.SUDUNG_BANLE} checked={formHT?.Ca2} onChange={(e) => setFormHT({ ...formHT, Ca2: e.target.checked })}>
                           Ca 2
                         </Checkbox>
                         <div className="flex gap-2 items-center">
@@ -409,7 +473,7 @@ const ModalHeThong = ({ close }) => {
                               const convertNewDate = convertHHMMToMinutes(dayjs(newDate).format('HH:mm'))
                               setFormHT({ ...formHT, Ca2_BatDau: convertNewDate })
                             }}
-                            disabled={!formHT?.Ca2}
+                            disabled={!formHT?.SUDUNG_BANLE || !formHT?.Ca2}
                           />
                         </div>
                         <div className="flex gap-2 items-center">
@@ -432,7 +496,7 @@ const ModalHeThong = ({ close }) => {
                               const convertNewDate = convertHHMMToMinutes(dayjs(newDate).format('HH:mm'))
                               setFormHT({ ...formHT, Ca2_KetThuc: convertNewDate })
                             }}
-                            disabled={!formHT?.Ca2}
+                            disabled={!formHT?.SUDUNG_BANLE || !formHT?.Ca2}
                           />
                         </div>
                         <Tooltip title="Hôm sau" color="blue">
@@ -442,13 +506,14 @@ const ModalHeThong = ({ close }) => {
                               const newValue = e.target.checked ? formHT.Ca2_KetThuc + 1440 : formHT.Ca2_KetThuc - 1440
                               setFormHT({ ...formHT, Ca2_KetThuc: newValue })
                             }}
+                            disabled={!formHT?.SUDUNG_BANLE || !formHT?.Ca2}
                           >
                             <span className="md:hidden">Hôm sau</span>
                           </Checkbox>
                         </Tooltip>
                       </div>
                       <div className="flex md:gap-1  lg:gap-3">
-                        <Checkbox checked={formHT?.Ca3} onChange={(e) => setFormHT({ ...formHT, Ca3: e.target.checked })}>
+                        <Checkbox disabled={!formHT?.SUDUNG_BANLE} checked={formHT?.Ca3} onChange={(e) => setFormHT({ ...formHT, Ca3: e.target.checked })}>
                           Ca 3
                         </Checkbox>
                         <div className="flex gap-2 items-center">
@@ -471,7 +536,7 @@ const ModalHeThong = ({ close }) => {
                               const convertNewDate = convertHHMMToMinutes(dayjs(newDate).format('HH:mm'))
                               setFormHT({ ...formHT, Ca3_BatDau: convertNewDate })
                             }}
-                            disabled={!formHT?.Ca3}
+                            disabled={!formHT?.SUDUNG_BANLE || !formHT?.Ca3}
                           />
                         </div>
                         <div className="flex gap-2 items-center">
@@ -494,7 +559,7 @@ const ModalHeThong = ({ close }) => {
                               const convertNewDate = convertHHMMToMinutes(dayjs(newDate).format('HH:mm'))
                               setFormHT({ ...formHT, Ca3_KetThuc: convertNewDate })
                             }}
-                            disabled={!formHT?.Ca3}
+                            disabled={!formHT?.SUDUNG_BANLE || !formHT?.Ca3}
                           />
                         </div>
                         <Tooltip title="Hôm sau" color="blue">
@@ -504,6 +569,7 @@ const ModalHeThong = ({ close }) => {
                               const newValue = e.target.checked ? formHT.Ca3_KetThuc + 1440 : formHT.Ca3_KetThuc - 1440
                               setFormHT({ ...formHT, Ca3_KetThuc: newValue })
                             }}
+                            disabled={!formHT?.SUDUNG_BANLE || !formHT?.Ca3}
                           >
                             <span className="md:hidden">Hôm sau</span>
                           </Checkbox>

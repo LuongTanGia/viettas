@@ -15,7 +15,7 @@ const { Option } = Select
 const { Text } = Typography
 const { BsSearch, TfiMoreAlt, FaEyeSlash, RiFileExcel2Fill, MdFilterAlt } = icons
 
-const SoSanhBG = () => {
+const HangHoaTKTT = () => {
   const optionContainerRef = useRef(null)
   const [tableLoad, setTableLoad] = useState(true)
 
@@ -23,10 +23,10 @@ const SoSanhBG = () => {
   const [isShowOption, setIsShowOption] = useState(false)
   const [data, setData] = useState([])
   const [dataHangHoa, setDataHangHoa] = useState(null)
-  // const [dataNhomGia, setDataNhomGia] = useState([])
+  // const [dataKhoHang, setDataKhoHang] = useState([])
   const [dataNhomHang, setDataNhomHang] = useState([])
   const [dataQuyenHan, setDataQuyenHan] = useState({})
-  const [setSearchSoSanhBG, filteredSoSanhBG, searchSoSanhBG] = useSearchHH(data)
+  const [setSearchHangHoaTKTT, filteredHangHoaTKTT, searchHangHoaTKTT] = useSearchHH(data)
   const [prevSearchValue, setPrevSearchValue] = useState('')
   const [hideColumns, setHideColumns] = useState(false)
   const [checkedList, setCheckedList] = useState([])
@@ -42,9 +42,6 @@ const SoSanhBG = () => {
     CodeValue1To: null,
     CodeValue2From: null,
     CodeValue2To: null,
-    CodeValue3From: null,
-    CodeValue3To: null,
-    CodeValue3List: null,
     CodeValue1List: null,
     CodeValue2List: null,
   })
@@ -69,7 +66,7 @@ const SoSanhBG = () => {
   useEffect(() => {
     setNewColumns(columns)
     // Lấy thông tin từ local storage sau khi đăng nhập
-    const storedHiddenColumns = localStorage.getItem('hidenColumnSoSanhBG')
+    const storedHiddenColumns = localStorage.getItem('hidenColumnHangHoaTKTT')
     const parsedHiddenColumns = storedHiddenColumns ? JSON.parse(storedHiddenColumns) : null
 
     // Áp dụng thông tin đã lưu vào checkedList và setConfirmed để ẩn cột
@@ -81,8 +78,8 @@ const SoSanhBG = () => {
 
   useEffect(() => {
     if (confirmed) {
-      setCheckedList(JSON.parse(localStorage.getItem('hidenColumnSoSanhBG')))
-      setNewColumns(JSON.parse(localStorage.getItem('hidenColumnSoSanhBG')))
+      setCheckedList(JSON.parse(localStorage.getItem('hidenColumnHangHoaTKTT')))
+      setNewColumns(JSON.parse(localStorage.getItem('hidenColumnHangHoaTKTT')))
     }
   }, [confirmed])
 
@@ -107,9 +104,9 @@ const SoSanhBG = () => {
       }
     }
 
-    fetchData(apis.ListHelperNhomHangSoSanhGB, setDataNhomHang)
-    fetchData(apis.ListHelperHHSoSanhGB, setDataHangHoa)
-    // fetchData(apis.ListHelperNhomGiaSoSanhGB, setDataNhomGia)
+    fetchData(apis.ListHelperNhomHangHangHoaTKTT, setDataNhomHang)
+    fetchData(apis.ListHelperHHHangHoaTKTT, setDataHangHoa)
+    // fetchData(apis.ListHelperKhoHangHangHoaTKTT, setDataKhoHang)
   }, [])
 
   // get Chức năng quyền hạn
@@ -156,24 +153,24 @@ const SoSanhBG = () => {
     }
   }, [formFilter])
 
-  //get DSSoSanhBG
+  //get DSHangHoaTKTT
   useEffect(() => {
     if (tableLoad && dataQuyenHan?.VIEW) {
-      getDSSoSanhBG()
+      getDSHangHoaTKTT()
     }
   }, [tableLoad, dataQuyenHan?.VIEW])
 
-  const getDSSoSanhBG = async () => {
+  const getDSHangHoaTKTT = async () => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
 
-      const response = await apis.DanhSachSoSanhGB(tokenLogin, { ...formFilter, CodeValue1List: valueList1.join(','), CodeValue2List: valueList2.join(',') })
+      const response = await apis.DanhSachHangHoaTKTT(tokenLogin, { ...formFilter, CodeValue1List: valueList1.join(','), CodeValue2List: valueList2.join(',') })
       if (response.data && response.data.DataError === 0) {
         setData(response.data.DataResults)
         setTableLoad(false)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
-        getDSSoSanhBG()
+        getDSHangHoaTKTT()
       } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
         toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
         setTableLoad(false)
@@ -190,8 +187,8 @@ const SoSanhBG = () => {
 
   // Extract dynamic columns from the data
   const dynamicColumns =
-    filteredSoSanhBG && filteredSoSanhBG.length > 0
-      ? Object.keys(filteredSoSanhBG[0])
+    filteredHangHoaTKTT && filteredHangHoaTKTT.length > 0
+      ? Object.keys(filteredHangHoaTKTT[0])
           .filter((key) => key.startsWith('Col_'))
           .map((colKey) => {
             const columnName = colKey.substring(4) // Extract column name after 'Col_'
@@ -203,7 +200,7 @@ const SoSanhBG = () => {
               align: 'center',
               render: (text) => (
                 <div className={`text-end ${text < 0 ? 'text-red-600  ' : text === 0 ? 'text-gray-300' : ''} `}>
-                  <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchSoSanhBG} />
+                  <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchHangHoaTKTT} />
                 </div>
               ),
               sorter: (a, b) => a[colKey] - b[colKey],
@@ -235,7 +232,7 @@ const SoSanhBG = () => {
         <div className="truncate text-start">
           <Tooltip title={text} color="blue" placement="top">
             <span>
-              <HighlightedCell text={text} search={searchSoSanhBG} />
+              <HighlightedCell text={text} search={searchHangHoaTKTT} />
             </span>
           </Tooltip>
         </div>
@@ -254,7 +251,7 @@ const SoSanhBG = () => {
         <div className="truncate text-start">
           <Tooltip title={text} color="blue" placement="top">
             <span>
-              <HighlightedCell text={text} search={searchSoSanhBG} />
+              <HighlightedCell text={text} search={searchHangHoaTKTT} />
             </span>
           </Tooltip>
         </div>
@@ -268,45 +265,48 @@ const SoSanhBG = () => {
       align: 'center',
       render: (text) => (
         <div>
-          <HighlightedCell text={text} search={searchSoSanhBG} />
+          <HighlightedCell text={text} search={searchHangHoaTKTT} />
         </div>
       ),
       sorter: (a, b) => a.DVT.localeCompare(b.DVT),
       showSorterTooltip: false,
     },
     {
-      title: 'Mã vạch',
-      dataIndex: 'MaVach',
-      key: 'MaVach',
-      width: 150,
+      title: 'Nhóm hàng',
+      dataIndex: 'NhomHang',
+      key: 'NhomHang',
+      width: 200,
       align: 'center',
       render: (text) => (
         <div className="truncate text-start">
-          <HighlightedCell text={text} search={searchSoSanhBG} />
+          <Tooltip title={text} color="blue" placement="top">
+            <span>
+              <HighlightedCell text={text} search={searchHangHoaTKTT} />
+            </span>
+          </Tooltip>
         </div>
       ),
       sorter: (a, b) => {
-        return a.MaVach - b.MaVach
+        return a.NhomHang.localeCompare(b.NhomHang)
       },
       showSorterTooltip: false,
     },
-    {
-      title: 'Giá bán lẻ',
-      dataIndex: 'GiaLe',
-      key: 'GiaLe',
-      align: 'center',
-      width: 120,
-      render: (text) => (
-        <div className={`text-end ${text < 0 ? 'text-red-600 text-base font-bold' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchSoSanhBG} />
-        </div>
-      ),
-      sorter: (a, b) => {
-        return a.GiaLe - b.GiaLe
-      },
-      showSorterTooltip: false,
-    },
+
     ...dynamicColumns,
+    {
+      title: 'Tổng cộng',
+      dataIndex: 'SoLuong',
+      key: 'SoLuong',
+      width: 200,
+      align: 'center',
+      render: (text) => (
+        <div className={`text-end ${text < 0 ? 'text-red-600 ' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOLUONG)} search={searchHangHoaTKTT} />
+        </div>
+      ),
+      sorter: (a, b) => a.SoLuong - b.SoLuong,
+      showSorterTooltip: false,
+    },
   ]
 
   const options = columns.slice(0, -1).map(({ key, title }) => ({
@@ -324,7 +324,7 @@ const SoSanhBG = () => {
   const handleSearch = (newSearch) => {
     if (newSearch !== prevSearchValue) {
       setTableLoad(true)
-      setSearchSoSanhBG(newSearch)
+      setSearchHangHoaTKTT(newSearch)
     }
   }
   const handleFilterDS = () => {
@@ -369,14 +369,14 @@ const SoSanhBG = () => {
           <div className="w-auto">
             <div className="relative text-lg flex justify-between items-center mb-1">
               <div className="flex items-center gap-x-4 font-bold">
-                <h1 className="text-xl uppercase">So sánh các bảng giá</h1>
+                <h1 className="w-full text-xl uppercase truncate">Hàng hóa tồn kho tạm tính toàn hệ thống</h1>
                 <div>
                   <BsSearch size={18} className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
                 </div>
               </div>
               <div className="flex  ">
                 {isShowSearch && (
-                  <div className={`flex absolute left-[18rem] -top-[2px] transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
+                  <div className={`flex absolute left-[33rem] -top-[2px] transition-all linear duration-700 ${isShowSearch ? 'md:w-[10rem] lg:w-[20rem]' : 'w-0'} overflow-hidden`}>
                     <Input
                       allowClear={{
                         clearIcon: <CloseSquareFilled />,
@@ -438,7 +438,7 @@ const SoSanhBG = () => {
                             defaultValue={checkedList}
                             onChange={(value) => {
                               setCheckedList(value)
-                              localStorage.setItem('hidenColumnSoSanhBG', JSON.stringify(value))
+                              localStorage.setItem('hidenColumnHangHoaTKTT', JSON.stringify(value))
                             }}
                           >
                             <Row>
@@ -616,7 +616,7 @@ const SoSanhBG = () => {
                 loading={tableLoad}
                 className="GBL"
                 columns={newColumnsHide}
-                dataSource={filteredSoSanhBG}
+                dataSource={filteredHangHoaTKTT}
                 size="small"
                 scroll={{
                   x: 1500,
@@ -639,9 +639,17 @@ const SoSanhBG = () => {
                         {newColumnsHide
                           .filter((column) => column.render)
                           .map((column) => {
-                            const isNumericColumn = typeof filteredSoSanhBG[0]?.[column.dataIndex] === 'number'
+                            const isNumericColumn = typeof filteredHangHoaTKTT[0]?.[column.dataIndex] === 'number'
                             return (
                               <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                                {isNumericColumn ? (
+                                  <Text strong>
+                                    {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                      minimumFractionDigits: dataThongSo.SOLESOLUONG,
+                                      maximumFractionDigits: dataThongSo.SOLESOLUONG,
+                                    })}
+                                  </Text>
+                                ) : null}
                                 {column.dataIndex === 'STT' ? (
                                   <Text className="text-center flex justify-center" strong>
                                     {data.length}
@@ -663,4 +671,4 @@ const SoSanhBG = () => {
   )
 }
 
-export default SoSanhBG
+export default HangHoaTKTT

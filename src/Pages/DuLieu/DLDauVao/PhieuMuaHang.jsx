@@ -734,7 +734,7 @@ const PhieuMuaHang = () => {
 
   const handleEndDateChange = (newDate) => {
     const startDate = formKhoanNgay.NgayBatDau
-    const endDate = dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss')
+    const endDate = dayjs(newDate).format('YYYY-MM-DD')
 
     if (dayjs(startDate).isAfter(dayjs(endDate))) {
       // Nếu ngày kết thúc nhỏ hơn ngày bắt đầu, cập nhật ngày bắt đầu
@@ -893,7 +893,7 @@ const PhieuMuaHang = () => {
                       onChange={(newDate) => {
                         setFormKhoanNgay({
                           ...formKhoanNgay,
-                          NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                          NgayBatDau: dayjs(newDate).format('YYYY-MM-DD'),
                         })
                       }}
                       onBlur={() => {
@@ -931,7 +931,7 @@ const PhieuMuaHang = () => {
                       onChange={(newDate) => {
                         setFormKhoanNgay({
                           ...formKhoanNgay,
-                          NgayKetThuc: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                          NgayKetThuc: dayjs(newDate).format('YYYY-MM-DD'),
                         })
                       }}
                       onBlur={() => {
