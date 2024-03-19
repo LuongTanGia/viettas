@@ -4,7 +4,7 @@
 // import ActionModals from './ActionModals'
 import { useEffect, useState, useRef } from 'react'
 // import { useDispatch } from 'react-redux'
-import { CNDRTONGHOP, CNDRTONGHOP_listHelper, exportToExcel } from '../../action/Actions'
+import { APIPHANQUYEN, CNDRTONGHOP, CNDRTONGHOP_listHelper, exportToExcel } from '../../action/Actions'
 import API from '../../API/API'
 import FilterCp from '../util/filterCP/FilterCp'
 import Date from '../util/DateCP/DateCP'
@@ -18,7 +18,7 @@ import { Button, Checkbox, Col, Empty, Row, Tooltip } from 'antd'
 
 function DSBHKH_HH() {
   const token = localStorage.getItem('TKN')
-  const [loadingSearch, setLoadingSearch] = useState(false)
+  // const [loadingSearch, setLoadingSearch] = useState(false)
 
   const [dataAPI, setDataAPI] = useState({
     NgayBatDau: '2023-12-15',
@@ -42,10 +42,21 @@ function DSBHKH_HH() {
   const [selectVisible, setSelectVisible] = useState(false)
   const [tableLoad, setTableLoad] = useState(true)
   const [options, setOptions] = useState()
+  const [DataQuyenHan, setDataQuyenHan] = useState([])
 
   useEffect(() => {
     const getDate = async () => {
-      setLoadingSearch(true)
+      const quyenHan = await APIPHANQUYEN(token, {
+        Ma: 'TruyVan_DoanhSoBanHangKHHH',
+      })
+      setDataQuyenHan(quyenHan)
+    }
+    getDate()
+    console.log(DataQuyenHan)
+  }, [])
+  useEffect(() => {
+    const getDate = async () => {
+      setTableLoad(true)
       const listTongHop = await CNDRTONGHOP(API.DSKhachHangHangHoa, token, dataAPI)
       const listDoiTuong = await CNDRTONGHOP_listHelper(API.DSListHelper_HangHoa, token)
       const listNhomDoiTuong = await CNDRTONGHOP_listHelper(API.DSListHelper_NhomHang, token)
@@ -56,7 +67,7 @@ function DSBHKH_HH() {
       setDataNhomDoiTuong(listNhomDoiTuong.DataResults)
       setDataDoiTuong_2(listDoiTuong_2.DataResults)
       setDataNhomDoiTuong_2(listNhomDoiTuong_2.DataResults)
-      setLoadingSearch(false)
+      setTableLoad(false)
     }
     getDate()
   }, [
@@ -210,15 +221,7 @@ function DSBHKH_HH() {
         </div>
 
         <div id="my-table">
-          <Tables
-            columName={nameColumsPhieuBanHang}
-            param={data}
-            height={'setHeight DSBH_KHHH'}
-            selectMH={[1]}
-            typeTable={'DSBH'}
-            loadingSearch={loadingSearch}
-            hiden={hiddenRow}
-          />
+          <Tables columName={nameColumsPhieuBanHang} param={data} height={'setHeight DSBH_KHHH'} selectMH={[1]} typeTable={'DSBH'} loadingSearch={tableLoad} hiden={hiddenRow} />
         </div>
       </>
     </>

@@ -6,6 +6,8 @@ import PBSSlice from '../components/PhieuBanHang/PBSSlice'
 import { toast } from 'react-toastify'
 import * as XLSX from 'xlsx'
 import dayjs from 'dayjs'
+
+import API from '../API/API'
 // CallBack API Function
 const axiosInstance = axios.create({
   headers: {
@@ -776,6 +778,19 @@ export const CNDRTONGHOP_listHelper = async (API, token, data) => {
     return response.data
   } catch (error) {
     console.error('Error adding user:', error)
+  }
+}
+export const APIPHANQUYEN = async (token, data) => {
+  try {
+    const response = await axios.post(API.QUYENHAN, data, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.data
+  } catch (error) {
+    toast.error('Error adding user:', error)
   }
 }
 // function Normal

@@ -13,7 +13,7 @@ import { CgCloseO } from 'react-icons/cg'
 import { ModalHeThong } from '../../components_K'
 import NCKConfirm from '../Modals/DuLieu/DuLieuTrongKho/PhieuNCK/NCKConfirm'
 import { Drawer } from 'antd'
-import LogoHeader from '../../assets/VTS-iSale.ico'
+// import LogoHeader from '../../assets/VTS-iSale.ico'
 
 const SiderMenu = ({ handleToggleSidebar, isTargetRow, isTableLoad, isSidebarVisible }) => {
   const TokenAccess = localStorage.getItem('TKN')
@@ -93,10 +93,9 @@ const SiderMenu = ({ handleToggleSidebar, isTargetRow, isTableLoad, isSidebarVis
       // width={225}
       className="DrawerSirB"
       title={
-        <div className="flex justify-center items-center">
-          <Link href="index.html" className="logo d-flex align-items-center justify-content-start">
-            <img src={LogoHeader} />
-            <span className="d-none d-lg-block">VTS - iSale</span>
+        <div className="flex justify-center items-center  w-full">
+          <Link href="index.html" className="logo d-flex align-items-center justify-content-start gap-4">
+            <span className="">VTS - iSale</span>
           </Link>
         </div>
       }
