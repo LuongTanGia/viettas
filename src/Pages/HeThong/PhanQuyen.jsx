@@ -24,6 +24,8 @@ const PhanQuyen = () => {
   const [setSearchUser, filteredUser, searchUser] = useSearch(dataUser)
   const [isShowNotify, setIsShowNotify] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [isHandel, setIhandel] = useState(false)
+
   const [tableLoadLeft, setTableLoadLeft] = useState(true)
   const [tableLoadRight, setTableLoadRight] = useState(true)
   const [isShowSearch, setIsShowSearch] = useState(false)
@@ -43,7 +45,7 @@ const PhanQuyen = () => {
   const [PQForm, setPQForm] = useState(() => {
     return dataChucNang ? { ...dataChucNang } : innitProduct
   })
-
+  const [dataSource, setDataSource] = useState([])
   useEffect(() => {
     const getDataQuyenHan = async () => {
       try {
@@ -187,19 +189,42 @@ const PhanQuyen = () => {
       render: (record) => {
         return (
           <>
-            <Checkbox className=" justify-center" id={record.key} />
+            <Checkbox className=" justify-center" id={record.key} onChange={() => setIhandel(!isHandel)} />
           </>
         )
       },
     },
   ]
+
+  const handleCheckboxChange = (checked, recordKey, value) => {
+    if (isNaN(recordKey)) {
+      const updatedDataSource = dataSource.map((record) => {
+        const updatedChildren = record.children.map((child) => {
+          if (child.key === recordKey) {
+            return { ...child, [value]: checked }
+          }
+          return child
+        })
+        return { ...record, children: updatedChildren }
+      })
+      setDataSource(updatedDataSource)
+    } else {
+      const updatedDataSource = dataSource.map((record) => {
+        if (record.key === recordKey) {
+          return { ...record, [value]: checked }
+        }
+        return record
+      })
+      setDataSource(updatedDataSource)
+    }
+  }
   const titlesChucNang = [
     {
       title: 'Tên chức năng',
       dataIndex: 'TenChucNang',
       fixed: 'left',
       align: 'center',
-      render: (text) => (
+      render: (text, record) => (
         <div
           style={{
             overflow: 'hidden',
@@ -208,6 +233,7 @@ const PhanQuyen = () => {
             cursor: 'pointer',
             textAlign: 'start',
           }}
+          onClick={() => console.log(record)}
         >
           <HighlightedCell text={text} search={searchChucNang} />
         </div>
@@ -225,11 +251,9 @@ const PhanQuyen = () => {
           <Checkbox
             className=" justify-center"
             id={`VISIBLE_${record.key}`}
-            checked={PQForm.VISIBLE}
+            checked={text}
             disabled={record.ALLOW_VISIBLE == false}
-            onChange={() => {
-              setPQForm({ ...record, VISIBLE: !PQForm.VISIBLE })
-            }}
+            onChange={(e) => handleCheckboxChange(e.target.checked, record.key, 'VISIBLE')}
           />
         )
       },
@@ -246,11 +270,9 @@ const PhanQuyen = () => {
           <Checkbox
             className=" justify-center"
             id={`VIEW_${record.key}`}
-            checked={PQForm.VIEW}
+            checked={text}
             disabled={record.ALLOW_VIEW == false}
-            onChange={() => {
-              setPQForm({ ...record, VIEW: !PQForm.VIEW })
-            }}
+            onChange={(e) => handleCheckboxChange(e.target.checked, record.key, 'VIEW')}
           />
         )
       },
@@ -266,11 +288,9 @@ const PhanQuyen = () => {
         <Checkbox
           className=" justify-center"
           id={`ADD_${record.key}`}
-          checked={PQForm.ADD}
+          checked={text}
           disabled={record.ALLOW_ADD == false}
-          onChange={() => {
-            setPQForm({ ...record, ADD: !PQForm.ADD })
-          }}
+          onChange={(e) => handleCheckboxChange(e.target.checked, record.key, 'ADD')}
         />
       ),
     },
@@ -282,7 +302,15 @@ const PhanQuyen = () => {
       width: 70,
       showSorterTooltip: false,
       render: (text, record) => {
-        return <Checkbox className=" justify-center" id={`DEL_${record.key}`} checked={text} disabled={record.ALLOW_DEL == false} />
+        return (
+          <Checkbox
+            className=" justify-center"
+            id={`DEL_${record.key}`}
+            checked={text}
+            disabled={record.ALLOW_DEL == false}
+            onChange={(e) => handleCheckboxChange(e.target.checked, record.key, 'DEL')}
+          />
+        )
       },
     },
     {
@@ -293,7 +321,15 @@ const PhanQuyen = () => {
       width: 70,
       showSorterTooltip: false,
       render: (text, record) => {
-        return <Checkbox className=" justify-center" id={`EDIT_${record.key}`} checked={text} disabled={record.ALLOW_EDIT == false} />
+        return (
+          <Checkbox
+            className=" justify-center"
+            onChange={(e) => handleCheckboxChange(e.target.checked, record.key, 'EDIT')}
+            id={`EDIT_${record.key}`}
+            checked={text}
+            disabled={record.ALLOW_EDIT == false}
+          />
+        )
       },
     },
     {
@@ -304,7 +340,15 @@ const PhanQuyen = () => {
       width: 70,
       showSorterTooltip: false,
       render: (text, record) => {
-        return <Checkbox className=" justify-center" id={`RUN_${record.key}`} checked={text} disabled={record.ALLOW_RUN == false} />
+        return (
+          <Checkbox
+            className=" justify-center"
+            onChange={(e) => handleCheckboxChange(e.target.checked, record.key, 'RUN')}
+            id={`RUN_${record.key}`}
+            checked={text}
+            disabled={record.ALLOW_RUN == false}
+          />
+        )
       },
     },
     {
@@ -315,7 +359,15 @@ const PhanQuyen = () => {
       width: 70,
       showSorterTooltip: false,
       render: (text, record) => {
-        return <Checkbox className=" justify-center" id={`EXCEL_${record.key}`} checked={text} disabled={record.ALLOW_EXCEL == false} />
+        return (
+          <Checkbox
+            className=" justify-center"
+            onChange={(e) => handleCheckboxChange(e.target.checked, record.key, 'EXCEL')}
+            id={`EXCEL_${record.key}`}
+            checked={text}
+            disabled={record.ALLOW_EXCEL == false}
+          />
+        )
       },
     },
     {
@@ -326,81 +378,92 @@ const PhanQuyen = () => {
       width: 70,
       showSorterTooltip: false,
       render: (text, record) => {
-        return <Checkbox className="justify-center" id={`TOOLBAR_${record.key}`} checked={text} disabled={record.ALLOW_TOOLBAR == false} />
+        return (
+          <Checkbox
+            className="justify-center"
+            onChange={(e) => handleCheckboxChange(e.target.checked, record.key, 'TOOLBAR')}
+            id={`TOOLBAR_${record.key}`}
+            checked={text}
+            disabled={record.ALLOW_TOOLBAR == false}
+          />
+        )
       },
     },
   ]
-  const data = filteredChucNang
-    ? filteredChucNang
-        .filter((item) => item.NhomChucNang === '10')
-        .map((item, index) => ({
-          key: index,
-          TenChucNang: item.TenChucNang,
-          VISIBLE: item.VISIBLE,
-          VIEW: item.VIEW,
-          ADD: item.ADD,
-          DEL: item.DEL,
-          EDIT: item.EDIT,
-          RUN: item.RUN,
-          EXCEL: item.EXCEL,
-          TOOLBAR: item.TOOLBAR,
-          ALLOW_VISIBLE: item.ALLOW_VISIBLE,
-          ALLOW_VIEW: item.ALLOW_VIEW,
-          ALLOW_ADD: item.ALLOW_ADD,
-          ALLOW_DEL: item.ALLOW_DEL,
-          ALLOW_EDIT: item.ALLOW_EDIT,
-          ALLOW_RUN: item.ALLOW_RUN,
-          ALLOW_EXCEL: item.ALLOW_EXCEL,
-          ALLOW_TOOLBAR: item.ALLOW_TOOLBAR,
-          children: filteredChucNang
-            .filter((chir_data) => chir_data.NhomChucNang === item.MaChucNang)
-            .map((chir_data) => ({
-              key: chir_data.MaChucNang,
-              TenChucNang: chir_data.TenChucNang,
-              VISIBLE: chir_data.VISIBLE,
-              VIEW: chir_data.VIEW,
-              ADD: chir_data.ADD,
-              DEL: chir_data.DEL,
-              EDIT: chir_data.EDIT,
-              RUN: chir_data.RUN,
-              EXCEL: chir_data.EXCEL,
-              TOOLBAR: chir_data.TOOLBAR,
-              ALLOW_VISIBLE: chir_data.ALLOW_VISIBLE,
-              ALLOW_VIEW: chir_data.ALLOW_VIEW,
-              ALLOW_ADD: chir_data.ALLOW_ADD,
-              ALLOW_DEL: chir_data.ALLOW_DEL,
-              ALLOW_EDIT: chir_data.ALLOW_EDIT,
-              ALLOW_RUN: chir_data.ALLOW_RUN,
-              ALLOW_EXCEL: chir_data.ALLOW_EXCEL,
-              ALLOW_TOOLBAR: chir_data.ALLOW_TOOLBAR,
-              children:
-                filteredChucNang.filter((chir_data_2) => chir_data_2.NhomChucNang === chir_data.MaChucNang).length > 0
-                  ? filteredChucNang
-                      .filter((chir_data_2) => chir_data_2.NhomChucNang === chir_data.MaChucNang)
-                      .map((chir_data_2) => ({
-                        key: chir_data_2.MaChucNang,
-                        TenChucNang: chir_data_2.TenChucNang,
-                        VISIBLE: chir_data_2.VISIBLE,
-                        VIEW: chir_data_2.VIEW,
-                        ADD: chir_data_2.ADD,
-                        DEL: chir_data_2.DEL,
-                        EDIT: chir_data_2.EDIT,
-                        RUN: chir_data_2.RUN,
-                        EXCEL: chir_data_2.EXCEL,
-                        TOOLBAR: chir_data_2.TOOLBAR,
-                        ALLOW_VISIBLE: chir_data_2.ALLOW_VISIBLE,
-                        ALLOW_VIEW: chir_data_2.ALLOW_VIEW,
-                        ALLOW_ADD: chir_data_2.ALLOW_ADD,
-                        ALLOW_DEL: chir_data_2.ALLOW_DEL,
-                        ALLOW_EDIT: chir_data_2.ALLOW_EDIT,
-                        ALLOW_RUN: chir_data_2.ALLOW_RUN,
-                        ALLOW_EXCEL: chir_data_2.ALLOW_EXCEL,
-                        ALLOW_TOOLBAR: chir_data_2.ALLOW_TOOLBAR,
-                      }))
-                  : undefined,
-            })),
-        }))
-    : []
+  useEffect(() => {
+    const data = filteredChucNang
+      ? filteredChucNang
+          .filter((item) => item.NhomChucNang === '10')
+          .map((item, index) => ({
+            key: index,
+            TenChucNang: item.TenChucNang,
+            VISIBLE: item.VISIBLE,
+            VIEW: item.VIEW,
+            ADD: item.ADD,
+            DEL: item.DEL,
+            EDIT: item.EDIT,
+            RUN: item.RUN,
+            EXCEL: item.EXCEL,
+            TOOLBAR: item.TOOLBAR,
+            ALLOW_VISIBLE: item.ALLOW_VISIBLE,
+            ALLOW_VIEW: item.ALLOW_VIEW,
+            ALLOW_ADD: item.ALLOW_ADD,
+            ALLOW_DEL: item.ALLOW_DEL,
+            ALLOW_EDIT: item.ALLOW_EDIT,
+            ALLOW_RUN: item.ALLOW_RUN,
+            ALLOW_EXCEL: item.ALLOW_EXCEL,
+            ALLOW_TOOLBAR: item.ALLOW_TOOLBAR,
+            children: filteredChucNang
+              .filter((chir_data) => chir_data.NhomChucNang === item.MaChucNang)
+              .map((chir_data) => ({
+                key: chir_data.MaChucNang,
+                TenChucNang: chir_data.TenChucNang,
+                VISIBLE: chir_data.VISIBLE,
+                VIEW: chir_data.VIEW,
+                ADD: chir_data.ADD,
+                DEL: chir_data.DEL,
+                EDIT: chir_data.EDIT,
+                RUN: chir_data.RUN,
+                EXCEL: chir_data.EXCEL,
+                TOOLBAR: chir_data.TOOLBAR,
+                ALLOW_VISIBLE: chir_data.ALLOW_VISIBLE,
+                ALLOW_VIEW: chir_data.ALLOW_VIEW,
+                ALLOW_ADD: chir_data.ALLOW_ADD,
+                ALLOW_DEL: chir_data.ALLOW_DEL,
+                ALLOW_EDIT: chir_data.ALLOW_EDIT,
+                ALLOW_RUN: chir_data.ALLOW_RUN,
+                ALLOW_EXCEL: chir_data.ALLOW_EXCEL,
+                ALLOW_TOOLBAR: chir_data.ALLOW_TOOLBAR,
+                children:
+                  filteredChucNang.filter((chir_data_2) => chir_data_2.NhomChucNang === chir_data.MaChucNang).length > 0
+                    ? filteredChucNang
+                        .filter((chir_data_2) => chir_data_2.NhomChucNang === chir_data.MaChucNang)
+                        .map((chir_data_2) => ({
+                          key: chir_data_2.MaChucNang,
+                          TenChucNang: chir_data_2.TenChucNang,
+                          VISIBLE: chir_data_2.VISIBLE,
+                          VIEW: chir_data_2.VIEW,
+                          ADD: chir_data_2.ADD,
+                          DEL: chir_data_2.DEL,
+                          EDIT: chir_data_2.EDIT,
+                          RUN: chir_data_2.RUN,
+                          EXCEL: chir_data_2.EXCEL,
+                          TOOLBAR: chir_data_2.TOOLBAR,
+                          ALLOW_VISIBLE: chir_data_2.ALLOW_VISIBLE,
+                          ALLOW_VIEW: chir_data_2.ALLOW_VIEW,
+                          ALLOW_ADD: chir_data_2.ALLOW_ADD,
+                          ALLOW_DEL: chir_data_2.ALLOW_DEL,
+                          ALLOW_EDIT: chir_data_2.ALLOW_EDIT,
+                          ALLOW_RUN: chir_data_2.ALLOW_RUN,
+                          ALLOW_EXCEL: chir_data_2.ALLOW_EXCEL,
+                          ALLOW_TOOLBAR: chir_data_2.ALLOW_TOOLBAR,
+                        }))
+                    : undefined,
+              })),
+          }))
+      : []
+    setDataSource(data)
+  }, [isHandel])
 
   return (
     <>
@@ -571,7 +634,7 @@ const PhanQuyen = () => {
                       loading={tableLoadRight}
                       className="setHeight"
                       columns={titlesChucNang}
-                      dataSource={data?.map((item, index) => ({ ...item, key: index }))}
+                      dataSource={dataSource?.map((item, index) => ({ ...item, key: index }))}
                       size="small"
                       scroll={{
                         x: 'max-content',
