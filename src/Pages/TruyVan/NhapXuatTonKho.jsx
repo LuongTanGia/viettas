@@ -59,10 +59,12 @@ const NhapXuatTonKho = () => {
         if (isLoading == true) {
           setTableLoad(true)
           const response = await categoryAPI.InfoNXTTheoKho(
-            {
-              NgayBatDau: dayjs(khoanNgayFrom).format('YYYY-MM-DD'),
-              NgayKetThuc: dayjs(khoanNgayTo).format('YYYY-MM-DD'),
-            },
+            dateData == {}
+              ? {}
+              : {
+                  NgayBatDau: dateData.NgayBatDau,
+                  NgayKetThuc: dateData.NgayKetThuc,
+                },
             TokenAccess,
           )
           if (response.data.DataError == 0) {
@@ -85,7 +87,7 @@ const NhapXuatTonKho = () => {
       }
     }
     getDataNXTFirst()
-  }, [searchHangHoa, isLoading, khoanNgayFrom, khoanNgayTo])
+  }, [searchHangHoa, isLoading])
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -192,7 +194,6 @@ const NhapXuatTonKho = () => {
         setIsLoading(true)
       }
     }
-
     if (!isLoading) {
       getListKhoNXT()
     }

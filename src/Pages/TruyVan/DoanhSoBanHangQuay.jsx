@@ -173,10 +173,12 @@ const DoanhSoBanHangQuay = () => {
         if (isLoading == true) {
           setTableLoad(true)
           const response = await categoryAPI.InfoBSDHQuay(
-            {
-              NgayBatDau: dayjs(khoanNgayFrom).format('YYYY-MM-DD'),
-              NgayKetThuc: dayjs(khoanNgayTo).format('YYYY-MM-DD'),
-            },
+            dateData == {}
+              ? {}
+              : {
+                  NgayBatDau: dateData.NgayBatDau,
+                  NgayKetThuc: dateData.NgayKetThuc,
+                },
             TokenAccess,
           )
           if (response.data.DataError == 0) {
