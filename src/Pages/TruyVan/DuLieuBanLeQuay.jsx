@@ -8,7 +8,7 @@ import { RETOKEN, formatPrice } from '../../action/Actions'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
 import dayjs from 'dayjs'
 import { CloseSquareFilled } from '@ant-design/icons'
-import { useSearchHH } from '../../components_K/myComponents/useSearchHH'
+import { useSearch } from '../../components_K/myComponents/useSearch'
 import { PermissionView } from '../../components_K'
 import { DateField } from '@mui/x-date-pickers'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
@@ -28,14 +28,22 @@ const DuLieuBLQ = () => {
   const [dataBLQ, setDataBLQ] = useState([])
   const [dataThongTin, setDataThongTin] = useState({})
   const [dataQuyenHan, setDataQuyenHan] = useState({})
-  const [setSearchDuLieuBLQ, filteredDuLieuBLQ, searchDuLieuBLQ] = useSearchHH(dataBLQ)
+  const [setSearchDuLieuBLQ, filteredDuLieuBLQ, searchDuLieuBLQ] = useSearch(dataBLQ)
+  const [setSearchDuLieuQuayCa, filteredDuLieuQuayCa, searchDuLieuQuayCa] = useSearch(dataQuayCa)
   const [prevSearchValue, setPrevSearchValue] = useState('')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
   const [isShowNotify, setIsShowNotify] = useState(false)
   const [prevdateValue, setPrevDateValue] = useState({})
   const [lastSearchTime, setLastSearchTime] = useState(0)
-  // const [hasCalledGetThongTin, setHasCalledGetThongTin] = useState(false)
+
+  const transformedDataSource = {
+    Details: dataThongTin?.Details?.map((item) => ({
+      SoChungTu: dataThongTin?.SoChungTu,
+      ...item,
+    })),
+  }
+  const [setSearchDuLieuTT, filteredDuLieuTT, searchDuLieuTT] = useSearch(transformedDataSource?.Details)
 
   const [formKhoanNgay, setFormKhoanNgay] = useState({})
   const [formPBLQ, setFormPBLQ] = useState({})
@@ -168,7 +176,7 @@ const DuLieuBLQ = () => {
       dataIndex: 'NgayCTu',
       key: 'NgayCTu',
       align: 'center',
-      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY')} search={searchDuLieuBLQ} />,
+      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY')} search={searchDuLieuQuayCa} />,
       width: 100,
       sorter: (a, b) => {
         const dateA = new Date(a.NgayCTu)
@@ -188,7 +196,7 @@ const DuLieuBLQ = () => {
         <div className="truncate text-end">
           <Tooltip title={text} color="blue" placement="top">
             <span>
-              <HighlightedCell text={text} search={searchDuLieuBLQ} />
+              <HighlightedCell text={text} search={searchDuLieuQuayCa} />
             </span>
           </Tooltip>
         </div>
@@ -208,7 +216,7 @@ const DuLieuBLQ = () => {
         <div className="truncate ">
           <Tooltip title={text} color="blue" placement="top">
             <span>
-              <HighlightedCell text={text} search={searchDuLieuBLQ} />
+              <HighlightedCell text={text} search={searchDuLieuQuayCa} />
             </span>
           </Tooltip>
         </div>
@@ -222,7 +230,7 @@ const DuLieuBLQ = () => {
       align: 'center',
       render: (text) => (
         <div className="text-start">
-          <HighlightedCell text={text} search={searchDuLieuBLQ} />
+          <HighlightedCell text={text} search={searchDuLieuQuayCa} />
         </div>
       ),
       sorter: (a, b) => a.NhanVien.localeCompare(b.NhanVien),
@@ -445,7 +453,7 @@ const DuLieuBLQ = () => {
       render: (text) => (
         <div style={{ textAlign: 'start' }}>
           {' '}
-          <HighlightedCell text={text} search={searchDuLieuBLQ} />
+          <HighlightedCell text={text} search={searchDuLieuTT} />
         </div>
       ),
     },
@@ -469,7 +477,7 @@ const DuLieuBLQ = () => {
       render: (text) => (
         <div style={{ textAlign: 'start' }}>
           {' '}
-          <HighlightedCell text={text} search={searchDuLieuBLQ} />
+          <HighlightedCell text={text} search={searchDuLieuTT} />
         </div>
       ),
     },
@@ -483,7 +491,7 @@ const DuLieuBLQ = () => {
       showSorterTooltip: false,
       render: (text) => (
         <div style={{ textAlign: 'start' }}>
-          <HighlightedCell text={text} search={searchDuLieuBLQ} />
+          <HighlightedCell text={text} search={searchDuLieuTT} />
         </div>
       ),
     },
@@ -495,7 +503,7 @@ const DuLieuBLQ = () => {
       align: 'center',
       render: (text) => (
         <div>
-          <HighlightedCell text={text} search={searchDuLieuBLQ} />
+          <HighlightedCell text={text} search={searchDuLieuTT} />
         </div>
       ),
       sorter: (a, b) => a.DVT.localeCompare(b.DVT),
@@ -510,7 +518,7 @@ const DuLieuBLQ = () => {
       align: 'center',
       render: (text) => (
         <div className={`flex justify-end w-full h-full    ${text < 0 ? 'text-red-600 ' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOLUONG)} search={searchDuLieuBLQ} />
+          <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOLUONG)} search={searchDuLieuTT} />
         </div>
       ),
       sorter: (a, b) => a.SoLuong - b.SoLuong,
@@ -524,7 +532,7 @@ const DuLieuBLQ = () => {
       align: 'center',
       render: (text) => (
         <div className={`flex justify-end w-full h-full    ${text < 0 ? 'text-red-600 ' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchDuLieuBLQ} />
+          <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchDuLieuTT} />
         </div>
       ),
       sorter: (a, b) => a.SoLuong - b.SoLuong,
@@ -538,7 +546,7 @@ const DuLieuBLQ = () => {
       align: 'center',
       render: (text) => (
         <div className={`flex justify-end w-full h-full    ${text < 0 ? 'text-red-600 ' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchDuLieuBLQ} />
+          <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchDuLieuTT} />
         </div>
       ),
       sorter: (a, b) => a.TienHang - b.TienHang,
@@ -552,7 +560,7 @@ const DuLieuBLQ = () => {
       align: 'center',
       render: (text) => (
         <div className={`flex justify-end w-full h-full    ${text < 0 ? 'text-red-600 ' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatPrice(text, dataThongSo?.SOLETYLE)} search={searchDuLieuBLQ} />
+          <HighlightedCell text={formatPrice(text, dataThongSo?.SOLETYLE)} search={searchDuLieuTT} />
         </div>
       ),
       sorter: (a, b) => a.TyLeThue - b.TyLeThue,
@@ -566,7 +574,7 @@ const DuLieuBLQ = () => {
       align: 'center',
       render: (text) => (
         <div className={`flex justify-end w-full h-full    ${text < 0 ? 'text-red-600 ' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchDuLieuBLQ} />
+          <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchDuLieuTT} />
         </div>
       ),
       sorter: (a, b) => a.TienThue - b.TienThue,
@@ -580,7 +588,7 @@ const DuLieuBLQ = () => {
       align: 'center',
       render: (text) => (
         <div className={`flex justify-end w-full h-full    ${text < 0 ? 'text-red-600 ' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchDuLieuBLQ} />
+          <HighlightedCell text={formatPrice(text, dataThongSo?.SOLESOTIEN)} search={searchDuLieuTT} />
         </div>
       ),
       sorter: (a, b) => a.ThanhTien - b.ThanhTien,
@@ -589,6 +597,12 @@ const DuLieuBLQ = () => {
   ]
 
   const handleView = (record) => {
+    const currentTime = Date.now()
+
+    if (currentTime - lastSearchTime < 1000) {
+      return
+    }
+    setLastSearchTime(currentTime)
     setTableLoadChild(true)
     getDSBLQ(record)
   }
@@ -628,6 +642,12 @@ const DuLieuBLQ = () => {
   }
 
   const handleViewThongTin = (record) => {
+    const currentTime = Date.now()
+
+    if (currentTime - lastSearchTime < 1000) {
+      return
+    }
+    setLastSearchTime(currentTime)
     setTableLoadTT(true)
     getThongTin(record)
   }
@@ -715,15 +735,10 @@ const DuLieuBLQ = () => {
   const handleSearch = (newSearch) => {
     if (newSearch !== prevSearchValue) {
       setTableLoad(true)
+      setSearchDuLieuQuayCa(newSearch)
       setSearchDuLieuBLQ(newSearch)
+      setSearchDuLieuTT(newSearch)
     }
-  }
-
-  const transformedDataSource = {
-    Details: dataThongTin?.Details?.map((item) => ({
-      SoChungTu: dataThongTin?.SoChungTu,
-      ...item,
-    })),
   }
 
   return (
@@ -849,7 +864,7 @@ const DuLieuBLQ = () => {
                     loading={tableLoad}
                     className="BLQ"
                     columns={columns}
-                    dataSource={dataQuayCa}
+                    dataSource={filteredDuLieuQuayCa}
                     size="small"
                     scroll={{
                       x: 'max-content',
@@ -867,7 +882,7 @@ const DuLieuBLQ = () => {
                             {columns
                               .filter((column) => column.render)
                               .map((column) => {
-                                const isNumericColumn = typeof filteredDuLieuBLQ[0]?.[column.dataIndex] === 'number'
+                                const isNumericColumn = typeof filteredDuLieuQuayCa[0]?.[column.dataIndex] === 'number'
                                 return (
                                   <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
                                     {column.dataIndex === 'STT' ? (
@@ -948,7 +963,7 @@ const DuLieuBLQ = () => {
                       loading={tableLoadTT}
                       className="BLQ_child2"
                       columns={columnChild2}
-                      dataSource={transformedDataSource?.Details}
+                      dataSource={filteredDuLieuTT}
                       size="small"
                       scroll={{
                         x: 'max-content',
@@ -963,19 +978,19 @@ const DuLieuBLQ = () => {
                               {columnChild2
                                 .filter((column) => column.render)
                                 .map((column) => {
-                                  const isNumericColumn = typeof transformedDataSource?.Details[0]?.[column.dataIndex] === 'number'
+                                  const isNumericColumn = typeof filteredDuLieuTT[0]?.[column.dataIndex] === 'number'
                                   return (
                                     <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
                                       {column.dataIndex === 'TyLeThue' ? (
                                         <Text strong>
-                                          {Number(transformedDataSource?.Details?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                          {Number(filteredDuLieuTT.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                             minimumFractionDigits: dataThongSo?.SOLETYLE,
                                             maximumFractionDigits: dataThongSo?.SOLETYLE,
                                           })}
                                         </Text>
                                       ) : column.dataIndex === 'SoLuong' ? (
                                         <Text strong>
-                                          {Number(transformedDataSource?.Details?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                          {Number(filteredDuLieuTT.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                             minimumFractionDigits: dataThongSo?.SOLESOLUONG,
                                             maximumFractionDigits: dataThongSo?.SOLESOLUONG,
                                           })}
@@ -985,7 +1000,7 @@ const DuLieuBLQ = () => {
                                         column.dataIndex === 'TienThue' ||
                                         column.dataIndex === 'ThanhTien' ? (
                                         <Text strong>
-                                          {Number(transformedDataSource?.Details?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                          {Number(filteredDuLieuTT.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                             minimumFractionDigits: dataThongSo?.SOLESOTIEN,
                                             maximumFractionDigits: dataThongSo?.SOLESOTIEN,
                                           })}
