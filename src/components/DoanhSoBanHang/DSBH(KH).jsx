@@ -43,6 +43,7 @@ function DSBHKHH() {
     console.log(DataQuyenHan)
   }, [])
   useEffect(() => {
+    setTableLoad(true)
     const getDate = async () => {
       const listTongHop = await CNDRTONGHOP(API.DSKhachHang, token, dataAPI)
       const listDoiTuong = await CNDRTONGHOP_listHelper(API.DSListHelper_DoiTuong, token)
@@ -50,6 +51,7 @@ function DSBHKHH() {
       setData(listTongHop.DataResults || [])
       setDataDoiTuong(listDoiTuong.DataResults)
       setDataNhomDoiTuong(listNhomDoiTuong.DataResults)
+      setTableLoad(false)
     }
     getDate()
   }, [dataAPI.NgayBatDau, dataAPI.NgayKetThuc, dataAPI.CodeValue1From, dataAPI.CodeValue1To, dataAPI.CodeValue1List])
@@ -180,7 +182,7 @@ function DSBHKHH() {
         </div>
 
         <div id="my-table">
-          <Tables param={data} columName={nameColumsDoanhSoBanHangKH} height={'setHeight'} selectMH={[1]} typeTable={'DSBH'} hiden={hiddenRow} />
+          <Tables param={data} loadingSearch={tableLoad} columName={nameColumsDoanhSoBanHangKH} height={'setHeight'} selectMH={[1]} typeTable={'DSBH'} hiden={hiddenRow} />
         </div>
       </>
     </>

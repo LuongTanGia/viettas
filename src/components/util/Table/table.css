@@ -28,14 +28,14 @@
 .TruyVan .setHeight .ant-table,
 .TruyVan .setHeight .ant-table-container .ant-table-body {
   /* max-height: unset !important; */
-  height: calc(100vh - 365px);
+  height: calc(100vh - 390px);
 }
 .TruyVan .setHeight .ant-table-container .ant-table-body {
   max-height: unset !important;
   /* height: calc(100vh - 500px); */
 }
 .TruyVan .setHeight .ant-table {
-  height: calc(100vh - 290px);
+  height: calc(100vh - 285px);
 }
 /* XuLy */
 .XuLy_BinhQuan .ant-table-wrapper.setHeight,

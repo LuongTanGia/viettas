@@ -5,7 +5,7 @@ import { APIPHANQUYEN, CNDRTONGHOP, CNDRTONGHOP_listHelper, exportToExcel } from
 import API from '../../API/API'
 import FilterCp from '../util/filterCP/FilterCp'
 import Date from '../util/DateCP/DateCP'
-import { Button, Checkbox, Col, Empty, Row, Spin, Tooltip } from 'antd'
+import { Button, Checkbox, Col, Empty, Row, Tooltip } from 'antd'
 import ActionButton from '../util/Button/ActionButton'
 import { RiFileExcel2Fill } from 'react-icons/ri'
 import { FaEyeSlash } from 'react-icons/fa'
@@ -44,6 +44,7 @@ function CongNoDauRa() {
     console.log(DataQuyenHan)
   }, [])
   useEffect(() => {
+    setTableLoad(true)
     const getDate = async () => {
       const listTongHop = await CNDRTONGHOP(API.CNDRTONGHOP, token, dataAPI)
       const listDoiTuong = await CNDRTONGHOP_listHelper(API.CNDRDoiTuong, token)
@@ -51,6 +52,7 @@ function CongNoDauRa() {
       setData(listTongHop.DataResults || [])
       setDataDoiTuong(listDoiTuong.DataResults)
       setDataNhomDoiTuong(listNhomDoiTuong.DataResults)
+      setTableLoad(false)
     }
     getDate()
   }, [dataAPI.NgayBatDau, dataAPI.NgayKetThuc, dataAPI.CodeValue1From, dataAPI.CodeValue1To, dataAPI.CodeValue1List])
@@ -179,7 +181,7 @@ function CongNoDauRa() {
         />
       </div>
       <div id="my-table">
-        <QueryTable param={data} columName={nameColumsCongNoDauRa} height={'setHeight'} hiden={hiddenRow} title={'DauRa'} />
+        <QueryTable param={data} columName={nameColumsCongNoDauRa} height={'setHeight'} hiden={hiddenRow} title={'DauRa'} loadingSearch={tableLoad} />
       </div>
     </>
   )

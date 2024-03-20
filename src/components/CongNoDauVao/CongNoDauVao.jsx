@@ -43,6 +43,7 @@ function CongNoDauVao() {
     console.log(DataQuyenHan)
   }, [])
   useEffect(() => {
+    setTableLoad(true)
     const getDate = async () => {
       const listTongHop = await CNDRTONGHOP(API.CNDVTONGHOP, token, dataAPI)
       const listDoiTuong = await CNDRTONGHOP_listHelper(API.CNDVDoiTuong, token)
@@ -50,6 +51,7 @@ function CongNoDauVao() {
       setData(listTongHop.DataResults || [])
       setDataDoiTuong(listDoiTuong.DataResults)
       setDataNhomDoiTuong(listNhomDoiTuong.DataResults)
+      setTableLoad(false)
     }
     getDate()
   }, [dataAPI.NgayBatDau, dataAPI.NgayKetThuc, dataAPI.CodeValue1From, dataAPI.CodeValue1To, dataAPI.CodeValue1List])
@@ -181,7 +183,7 @@ function CongNoDauVao() {
           />
         </div>
         <div id="my-table">
-          <QueryTable param={data} columName={nameColumsCongNoDauVao} height={'setHeight'} title={'DauVao'} hiden={hiddenRow} />
+          <QueryTable param={data} columName={nameColumsCongNoDauVao} height={'setHeight'} title={'DauVao'} hiden={hiddenRow} loadingSearch={tableLoad} />
         </div>
       </>
     </>

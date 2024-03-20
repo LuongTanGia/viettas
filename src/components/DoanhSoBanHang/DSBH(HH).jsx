@@ -45,7 +45,6 @@ function DSBHHH() {
   }, [])
   useEffect(() => {
     setTableLoad(true)
-
     const getDate = async () => {
       const listTongHop = await CNDRTONGHOP(API.DSHangHoa, token, dataAPI)
       const listDoiTuong = await CNDRTONGHOP_listHelper(API.DSListHelper_HangHoa, token)

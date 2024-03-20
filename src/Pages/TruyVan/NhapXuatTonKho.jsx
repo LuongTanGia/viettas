@@ -309,7 +309,6 @@ const NhapXuatTonKho = () => {
     }
   }
   let timerId
-
   const handleDateChange = () => {
     clearTimeout(timerId)
     timerId = setTimeout(() => {
@@ -685,6 +684,343 @@ const NhapXuatTonKho = () => {
     },
   ]
   const newTitles = titles.filter((item) => !hiddenRow?.includes(item.dataIndex))
+  const titlesChildren = [
+    {
+      title: 'STT',
+      dataIndex: 'STT',
+      render: (text, record, index) => index + 1,
+      with: 10,
+      fixed: 'left',
+      width: 50,
+      align: 'center',
+    },
+    {
+      title: 'Mã hàng',
+      dataIndex: 'MaHang',
+      key: 'MaHang',
+      fixed: 'left',
+      width: 150,
+      align: 'center',
+      sorter: (a, b) => a.MaHang.localeCompare(b.MaHang),
+      showSorterTooltip: false,
+      render: (text) => <HighlightedCell text={text} search={searchHangHoa} />,
+    },
+    {
+      title: 'Tên hàng',
+      dataIndex: 'TenHang',
+      key: 'TenHang',
+      fixed: 'left',
+      sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
+      showSorterTooltip: false,
+      render: (text) => (
+        <Tooltip title={text} color="blue">
+          <div
+            style={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              cursor: 'pointer',
+            }}
+          >
+            <HighlightedCell text={text} search={searchHangHoa} />
+          </div>
+        </Tooltip>
+      ),
+    },
+    {
+      title: 'Nhóm',
+      dataIndex: 'TenNhomHang',
+      key: 'TenNhomHang',
+      width: 150,
+      sorter: (a, b) => a.TenNhomHang.localeCompare(b.TenNhomHang),
+      showSorterTooltip: false,
+      render: (text) => (
+        <Tooltip title={text} color="blue">
+          <div
+            style={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              cursor: 'pointer',
+            }}
+          >
+            <HighlightedCell text={text} search={searchHangHoa} />
+          </div>
+        </Tooltip>
+      ),
+    },
+    {
+      title: 'Tên Kho',
+      dataIndex: 'TenKho',
+      key: 'TenKho',
+      width: 150,
+      sorter: (a, b) => a.TenKho.localeCompare(b.TenKho),
+      showSorterTooltip: false,
+      render: (text) => <HighlightedCell text={text} search={searchHangHoa} />,
+    },
+    {
+      title: 'Đơn vị tính',
+      dataIndex: 'DVT',
+      key: 'DVT',
+      width: 150,
+      align: 'center',
+      sorter: (a, b) => a.DVT.localeCompare(b.DVT),
+      showSorterTooltip: false,
+      render: (text) => <HighlightedCell text={text} search={searchHangHoa} />,
+    },
+    {
+      title: 'Tồn đầu',
+      dataIndex: 'SoLuongTonDK',
+      key: 'SoLuongTonDK',
+      width: 150,
+      align: 'center',
+      showSorterTooltip: false,
+      sorter: (a, b) => a.SoLuongTonDK - b.SoLuongTonDK,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+        </div>
+      ),
+    },
+    {
+      title: 'Nhập',
+      align: 'center',
+      children: [
+        {
+          title: 'Mua hàng',
+          dataIndex: 'SoLuongNhap_PMH',
+          key: 'SoLuongNhap_PMH',
+          width: 150,
+          align: 'center',
+          showSorterTooltip: false,
+          sorter: (a, b) => a.SoLuongNhap_PMH - b.SoLuongNhap_PMH,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+        {
+          title: 'Trả hàng',
+          dataIndex: 'SoLuongNhap_NTR',
+          key: 'SoLuongNhap_NTR',
+          width: 150,
+          align: 'center',
+          showSorterTooltip: false,
+          sorter: (a, b) => a.SoLuongNhap_NTR - b.SoLuongNhap_NTR,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+        {
+          title: 'Chuyển kho',
+          dataIndex: 'SoLuongNhap_NCK',
+          key: 'SoLuongNhap_NCK',
+          width: 150,
+          align: 'center',
+          showSorterTooltip: false,
+          sorter: (a, b) => a.SoLuongNhap_NCK - b.SoLuongNhap_NCK,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+        {
+          title: 'Điều chỉnh',
+          dataIndex: 'SoLuongNhap_NDC',
+          key: 'SoLuongNhap_NDC',
+          width: 150,
+          align: 'center',
+          showSorterTooltip: false,
+          sorter: (a, b) => a.SoLuongNhap_NDC - b.SoLuongNhap_NDC,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+        {
+          title: 'Tổng nhập',
+          dataIndex: 'SoLuongNhap',
+          key: 'SoLuongNhap',
+          width: 150,
+          align: 'center',
+          showSorterTooltip: false,
+          sorter: (a, b) => a.SoLuongNhap - b.SoLuongNhap,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+      ],
+    },
+    {
+      title: 'Xuất',
+      align: 'center',
+      children: [
+        {
+          title: 'Bán sỉ',
+          dataIndex: 'SoLuongXuat_PBS',
+          key: 'SoLuongXuat_PBS',
+          width: 150,
+          align: 'center',
+          showSorterTooltip: false,
+          sorter: (a, b) => a.SoLuongXuat_PBS - b.SoLuongXuat_PBS,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+        {
+          title: 'Bán lẻ',
+          dataIndex: 'SoLuongXuat_PBL',
+          key: 'SoLuongXuat_PBL',
+          width: 150,
+          align: 'center',
+          showSorterTooltip: false,
+          sorter: (a, b) => a.SoLuongXuat_PBL - b.SoLuongXuat_PBL,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+        {
+          title: 'Bán lẻ (Quầy)',
+          dataIndex: 'SoLuongXuat_PBQ',
+          key: 'SoLuongXuat_PBQ',
+          width: 150,
+          align: 'center',
+          showSorterTooltip: false,
+          sorter: (a, b) => a.SoLuongXuat_PBQ - b.SoLuongXuat_PBQ,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+        {
+          title: 'Trả hàng',
+          dataIndex: 'SoLuongXuat_XTR',
+          key: 'SoLuongXuat_XTR',
+          width: 150,
+          align: 'center',
+          showSorterTooltip: false,
+          sorter: (a, b) => a.SoLuongXuat_XTR - b.SoLuongXuat_XTR,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+        {
+          title: 'Sử dụng',
+          dataIndex: 'SoLuongXuat_XSD',
+          key: 'SoLuongXuat_XSD',
+          width: 150,
+          align: 'center',
+          showSorterTooltip: false,
+          sorter: (a, b) => a.SoLuongXuat_XSD - b.SoLuongXuat_XSD,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+        {
+          title: 'Hủy',
+          dataIndex: 'SoLuongXuat_HUY',
+          key: 'SoLuongXuat_HUY',
+          width: 150,
+          align: 'center',
+          showSorterTooltip: false,
+          sorter: (a, b) => a.SoLuongXuat_HUY - b.SoLuongXuat_HUY,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+        {
+          title: 'Điều chỉnh',
+          dataIndex: 'SoLuongXuat_XDC',
+          key: 'SoLuongXuat_XDC',
+          width: 150,
+          align: 'center',
+          showSorterTooltip: false,
+          sorter: (a, b) => a.SoLuongXuat_XDC - b.SoLuongXuat_XDC,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+        {
+          title: 'Chuyển kho',
+          dataIndex: 'SoLuongXuat_XCK',
+          key: 'SoLuongXuat_XCK',
+          width: 150,
+          align: 'center',
+          showSorterTooltip: false,
+          sorter: (a, b) => a.SoLuongXuat_XCK - b.SoLuongXuat_XCK,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+        {
+          title: 'Tổng xuất',
+          dataIndex: 'SoLuongXuat',
+          key: 'SoLuongXuat',
+          width: 150,
+          align: 'center',
+          showSorterTooltip: false,
+          sorter: (a, b) => a.SoLuongXuat - b.SoLuongXuat,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+      ],
+    },
+
+    {
+      title: 'Tồn Cuối',
+      dataIndex: 'SoLuongTonCK',
+      fixed: 'right',
+      key: 'SoLuongTonCK',
+      width: 150,
+      align: 'center',
+      showSorterTooltip: false,
+      sorter: (a, b) => a.SoLuongTonCK - b.SoLuongTonCK,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+        </div>
+      ),
+    },
+  ]
+  function filterChildren(children) {
+    return children?.filter((item) => !hiddenRow?.includes(item.dataIndex))
+  }
+  const newTitlesChildren = titlesChildren
+    .map((item) => {
+      if (item.children && item.children.length > 0) {
+        item.children = filterChildren(item.children)
+        return item
+      } else {
+        return filterChildren([item])[0] || null
+      }
+    })
+    .filter((item) => item !== null)
+
   return (
     <>
       {dataCRUD?.VIEW == false ? (
@@ -794,7 +1130,7 @@ const NhapXuatTonKho = () => {
                             <div>
                               <Checkbox.Group
                                 style={{
-                                  width: '350px',
+                                  width: '280px',
                                   background: 'white',
                                   padding: 10,
                                   borderRadius: 10,
@@ -1128,11 +1464,11 @@ const NhapXuatTonKho = () => {
                 <Table
                   loading={tableLoad}
                   className="setHeight"
-                  columns={newTitles}
+                  columns={newTitlesChildren}
                   dataSource={filteredHangHoa.filter((item) => (selectedMaKho ? item.MaKho === selectedMaKho : true)).map((item, index) => ({ ...item, key: index }))}
                   size="small"
                   scroll={{
-                    x: 3300,
+                    x: 'max-content',
                     y: 300,
                   }}
                   pagination={{

@@ -53,8 +53,7 @@ const SoQuy = () => {
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
     setCheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
-    const ColKey = filteredHangHoa && filteredHangHoa[0] && Object.keys(filteredHangHoa[0]).filter((item) => item.includes('THU') || item.includes('CHI'))
-    const key = Object?.keys(dataSoQuy[0] || []).filter((key) => !ColKey.includes(key) && key != 'DauKy' && key != 'CuoiKy')
+    const key = Object?.keys(dataSoQuy[0] || []).filter((key) => key != 'DauKy' && key != 'CuoiKy' && key != 'ID' && key != 'Loai')
     setOptions(key)
   }, [selectVisible])
 
@@ -377,6 +376,7 @@ const SoQuy = () => {
       ),
     },
   ]
+  const newTitles = titles?.filter((item) => !hiddenRow?.includes(item.dataIndex))
   const titlesChildren = [
     {
       title: 'STT',
@@ -444,6 +444,8 @@ const SoQuy = () => {
     },
     {
       title: 'Thu',
+      align: 'center',
+      ellipsis: true,
       children: [
         {
           title: 'Công nợ',
@@ -491,6 +493,8 @@ const SoQuy = () => {
     },
     {
       title: 'Chi',
+      ellipsis: true,
+      align: 'center',
       children: [
         {
           title: 'Công nợ',
@@ -551,7 +555,20 @@ const SoQuy = () => {
       ),
     },
   ]
-  const newTitles = titlesChildren.filter((item) => !hiddenRow?.includes(item.dataIndex))
+  function filterChildren(children) {
+    return children?.filter((item) => !hiddenRow?.includes(item.dataIndex))
+  }
+  const newTitlesChildren = titlesChildren
+    .map((item) => {
+      if (item.children && item.children.length > 0) {
+        item.children = filterChildren(item.children)
+        return item
+      } else {
+        return filterChildren([item])[0] || null
+      }
+    })
+    .filter((item) => item !== null)
+
   return (
     <>
       {dataCRUD?.VIEW == false ? (
@@ -710,7 +727,7 @@ const SoQuy = () => {
                     loading={tableLoad}
                     bordered
                     className="setHeight"
-                    columns={newTitles}
+                    columns={newTitlesChildren}
                     dataSource={filteredHangHoa?.map((record, index) => ({ ...record, key: index }))}
                     pagination={{
                       defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
@@ -733,7 +750,7 @@ const SoQuy = () => {
                       return (
                         <Table.Summary fixed="bottom">
                           <Table.Summary.Row>
-                            {titles
+                            {newTitles
                               .filter((column) => column.render)
                               .map((column, index) => {
                                 const data = filteredHangHoa?.map((record, index) => ({ ...record, key: index }))

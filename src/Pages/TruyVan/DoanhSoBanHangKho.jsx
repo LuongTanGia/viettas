@@ -166,7 +166,7 @@ const DoanhSoBanHangKho = () => {
       getTimeSetting()
     }
   }, [isLoading])
-
+  console.log(dayjs(khoanNgayFrom).format('YYYY-MM-DD'), dayjs(khoanNgayTo).format('YYYY-MM-DD'))
   useEffect(() => {
     const getDataNXTFirst = async () => {
       try {
