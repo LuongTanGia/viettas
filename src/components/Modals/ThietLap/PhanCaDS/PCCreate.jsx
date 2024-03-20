@@ -24,13 +24,13 @@ const PCCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
     MaCa: '',
     GhiChu: '',
   }
-
   const [PCForm, setPCForm] = useState(() => {
     return innitProduct
   })
   const [errors, setErrors] = useState({
     MaNguoiDung: '',
     SoQuay: '',
+    MaCa: '',
   })
 
   useEffect(() => {
@@ -101,7 +101,8 @@ const PCCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
     if (!PCForm?.MaNguoiDung?.trim() || !PCForm?.SoQuay) {
       setErrors({
         MaNguoiDung: PCForm?.MaNguoiDung?.trim() ? null : 'Người dùng không được trống',
-        SoQuay: PCForm?.SoQuay ? null : 'Quầy không được trống',
+        SoQuay: !PCForm?.MaCa ? null : PCForm?.SoQuay ? null : 'Quầy không được trống',
+        MaCa: !PCForm?.SoQuay ? null : PCForm?.MaCa ? null : 'Ca không được trống',
       })
       return
     }
@@ -165,7 +166,7 @@ const PCCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
                         )}
                     </Select>
                   </div>
-                  <div className="flex items-center ml-[15px] ">
+                  <div className="flex items-center ml-[15px]">
                     <div className="flex items-center gap-1 w-full">
                       <label className="required whitespace-nowrap text-sm">Kể từ ngày</label>
                       <DateField
@@ -188,12 +189,12 @@ const PCCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
                       />
                     </div>
                     <div className="flex items-center gap-1 w-full">
-                      <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Quầy</label>
+                      <label className="whitespace-nowrap required min-w-[90px] text-sm flex justify-end ">Quầy</label>
                       <Select
                         style={{ width: '100%' }}
                         showSearch
                         required
-                        className="text-end"
+                        className="text-end truncate 2xl:max-w-[8rem] xl:max-w-[7rem] md:max-w-[6rem]"
                         size="small"
                         status={errors.SoQuay ? 'error' : ''}
                         placeholder={errors?.SoQuay ? errors?.SoQuay : ''}
@@ -214,19 +215,23 @@ const PCCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
                           ))}
                       </Select>
                     </div>
-                    <div className="flex items-center gap-1 w-[90%]">
-                      <label className=" whitespace-nowrap min-w-[90px] text-sm flex justify-end">Ca</label>
+                    <div className="flex items-center gap-1 w-[80%]">
+                      <label className="required whitespace-nowrap min-w-[90px] text-sm flex justify-end">Ca</label>
                       <Select
                         style={{ width: '100%' }}
                         showSearch
                         required
                         size="small"
+                        className="truncate xl:max-w-[7rem] md:max-w-[6rem]"
+                        status={errors.MaCa ? 'error' : ''}
+                        placeholder={errors?.MaCa ? errors?.MaCa : ''}
                         value={PCForm?.MaCa || undefined}
                         onChange={(value) => {
                           setPCForm({
                             ...PCForm,
                             MaCa: value,
                           })
+                          setErrors({ ...errors, MaCa: '' })
                         }}
                       >
                         {dataCa &&

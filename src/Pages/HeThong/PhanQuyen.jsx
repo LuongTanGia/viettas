@@ -24,8 +24,7 @@ const PhanQuyen = () => {
   const [setSearchUser, filteredUser, searchUser] = useSearch(dataUser)
   const [isShowNotify, setIsShowNotify] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [isHandel, setIhandel] = useState(false)
-
+  const [isHandle, setIsHandle] = useState(false)
   const [tableLoadLeft, setTableLoadLeft] = useState(true)
   const [tableLoadRight, setTableLoadRight] = useState(true)
   const [isShowSearch, setIsShowSearch] = useState(false)
@@ -110,6 +109,7 @@ const PhanQuyen = () => {
         setIsLoading(true)
       }
     }
+
     getDataChucNang()
   }, [searchChucNang, targetRow])
 
@@ -189,7 +189,7 @@ const PhanQuyen = () => {
       render: (record) => {
         return (
           <>
-            <Checkbox className=" justify-center" id={record.key} onChange={() => setIhandel(!isHandel)} />
+            <Checkbox className=" justify-center" id={record.key} onChange={() => setIsHandle(!isHandle)} />
           </>
         )
       },
@@ -200,20 +200,44 @@ const PhanQuyen = () => {
     if (isNaN(recordKey)) {
       const updatedDataSource = dataSource.map((record) => {
         const updatedChildren = record.children.map((child) => {
+          const updateSubChildren = child?.children?.map((subChild) => {
+            if (subChild.key === recordKey) {
+              return { ...subChild, [value]: checked }
+            }
+            return subChild
+          })
           if (child.key === recordKey) {
             return { ...child, [value]: checked }
           }
-          return child
+          return { ...child, children: updateSubChildren }
         })
         return { ...record, children: updatedChildren }
       })
       setDataSource(updatedDataSource)
     } else {
-      const updatedDataSource = dataSource.map((record) => {
-        if (record.key === recordKey) {
-          return { ...record, [value]: checked }
+      const updatedDataSource = dataSource?.map((record) => {
+        const updateRecord = (item) => {
+          if (item.key === recordKey) {
+            const updatedItem = {
+              ...item,
+              [value]: checked,
+              children: item.children.map((child) => {
+                const updatedChild = {
+                  ...child,
+                  [value]: checked,
+                  children: child.children?.map((subChild) => ({
+                    ...subChild,
+                    [value]: checked,
+                  })),
+                }
+                return updatedChild
+              }),
+            }
+            return updatedItem
+          }
+          return item
         }
-        return record
+        return updateRecord(record)
       })
       setDataSource(updatedDataSource)
     }
@@ -233,7 +257,6 @@ const PhanQuyen = () => {
             cursor: 'pointer',
             textAlign: 'start',
           }}
-          onClick={() => console.log(record)}
         >
           <HighlightedCell text={text} search={searchChucNang} />
         </div>
@@ -463,8 +486,7 @@ const PhanQuyen = () => {
           }))
       : []
     setDataSource(data)
-  }, [isHandel])
-
+  }, [isHandle, tableLoadRight])
   return (
     <>
       {dataCRUD?.RUN == false ? (
