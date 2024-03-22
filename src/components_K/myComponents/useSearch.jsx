@@ -59,6 +59,10 @@ export const useSearch = (data) => {
           TyLeThue,
           TienThue,
           ThanhTien,
+          // TongHopPBL
+          TongThu,
+          TongChi,
+          TienPhaiNop,
         } = item || {}
 
         return (
@@ -112,6 +116,10 @@ export const useSearch = (data) => {
           (TyLeThue?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (TienThue?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (ThanhTien?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          // TongHopPBL
+          (TongThu?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (TongChi?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (TienPhaiNop?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           // SDV
           (DiaChiDoiTuong || '').toLowerCase().includes(search.toLowerCase())
         )

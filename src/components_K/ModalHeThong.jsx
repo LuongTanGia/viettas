@@ -34,16 +34,6 @@ const ModalHeThong = ({ close }) => {
   // const [dataHMChi, setDataHMChi] = useState([])
   // const [dataHMThu, setDataHMThu] = useState([])
   const [isLoading, setIsLoading] = useState(true)
-  const [errors, setErrors] = useState({
-    DATERANGEMIN: '',
-    DATERANGEMAX: '',
-    Ca1_bd: 0,
-    Ca1_kt: 0,
-    Ca2_bd: 0,
-    Ca2_kt: 0,
-    Ca3_bd: 0,
-    Ca3_kt: 0,
-  })
 
   const [formHT, setFormHT] = useState({})
 
@@ -112,6 +102,10 @@ const ModalHeThong = ({ close }) => {
     }
   }
 
+  const handleOverlapTime = (start, end) => {
+    return start < end
+  }
+
   const handleDieuChinhTT = async () => {
     if (dayjs(formHT?.DATERANGEMIN).isAfter(dayjs(formHT?.DATERANGEMAX))) {
       toast.warning('ngày bắt đầu không được lớn hơn ngày kết thúc!')
@@ -119,37 +113,40 @@ const ModalHeThong = ({ close }) => {
     }
 
     if (formHT?.Ca1_KetThuc < 1440) {
-      if (dayjs(formHT?.Ca1_BatDau).isAfter(dayjs(formHT?.Ca1_KetThuc))) {
+      if (formHT?.Ca1_BatDau > formHT?.Ca1_KetThuc) {
         toast.warning('Thời gian bắt đầu không được lớn hơn thời gian kết thúc!')
         return
       }
     }
-    if (formHT?.Ca1_KetThuc < 1440 && formHT?.Ca2_KetThuc < 1440) {
-      if (dayjs(formHT?.Ca2_BatDau).isAfter(dayjs(formHT?.Ca2_KetThuc))) {
+    if (formHT?.Ca2_KetThuc < 1440) {
+      if (formHT?.Ca2_BatDau > formHT?.Ca2_KetThuc) {
         toast.warning('Thời gian bắt đầu không được lớn hơn thời gian kết thúc!')
         return
       }
     }
-    if (formHT?.Ca2_KetThuc < 1440 && formHT?.Ca3_KetThuc < 1440) {
+    if (formHT?.Ca3_KetThuc < 1440) {
       if (dayjs(formHT?.Ca3_BatDau).isAfter(dayjs(formHT?.Ca3_KetThuc))) {
         toast.warning('Thời gian bắt đầu không được lớn hơn thời gian kết thúc!')
         return
       }
     }
-
-    if (formHT?.Ca1_KetThuc < 1440 && formHT?.Ca2_KetThuc >= 1440) {
-      const tong = formHT?.Ca2_KetThuc - formHT?.Ca1_KetThuc
-      if (tong > 1440) {
-        toast.warning('Thời gian phân ca không được quá một ngày!')
-        return
-      }
+    if (formHT?.Ca2 && handleOverlapTime(formHT?.Ca2_BatDau, formHT?.Ca1_KetThuc)) {
+      toast.warning('Thời gian phân ca trùng nhau!')
+      return
     }
-    if (formHT?.Ca2_KetThuc < 1440 && formHT?.Ca3_KetThuc >= 1440) {
-      const tong = formHT?.Ca3_KetThuc - formHT?.Ca2_KetThuc
-      if (tong > 1440) {
-        toast.warning('Thời gian phân ca không được quá một ngày!')
-        return
-      }
+    if (formHT?.Ca3 && handleOverlapTime(formHT?.Ca3_BatDau, formHT?.Ca2_KetThuc)) {
+      toast.warning('Thời gian phân ca trùng nhau!')
+      return
+    }
+
+    if (formHT?.Ca2_KetThuc - formHT?.Ca1_BatDau > 1440) {
+      toast.warning('Thời gian phân ca không được quá một ngày!')
+      return
+    }
+
+    if (formHT?.Ca3_KetThuc - formHT?.Ca1_BatDau > 1440) {
+      toast.warning('Thời gian phân ca không được quá một ngày!')
+      return
     }
 
     try {
@@ -439,13 +436,13 @@ const ModalHeThong = ({ close }) => {
                         disabled={!formHT?.SUDUNG_BANLE}
                       />
                       <div className="flex md:gap-1  lg:gap-3">
-                        <Checkbox disabled={!formHT?.SUDUNG_BANLE} checked={formHT?.Ca1} onChange={(e) => setFormHT({ ...formHT, Ca1: e.target.checked })}>
+                        <Checkbox disabled={!formHT?.SUDUNG_BANLE} checked={formHT?.Ca1}>
                           Ca 1
                         </Checkbox>
                         <div className="flex gap-2 items-center">
                           <label>Từ</label>
                           <TimeField
-                            className="max-w-[70px]"
+                            className="w-[70px]"
                             sx={{
                               '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
                               '& .MuiButtonBase-root': {
@@ -469,7 +466,7 @@ const ModalHeThong = ({ close }) => {
                         <div className="flex gap-2 items-center">
                           <label>Đến</label>
                           <TimeField
-                            className="max-w-[70px]"
+                            className="w-[70px]"
                             sx={{
                               '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
                               '& .MuiButtonBase-root': {
@@ -496,9 +493,8 @@ const ModalHeThong = ({ close }) => {
                             checked={formHT.Ca1_KetThuc >= 1440 ? true : false}
                             onChange={(e) => {
                               const newValue = e.target.checked ? formHT.Ca1_KetThuc + 1440 : formHT.Ca1_KetThuc - 1440
-                              const newValueCa = e.target.checked ? false : true
-                              const newValueCa2KT = formHT?.Ca1 && formHT.Ca2_KetThuc >= 1440 ? formHT.Ca2_KetThuc - 1440 : formHT.Ca2_KetThuc
-                              setFormHT({ ...formHT, Ca1_KetThuc: newValue, Ca2: newValueCa, Ca3: newValueCa, Ca2_KetThuc: newValueCa2KT })
+                              // const newValueCa2KT = formHT?.Ca1 && formHT.Ca2_KetThuc >= 1440 ? formHT.Ca2_KetThuc - 1440 : formHT.Ca2_KetThuc
+                              setFormHT({ ...formHT, Ca1_KetThuc: newValue })
                             }}
                           >
                             <span className="md:hidden lg:flex">Hôm sau</span>
@@ -506,16 +502,19 @@ const ModalHeThong = ({ close }) => {
                         </Tooltip>
                       </div>
                       <div className="flex md:gap-1  lg:gap-3">
-                        <Checkbox disabled={!formHT?.SUDUNG_BANLE || !formHT?.Ca2} checked={formHT?.Ca2} onChange={(e) => setFormHT({ ...formHT, Ca2: e.target.checked })}>
+                        <Checkbox disabled={!formHT?.SUDUNG_BANLE || !formHT?.Ca2} checked={formHT?.Ca2}>
                           Ca 2
                         </Checkbox>
                         <div className="flex gap-2 items-center">
                           <label>Từ</label>
                           <TimeField
-                            className="max-w-[70px]"
+                            className="w-[70px]"
                             format="HH:mm"
                             maxTime={formHT?.Ca2_KetThuc < 1440 ? dayjs(convertMinutesToHHMM(formHT.Ca2_KetThuc)) : undefined}
                             sx={{
+                              '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': {
+                                border: formHT?.Ca1_KetThuc >= 1440 && formHT?.Ca2_KetThuc - formHT?.Ca1_BatDau > 1440 ? '1px solid red' : '',
+                              },
                               '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
                               '& .MuiButtonBase-root': {
                                 padding: '4px',
@@ -536,7 +535,7 @@ const ModalHeThong = ({ close }) => {
                         <div className="flex gap-2 items-center">
                           <label>Đến</label>
                           <TimeField
-                            className="max-w-[70px]"
+                            className="w-[70px]"
                             format="HH:mm"
                             minTime={formHT?.Ca2_KetThuc < 1440 ? dayjs(convertMinutesToHHMM(formHT.Ca2_BatDau)) : undefined}
                             sx={{
@@ -562,10 +561,10 @@ const ModalHeThong = ({ close }) => {
                             checked={formHT.Ca2_KetThuc >= 1440 ? true : false}
                             onChange={(e) => {
                               const newValue = e.target.checked ? formHT.Ca2_KetThuc + 1440 : formHT.Ca2_KetThuc - 1440
-                              const newValueCa = e.target.checked ? false : true
-                              const newValueCa3KT = formHT?.Ca2 && formHT.Ca3_KetThuc >= 1440 ? formHT.Ca3_KetThuc - 1440 : formHT.Ca3_KetThuc
 
-                              setFormHT({ ...formHT, Ca2_KetThuc: newValue, Ca3: newValueCa, Ca3_KetThuc: newValueCa3KT })
+                              // const newValueCa3KT = formHT?.Ca2 && formHT.Ca3_KetThuc >= 1440 ? formHT.Ca3_KetThuc - 1440 : formHT.Ca3_KetThuc
+
+                              setFormHT({ ...formHT, Ca2_KetThuc: newValue })
                             }}
                             disabled={!formHT?.SUDUNG_BANLE || !formHT?.Ca2}
                           >
@@ -574,13 +573,13 @@ const ModalHeThong = ({ close }) => {
                         </Tooltip>
                       </div>
                       <div className="flex md:gap-1  lg:gap-3">
-                        <Checkbox disabled={!formHT?.SUDUNG_BANLE || !formHT?.Ca3} checked={formHT?.Ca3} onChange={(e) => setFormHT({ ...formHT, Ca3: e.target.checked })}>
+                        <Checkbox disabled={!formHT?.SUDUNG_BANLE || !formHT?.Ca3} checked={formHT?.Ca3}>
                           Ca 3
                         </Checkbox>
                         <div className="flex gap-2 items-center">
                           <label>Từ</label>
                           <TimeField
-                            className="max-w-[70px]"
+                            className="w-[70px]"
                             format="HH:mm"
                             maxTime={formHT?.Ca3_KetThuc < 1440 ? dayjs(convertMinutesToHHMM(formHT.Ca3_KetThuc)) : undefined}
                             sx={{
@@ -604,7 +603,7 @@ const ModalHeThong = ({ close }) => {
                         <div className="flex gap-2 items-center">
                           <label>Đến</label>
                           <TimeField
-                            className="max-w-[70px]"
+                            className="w-[70px]"
                             format="HH:mm"
                             maxTime={formHT?.Ca3_KetThuc < 1440 ? dayjs(convertMinutesToHHMM(formHT.Ca3_KetThuc)) : undefined}
                             sx={{

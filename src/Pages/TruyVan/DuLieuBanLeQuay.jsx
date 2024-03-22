@@ -1,10 +1,10 @@
 import { useEffect, useState, useRef } from 'react'
-import { Table, Tooltip, Input, Typography } from 'antd'
+import { Table, Tooltip, Input, Typography, Segmented } from 'antd'
 import icons from '../../untils/icons'
 import { toast } from 'react-toastify'
 import * as apis from '../../apis'
 
-import { RETOKEN, formatPrice } from '../../action/Actions'
+import { RETOKEN, formatCurrency, formatPrice } from '../../action/Actions'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
 import dayjs from 'dayjs'
 import { CloseSquareFilled } from '@ant-design/icons'
@@ -28,14 +28,19 @@ const DuLieuBLQ = () => {
   const [dataBLQ, setDataBLQ] = useState([])
   const [dataThongTin, setDataThongTin] = useState({})
   const [dataQuyenHan, setDataQuyenHan] = useState({})
-  const [setSearchDuLieuBLQ, filteredDuLieuBLQ, searchDuLieuBLQ] = useSearch(dataBLQ)
   const [setSearchDuLieuQuayCa, filteredDuLieuQuayCa, searchDuLieuQuayCa] = useSearch(dataQuayCa)
+  const [setSearchDuLieuBLQ, filteredDuLieuBLQ, searchDuLieuBLQ] = useSearch(dataBLQ)
   const [prevSearchValue, setPrevSearchValue] = useState('')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
   const [isShowNotify, setIsShowNotify] = useState(false)
   const [prevdateValue, setPrevDateValue] = useState({})
   const [lastSearchTime, setLastSearchTime] = useState(0)
+  const [showFull, setShowFull] = useState('Hiện hành')
+  const [isChanging, setIsChanging] = useState(false)
+  const [timerId, setTimerId] = useState(null)
+  const [firtQuayCa, setFirtQuayCa] = useState('')
+  const [firtBLQ, setFirtBLQ] = useState('')
 
   const transformedDataSource = {
     Details: dataThongTin?.Details?.map((item) => ({
@@ -70,16 +75,32 @@ const DuLieuBLQ = () => {
     if (dataQuayCa && dataQuayCa.length > 0) {
       const formDF = dataQuayCa[0]
       const record = null
+      setFirtQuayCa(`${dataQuayCa[0].NgayCTu}/${dataQuayCa[0].NhanVien}`)
+      setTableLoadChild(true)
       getDSBLQ(record, formDF)
     }
   }, [dataQuayCa])
 
   useEffect(() => {
     if (dataBLQ && dataBLQ.length > 0) {
-      const sct = dataBLQ[0]?.SoChungTu
+      const sct = dataBLQ[0].SoChungTu
       const record = null
-      setTableLoadTT(true)
-      getThongTin(record, sct)
+      setFirtBLQ(dataBLQ[0].SoChungTu)
+      if (timerId) {
+        clearTimeout(timerId)
+      }
+      const newTimerId = setTimeout(() => {
+        getThongTin(record, sct)
+        setTableLoadTT(true)
+      }, 300)
+
+      setTimerId(newTimerId)
+    }
+    // Hủy timer khi component unmount hoặc khi dataBLQ thay đổi
+    return () => {
+      if (timerId) {
+        clearTimeout(timerId)
+      }
     }
   }, [dataBLQ])
 
@@ -177,7 +198,7 @@ const DuLieuBLQ = () => {
       key: 'NgayCTu',
       align: 'center',
       render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY')} search={searchDuLieuQuayCa} />,
-      width: 100,
+      width: 150,
       sorter: (a, b) => {
         const dateA = new Date(a.NgayCTu)
         const dateB = new Date(b.NgayCTu)
@@ -193,10 +214,10 @@ const DuLieuBLQ = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-end">
+        <div className="truncate ">
           <Tooltip title={text} color="blue" placement="top">
             <span>
-              <HighlightedCell text={text} search={searchDuLieuQuayCa} />
+              <HighlightedCell text={formatCurrency(text)} search={searchDuLieuQuayCa} />
             </span>
           </Tooltip>
         </div>
@@ -643,7 +664,6 @@ const DuLieuBLQ = () => {
 
   const handleViewThongTin = (record) => {
     const currentTime = Date.now()
-
     if (currentTime - lastSearchTime < 1000) {
       return
     }
@@ -654,7 +674,6 @@ const DuLieuBLQ = () => {
 
   const getThongTin = async (record, sct) => {
     try {
-      console.log(sct)
       const tokenLogin = localStorage.getItem('TKN')
       let response
       if (record) {
@@ -778,7 +797,7 @@ const DuLieuBLQ = () => {
                 </div>
                 {/*  */}
               </div>
-              <div className="flex  items-center px-2  gap-2">
+              <div className="flex justify-between items-center pl-2  ">
                 <div className="flex flex-col gap-y-2 ">
                   {/* DatePicker */}
                   <div className="flex gap-3">
@@ -857,6 +876,21 @@ const DuLieuBLQ = () => {
                     </div>
                   </div>
                 </div>
+
+                <Segmented
+                  options={['Phiếu bán hàng', 'Phiếu thu', 'Phiếu chi']}
+                  value={showFull}
+                  // onChange={(value) => {
+                  //   if (!isChanging) {
+                  //     setIsChanging(true)
+                  //     setShowFull(value)
+                  //     setTableLoad(true)
+                  //     setTimeout(() => {
+                  //       setIsChanging(false)
+                  //     }, 1000)
+                  //   }
+                  // }}
+                />
               </div>
               <div id="my-table" className="pt-2 flex gap-2 ">
                 <div className="w-[30vw]">
@@ -872,8 +906,11 @@ const DuLieuBLQ = () => {
                     }}
                     bordered
                     pagination={false}
+                    rowClassName={(record) => (`${record.NgayCTu}/${record.NhanVien}` === firtQuayCa ? 'highlighted-row' : '')}
+                    rowKey={(record) => `${record.NgayCTu}/${record.NhanVien}`}
                     onRow={(record) => ({
                       onDoubleClick: () => handleView(record),
+                      onClick: () => setFirtQuayCa(`${record.NgayCTu}/${record.NhanVien}`),
                     })}
                     summary={() => {
                       return (
@@ -899,7 +936,7 @@ const DuLieuBLQ = () => {
                     }}
                   ></Table>
                 </div>
-                <div className="w-[67vw] ">
+                <div className="w-[66vw] ">
                   <div>
                     <Table
                       loading={tableLoadChild}
@@ -912,8 +949,11 @@ const DuLieuBLQ = () => {
                         y: 200,
                       }}
                       bordered
+                      rowClassName={(record) => (record.SoChungTu === firtBLQ ? 'highlighted-row' : '')}
+                      rowKey={(record) => record.SoChungTu}
                       onRow={(record) => ({
                         onDoubleClick: () => handleViewThongTin(record),
+                        onClick: () => setFirtBLQ(record.SoChungTu),
                       })}
                       pagination={false}
                       summary={() => {
@@ -958,7 +998,7 @@ const DuLieuBLQ = () => {
                       }}
                     ></Table>
                   </div>
-                  <div>
+                  <div className="mt-1">
                     <Table
                       loading={tableLoadTT}
                       className="BLQ_child2"

@@ -47,6 +47,8 @@ import DoanhSoBanHangKho from '../../Pages/TruyVan/DoanhSoBanHangKho'
 import DoanhSoBanHangQuay from '../../Pages/TruyVan/DoanhSoBanHangQuay'
 import SoQuy from '../../Pages/TruyVan/SoQuy'
 import BinhQuanXuatKho from '../../Pages/XuLy/BinhQuanXuatKho'
+import TongHopPBL from '../../Pages/XuLy/TongHopPhieuBanLe'
+import GoChotCa from '../../Pages/XuLy/GoDuLieuChotCa'
 import PhanQuyen from '../../Pages/HeThong/PhanQuyen'
 
 function MainPage({ isSidebarVisible, isTableLoad, isTargetRow }) {
@@ -80,6 +82,8 @@ function MainPage({ isSidebarVisible, isTableLoad, isTargetRow }) {
           <Route path="/DuLieuTC/DuLieu_PCT" element={<PhieuChiTien />} />
           <Route path="/DuLieuTC/DuLieu_PTT" element={<PhieuThuTien />} />
           <Route path="/XuLy_BinhQuanXuatKho" element={<BinhQuanXuatKho />} />
+          <Route path="/XuLy_TongHopPhieuBanLe" element={<TongHopPBL />} />
+          <Route path="/XuLy_GoDuLieuChotCa" element={<GoChotCa />} />
           <Route path="/TruyVan_CongNoDauRa" element={<CongNoDauRa />} />
           <Route path="/TruyVan_CongNoDauVao" element={<CongNoDauVao />} />
           <Route path="/TruyVan_DoanhSoBanHangHH" element={<DSBHHH />} />
