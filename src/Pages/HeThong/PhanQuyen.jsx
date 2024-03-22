@@ -30,6 +30,7 @@ const PhanQuyen = () => {
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [targetRow, setTargetRow] = useState([])
   const [dataCRUD, setDataCRUD] = useState()
+  const [checkedValue, setCheckedValue] = useState()
   const innitProduct = {
     TenChucNang: '',
     VISIBLE: true,
@@ -195,27 +196,119 @@ const PhanQuyen = () => {
       },
     },
   ]
-
   const handleCheckboxChange = (checked, recordKey, value) => {
-    if (isNaN(recordKey)) {
-      const updatedDataSource = dataSource.map((record) => {
+    const updatedDataSource = dataSource.map((record) => {
+      if (isNaN(recordKey)) {
         const updatedChildren = record.children.map((child) => {
           const updateSubChildren = child?.children?.map((subChild) => {
             if (subChild.key === recordKey) {
-              return { ...subChild, [value]: checked }
+              if (value === 'VISIBLE') {
+                const updatedSubChildVISIBLE = {
+                  ...subChild,
+                  [value]: checked,
+                  VIEW: subChild.ALLOW_VIEW == true ? checked : null,
+                  ADD: subChild.ALLOW_ADD == true ? checked : null,
+                  DEL: subChild.ALLOW_DEL == true ? checked : null,
+                  EDIT: subChild.ALLOW_EDIT == true ? checked : null,
+                  RUN: subChild.ALLOW_RUN == true ? checked : null,
+                  EXCEL: subChild.ALLOW_EXCEL == true ? checked : null,
+                  TOOLBAR: subChild.ALLOW_TOOLBAR == true ? checked : null,
+                }
+                return updatedSubChildVISIBLE
+              } else if (value === 'VIEW') {
+                const updatedSubChildVIEW = {
+                  ...subChild,
+                  [value]: checked,
+                  ADD: subChild.ALLOW_ADD == true ? checked : null,
+                  DEL: subChild.ALLOW_DEL == true ? checked : null,
+                  EDIT: subChild.ALLOW_EDIT == true ? checked : null,
+                  RUN: subChild.ALLOW_RUN == true ? checked : null,
+                  EXCEL: subChild.ALLOW_EXCEL == true ? checked : null,
+                  TOOLBAR: subChild.ALLOW_TOOLBAR == true ? checked : null,
+                }
+                return updatedSubChildVIEW
+              } else return { ...subChild, [value]: checked }
             }
             return subChild
           })
           if (child.key === recordKey) {
-            return { ...child, [value]: checked }
+            if (value === 'VISIBLE') {
+              const updatedChildVISIBLE = {
+                ...child,
+                [value]: checked,
+                VIEW: child.ALLOW_VIEW == true ? checked : null,
+                ADD: child.ALLOW_ADD == true ? checked : null,
+                DEL: child.ALLOW_DEL == true ? checked : null,
+                EDIT: child.ALLOW_EDIT == true ? checked : null,
+                RUN: child.ALLOW_RUN == true ? checked : null,
+                EXCEL: child.ALLOW_EXCEL == true ? checked : null,
+                TOOLBAR: child.ALLOW_TOOLBAR == true ? checked : null,
+                children: updateSubChildren?.map((subChild) => {
+                  if (value === 'VISIBLE' || value === 'VIEW') {
+                    return {
+                      ...subChild,
+                      [value]: checked,
+                      VIEW: subChild.ALLOW_VIEW === true ? checked : null,
+                      ADD: subChild.ALLOW_ADD === true ? checked : null,
+                      DEL: subChild.ALLOW_DEL === true ? checked : null,
+                      EDIT: subChild.ALLOW_EDIT === true ? checked : null,
+                      RUN: subChild.ALLOW_RUN === true ? checked : null,
+                      EXCEL: subChild.ALLOW_EXCEL === true ? checked : null,
+                      TOOLBAR: subChild.ALLOW_TOOLBAR === true ? checked : null,
+                    }
+                  } else {
+                    return { ...subChild, [value]: checked }
+                  }
+                }),
+              }
+              return updatedChildVISIBLE
+            } else if (value === 'VIEW') {
+              const updatedChildVIEW = {
+                ...child,
+                [value]: checked,
+                ADD: child.ALLOW_ADD == true ? checked : null,
+                DEL: child.ALLOW_DEL == true ? checked : null,
+                EDIT: child.ALLOW_EDIT == true ? checked : null,
+                RUN: child.ALLOW_RUN == true ? checked : null,
+                EXCEL: child.ALLOW_EXCEL == true ? checked : null,
+                TOOLBAR: child.ALLOW_TOOLBAR == true ? checked : null,
+                children: updateSubChildren?.map((subChild) => {
+                  if (value === 'VISIBLE' || value === 'VIEW') {
+                    return {
+                      ...subChild,
+                      [value]: checked,
+                      VIEW: subChild.ALLOW_VIEW === true ? checked : null,
+                      ADD: subChild.ALLOW_ADD === true ? checked : null,
+                      DEL: subChild.ALLOW_DEL === true ? checked : null,
+                      EDIT: subChild.ALLOW_EDIT === true ? checked : null,
+                      RUN: subChild.ALLOW_RUN === true ? checked : null,
+                      EXCEL: subChild.ALLOW_EXCEL === true ? checked : null,
+                      TOOLBAR: subChild.ALLOW_TOOLBAR === true ? checked : null,
+                    }
+                  } else {
+                    return { ...subChild, [value]: checked }
+                  }
+                }),
+              }
+              return updatedChildVIEW
+            } else if (updateSubChildren?.length > 0) {
+              const updatedChild = {
+                ...child,
+                [value]: checked,
+                children: updateSubChildren.map((subChild) => {
+                  return { ...subChild, [value]: checked }
+                }),
+              }
+              return updatedChild
+            } else {
+              return { ...child, [value]: checked }
+            }
           }
+
           return { ...child, children: updateSubChildren }
         })
         return { ...record, children: updatedChildren }
-      })
-      setDataSource(updatedDataSource)
-    } else {
-      const updatedDataSource = dataSource?.map((record) => {
+      } else {
         const updateRecord = (item) => {
           if (item.key === recordKey) {
             const updatedItem = {
@@ -224,23 +317,272 @@ const PhanQuyen = () => {
               children: item.children.map((child) => {
                 const updatedChild = {
                   ...child,
-                  [value]: checked,
-                  children: child.children?.map((subChild) => ({
-                    ...subChild,
-                    [value]: checked,
-                  })),
+                  [value]: child[`ALLOW_${value}`] === true ? checked : null,
+                  children:
+                    child.children?.map((subChild) => {
+                      const updateSubChildren = {
+                        ...subChild,
+                        [value]: subChild[`ALLOW_${value}`] === true ? checked : null,
+                      }
+                      return value === 'VISIBLE'
+                        ? {
+                            ...updateSubChildren,
+                            VIEW: subChild.ALLOW_VIEW === true ? checked : null,
+                            ADD: subChild.ALLOW_ADD === true ? checked : null,
+                            DEL: subChild.ALLOW_DEL === true ? checked : null,
+                            EDIT: subChild.ALLOW_EDIT === true ? checked : null,
+                            RUN: subChild.ALLOW_RUN === true ? checked : null,
+                            EXCEL: subChild.ALLOW_EXCEL === true ? checked : null,
+                            TOOLBAR: subChild.ALLOW_TOOLBAR === true ? checked : null,
+                          }
+                        : value === 'VIEW'
+                          ? {
+                              ...updateSubChildren,
+                              ADD: subChild.ALLOW_ADD === true ? checked : null,
+                              DEL: subChild.ALLOW_DEL === true ? checked : null,
+                              EDIT: subChild.ALLOW_EDIT === true ? checked : null,
+                              RUN: subChild.ALLOW_RUN === true ? checked : null,
+                              EXCEL: subChild.ALLOW_EXCEL === true ? checked : null,
+                              TOOLBAR: subChild.ALLOW_TOOLBAR === true ? checked : null,
+                            }
+                          : updateSubChildren
+                    }) || null,
                 }
-                return updatedChild
+                return value === 'VISIBLE'
+                  ? {
+                      ...updatedChild,
+                      VIEW: child.ALLOW_VIEW === true ? checked : null,
+                      ADD: child.ALLOW_ADD === true ? checked : null,
+                      DEL: child.ALLOW_DEL === true ? checked : null,
+                      EDIT: child.ALLOW_EDIT === true ? checked : null,
+                      RUN: child.ALLOW_RUN === true ? checked : null,
+                      EXCEL: child.ALLOW_EXCEL === true ? checked : null,
+                      TOOLBAR: child.ALLOW_TOOLBAR === true ? checked : null,
+                    }
+                  : value === 'VIEW'
+                    ? {
+                        ...updatedChild,
+                        ADD: child.ALLOW_ADD === true ? checked : null,
+                        DEL: child.ALLOW_DEL === true ? checked : null,
+                        EDIT: child.ALLOW_EDIT === true ? checked : null,
+                        RUN: child.ALLOW_RUN === true ? checked : null,
+                        EXCEL: child.ALLOW_EXCEL === true ? checked : null,
+                        TOOLBAR: child.ALLOW_TOOLBAR === true ? checked : null,
+                      }
+                    : updatedChild
               }),
             }
-            return updatedItem
+            return value === 'VISIBLE'
+              ? {
+                  ...updatedItem,
+                  VIEW: item.ALLOW_VIEW === true ? checked : null,
+                  ADD: item.ALLOW_ADD === true ? checked : null,
+                  DEL: item.ALLOW_DEL === true ? checked : null,
+                  EDIT: item.ALLOW_EDIT === true ? checked : null,
+                  RUN: item.ALLOW_RUN === true ? checked : null,
+                  EXCEL: item.ALLOW_EXCEL === true ? checked : null,
+                  TOOLBAR: item.ALLOW_TOOLBAR === true ? checked : null,
+                }
+              : value === 'VIEW'
+                ? {
+                    ...updatedItem,
+                    ADD: item.ALLOW_ADD === true ? checked : null,
+                    DEL: item.ALLOW_DEL === true ? checked : null,
+                    EDIT: item.ALLOW_EDIT === true ? checked : null,
+                    RUN: item.ALLOW_RUN === true ? checked : null,
+                    EXCEL: item.ALLOW_EXCEL === true ? checked : null,
+                    TOOLBAR: item.ALLOW_TOOLBAR === true ? checked : null,
+                  }
+                : updatedItem
           }
           return item
         }
         return updateRecord(record)
-      })
-      setDataSource(updatedDataSource)
-    }
+      }
+    })
+    setDataSource(updatedDataSource)
+  }
+
+  const handleCheckboxChange2 = (checked, recordKey, value) => {
+    const updatedDataSource = dataSource.map((record) => {
+      if (isNaN(recordKey)) {
+        const updatedChildren = record.children.map((child) => {
+          const updateSubChildren = child?.children?.map((subChild) => {
+            if (subChild.key === recordKey) {
+              const isParentChecked = child[value] === true
+              const childChecked = isParentChecked ? checked : false
+              if (value === 'VISIBLE') {
+                const updatedSubChildVISIBLE = {
+                  ...subChild,
+                  [value]: childChecked,
+                  VIEW: subChild.ALLOW_VIEW == true ? childChecked : null,
+                  ADD: subChild.ALLOW_ADD == true ? childChecked : null,
+                  DEL: subChild.ALLOW_DEL == true ? childChecked : null,
+                  EDIT: subChild.ALLOW_EDIT == true ? childChecked : null,
+                  RUN: subChild.ALLOW_RUN == true ? childChecked : null,
+                  EXCEL: subChild.ALLOW_EXCEL == true ? childChecked : null,
+                  TOOLBAR: subChild.ALLOW_TOOLBAR == true ? childChecked : null,
+                }
+                return updatedSubChildVISIBLE
+              } else if (value === 'VIEW') {
+                const updatedSubChildVIEW = {
+                  ...subChild,
+                  [value]: childChecked,
+                  ADD: subChild.ALLOW_ADD == true ? childChecked : null,
+                  DEL: subChild.ALLOW_DEL == true ? childChecked : null,
+                  EDIT: subChild.ALLOW_EDIT == true ? childChecked : null,
+                  RUN: subChild.ALLOW_RUN == true ? childChecked : null,
+                  EXCEL: subChild.ALLOW_EXCEL == true ? childChecked : null,
+                  TOOLBAR: subChild.ALLOW_TOOLBAR == true ? childChecked : null,
+                }
+                return updatedSubChildVIEW
+              } else return { ...subChild, [value]: childChecked }
+            }
+            return subChild
+          })
+          if (child.key === recordKey) {
+            const isParentChecked = child[value] === true
+            const childChecked = isParentChecked ? checked : false
+            if (value === 'VISIBLE') {
+              const updatedChildVISIBLE = {
+                ...child,
+                [value]: childChecked,
+                VIEW: child.ALLOW_VIEW == true ? childChecked : null,
+                ADD: child.ALLOW_ADD == true ? childChecked : null,
+                DEL: child.ALLOW_DEL == true ? childChecked : null,
+                EDIT: child.ALLOW_EDIT == true ? childChecked : null,
+                RUN: child.ALLOW_RUN == true ? childChecked : null,
+                EXCEL: child.ALLOW_EXCEL == true ? childChecked : null,
+                TOOLBAR: child.ALLOW_TOOLBAR == true ? childChecked : null,
+                children: updateSubChildren?.map((subChild) => {
+                  const isSubChildChecked = childChecked && subChild[value] !== false
+                  if (value === 'VISIBLE' || value === 'VIEW') {
+                    return {
+                      ...subChild,
+                      [value]: isSubChildChecked,
+                      VIEW: subChild.ALLOW_VIEW === true ? isSubChildChecked : null,
+                      ADD: subChild.ALLOW_ADD === true ? isSubChildChecked : null,
+                      DEL: subChild.ALLOW_DEL === true ? isSubChildChecked : null,
+                      EDIT: subChild.ALLOW_EDIT === true ? isSubChildChecked : null,
+                      RUN: subChild.ALLOW_RUN === true ? isSubChildChecked : null,
+                      EXCEL: subChild.ALLOW_EXCEL === true ? isSubChildChecked : null,
+                      TOOLBAR: subChild.ALLOW_TOOLBAR === true ? isSubChildChecked : null,
+                    }
+                  } else {
+                    return { ...subChild, [value]: isSubChildChecked }
+                  }
+                }),
+              }
+              return updatedChildVISIBLE
+            } else if (updateSubChildren?.length > 0) {
+              const updatedChild = {
+                ...child,
+                [value]: childChecked,
+                children: updateSubChildren.map((subChild) => {
+                  return { ...subChild, [value]: checked }
+                }),
+              }
+              return updatedChild
+            } else {
+              return { ...child, [value]: childChecked }
+            }
+          }
+          return { ...child, children: updateSubChildren }
+        })
+        return { ...record, children: updatedChildren }
+      } else {
+        const updateRecord = (item) => {
+          if (item.key === recordKey) {
+            const updatedItem = {
+              ...item,
+              [value]: checked,
+              children: item.children.map((child) => {
+                const updatedChild = {
+                  ...child,
+                  [value]: child[`ALLOW_${value}`] === true ? checked : null,
+                  children:
+                    child.children?.map((subChild) => {
+                      const updateSubChildren = {
+                        ...subChild,
+                        [value]: subChild[`ALLOW_${value}`] === true ? checked : null,
+                      }
+                      return value === 'VISIBLE'
+                        ? {
+                            ...updateSubChildren,
+                            VIEW: subChild.ALLOW_VIEW === true ? checked : null,
+                            ADD: subChild.ALLOW_ADD === true ? checked : null,
+                            DEL: subChild.ALLOW_DEL === true ? checked : null,
+                            EDIT: subChild.ALLOW_EDIT === true ? checked : null,
+                            RUN: subChild.ALLOW_RUN === true ? checked : null,
+                            EXCEL: subChild.ALLOW_EXCEL === true ? checked : null,
+                            TOOLBAR: subChild.ALLOW_TOOLBAR === true ? checked : null,
+                          }
+                        : value === 'VIEW'
+                          ? {
+                              ...updateSubChildren,
+                              ADD: subChild.ALLOW_ADD === true ? checked : null,
+                              DEL: subChild.ALLOW_DEL === true ? checked : null,
+                              EDIT: subChild.ALLOW_EDIT === true ? checked : null,
+                              RUN: subChild.ALLOW_RUN === true ? checked : null,
+                              EXCEL: subChild.ALLOW_EXCEL === true ? checked : null,
+                              TOOLBAR: subChild.ALLOW_TOOLBAR === true ? checked : null,
+                            }
+                          : updateSubChildren
+                    }) || null,
+                }
+                return value === 'VISIBLE'
+                  ? {
+                      ...updatedChild,
+                      VIEW: child.ALLOW_VIEW === true ? checked : null,
+                      ADD: child.ALLOW_ADD === true ? checked : null,
+                      DEL: child.ALLOW_DEL === true ? checked : null,
+                      EDIT: child.ALLOW_EDIT === true ? checked : null,
+                      RUN: child.ALLOW_RUN === true ? checked : null,
+                      EXCEL: child.ALLOW_EXCEL === true ? checked : null,
+                      TOOLBAR: child.ALLOW_TOOLBAR === true ? checked : null,
+                    }
+                  : value === 'VIEW'
+                    ? {
+                        ...updatedChild,
+                        ADD: child.ALLOW_ADD === true ? checked : null,
+                        DEL: child.ALLOW_DEL === true ? checked : null,
+                        EDIT: child.ALLOW_EDIT === true ? checked : null,
+                        RUN: child.ALLOW_RUN === true ? checked : null,
+                        EXCEL: child.ALLOW_EXCEL === true ? checked : null,
+                        TOOLBAR: child.ALLOW_TOOLBAR === true ? checked : null,
+                      }
+                    : updatedChild
+              }),
+            }
+            return value === 'VISIBLE'
+              ? {
+                  ...updatedItem,
+                  VIEW: item.ALLOW_VIEW === true ? checked : null,
+                  ADD: item.ALLOW_ADD === true ? checked : null,
+                  DEL: item.ALLOW_DEL === true ? checked : null,
+                  EDIT: item.ALLOW_EDIT === true ? checked : null,
+                  RUN: item.ALLOW_RUN === true ? checked : null,
+                  EXCEL: item.ALLOW_EXCEL === true ? checked : null,
+                  TOOLBAR: item.ALLOW_TOOLBAR === true ? checked : null,
+                }
+              : value === 'VIEW'
+                ? {
+                    ...updatedItem,
+                    ADD: item.ALLOW_ADD === true ? checked : null,
+                    DEL: item.ALLOW_DEL === true ? checked : null,
+                    EDIT: item.ALLOW_EDIT === true ? checked : null,
+                    RUN: item.ALLOW_RUN === true ? checked : null,
+                    EXCEL: item.ALLOW_EXCEL === true ? checked : null,
+                    TOOLBAR: item.ALLOW_TOOLBAR === true ? checked : null,
+                  }
+                : updatedItem
+          }
+          return item
+        }
+        return updateRecord(record)
+      }
+    })
+    setDataSource(updatedDataSource)
   }
   const titlesChucNang = [
     {
@@ -485,6 +827,7 @@ const PhanQuyen = () => {
               })),
           }))
       : []
+
     setDataSource(data)
   }, [isHandle, tableLoadRight])
   return (
