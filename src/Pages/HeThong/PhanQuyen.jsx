@@ -500,7 +500,7 @@ const PhanQuyen = () => {
         return (
           <Checkbox
             className=" justify-center"
-            indeterminate={isParentRecord(record) && checkedValue.length > 0 && testFunctions(record?.key, 'VISIBLE')}
+            indeterminate={isParentRecord(record) && checkedValue.length > 0 && isFullData?.length < dataSource[0].children.length}
             checked={text}
             id={`VISIBLE_${record?.key}`}
             disabled={record?.ALLOW_VISIBLE == false}
