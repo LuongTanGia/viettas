@@ -46,6 +46,7 @@ import DoanhSoBanHangQuay from '../../Pages/TruyVan/DoanhSoBanHangQuay'
 import SoQuy from '../../Pages/TruyVan/SoQuy'
 import BinhQuanXuatKho from '../../Pages/XuLy/BinhQuanXuatKho'
 import PhanQuyen from '../../Pages/HeThong/PhanQuyen'
+import ThongKeQuyenHan from '../../Pages/HeThong/ThongKeQuyenHan'
 
 function MainPage({ isSidebarVisible, isTableLoad, isTargetRow }) {
   return (
@@ -98,6 +99,7 @@ function MainPage({ isSidebarVisible, isTableLoad, isTargetRow }) {
           <Route path="/ThietLap_QuanLy" element={<QuanLy />} />
           <Route path="/ThietLap_QuayTinhTien" element={<QuayTinhTien />} />
           <Route path="/HeThong_PhanQuyen" element={<PhanQuyen />} />
+          <Route path="/HeThong_ThongKeQuyen" element={<ThongKeQuyenHan />} />
 
           <Route path="*" element={<ErrorPage />} />
         </Routes>

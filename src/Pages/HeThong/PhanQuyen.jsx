@@ -14,6 +14,7 @@ import categoryAPI from '../../API/linkAPI'
 import ActionButton from '../../components/util/Button/ActionButton'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
+import { toast } from 'react-toastify'
 
 const PhanQuyen = () => {
   const navigate = useNavigate()
@@ -30,7 +31,9 @@ const PhanQuyen = () => {
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [targetRow, setTargetRow] = useState([])
   const [dataCRUD, setDataCRUD] = useState()
-  const [checkedValue, setCheckedValue] = useState()
+  const [checkedValue, setCheckedValue] = useState([])
+  const [dataSource, setDataSource] = useState([])
+  const [selectedRowKeys, setSelectedRowKeys] = useState([{}])
   const innitProduct = {
     TenChucNang: '',
     VISIBLE: true,
@@ -43,9 +46,9 @@ const PhanQuyen = () => {
     TOOLBAR: true,
   }
   const [PQForm, setPQForm] = useState(() => {
-    return dataChucNang ? { ...dataChucNang } : innitProduct
+    return dataSource && dataSource?.length > 0 ? { ...dataSource[0] } : innitProduct
   })
-  const [dataSource, setDataSource] = useState([])
+  const [isFullData, setIsFullData] = useState()
   useEffect(() => {
     const getDataQuyenHan = async () => {
       try {
@@ -114,8 +117,38 @@ const PhanQuyen = () => {
     getDataChucNang()
   }, [searchChucNang, targetRow])
 
-  const handleCreate = () => {
-    console.log('hi')
+  const handleCreate = async () => {
+    try {
+      console.log({
+        DanhSachNguoiDung: selectedRowKeys?.map((item) => ({ Ma: item })),
+        DuLieuPhanQuyen:
+          PQForm?.children && PQForm.children.length > 0
+            ? PQForm.children.map((child) => ({
+                ...PQForm,
+                ...child,
+                children:
+                  child.children && child.children.length > 0
+                    ? child.children.map((subChild) => ({
+                        ...child,
+                        ...subChild,
+                      }))
+                    : [child],
+              }))
+            : [PQForm],
+      })
+
+      // const response = await categoryAPI.DieuChinhQuyenHan({ DanhSachNguoiDung: selectedRowKeys, DuLieuPhanQuyen: PQForm }, TokenAccess)
+      // if (response.data.DataError == 0) {
+      //   setPQForm([])
+      //   // loadingData()
+      //   toast.success('Tạo thành công', { autoClose: 1000 })
+      //   setTargetRow(selectedRowKeys)
+      // } else {
+      //   toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
+      // }
+    } catch (error) {
+      toast.error('Lỗi Server vui lòng thử lại', { autoClose: 1000 })
+    }
   }
   const handleSearch = (event) => {
     let timerId
@@ -181,25 +214,11 @@ const PhanQuyen = () => {
         </Tooltip>
       ),
     },
-    {
-      title: 'Chọn',
-      key: 'operation',
-      width: 40,
-      fixed: 'right',
-      align: 'center',
-      render: (record) => {
-        return (
-          <>
-            <Checkbox className=" justify-center" id={record.key} onChange={() => setIsHandle(!isHandle)} />
-          </>
-        )
-      },
-    },
   ]
   const handleCheckboxChange = (checked, recordKey, value) => {
     const updatedDataSource = dataSource.map((record) => {
       if (isNaN(recordKey)) {
-        const updatedChildren = record.children.map((child) => {
+        const updatedChildren = record?.children.map((child) => {
           const updateSubChildren = child?.children?.map((subChild) => {
             if (subChild.key === recordKey) {
               if (value === 'VISIBLE') {
@@ -214,6 +233,7 @@ const PhanQuyen = () => {
                   EXCEL: subChild.ALLOW_EXCEL == true ? checked : null,
                   TOOLBAR: subChild.ALLOW_TOOLBAR == true ? checked : null,
                 }
+                setPQForm(updatedSubChildVISIBLE)
                 return updatedSubChildVISIBLE
               } else if (value === 'VIEW') {
                 const updatedSubChildVIEW = {
@@ -226,8 +246,12 @@ const PhanQuyen = () => {
                   EXCEL: subChild.ALLOW_EXCEL == true ? checked : null,
                   TOOLBAR: subChild.ALLOW_TOOLBAR == true ? checked : null,
                 }
+                setPQForm(updatedSubChildVIEW)
                 return updatedSubChildVIEW
-              } else return { ...subChild, [value]: checked }
+              } else {
+                setPQForm({ ...subChild, [value]: checked })
+                return { ...subChild, [value]: checked }
+              }
             }
             return subChild
           })
@@ -257,10 +281,12 @@ const PhanQuyen = () => {
                       TOOLBAR: subChild.ALLOW_TOOLBAR === true ? checked : null,
                     }
                   } else {
+                    setPQForm({ ...subChild, [value]: checked })
                     return { ...subChild, [value]: checked }
                   }
                 }),
               }
+              setPQForm(updatedChildVISIBLE)
               return updatedChildVISIBLE
             } else if (value === 'VIEW') {
               const updatedChildVIEW = {
@@ -286,207 +312,46 @@ const PhanQuyen = () => {
                       TOOLBAR: subChild.ALLOW_TOOLBAR === true ? checked : null,
                     }
                   } else {
+                    setPQForm({ ...subChild, [value]: checked })
                     return { ...subChild, [value]: checked }
                   }
                 }),
               }
+              setPQForm(updatedChildVIEW)
               return updatedChildVIEW
             } else if (updateSubChildren?.length > 0) {
               const updatedChild = {
                 ...child,
                 [value]: checked,
                 children: updateSubChildren.map((subChild) => {
-                  return { ...subChild, [value]: checked }
-                }),
-              }
-              return updatedChild
-            } else {
-              return { ...child, [value]: checked }
-            }
-          }
-
-          return { ...child, children: updateSubChildren }
-        })
-        return { ...record, children: updatedChildren }
-      } else {
-        const updateRecord = (item) => {
-          if (item.key === recordKey) {
-            const updatedItem = {
-              ...item,
-              [value]: checked,
-              children: item.children.map((child) => {
-                const updatedChild = {
-                  ...child,
-                  [value]: child[`ALLOW_${value}`] === true ? checked : null,
-                  children:
-                    child.children?.map((subChild) => {
-                      const updateSubChildren = {
-                        ...subChild,
-                        [value]: subChild[`ALLOW_${value}`] === true ? checked : null,
-                      }
-                      return value === 'VISIBLE'
-                        ? {
-                            ...updateSubChildren,
-                            VIEW: subChild.ALLOW_VIEW === true ? checked : null,
-                            ADD: subChild.ALLOW_ADD === true ? checked : null,
-                            DEL: subChild.ALLOW_DEL === true ? checked : null,
-                            EDIT: subChild.ALLOW_EDIT === true ? checked : null,
-                            RUN: subChild.ALLOW_RUN === true ? checked : null,
-                            EXCEL: subChild.ALLOW_EXCEL === true ? checked : null,
-                            TOOLBAR: subChild.ALLOW_TOOLBAR === true ? checked : null,
-                          }
-                        : value === 'VIEW'
-                          ? {
-                              ...updateSubChildren,
-                              ADD: subChild.ALLOW_ADD === true ? checked : null,
-                              DEL: subChild.ALLOW_DEL === true ? checked : null,
-                              EDIT: subChild.ALLOW_EDIT === true ? checked : null,
-                              RUN: subChild.ALLOW_RUN === true ? checked : null,
-                              EXCEL: subChild.ALLOW_EXCEL === true ? checked : null,
-                              TOOLBAR: subChild.ALLOW_TOOLBAR === true ? checked : null,
-                            }
-                          : updateSubChildren
-                    }) || null,
-                }
-                return value === 'VISIBLE'
-                  ? {
-                      ...updatedChild,
-                      VIEW: child.ALLOW_VIEW === true ? checked : null,
-                      ADD: child.ALLOW_ADD === true ? checked : null,
-                      DEL: child.ALLOW_DEL === true ? checked : null,
-                      EDIT: child.ALLOW_EDIT === true ? checked : null,
-                      RUN: child.ALLOW_RUN === true ? checked : null,
-                      EXCEL: child.ALLOW_EXCEL === true ? checked : null,
-                      TOOLBAR: child.ALLOW_TOOLBAR === true ? checked : null,
-                    }
-                  : value === 'VIEW'
-                    ? {
-                        ...updatedChild,
-                        ADD: child.ALLOW_ADD === true ? checked : null,
-                        DEL: child.ALLOW_DEL === true ? checked : null,
-                        EDIT: child.ALLOW_EDIT === true ? checked : null,
-                        RUN: child.ALLOW_RUN === true ? checked : null,
-                        EXCEL: child.ALLOW_EXCEL === true ? checked : null,
-                        TOOLBAR: child.ALLOW_TOOLBAR === true ? checked : null,
-                      }
-                    : updatedChild
-              }),
-            }
-            return value === 'VISIBLE'
-              ? {
-                  ...updatedItem,
-                  VIEW: item.ALLOW_VIEW === true ? checked : null,
-                  ADD: item.ALLOW_ADD === true ? checked : null,
-                  DEL: item.ALLOW_DEL === true ? checked : null,
-                  EDIT: item.ALLOW_EDIT === true ? checked : null,
-                  RUN: item.ALLOW_RUN === true ? checked : null,
-                  EXCEL: item.ALLOW_EXCEL === true ? checked : null,
-                  TOOLBAR: item.ALLOW_TOOLBAR === true ? checked : null,
-                }
-              : value === 'VIEW'
-                ? {
-                    ...updatedItem,
-                    ADD: item.ALLOW_ADD === true ? checked : null,
-                    DEL: item.ALLOW_DEL === true ? checked : null,
-                    EDIT: item.ALLOW_EDIT === true ? checked : null,
-                    RUN: item.ALLOW_RUN === true ? checked : null,
-                    EXCEL: item.ALLOW_EXCEL === true ? checked : null,
-                    TOOLBAR: item.ALLOW_TOOLBAR === true ? checked : null,
-                  }
-                : updatedItem
-          }
-          return item
-        }
-        return updateRecord(record)
-      }
-    })
-    setDataSource(updatedDataSource)
-  }
-
-  const handleCheckboxChange2 = (checked, recordKey, value) => {
-    const updatedDataSource = dataSource.map((record) => {
-      if (isNaN(recordKey)) {
-        const updatedChildren = record.children.map((child) => {
-          const updateSubChildren = child?.children?.map((subChild) => {
-            if (subChild.key === recordKey) {
-              const isParentChecked = child[value] === true
-              const childChecked = isParentChecked ? checked : false
-              if (value === 'VISIBLE') {
-                const updatedSubChildVISIBLE = {
-                  ...subChild,
-                  [value]: childChecked,
-                  VIEW: subChild.ALLOW_VIEW == true ? childChecked : null,
-                  ADD: subChild.ALLOW_ADD == true ? childChecked : null,
-                  DEL: subChild.ALLOW_DEL == true ? childChecked : null,
-                  EDIT: subChild.ALLOW_EDIT == true ? childChecked : null,
-                  RUN: subChild.ALLOW_RUN == true ? childChecked : null,
-                  EXCEL: subChild.ALLOW_EXCEL == true ? childChecked : null,
-                  TOOLBAR: subChild.ALLOW_TOOLBAR == true ? childChecked : null,
-                }
-                return updatedSubChildVISIBLE
-              } else if (value === 'VIEW') {
-                const updatedSubChildVIEW = {
-                  ...subChild,
-                  [value]: childChecked,
-                  ADD: subChild.ALLOW_ADD == true ? childChecked : null,
-                  DEL: subChild.ALLOW_DEL == true ? childChecked : null,
-                  EDIT: subChild.ALLOW_EDIT == true ? childChecked : null,
-                  RUN: subChild.ALLOW_RUN == true ? childChecked : null,
-                  EXCEL: subChild.ALLOW_EXCEL == true ? childChecked : null,
-                  TOOLBAR: subChild.ALLOW_TOOLBAR == true ? childChecked : null,
-                }
-                return updatedSubChildVIEW
-              } else return { ...subChild, [value]: childChecked }
-            }
-            return subChild
-          })
-          if (child.key === recordKey) {
-            const isParentChecked = child[value] === true
-            const childChecked = isParentChecked ? checked : false
-            if (value === 'VISIBLE') {
-              const updatedChildVISIBLE = {
-                ...child,
-                [value]: childChecked,
-                VIEW: child.ALLOW_VIEW == true ? childChecked : null,
-                ADD: child.ALLOW_ADD == true ? childChecked : null,
-                DEL: child.ALLOW_DEL == true ? childChecked : null,
-                EDIT: child.ALLOW_EDIT == true ? childChecked : null,
-                RUN: child.ALLOW_RUN == true ? childChecked : null,
-                EXCEL: child.ALLOW_EXCEL == true ? childChecked : null,
-                TOOLBAR: child.ALLOW_TOOLBAR == true ? childChecked : null,
-                children: updateSubChildren?.map((subChild) => {
-                  const isSubChildChecked = childChecked && subChild[value] !== false
                   if (value === 'VISIBLE' || value === 'VIEW') {
                     return {
                       ...subChild,
-                      [value]: isSubChildChecked,
-                      VIEW: subChild.ALLOW_VIEW === true ? isSubChildChecked : null,
-                      ADD: subChild.ALLOW_ADD === true ? isSubChildChecked : null,
-                      DEL: subChild.ALLOW_DEL === true ? isSubChildChecked : null,
-                      EDIT: subChild.ALLOW_EDIT === true ? isSubChildChecked : null,
-                      RUN: subChild.ALLOW_RUN === true ? isSubChildChecked : null,
-                      EXCEL: subChild.ALLOW_EXCEL === true ? isSubChildChecked : null,
-                      TOOLBAR: subChild.ALLOW_TOOLBAR === true ? isSubChildChecked : null,
+                      [value]: checked,
+                      VIEW: subChild.ALLOW_VIEW === true ? checked : null,
+                      ADD: subChild.ALLOW_ADD === true ? checked : null,
+                      DEL: subChild.ALLOW_DEL === true ? checked : null,
+                      EDIT: subChild.ALLOW_EDIT === true ? checked : null,
+                      RUN: subChild.ALLOW_RUN === true ? checked : null,
+                      EXCEL: subChild.ALLOW_EXCEL === true ? checked : null,
+                      TOOLBAR: subChild.ALLOW_TOOLBAR === true ? checked : null,
                     }
                   } else {
-                    return { ...subChild, [value]: isSubChildChecked }
+                    setPQForm({ ...subChild, [value]: checked })
+                    return { ...subChild, [value]: checked }
                   }
                 }),
               }
-              return updatedChildVISIBLE
-            } else if (updateSubChildren?.length > 0) {
-              const updatedChild = {
-                ...child,
-                [value]: childChecked,
-                children: updateSubChildren.map((subChild) => {
-                  return { ...subChild, [value]: checked }
-                }),
-              }
+              setPQForm(updatedChild)
               return updatedChild
             } else {
-              return { ...child, [value]: childChecked }
+              setPQForm({ ...child, [value]: checked })
+              return { ...child, [value]: checked }
             }
           }
+          checkedValue.push((pre) => {
+            pre.child
+          })
           return { ...child, children: updateSubChildren }
         })
         return { ...record, children: updatedChildren }
@@ -554,6 +419,7 @@ const PhanQuyen = () => {
                     : updatedChild
               }),
             }
+            setPQForm(updatedItem)
             return value === 'VISIBLE'
               ? {
                   ...updatedItem,
@@ -583,6 +449,24 @@ const PhanQuyen = () => {
       }
     })
     setDataSource(updatedDataSource)
+    testFunctions()
+  }
+  const isParentRecord = (record) => {
+    return record?.children && record?.children?.length > 0
+  }
+  const childrenWithSubChildren = dataSource
+    .map((item) => item.children)
+    .filter((children) => children)
+    .flatMap((children) => children)
+    .map((child) => child.children)
+    .filter((subchildren) => subchildren)
+  const children = dataSource.map((item) => item.children)
+  // console.log(dataSource)
+
+  const testFunctions = (record, value) => {
+    const newData = dataSource[record].children.filter((child) => child[value] === true)
+    setIsFullData(newData)
+    return isFullData?.length < dataSource[0].children.length
   }
   const titlesChucNang = [
     {
@@ -611,14 +495,16 @@ const PhanQuyen = () => {
       align: 'center',
       width: 70,
       showSorterTooltip: false,
+
       render: (text, record) => {
         return (
           <Checkbox
             className=" justify-center"
-            id={`VISIBLE_${record.key}`}
+            indeterminate={isParentRecord(record) && checkedValue.length > 0 && testFunctions(record?.key, 'VISIBLE')}
             checked={text}
-            disabled={record.ALLOW_VISIBLE == false}
-            onChange={(e) => handleCheckboxChange(e.target.checked, record.key, 'VISIBLE')}
+            id={`VISIBLE_${record?.key}`}
+            disabled={record?.ALLOW_VISIBLE == false}
+            onChange={(e) => handleCheckboxChange(e.target.checked, record?.key, 'VISIBLE')}
           />
         )
       },
@@ -633,11 +519,12 @@ const PhanQuyen = () => {
       render: (text, record) => {
         return (
           <Checkbox
+            // indeterminate={isParentRecord(record) && checkedValue.length > 0}
             className=" justify-center"
-            id={`VIEW_${record.key}`}
+            id={`VIEW_${record?.key}`}
             checked={text}
-            disabled={record.ALLOW_VIEW == false}
-            onChange={(e) => handleCheckboxChange(e.target.checked, record.key, 'VIEW')}
+            disabled={record?.ALLOW_VIEW == false}
+            onChange={(e) => handleCheckboxChange(e.target.checked, record?.key, 'VIEW')}
           />
         )
       },
@@ -651,11 +538,12 @@ const PhanQuyen = () => {
       showSorterTooltip: false,
       render: (text, record) => (
         <Checkbox
+          // indeterminate={isParentRecord(record) && checkedValue.length > 0}
           className=" justify-center"
-          id={`ADD_${record.key}`}
+          id={`ADD_${record?.key}`}
           checked={text}
-          disabled={record.ALLOW_ADD == false}
-          onChange={(e) => handleCheckboxChange(e.target.checked, record.key, 'ADD')}
+          disabled={record?.ALLOW_ADD == false}
+          onChange={(e) => handleCheckboxChange(e.target.checked, record?.key, 'ADD')}
         />
       ),
     },
@@ -670,10 +558,10 @@ const PhanQuyen = () => {
         return (
           <Checkbox
             className=" justify-center"
-            id={`DEL_${record.key}`}
+            id={`DEL_${record?.key}`}
             checked={text}
-            disabled={record.ALLOW_DEL == false}
-            onChange={(e) => handleCheckboxChange(e.target.checked, record.key, 'DEL')}
+            disabled={record?.ALLOW_DEL == false}
+            onChange={(e) => handleCheckboxChange(e.target.checked, record?.key, 'DEL')}
           />
         )
       },
@@ -689,10 +577,10 @@ const PhanQuyen = () => {
         return (
           <Checkbox
             className=" justify-center"
-            onChange={(e) => handleCheckboxChange(e.target.checked, record.key, 'EDIT')}
-            id={`EDIT_${record.key}`}
+            onChange={(e) => handleCheckboxChange(e.target.checked, record?.key, 'EDIT')}
+            id={`EDIT_${record?.key}`}
             checked={text}
-            disabled={record.ALLOW_EDIT == false}
+            disabled={record?.ALLOW_EDIT == false}
           />
         )
       },
@@ -708,10 +596,10 @@ const PhanQuyen = () => {
         return (
           <Checkbox
             className=" justify-center"
-            onChange={(e) => handleCheckboxChange(e.target.checked, record.key, 'RUN')}
-            id={`RUN_${record.key}`}
+            onChange={(e) => handleCheckboxChange(e.target.checked, record?.key, 'RUN')}
+            id={`RUN_${record?.key}`}
             checked={text}
-            disabled={record.ALLOW_RUN == false}
+            disabled={record?.ALLOW_RUN == false}
           />
         )
       },
@@ -727,10 +615,10 @@ const PhanQuyen = () => {
         return (
           <Checkbox
             className=" justify-center"
-            onChange={(e) => handleCheckboxChange(e.target.checked, record.key, 'EXCEL')}
-            id={`EXCEL_${record.key}`}
+            onChange={(e) => handleCheckboxChange(e.target.checked, record?.key, 'EXCEL')}
+            id={`EXCEL_${record?.key}`}
             checked={text}
-            disabled={record.ALLOW_EXCEL == false}
+            disabled={record?.ALLOW_EXCEL == false}
           />
         )
       },
@@ -746,10 +634,10 @@ const PhanQuyen = () => {
         return (
           <Checkbox
             className="justify-center"
-            onChange={(e) => handleCheckboxChange(e.target.checked, record.key, 'TOOLBAR')}
-            id={`TOOLBAR_${record.key}`}
+            onChange={(e) => handleCheckboxChange(e.target.checked, record?.key, 'TOOLBAR')}
+            id={`TOOLBAR_${record?.key}`}
             checked={text}
-            disabled={record.ALLOW_TOOLBAR == false}
+            disabled={record?.ALLOW_TOOLBAR == false}
           />
         )
       },
@@ -830,6 +718,7 @@ const PhanQuyen = () => {
 
     setDataSource(data)
   }, [isHandle, tableLoadRight])
+
   return (
     <>
       {dataCRUD?.RUN == false ? (
@@ -947,6 +836,14 @@ const PhanQuyen = () => {
                       columns={titlesUser}
                       dataSource={filteredUser?.map((record, index) => ({ ...record, key: index }))}
                       size="small"
+                      rowSelection={{
+                        selectedRowKeys,
+                        showSizeChanger: true,
+                        onChange: (selectedKeys) => {
+                          setSelectedRowKeys(selectedKeys)
+                        },
+                      }}
+                      rowKey={(record) => record.Ma}
                       scroll={{
                         x: 'max-content',
                         y: 300,
@@ -959,10 +856,7 @@ const PhanQuyen = () => {
                           localStorage.setItem('pageSize', size)
                         },
                       }}
-                      rowClassName={(record) => (record.Thang == targetRow ? 'highlighted-row' : '')}
-                      // onRow={(record) => ({
-                      //   onDoubleClick: () => handleDoubleClick(record),
-                      // })}
+                      rowClassName={(record) => (record?.Ma == targetRow ? 'highlighted-row' : '')}
                       scrollToFirstRowOnChange
                       bordered
                       style={{
@@ -974,6 +868,7 @@ const PhanQuyen = () => {
                         return (
                           <Table.Summary fixed>
                             <Table.Summary.Row>
+                              <Table.Summary.Cell className="bg-gray-100"></Table.Summary.Cell>
                               {titlesUser
                                 .filter((column) => column.render)
                                 .map((column, index) => {

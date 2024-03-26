@@ -37,11 +37,12 @@ const SiderMenu = ({ handleToggleSidebar, isTargetRow, isTableLoad, isSidebarVis
 
   const getQuyenHan = async (Ma) => {
     try {
+      console.log(Ma)
       const response = await categoryAPI.QuyenHan(Ma, TokenAccess)
       if (response.data.DataError === 0) {
-        Ma.includes('XuLy_') && Ma.includes('_PhanQuyen') && response.data.RUN === false
+        Ma.includes('XuLy_') && Ma.includes('_PhanQuyen') && Ma.includes('_ThongKeQuyen') && response.data.RUN === false
           ? setIsShowNotify(true)
-          : !Ma.includes('XuLy_') && !Ma.includes('_PhanQuyen') && response.data.VIEW === false
+          : !Ma.includes('XuLy_') && !Ma.includes('_PhanQuyen') && !Ma.includes('_ThongKeQuyen') && response.data.VIEW === false
             ? setIsShowNotify(true)
             : Ma === 'HeThong_ThongSoHeThong'
               ? (setIsShowModal(true), setType('ThongSoHeThong'))

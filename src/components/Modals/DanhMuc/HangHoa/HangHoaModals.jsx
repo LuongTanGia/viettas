@@ -1942,7 +1942,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                       <p className="text-red-500 block truncate">{getMaHang?.TenHang}</p>
                       <p className="text-blue-700 uppercase">?</p>
                     </div>
-                    <p className="text-slate-500 text-lg font-light">Thông tin sản phẩm không thể hoàn tác nếu bạn xóa !</p>
+                    <p className="text-slate-500 text-lg font-light">Thông tin không thể hoàn tác nếu bạn xóa !</p>
                   </div>
                   <div className="flex gap-2 justify-end">
                     <ActionButton

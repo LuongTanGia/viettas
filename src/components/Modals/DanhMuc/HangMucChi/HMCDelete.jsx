@@ -39,7 +39,7 @@ const HMCDelete = ({ close, dataHMC, loadingData, setTargetRow }) => {
               <p className="text-red-600">{dataHMC?.Ma}</p>
               <p className="text-blue-700 uppercase">?</p>
             </div>
-            <p className="text-slate-500 text-lg font-light">Thông tin sản phẩm không thể hoàn tác nếu bạn xóa !</p>
+            <p className="text-slate-500 text-lg font-light">Thông tin không thể hoàn tác nếu bạn xóa !</p>
           </div>
           <div className="flex gap-2 justify-end">
             <ActionButton handleAction={handleDelete} title={'Xác nhận'} isModal={true} color={'slate-50'} background={'blue-500'} color_hover={'blue-500'} bg_hover={'white'} />
