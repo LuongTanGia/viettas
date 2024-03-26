@@ -51,6 +51,8 @@ const Modals = ({
   const [newData, setNewData] = useState(data)
   const [SctCreate, setSctCreate] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [typePrint, setTypePrint] = useState('print')
+
   const [errors, setErrors] = useState({
     DoiTuong: null,
     Ten: '',
@@ -91,6 +93,7 @@ const Modals = ({
   }
 
   const [formCreate, setFormCreate] = useState(defaultFormCreate)
+  const [formCreateTT, setFormCreateTT] = useState({})
 
   const [formEdit, setFormEdit] = useState({ ...dataThongTinSua })
 
@@ -533,7 +536,6 @@ const Modals = ({
         ...item,
         STT: index + 1,
       }))
-
       let response
       switch (typePage) {
         case 'PMH':
@@ -548,7 +550,6 @@ const Modals = ({
         default:
           break
       }
-
       if (response) {
         const { DataError, DataErrorDescription, DataResults } = response.data
         if (DataError === 0) {
@@ -562,6 +563,10 @@ const Modals = ({
           setDoiTuongInfo({ Ten: '', DiaChi: '' })
           setSelectedKhoHang(dataKhoHang[0].MaKho)
           setSelectedRowData([])
+          if (typePrint === 'print') setIsShowModalOnlyPrint(true)
+          else if (typePrint === 'printwarehouse') {
+            setIsShowModalOnlyPrintWareHouse(true)
+          }
         } else if (DataError === -1 || DataError === -2 || DataError === -3) {
           toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
         } else if (DataError === -107 || DataError === -108) {
@@ -596,13 +601,14 @@ const Modals = ({
       }
     }
     if (selectedRowData.length <= 0) {
-      toast.warning('Bảng chi tiết không được để trống')
+      toast.warning('Bảng chi tiết không được để trống!')
       return
     }
     if (selectedRowData.map((item) => item.MaHang).includes('Chọn mã hàng')) {
-      toast.warning('Mã hàng không được để trống, vui lòng chọn mã hàng!')
+      toast.warning('Mã hàng không được để trống!')
       return
     }
+
     try {
       const tokenLogin = localStorage.getItem('TKN')
       const dataAddSTT = selectedRowData.map((item, index) => ({
@@ -613,13 +619,13 @@ const Modals = ({
       let response
       switch (typePage) {
         case 'PMH':
-          response = await handleAPIEdit(apis.SuaPMH, tokenLogin, dataRecord.SoChungTu, formEdit, dataAddSTT, selectedDoiTuong, selectedKhoHang)
+          response = await apis.SuaPMH(tokenLogin, dataRecord.SoChungTu, { ...formEdit, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
           break
         case 'NTR':
-          response = await handleAPIEdit(apis.SuaNTR, tokenLogin, dataRecord.SoChungTu, formEdit, dataAddSTT, selectedDoiTuong, selectedKhoHang)
+          response = await apis.SuaNTR(tokenLogin, dataRecord.SoChungTu, { ...formEdit, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
           break
         case 'XTR':
-          response = await handleAPIEdit(apis.SuaXTR, tokenLogin, dataRecord.SoChungTu, formEdit, dataAddSTT, selectedDoiTuong, selectedKhoHang)
+          response = await apis.SuaXTR(tokenLogin, dataRecord.SoChungTu, { ...formEdit, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
           break
         default:
           break
@@ -643,15 +649,6 @@ const Modals = ({
       }
     } catch (error) {
       console.error('Error while saving data:', error)
-    }
-  }
-
-  const handleAPIEdit = async (apiFunc, tokenLogin, Sct, form, dataAddSTT, selectedDoiTuong, selectedKhoHang) => {
-    try {
-      return await apiFunc(tokenLogin, Sct, { ...form, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
-    } catch (error) {
-      console.error('Error while adding data:', error)
-      return null
     }
   }
 
@@ -854,6 +851,10 @@ const Modals = ({
           loading()
           setHightLight(dataRecord.SoChungTu)
           setSelectedRowData([])
+          if (typePrint === 'print') setIsShowModalOnlyPrint(true)
+          else if (typePrint === 'printwarehouse') {
+            setIsShowModalOnlyPrintWareHouse(true)
+          }
         } else if (DataError === -1 || DataError === -2 || DataError === -3) {
           toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
         } else if (DataError === -107 || DataError === -108) {
@@ -887,7 +888,6 @@ const Modals = ({
 
   useEffect(() => {
     const handleFilterPrint = () => {
-      console.log('formPrint', formPrintFilter)
       const ngayBD = dayjs(formPrintFilter.NgayBatDau)
       const ngayKT = dayjs(formPrintFilter.NgayKetThuc)
 
@@ -953,18 +953,7 @@ const Modals = ({
   const handleChangLoading = (newLoading) => {
     setIsLoading(newLoading)
   }
-  const handlePrintModal = () => {
-    if (!formCreate?.TenDoiTuong?.trim() || !formCreate?.DiaChi?.trim() || selectedRowData.length <= 0) return
-    if (selectedRowData.map((item) => item.MaHang).includes('Chọn mã hàng')) return
 
-    setIsShowModalOnlyPrint(true)
-  }
-  const handlePrintWareHouseModal = () => {
-    if (!formCreate?.TenDoiTuong?.trim() || !formCreate?.DiaChi?.trim() || selectedRowData.length <= 0) return
-    if (selectedRowData.map((item) => item.MaHang).includes('Chọn mã hàng')) return
-
-    setIsShowModalOnlyPrintWareHouse(true)
-  }
   const handleSctBDChange = (value) => {
     setSelectedSctBD(value)
 
@@ -1225,7 +1214,7 @@ const Modals = ({
                         <div className="flex md:px-1 lg:px-4 items-center">
                           <label className=" px-3  text-center ">Ngày</label>
                           <DateField
-                            className="DatePicker_PMH  max-w-[110px]"
+                            className="DatePicker_PMH  w-[110px]"
                             format="DD/MM/YYYY"
                             value={dayjs(dataThongTin?.NgayCTu)}
                             disabled
@@ -1450,14 +1439,18 @@ const Modals = ({
                         <div className="flex md:px-1 lg:px-4 items-center">
                           <label className="pr-1 lg:pr-[30px] lg:pl-[8px]">Ngày</label>
                           <DateField
-                            className="DatePicker_PMH max-w-[110px]"
+                            className="DatePicker_PMH w-[110px]"
                             format="DD/MM/YYYY"
-                            defaultValue={dayjs()}
+                            value={dayjs(formCreate?.NgayCTu)}
                             onChange={(newDate) => {
                               setFormCreate({
                                 ...formCreate,
                                 NgayCTu: dayjs(newDate).format('YYYY-MM-DD'),
-                              })
+                              }),
+                                setFormCreateTT({
+                                  ...formCreateTT,
+                                  NgayCTu: dayjs(newDate).format('YYYY-MM-DD'),
+                                })
                             }}
                             sx={{
                               '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
@@ -1663,7 +1656,7 @@ const Modals = ({
                     bg_hover={'white'}
                     color_hover={'purple-500'}
                     handleAction={() => {
-                      handleCreate(), handlePrintModal()
+                      handleCreate(), setTypePrint('print')
                     }}
                     isModal={true}
                   />
@@ -1675,7 +1668,7 @@ const Modals = ({
                       bg_hover={'white'}
                       color_hover={'purple-500'}
                       handleAction={() => {
-                        handleCreate(), handlePrintWareHouseModal()
+                        handleCreate(), setTypePrint('printwarehouse')
                       }}
                       isModal={true}
                     />
@@ -1965,7 +1958,7 @@ const Modals = ({
                         bg_hover={'white'}
                         color_hover={'purple-500'}
                         handleAction={() => {
-                          handlePrintInEdit(), handlePrintModal()
+                          handlePrintInEdit(), setTypePrint('print')
                         }}
                         isModal={true}
                       />
@@ -1977,7 +1970,7 @@ const Modals = ({
                           bg_hover={'white'}
                           color_hover={'purple-500'}
                           handleAction={() => {
-                            handlePrintInEdit(), handlePrintWareHouseModal()
+                            handlePrintInEdit(), setTypePrint('printwarehouses')
                           }}
                           isModal={true}
                         />
@@ -2057,7 +2050,7 @@ const Modals = ({
             typePage={typePage}
             namePage={namePage}
             close={() => setIsShowModalOnlyPrint(false)}
-            dataThongTin={actionType === 'edit' ? dataThongTinSua : dataThongTin}
+            dataThongTin={actionType === 'edit' ? formEdit : actionType === 'view' ? dataThongTin : formCreateTT}
             data={data}
             actionType={actionType}
             close2={() => close()}
@@ -2069,7 +2062,7 @@ const Modals = ({
             typePage={typePage}
             namePage={namePage}
             close={() => setIsShowModalOnlyPrintWareHouse(false)}
-            dataThongTin={actionType === 'edit' ? dataThongTinSua : dataThongTin}
+            dataThongTin={actionType === 'edit' ? formEdit : actionType === 'view' ? dataThongTin : formCreateTT}
             data={data}
             controlDate={controlDate}
             actionType={actionType}

@@ -59,6 +59,8 @@ const ModalPCT = ({
   }
 
   const [formCreate, setFormCreate] = useState(defaultFormCreate)
+  const [formCreateTT, setFormCreateTT] = useState({})
+
   const [formEdit, setFormEdit] = useState({ ...dataThongTinSua })
   const startDate = dayjs(controlDate.NgayBatDau).format('YYYY-MM-DD')
   const endDate = dayjs(controlDate.NgayKetThuc).format('YYYY-MM-DD')
@@ -969,7 +971,11 @@ const ModalPCT = ({
                                 setFormCreate({
                                   ...formCreate,
                                   NgayCTu: dayjs(newDate).format('YYYY-MM-DD'),
-                                })
+                                }),
+                                  setFormCreateTT({
+                                    ...formCreateTT,
+                                    NgayCTu: dayjs(newDate).format('YYYY-MM-DD'),
+                                  })
                               }}
                               sx={{
                                 '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
@@ -1475,7 +1481,7 @@ const ModalPCT = ({
             typePage={typePage}
             namePage={namePage}
             close={() => setIsShowModalOnlyPrint(false)}
-            dataThongTin={dataRecord}
+            dataThongTin={actionType === 'edit' ? formEdit : actionType === 'view' ? dataRecord : formCreateTT}
             data={data}
             actionType={actionType}
             close2={() => close()}

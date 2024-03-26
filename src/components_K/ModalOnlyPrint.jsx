@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
@@ -16,31 +16,31 @@ const { Option } = Select
 // const { MdFilterAlt } = icons
 
 const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCreate, typePage, namePage }) => {
-  const [selectedSctBD, setSelectedSctBD] = useState()
-  const [selectedSctKT, setSelectedSctKT] = useState()
+  const [selectedSctBD, setSelectedSctBD] = useState('')
+  const [selectedSctKT, setSelectedSctKT] = useState('')
   const [newData, setNewData] = useState()
   const startDate = dayjs(dataThongTin?.NgayCTu).format('YYYY-MM-DD')
   const endDate = dayjs(dataThongTin?.NgayCTu).format('YYYY-MM-DD')
 
-  const dataByDate = useMemo(() => {
-    return data.filter((item) => {
-      const itemDate = new Date(item.NgayCTu)
-      const ngaybt = new Date(startDate)
-      const ngaykt = new Date(endDate)
+  // const dataByDate = useMemo(() => {
+  //   return data.filter((item) => {
+  //     const itemDate = new Date(item.NgayCTu)
+  //     const ngaybt = new Date(startDate)
+  //     const ngaykt = new Date(endDate)
 
-      return itemDate >= ngaybt && itemDate <= ngaykt
-    })
-  }, [data, startDate, endDate])
+  //     return itemDate >= ngaybt && itemDate <= ngaykt
+  //   })
+  // }, [data, startDate, endDate])
 
-  useEffect(() => {
-    setNewData(dataByDate)
-  }, [dataByDate])
+  // useEffect(() => {
+  //   if (actionType === 'view' && !!newData?.length) {
+  //     setNewData(dataByDate)
+  //   } else {
+  //     setNewData('Chọn mã hàng')
+  //   }
+  // }, [dataByDate])
 
-  const [formPrint, setFormPrint] = useState({ NgayBatDau: startDate, NgayKetThuc: endDate })
-  const [formPrintFilter, setFormPrintFilter] = useState({
-    NgayBatDau: startDate,
-    NgayKetThuc: endDate,
-  })
+  const [formPrint, setFormPrint] = useState()
 
   const [checkboxValues, setCheckboxValues] = useState({
     checkbox1: true,
@@ -49,51 +49,13 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
   })
 
   useEffect(() => {
-    if (actionType === 'edit') {
-      setFormPrint({ NgayBatDau: startDate, NgayKetThuc: endDate })
-    }
-    if (actionType === 'create') {
-      setFormPrint({ NgayBatDau: dayjs(), NgayKetThuc: dayjs() })
-    }
-  }, [dataThongTin, actionType])
-
-  useEffect(() => {
-    // if (dataThongTin && actionType !== 'create') {
-    //   setSelectedSctBD(dataThongTin.SoChungTu)
-    //   setSelectedSctKT(dataThongTin.SoChungTu)
-    // }
-    if (actionType == 'create') {
-      setSelectedSctBD(SctCreate)
-      setSelectedSctKT(SctCreate)
-    }
-  }, [dataThongTin, SctCreate])
-
-  useEffect(() => {
-    if (newData && actionType !== 'create') {
-      setSelectedSctBD(dataThongTin.SoChungTu)
-      setSelectedSctKT(dataThongTin.SoChungTu)
-    }
-    if (newData?.length <= 0 && actionType !== 'create') {
-      setSelectedSctBD('Chọn mã hàng')
-      setSelectedSctKT('Chọn mã hàng')
-    }
-  }, [newData])
-
-  const calculateTotal = () => {
-    let total = 0
-    if (checkboxValues.checkbox1) total += 1
-    if (checkboxValues.checkbox2) total += 2
-    if (checkboxValues.checkbox3) total += 4
-    return total
-  }
+    setFormPrint({ NgayBatDau: startDate, NgayKetThuc: endDate })
+  }, [actionType, dataThongTin])
 
   useEffect(() => {
     const handleFilterPrint = () => {
-      const ngayBD = dayjs(formPrintFilter.NgayBatDau)
-      const ngayKT = dayjs(formPrintFilter.NgayKetThuc)
-      // console.log('formPrint22222222', formPrint)
-
-      // Lọc hàng hóa dựa trên ngày bắt đầu và ngày kết thúc
+      const ngayBD = dayjs(formPrint?.NgayBatDau)
+      const ngayKT = dayjs(formPrint?.NgayKetThuc)
       const filteredData = data.filter((item) => {
         const itemDate = dayjs(item.NgayCTu)
 
@@ -105,7 +67,34 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
     }
 
     handleFilterPrint()
-  }, [formPrintFilter])
+  }, [formPrint, data])
+
+  useEffect(() => {
+    if (actionType !== 'create' && newData) {
+      const foundItem = newData.find((item) => item.SoChungTu === dataThongTin.SoChungTu)
+      if (newData.length <= 0) {
+        setSelectedSctBD('Chọn mã hàng')
+        setSelectedSctKT('Chọn mã hàng')
+      } else if (foundItem) {
+        setSelectedSctBD(foundItem.SoChungTu)
+        setSelectedSctKT(foundItem.SoChungTu)
+      } else {
+        setSelectedSctBD(newData[0].SoChungTu)
+        setSelectedSctKT(newData[0].SoChungTu)
+      }
+    } else {
+      setSelectedSctBD(SctCreate)
+      setSelectedSctKT(SctCreate)
+    }
+  }, [newData])
+
+  const calculateTotal = () => {
+    let total = 0
+    if (checkboxValues.checkbox1) total += 1
+    if (checkboxValues.checkbox2) total += 2
+    if (checkboxValues.checkbox3) total += 4
+    return total
+  }
 
   const handleStartDateChange = (newDate) => {
     const startDate = newDate
@@ -118,13 +107,11 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
         NgayBatDau: startDate,
         NgayKetThuc: startDate,
       })
-      setFormPrintFilter({ ...formPrintFilter, NgayBatDau: startDate, NgayKetThuc: startDate })
     } else {
       setFormPrint({
         ...formPrint,
         NgayBatDau: startDate,
       })
-      setFormPrintFilter({ ...formPrintFilter, NgayBatDau: startDate })
     }
   }
 
@@ -139,13 +126,11 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
         NgayBatDau: endDate,
         NgayKetThuc: endDate,
       })
-      setFormPrintFilter({ ...formPrintFilter, NgayBatDau: endDate, NgayKetThuc: endDate })
     } else {
       setFormPrint({
         ...formPrint,
         NgayKetThuc: endDate,
       })
-      setFormPrintFilter({ ...formPrintFilter, NgayKetThuc: endDate })
     }
   }
 
@@ -273,10 +258,9 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
                 <div className="flex gap-x-5 items-center">
                   <label htmlFor="">Ngày</label>
                   <DateField
-                    className="DatePicker_PMH max-w-[170px]"
+                    className="DatePicker_PMH w-[170px]"
                     format="DD/MM/YYYY"
-                    // maxDate={actionType !== 'create' && dayjs(formPrint.NgayKetThuc)}
-                    value={actionType === 'create' ? dayjs() : dayjs(formPrint.NgayBatDau)}
+                    value={dayjs(formPrint?.NgayBatDau)}
                     onChange={(newDate) => {
                       setFormPrint({
                         ...formPrint,
@@ -284,11 +268,11 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
                       })
                     }}
                     onBlur={() => {
-                      handleStartDateChange(formPrint.NgayBatDau)
+                      handleStartDateChange(formPrint?.NgayBatDau)
                     }}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') {
-                        handleStartDateChange(formPrint.NgayBatDau)
+                        handleStartDateChange(formPrint?.NgayBatDau)
                       }
                     }}
                     sx={{
@@ -306,10 +290,9 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
                 <div className="flex gap-x-5 items-center">
                   <label htmlFor="">Đến</label>
                   <DateField
-                    className="DatePicker_PMH max-w-[170px]"
+                    className="DatePicker_PMH w-[170px]"
                     format="DD/MM/YYYY"
-                    // minDate={actionType !== 'create' && dayjs(formPrint.NgayBatDau)}
-                    value={actionType === 'create' ? dayjs() : dayjs(formPrint.NgayKetThuc)}
+                    value={dayjs(formPrint?.NgayKetThuc)}
                     onChange={(newDate) => {
                       setFormPrint({
                         ...formPrint,
@@ -317,11 +300,11 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
                       })
                     }}
                     onBlur={() => {
-                      handleEndDateChange(formPrint.NgayKetThuc)
+                      handleEndDateChange(formPrint?.NgayKetThuc)
                     }}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') {
-                        handleEndDateChange(formPrint.NgayKetThuc)
+                        handleEndDateChange(formPrint?.NgayKetThuc)
                       }
                     }}
                     sx={{

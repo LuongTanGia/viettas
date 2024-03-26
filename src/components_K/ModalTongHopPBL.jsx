@@ -329,7 +329,7 @@ const ModalTongHopPBL = ({ actionType, typePage, namePage, close, dataRecord, da
             </div>
           )}
           {actionType === 'delete' && (
-            <div className=" items-center  ">
+            <div className=" h-[254px] items-center  ">
               <label className="text-blue-700 font-semibold uppercase pb-1">Kiểm tra dữ liệu</label>
               <div className="flex items-center  border p-3 gap-3">
                 <div className="text-bg-main">
@@ -352,7 +352,7 @@ const ModalTongHopPBL = ({ actionType, typePage, namePage, close, dataRecord, da
                   <div>Bạn có chắc chắn muốn gỡ dữ liệu này không?</div>
                 </div>
               </div>
-              <div className="flex justify-end mt-4 gap-2">
+              <div className="flex justify-end mt-2 gap-2">
                 <ActionButton
                   color={'slate-50'}
                   title={'Xác nhận'}
@@ -368,7 +368,7 @@ const ModalTongHopPBL = ({ actionType, typePage, namePage, close, dataRecord, da
             </div>
           )}
           {actionType === 'synthetics' && (
-            <div className=" items-center  ">
+            <div className="h-[170px]  items-center  ">
               <label className="text-blue-700 font-semibold uppercase pb-1">Kiểm tra dữ liệu</label>
               <div className="flex items-center  border p-3 gap-3">
                 <div className="text-bg-main">
@@ -382,7 +382,7 @@ const ModalTongHopPBL = ({ actionType, typePage, namePage, close, dataRecord, da
                   <div>Bạn có chắc chắn không?</div>
                 </div>
               </div>
-              <div className="flex justify-end mt-4 gap-2">
+              <div className="flex justify-end mt-2 gap-2">
                 <ActionButton
                   color={'slate-50'}
                   title={'Xác nhận'}

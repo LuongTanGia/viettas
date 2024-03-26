@@ -153,7 +153,7 @@
 
 .TongHopPBL .ant-table-container .ant-table-body {
   max-height: unset !important;
-  height: calc(100vh - 280px);
+  height: calc(100vh - 310px);
 }
 
 /* @media (min-width: 536px) {

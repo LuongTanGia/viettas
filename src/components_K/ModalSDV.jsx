@@ -12,28 +12,11 @@ import { useEffect, useState } from 'react'
 import ActionButton from '../components/util/Button/ActionButton'
 import { toast } from 'react-toastify'
 import { Spin } from 'antd'
-import ModalOnlyPrint from './ModalOnlyPrint'
+
 import SimpleBackdrop from '../components/util/Loading/LoadingPage'
 const { Option } = Select
 
-const ModalSDV = ({
-  data,
-  actionType,
-  typePage,
-  namePage,
-  close,
-  dataRecord,
-  dataThongSo,
-  dataDoiTuong,
-  loading,
-  setHightLight,
-  dataThongTinSua,
-  isLoadingModal,
-  isLoadingEdit,
-}) => {
-  const [isShowModalOnlyPrint, setIsShowModalOnlyPrint] = useState(false)
-
-  const [SctCreate, setSctCreate] = useState(null)
+const ModalSDV = ({ actionType, typePage, namePage, close, dataRecord, dataThongSo, dataDoiTuong, loading, setHightLight, dataThongTinSua, isLoadingModal, isLoadingEdit }) => {
   const [doiTuongInfo, setDoiTuongInfo] = useState({ Ten: '', DiaChi: '' })
   const [errors, setErrors] = useState({
     DoiTuong: null,
@@ -161,7 +144,6 @@ const ModalSDV = ({
           toast.success(DataErrorDescription)
           loading()
           setHightLight(soChungTu)
-          setSctCreate(soChungTu)
           setFormCreate(defaultFormCreate)
           setDoiTuongInfo({ Ten: '', DiaChi: '' })
         } else if (DataError === -1 || DataError === -2 || DataError === -3) {
@@ -431,16 +413,7 @@ const ModalSDV = ({
                 </div>
               </div>
               {/* button */}
-              <div className="flex justify-between items-center pt-[10px] ">
-                <div className="flex gap-x-3   ">
-                  <button
-                    onClick={() => setIsShowModalOnlyPrint(true)}
-                    className="flex items-center  py-1 px-2  rounded-md  border-2 border-purple-500 text-slate-50 text-text-main font-bold  bg-purple-500 hover:bg-white hover:text-purple-500"
-                  >
-                    <div className="pr-1">{/* <TiPrinter size={20} /> */}</div>
-                    <div>In phiếu</div>
-                  </button>
-                </div>
+              <div className="flex justify-end items-center pt-[10px] ">
                 <button
                   onClick={() => close()}
                   className="active:scale-[.98] active:duration-75 border-2 border-rose-500 text-slate-50 text-text-main font-bold  bg-rose-500 hover:bg-white hover:text-rose-500  rounded-md px-2 py-1 w-[80px] "
@@ -861,18 +834,6 @@ const ModalSDV = ({
             </>
           )}
         </div>
-        {isShowModalOnlyPrint && (
-          <ModalOnlyPrint
-            typePage={typePage}
-            namePage={namePage}
-            close={() => setIsShowModalOnlyPrint(false)}
-            dataThongTin={dataRecord}
-            data={data}
-            actionType={actionType}
-            close2={() => close()}
-            SctCreate={SctCreate}
-          />
-        )}
       </div>
     </>
   )
