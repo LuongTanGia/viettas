@@ -1,11 +1,15 @@
 import { configureStore } from "@reduxjs/toolkit";
-// import filtersSlice from "../components/Filters/FiltersSlice";
-// import todoListSlice from "../components/TodoList/TodoSlice";
+import LoginSlice from "../components/Auth/loginSlice";
+import MainSlice from "../components/MainPage/MainSlice";
+import DuLieuSlice from "../components/DULIEU/DuLieuSlice";
+import PBSSlice from "../components/PhieuBanHang/PBSSlice";
 
 const store = configureStore({
     reducer: {
-        // filters: filtersSlice.reducer,
-        // todoList: todoListSlice.reducer,
+        AuthData: LoginSlice.reducer,
+        mainData: MainSlice.reducer,
+        dataDuLieu: DuLieuSlice.reducer,
+        phieuBanHang: PBSSlice.reducer,
     },
 });
 

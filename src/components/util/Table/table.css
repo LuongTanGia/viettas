@@ -1,0 +1,277 @@
+.ant-table-wrapper.setHeight,
+.setHeight .ant-spin-container,
+.setHeight .ant-table,
+.setHeight .ant-table-container .ant-table-body {
+  /* max-height: unset !important; */
+  height: calc(100vh - 300px);
+}
+.setHeight .ant-table-container .ant-table-body {
+  max-height: unset !important;
+  /* height: calc(100vh - 500px); */
+}
+.setHeight .ant-table {
+  height: calc(100vh - 225px);
+}
+.DSBH_KHHH.setHeight .ant-table {
+  height: calc(100vh - 300px) !important;
+  /* z-index: 100000; */
+}
+.ant-table-wrapper.setHeight,
+.DSBH_KHHH.setHeight .ant-spin-container,
+.DSBH_KHHH.setHeight .ant-table,
+.DSBH_KHHH.setHeight .ant-table-container .ant-table-body {
+  height: calc(100vh - 370px);
+}
+/* NXT */
+.TruyVan .ant-table-wrapper.setHeight,
+.TruyVan .setHeight .ant-spin-container,
+.TruyVan .setHeight .ant-table,
+.TruyVan .setHeight .ant-table-container .ant-table-body {
+  /* max-height: unset !important; */
+  height: calc(100vh - 365px);
+}
+.TruyVan .setHeight .ant-table-container .ant-table-body {
+  max-height: unset !important;
+  /* height: calc(100vh - 500px); */
+}
+.TruyVan .setHeight .ant-table {
+  height: calc(100vh - 290px);
+}
+/* XuLy */
+.XuLy_BinhQuan .ant-table-wrapper.setHeight,
+.XuLy_BinhQuan .setHeight .ant-spin-container,
+.XuLy_BinhQuan .setHeight .ant-table,
+.XuLy_BinhQuan .setHeight .ant-table-container .ant-table-body {
+  /* max-height: unset !important; */
+  height: calc(100vh - 270px);
+}
+.XuLy_BinhQuan .setHeight .ant-table-container .ant-table-body {
+  max-height: unset !important;
+  /* height: calc(100vh - 500px); */
+}
+.XuLy_BinhQuan .setHeight .ant-table {
+  height: calc(100vh - 200px);
+}
+/* PhanQuyen */
+.PhanQuyen .ant-table-wrapper.setHeight,
+.PhanQuyen .setHeight .ant-spin-container,
+.PhanQuyen .setHeight .ant-table,
+.PhanQuyen .setHeight .ant-table-container .ant-table-body {
+  /* max-height: unset !important; */
+  height: calc(100vh - 240px);
+}
+.PhanQuyen .setHeight .ant-table-container .ant-table-body {
+  max-height: unset !important;
+  /* height: calc(100vh - 500px); */
+}
+.PhanQuyen .setHeight .ant-table {
+  height: calc(100vh - 200px);
+}
+/* DoanhSo */
+.TruyVan_Child .ant-table-wrapper.setHeight,
+.TruyVan_Child .setHeight .ant-spin-container,
+.TruyVan_Child .setHeight .ant-table,
+.TruyVan_Child .setHeight .ant-table-container .ant-table-body {
+  /* max-height: unset !important; */
+  height: calc(100vh - 400px);
+}
+.TruyVan_Child .setHeight .ant-table-container .ant-table-body {
+  max-height: unset !important;
+}
+.TruyVan_Child .setHeight .ant-table {
+  height: calc(100vh - 290px);
+}
+/* DoanhSo */
+.TruyVanDSKho_Child .ant-table-wrapper.setHeight,
+.TruyVanDSKho_Child .setHeight .ant-spin-container,
+.TruyVanDSKho_Child .setHeight .ant-table,
+.TruyVanDSKho_Child .setHeight .ant-table-container .ant-table-body {
+  /* max-height: unset !important; */
+  height: calc(100vh - 400px);
+}
+.TruyVanDSKho_Child .setHeight .ant-table-container .ant-table-body {
+  max-height: unset !important;
+}
+.TruyVanDSKho_Child .setHeight .ant-table {
+  height: calc(100vh - 290px);
+}
+/* SoQuy */
+.TruyVanSoQuy_Child .ant-table-wrapper.setHeight,
+.TruyVanSoQuy_Child .setHeight .ant-spin-container,
+.TruyVanSoQuy_Child .setHeight .ant-table,
+.TruyVanSoQuy_Child .setHeight .ant-table-container .ant-table-body {
+  /* max-height: unset !important; */
+  height: calc(100vh - 330px);
+}
+.TruyVanSoQuy_Child .setHeight .ant-table-container .ant-table-body {
+  max-height: unset !important;
+}
+.TruyVanSoQuy_Child .setHeight .ant-table {
+  height: calc(100vh - 220px);
+}
+/*  GBL */
+.GBL .ant-table-wrapper,
+.GBL .ant-spin-container,
+.GBL .ant-table,
+.GBL .ant-table-container .ant-table-body {
+  /* max-height: unset !important; */
+  height: calc(100vh - 320px);
+}
+.GBL .ant-table-container .ant-table-body {
+  max-height: unset !important;
+  /* height: calc(100vh - 500px); */
+}
+.GBL .ant-table {
+  height: calc(100vh - 250px);
+}
+
+/* DuLieuBLQ */
+.BLQ .ant-table-wrapper,
+.BLQ .ant-spin-container,
+.BLQ .ant-table,
+.BLQ .ant-table-container .ant-table-body {
+  /* max-height: unset !important; */
+  height: calc(100vh - 234px);
+}
+.BLQ .ant-table-container .ant-table-body {
+  max-height: unset !important;
+  /* height: calc(100vh - 500px); */
+}
+.BLQ .ant-table {
+  height: calc(100vh - 250px);
+}
+
+.BLQ_child1 .ant-table-container .ant-table-body {
+  max-height: unset !important;
+  height: calc(100vh - 580px);
+}
+
+.BLQ_child2 .ant-table-container .ant-table-body {
+  max-height: unset !important;
+  height: calc(100vh - 450px);
+}
+
+.TongHopPBL .ant-table-container .ant-table-body {
+  max-height: unset !important;
+  height: calc(100vh - 310px);
+}
+
+/* @media (min-width: 536px) {
+  .ant-table-wrapper.setHeight,
+  .setHeight .ant-spin-container,
+  .setHeight .ant-table,
+  .setHeight .ant-table-container,
+  .setHeight .ant-table-container .ant-table-body {
+    height: calc(100vh - 400px);
+  }
+} */
+.h450 .ant-table-container .ant-table-body {
+  max-height: 450px;
+  min-height: 450px;
+}
+.h400 .ant-table-container .ant-table-body {
+  max-height: 400px;
+  min-height: 400px;
+}
+.h396 .ant-table-container .ant-table-body {
+  max-height: 396px;
+  min-height: 396px;
+}
+
+.h340 .ant-table-container .ant-table-body {
+  max-height: 340px;
+  min-height: 340px;
+}
+.h310 .ant-table-container .ant-table-body {
+  max-height: 310px;
+  min-height: 310px;
+}
+
+.h300 .ant-table-container .ant-table-body {
+  max-height: 300px;
+  min-height: 300px;
+}
+.h290 .ant-table-container .ant-table-body {
+  max-height: 290px;
+  min-height: 290px;
+}
+.h264 .ant-table-container .ant-table-body {
+  max-height: 264px;
+  min-height: 264px;
+}
+.h250 .ant-table-container .ant-table-body {
+  max-height: 250px;
+  min-height: 250px;
+}
+
+.h220 .ant-table-container .ant-table-body {
+  max-height: 220px;
+  min-height: 220px;
+}
+.h200 .ant-table-container .ant-table-body {
+  max-height: 200px;
+  min-height: 200px;
+}
+.h150 .ant-table-container .ant-table-body {
+  max-height: 150px;
+  min-height: 150px;
+}
+
+tbody tr {
+  cursor: pointer;
+}
+.editable-row .ant-form-item-explain {
+  position: absolute;
+  top: 100%;
+  font-size: 12px;
+}
+
+.ant-table-summary {
+  position: absolute;
+}
+
+.highlight-row {
+  background-color: #d7f4fd;
+}
+.ant-table-cell-row-hover {
+  background-color: #d7f4fd !important;
+}
+.highlight-row .ant-table-cell-fix-right,
+.highlight-row .ant-table-cell-fix-left {
+  background-color: #d7f4fd !important;
+}
+
+/* tr.highlight-row:hover {
+  background-color: #87b4ef !important;
+} */
+/* .setHeight .ant-table-body:--w {
+  overflow-y: hidden !important;
+} */
+/* width */
+.ant-table-body::-webkit-scrollbar {
+  width: 10px;
+  height: 12px;
+}
+
+/* Track */
+.ant-table-body::-webkit-scrollbar-track {
+  background: transparent;
+  display: none;
+}
+
+/* Handle */
+.ant-table-body::-webkit-scrollbar-thumb {
+  background: #f1f1f1;
+  border-radius: 20000px;
+}
+
+/* Handle on hover */
+.ant-table-body::-webkit-scrollbar-thumb:hover {
+  background: #969696;
+}
+/* .ant-table-wrapper .ant-table-cell-fix-left {
+  background-color: #f1f1f1;
+} */
+.ant-table-summary td {
+  background-color: #f1f1f1 !important;
+}

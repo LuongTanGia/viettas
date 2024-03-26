@@ -1,0 +1,68 @@
+.barcodeList {
+  border-collapse: collapse;
+  width: 100%;
+}
+.barcodeList thead th {
+  font-weight: 500;
+  font-size: 16px;
+  background-color: #fafafa;
+  border: 1px solid #dcdcdc;
+  padding: 0.35rem;
+  text-align: center;
+}
+.barcodeList thead {
+  border: 1px solid #dcdcdc;
+  width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+.barcodeList tr:hover {
+  background-color: #fafafa;
+}
+
+.barcodeList td {
+  text-align: center;
+  border: 1px solid #dcdcdc;
+  padding: 0.5rem;
+}
+
+.barcodeList td > input {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+}
+.barcodeList td > div {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+@media (max-width: 819px) {
+  .HH_Barcode {
+    right: 15px;
+    top: 10px;
+  }
+  .HH_HHCT {
+    right: 20px;
+    top: 10px;
+  }
+}
+@media (width: 820px) {
+  .HH_Barcode {
+    right: 30px;
+    top: 10px;
+  }
+  .HH_Barcode--LapRap {
+    right: 20px;
+    top: 10px;
+  }
+  .HH_HHCT {
+    right: 37px;
+    top: 10px;
+  }
+  .HH_HHCT_small {
+    right: 25px;
+  }
+}

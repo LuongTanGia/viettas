@@ -1,0 +1,130 @@
+.box_content {
+  position: relative;
+}
+.box_capnhat {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  align-items: center;
+  border: 1px solid rgb(152, 151, 151);
+}
+.text_capnhat {
+  position: absolute;
+  background-color: #fff;
+  left: 20px;
+  top: 0px;
+}
+/* .box_capnhatlabel {
+  width: 70px;
+} */
+.box_thongtin {
+  padding: 5px;
+  background-color: #fff;
+}
+.box_thongtin .DatePicker_PMH input {
+  border: unset;
+}
+.box_thongtin .DatePicker_PMH input:hover {
+  border: unset;
+}
+.box_thongtin.create *,
+.box_thongtin.create select,
+.box_thongtin.create input {
+  /* background-color: white; */
+  /* font-weight: 500; */
+
+  /* outline: none; */
+}
+
+/* .box_thongtin.create .sochungtu {
+  background-color: gray;
+} */
+.box_thongtin input,
+.box_thongtin select,
+.box_thongtin option {
+  border: 1px solid rgb(152, 151, 151);
+}
+
+/* label {
+/* label {
+  min-width: 80px;
+} */
+.date_edit * {
+  background: #fff;
+}
+/* .box_thongtin.create .box_content,
+.box_thongtin.create .box_content * {
+  background: #ccc;
+} */
+.box_thongtin.create .box_content_left {
+  border-radius: 5px;
+  overflow: hidden;
+  margin-right: 5px;
+}
+/* .box_thongtin .ant-select-selection-search {
+  background-color: #fff;
+} */
+
+.box_thongtin.edit div[name='MaKho'] * {
+  background-color: white;
+}
+.box_thongtin input {
+  /* padding: 0 11px; */
+  height: 24px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+.box_thongtin .ant-select {
+  height: 24px;
+}
+
+.box_thongtin .ant-select-selector {
+  overflow: hidden;
+}
+.box_thongtin .ant-select-arrow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.box_thongtin .ant-select-selection-item {
+  height: 25px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+.box_thongtin input:hover {
+  border: 1px solid #4897e6;
+}
+.DateBox .css-14s5rfu-MuiFormLabel-root-MuiInputLabel-root {
+  transform: translate(14px, 8px) scale(1) !important;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.DateBox .css-o9k5xi-MuiInputBase-root-MuiOutlinedInput-root {
+  height: 40px;
+  padding-left: 5px;
+  font-size: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 75px;
+  width: 200px;
+}
+.DateBox {
+}
+.selectBox .ant-select-selection-placeholder,
+.selectBox .ant-select-selection-item {
+  font-weight: 400;
+  opacity: 1;
+  color: rgb(43, 42, 42);
+  font-size: 18px;
+  margin: 10px;
+}
+.ant-float-btn-default {
+  position: absolute;
+}
+.phieuKhoLien .ant-row {
+  justify-content: center;
+}

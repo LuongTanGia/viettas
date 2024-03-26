@@ -1,0 +1,9 @@
+#sidebar {
+  top: 50px;
+}
+.ant-drawer-mask {
+  background: transparent !important;
+}
+.iconSize {
+  font-size: 20px !important;
+}
