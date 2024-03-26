@@ -125,13 +125,13 @@ const App = () => {
 
       const response = await DANHSACHDULIEU(API.DANHSACHDULIEU, { TokenId: TokenID.credential }, dispatch)
       setData(response)
-      if (response.DataResults.length === 1) {
+      if (response?.DataResults?.length === 1) {
         const remoteDB = response.DataResults[0].RemoteDB
 
         await LOGIN(API.DANGNHAP, API.DANHSACHDULIEU, response.TKN, remoteDB, {}, dispatch)
         window.localStorage.setItem('firstLogin', true)
         window.location.href = '/'
-      } else if (response?.DataResults.length > 1) {
+      } else if (response?.DataResults?.length > 1) {
         setIsLoggedIn(true)
       }
     } catch (error) {

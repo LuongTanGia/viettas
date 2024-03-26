@@ -15,12 +15,10 @@ import { useSearch } from '../../../components_K/myComponents/useSearch'
 import HighlightedCell from '../../../components/hooks/HighlightedCell'
 import { exportToExcel } from '../../../action/Actions'
 import { CloseSquareFilled } from '@ant-design/icons'
-import { useNavigate } from 'react-router-dom'
 
 const { Text } = Typography
 const { IoAddCircleOutline, TiPrinter, MdDelete, GiPayMoney, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill, CgCloseO } = icons
 const PhieuMuaHang = () => {
-  const navigate = useNavigate()
   const optionContainerRef = useRef(null)
   const [isLoading, setIsLoading] = useState(true)
   const [tableLoad, setTableLoad] = useState(true)
@@ -734,7 +732,7 @@ const PhieuMuaHang = () => {
 
   const handleEndDateChange = (newDate) => {
     const startDate = formKhoanNgay.NgayBatDau
-    const endDate = dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss')
+    const endDate = dayjs(newDate).format('YYYY-MM-DD')
 
     if (dayjs(startDate).isAfter(dayjs(endDate))) {
       // Nếu ngày kết thúc nhỏ hơn ngày bắt đầu, cập nhật ngày bắt đầu
@@ -893,7 +891,7 @@ const PhieuMuaHang = () => {
                       onChange={(newDate) => {
                         setFormKhoanNgay({
                           ...formKhoanNgay,
-                          NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                          NgayBatDau: dayjs(newDate).format('YYYY-MM-DD'),
                         })
                       }}
                       onBlur={() => {
@@ -931,7 +929,7 @@ const PhieuMuaHang = () => {
                       onChange={(newDate) => {
                         setFormKhoanNgay({
                           ...formKhoanNgay,
-                          NgayKetThuc: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                          NgayKetThuc: dayjs(newDate).format('YYYY-MM-DD'),
                         })
                       }}
                       onBlur={() => {

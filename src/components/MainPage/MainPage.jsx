@@ -40,11 +40,15 @@ import QuanLy from '../../Pages/ThietLap/QuanLy'
 import QuayTinhTien from '../../Pages/ThietLap/QuayTinhTien'
 import NhapXuatTon from '../../Pages/TruyVan/NhapXuatTon'
 import SoSanhGB from '../../Pages/TruyVan/SoSanhBangGia'
+import HangHoaTKTT from '../../Pages/TruyVan/HangHoaTonKhoTamTinh'
+import DLBanLeQuay from '../../Pages/TruyVan/DuLieuBanLeQuay'
 import PhanCaDS from '../../Pages/ThietLap/PhanCaDS'
 import DoanhSoBanHangKho from '../../Pages/TruyVan/DoanhSoBanHangKho'
 import DoanhSoBanHangQuay from '../../Pages/TruyVan/DoanhSoBanHangQuay'
 import SoQuy from '../../Pages/TruyVan/SoQuy'
 import BinhQuanXuatKho from '../../Pages/XuLy/BinhQuanXuatKho'
+import TongHopPBL from '../../Pages/XuLy/TongHopPhieuBanLe'
+import GoChotCa from '../../Pages/XuLy/GoDuLieuChotCa'
 import PhanQuyen from '../../Pages/HeThong/PhanQuyen'
 import ThongKeQuyenHan from '../../Pages/HeThong/ThongKeQuyenHan'
 
@@ -79,6 +83,8 @@ function MainPage({ isSidebarVisible, isTableLoad, isTargetRow }) {
           <Route path="/DuLieuTC/DuLieu_PCT" element={<PhieuChiTien />} />
           <Route path="/DuLieuTC/DuLieu_PTT" element={<PhieuThuTien />} />
           <Route path="/XuLy_BinhQuanXuatKho" element={<BinhQuanXuatKho />} />
+          <Route path="/XuLy_TongHopPhieuBanLe" element={<TongHopPBL />} />
+          <Route path="/XuLy_GoDuLieuChotCa" element={<GoChotCa />} />
           <Route path="/TruyVan_CongNoDauRa" element={<CongNoDauRa />} />
           <Route path="/TruyVan_CongNoDauVao" element={<CongNoDauVao />} />
           <Route path="/TruyVan_DoanhSoBanHangHH" element={<DSBHHH />} />
@@ -91,6 +97,8 @@ function MainPage({ isSidebarVisible, isTableLoad, isTargetRow }) {
           <Route path="/TruyVan_CanDoiNXT_TongKho" element={<NhapXuatTon />} />
           <Route path="/TruyVan_SoSanhBangGia" element={<SoSanhGB />} />
           <Route path="/ThietLap_GiaLe" element={<GiaBanLe />} />
+          <Route path="/TruyVan_TonKho_TheoKho" element={<HangHoaTKTT />} />
+          <Route path="/TruyVan_DuLieuBanLeQuay" element={<DLBanLeQuay />} />
           <Route path="/ThietLap_NhomGiaDoiTuong" element={<BangGiaKH />} />
           <Route path="/ThietLap_GiaLe" element={<GiaBanLe />} />
           <Route path="/ThietLap_GiaSi" element={<GiaBanSi />} />

@@ -39,6 +39,30 @@ export const useSearch = (data) => {
           TongDoiTuong,
           // SDV
           DiaChiDoiTuong,
+          // Ban le Quay
+          Quay,
+          Ca,
+          NhanVien,
+          TyLeCKTT,
+          TongTienCKTT,
+          TongTongCong,
+          KhachTra,
+          HoanLai,
+          SoChungTuTH,
+          // Dong,
+          MaHang,
+          TenHang,
+          DVT,
+          SoLuong,
+          DonGia,
+          TienHang,
+          TyLeThue,
+          TienThue,
+          ThanhTien,
+          // TongHopPBL
+          TongThu,
+          TongChi,
+          TienPhaiNop,
         } = item || {}
 
         return (
@@ -72,6 +96,30 @@ export const useSearch = (data) => {
           (SoTien?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (TenHangMuc || '').toLowerCase().includes(search.toLowerCase()) ||
           (SoThamChieu || '').toLowerCase().includes(search.toLowerCase()) ||
+          // ban le Quay
+          (Quay?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (Ca || '').toLowerCase().includes(search.toLowerCase()) ||
+          (NhanVien || '').toLowerCase().includes(search.toLowerCase()) ||
+          (TyLeCKTT?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (TongTienCKTT?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (TongTongCong?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (KhachTra?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (HoanLai?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (SoChungTuTH || '').toLowerCase().includes(search.toLowerCase()) ||
+          // (Dong?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (MaHang || '').toLowerCase().includes(search.toLowerCase()) ||
+          (TenHang || '').toLowerCase().includes(search.toLowerCase()) ||
+          (DVT || '').toLowerCase().includes(search.toLowerCase()) ||
+          (SoLuong?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (DonGia?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (TienHang?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (TyLeThue?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (TienThue?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (ThanhTien?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          // TongHopPBL
+          (TongThu?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (TongChi?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (TienPhaiNop?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           // SDV
           (DiaChiDoiTuong || '').toLowerCase().includes(search.toLowerCase())
         )
