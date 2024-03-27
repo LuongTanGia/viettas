@@ -145,6 +145,10 @@
   max-height: unset !important;
   height: calc(100vh - 580px);
 }
+.BLQ_child1_1 .ant-table-container .ant-table-body {
+  max-height: unset !important;
+  height: calc(100vh - 260px);
+}
 
 .BLQ_child2 .ant-table-container .ant-table-body {
   max-height: unset !important;
@@ -165,6 +169,7 @@
     height: calc(100vh - 400px);
   }
 } */
+
 .h450 .ant-table-container .ant-table-body {
   max-height: 450px;
   min-height: 450px;

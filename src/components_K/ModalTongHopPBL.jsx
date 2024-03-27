@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { Tooltip } from 'antd'
+import { Spin, Table } from 'antd'
 import dayjs from 'dayjs'
 import logo from '../assets/VTS-iSale.ico'
 import * as apis from '../apis'
@@ -9,9 +9,10 @@ import ActionButton from '../components/util/Button/ActionButton'
 import { toast } from 'react-toastify'
 
 import icons from '../untils/icons'
+
 // import { toast } from 'react-toastify'
 const { GoQuestion } = icons
-const ModalTongHopPBL = ({ actionType, typePage, namePage, close, dataRecord, dataThongSo, loading, formSynthetics }) => {
+const ModalTongHopPBL = ({ actionType, typePage, namePage, close, dataRecord, dataThongSo, loading, formSynthetics, isLoadingModal, dataThongTin }) => {
   const formSynthetic = {
     NgayCTu: dataRecord ? dataRecord.NgayCTu : '',
     Quay: dataRecord ? dataRecord.Quay : 0,
@@ -25,6 +26,175 @@ const ModalTongHopPBL = ({ actionType, typePage, namePage, close, dataRecord, da
     Ca: dataRecord ? dataRecord.Ca : '',
     NhanVien: dataRecord ? dataRecord.NguoiTao : '',
   }
+
+  const columns = [
+    {
+      title: 'STT',
+      dataIndex: 'STT',
+      key: 'STT',
+      width: 60,
+      hight: 10,
+      fixed: 'left',
+      align: 'center',
+      render: (text, record, index) => <div style={{ textAlign: 'center' }}>{index + 1}</div>,
+    },
+    {
+      title: 'Mã khách hàng',
+      dataIndex: 'MaDoiTuong',
+      key: 'MaDoiTuong',
+      width: 200,
+      fixed: 'left',
+      sorter: (a, b) => a.MaDoiTuong.localeCompare(b.MaDoiTuong),
+      showSorterTooltip: false,
+      align: 'center',
+      render: (text) => <div style={{ textAlign: 'start' }}>{text}</div>,
+    },
+    {
+      title: 'Tên khách hàng',
+      dataIndex: 'TenDoiTuong',
+      key: 'TenDoiTuong',
+      width: 250,
+      sorter: (a, b) => a.TenDoiTuong.localeCompare(b.TenDoiTuong),
+      showSorterTooltip: false,
+      align: 'center',
+      render: (text) => <div style={{ textAlign: 'start' }}>{text}</div>,
+    },
+
+    {
+      title: 'Mã hàng',
+      dataIndex: 'MaHang',
+      key: 'MaHang',
+      width: 200,
+      sorter: (a, b) => a.MaHang.localeCompare(b.MaHang),
+      showSorterTooltip: false,
+      align: 'center',
+      render: (text) => <div style={{ textAlign: 'start' }}>{text}</div>,
+    },
+    {
+      title: 'Tên hàng',
+      dataIndex: 'TenHang',
+      key: 'TenHang',
+      width: 250,
+      sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
+      showSorterTooltip: false,
+      align: 'center',
+      render: (text) => <div style={{ textAlign: 'start' }}>{text}</div>,
+    },
+    {
+      title: 'ĐVT',
+      dataIndex: 'DVT',
+      key: 'DVT',
+      width: 150,
+      align: 'center',
+      render: (text) => <div>{text}</div>,
+      sorter: (a, b) => a.DVT.localeCompare(b.DVT),
+      showSorterTooltip: false,
+    },
+
+    {
+      title: 'Số lượng',
+      dataIndex: 'SoLuong',
+      key: 'SoLuong',
+      width: 150,
+      align: 'center',
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full    ${text < 0 ? 'text-red-600 ' : text === 0 ? 'text-gray-300' : ''} `}>{formatPrice(text, dataThongSo?.SOLESOLUONG)}</div>
+      ),
+      sorter: (a, b) => a.SoLuong - b.SoLuong,
+      showSorterTooltip: false,
+    },
+    {
+      title: 'Đơn giá',
+      dataIndex: 'DonGia',
+      key: 'DonGia',
+      width: 150,
+      align: 'center',
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full    ${text < 0 ? 'text-red-600 ' : text === 0 ? 'text-gray-300' : ''} `}>{formatPrice(text, dataThongSo?.SOLESOTIEN)}</div>
+      ),
+      sorter: (a, b) => a.SoLuong - b.SoLuong,
+      showSorterTooltip: false,
+    },
+    {
+      title: 'Tiền hàng',
+      dataIndex: 'TienHang',
+      key: 'TienHang',
+      width: 150,
+      align: 'center',
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full    ${text < 0 ? 'text-red-600 ' : text === 0 ? 'text-gray-300' : ''} `}>{formatPrice(text, dataThongSo?.SOLESOTIEN)}</div>
+      ),
+      sorter: (a, b) => a.TienHang - b.TienHang,
+      showSorterTooltip: false,
+    },
+    {
+      title: '% Thuế',
+      dataIndex: 'TyLeThue',
+      key: 'TyLeThue',
+      width: 100,
+      align: 'center',
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full    ${text < 0 ? 'text-red-600 ' : text === 0 ? 'text-gray-300' : ''} `}>{formatPrice(text, dataThongSo?.SOLETYLE)}</div>
+      ),
+      sorter: (a, b) => a.TyLeThue - b.TyLeThue,
+      showSorterTooltip: false,
+    },
+    {
+      title: 'Tiền thuế',
+      dataIndex: 'TienThue',
+      key: 'TienThue',
+      width: 150,
+      align: 'center',
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full    ${text < 0 ? 'text-red-600 ' : text === 0 ? 'text-gray-300' : ''} `}>{formatPrice(text, dataThongSo?.SOLESOTIEN)}</div>
+      ),
+      sorter: (a, b) => a.TienThue - b.TienThue,
+      showSorterTooltip: false,
+    },
+    {
+      title: 'Thành tiền',
+      dataIndex: 'ThanhTien',
+      key: 'ThanhTien',
+      width: 150,
+      align: 'center',
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full    ${text < 0 ? 'text-red-600 ' : text === 0 ? 'text-gray-300' : ''} `}>{formatPrice(text, dataThongSo?.SOLESOTIEN)}</div>
+      ),
+      sorter: (a, b) => a.ThanhTien - b.ThanhTien,
+      showSorterTooltip: false,
+    },
+
+    {
+      title: '%CK TH.Toán',
+      dataIndex: 'TyLeCKTT',
+      key: 'TyLeCKTT',
+      width: 150,
+      align: 'center',
+      sorter: (a, b) => a.TyLeCKTT - b.TyLeCKTT,
+      showSorterTooltip: false,
+      render: (text) => <div className={`text-end ${text < 0 ? 'text-red-600 ' : text === 0 ? 'text-gray-300' : ''} `}>{formatPrice(text, dataThongSo.SOLESOTIEN)}</div>,
+    },
+    {
+      title: 'Tiền CK TH.Toán',
+      dataIndex: 'TienCKTT',
+      key: 'TienCKTT',
+      width: 150,
+      align: 'center',
+      sorter: (a, b) => a.TienCKTT - b.TienCKTT,
+      showSorterTooltip: false,
+      render: (text) => <div className={`text-end ${text < 0 ? 'text-red-600 ' : text === 0 ? 'text-gray-300' : ''} `}>{formatPrice(text, dataThongSo.SOLESOTIEN)}</div>,
+    },
+    {
+      title: 'Tổng cộng',
+      dataIndex: 'TongCong',
+      key: 'TongCong',
+      width: 150,
+      align: 'center',
+      sorter: (a, b) => a.TongCong - b.TongCong,
+      showSorterTooltip: false,
+      render: (text) => <div className={`text-end ${text < 0 ? 'text-red-600 ' : text === 0 ? 'text-gray-300' : ''} `}>{formatPrice(text, dataThongSo.SOLESOTIEN)}</div>,
+    },
+  ]
 
   const handleLapChungTu = async () => {
     try {
@@ -312,6 +482,63 @@ const ModalTongHopPBL = ({ actionType, typePage, namePage, close, dataRecord, da
                     />
                   </div>
                 </div>
+                {/* table */}
+                <Spin spinning={isLoadingModal}>
+                  <div>
+                    <Table
+                      className="TongHopPBL"
+                      columns={columns}
+                      dataSource={dataThongTin?.DataResults_PBL}
+                      size="small"
+                      scroll={{
+                        x: 'max-content',
+                        y: 200,
+                      }}
+                      bordered
+                      pagination={false}
+                      // summary={() => {
+                      //   return (
+                      //     <Table.Summary fixed="bottom">
+                      //       <Table.Summary.Row>
+                      //         {columnChild1
+                      //           .filter((column) => column.render)
+                      //           .map((column) => {
+                      //             const isNumericColumn = typeof filteredDuLieuBLQ[0]?.[column.dataIndex] === 'number'
+                      //             return (
+                      //               <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                      //                 {column.dataIndex === 'TyLeCKTT' ? (
+                      //                   <Text strong>
+                      //                     {Number(filteredDuLieuBLQ.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                      //                       minimumFractionDigits: dataThongSo?.SOLETYLE,
+                      //                       maximumFractionDigits: dataThongSo?.SOLETYLE,
+                      //                     })}
+                      //                   </Text>
+                      //                 ) : column.dataIndex === 'TongTienHang' ||
+                      //                   column.dataIndex === 'TongTienThue' ||
+                      //                   column.dataIndex === 'TongThanhTien' ||
+                      //                   column.dataIndex === 'TongTienCKTT' ||
+                      //                   column.dataIndex === 'TongTongCong' ||
+                      //                   column.dataIndex === 'KhachTra' ||
+                      //                   column.dataIndex === 'HoanLai' ? (
+                      //                   <Text strong>
+                      //                     {Number(filteredDuLieuBLQ.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                      //                       minimumFractionDigits: dataThongSo?.SOLESOTIEN,
+                      //                       maximumFractionDigits: dataThongSo?.SOLESOTIEN,
+                      //                     })}
+                      //                   </Text>
+                      //                 ) : column.dataIndex === 'SoChungTu' ? (
+                      //                   <Text strong>{Object.values(dataBLQ).filter((value) => value.SoChungTu).length}</Text>
+                      //                 ) : null}
+                      //               </Table.Summary.Cell>
+                      //             )
+                      //           })}
+                      //       </Table.Summary.Row>
+                      //     </Table.Summary>
+                      //   )
+                      // }}
+                    ></Table>
+                  </div>
+                </Spin>
               </div>
               {/* button */}
               <div className="flex justify-end items-center pt-[10px] gap-2 ">
