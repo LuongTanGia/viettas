@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { Table, Tooltip, Typography } from 'antd'
+import { Spin, Table } from 'antd'
 import dayjs from 'dayjs'
 import logo from '../assets/VTS-iSale.ico'
 import * as apis from '../apis'
@@ -7,9 +7,9 @@ import { RETOKEN, formatPrice } from '../action/Actions'
 import { DateField } from '@mui/x-date-pickers'
 import ActionButton from '../components/util/Button/ActionButton'
 import { toast } from 'react-toastify'
-const { Text } = Typography
+
 import icons from '../untils/icons'
-import HighlightedCell from '../components/hooks/HighlightedCell'
+
 // import { toast } from 'react-toastify'
 const { GoQuestion } = icons
 const ModalTongHopPBL = ({ actionType, typePage, namePage, close, dataRecord, dataThongSo, loading, formSynthetics, isLoadingModal, dataThongTin }) => {
@@ -483,60 +483,62 @@ const ModalTongHopPBL = ({ actionType, typePage, namePage, close, dataRecord, da
                   </div>
                 </div>
                 {/* table */}
-                <div>
-                  <Table
-                    className="TongHopPBL"
-                    columns={columns}
-                    dataSource={dataThongTin?.DataResults_PBL}
-                    size="small"
-                    scroll={{
-                      x: 'max-content',
-                      y: 200,
-                    }}
-                    bordered
-                    pagination={false}
-                    // summary={() => {
-                    //   return (
-                    //     <Table.Summary fixed="bottom">
-                    //       <Table.Summary.Row>
-                    //         {columnChild1
-                    //           .filter((column) => column.render)
-                    //           .map((column) => {
-                    //             const isNumericColumn = typeof filteredDuLieuBLQ[0]?.[column.dataIndex] === 'number'
-                    //             return (
-                    //               <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
-                    //                 {column.dataIndex === 'TyLeCKTT' ? (
-                    //                   <Text strong>
-                    //                     {Number(filteredDuLieuBLQ.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                    //                       minimumFractionDigits: dataThongSo?.SOLETYLE,
-                    //                       maximumFractionDigits: dataThongSo?.SOLETYLE,
-                    //                     })}
-                    //                   </Text>
-                    //                 ) : column.dataIndex === 'TongTienHang' ||
-                    //                   column.dataIndex === 'TongTienThue' ||
-                    //                   column.dataIndex === 'TongThanhTien' ||
-                    //                   column.dataIndex === 'TongTienCKTT' ||
-                    //                   column.dataIndex === 'TongTongCong' ||
-                    //                   column.dataIndex === 'KhachTra' ||
-                    //                   column.dataIndex === 'HoanLai' ? (
-                    //                   <Text strong>
-                    //                     {Number(filteredDuLieuBLQ.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                    //                       minimumFractionDigits: dataThongSo?.SOLESOTIEN,
-                    //                       maximumFractionDigits: dataThongSo?.SOLESOTIEN,
-                    //                     })}
-                    //                   </Text>
-                    //                 ) : column.dataIndex === 'SoChungTu' ? (
-                    //                   <Text strong>{Object.values(dataBLQ).filter((value) => value.SoChungTu).length}</Text>
-                    //                 ) : null}
-                    //               </Table.Summary.Cell>
-                    //             )
-                    //           })}
-                    //       </Table.Summary.Row>
-                    //     </Table.Summary>
-                    //   )
-                    // }}
-                  ></Table>
-                </div>
+                <Spin spinning={isLoadingModal}>
+                  <div>
+                    <Table
+                      className="TongHopPBL"
+                      columns={columns}
+                      dataSource={dataThongTin?.DataResults_PBL}
+                      size="small"
+                      scroll={{
+                        x: 'max-content',
+                        y: 200,
+                      }}
+                      bordered
+                      pagination={false}
+                      // summary={() => {
+                      //   return (
+                      //     <Table.Summary fixed="bottom">
+                      //       <Table.Summary.Row>
+                      //         {columnChild1
+                      //           .filter((column) => column.render)
+                      //           .map((column) => {
+                      //             const isNumericColumn = typeof filteredDuLieuBLQ[0]?.[column.dataIndex] === 'number'
+                      //             return (
+                      //               <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                      //                 {column.dataIndex === 'TyLeCKTT' ? (
+                      //                   <Text strong>
+                      //                     {Number(filteredDuLieuBLQ.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                      //                       minimumFractionDigits: dataThongSo?.SOLETYLE,
+                      //                       maximumFractionDigits: dataThongSo?.SOLETYLE,
+                      //                     })}
+                      //                   </Text>
+                      //                 ) : column.dataIndex === 'TongTienHang' ||
+                      //                   column.dataIndex === 'TongTienThue' ||
+                      //                   column.dataIndex === 'TongThanhTien' ||
+                      //                   column.dataIndex === 'TongTienCKTT' ||
+                      //                   column.dataIndex === 'TongTongCong' ||
+                      //                   column.dataIndex === 'KhachTra' ||
+                      //                   column.dataIndex === 'HoanLai' ? (
+                      //                   <Text strong>
+                      //                     {Number(filteredDuLieuBLQ.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                      //                       minimumFractionDigits: dataThongSo?.SOLESOTIEN,
+                      //                       maximumFractionDigits: dataThongSo?.SOLESOTIEN,
+                      //                     })}
+                      //                   </Text>
+                      //                 ) : column.dataIndex === 'SoChungTu' ? (
+                      //                   <Text strong>{Object.values(dataBLQ).filter((value) => value.SoChungTu).length}</Text>
+                      //                 ) : null}
+                      //               </Table.Summary.Cell>
+                      //             )
+                      //           })}
+                      //       </Table.Summary.Row>
+                      //     </Table.Summary>
+                      //   )
+                      // }}
+                    ></Table>
+                  </div>
+                </Spin>
               </div>
               {/* button */}
               <div className="flex justify-end items-center pt-[10px] gap-2 ">
