@@ -35,3 +35,21 @@ export const TongHopPBL = (token, form) =>
       reject(error)
     }
   })
+
+export const ThongTinTongHopPBL = (token, form) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      // console.log('Data to be sent to API:', form)
+      const response = await axios({
+        url: '/processes/DuLieuQuayChuaTongHop/ThongTin',
+        method: 'post',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        data: form,
+      })
+      resolve(response)
+    } catch (error) {
+      reject(error)
+    }
+  })

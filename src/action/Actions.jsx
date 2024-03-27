@@ -836,6 +836,7 @@ export const formatCurrency = (value) => {
 }
 
 export const formatPrice = (price, odd) => {
+  if (price === null || price === undefined) return
   const numberOfDecimals = odd || 0
 
   // Làm tròn số thập phân
