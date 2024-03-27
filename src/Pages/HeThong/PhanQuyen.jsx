@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useNavigate } from 'react-router-dom'
-import React, { useState, useEffect, useContext, useRef } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { Checkbox, Form, Input, Table, Tooltip, Typography } from 'antd'
 const { Text } = Typography
 import { CgCloseO } from 'react-icons/cg'
@@ -45,28 +45,11 @@ const PhanQuyen = () => {
     EXCEL: true,
     TOOLBAR: true,
   }
+
   const [PQForm, setPQForm] = useState(() => {
     return dataSource && dataSource?.length > 0 ? { ...dataSource[0] } : innitProduct
   })
   const [isFullData, setIsFullData] = useState()
-  useEffect(() => {
-    const getDataQuyenHan = async () => {
-      try {
-        const response = await categoryAPI.QuyenHan('HeThong_PhanQuyen', TokenAccess)
-        if (response.data.DataError === 0) {
-          setDataCRUD(response.data)
-          setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getDataQuyenHan()
-        }
-      } catch (error) {
-        console.log(error)
-        setIsLoading(true)
-      }
-    }
-    getDataQuyenHan()
-  }, [])
 
   useEffect(() => {
     const getDataNguoiDung = async () => {
@@ -449,25 +432,16 @@ const PhanQuyen = () => {
       }
     })
     setDataSource(updatedDataSource)
-    testFunctions()
   }
   const isParentRecord = (record) => {
     return record?.children && record?.children?.length > 0
   }
-  const childrenWithSubChildren = dataSource
-    .map((item) => item.children)
-    .filter((children) => children)
-    .flatMap((children) => children)
-    .map((child) => child.children)
-    .filter((subchildren) => subchildren)
-  const children = dataSource.map((item) => item.children)
-  // console.log(dataSource)
 
-  const testFunctions = (record, value) => {
-    const newData = dataSource[record].children.filter((child) => child[value] === true)
-    setIsFullData(newData)
-    return isFullData?.length < dataSource[0].children.length
-  }
+  const newData = dataSource[0]?.children.filter((child) => child.VISIBLE === true)
+  const full = newData?.length < dataSource[0]?.children.length
+  console.log('1', full)
+  console.log('2', newData)
+
   const titlesChucNang = [
     {
       title: 'Tên chức năng',
@@ -495,12 +469,12 @@ const PhanQuyen = () => {
       align: 'center',
       width: 70,
       showSorterTooltip: false,
-
       render: (text, record) => {
+        const filteredChildren = dataSource[record.key]?.children.filter((child) => child.VISIBLE === true)
         return (
           <Checkbox
             className=" justify-center"
-            indeterminate={isParentRecord(record) && checkedValue.length > 0 && isFullData?.length < dataSource[0].children.length}
+            indeterminate={isParentRecord(record) && checkedValue.length > 0 && filteredChildren?.length < dataSource[record.key]?.children.length}
             checked={text}
             id={`VISIBLE_${record?.key}`}
             disabled={record?.ALLOW_VISIBLE == false}
@@ -643,6 +617,7 @@ const PhanQuyen = () => {
       },
     },
   ]
+
   useEffect(() => {
     const data = filteredChucNang
       ? filteredChucNang
