@@ -37,7 +37,6 @@ const SiderMenu = ({ handleToggleSidebar, isTargetRow, isTableLoad, isSidebarVis
 
   const getQuyenHan = async (Ma) => {
     try {
-      console.log(Ma)
       const response = await categoryAPI.QuyenHan(Ma, TokenAccess)
       if (response.data.DataError === 0) {
         Ma.includes('XuLy_') && Ma.includes('_PhanQuyen') && Ma.includes('_ThongKeQuyen') && response.data.RUN === false
