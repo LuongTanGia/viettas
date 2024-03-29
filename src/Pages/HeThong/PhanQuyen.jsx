@@ -33,7 +33,7 @@ const PhanQuyen = () => {
   const [dataCRUD, setDataCRUD] = useState()
   const [checkedValue, setCheckedValue] = useState([])
   const [dataSource, setDataSource] = useState([])
-  const [selectedRowKeys, setSelectedRowKeys] = useState([{}])
+  const [selectedRowKeys, setSelectedRowKeys] = useState([])
   const innitProduct = {
     TenChucNang: '',
     VISIBLE: true,
@@ -49,7 +49,7 @@ const PhanQuyen = () => {
   const [PQForm, setPQForm] = useState(() => {
     return dataSource && dataSource?.length > 0 ? { ...dataSource[0] } : innitProduct
   })
-  const [isFullData, setIsFullData] = useState()
+  const [isChildChecked, setIsChildChecked] = useState()
 
   useEffect(() => {
     const getDataNguoiDung = async () => {
@@ -198,6 +198,7 @@ const PhanQuyen = () => {
       ),
     },
   ]
+
   const handleCheckboxChange = (checked, recordKey, value) => {
     const updatedDataSource = dataSource.map((record) => {
       if (isNaN(recordKey)) {
@@ -305,12 +306,12 @@ const PhanQuyen = () => {
             } else if (updateSubChildren?.length > 0) {
               const updatedChild = {
                 ...child,
-                [value]: checked,
+                [value]: child[`ALLOW_${value}`] === true ? checked : null,
                 children: updateSubChildren.map((subChild) => {
                   if (value === 'VISIBLE' || value === 'VIEW') {
                     return {
                       ...subChild,
-                      [value]: checked,
+                      [value]: subChild[`ALLOW_${value}`] === true ? checked : null,
                       VIEW: subChild.ALLOW_VIEW === true ? checked : null,
                       ADD: subChild.ALLOW_ADD === true ? checked : null,
                       DEL: subChild.ALLOW_DEL === true ? checked : null,
@@ -320,8 +321,8 @@ const PhanQuyen = () => {
                       TOOLBAR: subChild.ALLOW_TOOLBAR === true ? checked : null,
                     }
                   } else {
-                    setPQForm({ ...subChild, [value]: checked })
-                    return { ...subChild, [value]: checked }
+                    setPQForm({ ...subChild, [value]: subChild[`ALLOW_${value}`] === true ? checked : null })
+                    return { ...subChild, [value]: subChild[`ALLOW_${value}`] === true ? checked : null }
                   }
                 }),
               }
@@ -437,11 +438,6 @@ const PhanQuyen = () => {
     return record?.children && record?.children?.length > 0
   }
 
-  const newData = dataSource[0]?.children.filter((child) => child.VISIBLE === true)
-  const full = newData?.length < dataSource[0]?.children.length
-  console.log('1', full)
-  console.log('2', newData)
-
   const titlesChucNang = [
     {
       title: 'Tên chức năng',
@@ -470,11 +466,18 @@ const PhanQuyen = () => {
       width: 70,
       showSorterTooltip: false,
       render: (text, record) => {
-        const filteredChildren = dataSource[record.key]?.children.filter((child) => child.VISIBLE === true)
+        const filteredChildrenVISIBLE = dataSource[record.key]?.children.filter((child) => child.VISIBLE === true)
+
         return (
           <Checkbox
             className=" justify-center"
-            indeterminate={isParentRecord(record) && checkedValue.length > 0 && filteredChildren?.length < dataSource[record.key]?.children.length}
+            indeterminate={
+              filteredChildrenVISIBLE?.length == 0
+                ? false
+                : isParentRecord(record) &&
+                  checkedValue.length > 0 &&
+                  filteredChildrenVISIBLE?.length < dataSource[record.key]?.children.filter((child) => child?.ALLOW_VISIBLE !== false)?.length
+            }
             checked={text}
             id={`VISIBLE_${record?.key}`}
             disabled={record?.ALLOW_VISIBLE == false}
@@ -491,9 +494,16 @@ const PhanQuyen = () => {
       width: 70,
       showSorterTooltip: false,
       render: (text, record) => {
+        const filteredChildrenVIEW = dataSource[record.key]?.children.filter((child) => child?.VIEW === true)
         return (
           <Checkbox
-            // indeterminate={isParentRecord(record) && checkedValue.length > 0}
+            indeterminate={
+              filteredChildrenVIEW?.length === 0
+                ? false
+                : isParentRecord(record) &&
+                  checkedValue.length > 0 &&
+                  filteredChildrenVIEW?.length < dataSource[record.key]?.children.filter((child) => child?.ALLOW_VIEW !== false)?.length
+            }
             className=" justify-center"
             id={`VIEW_${record?.key}`}
             checked={text}
@@ -510,16 +520,25 @@ const PhanQuyen = () => {
       align: 'center',
       width: 70,
       showSorterTooltip: false,
-      render: (text, record) => (
-        <Checkbox
-          // indeterminate={isParentRecord(record) && checkedValue.length > 0}
-          className=" justify-center"
-          id={`ADD_${record?.key}`}
-          checked={text}
-          disabled={record?.ALLOW_ADD == false}
-          onChange={(e) => handleCheckboxChange(e.target.checked, record?.key, 'ADD')}
-        />
-      ),
+      render: (text, record) => {
+        const filteredChildrenADD = dataSource[record.key]?.children.filter((child) => child?.ADD === true)
+        return (
+          <Checkbox
+            indeterminate={
+              filteredChildrenADD?.length === 0
+                ? false
+                : isParentRecord(record) &&
+                  checkedValue.length > 0 &&
+                  filteredChildrenADD?.length < dataSource[record.key]?.children.filter((child) => child?.ALLOW_ADD !== false)?.length
+            }
+            className=" justify-center"
+            id={`ADD_${record?.key}`}
+            checked={text}
+            disabled={record?.ALLOW_ADD == false}
+            onChange={(e) => handleCheckboxChange(e.target.checked, record?.key, 'ADD')}
+          />
+        )
+      },
     },
     {
       title: 'Xóa',
@@ -529,8 +548,16 @@ const PhanQuyen = () => {
       width: 70,
       showSorterTooltip: false,
       render: (text, record) => {
+        const filteredChildrenDEL = dataSource[record.key]?.children.filter((child) => child?.DEL === true)
         return (
           <Checkbox
+            indeterminate={
+              filteredChildrenDEL?.length === 0
+                ? false
+                : isParentRecord(record) &&
+                  checkedValue.length > 0 &&
+                  filteredChildrenDEL?.length < dataSource[record.key]?.children.filter((child) => child?.ALLOW_DEL !== false)?.length
+            }
             className=" justify-center"
             id={`DEL_${record?.key}`}
             checked={text}
@@ -548,13 +575,21 @@ const PhanQuyen = () => {
       width: 70,
       showSorterTooltip: false,
       render: (text, record) => {
+        const filteredChildrenEDIT = dataSource[record.key]?.children.filter((child) => child?.EDIT === true)
         return (
           <Checkbox
+            indeterminate={
+              filteredChildrenEDIT?.length === 0
+                ? false
+                : isParentRecord(record) &&
+                  checkedValue.length > 0 &&
+                  filteredChildrenEDIT?.length < dataSource[record.key]?.children.filter((child) => child?.ALLOW_EDIT !== false)?.length
+            }
             className=" justify-center"
-            onChange={(e) => handleCheckboxChange(e.target.checked, record?.key, 'EDIT')}
             id={`EDIT_${record?.key}`}
             checked={text}
             disabled={record?.ALLOW_EDIT == false}
+            onChange={(e) => handleCheckboxChange(e.target.checked, record?.key, 'EDIT')}
           />
         )
       },
@@ -567,13 +602,21 @@ const PhanQuyen = () => {
       width: 70,
       showSorterTooltip: false,
       render: (text, record) => {
+        const filteredChildrenRUN = dataSource[record.key]?.children.filter((child) => child?.RUN === true)
         return (
           <Checkbox
+            indeterminate={
+              filteredChildrenRUN?.length === 0
+                ? false
+                : isParentRecord(record) &&
+                  checkedValue.length > 0 &&
+                  filteredChildrenRUN?.length < dataSource[record.key]?.children.filter((child) => child?.ALLOW_RUN !== false)?.length
+            }
             className=" justify-center"
-            onChange={(e) => handleCheckboxChange(e.target.checked, record?.key, 'RUN')}
             id={`RUN_${record?.key}`}
             checked={text}
             disabled={record?.ALLOW_RUN == false}
+            onChange={(e) => handleCheckboxChange(e.target.checked, record?.key, 'RUN')}
           />
         )
       },
@@ -586,13 +629,21 @@ const PhanQuyen = () => {
       width: 70,
       showSorterTooltip: false,
       render: (text, record) => {
+        const filteredChildrenEXCEL = dataSource[record.key]?.children.filter((child) => child?.EXCEL === true)
         return (
           <Checkbox
+            indeterminate={
+              filteredChildrenEXCEL?.length === 0
+                ? false
+                : isParentRecord(record) &&
+                  checkedValue.length > 0 &&
+                  filteredChildrenEXCEL?.length < dataSource[record.key]?.children.filter((child) => child?.ALLOW_EXCEL !== false)?.length
+            }
             className=" justify-center"
-            onChange={(e) => handleCheckboxChange(e.target.checked, record?.key, 'EXCEL')}
             id={`EXCEL_${record?.key}`}
             checked={text}
             disabled={record?.ALLOW_EXCEL == false}
+            onChange={(e) => handleCheckboxChange(e.target.checked, record?.key, 'EXCEL')}
           />
         )
       },
@@ -605,13 +656,21 @@ const PhanQuyen = () => {
       width: 70,
       showSorterTooltip: false,
       render: (text, record) => {
+        const filteredChildrenTOOLBAR = dataSource[record.key]?.children.filter((child) => child?.TOOLBAR === true)
         return (
           <Checkbox
-            className="justify-center"
-            onChange={(e) => handleCheckboxChange(e.target.checked, record?.key, 'TOOLBAR')}
+            indeterminate={
+              filteredChildrenTOOLBAR?.length === 0
+                ? false
+                : isParentRecord(record) &&
+                  checkedValue.length > 0 &&
+                  filteredChildrenTOOLBAR?.length < dataSource[record.key]?.children.filter((child) => child?.ALLOW_TOOLBAR !== false)?.length
+            }
+            className=" justify-center"
             id={`TOOLBAR_${record?.key}`}
             checked={text}
             disabled={record?.ALLOW_TOOLBAR == false}
+            onChange={(e) => handleCheckboxChange(e.target.checked, record?.key, 'TOOLBAR')}
           />
         )
       },
