@@ -18,12 +18,12 @@ const { FaFileMedical, BsSearch, TfiMoreAlt, FaEyeSlash, RiFileExcel2Fill } = ic
 const TongHopPBL = () => {
   const optionContainerRef = useRef(null)
   const [tableLoad, setTableLoad] = useState(true)
-  const [isLoadingModal, setIsLoadingModal] = useState(true)
+
   const [isShowModal, setIsShowModal] = useState(false)
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [isShowOption, setIsShowOption] = useState(false)
   const [data, setData] = useState([])
-  const [dataThongTin, setDataThongTin] = useState({})
+
   const [dataRecord, setDataRecord] = useState(null)
   const [actionType, setActionType] = useState('')
   const [dataQuyenHan, setDataQuyenHan] = useState({})
@@ -76,47 +76,6 @@ const TongHopPBL = () => {
       setNewColumns(JSON.parse(localStorage.getItem('hidenColumnTongHopPBL')))
     }
   }, [confirmed])
-
-  // get helper
-  useEffect(() => {
-    setIsLoadingModal(true)
-
-    const fetchData = async () => {
-      try {
-        console.log('get helper')
-        const tokenLogin = localStorage.getItem('TKN')
-        if (actionType === 'view') {
-          const response = await apis.ThongTinTongHopPBL(tokenLogin, dataRecord)
-          if (response) {
-            const { DataError, DataErrorDescription } = response.data
-            if (DataError === 0) {
-              setDataThongTin(response.data)
-              setIsLoadingModal(false)
-            } else if (DataError === -107 || DataError === -108) {
-              await RETOKEN()
-              fetchData()
-            } else if (DataError === -1 || DataError === -2 || DataError === -3) {
-              toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
-              setIsShowModal(false)
-              setIsLoadingModal(false)
-            } else {
-              toast.error(DataErrorDescription)
-              setIsShowModal(false)
-              setIsLoadingModal(false)
-            }
-          }
-        }
-      } catch (error) {
-        console.error('Lấy data thất bại', error)
-        setIsShowModal(false)
-        setIsLoadingModal(false)
-      }
-    }
-
-    if (isShowModal) {
-      fetchData()
-    }
-  }, [isShowModal])
 
   // get Chức năng quyền hạn
   useEffect(() => {
@@ -633,8 +592,6 @@ const TongHopPBL = () => {
                 actionType={actionType}
                 dataRecord={dataRecord}
                 formSynthetics={formSynthetics}
-                dataThongTin={dataThongTin}
-                isLoadingModal={isLoadingModal}
                 dataThongSo={dataThongSo}
                 loading={() => setTableLoad(true)}
                 setHightLight={setDoneTongHopPBL}

@@ -20,7 +20,7 @@ function ActionButton({ handleAction, title, icon, color, background, color_hove
           onClick={handleActionLoad}
           className={` flex justify-center items-center ${
             isModal ? '' : 'min-w-[10rem]'
-          }  border-2 shadow hover:text-${color_hover} border-${background} text-${color} text-base font-medium bg-${background} hover:bg-${bg_hover} rounded-md px-2 py-1 flex items-center gap-1 whitespace-nowrap max-h-10 
+          }  border-2 shadow hover:text-${color_hover} border-orange-500 text-${color} text-base font-medium bg-orange-500 hover:bg-orange-500 rounded-md px-2 py-1 flex items-center gap-1 whitespace-nowrap max-h-10 
         `}
         >
           <i className="text-sm">{icon}</i>

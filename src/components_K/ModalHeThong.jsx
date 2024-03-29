@@ -23,6 +23,15 @@ const styleDate = {
     height: '18px',
   },
 }
+const styleDate2 = {
+  '& .MuiButtonBase-root': {
+    padding: '4px',
+  },
+  '& .MuiSvgIcon-root': {
+    width: '18px',
+    height: '18px',
+  },
+}
 
 const ModalHeThong = ({ close }) => {
   const [data, setData] = useState([])
@@ -183,7 +192,6 @@ const ModalHeThong = ({ close }) => {
     setFormHT({ ...formHT, [value]: e.target.checked })
   }
 
-  console.table(formHT)
   return (
     <div className=" fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
       <div className="p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
@@ -274,7 +282,7 @@ const ModalHeThong = ({ close }) => {
                       <div className="w-full flex gap-2">
                         <div className="flex gap-3">
                           <DateField
-                            className="DatePicker_PMH max-w-[110px]"
+                            className="DatePicker_PMH w-[110px]"
                             format="DD/MM/YYYY"
                             value={dayjs(formHT?.DATERANGEMIN)}
                             maxDate={formHT?.DATERANGEMAX}
@@ -284,13 +292,13 @@ const ModalHeThong = ({ close }) => {
                                 DATERANGEMIN: dayjs(newDate).format('YYYY-MM-DD'),
                               })
                             }}
-                            sx={styleDate}
+                            sx={formHT?.DATERANGELIMIT === 'M' ? styleDate : styleDate2}
                             disabled={formHT?.DATERANGELIMIT !== 'M'}
                           />
                           <div className="flex gap-2 ">
                             <div className=" text-end">Đến</div>
                             <DateField
-                              className="DatePicker_PMH max-w-[110px]"
+                              className="DatePicker_PMH w-[110px]"
                               format="DD/MM/YYYY"
                               value={dayjs(formHT?.DATERANGEMAX)}
                               minDate={formHT?.DATERANGEMIN}
@@ -300,7 +308,7 @@ const ModalHeThong = ({ close }) => {
                                   DATERANGEMAX: dayjs(newDate).format('YYYY-MM-DD'),
                                 })
                               }}
-                              sx={styleDate}
+                              sx={formHT?.DATERANGELIMIT === 'M' ? styleDate : styleDate2}
                               disabled={formHT?.DATERANGELIMIT !== 'M'}
                             />
                           </div>

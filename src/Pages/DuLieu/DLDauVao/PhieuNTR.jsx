@@ -291,7 +291,7 @@ const PhieuNTR = () => {
       render: (text, record, index) => <div style={{ textAlign: 'center' }}>{index + 1}</div>,
     },
     {
-      title: 'Số Chứng Từ',
+      title: 'Số chứng từ',
       dataIndex: 'SoChungTu',
       key: 'SoChungTu',
       width: 150,
@@ -306,7 +306,7 @@ const PhieuNTR = () => {
       ),
     },
     {
-      title: 'Ngày Chứng Từ',
+      title: 'Ngày chứng từ',
       dataIndex: 'NgayCTu',
       key: 'NgayCTu',
       align: 'center',
@@ -321,7 +321,7 @@ const PhieuNTR = () => {
     },
 
     {
-      title: 'Mã Đối Tượng',
+      title: 'Mã đối tượng',
       dataIndex: 'MaDoiTuong',
       key: 'MaDoiTuong',
       width: 150,
@@ -596,7 +596,7 @@ const PhieuNTR = () => {
         return (
           <>
             <div className=" flex gap-1 items-center justify-center">
-              <Tooltip title="lập phiếu chi" color="blue">
+              <Tooltip title="Lập phiếu chi" color="blue">
                 <div
                   onClick={() => handlePay(record)}
                   className={`p-[3px] rounded-md text-slate-50 ${
@@ -883,7 +883,7 @@ const PhieuNTR = () => {
                   <div className="flex gap-x-2 items-center">
                     <label htmlFor="">Ngày</label>
                     <DateField
-                      className="DatePicker_PMH max-w-[110px]"
+                      className="DatePicker_PMH w-[110px]"
                       format="DD/MM/YYYY"
                       value={dayjs(formKhoanNgay.NgayBatDau)}
                       // maxDate={dayjs(formKhoanNgay.NgayKetThuc)}
@@ -921,7 +921,7 @@ const PhieuNTR = () => {
                   <div className="flex gap-x-2 items-center">
                     <label htmlFor="">Đến</label>
                     <DateField
-                      className="DatePicker_PMH max-w-[110px]"
+                      className="DatePicker_PMH w-[110px]"
                       format="DD/MM/YYYY"
                       // minDate={dayjs(formKhoanNgay.NgayBatDau)}
                       value={dayjs(formKhoanNgay.NgayKetThuc)}
@@ -1016,11 +1016,16 @@ const PhieuNTR = () => {
                         <Table.Summary.Row>
                           {newColumnsHide
                             .filter((column) => column.render)
-                            .map((column) => {
+                            .map((column, index) => {
                               const isNumericColumn = typeof filteredPNTR[0]?.[column.dataIndex] === 'number'
 
                               return (
-                                <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                                <Table.Summary.Cell
+                                  index={index}
+                                  key={`summary-cell-${index + 1}`}
+                                  align={isNumericColumn ? 'right' : 'left'}
+                                  className="text-end font-bold  bg-[#f1f1f1]"
+                                >
                                   {isNumericColumn ? (
                                     column.dataIndex === 'TongTienHang' || column.dataIndex === 'TongTienThue' || column.dataIndex === 'TongThanhTien' ? (
                                       <Text strong>

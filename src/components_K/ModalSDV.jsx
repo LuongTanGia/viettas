@@ -290,12 +290,11 @@ const ModalSDV = ({ actionType, typePage, namePage, close, dataRecord, dataThong
                         <div className="flex items-center gap-1 whitespace-nowrap">
                           <label className="required  min-w-[90px] text-sm flex justify-end">Ngày</label>
                           <DateField
-                            className="DatePicker_PMH  max-w-[110px]"
+                            className="DatePicker_PMH  w-[110px] bg-[#fafafa]"
                             format="DD/MM/YYYY"
                             value={dayjs(dataRecord?.NgayCTu)}
                             disabled
                             sx={{
-                              '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
                               '& .MuiButtonBase-root': {
                                 padding: '4px',
                               },
@@ -539,7 +538,7 @@ const ModalSDV = ({ actionType, typePage, namePage, close, dataRecord, dataThong
                               })
                               setErrors({ ...errors, GhiChu: '' })
                             }}
-                            className={`h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none 
+                            className={`h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none hover:border-blue-500
                                        ${errors.GhiChu ? 'border-red-500' : ''} `}
                           />
                         </div>
@@ -741,7 +740,7 @@ const ModalSDV = ({ actionType, typePage, namePage, close, dataRecord, dataThong
                                 })
                                 setErrors({ ...errors, GhiChu: '' })
                               }}
-                              className={`h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none 
+                              className={`h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none hover:border-blue-500
                                              ${errors.GhiChu ? 'border-red-500' : ''} `}
                             />
                           </div>

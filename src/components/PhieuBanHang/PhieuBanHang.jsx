@@ -264,8 +264,8 @@ function PhieuBanHang() {
   //         const isDateTime = dayjs(stringValue).isValid()
 
   //         if (isDate && isDateTime) {
-  //           const formattedValue = dayjs(stringValue).format('YYYY-MM-DDTHH:mm:ss')
-  //           const formattedSearchText = dayjs(searchTextLower, { strict: true }).format('YYYY-MM-DDTHH:mm:ss')
+  //           const formattedValue = dayjs(stringValue).format('YYYY-MM-DD')
+  //           const formattedSearchText = dayjs(searchTextLower, { strict: true }).format('YYYY-MM-DD')
 
   //           if (formattedValue.startsWith(formattedSearchText)) {
   //             return true
@@ -437,7 +437,7 @@ function PhieuBanHang() {
               onChange={(newDate) => {
                 setDataDate({
                   ...dataDate,
-                  NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                  NgayBatDau: dayjs(newDate).format('YYYY-MM-DD'),
                 })
               }}
               sx={{
@@ -463,7 +463,7 @@ function PhieuBanHang() {
               onChange={(newDate) => {
                 setDataDate({
                   ...dataDate,
-                  NgayKetThuc: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                  NgayKetThuc: dayjs(newDate).format('YYYY-MM-DD'),
                 })
               }}
               sx={{

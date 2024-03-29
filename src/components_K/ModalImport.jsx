@@ -214,9 +214,9 @@ const ModalImport = ({ close, dataHangHoa, typePage, loading, onRowCreate }) => 
                     <div>
                       <label className="required w-[120px] text-end">Áp dụng từ ngày</label>
                       <DateField
-                        // className="DatePicker_PMH max-w-[110px]"
+                        //className="DatePicker_PMH w-[110px]"
                         format="DD/MM/YYYY"
-                        value={dayjs()}
+                        value={dayjs(formImport?.HieuLucTu)}
                         onChange={(newDate) => {
                           setFormImport({
                             ...formImport,

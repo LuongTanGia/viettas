@@ -15,13 +15,11 @@ import HighlightedCell from '../../../components/hooks/HighlightedCell'
 import { exportToExcel } from '../../../action/Actions'
 import { CloseSquareFilled } from '@ant-design/icons'
 import ModalThuChi from '../../../components_K/ModalThuChi'
-import { useNavigate } from 'react-router-dom'
 import { PermissionView } from '../../../components_K'
 
 const { Text } = Typography
-const { IoAddCircleOutline, TiPrinter, MdDelete, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill, CgCloseO } = icons
+const { IoAddCircleOutline, TiPrinter, MdDelete, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill } = icons
 const PhieuThuTien = () => {
-  const navigate = useNavigate()
   const optionContainerRef = useRef(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isLoadingEdit, setIsLoadingEdit] = useState(true)
@@ -278,7 +276,7 @@ const PhieuThuTien = () => {
       render: (text, record, index) => <div style={{ textAlign: 'center' }}>{index + 1}</div>,
     },
     {
-      title: 'Số Phiếu Thu',
+      title: 'Số phiếu thu',
       dataIndex: 'SoChungTu',
       key: 'SoChungTu',
       width: 150,
@@ -293,7 +291,7 @@ const PhieuThuTien = () => {
       ),
     },
     {
-      title: 'Ngày Chứng Từ',
+      title: 'Ngày chứng từ',
       dataIndex: 'NgayCTu',
       key: 'NgayCTu',
       align: 'center',
@@ -308,7 +306,7 @@ const PhieuThuTien = () => {
     },
 
     {
-      title: 'Tên Hạng Mục',
+      title: 'Tên hạng mục',
       dataIndex: 'TenHangMuc',
       key: 'TenHangMuc',
       width: 150,
@@ -322,7 +320,7 @@ const PhieuThuTien = () => {
       ),
     },
     {
-      title: 'Chứng Từ Góc',
+      title: 'Chứng từ góc',
       dataIndex: 'SoThamChieu',
       key: 'SoThamChieu',
       width: 200,
@@ -341,7 +339,7 @@ const PhieuThuTien = () => {
     },
 
     {
-      title: 'Mã Đối Tượng',
+      title: 'Mã đối tượng',
       dataIndex: 'MaDoiTuong',
       key: 'MaDoiTuong',
       width: 200,
@@ -356,7 +354,7 @@ const PhieuThuTien = () => {
     },
 
     {
-      title: 'Tên Đối Tượng',
+      title: 'Tên đối tượng',
       dataIndex: 'TenDoiTuong',
       key: 'TenDoiTuong',
       width: 200,
@@ -394,7 +392,7 @@ const PhieuThuTien = () => {
     },
 
     {
-      title: 'Số Tiền',
+      title: 'Số tiền',
       dataIndex: 'SoTien',
       key: 'SoTien',
       width: 200,
@@ -604,7 +602,7 @@ const PhieuThuTien = () => {
 
   const handleEndDateChange = (newDate) => {
     const startDate = formKhoanNgay.NgayBatDau
-    const endDate = dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss')
+    const endDate = dayjs(newDate).format('YYYY-MM-DD')
 
     if (dayjs(startDate).isAfter(dayjs(endDate))) {
       // Nếu ngày kết thúc nhỏ hơn ngày bắt đầu, cập nhật ngày bắt đầu
@@ -649,7 +647,7 @@ const PhieuThuTien = () => {
                 </div>
                 <div className="flex  ">
                   {isShowSearch && (
-                    <div className={`flex absolute left-[12rem] -top-[2px] transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
+                    <div className={`flex absolute left-[13rem] -top-[1px] transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
                       <Input
                         allowClear={{
                           clearIcon: <CloseSquareFilled />,
@@ -748,14 +746,14 @@ const PhieuThuTien = () => {
                   <div className="flex gap-x-2 items-center">
                     <label htmlFor="">Ngày</label>
                     <DateField
-                      className="DatePicker_PMH max-w-[110px]"
+                      className="DatePicker_PMH w-[110px]"
                       format="DD/MM/YYYY"
                       value={dayjs(formKhoanNgay.NgayBatDau)}
                       // maxDate={dayjs(formKhoanNgay.NgayKetThuc)}
                       onChange={(newDate) => {
                         setFormKhoanNgay({
                           ...formKhoanNgay,
-                          NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                          NgayBatDau: dayjs(newDate).format('YYYY-MM-DD'),
                         })
                       }}
                       onBlur={() => {
@@ -786,14 +784,14 @@ const PhieuThuTien = () => {
                   <div className="flex gap-x-2 items-center">
                     <label htmlFor="">Đến</label>
                     <DateField
-                      className="DatePicker_PMH max-w-[110px]"
+                      className="DatePicker_PMH w-[110px]"
                       format="DD/MM/YYYY"
                       // minDate={dayjs(formKhoanNgay.NgayBatDau)}
                       value={dayjs(formKhoanNgay.NgayKetThuc)}
                       onChange={(newDate) => {
                         setFormKhoanNgay({
                           ...formKhoanNgay,
-                          NgayKetThuc: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                          NgayKetThuc: dayjs(newDate).format('YYYY-MM-DD'),
                         })
                       }}
                       onBlur={() => {

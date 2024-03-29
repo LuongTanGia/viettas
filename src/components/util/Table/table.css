@@ -131,7 +131,7 @@
 .BLQ .ant-table,
 .BLQ .ant-table-container .ant-table-body {
   /* max-height: unset !important; */
-  height: calc(100vh - 234px);
+  height: calc(100vh - 240px);
 }
 .BLQ .ant-table-container .ant-table-body {
   max-height: unset !important;
@@ -142,8 +142,7 @@
 }
 
 .BLQ_child1 .ant-table-container .ant-table-body {
-  max-height: unset !important;
-  height: calc(100vh - 580px);
+  height: 110px;
 }
 .BLQ_child1_1 .ant-table-container .ant-table-body {
   max-height: unset !important;
@@ -158,6 +157,11 @@
 .TongHopPBL .ant-table-container .ant-table-body {
   max-height: unset !important;
   height: calc(100vh - 310px);
+}
+
+.TongHopPBL_view .ant-table-container .ant-table-body {
+  max-height: unset !important;
+  height: calc(100vh - 374px);
 }
 
 /* @media (min-width: 536px) {

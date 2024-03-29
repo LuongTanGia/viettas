@@ -110,7 +110,6 @@ const GBL = () => {
     setIsLoadingEdit(true)
     const fetchData = async () => {
       try {
-        console.log('get helper')
         const tokenLogin = localStorage.getItem('TKN')
         if (actionType === 'create' || actionType === 'edit' || actionType === 'print' || actionType === 'import') {
           console.log('get helper  KH,DT')
@@ -147,10 +146,7 @@ const GBL = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log('get helper')
-
         const tokenLogin = localStorage.getItem('TKN')
-
         console.log('get helper  KH,DT')
         const response = await apis.ListHelperNhomGiaGBL(tokenLogin)
         if (response.data && response.data.DataError === 0) {
@@ -385,7 +381,7 @@ const GBL = () => {
       ),
     },
     {
-      title: 'DVT',
+      title: 'ĐVT',
       dataIndex: 'DVT',
       key: 'DVT',
       width: 100,
@@ -934,13 +930,18 @@ const GBL = () => {
                   return (
                     <Table.Summary fixed="bottom">
                       <Table.Summary.Row>
-                        <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell>
+                        <Table.Summary.Cell className="text-end font-bold bg-[#f1f1f1]"></Table.Summary.Cell>
                         {newColumnsHide
                           .filter((column) => column.render)
-                          .map((column) => {
+                          .map((column, index) => {
                             const isNumericColumn = typeof filteredGBL[0]?.[column.dataIndex] === 'number'
                             return (
-                              <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                              <Table.Summary.Cell
+                                index={index + 1}
+                                key={`summary-cell-${index + 1}`}
+                                align={isNumericColumn ? 'right' : 'left'}
+                                className="text-end font-bold  bg-[#f1f1f1]"
+                              >
                                 {column.dataIndex === 'STT' ? (
                                   <Text className="text-center flex justify-center" strong>
                                     {showFull === 'Hiện hành' ? data.length : dataFull.length}

@@ -332,7 +332,7 @@ const PhieuSDR = () => {
     },
 
     {
-      title: 'Số Tiền',
+      title: 'Số tiền',
       dataIndex: 'SoTien',
       key: 'SoTien',
       width: 200,
@@ -537,7 +537,7 @@ const PhieuSDR = () => {
 
   const handleEndDateChange = (newDate) => {
     const startDate = formKhoanNgay.NgayBatDau
-    const endDate = dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss')
+    const endDate = dayjs(newDate).format('YYYY-MM-DD')
 
     if (dayjs(startDate).isAfter(dayjs(endDate))) {
       // Nếu ngày kết thúc nhỏ hơn ngày bắt đầu, cập nhật ngày bắt đầu
@@ -674,14 +674,14 @@ const PhieuSDR = () => {
                   <div className="flex gap-x-2 items-center">
                     <label htmlFor="">Ngày</label>
                     <DateField
-                      className="DatePicker_PMH max-w-[110px]"
+                      className="DatePicker_PMH w-[110px]"
                       format="DD/MM/YYYY"
                       value={dayjs(formKhoanNgay.NgayBatDau)}
                       // maxDate={dayjs(formKhoanNgay.NgayKetThuc)}
                       onChange={(newDate) => {
                         setFormKhoanNgay({
                           ...formKhoanNgay,
-                          NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                          NgayBatDau: dayjs(newDate).format('YYYY-MM-DD'),
                         })
                       }}
                       onBlur={() => {
@@ -712,14 +712,14 @@ const PhieuSDR = () => {
                   <div className="flex gap-x-2 items-center">
                     <label htmlFor="">Đến</label>
                     <DateField
-                      className="DatePicker_PMH max-w-[110px]"
+                      className="DatePicker_PMH w-[110px]"
                       format="DD/MM/YYYY"
                       // minDate={dayjs(formKhoanNgay.NgayBatDau)}
                       value={dayjs(formKhoanNgay.NgayKetThuc)}
                       onChange={(newDate) => {
                         setFormKhoanNgay({
                           ...formKhoanNgay,
-                          NgayKetThuc: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                          NgayKetThuc: dayjs(newDate).format('YYYY-MM-DD'),
                         })
                       }}
                       onBlur={() => {
