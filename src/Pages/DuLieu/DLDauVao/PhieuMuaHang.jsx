@@ -909,13 +909,6 @@ const PhieuMuaHang = () => {
                       onFocus={() => setPrevDateValue(formKhoanNgay)}
                       sx={{
                         '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                        '& .MuiButtonBase-root': {
-                          padding: '4px',
-                        },
-                        '& .MuiSvgIcon-root': {
-                          width: '18px',
-                          height: '18px',
-                        },
                       }}
                     />
                   </div>
