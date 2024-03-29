@@ -792,7 +792,7 @@ const ModalPCT = ({
                         <div className="flex items-center gap-1 whitespace-nowrap">
                           <label className="required  min-w-[90px] text-sm flex justify-end">Ngày</label>
                           <DateField
-                            className="DatePicker_PMH  w-[110px]"
+                            className="DatePicker_PMH  w-[115px]"
                             format="DD/MM/YYYY"
                             value={dayjs(dataRecord?.NgayCTu)}
                             disabled

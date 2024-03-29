@@ -8,7 +8,7 @@ import dayjs from 'dayjs'
 // import ActionButton from '../../components/util/Button/ActionButton'
 import { RETOKEN, formatCurrency, formatPrice } from '../../action/Actions'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
-// import { exportToExcel } from '../../action/Actions'
+import { exportToExcel } from '../../action/Actions'
 import { CloseSquareFilled } from '@ant-design/icons'
 import { useSearch } from '../../components_K/myComponents/useSearch'
 import { ModalTongHopPBL, PermissionView } from '../../components_K'
@@ -511,7 +511,7 @@ const GoChotCa = () => {
                   {isShowOption && (
                     <div className=" absolute flex flex-col gap-2 bg-slate-100 px-3 py-2 items-center top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom ">
                       <div className={`flex flex-grow flex-wrap gap-1 ${!hideColumns ? 'flex-col' : ''}`}>
-                        {/* <button
+                        <button
                           onClick={dataQuyenHan?.EXCEL ? exportToExcel : ''}
                           className={`flex items-center py-1 px-2 rounded-md text-slate-50 text-base border-2 ${
                             dataQuyenHan?.EXCEL ? 'border-green-500  bg-green-500 hover:bg-white hover:text-green-500' : 'bg-gray-400 cursor-not-allowed'
@@ -521,7 +521,7 @@ const GoChotCa = () => {
                             <RiFileExcel2Fill size={20} />
                           </div>
                           <div>Xuất excel</div>
-                        </button> */}
+                        </button>
 
                         <button
                           onClick={() => setHideColumns(!hideColumns)}
@@ -679,11 +679,16 @@ const GoChotCa = () => {
                           {/* <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell> */}
                           {newColumnsHide
                             .filter((column) => column.render)
-                            .map((column) => {
+                            .map((column, index) => {
                               const isNumericColumn = typeof filteredGoChotCa[0]?.[column.dataIndex] === 'number'
 
                               return (
-                                <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                                <Table.Summary.Cell
+                                  index={index}
+                                  key={`summary-cell-${index + 1}`}
+                                  align={isNumericColumn ? 'right' : 'left'}
+                                  className="text-end font-bold  bg-[#f1f1f1]"
+                                >
                                   {column.dataIndex === 'TyLeCKTT' ? (
                                     <Text strong>
                                       {Number(filteredGoChotCa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {

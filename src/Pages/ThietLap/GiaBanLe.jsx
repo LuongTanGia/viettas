@@ -46,7 +46,7 @@ const GBL = () => {
   const [valueList, setValueList] = useState([])
   const [selectedRowKeys, setSelectedRowKeys] = useState([])
   const [isChanging, setIsChanging] = useState(false)
-  // const [doneGBL, setDoneGBL] = useState([])
+  const [doneGBL, setDoneGBL] = useState([])
 
   const [formFilter, setFormFilter] = useState({
     CodeValue1From: null,
@@ -773,6 +773,7 @@ const GBL = () => {
                     <div className="w-[42px] text-end">Nhóm</div>
                     <Select
                       showSearch
+                      optionFilterProp="children"
                       size="small"
                       allowClear
                       placeholder="Chọn nhóm"
@@ -795,6 +796,7 @@ const GBL = () => {
                     <div className=" text-center">Đến</div>
                     <Select
                       showSearch
+                      optionFilterProp="children"
                       allowClear
                       size="small"
                       placeholder="Chọn nhóm"
@@ -835,7 +837,8 @@ const GBL = () => {
                   <Select
                     mode="multiple"
                     allowClear
-                    maxTagCount={1}
+                    maxTagCount="responsive"
+                    optionFilterProp="children"
                     size="small"
                     placeholder="Chọn nhóm"
                     value={valueList}
@@ -870,8 +873,8 @@ const GBL = () => {
                   title={'Điều chỉnh giá'}
                   icon={<BsWrenchAdjustableCircle size={20} />}
                   bg_hover={'white'}
-                  background={'orange-500'}
-                  color_hover={'orange-500'}
+                  background={'bg-main'}
+                  color_hover={'bg-main'}
                   handleAction={handleAdjustPrice}
                   isModal={true}
                 />
@@ -915,7 +918,7 @@ const GBL = () => {
                     localStorage.setItem('pageSize', size)
                   },
                 }}
-                // rowClassName={(record) => (`${record.MaHang}/${record.HieuLucTu}` === doneGBL ? 'highlighted-row' : '')}
+                rowClassName={(record) => (`${record.MaHang}/${record.HieuLucTu}` === doneGBL ? 'highlighted-row' : '')}
                 rowKey={(record) => `${record.MaHang}/${record.HieuLucTu}`}
                 onRow={(record) => ({
                   onClick: () => {
@@ -973,7 +976,7 @@ const GBL = () => {
                 isLoadingEdit={isLoadingEdit}
                 dataThongSo={dataThongSo}
                 loading={() => setTableLoad(true)}
-                // setHightLight={setDoneGBL}
+                setHightLight={setDoneGBL}
               />
             )}
           </div>

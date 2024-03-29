@@ -543,11 +543,16 @@ const TongHopPBL = () => {
                         <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell>
                         {newColumnsHide
                           .filter((column) => column.render)
-                          .map((column) => {
+                          .map((column, index) => {
                             const isNumericColumn = typeof filteredTongHopPBL[0]?.[column.dataIndex] === 'number'
 
                             return (
-                              <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                              <Table.Summary.Cell
+                                index={index + 1}
+                                key={`summary-cell-${index + 1}`}
+                                align={isNumericColumn ? 'right' : 'left'}
+                                className="text-end font-bold  bg-[#f1f1f1]"
+                              >
                                 {column.dataIndex === 'TyLeCKTT' ? (
                                   <Text strong>
                                     {Number(filteredTongHopPBL.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {

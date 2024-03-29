@@ -148,6 +148,7 @@ const ModalImport = ({ close, dataHangHoa, typePage, loading, onRowCreate }) => 
         const { DataError, DataErrorDescription } = response.data
         if (DataError === 0) {
           toast.success(DataErrorDescription)
+          // setHightLight(`${formImport?.Datas?.MaHang}/${formImport?.Datas?.HieuLucTu}T00:00:00`)
           loading()
           close()
         } else if (DataError === -1 || DataError === -2 || DataError === -3) {

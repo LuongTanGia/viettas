@@ -675,7 +675,7 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
                           <input
                             placeholder={errors?.NhomGia}
                             type="text"
-                            className={`w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] hover:border-[#4897e6] h-[24px]
+                            className={`w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] hover:border-hover-border-color h-[24px]
                              ${errors.NhomGia ? 'border-red-500' : ''}`}
                             value={formCreate.NhomGia}
                             onChange={(e) => {
@@ -692,7 +692,7 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
                           <input
                             placeholder={errors?.TenNhomGia}
                             type="text"
-                            className={`w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] hover:border-[#4897e6] h-[24px]
+                            className={`w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] hover:border-hover-border-color h-[24px]
                              ${errors.TenNhomGia ? 'border-red-500' : ''}`}
                             value={formCreate.TenNhomGia}
                             onChange={(e) => {
@@ -708,7 +708,7 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
                           <label className=" w-[120px] text-end">Ghi chú</label>
                           <input
                             type="text"
-                            className="w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] hover:border-[#4897e6] h-[24px]"
+                            className="w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] hover:border-hover-border-color h-[24px]"
                             value={formCreate.GhiChu}
                             onChange={(e) =>
                               setFormCreate({
@@ -832,7 +832,7 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
                           <input
                             placeholder={errors?.NhomGia}
                             type="text"
-                            className={`w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] hover:border-[#4897e6] h-[24px]
+                            className={`w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px]  h-[24px]
                              ${errors.NhomGia ? 'border-red-500' : ''}`}
                             value={formEdit.Ma}
                             disabled
@@ -843,7 +843,7 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
                           <input
                             placeholder={errors?.TenNhomGia}
                             type="text"
-                            className={`w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] hover:border-[#4897e6] h-[24px]
+                            className={`w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] hover:border-hover-border-color h-[24px]
                              ${errors.TenNhomGia ? 'border-red-500' : ''}`}
                             value={formEdit.Data.TenNhomGia}
                             onChange={(e) => {
@@ -862,7 +862,7 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
                           <label className=" w-[120px] text-end">Ghi chú</label>
                           <input
                             type="text"
-                            className="w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] hover:border-[#4897e6] h-[24px]"
+                            className="w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] hover:border-hover-border-color h-[24px]"
                             value={formEdit.Data.GhiChu}
                             onChange={(e) =>
                               setFormEdit({

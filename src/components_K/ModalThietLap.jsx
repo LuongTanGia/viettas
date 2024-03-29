@@ -132,36 +132,31 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
 
     try {
       const tokenLogin = localStorage.getItem('TKN')
-
-      if (typePage === 'GBL') {
-        const response = await apis.ThemGBL(tokenLogin, formCreate)
-        if (response.data && response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription)
-          loading()
-          close()
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleCreateAndClose()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
+      let response
+      switch (typePage) {
+        case 'GBL':
+          response = await apis.ThemGBL(tokenLogin, formCreate)
+          break
+        case 'GKH':
+          response = await apis.ThemGKH(tokenLogin, formCreate)
+          break
+        default:
+          break
       }
-      if (typePage === 'GKH') {
-        const response = await apis.ThemGKH(tokenLogin, formCreate)
-        if (response.data && response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription)
-          setHightLight(`${formCreate.MaDoiTuong}/${formCreate.HieuLucTu}T00:00:00`)
+      if (response) {
+        const { DataError, DataErrorDescription } = response.data
+        if (DataError === 0) {
+          toast.success(DataErrorDescription)
+          setHightLight(`${typePage === 'GKH' ? `${formCreate.MaDoiTuong}/${formCreate.HieuLucTu}T00:00:00` : `${formCreate.MaHang}/${formCreate.HieuLucTu}T00:00:00`}`)
           loading()
           close()
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+        } else if (DataError === -107 || DataError === -108) {
           await RETOKEN()
           handleCreateAndClose()
         } else {
-          toast.error(response.data.DataErrorDescription)
+          toast.error(DataErrorDescription)
         }
       }
     } catch (error) {
@@ -183,36 +178,31 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
 
     try {
       const tokenLogin = localStorage.getItem('TKN')
-
-      if (typePage === 'GBL') {
-        const response = await apis.ThemGBL(tokenLogin, formCreate)
-        if (response.data && response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription)
-          loading()
-          setFormCreate(defaultFormCreate)
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleCreate()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
+      let response
+      switch (typePage) {
+        case 'GBL':
+          response = await apis.ThemGBL(tokenLogin, formCreate)
+          break
+        case 'GKH':
+          response = await apis.ThemGKH(tokenLogin, formCreate)
+          break
+        default:
+          break
       }
-      if (typePage === 'GKH') {
-        const response = await apis.ThemGKH(tokenLogin, formCreate)
-        if (response.data && response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription)
-          setHightLight(`${formCreate.MaDoiTuong}/${formCreate.HieuLucTu}T00:00:00`)
+      if (response) {
+        const { DataError, DataErrorDescription } = response.data
+        if (DataError === 0) {
+          toast.success(DataErrorDescription)
+          setHightLight(`${typePage === 'GKH' ? `${formCreate.MaDoiTuong}/${formCreate.HieuLucTu}T00:00:00` : `${formCreate.MaHang}/${formCreate.HieuLucTu}T00:00:00`}`)
           loading()
-          setFormCreate(defaultFormCreateGKH)
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+          setFormCreate(typePage === 'GKH' ? defaultFormCreateGKH : defaultFormCreate)
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+        } else if (DataError === -107 || DataError === -108) {
           await RETOKEN()
           handleCreate()
         } else {
-          toast.error(response.data.DataErrorDescription)
+          toast.error(DataErrorDescription)
         }
       }
     } catch (error) {
@@ -233,36 +223,32 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
 
     try {
       const tokenLogin = localStorage.getItem('TKN')
-
-      if (typePage === 'GBL') {
-        const response = await apis.SuaGBL(tokenLogin, formEdit)
-        if (response.data && response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription)
-          loading()
-          close()
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleEdit()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
+      let response
+      switch (typePage) {
+        case 'GBL':
+          response = await apis.SuaGBL(tokenLogin, formEdit)
+          break
+        case 'GKH':
+          response = await apis.SuaGKH(tokenLogin, formEdit)
+          break
+        default:
+          break
       }
-      if (typePage === 'GKH') {
-        const response = await apis.SuaGKH(tokenLogin, formEdit)
-        if (response.data && response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription)
+
+      if (response) {
+        const { DataError, DataErrorDescription } = response.data
+        if (DataError === 0) {
+          toast.success(DataErrorDescription)
           setHightLight(`${formEdit.Ma}/${formEdit.HieuLuc}`)
           loading()
           close()
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+        } else if (DataError === -107 || DataError === -108) {
           await RETOKEN()
           handleEdit()
         } else {
-          toast.error(response.data.DataErrorDescription)
+          toast.error(DataErrorDescription)
         }
       }
     } catch (error) {
@@ -273,32 +259,29 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
   const handleDelete = async (dataRecord) => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
-      if (typePage === 'GBL') {
-        const response = await apis.XoaGBL(tokenLogin, dataRecord.MaHang, dataRecord.HieuLucTu)
-        if (response.data && response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription)
-          loading()
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(response.data.DataErrorDescription)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleDelete()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
+      let response
+      switch (typePage) {
+        case 'GBL':
+          response = await apis.XoaGBL(tokenLogin, dataRecord.MaHang, dataRecord.HieuLucTu)
+          break
+        case 'GKH':
+          response = await apis.XoaGKH(tokenLogin, dataRecord.MaDoiTuong, dataRecord.HieuLucTu)
+          break
+        default:
+          break
       }
-      if (typePage === 'GKH') {
-        const response = await apis.XoaGKH(tokenLogin, dataRecord.MaDoiTuong, dataRecord.HieuLucTu)
-        if (response.data && response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription)
+      if (response) {
+        const { DataError, DataErrorDescription } = response.data
+        if (DataError === 0) {
+          toast.success(DataErrorDescription)
           loading()
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(response.data.DataErrorDescription)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(DataErrorDescription)
+        } else if (DataError === -107 || DataError === -108) {
           await RETOKEN()
           handleDelete()
         } else {
-          toast.error(response.data.DataErrorDescription)
+          toast.error(DataErrorDescription)
         }
       }
       close()
@@ -310,18 +293,20 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
   const handleDeleteDS = async () => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
-
       const response = await apis.XoaDSGKH(tokenLogin, formDEL)
-      if (response.data && response.data.DataError === 0) {
-        toast.success(response.data.DataErrorDescription)
-        loading()
-      } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-        toast.warning(response.data.DataErrorDescription)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        handleDeleteDS()
-      } else {
-        toast.error(response.data.DataErrorDescription)
+      if (response) {
+        const { DataError, DataErrorDescription } = response.data
+        if (DataError === 0) {
+          toast.success(DataErrorDescription)
+          loading()
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(DataErrorDescription)
+        } else if (DataError === -107 || DataError === -108) {
+          await RETOKEN()
+          handleDeleteDS()
+        } else {
+          toast.error(DataErrorDescription)
+        }
       }
       close()
     } catch (error) {
@@ -331,56 +316,45 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
   const handlePrint = async () => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
-
       const response = await apis.InGBL(tokenLogin, { ...formPrint, CodeValue1List: value1List.join(','), CodeValue2List: value2List.join(',') })
-      if (response.data && response.data.DataError === 0) {
-        base64ToPDF(response.data.DataResults)
-      } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-        toast.warning(response.data.DataErrorDescription)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        handlePrint()
-      } else {
-        toast.error(response.data.DataErrorDescription)
+      if (response) {
+        const { DataError, DataErrorDescription, DataResults } = response.data
+        if (DataError === 0) {
+          base64ToPDF(DataResults)
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(DataErrorDescription)
+        } else if (DataError === -107 || DataError === -108) {
+          await RETOKEN()
+          handlePrint()
+        } else {
+          toast.error(DataErrorDescription)
+        }
       }
     } catch (error) {
       console.error('Error while saving data:', error)
     }
   }
 
-  const handleCoThue = () => {
-    if (actionType === 'create') {
-      setFormCreate({ ...formCreate, CoThue: !formCreate.CoThue })
-    }
-    if (actionType === 'edit') {
-      setFormEdit({
-        ...formEdit,
-        Data: {
-          ...formEdit.Data,
-          CoThue: !formEdit.Data.CoThue,
-        },
-      })
-    }
-  }
   const handleAdjustPrice = async () => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
-
       const response = await apis.DieuChinhGBL(tokenLogin, formAdjustPrice)
-      if (response.data && response.data.DataError === 0) {
-        toast.success(response.data.DataErrorDescription)
-        // const soChungTu = response.data.DataResults.map((obj) => `${obj.Ma}/${obj.HieuLuc}`)
-        // setHightLight(soChungTu)
-        loading()
-      } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-        toast.warning(response.data.DataErrorDescription)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        handleAdjustPrice()
-      } else {
-        toast.error(response.data.DataErrorDescription)
+      if (response) {
+        const { DataError, DataErrorDescription } = response.data
+        if (DataError === 0) {
+          toast.success(DataErrorDescription)
+          // const soChungTu = response.data.DataResults.map((obj) => `${obj.Ma}/${obj.HieuLuc}`)
+          // setHightLight(soChungTu)
+          loading()
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(DataErrorDescription)
+        } else if (DataError === -107 || DataError === -108) {
+          await RETOKEN()
+          handleAdjustPrice()
+        } else {
+          toast.error(DataErrorDescription)
+        }
       }
-
       close()
     } catch (error) {
       console.error('Error while saving data:', error)
@@ -502,6 +476,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                       <label className="w-[90px] text-end">Nhóm</label>
                       <Select
                         showSearch
+                        optionFilterProp="children"
                         allowClear
                         size="small"
                         placeholder="Chọn nhóm"
@@ -524,6 +499,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                       <label className="w-[50px]  text-end">Đến</label>
                       <Select
                         showSearch
+                        optionFilterProp="children"
                         allowClear
                         size="small"
                         placeholder="Chọn nhóm"
@@ -547,12 +523,13 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                     <Select
                       mode="multiple"
                       allowClear
-                      maxTagCount={1}
                       placeholder="Chọn nhóm"
                       size="small"
                       value={value1List}
                       onChange={(value) => setValue1List(value)}
                       className="w-full truncate"
+                      maxTagCount="responsive"
+                      optionFilterProp="children"
                     >
                       {dataNhomGia?.map((item) => (
                         <Option key={item.Ma} value={item.Ma}>
@@ -566,6 +543,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                       <label className="w-[90px] text-end">Hàng hóa</label>
                       <Select
                         showSearch
+                        optionFilterProp="children"
                         allowClear
                         size="small"
                         placeholder="Chọn hàng hóa"
@@ -588,6 +566,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                       <label className="w-[50px]  text-end">Đến</label>
                       <Select
                         showSearch
+                        optionFilterProp="children"
                         allowClear
                         size="small"
                         placeholder="Chọn hàng hóa"
@@ -611,12 +590,13 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                     <Select
                       mode="multiple"
                       allowClear
-                      maxTagCount={1}
                       placeholder="Chọn nhóm"
                       size="small"
                       value={value2List}
                       onChange={(value) => setValue2List(value)}
                       className="w-full truncate"
+                      maxTagCount="responsive"
+                      optionFilterProp="children"
                     >
                       {dataHangHoa?.map((item) => (
                         <Option key={item.MaHang} value={item.MaHang} title={item.TenHang}>
@@ -648,7 +628,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                       <div className="flex items-center gap-1">
                         <label className="required  min-w-[70px] text-sm flex justify-end">Hiệu lực từ</label>
                         <DateField
-                          className="DatePicker_PMH  w-[110px]"
+                          className="DatePicker_PMH  w-[115px]"
                           format="DD/MM/YYYY"
                           value={dayjs(formAdjustPrice?.HieuLucTu)}
                           onChange={(newDate) => {
@@ -836,7 +816,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                             <div className="flex items-center gap-1 whitespace-nowrap">
                               <label className="required  min-w-[90px] text-sm flex justify-end">Kể từ ngày</label>
                               <DateField
-                                className="DatePicker_PMH  w-[110px]"
+                                className="DatePicker_PMH  w-[115px]"
                                 format="DD/MM/YYYY"
                                 value={dayjs(dataRecord?.HieuLucTu)}
                                 disabled
@@ -891,7 +871,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                           <div className="flex items-center gap-1 whitespace-nowrap">
                             <label className="required  min-w-[90px] text-sm flex justify-end">Hiệu lực từ</label>
                             <DateField
-                              className="DatePicker_PMH  w-[110px]"
+                              className="DatePicker_PMH  w-[115px]"
                               format="DD/MM/YYYY"
                               value={dayjs(dataRecord?.HieuLucTu)}
                               disabled
@@ -1036,7 +1016,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                             <div className="flex items-center gap-1 whitespace-nowrap">
                               <label className="required  min-w-[90px] text-sm flex justify-end">Kể từ ngày</label>
                               <DateField
-                                className="DatePicker_PMH  w-[110px]"
+                                className="DatePicker_PMH  w-[115px]"
                                 format="DD/MM/YYYY"
                                 defaultValue={dayjs()}
                                 onChange={(newDate) => {
@@ -1047,13 +1027,6 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                                 }}
                                 sx={{
                                   '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                                  '& .MuiButtonBase-root': {
-                                    padding: '4px',
-                                  },
-                                  '& .MuiSvgIcon-root': {
-                                    width: '18px',
-                                    height: '18px',
-                                  },
                                 }}
                               />
                             </div>
@@ -1082,7 +1055,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                               />
                             </div>
                             <div className="flex items-center gap-1 whitespace-nowrap">
-                              <Checkbox className="min-w-[192px] text-sm flex justify-end " checked={formCreate?.CoThue} onChange={handleCoThue}>
+                              <Checkbox className="min-w-[192px] text-sm flex justify-end " checked={formCreate?.CoThue}>
                                 Đã có thuế
                               </Checkbox>
                             </div>
@@ -1099,12 +1072,15 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                                   const parsedValue = parseFloat(value)
                                   return isNaN(parsedValue) ? null : parseFloat(parsedValue.toFixed(dataThongSo.SOLETYLE))
                                 }}
-                                onChange={(e) =>
+                                onChange={(e) => {
+                                  const tyLeThue = e
+
                                   setFormCreate({
                                     ...formCreate,
-                                    TyLeThue: e,
+                                    TyLeThue: tyLeThue,
+                                    CoThue: tyLeThue > 0,
                                   })
-                                }
+                                }}
                               />
                             </div>
                           </div>
@@ -1137,7 +1113,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                           <div className="flex items-center gap-1 whitespace-nowrap">
                             <label className="required  min-w-[90px] text-sm flex justify-end">Hiệu lực từ</label>
                             <DateField
-                              className="DatePicker_PMH  w-[110px]"
+                              className="DatePicker_PMH  w-[115px]"
                               format="DD/MM/YYYY"
                               value={dayjs(formCreate.HieuLucTu)}
                               onChange={(newDate) => {
@@ -1279,9 +1255,9 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                             <div className="flex items-center gap-1 whitespace-nowrap">
                               <label className="required  min-w-[90px] text-sm flex justify-end">Kể từ ngày</label>
                               <DateField
-                                className="DatePicker_PMH  w-[110px]"
+                                className="DatePicker_PMH w-[115px]"
                                 format="DD/MM/YYYY"
-                                value={dayjs(formEdit.Data.HieuLucTu)}
+                                value={dayjs(formEdit?.Data?.HieuLucTu)}
                                 onChange={(newDate) => {
                                   setFormEdit({
                                     ...formEdit,
@@ -1291,16 +1267,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                                     },
                                   })
                                 }}
-                                sx={{
-                                  '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                                  '& .MuiButtonBase-root': {
-                                    padding: '4px',
-                                  },
-                                  '& .MuiSvgIcon-root': {
-                                    width: '18px',
-                                    height: '18px',
-                                  },
-                                }}
+                                sx={{ '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' } }}
                               />
                             </div>
                             <div className="flex items-center gap-1 whitespace-nowrap">
@@ -1331,7 +1298,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                               />
                             </div>
                             <div className="flex items-center gap-1 whitespace-nowrap">
-                              <Checkbox className="min-w-[192px] text-sm flex justify-end " checked={formEdit?.Data.CoThue} onChange={handleCoThue}>
+                              <Checkbox className="min-w-[192px] text-sm flex justify-end " checked={formEdit?.Data.CoThue}>
                                 Đã có thuế
                               </Checkbox>
                             </div>
@@ -1348,15 +1315,17 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                                   const parsedValue = parseFloat(value)
                                   return isNaN(parsedValue) ? null : parseFloat(parsedValue.toFixed(dataThongSo.SOLETYLE))
                                 }}
-                                onChange={(e) =>
+                                onChange={(e) => {
+                                  const tyLeThue = e
                                   setFormEdit({
                                     ...formEdit,
                                     Data: {
                                       ...formEdit.Data,
-                                      TyLeThue: e,
+                                      TyLeThue: tyLeThue,
+                                      CoThue: tyLeThue > 0,
                                     },
                                   })
-                                }
+                                }}
                               />
                             </div>
                           </div>
@@ -1371,7 +1340,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                           <div className="flex items-center gap-1 whitespace-nowrap">
                             <label className="required  min-w-[90px] text-sm flex justify-end">Hiệu lực từ</label>
                             <DateField
-                              className="DatePicker_PMH  w-[110px]"
+                              className="DatePicker_PMH  w-[115px]"
                               format="DD/MM/YYYY"
                               value={dayjs(formEdit.HieuLuc)}
                               onChange={(newDate) => {
@@ -1514,6 +1483,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
           )}
         </div>
       </div>
+
       {actionType === 'import' && <ModalImport typePage={typePage} namePage={namePage} close={close} dataHangHoa={dataHangHoa} loading={loading}></ModalImport>}
     </>
   )

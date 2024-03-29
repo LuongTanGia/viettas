@@ -189,6 +189,10 @@ const ModalSelectHH = ({ close, data, onRowCreate, onChangLoading }) => {
                       <Table.Summary fixed="bottom">
                         <Table.Summary.Row>
                           <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"> {selectedRowTotal}</Table.Summary.Cell>
+                          <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"> </Table.Summary.Cell>
+                          <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"> </Table.Summary.Cell>
+                          <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"> </Table.Summary.Cell>
+                          <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"> </Table.Summary.Cell>
                         </Table.Summary.Row>
                       </Table.Summary>
                     )
@@ -196,7 +200,7 @@ const ModalSelectHH = ({ close, data, onRowCreate, onChangLoading }) => {
             }
           />
 
-          <div className="flex justify-end mt-1 gap-x-2">
+          <div className="flex justify-end mt-3 gap-x-2">
             <ActionButton color={'slate-50'} title={'Xong'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleChoose} isModal={true} />
             <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} isModal={true} />
           </div>

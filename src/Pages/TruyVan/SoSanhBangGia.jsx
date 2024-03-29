@@ -466,7 +466,6 @@ const SoSanhBG = () => {
                   <div className="flex gap-1 items-center">
                     <div className="w-[42px] text-end">Nhóm</div>
                     <Select
-                      showSearch
                       size="small"
                       allowClear
                       placeholder="Chọn nhóm"
@@ -477,6 +476,8 @@ const SoSanhBG = () => {
                         textOverflow: 'ellipsis',
                       }}
                       popupMatchSelectWidth={false}
+                      showSearch
+                      optionFilterProp="children"
                     >
                       {dataNhomHang?.map((item) => (
                         <Option key={item.Ma} value={item.Ma} title={item.Ten}>
@@ -489,6 +490,7 @@ const SoSanhBG = () => {
                     <div className=" text-center">Đến</div>
                     <Select
                       showSearch
+                      optionFilterProp="children"
                       allowClear
                       size="small"
                       placeholder="Chọn nhóm"
@@ -507,17 +509,23 @@ const SoSanhBG = () => {
                       ))}
                     </Select>
                   </div>
-                  <div className="flex gap-1 ">
+                  <div className="flex gap-1 items-center">
                     <div className="w-[42px] text-end">Chọn</div>
                     <Select
                       mode="multiple"
                       allowClear
-                      maxTagCount={2}
                       size="small"
                       placeholder="Chọn nhóm"
                       value={valueList1}
                       onChange={(value) => setValueList1(value)}
-                      className="md:w-[40vw] lg:w-[50vw] truncate"
+                      className="md:w-[40vw] lg:w-[50vw] "
+                      maxTagCount="responsive"
+                      optionFilterProp="children"
+                      // maxTagPlaceholder={(omittedValues) => (
+                      //   <Tooltip title={omittedValues?.map(({ label }) => label)} color="blue">
+                      //     <span>+{omittedValues?.length}...</span>
+                      //   </Tooltip>
+                      // )}
                     >
                       {dataNhomHang?.map((item) => (
                         <Option key={item.Ma} value={item.Ma}>
@@ -533,6 +541,7 @@ const SoSanhBG = () => {
                     <div className="w-[42px] text-end">H.Hóa</div>
                     <Select
                       showSearch
+                      optionFilterProp="children"
                       size="small"
                       allowClear
                       placeholder="Chọn nhóm"
@@ -555,6 +564,7 @@ const SoSanhBG = () => {
                     <div className=" text-center">Đến</div>
                     <Select
                       showSearch
+                      optionFilterProp="children"
                       allowClear
                       size="small"
                       placeholder="Chọn nhóm"
@@ -578,12 +588,13 @@ const SoSanhBG = () => {
                     <Select
                       mode="multiple"
                       allowClear
-                      maxTagCount={2}
                       size="small"
                       placeholder="Chọn nhóm"
                       value={valueList2}
                       onChange={(value) => setValueList2(value)}
                       className="md:w-[40vw] lg:w-[50vw] truncate"
+                      maxTagCount="responsive"
+                      optionFilterProp="children"
                     >
                       {dataHangHoa?.map((item) => (
                         <Option key={item.MaHang} value={item.MaHang} title={item.TenHang}>
