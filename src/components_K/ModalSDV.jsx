@@ -289,21 +289,7 @@ const ModalSDV = ({ actionType, typePage, namePage, close, dataRecord, dataThong
                         </div>
                         <div className="flex items-center gap-1 whitespace-nowrap">
                           <label className="required  min-w-[90px] text-sm flex justify-end">Ngày</label>
-                          <DateField
-                            className="DatePicker_PMH  w-[110px] bg-[#fafafa]"
-                            format="DD/MM/YYYY"
-                            value={dayjs(dataRecord?.NgayCTu)}
-                            disabled
-                            sx={{
-                              '& .MuiButtonBase-root': {
-                                padding: '4px',
-                              },
-                              '& .MuiSvgIcon-root': {
-                                width: '18px',
-                                height: '18px',
-                              },
-                            }}
-                          />
+                          <DateField className="DatePicker_PMH  w-[115px] bg-[#fafafa]" format="DD/MM/YYYY" value={dayjs(dataRecord?.NgayCTu)} disabled />
                         </div>
                       </div>
 
@@ -441,7 +427,7 @@ const ModalSDV = ({ actionType, typePage, namePage, close, dataRecord, dataThong
                           <div className="flex items-center gap-1 whitespace-nowrap">
                             <label className="required  min-w-[90px] text-sm flex justify-end">Ngày</label>
                             <DateField
-                              className="DatePicker_PMH"
+                              className="DatePicker_PMH w-[115px]"
                               format="DD/MM/YYYY"
                               defaultValue={dayjs()}
                               onChange={(newDate) => {
@@ -452,13 +438,6 @@ const ModalSDV = ({ actionType, typePage, namePage, close, dataRecord, dataThong
                               }}
                               sx={{
                                 '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                                '& .MuiButtonBase-root': {
-                                  padding: '4px',
-                                },
-                                '& .MuiSvgIcon-root': {
-                                  width: '18px',
-                                  height: '18px',
-                                },
                               }}
                             />
                           </div>
@@ -645,7 +624,7 @@ const ModalSDV = ({ actionType, typePage, namePage, close, dataRecord, dataThong
                             <div className="flex items-center gap-1 whitespace-nowrap">
                               <label className="required  min-w-[90px] text-sm flex justify-end">Ngày</label>
                               <DateField
-                                className="DatePicker_PMH"
+                                className="DatePicker_PMH w-[115px]"
                                 format="DD/MM/YYYY"
                                 defaultValue={dayjs(dataThongTinSua?.NgayCTu)}
                                 onChange={(newDate) => {
@@ -656,13 +635,6 @@ const ModalSDV = ({ actionType, typePage, namePage, close, dataRecord, dataThong
                                 }}
                                 sx={{
                                   '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                                  '& .MuiButtonBase-root': {
-                                    padding: '4px',
-                                  },
-                                  '& .MuiSvgIcon-root': {
-                                    width: '18px',
-                                    height: '18px',
-                                  },
                                 }}
                               />
                             </div>

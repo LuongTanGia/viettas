@@ -1438,7 +1438,7 @@ const Modals = ({
                         <div className="flex md:px-1 lg:px-4 items-center">
                           <label className="pr-1 lg:pr-[30px] lg:pl-[8px]">Ngày</label>
                           <DateField
-                            className="DatePicker_PMH w-[110px]"
+                            className="DatePicker_PMH w-[115px]"
                             format="DD/MM/YYYY"
                             value={dayjs(formCreate?.NgayCTu)}
                             onChange={(newDate) => {
