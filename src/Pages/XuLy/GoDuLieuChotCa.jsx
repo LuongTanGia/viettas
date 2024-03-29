@@ -8,7 +8,7 @@ import dayjs from 'dayjs'
 // import ActionButton from '../../components/util/Button/ActionButton'
 import { RETOKEN, formatCurrency, formatPrice } from '../../action/Actions'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
-import { exportToExcel } from '../../action/Actions'
+// import { exportToExcel } from '../../action/Actions'
 import { CloseSquareFilled } from '@ant-design/icons'
 import { useSearch } from '../../components_K/myComponents/useSearch'
 import { ModalTongHopPBL, PermissionView } from '../../components_K'
@@ -17,7 +17,7 @@ import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
 import { DateField } from '@mui/x-date-pickers'
 
 const { Text } = Typography
-const { MdDelete, BsSearch, TfiMoreAlt, FaEyeSlash, RiFileExcel2Fill } = icons
+const { BsSearch, TfiMoreAlt, FaEyeSlash, RiFileExcel2Fill, FaClockRotateLeft } = icons
 const GoChotCa = () => {
   const optionContainerRef = useRef(null)
   const [tableLoad, setTableLoad] = useState(true)
@@ -379,12 +379,12 @@ const GoChotCa = () => {
         return (
           <>
             <div className=" flex gap-1 items-center justify-center">
-              <Tooltip title="Xóa" color="blue">
+              <Tooltip title="Gỡ dữ liệu" color="blue">
                 <div
                   onClick={() => handleDelete(record)}
-                  className="p-[3px] border-2 rounded-md text-slate-50  border-red-500 bg-red-500 hover:bg-white hover:text-red-500 cursor-pointer "
+                  className="p-[3px] border-2 rounded-md text-slate-50  border-bg-main bg-bg-main hover:bg-white hover:text-bg-main cursor-pointer "
                 >
-                  <MdDelete size={16} />
+                  <FaClockRotateLeft size={16} />
                 </div>
               </Tooltip>
             </div>
@@ -511,7 +511,7 @@ const GoChotCa = () => {
                   {isShowOption && (
                     <div className=" absolute flex flex-col gap-2 bg-slate-100 px-3 py-2 items-center top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom ">
                       <div className={`flex flex-grow flex-wrap gap-1 ${!hideColumns ? 'flex-col' : ''}`}>
-                        <button
+                        {/* <button
                           onClick={dataQuyenHan?.EXCEL ? exportToExcel : ''}
                           className={`flex items-center py-1 px-2 rounded-md text-slate-50 text-base border-2 ${
                             dataQuyenHan?.EXCEL ? 'border-green-500  bg-green-500 hover:bg-white hover:text-green-500' : 'bg-gray-400 cursor-not-allowed'
@@ -521,7 +521,7 @@ const GoChotCa = () => {
                             <RiFileExcel2Fill size={20} />
                           </div>
                           <div>Xuất excel</div>
-                        </button>
+                        </button> */}
 
                         <button
                           onClick={() => setHideColumns(!hideColumns)}
@@ -576,7 +576,7 @@ const GoChotCa = () => {
                   <div className="flex gap-x-2 items-center">
                     <label htmlFor="">Ngày</label>
                     <DateField
-                      className="DatePicker_PMH max-w-[110px]"
+                      className="DatePicker_PMH w-[110px]"
                       format="DD/MM/YYYY"
                       value={dayjs(formKhoanNgay.NgayBatDau)}
                       // maxDate={dayjs(formKhoanNgay.NgayKetThuc)}
@@ -614,7 +614,7 @@ const GoChotCa = () => {
                   <div className="flex  gap-x-2 items-center">
                     <label htmlFor="">Đến</label>
                     <DateField
-                      className="DatePicker_PMH max-w-[110px]"
+                      className="DatePicker_PMH w-[110px]"
                       format="DD/MM/YYYY"
                       // minDate={dayjs(formKhoanNgay.NgayBatDau)}
                       value={dayjs(formKhoanNgay.NgayKetThuc)}

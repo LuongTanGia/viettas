@@ -193,7 +193,7 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
       },
     },
     {
-      title: '% thuế',
+      title: '% Thuế',
       dataIndex: 'TyLeThue',
       key: 'TyLeThue',
       width: 150,
@@ -658,7 +658,7 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
             </div>
           )}
           {(actionType === 'create' || actionType === 'clone') && (
-            <div className=" w-[90vw] h-[600px] ">
+            <div className=" w-[90vw] h-[610px] ">
               <div className="flex gap-2">
                 <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
                 <label className="text-blue-700 font-semibold uppercase pb-1">Thêm - {namePage ? namePage : 'Phiếu ?'}</label>
@@ -797,7 +797,9 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
                   <ActionButton color={'slate-50'} title={'Import'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} isModal={true} handleAction={handleImport} />
                 </div>
                 <div className="flex  items-center gap-3  pt-3">
-                  <ActionButton color={'slate-50'} title={'Lưu'} isModal={true} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleCreate} />
+                  {actionType === 'create' ? (
+                    <ActionButton color={'slate-50'} title={'Lưu'} isModal={true} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleCreate} />
+                  ) : null}
                   <ActionButton
                     color={'slate-50'}
                     title={'Lưu & Đóng'}
@@ -813,7 +815,7 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
             </div>
           )}
           {actionType === 'edit' && (
-            <div className=" w-[90vw] h-[600px] ">
+            <div className=" w-[90vw] h-[610px] ">
               <div className="flex gap-2">
                 <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
                 <label className="text-blue-700 font-semibold uppercase pb-1">Sửa - {namePage ? namePage : 'Phiếu ?'}</label>

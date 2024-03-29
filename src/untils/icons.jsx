@@ -16,6 +16,7 @@ import { SlOptions } from 'react-icons/sl'
 import { GiPayMoney, GiReceiveMoney } from 'react-icons/gi'
 import { RiFileExcel2Fill } from 'react-icons/ri'
 import { CgCloseO } from 'react-icons/cg'
+import { FaClockRotateLeft } from 'react-icons/fa6'
 
 const icons = {
   TfiSearch,
@@ -61,5 +62,6 @@ const icons = {
   MdOutlineFileUpload,
   FaFileMedical,
   GoQuestion,
+  FaClockRotateLeft,
 }
 export default icons

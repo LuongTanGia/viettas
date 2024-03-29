@@ -462,7 +462,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
             </div>
           )}
           {actionType === 'print' && (
-            <div className="h-[300px]">
+            <div className="h-[306px]">
               <div className="flex gap-2">
                 <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
                 <label className="text-blue-700 font-semibold uppercase pb-1">In - {namePage} </label>
@@ -476,7 +476,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                       Ngày
                     </label>
                     <DateField
-                      className="DatePicker_PMH max-w-[154px]"
+                      className="DatePicker_PMH w-[154px]"
                       format="DD/MM/YYYY"
                       value={dayjs(formPrint.ngayHieuLuc)}
                       onChange={(newDate) => {
@@ -648,7 +648,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                       <div className="flex items-center gap-1">
                         <label className="required  min-w-[70px] text-sm flex justify-end">Hiệu lực từ</label>
                         <DateField
-                          className="DatePicker_PMH  max-w-[110px]"
+                          className="DatePicker_PMH  w-[110px]"
                           format="DD/MM/YYYY"
                           value={dayjs(formAdjustPrice?.HieuLucTu)}
                           onChange={(newDate) => {
@@ -836,12 +836,11 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                             <div className="flex items-center gap-1 whitespace-nowrap">
                               <label className="required  min-w-[90px] text-sm flex justify-end">Kể từ ngày</label>
                               <DateField
-                                className="DatePicker_PMH  max-w-[110px]"
+                                className="DatePicker_PMH  w-[110px]"
                                 format="DD/MM/YYYY"
                                 value={dayjs(dataRecord?.HieuLucTu)}
                                 disabled
                                 sx={{
-                                  '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
                                   '& .MuiButtonBase-root': {
                                     padding: '4px',
                                   },
@@ -892,7 +891,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                           <div className="flex items-center gap-1 whitespace-nowrap">
                             <label className="required  min-w-[90px] text-sm flex justify-end">Hiệu lực từ</label>
                             <DateField
-                              className="DatePicker_PMH  max-w-[110px]"
+                              className="DatePicker_PMH  w-[110px]"
                               format="DD/MM/YYYY"
                               value={dayjs(dataRecord?.HieuLucTu)}
                               disabled
@@ -921,7 +920,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                             <input
                               type="text"
                               value={dataRecord?.GhiChu}
-                              className="h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none "
+                              className="h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300   outline-none "
                               disabled
                             />
                           </div>
@@ -1037,7 +1036,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                             <div className="flex items-center gap-1 whitespace-nowrap">
                               <label className="required  min-w-[90px] text-sm flex justify-end">Kể từ ngày</label>
                               <DateField
-                                className="DatePicker_PMH  max-w-[110px]"
+                                className="DatePicker_PMH  w-[110px]"
                                 format="DD/MM/YYYY"
                                 defaultValue={dayjs()}
                                 onChange={(newDate) => {
@@ -1138,7 +1137,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                           <div className="flex items-center gap-1 whitespace-nowrap">
                             <label className="required  min-w-[90px] text-sm flex justify-end">Hiệu lực từ</label>
                             <DateField
-                              className="DatePicker_PMH  max-w-[110px]"
+                              className="DatePicker_PMH  w-[110px]"
                               format="DD/MM/YYYY"
                               value={dayjs(formCreate.HieuLucTu)}
                               onChange={(newDate) => {
@@ -1185,7 +1184,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                             <label className=" whitespace-nowrap  min-w-[90px] text-sm flex justify-end">Ghi chú</label>
                             <input
                               type="text"
-                              className="h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none "
+                              className="h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 hover:border-hover-border-color outline-none "
                               value={formCreate.GhiChu}
                               onChange={(e) =>
                                 setFormCreate({
@@ -1268,19 +1267,19 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                           <div className="flex items-center gap-1">
                             <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Hàng hóa</label>
                             <Select
-                              className="w-full truncate"
+                              disabled
+                              className="w-full truncate "
                               showSearch
                               size="small"
                               optionFilterProp="children"
                               value={`${dataRecord?.MaHang}-${dataRecord?.TenHang} (${dataRecord?.DVT}) `}
-                              disabled
                             ></Select>
                           </div>
                           <div className="grid grid-cols-2  gap-2 items-center">
                             <div className="flex items-center gap-1 whitespace-nowrap">
                               <label className="required  min-w-[90px] text-sm flex justify-end">Kể từ ngày</label>
                               <DateField
-                                className="DatePicker_PMH  max-w-[110px]"
+                                className="DatePicker_PMH  w-[110px]"
                                 format="DD/MM/YYYY"
                                 value={dayjs(formEdit.Data.HieuLucTu)}
                                 onChange={(newDate) => {
@@ -1372,7 +1371,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                           <div className="flex items-center gap-1 whitespace-nowrap">
                             <label className="required  min-w-[90px] text-sm flex justify-end">Hiệu lực từ</label>
                             <DateField
-                              className="DatePicker_PMH  max-w-[110px]"
+                              className="DatePicker_PMH  w-[110px]"
                               format="DD/MM/YYYY"
                               value={dayjs(formEdit.HieuLuc)}
                               onChange={(newDate) => {
@@ -1422,7 +1421,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                             <label className=" whitespace-nowrap  min-w-[90px] text-sm flex justify-end">Ghi chú</label>
                             <input
                               type="text"
-                              className="h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none "
+                              className="h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 hover:border-hover-border-color outline-none "
                               value={formEdit.Data.GhiChu}
                               onChange={(e) =>
                                 setFormEdit({

@@ -147,7 +147,7 @@ const Modals = ({
       render: (text) => <div className="text-start">{text}</div>,
     },
     {
-      title: 'Tên Hàng',
+      title: 'Tên hàng',
       dataIndex: 'TenHang',
       key: 'TenHang',
       width: 250,
@@ -163,7 +163,7 @@ const Modals = ({
       ),
     },
     {
-      title: 'Đơn vị tính',
+      title: 'ĐVT',
       dataIndex: 'DVT',
       key: 'DVT',
       width: 150,
@@ -1219,7 +1219,6 @@ const Modals = ({
                             value={dayjs(dataThongTin?.NgayCTu)}
                             disabled
                             sx={{
-                              '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
                               '& .MuiButtonBase-root': {
                                 padding: '4px',
                               },
@@ -1728,7 +1727,7 @@ const Modals = ({
                           <div className="flex md:px-1 lg:px-4 items-center">
                             <label className="pr-1 lg:pr-[30px] lg:pl-[8px]">Ngày</label>
                             <DateField
-                              className="DatePicker_PMH  max-w-[110px]"
+                              className="DatePicker_PMH  w-[110px]"
                               format="DD/MM/YYYY"
                               defaultValue={dayjs(dataThongTinSua.NgayCTu)}
                               onChange={(newDate) => {

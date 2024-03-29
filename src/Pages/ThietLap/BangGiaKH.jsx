@@ -691,15 +691,21 @@ const BangGiaKH = () => {
                   return (
                     <Table.Summary fixed="bottom">
                       <Table.Summary.Row>
+                        <Table.Summary.Cell></Table.Summary.Cell>
                         {newColumnsHide
                           .filter((column) => column.render)
-                          .map((column) => {
+                          .map((column, index) => {
                             const isNumericColumn = typeof filteredGKH[0]?.[column.dataIndex] === 'number'
 
                             return (
-                              <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                              <Table.Summary.Cell
+                                index={index + 1}
+                                key={`summary-cell-${index + 1}`}
+                                align={isNumericColumn ? 'right' : 'left'}
+                                className="text-end font-bold  bg-[#f1f1f1]"
+                              >
                                 {column.dataIndex === 'STT' ? (
-                                  <Text className="text-center flex justify-center" strong>
+                                  <Text className="text-center flex justify-center bg-[#f1f1f1]" strong>
                                     {showFull === 'Hiện hành' ? data.length : dataFull.length}
                                   </Text>
                                 ) : null}

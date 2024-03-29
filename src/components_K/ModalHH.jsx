@@ -85,7 +85,7 @@ const ModalHH = ({ close, data, onRowCreate, dataThongSo, onChangLoading }) => {
       ),
     },
     {
-      title: 'DVT',
+      title: 'ĐVT',
       dataIndex: 'DVT',
       key: 'DVT',
       width: 30,

@@ -296,7 +296,7 @@ const PhieuXTR = () => {
       render: (text, record, index) => <div style={{ textAlign: 'center' }}>{index + 1}</div>,
     },
     {
-      title: 'Số Chứng Từ',
+      title: 'Số chứng từ',
       dataIndex: 'SoChungTu',
       key: 'SoChungTu',
       width: 150,
@@ -311,7 +311,7 @@ const PhieuXTR = () => {
       ),
     },
     {
-      title: 'Ngày Chứng Từ',
+      title: 'Ngày chứng từ',
       dataIndex: 'NgayCTu',
       key: 'NgayCTu',
       align: 'center',
@@ -326,7 +326,7 @@ const PhieuXTR = () => {
     },
 
     {
-      title: 'Mã Đối Tượng',
+      title: 'Mã đối tượng',
       dataIndex: 'MaDoiTuong',
       key: 'MaDoiTuong',
       width: 150,
@@ -721,7 +721,7 @@ const PhieuXTR = () => {
 
   const handleEndDateChange = (newDate) => {
     const startDate = formKhoanNgay.NgayBatDau
-    const endDate = dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss')
+    const endDate = dayjs(newDate).format('YYYY-MM-DD')
 
     if (dayjs(startDate).isAfter(dayjs(endDate))) {
       // Nếu ngày kết thúc nhỏ hơn ngày bắt đầu, cập nhật ngày bắt đầu
@@ -889,14 +889,14 @@ const PhieuXTR = () => {
                   <div className="flex gap-x-2 items-center">
                     <label htmlFor="">Ngày</label>
                     <DateField
-                      className="DatePicker_PMH max-w-[110px]"
+                      className="DatePicker_PMH w-[110px]"
                       format="DD/MM/YYYY"
                       value={dayjs(formKhoanNgay.NgayBatDau)}
                       // maxDate={dayjs(formKhoanNgay.NgayKetThuc)}
                       onChange={(newDate) => {
                         setFormKhoanNgay({
                           ...formKhoanNgay,
-                          NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                          NgayBatDau: dayjs(newDate).format('YYYY-MM-DD'),
                         })
                       }}
                       onBlur={() => {
@@ -927,14 +927,14 @@ const PhieuXTR = () => {
                   <div className="flex gap-x-2 items-center">
                     <label htmlFor="">Đến</label>
                     <DateField
-                      className="DatePicker_PMH max-w-[110px]"
+                      className="DatePicker_PMH w-[110px]"
                       format="DD/MM/YYYY"
                       // minDate={dayjs(formKhoanNgay.NgayBatDau)}
                       value={dayjs(formKhoanNgay.NgayKetThuc)}
                       onChange={(newDate) => {
                         setFormKhoanNgay({
                           ...formKhoanNgay,
-                          NgayKetThuc: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                          NgayKetThuc: dayjs(newDate).format('YYYY-MM-DD'),
                         })
                       }}
                       onBlur={() => {
@@ -1012,11 +1012,16 @@ const PhieuXTR = () => {
                         <Table.Summary.Row>
                           {newColumnsHide
                             .filter((column) => column.render)
-                            .map((column) => {
+                            .map((column, index) => {
                               const isNumericColumn = typeof filteredPXTR[0]?.[column.dataIndex] === 'number'
 
                               return (
-                                <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                                <Table.Summary.Cell
+                                  index={index}
+                                  key={`summary-cell-${index + 1}`}
+                                  align={isNumericColumn ? 'right' : 'left'}
+                                  className="text-end font-bold  bg-[#f1f1f1]"
+                                >
                                   {isNumericColumn ? (
                                     column.dataIndex === 'TongTienHang' || column.dataIndex === 'TongTienThue' || column.dataIndex === 'TongThanhTien' ? (
                                       <Text strong>

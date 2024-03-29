@@ -288,7 +288,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                           onChange={(newDate) => {
                             setDates({
                               ...Dates,
-                              NgayCTu: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
+                              NgayCTu: dayjs(newDate).format('YYYY-MM-DD'),
                             })
                           }}
                           sx={{

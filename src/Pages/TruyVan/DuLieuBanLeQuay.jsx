@@ -51,7 +51,7 @@ const DuLieuBLQ = () => {
   const [setSearchDuLieuTT, filteredDuLieuTT, searchDuLieuTT] = useSearch(transformedDataSource?.Details)
 
   const [formKhoanNgay, setFormKhoanNgay] = useState({})
-  const [formPBLQ, setFormPBLQ] = useState({})
+  const formPBLQ = {}
 
   // bỏ focus option thì hidden
   useEffect(() => {
@@ -91,6 +91,8 @@ const DuLieuBLQ = () => {
       }
       const newTimerId = setTimeout(() => {
         getThongTin(record, sct)
+        console.log('useEffect')
+
         setTableLoadTT(true)
       }, 300)
 
@@ -102,7 +104,7 @@ const DuLieuBLQ = () => {
         clearTimeout(timerId)
       }
     }
-  }, [dataBLQ, typeData])
+  }, [dataBLQ])
 
   // get Chức năng quyền hạn
   useEffect(() => {
@@ -274,7 +276,7 @@ const DuLieuBLQ = () => {
       render: (text, record, index) => <div style={{ textAlign: 'center' }}>{index + 1}</div>,
     },
     {
-      title: 'Số Phiếu',
+      title: 'Số phiếu',
       dataIndex: 'SoChungTu',
       key: 'SoChungTu',
       width: 150,
@@ -468,7 +470,7 @@ const DuLieuBLQ = () => {
       render: (text, record, index) => <div style={{ textAlign: 'center' }}>{index + 1}</div>,
     },
     {
-      title: 'Số Phiếu',
+      title: 'Số phiếu',
       dataIndex: 'SoChungTu',
       key: 'SoChungTu',
       width: 150,
@@ -550,12 +552,12 @@ const DuLieuBLQ = () => {
   const columnChild2 = [
     {
       title: 'STT',
-      dataIndex: 'STT',
-      key: 'STT',
+      dataIndex: 'Dong',
+      key: 'Dong',
       width: 80,
       fixed: 'left',
       align: 'center',
-      render: (text) => <div style={{ textAlign: 'center' }}>{text}</div>,
+      render: (text, record, index) => <div style={{ textAlign: 'center' }}>{index + 1}</div>,
     },
     {
       title: 'Số phiếu',
@@ -575,12 +577,14 @@ const DuLieuBLQ = () => {
     },
     {
       title: 'Dòng',
-      dataIndex: 'Dong',
-      key: 'Dong',
+      dataIndex: 'STT',
+      key: 'STT',
       width: 80,
       fixed: 'left',
       align: 'center',
-      render: (text, record, index) => <div style={{ textAlign: 'center' }}>{index + 1}</div>,
+      render: (text) => <div style={{ textAlign: 'center' }}>{text}</div>,
+      sorter: (a, b) => a.STT - b.STT,
+      showSorterTooltip: false,
     },
     {
       title: 'Mã hàng',
@@ -606,7 +610,7 @@ const DuLieuBLQ = () => {
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       showSorterTooltip: false,
       render: (text) => (
-        <div style={{ textAlign: 'start' }}>
+        <div className="text-start truncate">
           <HighlightedCell text={text} search={searchDuLieuTT} />
         </div>
       ),
@@ -769,9 +773,7 @@ const DuLieuBLQ = () => {
 
   const handleViewThongTin = (record) => {
     const currentTime = Date.now()
-    if (currentTime - lastSearchTime < 1000 || typeData !== 'Phiếu bán hàng') {
-      return
-    }
+    if (currentTime - lastSearchTime < 1000 || typeData !== 'Phiếu bán hàng') return
     setLastSearchTime(currentTime)
     setTableLoadTT(true)
     getThongTin(record)
@@ -878,9 +880,9 @@ const DuLieuBLQ = () => {
               <div className="relative text-lg flex justify-between items-center mb-1">
                 <div className="flex items-center gap-x-4 font-bold">
                   <h1 className="w-full text-xl uppercase truncate">Dữ liệu bán lẻ tại các quầy</h1>
-                  <div>
+                  {/* <div>
                     <BsSearch size={18} className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
-                  </div>
+                  </div> */}
                 </div>
                 <div className="flex  ">
                   {isShowSearch && (
@@ -909,7 +911,7 @@ const DuLieuBLQ = () => {
                     <div className="flex gap-x-2 items-center">
                       <label htmlFor="">Ngày</label>
                       <DateField
-                        className="DatePicker_PMH max-w-[110px]"
+                        className="DatePicker_PMH w-[110px]"
                         format="DD/MM/YYYY"
                         value={dayjs(formKhoanNgay.NgayBatDau)}
                         onChange={(newDate) => {
@@ -946,7 +948,7 @@ const DuLieuBLQ = () => {
                     <div className="flex gap-x-2 items-center">
                       <label htmlFor="">Đến</label>
                       <DateField
-                        className="DatePicker_PMH max-w-[110px]"
+                        className="DatePicker_PMH w-[110px]"
                         format="DD/MM/YYYY"
                         value={dayjs(formKhoanNgay.NgayKetThuc)}
                         onChange={(newDate) => {
@@ -1068,10 +1070,15 @@ const DuLieuBLQ = () => {
                                 <Table.Summary.Row>
                                   {columnChild1
                                     .filter((column) => column.render)
-                                    .map((column) => {
+                                    .map((column, index) => {
                                       const isNumericColumn = typeof filteredDuLieuBLQ[0]?.[column.dataIndex] === 'number'
                                       return (
-                                        <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                                        <Table.Summary.Cell
+                                          index={index}
+                                          key={`summary-cell-${index + 1}`}
+                                          align={isNumericColumn ? 'right' : 'left'}
+                                          className="text-end font-bold  bg-[#f1f1f1]"
+                                        >
                                           {column.dataIndex === 'TyLeCKTT' ? (
                                             <Text strong>
                                               {Number(filteredDuLieuBLQ.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
@@ -1123,10 +1130,15 @@ const DuLieuBLQ = () => {
                                 <Table.Summary.Row>
                                   {columnChild2
                                     .filter((column) => column.render)
-                                    .map((column) => {
+                                    .map((column, index) => {
                                       const isNumericColumn = typeof filteredDuLieuTT[0]?.[column.dataIndex] === 'number'
                                       return (
-                                        <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                                        <Table.Summary.Cell
+                                          index={index}
+                                          key={`summary-cell-${index + 1}`}
+                                          align={isNumericColumn ? 'right' : 'left'}
+                                          className="text-end font-bold  bg-[#f1f1f1]"
+                                        >
                                           {column.dataIndex === 'TyLeThue' ? (
                                             <Text strong>
                                               {Number(filteredDuLieuTT.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {

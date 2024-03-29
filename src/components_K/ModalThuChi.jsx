@@ -45,13 +45,15 @@ const ModalPCT = ({
     DiaChi: '',
     GhiChu: '',
     SoTien: '',
+    HangMuc: null,
+    MaDoiTuong: null,
   })
 
   const ngayChungTu = dayjs().format('YYYY-MM-DD')
   const defaultFormCreate = {
     NgayCTu: ngayChungTu,
-    HangMuc: '',
-    MaDoiTuong: '',
+    HangMuc: null,
+    MaDoiTuong: null,
     TenDoiTuong: '',
     DiaChi: '',
     SoTien: 0,
@@ -118,7 +120,7 @@ const ModalPCT = ({
         TenDoiTuong: selectedDoiTuongInfo?.Ten,
         DiaChi: selectedDoiTuongInfo?.DiaChi,
       })
-      setErrors({ Ten: '', DiaChi: '' })
+      setErrors({ ...errors, Ten: '', DiaChi: '', MaDoiTuong: null })
     }
 
     if ((actionType === 'edit' && selectedValue === 'KHVL') || (actionType === 'edit' && selectedValue === 'NCVL')) {
@@ -138,6 +140,17 @@ const ModalPCT = ({
   }
 
   const handleCreateAndClose = async () => {
+    if (!formCreate?.HangMuc?.trim() || !formCreate?.MaDoiTuong?.trim() || !formCreate?.GhiChu?.trim() || formCreate?.SoTien === null || formCreate?.SoTien === 0) {
+      setErrors({
+        ...errors,
+        HangMuc: formCreate?.HangMuc?.trim() ? null : 'Hạng mục không được để trống',
+        MaDoiTuong: formCreate?.MaDoiTuong?.trim() ? null : 'Đối tượng không được để trống',
+        GhiChu: formCreate?.GhiChu?.trim() ? '' : 'Ghi chú không được để trống',
+        SoTien: formCreate?.SoTien === null ? null : formCreate?.SoTien === 0 && 0,
+      })
+      return
+    }
+
     if (formCreate.MaDoiTuong === 'NCVL' || formCreate.MaDoiTuong === 'KHVL') {
       if (!formCreate?.TenDoiTuong?.trim() || !formCreate?.DiaChi?.trim() || !formCreate?.GhiChu?.trim() || formCreate?.SoTien === null || formCreate?.SoTien === 0) {
         setErrors({
@@ -150,14 +163,7 @@ const ModalPCT = ({
         return
       }
     }
-    if (!formCreate?.GhiChu?.trim() || formCreate?.SoTien === null || formCreate?.SoTien === 0) {
-      setErrors({
-        ...errors,
-        GhiChu: formCreate?.GhiChu?.trim() ? '' : 'Ghi chú không được để trống',
-        SoTien: formCreate?.SoTien === null ? null : formCreate?.SoTien === 0 && 0,
-      })
-      return
-    }
+
     try {
       const tokenLogin = localStorage.getItem('TKN')
 
@@ -201,6 +207,16 @@ const ModalPCT = ({
   }
 
   const handleCreate = async () => {
+    if (!formCreate?.HangMuc?.trim() || !formCreate?.MaDoiTuong?.trim() || !formCreate?.GhiChu?.trim() || formCreate?.SoTien === null || formCreate?.SoTien === 0) {
+      setErrors({
+        ...errors,
+        HangMuc: formCreate?.HangMuc?.trim() ? null : 'Hạng mục không được để trống',
+        MaDoiTuong: formCreate?.MaDoiTuong?.trim() ? null : 'Đối tượng không được để trống',
+        GhiChu: formCreate?.GhiChu?.trim() ? '' : 'Ghi chú không được để trống',
+        SoTien: formCreate?.SoTien === null ? null : formCreate?.SoTien === 0 && 0,
+      })
+      return
+    }
     if (formCreate.MaDoiTuong === 'NCVL' || formCreate.MaDoiTuong === 'KHVL') {
       if (!formCreate?.TenDoiTuong?.trim() || !formCreate?.DiaChi?.trim() || !formCreate?.GhiChu?.trim() || formCreate?.SoTien === null || formCreate?.SoTien === 0) {
         setErrors({
@@ -213,18 +229,9 @@ const ModalPCT = ({
         return
       }
     }
-    if (!formCreate?.GhiChu?.trim() || formCreate?.SoTien === null || formCreate?.SoTien === 0) {
-      setErrors({
-        ...errors,
-        GhiChu: formCreate?.GhiChu?.trim() ? '' : 'Ghi chú không được để trống',
-        SoTien: formCreate?.SoTien === null ? null : formCreate?.SoTien === 0 && 0,
-      })
-      return
-    }
 
     try {
       const tokenLogin = localStorage.getItem('TKN')
-
       if (typePage === 'PCT') {
         const response = await apis.ThemPCT(tokenLogin, formCreate)
         if (response.data && response.data.DataError === 0) {
@@ -613,7 +620,7 @@ const ModalPCT = ({
                     <div className="flex gap-x-5 items-center">
                       <label htmlFor="">Ngày</label>
                       <DateField
-                        className="DatePicker_PMH max-w-[154px]"
+                        className="DatePicker_PMH w-[154px]"
                         format="DD/MM/YYYY"
                         // maxDate={dayjs(formPrint.NgayKetThuc)}
                         value={dayjs(formPrint.NgayBatDau)}
@@ -646,7 +653,7 @@ const ModalPCT = ({
                     <div className="flex gap-x-5 items-center ">
                       <label htmlFor="">Đến</label>
                       <DateField
-                        className="DatePicker_PMH max-w-[154px]"
+                        className="DatePicker_PMH w-[154px]"
                         format="DD/MM/YYYY"
                         // minDate={dayjs(formPrint.NgayBatDau)}
                         value={dayjs(formPrint.NgayKetThuc)}
@@ -785,12 +792,11 @@ const ModalPCT = ({
                         <div className="flex items-center gap-1 whitespace-nowrap">
                           <label className="required  min-w-[90px] text-sm flex justify-end">Ngày</label>
                           <DateField
-                            className="DatePicker_PMH  max-w-[110px]"
+                            className="DatePicker_PMH  w-[110px]"
                             format="DD/MM/YYYY"
                             value={dayjs(dataRecord?.NgayCTu)}
                             disabled
                             sx={{
-                              '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
                               '& .MuiButtonBase-root': {
                                 padding: '4px',
                               },
@@ -997,16 +1003,19 @@ const ModalPCT = ({
                         <div className="flex items-center gap-1">
                           <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Hạng mục</label>
                           <Select
+                            status={errors.HangMuc ? 'error' : ''}
+                            placeholder={errors.HangMuc}
                             className="w-full"
                             showSearch
                             size="small"
                             optionFilterProp="children"
-                            onChange={(value) =>
+                            onChange={(value) => {
                               setFormCreate({
                                 ...formCreate,
                                 HangMuc: value,
                               })
-                            }
+                              setErrors({ ...errors, HangMuc: null })
+                            }}
                             value={formCreate.HangMuc}
                           >
                             {dataHangMuc?.map((item) => (
@@ -1019,6 +1028,8 @@ const ModalPCT = ({
                         <div className="flex items-center gap-1 whitespace-nowrap  ">
                           <label className="required min-w-[90px] text-sm flex justify-end">Khách hàng</label>
                           <Select
+                            status={errors.MaDoiTuong ? 'error' : ''}
+                            placeholder={errors.MaDoiTuong}
                             showSearch
                             size="small"
                             optionFilterProp="children"
@@ -1040,7 +1051,7 @@ const ModalPCT = ({
                             placeholder={errors?.Ten}
                             type="text"
                             value={formCreate.MaDoiTuong === 'NCVL' || formCreate.MaDoiTuong === 'KHVL' ? formCreate.TenDoiTuong : doiTuongInfo.Ten}
-                            className={`h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none 
+                            className={`h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none  hover:border-blue-500
                                        ${(formCreate.MaDoiTuong === 'NCVL' && errors.Ten) || (formCreate.MaDoiTuong === 'KHVL' && errors.Ten) ? 'border-red-500' : ''} `}
                             onChange={(e) => {
                               setFormCreate({
@@ -1058,7 +1069,7 @@ const ModalPCT = ({
                             placeholder={errors?.DiaChi}
                             type="text"
                             value={formCreate.MaDoiTuong === 'NCVL' || formCreate.MaDoiTuong === 'KHVL' ? formCreate.DiaChi : doiTuongInfo.DiaChi}
-                            className={`h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none 
+                            className={`h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none  hover:border-blue-500
                                        ${(formCreate.MaDoiTuong === 'NCVL' && errors.DiaChi) || (formCreate.MaDoiTuong === 'KHVL' && errors.DiaChi) ? 'border-red-500' : ''} `}
                             onChange={(e) => {
                               setFormCreate({
@@ -1107,7 +1118,7 @@ const ModalPCT = ({
                               })
                               setErrors({ ...errors, GhiChu: '' })
                             }}
-                            className={`h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none 
+                            className={`h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none hover:border-blue-500
                                        ${errors.GhiChu ? 'border-red-500' : ''} `}
                           />
                         </div>
@@ -1301,7 +1312,7 @@ const ModalPCT = ({
                           <div className="flex items-center gap-1 whitespace-nowrap  ">
                             <label className="required min-w-[90px] text-sm flex justify-end">Tên</label>
                             <input
-                              className={`h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none 
+                              className={`h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none hover:border-blue-500
                                              ${(formEdit.MaDoiTuong === 'NCVL' && errors.Ten) || (formEdit.MaDoiTuong === 'KHVL' && errors.Ten) ? 'border-red-500' : ''} `}
                               placeholder={errors?.Ten}
                               type="text"
@@ -1319,7 +1330,7 @@ const ModalPCT = ({
                           <div className="flex items-center gap-1 whitespace-nowrap  ">
                             <label className="required min-w-[90px] text-sm flex justify-end">Địa chỉ</label>
                             <input
-                              className={`h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none 
+                              className={`h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none hover:border-blue-500
                                              ${(formEdit.MaDoiTuong === 'NCVL' && errors.DiaChi) || (formEdit.MaDoiTuong === 'KHVL' && errors.DiaChi) ? 'border-red-500' : ''} `}
                               placeholder={errors?.DiaChi}
                               type="text"
@@ -1370,7 +1381,7 @@ const ModalPCT = ({
                                 })
                                 setErrors({ ...errors, GhiChu: '' })
                               }}
-                              className={`h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none 
+                              className={`h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none hover:border-blue-500
                                              ${errors.GhiChu ? 'border-red-500' : ''} `}
                             />
                           </div>
