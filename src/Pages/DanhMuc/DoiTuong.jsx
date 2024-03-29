@@ -746,14 +746,14 @@ const DoiTuong = () => {
                       return (
                         <Table.Summary fixed="bottom">
                           <Table.Summary.Row>
-                            <Table.Summary.Cell className="bg-gray-100"></Table.Summary.Cell>
+                            <Table.Summary.Cell className="bg-gray-100" index="0"></Table.Summary.Cell>
                             {newTitles
                               .filter((column) => column.render)
                               .map((column, index) => {
                                 const isNumericColumn = typeof filteredDoiTuong[0]?.[column.dataIndex] === 'number'
                                 return (
                                   <Table.Summary.Cell
-                                    index={index}
+                                    index={index + 1}
                                     key={`summary-cell-${index + 1}`}
                                     align={isNumericColumn ? 'right' : 'left'}
                                     className="text-end font-bold  bg-[#f1f1f1]"

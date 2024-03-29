@@ -69,6 +69,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
     MaHang: '',
     TenHang: '',
     DVTKho: '',
+    DVTQuyDoi: '',
     MaVach: '',
     SoTem: '',
     GiaTriMoi: '',
@@ -367,6 +368,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
       !hangHoaForm?.Nhom?.trim() ||
       !hangHoaForm?.TenHang?.trim() ||
       !hangHoaForm?.DVTKho?.trim() ||
+      hangHoaForm?.DVTQuyDoi?.trim() ||
       !hangHoaForm?.MaVach?.trim() ||
       (dataThongSo.SUDUNG_MAHANGHOATUDONG ? null : !hangHoaForm?.MaHang?.trim())
     ) {
@@ -374,6 +376,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
         Nhom: hangHoaForm?.Nhom?.trim() ? '' : 'Nhóm không được trống',
         TenHang: hangHoaForm?.TenHang?.trim() ? '' : 'Tên hàng không được trống',
         DVTKho: hangHoaForm?.DVTKho?.trim() ? '' : 'ĐVT không được trống',
+        DVTQuyDoi: hangHoaForm?.DVTQuyDoi?.trim() ? '' : 'ĐVT Quy đổi không được trống',
         MaVach: hangHoaForm?.MaVach?.trim() ? '' : 'Mã vạch không được trống',
         MaHang: dataThongSo.SUDUNG_MAHANGHOATUDONG ? null : hangHoaForm?.MaHang?.trim() ? '' : 'Mã hàng không được trống',
       })
@@ -1031,7 +1034,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                           />
                         </div>
                         <div className="flex gap-1 items-center col-span-2 relative">
-                          <label className="required  min-w-[90px] text-sm flex justify-end whitespace-nowrap">Nhóm hàng</label>
+                          <label className="required min-w-[90px] text-sm flex justify-end whitespace-nowrap">Nhóm hàng</label>
                           <Select
                             showSearch
                             required
@@ -1059,12 +1062,13 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                             })}
                           </Select>
                         </div>
-                        <div className={`${hangHoaForm?.LapRap == true ? 'lg:grid-cols-5 md:grid-cols-3' : 'grid grid-cols-5'} grid gap-2 items-center`}>
+                        <div className="xl:grid-cols-5 md:grid-cols-3 grid gap-2 items-center">
                           <div className="flex col-span-2 gap-1 items-center relative">
-                            <label className="required  min-w-[90px] text-sm flex justify-end whitespace-nowrap">Đơn vị tính</label>
+                            <label className="required min-w-[90px] text-sm flex justify-end whitespace-nowrap">Đơn vị tính</label>
                             <Select
                               showSearch
                               size="small"
+                              className="truncate"
                               value={hangHoaForm?.DVTKho}
                               placeholder={errors?.DVTKho ? errors?.DVTKho : ''}
                               status={errors.DVTKho ? 'error' : ''}
@@ -1120,23 +1124,20 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                                       DVTQuyDoi: prev.DVTKho,
                                     }))
                                   }
-                                  if (tyLeQuyDoiValue !== 1) {
-                                    setHangHoaForm((prev) => ({
-                                      ...prev,
-                                      DVTQuyDoi: !prev.DVTKho,
-                                    }))
-                                  }
                                 }
                               }}
                             />
                           </div>
-                          <div className={`${hangHoaForm?.LapRap == true ? ' lg:flex md:hidden' : 'flex'} col-span-2 items-center gap-1`}>
+                          <div className="flex col-span-2 items-center gap-1 md:ml-[-5px] xl:ml-0">
                             <label className="whitespace-nowrap required text-sm">Đơn vị quy đổi</label>
                             <Select
                               id="DVTQuyDoi"
                               showSearch
                               size="small"
-                              value={hangHoaForm?.DVTQuyDoi || ''}
+                              className="truncate"
+                              placeholder={errors?.DVTQuyDoi ? errors?.DVTQuyDoi : ''}
+                              status={errors.DVTQuyDoi ? 'error' : ''}
+                              value={hangHoaForm?.DVTQuyDoi}
                               disabled={(dataThongSo && dataThongSo.SUDUNG_QUYDOIDVT === false) || hangHoaForm.LapRap == true}
                               style={{
                                 width: '100%',
@@ -1146,6 +1147,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                                   ...hangHoaForm,
                                   DVTQuyDoi: value,
                                 })
+                                setErrors({ ...errors, DVTQuyDoi: '' })
                               }}
                             >
                               <Select.Option value="" disabled hidden></Select.Option>
@@ -1197,7 +1199,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                             />
                           </div>
                         </div>
-                        <div className=" border-[0.125rem] ml-[95px] p-2 min-h-[8.5rem] rounded flex gap-2 items-start relative ">
+                        <div className="border-[0.125rem] ml-[95px] p-2 min-h-[8.5rem] rounded flex gap-2 items-start relative ">
                           <div className="w-full lg:max-h-[125px] md:max-h-[155px] overflow-y-auto">
                             <table className="barcodeList  ">
                               <thead>
