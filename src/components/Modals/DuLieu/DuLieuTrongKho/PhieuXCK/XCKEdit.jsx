@@ -5,9 +5,9 @@ import { useEffect, useState, useCallback, useMemo } from 'react'
 import { Checkbox, FloatButton, Input, InputNumber, Select, Table, Tooltip } from 'antd'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { FaSearch } from 'react-icons/fa'
-import { MdPrint } from 'react-icons/md'
+// import { MdPrint } from 'react-icons/md'
 import { toast } from 'react-toastify'
-import { IoMdClose, IoMdAddCircle } from 'react-icons/io'
+import { IoMdAddCircle } from 'react-icons/io'
 import dayjs from 'dayjs'
 import moment from 'moment'
 import XCKPrint from './XCKPrint'
@@ -79,6 +79,7 @@ const XCKEdit = ({ close, dataXCK, loadingData, setTargetRow }) => {
         const response = await categoryAPI.ListKhoHangXCK(TokenAccess)
         if (response.data.DataError == 0) {
           setDataKhoHang(response.data.DataResults)
+          setIsLoading(true)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
           getDataKhoHangXCK()
@@ -96,7 +97,7 @@ const XCKEdit = ({ close, dataXCK, loadingData, setTargetRow }) => {
   useEffect(() => {
     const getDataHangHoaXCK = async () => {
       try {
-        const response = await categoryAPI.ListHangHoaXCK(TokenAccess)
+        const response = await categoryAPI.ListHangHoaXCK({ SoChungTu: XCKForm?.SoChungTu, MaKho: XCKForm?.MaKho }, TokenAccess)
         if (response.data.DataError == 0) {
           setIsLoading(true)
           setDataHangHoa(response.data.DataResults)
@@ -109,10 +110,10 @@ const XCKEdit = ({ close, dataXCK, loadingData, setTargetRow }) => {
         setIsLoading(true)
       }
     }
-    if (!isLoading) {
+    if (XCKForm?.MaKho) {
       getDataHangHoaXCK()
     }
-  }, [isLoading])
+  }, [XCKForm?.MaKho])
 
   useEffect(() => {
     const handleView = async () => {
@@ -177,6 +178,9 @@ const XCKEdit = ({ close, dataXCK, loadingData, setTargetRow }) => {
         autoClose: 1000,
       })
     } else {
+      toast.success('Chọn hàng hóa thành công', {
+        autoClose: 1000,
+      })
       const index = selectedRowData.findIndex((item) => item.MaHang === newRow.MaHang)
       const oldQuantity = selectedRowData[index].SoLuong
       selectedRowData[index].SoLuong = oldQuantity + newRow.SoLuong
@@ -195,14 +199,18 @@ const XCKEdit = ({ close, dataXCK, loadingData, setTargetRow }) => {
           STT: index + 1,
         }
       })
-      const response = await categoryAPI.XCKEdit({ SoChungTu: dataXCK?.SoChungTu, Data: { ...XCKForm, DataDetails: newData } }, TokenAccess)
-      if (response.data.DataError == 0) {
-        isPrint ? handlePrint() : (close(), toast.success('Sửa thành công', { autoClose: 1000 }))
-        loadingData()
-        setTargetRow(dataXCK?.SoChungTu)
+      if (newData?.length > 0) {
+        const response = await categoryAPI.XCKEdit({ SoChungTu: dataXCK?.SoChungTu, Data: { ...XCKForm, DataDetails: newData } }, TokenAccess)
+        if (response.data.DataError == 0) {
+          isPrint ? handlePrint() : (close(), toast.success(response.data.DataErrorDescription, { autoClose: 1000 }))
+          loadingData()
+          setTargetRow(dataXCK?.SoChungTu)
+        } else {
+          console.log('sai', { SoChungTu: dataXCK?.SoChungTu, Data: { ...XCKForm, DataDetails: selectedRowData } })
+          toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
+        }
       } else {
-        console.log('sai', { SoChungTu: dataXCK?.SoChungTu, Data: { ...XCKForm, DataDetails: selectedRowData } })
-        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
+        toast.warning('Chi tiết hàng không được để trống', { autoClose: 1000 })
       }
     } catch (error) {
       console.log(error)
@@ -304,7 +312,7 @@ const XCKEdit = ({ close, dataXCK, loadingData, setTargetRow }) => {
       ),
     },
     {
-      title: 'Đơn vị tính',
+      title: 'ĐVT',
       dataIndex: 'DVT',
       key: 'DVT',
       showSorterTooltip: false,
@@ -383,7 +391,7 @@ const XCKEdit = ({ close, dataXCK, loadingData, setTargetRow }) => {
                           <Input disabled size="small" value={XCKForm?.SoChungTu || ''} readOnly />
                         </div>
                         <div className="flex items-center gap-1">
-                          <label className="required whitespace-nowrap text-sm">Ngày c.từ</label>
+                          <label className="required whitespace-nowrap text-sm"> Ngày</label>
                           <DatePicker
                             className="DatePicker_XCKKho"
                             format="DD/MM/YYYY"
@@ -406,7 +414,7 @@ const XCKEdit = ({ close, dataXCK, loadingData, setTargetRow }) => {
                         </div>
                       </div>
                       <div className="flex items-center gap-1">
-                        <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Kho hàng</label>
+                        <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Kho</label>
                         <Select
                           style={{ width: '100%' }}
                           type="text"
@@ -430,7 +438,7 @@ const XCKEdit = ({ close, dataXCK, loadingData, setTargetRow }) => {
                         </Select>
                       </div>
                       <div className="flex items-center gap-1">
-                        <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Kho hàng nhận</label>
+                        <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Kho nhận</label>
                         <Select
                           style={{ width: '100%' }}
                           type="text"
@@ -545,39 +553,31 @@ const XCKEdit = ({ close, dataXCK, loadingData, setTargetRow }) => {
                 <div className="flex justify-between">
                   <div className="flex gap-2 justify-start">
                     <ActionButton
-                      handleAction={
-                        isAdd
-                          ? ''
-                          : () => {
-                              handleEdit(true)
-                            }
-                      }
+                      handleAction={() => {
+                        handleEdit(true)
+                      }}
                       title={'In Phiếu'}
-                      icon={<MdPrint className="w-5 h-5" />}
+                      // icon={<MdPrint className="w-5 h-5" />}
                       color={'slate-50'}
-                      background={isAdd ? 'gray-500' : 'purple-500'}
-                      color_hover={isAdd ? 'gray-500' : 'purple-500'}
+                      background={'purple-500'}
+                      color_hover={'purple-500'}
                       bg_hover={'white'}
-                      isPermission={isAdd ? false : true}
+                      isPermission={true}
                       isModal={true}
                     />
                   </div>
                   <div className="flex gap-2 justify-end">
                     <ActionButton
-                      handleAction={
-                        isAdd
-                          ? ''
-                          : () => {
-                              handleEdit(false)
-                            }
-                      }
-                      title={'Xác nhận'}
+                      handleAction={() => {
+                        handleEdit(false)
+                      }}
+                      title={'Lưu & đóng'}
                       isModal={true}
                       color={'slate-50'}
-                      background={isAdd ? 'gray-500' : 'blue-500'}
-                      color_hover={isAdd ? 'gray-500' : 'blue-500'}
+                      background={'blue-500'}
+                      color_hover={'blue-500'}
                       bg_hover={'white'}
-                      isPermission={isAdd ? false : true}
+                      isPermission={true}
                     />
                     <ActionButton handleAction={close} title={'Đóng'} isModal={true} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
                   </div>
@@ -595,8 +595,8 @@ const XCKEdit = ({ close, dataXCK, loadingData, setTargetRow }) => {
                     <div className="flex items-center gap-2">
                       <div className="flex items-center gap-2 py-1">
                         <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
-                        <p className="text-blue-700 font-semibold uppercase">Danh Sách Hàng Hóa - Phiếu Xuất Chuyển Kho</p>
-                        <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
+                        <p className="text-blue-700 font-semibold uppercase md:text-[12px] lg:text-sm truncate">Danh Sách Hàng Hóa - Phiếu Xuất Chuyển Kho</p>
+                        <FaSearch className="hover:text-red-400 cursor-pointer md:text-[14px] lg:text-sm" onClick={() => setIsShowSearch(!isShowSearch)} />
                       </div>
                       <div className="flex w-[20rem] overflow-hidden">
                         {isShowSearch && (

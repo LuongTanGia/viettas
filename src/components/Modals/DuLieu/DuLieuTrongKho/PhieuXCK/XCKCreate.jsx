@@ -4,7 +4,7 @@
 import { useEffect, useState, useMemo } from 'react'
 import { toast } from 'react-toastify'
 import { FaSearch } from 'react-icons/fa'
-import { MdPrint } from 'react-icons/md'
+// import { MdPrint } from 'react-icons/md'
 import { IoMdAddCircle } from 'react-icons/io'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { Checkbox, Table, Tooltip, Select, FloatButton, Input } from 'antd'
@@ -58,7 +58,6 @@ const XCKCreate = ({ close, loadingData, setTargetRow }) => {
   })
 
   const [errors, setErrors] = useState({
-    MaKho: '',
     MaKho_Nhan: '',
   })
 
@@ -84,6 +83,7 @@ const XCKCreate = ({ close, loadingData, setTargetRow }) => {
         const response = await categoryAPI.ListKhoHangXCK(TokenAccess)
         if (response.data.DataError == 0) {
           setDataKhoHang(response.data.DataResults)
+          setXCKForm({ ...XCKForm, MaKho: response?.data?.DataResults[0]?.MaKho })
           setIsLoading(true)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
@@ -102,8 +102,8 @@ const XCKCreate = ({ close, loadingData, setTargetRow }) => {
   useEffect(() => {
     const getDataHangHoaXCK = async () => {
       try {
-        const response = await categoryAPI.ListHangHoaXCK(TokenAccess)
-        if (response.data.DataError == 0) {
+        const response = await categoryAPI.ListHangHoaXCK({ SoChungTu: null, MaKho: XCKForm?.MaKho }, TokenAccess)
+        if (response.data && response.data.DataError == 0) {
           setDataHangHoa(response.data.DataResults)
           setIsLoading(true)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
@@ -115,10 +115,10 @@ const XCKCreate = ({ close, loadingData, setTargetRow }) => {
         setIsLoading(true)
       }
     }
-    if (!isLoading) {
+    if (XCKForm?.MaKho) {
       getDataHangHoaXCK()
     }
-  }, [isLoading])
+  }, [XCKForm?.MaKho])
 
   const handleSearch = (event) => {
     setSearchHangHoa(event.target.value)
@@ -158,6 +158,9 @@ const XCKCreate = ({ close, loadingData, setTargetRow }) => {
         autoClose: 1000,
       })
     } else {
+      toast.success('Chọn hàng hóa thành công', {
+        autoClose: 1000,
+      })
       const index = selectedRowData.findIndex((item) => item.MaHang === newRow.MaHang)
       const oldQuantity = selectedRowData[index].SoLuong
       selectedRowData[index].SoLuong = oldQuantity + newRow.SoLuong
@@ -166,9 +169,8 @@ const XCKCreate = ({ close, loadingData, setTargetRow }) => {
   }
 
   const handleCreate = async (isSave = true, isPrint = true) => {
-    if (!XCKForm?.MaKho?.trim() || !XCKForm.MaKho_Nhan.trim()) {
+    if (!XCKForm.MaKho_Nhan.trim()) {
       setErrors({
-        MaKho: XCKForm?.MaKho?.trim() ? '' : 'Kho không được trống',
         MaKho_Nhan: XCKForm?.MaKho_Nhan.trim() ? '' : 'Kho nhận không được trống',
       })
       return
@@ -180,19 +182,22 @@ const XCKCreate = ({ close, loadingData, setTargetRow }) => {
           STT: index + 1,
         }
       })
-      const response = await categoryAPI.XCKCreate({ ...XCKForm, DataDetails: newData, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss') }, TokenAccess)
-      if (response.data.DataError == 0) {
-        isPrint
-          ? (handlePrint(), setXCKForm([]), setSelectedRowData([]))
-          : isSave
-            ? (toast.success('Tạo thành công', { autoClose: 1000 }), setXCKForm([]), setSelectedRowData([]))
-            : (close(), toast.success('Tạo thành công', { autoClose: 1000 }))
-        loadingData()
-        setSoCTu(response.data.DataResults[0].SoChungTu)
-        setTargetRow(response.data.DataResults[0].SoChungTu)
+      if (newData?.length > 0) {
+        const response = await categoryAPI.XCKCreate({ ...XCKForm, DataDetails: newData, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss') }, TokenAccess)
+        if (response.data.DataError == 0) {
+          isPrint
+            ? (handlePrint(), setXCKForm({ MaKho: dataKhoHang[0]?.MaKho }), setSelectedRowData([]))
+            : isSave
+              ? (toast.success(response.data.DataErrorDescription, { autoClose: 1000 }), setXCKForm({ MaKho: dataKhoHang[0]?.MaKho }), setSelectedRowData([]))
+              : (close(), toast.success(response.data.DataErrorDescription, { autoClose: 1000 }))
+          loadingData()
+          setSoCTu(response.data.DataResults[0].SoChungTu)
+          setTargetRow(response.data.DataResults[0].SoChungTu)
+        } else {
+          toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
+        }
       } else {
-        console.log(response.data)
-        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
+        toast.warning('Chi tiết hàng không được để trống', { autoClose: 1000 })
       }
     } catch (error) {
       console.log(error)
@@ -298,7 +303,7 @@ const XCKCreate = ({ close, loadingData, setTargetRow }) => {
       ),
     },
     {
-      title: 'Đơn vị tính',
+      title: 'ĐVT',
       dataIndex: 'DVT',
       key: 'DVT',
       showSorterTooltip: false,
@@ -378,7 +383,7 @@ const XCKCreate = ({ close, loadingData, setTargetRow }) => {
                           <Input size="small" disabled value={XCKForm?.SoChungTu || ''} readOnly />
                         </div>
                         <div className="flex items-center gap-1">
-                          <label className="required whitespace-nowrap text-sm">Ngày c.từ</label>
+                          <label className="required whitespace-nowrap text-sm"> Ngày</label>
                           <DatePicker
                             className="DatePicker_XCKKho"
                             format="DD/MM/YYYY"
@@ -400,21 +405,18 @@ const XCKCreate = ({ close, loadingData, setTargetRow }) => {
                         </div>
                       </div>
                       <div className="flex items-center gap-1">
-                        <label className="text-sm required whitespace-nowrap min-w-[100px] flex justify-end">Kho hàng</label>
+                        <label className="text-sm required whitespace-nowrap min-w-[100px] flex justify-end">Kho</label>
                         <Select
                           style={{ width: '100%' }}
                           showSearch
                           required
                           size="small"
-                          value={XCKForm?.MaKho || undefined}
-                          placeholder={errors.MaKho ? errors.MaKho : ''}
-                          status={errors.MaKho ? 'error' : ''}
+                          value={XCKForm?.MaKho}
                           onChange={(value) => {
                             setXCKForm({
                               ...XCKForm,
                               MaKho: value,
                             })
-                            setErrors({ ...errors, MaKho: '' })
                           }}
                         >
                           {dataKhoHang &&
@@ -426,7 +428,7 @@ const XCKCreate = ({ close, loadingData, setTargetRow }) => {
                         </Select>
                       </div>
                       <div className="flex items-center gap-1">
-                        <label className="text-sm required whitespace-nowrap min-w-[100px] flex justify-end">Kho hàng</label>
+                        <label className="text-sm required whitespace-nowrap min-w-[100px] flex justify-end">Kho nhận</label>
                         <Select
                           style={{ width: '100%' }}
                           showSearch
@@ -521,43 +523,39 @@ const XCKCreate = ({ close, loadingData, setTargetRow }) => {
                 <div className="flex justify-between">
                   <div className="flex gap-2 justify-start">
                     <ActionButton
-                      handleAction={
-                        isAdd
-                          ? ''
-                          : () => {
-                              handleCreate(true, true)
-                            }
-                      }
+                      handleAction={() => {
+                        handleCreate(true, true)
+                      }}
                       title={'In Phiếu'}
-                      icon={<MdPrint className="w-5 h-5" />}
+                      // icon={<MdPrint className="w-5 h-5" />}
                       color={'slate-50'}
-                      background={isAdd ? 'gray-500' : 'purple-500'}
-                      color_hover={isAdd ? 'gray-500' : 'purple-500'}
+                      background={'purple-500'}
+                      color_hover={'purple-500'}
                       bg_hover={'white'}
-                      isPermission={isAdd ? false : true}
+                      isPermission={true}
                       isModal={true}
                     />
                   </div>
                   <div className="flex gap-2 justify-end">
                     <ActionButton
-                      handleAction={isAdd ? '' : () => handleCreate(true, false)}
+                      handleAction={() => handleCreate(true, false)}
                       title={'Lưu'}
                       isModal={true}
                       color={'slate-50'}
-                      background={isAdd ? 'gray-500' : 'blue-500'}
-                      color_hover={isAdd ? 'gray-500' : 'blue-500'}
+                      background={'blue-500'}
+                      color_hover={'blue-500'}
                       bg_hover={'white'}
-                      isPermission={isAdd ? false : true}
+                      isPermission={true}
                     />
                     <ActionButton
-                      handleAction={isAdd ? '' : () => handleCreate(false, false)}
-                      title={'Lưu & Đóng'}
+                      handleAction={() => handleCreate(false, false)}
+                      title={'Lưu & đóng'}
                       isModal={true}
                       color={'slate-50'}
-                      background={isAdd ? 'gray-500' : 'blue-500'}
-                      color_hover={isAdd ? 'gray-500' : 'blue-500'}
+                      background={'blue-500'}
+                      color_hover={'blue-500'}
                       bg_hover={'white'}
-                      isPermission={isAdd ? false : true}
+                      isPermission={true}
                     />
                     <ActionButton handleAction={close} title={'Đóng'} isModal={true} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
                   </div>
@@ -575,8 +573,8 @@ const XCKCreate = ({ close, loadingData, setTargetRow }) => {
                     <div className="flex items-center gap-2">
                       <div className="flex items-center gap-2 py-1">
                         <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
-                        <p className="text-blue-700 font-semibold uppercase">Danh Sách Hàng Hóa - Phiếu Xuất Chuyển Kho</p>
-                        <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
+                        <p className="text-blue-700 font-semibold uppercase md:text-[12px] lg:text-sm truncate">Danh Sách Hàng Hóa - Phiếu Xuất Chuyển Kho</p>
+                        <FaSearch className="hover:text-red-400 cursor-pointer md:text-[14px] lg:text-sm" onClick={() => setIsShowSearch(!isShowSearch)} />
                       </div>
                       <div className="flex w-[20rem] overflow-hidden">
                         {isShowSearch && (

@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from 'react'
 import moment from 'moment'
-import { MdPrint } from 'react-icons/md'
+// import { MdPrint } from 'react-icons/md'
 const { Text } = Typography
 import { Table, Tooltip, Typography } from 'antd'
 import XSDPrint from './XSDPrint'
@@ -98,7 +98,7 @@ const XSDXem = ({ close, dataXSD }) => {
       ),
     },
     {
-      title: 'Đơn vị tính',
+      title: 'ĐVT',
       dataIndex: 'DVT',
       key: 'DVT',
       showSorterTooltip: false,
@@ -145,7 +145,7 @@ const XSDXem = ({ close, dataXSD }) => {
                           <input type="text" value={dataXSDView?.SoChungTu || ''} className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate" readOnly />
                         </div>
                         <div className="flex items-center gap-1">
-                          <label className="required whitespace-nowrap text-sm">Ngày C.Từ</label>
+                          <label className="required whitespace-nowrap text-sm">Ngày</label>
                           <input
                             type="text"
                             value={moment(dataXSDView?.NgayCTu)?.format('DD/MM/YYYY') || ''}
@@ -273,7 +273,7 @@ const XSDXem = ({ close, dataXSD }) => {
                 </div>
                 <div className="flex justify-between">
                   <ActionButton
-                    icon={<MdPrint className="w-5 h-5" />}
+                    // icon={<MdPrint className="w-5 h-5" />}
                     handleAction={handlePrint}
                     title={'In Phiếu'}
                     color={'slate-50'}

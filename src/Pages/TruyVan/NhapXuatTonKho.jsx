@@ -448,7 +448,7 @@ const NhapXuatTonKho = () => {
       render: (text) => <HighlightedCell text={text} search={searchHangHoa} />,
     },
     {
-      title: 'Đơn vị tính',
+      title: 'ĐVT',
       dataIndex: 'DVT',
       key: 'DVT',
       width: 150,
@@ -759,7 +759,7 @@ const NhapXuatTonKho = () => {
       render: (text) => <HighlightedCell text={text} search={searchHangHoa} />,
     },
     {
-      title: 'Đơn vị tính',
+      title: 'ĐVT',
       dataIndex: 'DVT',
       key: 'DVT',
       width: 150,

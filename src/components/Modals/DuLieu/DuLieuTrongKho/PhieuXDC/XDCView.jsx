@@ -5,7 +5,7 @@ import moment from 'moment'
 const { Text } = Typography
 import { Table, Tooltip, Typography } from 'antd'
 import XDCPrint from './XDCPrint'
-import { MdPrint } from 'react-icons/md'
+// import { MdPrint } from 'react-icons/md'
 import categoryAPI from '../../../../../API/linkAPI'
 import logo from '../../../../../assets/VTS-iSale.ico'
 import { RETOKEN } from '../../../../../action/Actions'
@@ -98,7 +98,7 @@ const XDCXem = ({ close, dataXDC }) => {
       ),
     },
     {
-      title: 'Đơn vị tính',
+      title: 'ĐVT',
       dataIndex: 'DVT',
       key: 'DVT',
       showSorterTooltip: false,
@@ -145,7 +145,7 @@ const XDCXem = ({ close, dataXDC }) => {
                           <input type="text" value={dataXDCView?.SoChungTu || ''} className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate" readOnly />
                         </div>
                         <div className="flex items-center gap-1">
-                          <label className="required whitespace-nowrap text-sm">Ngày C.Từ</label>
+                          <label className="required whitespace-nowrap text-sm">Ngày</label>
                           <input
                             type="text"
                             value={moment(dataXDCView?.NgayCTu)?.format('DD/MM/YYYY') || ''}
@@ -281,7 +281,7 @@ const XDCXem = ({ close, dataXDC }) => {
                       background={'purple-500'}
                       color_hover={'purple-500'}
                       bg_hover={'white'}
-                      icon={<MdPrint className="w-5 h-5" />}
+                      // icon={<MdPrint className="w-5 h-5" />}
                     />
                   </div>
                   <div className="flex gap-2 justify-end ">

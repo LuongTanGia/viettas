@@ -6,7 +6,7 @@ import { Checkbox, FloatButton, Input, InputNumber, Select, Table, Tooltip } fro
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { FaSearch } from 'react-icons/fa'
 import { toast } from 'react-toastify'
-import { MdPrint } from 'react-icons/md'
+// import { MdPrint } from 'react-icons/md'
 import { IoMdAddCircle } from 'react-icons/io'
 import dayjs from 'dayjs'
 import moment from 'moment'
@@ -34,7 +34,6 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
   const [actionType, setActionType] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [isShowSearch, setIsShowSearch] = useState(false)
-
   const innitProduct = {
     SoChungTu: '',
     NgayCTu: '',
@@ -79,6 +78,7 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
         const response = await categoryAPI.ListKhoHangNDC(TokenAccess)
         if (response.data.DataError == 0) {
           setDataKhoHang(response.data.DataResults)
+          setIsLoading(true)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
           getDataKhoHangNDC()
@@ -96,7 +96,7 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
   useEffect(() => {
     const getDataHangHoaNDC = async () => {
       try {
-        const response = await categoryAPI.ListHangHoaNDC(TokenAccess)
+        const response = await categoryAPI.ListHangHoaNDC({ SoChungTu: NDCForm?.SoChungTu, MaKho: NDCForm?.MaKho }, TokenAccess)
         if (response.data.DataError == 0) {
           setIsLoading(true)
           setDataHangHoa(response.data.DataResults)
@@ -109,10 +109,10 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
         setIsLoading(true)
       }
     }
-    if (!isLoading) {
+    if (NDCForm.MaKho) {
       getDataHangHoaNDC()
     }
-  }, [isLoading])
+  }, [NDCForm.MaKho])
 
   useEffect(() => {
     const handleView = async () => {
@@ -177,6 +177,9 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
         autoClose: 1000,
       })
     } else {
+      toast.success('Chọn hàng hóa thành công', {
+        autoClose: 1000,
+      })
       const index = selectedRowData.findIndex((item) => item.MaHang === newRow.MaHang)
       const oldQuantity = selectedRowData[index].SoLuong
       selectedRowData[index].SoLuong = oldQuantity + newRow.SoLuong
@@ -195,14 +198,18 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
           STT: index + 1,
         }
       })
-      const response = await categoryAPI.NDCEdit({ SoChungTu: dataNDC?.SoChungTu, Data: { ...NDCForm, DataDetails: newData } }, TokenAccess)
-      if (response.data.DataError == 0) {
-        isPrint ? handlePrint() : (close(), toast.success('Sửa thành công', { autoClose: 1000 }))
-        loadingData()
-        setTargetRow(dataNDC?.SoChungTu)
+      if (newData?.length > 0) {
+        const response = await categoryAPI.NDCEdit({ SoChungTu: dataNDC?.SoChungTu, Data: { ...NDCForm, DataDetails: newData } }, TokenAccess)
+        if (response.data.DataError == 0) {
+          isPrint ? handlePrint() : (close(), toast.success('Sửa thành công', { autoClose: 1000 }))
+          loadingData()
+          setTargetRow(dataNDC?.SoChungTu)
+        } else {
+          console.log('sai', { SoChungTu: dataNDC?.SoChungTu, Data: { ...NDCForm, DataDetails: newData } })
+          toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
+        }
       } else {
-        console.log('sai', { SoChungTu: dataNDC?.SoChungTu, Data: { ...NDCForm, DataDetails: newData } })
-        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
+        toast.warning('Chi tiết hàng không được để trống', { autoClose: 1000 })
       }
     } catch (error) {
       console.log(error)
@@ -304,7 +311,7 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
       ),
     },
     {
-      title: 'Đơn vị tính',
+      title: 'ĐVT',
       dataIndex: 'DVT',
       key: 'DVT',
       showSorterTooltip: false,
@@ -380,12 +387,12 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
                       <div className="flex gap-2">
                         <div className="flex items-center gap-1">
                           <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Số chứng từ</label>
-                          <Input disabled size="small" value={NDCForm?.SoChungTu || ''} readOnly />
+                          <Input className="truncate" disabled size="small" value={NDCForm?.SoChungTu || ''} readOnly />
                         </div>
                         <div className="flex items-center gap-1">
-                          <label className="required whitespace-nowrap text-sm">Ngày c.từ</label>
+                          <label className="required whitespace-nowrap text-sm"> Ngày</label>
                           <DatePicker
-                            className="DatePicker_NDCKho"
+                            className="DatePicker_NDCKho truncate"
                             format="DD/MM/YYYY"
                             value={dayjs(NDCForm?.NgayCTu) || ''}
                             onChange={(values) => {
@@ -480,15 +487,14 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
                   </div>
                   <div className="flex items-center gap-1">
                     <label className="whitespace-nowrap min-w-[100px] flex justify-end text-sm">Ghi chú</label>
-                    <input
-                      type="text"
-                      className="px-2 w-[70rem] resize-none rounded border-[1px] border-solid outline-none text-[1rem] hover:border-blue-500 "
-                      name="GhiChu"
-                      value={NDCForm?.GhiChu || ''}
+                    <Input
+                      size="small"
+                      className="w-full overflow-hidden whitespace-nowrap overflow-ellipsis"
+                      value={NDCForm?.GhiChu}
                       onChange={(e) =>
                         setNDCForm({
                           ...NDCForm,
-                          [e.target.name]: e.target.value,
+                          GhiChu: e.target.value,
                         })
                       }
                     />
@@ -523,39 +529,31 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
                 <div className="flex justify-between">
                   <div className="flex gap-2 justify-start">
                     <ActionButton
-                      handleAction={
-                        isAdd
-                          ? ''
-                          : () => {
-                              handleEdit(true)
-                            }
-                      }
+                      handleAction={() => {
+                        handleEdit(true)
+                      }}
                       title={'In Phiếu'}
-                      icon={<MdPrint className="w-5 h-5" />}
+                      // icon={<MdPrint className="w-5 h-5" />}
                       color={'slate-50'}
-                      background={isAdd ? 'gray-500' : 'purple-500'}
-                      color_hover={isAdd ? 'gray-500' : 'purple-500'}
+                      background={'purple-500'}
+                      color_hover={'purple-500'}
                       bg_hover={'white'}
-                      isPermission={isAdd ? false : true}
+                      isPermission={true}
                       isModal={true}
                     />
                   </div>
                   <div className="flex gap-2 justify-end">
                     <ActionButton
-                      handleAction={
-                        isAdd
-                          ? ''
-                          : () => {
-                              handleEdit(false)
-                            }
-                      }
-                      title={'Xác nhận'}
+                      handleAction={() => {
+                        handleEdit(false)
+                      }}
+                      title={'Lưu & đóng'}
                       isModal={true}
                       color={'slate-50'}
-                      background={isAdd ? 'gray-500' : 'blue-500'}
-                      color_hover={isAdd ? 'gray-500' : 'blue-500'}
+                      background={'blue-500'}
+                      color_hover={'blue-500'}
                       bg_hover={'white'}
-                      isPermission={isAdd ? false : true}
+                      isPermission={true}
                     />
                     <ActionButton handleAction={close} title={'Đóng'} isModal={true} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
                   </div>
@@ -573,8 +571,8 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
                     <div className="flex items-center gap-2">
                       <div className="flex items-center gap-2 py-1">
                         <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
-                        <p className="text-blue-700 font-semibold uppercase">Danh Sách Hàng Hóa - Phiếu Nhập Điều Chỉnh</p>
-                        <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
+                        <p className="text-blue-700 font-semibold uppercase whitespace-nowrap md:text-[12px] lg:text-sm truncate">Danh Sách Hàng Hóa - Phiếu Nhập Điều Chỉnh</p>
+                        <FaSearch className="hover:text-red-400 cursor-pointer md:text-[14px] lg:text-sm" onClick={() => setIsShowSearch(!isShowSearch)} />
                       </div>
                       <div className="flex w-[20rem] overflow-hidden">
                         {isShowSearch && (

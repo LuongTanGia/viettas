@@ -399,7 +399,7 @@ const PhanCaDS = () => {
     },
 
     {
-      title: '',
+      title: 'Chức năng',
       key: 'operation',
       fixed: 'right',
       width: 80,

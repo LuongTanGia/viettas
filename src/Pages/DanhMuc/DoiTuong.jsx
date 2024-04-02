@@ -435,7 +435,7 @@ const DoiTuong = () => {
         const dateB = new Date(b.NgayTao)
         return dateA - dateB
       },
-      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss.SS')} search={searchDoiTuong} />,
+      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss')} search={searchDoiTuong} />,
     },
     {
       title: 'Người sửa',
@@ -474,14 +474,14 @@ const DoiTuong = () => {
       },
       render: (text) => {
         if (text) {
-          return <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss.SS')} search={searchDoiTuong} />
+          return <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss')} search={searchDoiTuong} />
         } else {
           return ''
         }
       },
     },
     {
-      title: ' ',
+      title: 'Chức năng',
       key: 'operation',
       fixed: 'right',
       width: 80,
@@ -746,14 +746,14 @@ const DoiTuong = () => {
                       return (
                         <Table.Summary fixed="bottom">
                           <Table.Summary.Row>
-                            <Table.Summary.Cell className="bg-gray-100"></Table.Summary.Cell>
+                            <Table.Summary.Cell className="bg-gray-100" index="0"></Table.Summary.Cell>
                             {newTitles
                               .filter((column) => column.render)
                               .map((column, index) => {
                                 const isNumericColumn = typeof filteredDoiTuong[0]?.[column.dataIndex] === 'number'
                                 return (
                                   <Table.Summary.Cell
-                                    index={index}
+                                    index={index + 1}
                                     key={`summary-cell-${index + 1}`}
                                     align={isNumericColumn ? 'right' : 'left'}
                                     className="text-end font-bold  bg-[#f1f1f1]"
