@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
-import { Table, Checkbox, Tooltip, Row, Col, Typography, Input, Segmented } from 'antd'
+import { Table, Checkbox, Tooltip, Row, Col, Typography, Input } from 'antd'
 import moment from 'moment'
 import icons from '../../untils/icons'
 import { toast } from 'react-toastify'
@@ -84,23 +84,15 @@ const GoChotCa = () => {
   useEffect(() => {
     const getChucNangQuyenHan = async () => {
       try {
-        console.log('đi')
         const tokenLogin = localStorage.getItem('TKN')
         const response = await apis.ChucNangQuyenHan(tokenLogin, 'XuLy_GoDuLieuChotCa')
 
         if (response.data && response.data.DataError === 0) {
           setDataQuyenHan(response.data)
-        }
-        // else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        //   toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        // }
-        else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
           getChucNangQuyenHan()
         }
-        // else {
-        //   toast.error(response.data.DataErrorDescription)
-        // }
       } catch (error) {
         console.error('Kiểm tra token thất bại', error)
       }
@@ -157,20 +149,22 @@ const GoChotCa = () => {
       const tokenLogin = localStorage.getItem('TKN')
 
       const response = await apis.DSGoChotCa(tokenLogin, formKhoanNgay)
-
-      if (response.data && response.data.DataError === 0) {
-        setData(response.data.DataResults)
-        setTableLoad(false)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getDSGoChotCa()
-      } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        setTableLoad(false)
-      } else {
-        toast.error(response.data.DataErrorDescription)
-        setData([])
-        setTableLoad(false)
+      if (response) {
+        const { DataError, DataErrorDescription, DataResults } = response.data
+        if (DataError === 0) {
+          setData(DataResults)
+          setTableLoad(false)
+        } else if (DataError === -107 || DataError === -108) {
+          await RETOKEN()
+          getDSGoChotCa()
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+          setTableLoad(false)
+        } else {
+          toast.error(DataErrorDescription)
+          setData([])
+          setTableLoad(false)
+        }
       }
     } catch (error) {
       console.error('Kiểm tra token thất bại', error)

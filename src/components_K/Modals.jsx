@@ -563,10 +563,82 @@ const Modals = ({
           setDoiTuongInfo({ Ten: '', DiaChi: '' })
           setSelectedKhoHang(dataKhoHang[0].MaKho)
           setSelectedRowData([])
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+        } else if (DataError === -107 || DataError === -108) {
+          await RETOKEN()
+          handleCreate()
+        } else {
+          toast.error(DataErrorDescription)
+        }
+      }
+    } catch (error) {
+      console.error('Error while saving data:', error)
+    }
+  }
+
+  const handlePrintInCreate = async () => {
+    if (!selectedDoiTuong?.trim()) {
+      setErrors({
+        ...errors,
+        DoiTuong: selectedDoiTuong?.trim() ? null : 'Đối tượng không được để trống',
+      })
+      return
+    }
+
+    if (selectedDoiTuong === 'NCVL' || selectedDoiTuong === 'KHVL') {
+      if (!formCreate?.TenDoiTuong?.trim() || !formCreate?.DiaChi?.trim()) {
+        setErrors({
+          Ten: formCreate?.TenDoiTuong?.trim() ? '' : 'Tên đối tượng không được để trống',
+          DiaChi: formCreate?.DiaChi?.trim() ? '' : 'Địa chỉ không được để trống',
+        })
+        return
+      }
+    }
+
+    if (selectedRowData.length <= 0) {
+      toast.warning('Chi tiết phiếu không được để trống')
+      return
+    }
+    if (selectedRowData.map((item) => item.MaHang).includes('Chọn mã hàng')) {
+      toast.warning('Mã hàng không được để trống, vui lòng chọn mã hàng!')
+      return
+    }
+    try {
+      const tokenLogin = localStorage.getItem('TKN')
+      const dataAddSTT = selectedRowData.map((item, index) => ({
+        ...item,
+        STT: index + 1,
+      }))
+      let response
+      switch (typePage) {
+        case 'PMH':
+          response = await handleAPICreate(apis.ThemPMH, tokenLogin, formCreate, dataAddSTT, selectedDoiTuong, selectedKhoHang)
+          break
+        case 'NTR':
+          response = await handleAPICreate(apis.ThemNTR, tokenLogin, formCreate, dataAddSTT, selectedDoiTuong, selectedKhoHang)
+          break
+        case 'XTR':
+          response = await handleAPICreate(apis.ThemXTR, tokenLogin, formCreate, dataAddSTT, selectedDoiTuong, selectedKhoHang)
+          break
+        default:
+          break
+      }
+      if (response) {
+        const { DataError, DataErrorDescription, DataResults } = response.data
+        if (DataError === 0) {
+          const soChungTu = DataResults[0].SoChungTu
+          loading()
+          setHightLight(soChungTu)
+          setSctCreate(soChungTu)
+          setFormCreate(defaultFormCreate)
+          setSelectedDoiTuong(null)
+          setDoiTuongInfo({ Ten: '', DiaChi: '' })
+          setSelectedKhoHang(dataKhoHang[0].MaKho)
+          setSelectedRowData([])
+
           if (typePrint === 'print') setIsShowModalOnlyPrint(true)
-          else if (typePrint === 'printwarehouse') {
-            setIsShowModalOnlyPrintWareHouse(true)
-          }
+          if (typePrint === 'printwarehouse') setIsShowModalOnlyPrintWareHouse(true)
         } else if (DataError === -1 || DataError === -2 || DataError === -3) {
           toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
         } else if (DataError === -107 || DataError === -108) {
@@ -998,7 +1070,7 @@ const Modals = ({
                     <div className="flex gap-x-5 items-center">
                       <label htmlFor="">Ngày</label>
                       <DateField
-                        className="DatePicker_PMH max-w-[170px]"
+                        className="DatePicker_PMH w-[170px]"
                         format="DD/MM/YYYY"
                         // maxDate={dayjs(controlDate.NgayKetThuc)}
                         value={dayjs(formPrint.NgayBatDau)}
@@ -1031,7 +1103,7 @@ const Modals = ({
                     <div className="flex gap-x-5 items-center ">
                       <label htmlFor="">Đến</label>
                       <DateField
-                        className="DatePicker_PMH max-w-[170px]"
+                        className="DatePicker_PMH w-[170px]"
                         format="DD/MM/YYYY"
                         // minDate={dayjs(controlDate.NgayBatDau)}
                         value={dayjs(formPrint.NgayKetThuc)}
@@ -1391,9 +1463,9 @@ const Modals = ({
                     onClick={() => setIsShowModalOnlyPrint(true)}
                     className="flex items-center  py-1 px-2  rounded-md  border-2 border-purple-500 text-slate-50 text-text-main font-bold  bg-purple-500 hover:bg-white hover:text-purple-500"
                   >
-                    <div className="pr-1">
+                    {/* <div className="pr-1">
                       <TiPrinter size={20} />
-                    </div>
+                    </div> */}
                     <div>In phiếu</div>
                   </button>
                   {dataThongSo?.ALLOW_INPHIEUKHO_DAUVAODAURA === true && (
@@ -1401,9 +1473,9 @@ const Modals = ({
                       onClick={() => setIsShowModalOnlyPrintWareHouse(true)}
                       className="flex items-center  py-1 px-2  rounded-md  border-2 border-purple-500 text-slate-50 text-text-main font-bold  bg-purple-500 hover:bg-white hover:text-purple-500"
                     >
-                      <div className="pr-1">
+                      {/* <div className="pr-1">
                         <TiPrinter size={20} />
-                      </div>
+                      </div> */}
                       <div>In phiếu kho</div>
                     </button>
                   )}
@@ -1655,7 +1727,7 @@ const Modals = ({
                     bg_hover={'white'}
                     color_hover={'purple-500'}
                     handleAction={() => {
-                      handleCreate(), setTypePrint('print')
+                      handlePrintInCreate(), setTypePrint('print')
                     }}
                     isModal={true}
                   />
@@ -1667,7 +1739,7 @@ const Modals = ({
                       bg_hover={'white'}
                       color_hover={'purple-500'}
                       handleAction={() => {
-                        handleCreate(), setTypePrint('printwarehouse')
+                        handlePrintInCreate(), setTypePrint('printwarehouse')
                       }}
                       isModal={true}
                     />

@@ -24,7 +24,7 @@ const EditTable = ({
 
   const [dataSource, setDataSource] = useState(param)
   const [newOptions, setNewOptions] = useState(yourMaHangOptions)
-  const [coThue, setCoThue] = useState(false)
+  // const [coThue, setCoThue] = useState(false)
 
   const ThongSo = JSON.parse(localStorage.getItem('ThongSo'))
 
@@ -178,18 +178,19 @@ const EditTable = ({
           //
 
           handleSave(updatedRow)
-        } else if (dataIndex === 'CoThue') {
-          const updatedRow = {
-            ...record,
-            ...values,
-            CoThue: !coThue,
-          }
+          // } else if (dataIndex === 'CoThue') {
+          //   const updatedRow = {
+          //     ...record,
+          //     ...values,
+          //     CoThue: record.TyLeThue > 0,
+          //   }
 
-          handleSave(updatedRow)
+          //   handleSave(updatedRow)
         } else if (dataIndex === 'TyLeCKTT') {
           const updatedRow = {
             ...record,
             ...values,
+
             TienCKTT: (record.ThanhTien * values.TyLeCKTT) / 100,
           }
 
@@ -208,6 +209,15 @@ const EditTable = ({
               TienCKTT: (record.ThanhTien * record.TyLeCKTT) / 100,
             })
           }
+        } else if (dataIndex === 'TyLeThue') {
+          const updatedRow = {
+            ...record,
+            ...values,
+
+            CoThue: values.TyLeThue > 0 ? true : false,
+          }
+          console.log(updatedRow)
+          handleSave(updatedRow)
         } else {
           handleSave({
             ...record,
@@ -269,15 +279,6 @@ const EditTable = ({
                       ))
                     : null}
             </Select>
-          ) : (tableName === 'GBS' || tableName === 'Import') && dataIndex === 'CoThue' ? (
-            <Checkbox
-              ref={inputRef}
-              onBlur={(setCoThue(!coThue), save())}
-              onChange={() => {
-                setCoThue(!coThue), save()
-              }}
-              checked={coThue}
-            />
           ) : dataIndex === 'SoLuong' || dataIndex === 'DonGia' ? (
             <InputNumber
               ref={inputRef}
@@ -417,7 +418,7 @@ const EditTable = ({
         title: columName[item] || item,
         width: 100,
         dataIndex: item,
-        editable: true,
+        // editable: true,
         key: item,
         align: 'center',
         sorter: (a, b) => {

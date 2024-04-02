@@ -241,23 +241,25 @@ const PhieuChiTien = () => {
 
   const getDSPCT = async () => {
     try {
-      console.log('get ds PMH')
       const tokenLogin = localStorage.getItem('TKN')
       const response = await apis.DanhSachPCT(tokenLogin, formKhoanNgay)
-      if (response.data && response.data.DataError === 0) {
-        setData(response.data.DataResults)
-        setTableLoad(false)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getDSPCT()
-        // setTableLoad(false)
-      } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        toast.warning(response.data.DataErrorDescription)
-        setTableLoad(false)
-      } else {
-        toast.error(response.data.DataErrorDescription)
-        setData([])
-        setTableLoad(false)
+
+      if (response) {
+        const { DataError, DataErrorDescription, DataResults } = response.data
+        if (DataError === 0) {
+          setData(DataResults)
+          setTableLoad(false)
+        } else if (DataError === -107 || DataError === -108) {
+          await RETOKEN()
+          getDSPCT()
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(DataErrorDescription)
+          setTableLoad(false)
+        } else {
+          toast.error(DataErrorDescription)
+          setData([])
+          setTableLoad(false)
+        }
       }
     } catch (error) {
       console.error('Kiểm tra token thất bại', error)

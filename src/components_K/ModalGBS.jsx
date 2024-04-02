@@ -265,19 +265,21 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
       const tokenLogin = localStorage.getItem('TKN')
 
       const response = await apis.ThemGBS(tokenLogin, { ...formCreate, NhomGia_CTs: selectedRowData })
-
-      if (response.data && response.data.DataError === 0) {
-        toast.success(response.data.DataErrorDescription)
-        setHightLight(formCreate.NhomGia)
-        loading()
-        close()
-      } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        handleCreateAndClose()
-      } else {
-        toast.error(response.data.DataErrorDescription)
+      if (response) {
+        const { DataError, DataErrorDescription } = response.data
+        if (DataError === 0) {
+          toast.success(DataErrorDescription)
+          setHightLight(formCreate.NhomGia)
+          loading()
+          close()
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+        } else if (DataError === -107 || DataError === -108) {
+          await RETOKEN()
+          handleCreateAndClose()
+        } else {
+          toast.error(DataErrorDescription)
+        }
       }
     } catch (error) {
       console.error('Error while saving data:', error)
@@ -297,20 +299,22 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
       const tokenLogin = localStorage.getItem('TKN')
 
       const response = await apis.ThemGBS(tokenLogin, { ...formCreate, NhomGia_CTs: selectedRowData })
-
-      if (response.data && response.data.DataError === 0) {
-        toast.success(response.data.DataErrorDescription)
-        setHightLight(formCreate.NhomGia)
-        loading()
-        setFormCreate(defaultFormCreate)
-        setSelectedRowData([])
-      } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        handleCreateAndClose()
-      } else {
-        toast.error(response.data.DataErrorDescription)
+      if (response) {
+        const { DataError, DataErrorDescription } = response.data
+        if (DataError === 0) {
+          toast.success(DataErrorDescription)
+          setHightLight(formCreate.NhomGia)
+          loading()
+          setFormCreate(defaultFormCreate)
+          setSelectedRowData([])
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+        } else if (DataError === -107 || DataError === -108) {
+          await RETOKEN()
+          handleCreateAndClose()
+        } else {
+          toast.error(DataErrorDescription)
+        }
       }
     } catch (error) {
       console.error('Error while saving data:', error)
@@ -329,18 +333,22 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
       const tokenLogin = localStorage.getItem('TKN')
 
       const response = await apis.SuaGBS(tokenLogin, { ...formEdit, Data: { ...formEdit.Data, NhomGia_CTs: selectedRowData } })
-      if (response.data && response.data.DataError === 0) {
-        toast.success(response.data.DataErrorDescription)
-        setHightLight(formEdit.Ma)
-        loading()
-        close()
-      } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        handleEdit()
-      } else {
-        toast.error(response.data.DataErrorDescription)
+
+      if (response) {
+        const { DataError, DataErrorDescription } = response.data
+        if (DataError === 0) {
+          toast.success(DataErrorDescription)
+          setHightLight(formEdit.Ma)
+          loading()
+          close()
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+        } else if (DataError === -107 || DataError === -108) {
+          await RETOKEN()
+          handleEdit()
+        } else {
+          toast.error(DataErrorDescription)
+        }
       }
     } catch (error) {
       console.error('Error while saving data:', error)
@@ -350,18 +358,21 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
   const handleDelete = async (dataRecord) => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
-
       const response = await apis.XoaGBS(tokenLogin, dataRecord.NhomGia)
-      if (response.data && response.data.DataError === 0) {
-        toast.success(response.data.DataErrorDescription)
-        loading()
-      } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        handleDelete()
-      } else {
-        toast.error(response.data.DataErrorDescription)
+
+      if (response) {
+        const { DataError, DataErrorDescription } = response.data
+        if (DataError === 0) {
+          toast.success(DataErrorDescription)
+          loading()
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+        } else if (DataError === -107 || DataError === -108) {
+          await RETOKEN()
+          handleDelete()
+        } else {
+          toast.error(DataErrorDescription)
+        }
       }
 
       close()
@@ -375,16 +386,18 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
       const tokenLogin = localStorage.getItem('TKN')
 
       const response = await apis.InGBS(tokenLogin, formPrint)
-      // Kiểm tra call api thành công
-      if (response.data && response.data.DataError === 0) {
-        base64ToPDF(response.data.DataResults)
-      } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-        toast.warning(response.data.DataErrorDescription)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        handlePrint()
-      } else {
-        toast.error(response.data.DataErrorDescription)
+      if (response) {
+        const { DataError, DataErrorDescription, DataResults } = response.data
+        if (DataError === 0) {
+          base64ToPDF(DataResults)
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(DataErrorDescription)
+        } else if (DataError === -107 || DataError === -108) {
+          await RETOKEN()
+          handlePrint()
+        } else {
+          toast.error(DataErrorDescription)
+        }
       }
     } catch (error) {
       console.error('Error while saving data:', error)
@@ -411,6 +424,7 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
   }
   const handleEditData = (data) => {
     setSelectedRowData(data)
+    // console.log(data)
   }
 
   const handleFromChange = (value) => {

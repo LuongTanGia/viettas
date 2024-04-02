@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
-import { Table, Checkbox, Tooltip, Row, Col, Typography, Input, Segmented } from 'antd'
+import { Table, Checkbox, Tooltip, Row, Col, Typography, Input } from 'antd'
 import moment from 'moment'
 import icons from '../../untils/icons'
 import { toast } from 'react-toastify'
@@ -8,22 +8,20 @@ import * as apis from '../../apis'
 import ActionButton from '../../components/util/Button/ActionButton'
 import { RETOKEN, formatCurrency, formatPrice } from '../../action/Actions'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
-import { exportToExcel } from '../../action/Actions'
+// import { exportToExcel } from '../../action/Actions'
 import { CloseSquareFilled } from '@ant-design/icons'
 import { useSearch } from '../../components_K/myComponents/useSearch'
 import { ModalTongHopPBL, PermissionView } from '../../components_K'
 
 const { Text } = Typography
-const { FaFileMedical, BsSearch, TfiMoreAlt, FaEyeSlash, RiFileExcel2Fill } = icons
+const { FaFileMedical, BsSearch, TfiMoreAlt, FaEyeSlash } = icons
 const TongHopPBL = () => {
   const optionContainerRef = useRef(null)
   const [tableLoad, setTableLoad] = useState(true)
-
   const [isShowModal, setIsShowModal] = useState(false)
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [isShowOption, setIsShowOption] = useState(false)
   const [data, setData] = useState([])
-
   const [dataRecord, setDataRecord] = useState(null)
   const [actionType, setActionType] = useState('')
   const [dataQuyenHan, setDataQuyenHan] = useState({})
@@ -116,20 +114,22 @@ const TongHopPBL = () => {
       const tokenLogin = localStorage.getItem('TKN')
 
       const response = await apis.DSTongHopPBL(tokenLogin)
-
-      if (response.data && response.data.DataError === 0) {
-        setData(response.data.DataResults)
-        setTableLoad(false)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getDSTongHopPBL()
-      } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        setTableLoad(false)
-      } else {
-        toast.error(response.data.DataErrorDescription)
-        setData([])
-        setTableLoad(false)
+      if (response) {
+        const { DataError, DataErrorDescription, DataResults } = response.data
+        if (DataError === 0) {
+          setData(DataResults)
+          setTableLoad(false)
+        } else if (DataError === -107 || DataError === -108) {
+          await RETOKEN()
+          getDSTongHopPBL()
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+          setTableLoad(false)
+        } else {
+          toast.error(DataErrorDescription)
+          setData([])
+          setTableLoad(false)
+        }
       }
     } catch (error) {
       console.error('Kiểm tra token thất bại', error)
@@ -425,7 +425,7 @@ const TongHopPBL = () => {
                 {isShowOption && (
                   <div className=" absolute flex flex-col gap-2 bg-slate-100 px-3 py-2 items-center top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom ">
                     <div className={`flex flex-grow flex-wrap gap-1 ${!hideColumns ? 'flex-col' : ''}`}>
-                      <button
+                      {/* <button
                         onClick={dataQuyenHan?.EXCEL ? exportToExcel : ''}
                         className={`flex items-center py-1 px-2 rounded-md text-slate-50 text-base border-2 ${
                           dataQuyenHan?.EXCEL ? 'border-green-500  bg-green-500 hover:bg-white hover:text-green-500' : 'bg-gray-400 cursor-not-allowed'
@@ -435,7 +435,7 @@ const TongHopPBL = () => {
                           <RiFileExcel2Fill size={20} />
                         </div>
                         <div>Xuất excel</div>
-                      </button>
+                      </button> */}
 
                       <button
                         onClick={() => setHideColumns(!hideColumns)}

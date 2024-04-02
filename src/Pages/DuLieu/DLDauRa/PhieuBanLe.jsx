@@ -5,7 +5,7 @@ import icons from '../../../untils/icons'
 import { toast } from 'react-toastify'
 import * as apis from '../../../apis'
 import { Modals, PermissionView } from '../../../components_K'
-import ActionButton from '../../../components/util/Button/ActionButton'
+// import ActionButton from '../../../components/util/Button/ActionButton'
 import dayjs from 'dayjs'
 import { RETOKEN, formatPrice, formatQuantity } from '../../../action/Actions'
 import SimpleBackdrop from '../../../components/util/Loading/LoadingPage'
@@ -193,7 +193,6 @@ const PhieuBanLe = () => {
   useEffect(() => {
     const getKhoanNgay = async () => {
       try {
-        console.log('get Khoảng ngày')
         const tokenLogin = localStorage.getItem('TKN')
         const response = await apis.KhoanNgay(tokenLogin)
 
@@ -223,23 +222,15 @@ const PhieuBanLe = () => {
   useEffect(() => {
     const getChucNangQuyenHan = async () => {
       try {
-        console.log('đi')
         const tokenLogin = localStorage.getItem('TKN')
         const response = await apis.ChucNangQuyenHan(tokenLogin, 'DuLieu_PBL')
 
         if (response.data && response.data.DataError === 0) {
           setDataQuyenHan(response.data)
-        }
-        // else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        //   toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        // }
-        else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
           getChucNangQuyenHan()
         }
-        // else {
-        //   toast.error(response.data.DataErrorDescription)
-        // }
       } catch (error) {
         console.error('Kiểm tra token thất bại', error)
       }
@@ -266,21 +257,23 @@ const PhieuBanLe = () => {
       const tokenLogin = localStorage.getItem('TKN')
 
       const response = await apis.DanhSachPBL(tokenLogin, formKhoanNgay)
-
-      if (response.data && response.data.DataError === 0) {
-        setData(response.data.DataResults)
-        setTableLoad(false)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getDSPBL()
-        // setTableLoad(false)
-      } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        setTableLoad(false)
-      } else {
-        toast.error(response.data.DataErrorDescription)
-        setData([])
-        setTableLoad(false)
+      if (response) {
+        const { DataError, DataErrorDescription, DataResults } = response.data
+        if (DataError === 0) {
+          setData(DataResults)
+          setTableLoad(false)
+        } else if (DataError === -107 || DataError === -108) {
+          await RETOKEN()
+          getDSPBL()
+          // setTableLoad(false)
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+          setTableLoad(false)
+        } else {
+          toast.error(DataErrorDescription)
+          setData([])
+          setTableLoad(false)
+        }
       }
     } catch (error) {
       console.error('Kiểm tra token thất bại', error)
@@ -818,7 +811,7 @@ const PhieuBanLe = () => {
                   <div className="flex gap-x-2 items-center">
                     <label htmlFor="">Ngày</label>
                     <DateField
-                      className="DatePicker_PBL w-[110px]"
+                      className="DatePicker_PBL w-[115px]"
                       format="DD/MM/YYYY"
                       value={dayjs(formKhoanNgay.NgayBatDau)}
                       // maxDate={dayjs(formKhoanNgay.NgayKetThuc)}
@@ -856,7 +849,7 @@ const PhieuBanLe = () => {
                   <div className="flex gap-x-2 items-center">
                     <label htmlFor="">Đến</label>
                     <DateField
-                      className="DatePicker_PBL w-[110px]"
+                      className="DatePicker_PBL w-[115px]"
                       format="DD/MM/YYYY"
                       // minDate={dayjs(formKhoanNgay.NgayBatDau)}
                       value={dayjs(formKhoanNgay.NgayKetThuc)}

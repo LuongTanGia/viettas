@@ -58,15 +58,18 @@ const ModalHeThong = ({ close }) => {
       try {
         const tokenLogin = localStorage.getItem('TKN')
         const response = await apiFunc(tokenLogin)
-        if (response.data && response.data.DataError === 0) {
-          setDataFunc(response.data.DataResults)
-        } else if (response.data.DataError === -1 || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        } else if (response.data.DataError === -107 || response.data.DataError === -108) {
-          await RETOKEN()
-          fetchData(apiFunc, setDataFunc)
-        } else {
-          toast.error(response.data.DataErrorDescription)
+        if (response) {
+          const { DataError, DataErrorDescription, DataResults } = response.data
+          if (DataError === 0) {
+            setDataFunc(DataResults)
+          } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+          } else if (DataError === -107 || DataError === -108) {
+            await RETOKEN()
+            fetchData(apiFunc, setDataFunc)
+          } else {
+            toast.error(DataErrorDescription)
+          }
         }
       } catch (error) {
         console.error('Lấy data thất bại', error)
@@ -91,19 +94,23 @@ const ModalHeThong = ({ close }) => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
       const response = await apis.DSThongSo(tokenLogin)
-      if (response.data && response.data.DataError === 0) {
-        setData(response.data.DataResult)
-        setIsLoading(false)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getData()
-      } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        setIsLoading(false)
-      } else {
-        toast.error(response.data.DataErrorDescription)
-        setData([])
-        setIsLoading(false)
+
+      if (response) {
+        const { DataError, DataErrorDescription, DataResult } = response.data
+        if (DataError === 0) {
+          setData(DataResult)
+          setIsLoading(false)
+        } else if (DataError === -107 || DataError === -108) {
+          await RETOKEN()
+          getData()
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+          setIsLoading(false)
+        } else {
+          toast.error(DataErrorDescription)
+          setData([])
+          setIsLoading(false)
+        }
       }
     } catch (error) {
       console.error('Kiểm tra token thất bại', error)
@@ -161,16 +168,19 @@ const ModalHeThong = ({ close }) => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
       const response = await apis.DieuChinhThongSo(tokenLogin, formHT)
-      if (response.data && response.data.DataError === 0) {
-        toast.success(response.data.DataErrorDescription)
-        close()
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        handleDieuChinhTT()
-      } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-      } else {
-        toast.error(response.data.DataErrorDescription)
+      if (response) {
+        const { DataError, DataErrorDescription } = response.data
+        if (DataError === 0) {
+          toast.success(DataErrorDescription)
+          close()
+        } else if (DataError === -107 || DataError === -108) {
+          await RETOKEN()
+          handleDieuChinhTT()
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+        } else {
+          toast.error(DataErrorDescription)
+        }
       }
     } catch (error) {
       console.error('Kiểm tra token thất bại', error)

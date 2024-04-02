@@ -10,13 +10,13 @@ import { RETOKEN } from '../../action/Actions'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
 import { exportToExcel } from '../../action/Actions'
 import { CloseSquareFilled } from '@ant-design/icons'
-import { useNavigate } from 'react-router-dom'
 import { useSearchHH } from '../../components_K/myComponents/useSearchHH'
 
 const { Text } = Typography
-const { IoAddCircleOutline, IoIosRemoveCircleOutline, MdDelete, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill, CgCloseO } = icons
+
+const { IoAddCircleOutline, IoIosRemoveCircleOutline, MdDelete, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill } = icons
+
 const BangGiaKH = () => {
-  const navigate = useNavigate()
   const optionContainerRef = useRef(null)
   const [tableLoad, setTableLoad] = useState(true)
   const [isLoadingEdit, setIsLoadingEdit] = useState(true)
@@ -92,37 +92,42 @@ const BangGiaKH = () => {
     setIsLoadingEdit(true)
     const fetchData = async () => {
       try {
-        console.log('get helper')
         const tokenLogin = localStorage.getItem('TKN')
         if (actionType === 'create' || actionType === 'edit') {
-          console.log('get helper  KH,DT')
           const responseDT = await apis.ListHelperDTGKH(tokenLogin)
-          if (responseDT.data && responseDT.data.DataError === 0) {
-            setDataDoiTuong(responseDT.data.DataResults)
-            setIsLoadingModal(false)
-          } else if (responseDT.data.DataError === -1 || responseDT.data.DataError === -2 || responseDT.data.DataError === -3) {
-            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseDT.data.DataErrorDescription}</div>)
-            setIsLoadingModal(false)
-          } else if (responseDT.data.DataError === -107 || responseDT.data.DataError === -108) {
-            await RETOKEN()
-            fetchData()
-          } else {
-            toast.error(responseDT.data.DataErrorDescription)
-            setIsLoadingModal(false)
+          if (responseDT) {
+            const { DataError, DataErrorDescription, DataResults } = responseDT.data
+            if (DataError === 0) {
+              setDataDoiTuong(DataResults)
+              setIsLoadingModal(false)
+            } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+              toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+              setIsLoadingModal(false)
+            } else if (DataError === -107 || DataError === -108) {
+              await RETOKEN()
+              fetchData()
+            } else {
+              toast.error(DataErrorDescription)
+              setIsLoadingModal(false)
+            }
           }
+
           const responseNG = await apis.ListHelperNGGKH(tokenLogin)
-          if (responseNG.data && responseNG.data.DataError === 0) {
-            setDataNhomGia(responseNG.data.DataResults)
-            setIsLoadingModal(false)
-          } else if (responseNG.data.DataError === -1 || responseNG.data.DataError === -2 || responseNG.data.DataError === -3) {
-            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseNG.data.DataErrorDescription}</div>)
-            setIsLoadingModal(false)
-          } else if (responseNG.data.DataError === -107 || responseNG.data.DataError === -108) {
-            await RETOKEN()
-            fetchData()
-          } else {
-            toast.error(responseNG.data.DataErrorDescription)
-            setIsLoadingModal(false)
+          if (responseNG) {
+            const { DataError, DataErrorDescription, DataResults } = responseNG.data
+            if (DataError === 0) {
+              setDataNhomGia(DataResults)
+              setIsLoadingModal(false)
+            } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+              toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+              setIsLoadingModal(false)
+            } else if (DataError === -107 || DataError === -108) {
+              await RETOKEN()
+              fetchData()
+            } else {
+              toast.error(DataErrorDescription)
+              setIsLoadingModal(false)
+            }
           }
         }
       } catch (error) {
@@ -147,20 +152,15 @@ const BangGiaKH = () => {
         console.log('đi')
         const tokenLogin = localStorage.getItem('TKN')
         const response = await apis.ChucNangQuyenHan(tokenLogin, 'ThietLap_NhomGiaDoiTuong')
-
-        if (response.data && response.data.DataError === 0) {
-          setDataQuyenHan(response.data)
+        if (response) {
+          const { DataError } = response.data
+          if (DataError === 0) {
+            setDataQuyenHan(response.data)
+          } else if (DataError === -107 || DataError === -108) {
+            await RETOKEN()
+            getChucNangQuyenHan()
+          }
         }
-        // else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        //   toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        // }
-        else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getChucNangQuyenHan()
-        }
-        // else {
-        //   toast.error(response.data.DataErrorDescription)
-        // }
       } catch (error) {
         console.error('Kiểm tra token thất bại', error)
       }
@@ -201,21 +201,22 @@ const BangGiaKH = () => {
       const tokenLogin = localStorage.getItem('TKN')
 
       const response = await apis.DanhSachGKH(tokenLogin)
-
-      if (response.data && response.data.DataError === 0) {
-        setData(response.data.DataResults)
-        setTableLoad(false)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getDSGKH()
-        // setTableLoad(false)
-      } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        setTableLoad(false)
-      } else {
-        toast.error(response.data.DataErrorDescription)
-        setData([])
-        setTableLoad(false)
+      if (response) {
+        const { DataError, DataErrorDescription, DataResults } = response.data
+        if (DataError === 0) {
+          setData(DataResults)
+          setTableLoad(false)
+        } else if (DataError === -107 || DataError === -108) {
+          await RETOKEN()
+          getDSGKH()
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+          setTableLoad(false)
+        } else {
+          toast.error(DataErrorDescription)
+          setData([])
+          setTableLoad(false)
+        }
       }
     } catch (error) {
       console.error('Kiểm tra token thất bại', error)
@@ -227,21 +228,22 @@ const BangGiaKH = () => {
       const tokenLogin = localStorage.getItem('TKN')
 
       const response = await apis.DanhSachFullGKH(tokenLogin)
-
-      if (response.data && response.data.DataError === 0) {
-        setDataFull(response.data.DataResults)
-        setTableLoad(false)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getDSGKH()
-        // setTableLoad(false)
-      } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        setTableLoad(false)
-      } else {
-        toast.error(response.data.DataErrorDescription)
-        setDataFull([])
-        setTableLoad(false)
+      if (response) {
+        const { DataError, DataErrorDescription, DataResults } = response.data
+        if (DataError === 0) {
+          setDataFull(DataResults)
+          setTableLoad(false)
+        } else if (DataError === -107 || DataError === -108) {
+          await RETOKEN()
+          getDSGKH()
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+          setTableLoad(false)
+        } else {
+          toast.error(DataErrorDescription)
+          setDataFull([])
+          setTableLoad(false)
+        }
       }
     } catch (error) {
       console.error('Kiểm tra token thất bại', error)
@@ -691,7 +693,8 @@ const BangGiaKH = () => {
                   return (
                     <Table.Summary fixed="bottom">
                       <Table.Summary.Row>
-                        <Table.Summary.Cell></Table.Summary.Cell>
+                        <Table.Summary.Cell index={0} key="summary-cell-0" className=""></Table.Summary.Cell>
+
                         {newColumnsHide
                           .filter((column) => column.render)
                           .map((column, index) => {
@@ -700,7 +703,7 @@ const BangGiaKH = () => {
                             return (
                               <Table.Summary.Cell
                                 index={index + 1}
-                                key={`summary-cell-${index + 1}`}
+                                key={`summary-cell-${index}`}
                                 align={isNumericColumn ? 'right' : 'left'}
                                 className="text-end font-bold  bg-[#f1f1f1]"
                               >

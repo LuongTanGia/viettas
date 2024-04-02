@@ -185,26 +185,65 @@ const PhieuMuaHang = () => {
     }
   }, [isShowModal])
 
+  //get DSPMH
+  useEffect(() => {
+    if (tableLoad && dataQuyenHan?.VIEW) {
+      getDSPMH()
+    }
+  }, [tableLoad, dataQuyenHan?.VIEW])
+
+  const getDSPMH = async () => {
+    try {
+      const tokenLogin = localStorage.getItem('TKN')
+
+      const response = await apis.DanhSachPMH(tokenLogin, formKhoanNgay)
+
+      if (response) {
+        const { DataError, DataErrorDescription, DataResults } = response.data
+        if (DataError === 0) {
+          setData(DataResults)
+          setTableLoad(false)
+        } else if (DataError === -107 || DataError === -108) {
+          await RETOKEN()
+          getDSPMH()
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+          setTableLoad(false)
+        } else {
+          toast.error(DataErrorDescription)
+          setData([])
+          setTableLoad(false)
+        }
+      }
+    } catch (error) {
+      console.error('Kiểm tra token thất bại', error)
+      setTableLoad(false)
+    }
+  }
+
   // get Khoảng ngày
   useEffect(() => {
     const getKhoanNgay = async () => {
       try {
         const tokenLogin = localStorage.getItem('TKN')
         const response = await apis.KhoanNgay(tokenLogin)
-
-        if (response.data && response.data.DataError === 0) {
-          setFormKhoanNgay(response.data)
-          setIsLoading(false)
-        } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-          setIsLoading(false)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getKhoanNgay()
-          // setIsLoading(false)
-        } else {
-          toast.error(response.data.DataErrorDescription)
-          setIsLoading(false)
+        if (response) {
+          const { DataError, DataErrorDescription } = response.data
+          if (DataError === 0) {
+            setFormKhoanNgay(response.data)
+            setIsLoading(false)
+          } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+            setIsLoading(false)
+          } else if (DataError === -107 || DataError === -108) {
+            // await RETOKEN()
+            // getKhoanNgay()
+            // setIsLoading(false)
+            console.log('DataErrorDescription', DataErrorDescription)
+          } else {
+            toast.error(DataErrorDescription)
+            setIsLoading(false)
+          }
         }
       } catch (error) {
         console.error('Kiểm tra token thất bại', error)
@@ -220,65 +259,28 @@ const PhieuMuaHang = () => {
       try {
         const tokenLogin = localStorage.getItem('TKN')
         const response = await apis.ChucNangQuyenHan(tokenLogin, 'DuLieu_PMH')
-
-        if (response.data && response.data.DataError === 0) {
-          setDataQuyenHan(response.data)
+        if (response) {
+          const { DataError, DataErrorDescription } = response.data
+          if (DataError === 0) {
+            setDataQuyenHan(response.data)
+          } else if (DataError === -107 || DataError === -108) {
+            // await RETOKEN()
+            // getChucNangQuyenHan()
+            console.log('DataErrorDescription', DataErrorDescription)
+          }
         }
-        // else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        //   toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        // }
-        else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getChucNangQuyenHan()
-        }
-        // else {
-        //   toast.error(response.data.DataErrorDescription)
-        // }
       } catch (error) {
         console.error('Kiểm tra token thất bại', error)
       }
     }
-
     getChucNangQuyenHan()
   }, [])
+
   useEffect(() => {
     if (dataQuyenHan?.VIEW == false) {
       setIsShowNotify(true)
     }
   }, [dataQuyenHan])
-  //get DSPMH
-  useEffect(() => {
-    if (tableLoad && dataQuyenHan?.VIEW) {
-      getDSPMH()
-    }
-  }, [tableLoad, dataQuyenHan?.VIEW])
-
-  const getDSPMH = async () => {
-    try {
-      const tokenLogin = localStorage.getItem('TKN')
-
-      const response = await apis.DanhSachPMH(tokenLogin, formKhoanNgay)
-
-      if (response.data && response.data.DataError === 0) {
-        setData(response.data.DataResults)
-        setTableLoad(false)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getDSPMH()
-        // setTableLoad(false)
-      } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        setTableLoad(false)
-      } else {
-        toast.error(response.data.DataErrorDescription)
-        setData([])
-        setTableLoad(false)
-      }
-    } catch (error) {
-      console.error('Kiểm tra token thất bại', error)
-      setTableLoad(false)
-    }
-  }
 
   const columns = [
     {

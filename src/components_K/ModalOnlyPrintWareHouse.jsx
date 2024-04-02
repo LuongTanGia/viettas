@@ -119,60 +119,36 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
     try {
       const tokenLogin = localStorage.getItem('TKN')
       const lien = calculateTotal()
-      if (typePage === 'PMH') {
-        const response = await apis.InPK(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
-        // Kiểm tra call api thành công
-        if (response.data && response.data.DataError === 0) {
-          base64ToPDF(response.data.DataResults)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleOnlyPrintWareHouse()
-        } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-          toast.warning(response.data.DataErrorDescription)
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
+
+      let response
+      switch (typePage) {
+        case 'PMH':
+          response = await apis.InPK(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+          break
+        case 'NTR':
+          response = await apis.InPKNTR(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+          break
+        case 'XTR':
+          response = await apis.InPKXTR(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+          break
+        case 'PBL':
+          response = await apis.InPKPBL(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+          break
+        default:
+          break
       }
-      if (typePage === 'NTR') {
-        const response = await apis.InPKNTR(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
-        // Kiểm tra call api thành công
-        if (response.data && response.data.DataError === 0) {
-          base64ToPDF(response.data.DataResults)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+      if (response) {
+        const { DataError, DataErrorDescription, DataResults } = response.data
+
+        if (DataError === 0) {
+          base64ToPDF(DataResults)
+        } else if (DataError === -107 || DataError === -108) {
           await RETOKEN()
           handleOnlyPrintWareHouse()
-        } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-          toast.warning(response.data.DataErrorDescription)
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(DataErrorDescription)
         } else {
-          toast.error(response.data.DataErrorDescription)
-        }
-      }
-      if (typePage === 'XTR') {
-        const response = await apis.InPKXTR(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
-        // Kiểm tra call api thành công
-        if (response.data && response.data.DataError === 0) {
-          base64ToPDF(response.data.DataResults)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleOnlyPrintWareHouse()
-        } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-          toast.warning(response.data.DataErrorDescription)
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
-      }
-      if (typePage === 'PBL') {
-        const response = await apis.InPKPBL(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
-        // Kiểm tra call api thành công
-        if (response.data && response.data.DataError === 0) {
-          base64ToPDF(response.data.DataResults)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleOnlyPrintWareHouse()
-        } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-          toast.warning(response.data.DataErrorDescription)
-        } else {
-          toast.error(response.data.DataErrorDescription)
+          toast.error(DataErrorDescription)
         }
       }
 

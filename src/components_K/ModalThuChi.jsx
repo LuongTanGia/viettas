@@ -166,39 +166,33 @@ const ModalPCT = ({
 
     try {
       const tokenLogin = localStorage.getItem('TKN')
+      let response
+      switch (typePage) {
+        case 'PCT':
+          response = await apis.ThemPCT(tokenLogin, formCreate)
+          break
+        case 'PTT':
+          response = await apis.ThemPTT(tokenLogin, formCreate)
+          break
 
-      if (typePage === 'PCT') {
-        const response = await apis.ThemPCT(tokenLogin, formCreate)
-        if (response.data && response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription)
-          const soChungTu = response.data.DataResults[0].SoChungTu
-          loading()
-          setHightLight(soChungTu)
-          close()
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleCreateAndClose()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
+        default:
+          break
       }
-      if (typePage === 'PTT') {
-        const response = await apis.ThemPTT(tokenLogin, formCreate)
-        if (response.data && response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription)
-          const soChungTu = response.data.DataResults[0].SoChungTu
+      if (response) {
+        const { DataError, DataErrorDescription, DataResults } = response.data
+        if (DataError === 0) {
+          toast.success(DataErrorDescription)
+          const soChungTu = DataResults[0].SoChungTu
           loading()
           setHightLight(soChungTu)
           close()
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+        } else if (DataError === -107 || DataError === -108) {
           await RETOKEN()
           handleCreateAndClose()
         } else {
-          toast.error(response.data.DataErrorDescription)
+          toast.error(DataErrorDescription)
         }
       }
     } catch (error) {
@@ -232,42 +226,36 @@ const ModalPCT = ({
 
     try {
       const tokenLogin = localStorage.getItem('TKN')
-      if (typePage === 'PCT') {
-        const response = await apis.ThemPCT(tokenLogin, formCreate)
-        if (response.data && response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription)
-          const soChungTu = response.data.DataResults[0].SoChungTu
-          loading()
-          setHightLight(soChungTu)
-          setSctCreate(soChungTu)
-          setFormCreate(defaultFormCreate)
-          setDoiTuongInfo({ Ten: '', DiaChi: '' })
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleCreateAndClose()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
+      let response
+      switch (typePage) {
+        case 'PCT':
+          response = await apis.ThemPCT(tokenLogin, formCreate)
+          break
+        case 'PTT':
+          response = await apis.ThemPTT(tokenLogin, formCreate)
+          break
+
+        default:
+          break
       }
-      if (typePage === 'PTT') {
-        const response = await apis.ThemPTT(tokenLogin, formCreate)
-        if (response.data && response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription)
-          const soChungTu = response.data.DataResults[0].SoChungTu
+
+      if (response) {
+        const { DataError, DataErrorDescription, DataResults } = response.data
+        if (DataError === 0) {
+          toast.success(DataErrorDescription)
+          const soChungTu = DataResults[0].SoChungTu
           loading()
           setHightLight(soChungTu)
           setSctCreate(soChungTu)
           setFormCreate(defaultFormCreate)
           setDoiTuongInfo({ Ten: '', DiaChi: '' })
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+        } else if (DataError === -107 || DataError === -108) {
           await RETOKEN()
           handleCreateAndClose()
         } else {
-          toast.error(response.data.DataErrorDescription)
+          toast.error(DataErrorDescription)
         }
       }
     } catch (error) {
@@ -298,36 +286,33 @@ const ModalPCT = ({
     }
     try {
       const tokenLogin = localStorage.getItem('TKN')
-      if (typePage === 'PCT') {
-        const response = await apis.SuaPCT(tokenLogin, dataRecord.SoChungTu, formEdit)
-        if (response.data && response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription)
-          loading()
-          setHightLight(dataRecord.SoChungTu)
-          close()
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleEdit()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
+      let response
+      switch (typePage) {
+        case 'PCT':
+          response = await apis.SuaPCT(tokenLogin, dataRecord.SoChungTu, formEdit)
+          break
+        case 'PTT':
+          response = await apis.SuaPTT(tokenLogin, dataRecord.SoChungTu, formEdit)
+          break
+
+        default:
+          break
       }
-      if (typePage === 'PTT') {
-        const response = await apis.SuaPTT(tokenLogin, dataRecord.SoChungTu, formEdit)
-        if (response.data && response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription)
+      if (response) {
+        const { DataError, DataErrorDescription } = response.data
+
+        if (DataError === 0) {
+          toast.success(DataErrorDescription)
           loading()
           setHightLight(dataRecord.SoChungTu)
           close()
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+        } else if (DataError === -107 || DataError === -108) {
           await RETOKEN()
           handleEdit()
         } else {
-          toast.error(response.data.DataErrorDescription)
+          toast.error(DataErrorDescription)
         }
       }
     } catch (error) {
@@ -338,34 +323,34 @@ const ModalPCT = ({
   const handleDelete = async (dataRecord) => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
-      if (typePage === 'PCT') {
-        const response = await apis.XoaPCT(tokenLogin, dataRecord.SoChungTu)
-        if (response.data && response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription)
+
+      let response
+      switch (typePage) {
+        case 'PCT':
+          response = await apis.XoaPCT(tokenLogin, dataRecord.SoChungTu)
+          break
+        case 'PTT':
+          response = await apis.XoaPTT(tokenLogin, dataRecord.SoChungTu)
+          break
+
+        default:
+          break
+      }
+      if (response) {
+        const { DataError, DataErrorDescription } = response.data
+        if (DataError === 0) {
+          toast.success(DataErrorDescription)
           loading()
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(response.data.DataErrorDescription)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(DataErrorDescription)
+        } else if (DataError === -107 || DataError === -108) {
           await RETOKEN()
           handleDelete()
         } else {
-          toast.error(response.data.DataErrorDescription)
+          toast.error(DataErrorDescription)
         }
       }
-      if (typePage === 'PTT') {
-        const response = await apis.XoaPTT(tokenLogin, dataRecord.SoChungTu)
-        if (response.data && response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription)
-          loading()
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(response.data.DataErrorDescription)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleDelete()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
-      }
+
       close()
     } catch (error) {
       console.error('Error while saving data:', error)
@@ -385,30 +370,29 @@ const ModalPCT = ({
       const tokenLogin = localStorage.getItem('TKN')
       const lien = calculateTotal()
 
-      if (typePage === 'PCT') {
-        const response = await apis.InPCT(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
-        if (response.data && response.data.DataError === 0) {
-          base64ToPDF(response.data.DataResults)
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(response.data.DataErrorDescription)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handlePrint()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
+      let response
+      switch (typePage) {
+        case 'PCT':
+          response = await apis.InPCT(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+          break
+        case 'PTT':
+          response = await apis.InPTT(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+          break
+
+        default:
+          break
       }
-      if (typePage === 'PTT') {
-        const response = await apis.InPTT(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
-        if (response.data && response.data.DataError === 0) {
-          base64ToPDF(response.data.DataResults)
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(response.data.DataErrorDescription)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+      if (response) {
+        const { DataError, DataErrorDescription, DataResults } = response.data
+        if (DataError === 0) {
+          base64ToPDF(DataResults)
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(DataErrorDescription)
+        } else if (DataError === -107 || DataError === -108) {
           await RETOKEN()
           handlePrint()
         } else {
-          toast.error(response.data.DataErrorDescription)
+          toast.error(DataErrorDescription)
         }
       }
     } catch (error) {
@@ -439,46 +423,40 @@ const ModalPCT = ({
     }
     try {
       const tokenLogin = localStorage.getItem('TKN')
+      let response
+      switch (typePage) {
+        case 'PCT':
+          response = await apis.SuaPCT(tokenLogin, dataRecord.SoChungTu, formEdit)
+          break
+        case 'PTT':
+          response = await apis.SuaPTT(tokenLogin, dataRecord.SoChungTu, formEdit)
+          break
 
-      if (typePage === 'PCT') {
-        const response = await apis.SuaPCT(tokenLogin, dataRecord.SoChungTu, formEdit)
-        if (response.data && response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription)
+        default:
+          break
+      }
+      if (response) {
+        const { DataError, DataErrorDescription } = response.data
+
+        if (DataError === 0) {
           loading()
           setHightLight(dataRecord.SoChungTu)
           setIsShowModalOnlyPrint(true)
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+        } else if (DataError === -107 || DataError === -108) {
           await RETOKEN()
           handleEdit()
         } else {
-          toast.error(response.data.DataErrorDescription)
+          toast.error(DataErrorDescription)
         }
       }
-      if (typePage === 'PTT') {
-        const response = await apis.SuaPTT(tokenLogin, dataRecord.SoChungTu, formEdit)
-        if (response.data && response.data.DataError === 0) {
-          toast.success(response.data.DataErrorDescription)
-          loading()
-          setHightLight(dataRecord.SoChungTu)
-          setIsShowModalOnlyPrint(true)
-        } else if ((response.data && response.data.DataError === -1) || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleEdit()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
-      }
-      // close()
     } catch (error) {
       console.error('Error while saving data:', error)
     }
   }
 
-  const handlePrintInCreate = () => {
+  const handlePrintInCreate = async () => {
     if (formCreate.MaDoiTuong === 'NCVL' || formCreate.MaDoiTuong === 'KHVL') {
       if (!formCreate?.TenDoiTuong?.trim() || !formCreate?.DiaChi?.trim() || !formCreate?.GhiChu?.trim() || formCreate?.SoTien === null || formCreate?.SoTien === 0) {
         setErrors({
@@ -499,7 +477,44 @@ const ModalPCT = ({
       })
       return
     }
-    setIsShowModalOnlyPrint(true)
+
+    try {
+      const tokenLogin = localStorage.getItem('TKN')
+      let response
+      switch (typePage) {
+        case 'PCT':
+          response = await apis.ThemPCT(tokenLogin, formCreate)
+          break
+        case 'PTT':
+          response = await apis.ThemPTT(tokenLogin, formCreate)
+          break
+
+        default:
+          break
+      }
+
+      if (response) {
+        const { DataError, DataErrorDescription, DataResults } = response.data
+        if (DataError === 0) {
+          const soChungTu = DataResults[0].SoChungTu
+          loading()
+          setHightLight(soChungTu)
+          setSctCreate(soChungTu)
+          setFormCreate(defaultFormCreate)
+          setDoiTuongInfo({ Ten: '', DiaChi: '' })
+          setIsShowModalOnlyPrint(true)
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+        } else if (DataError === -107 || DataError === -108) {
+          await RETOKEN()
+          handlePrintInCreate()
+        } else {
+          toast.error(DataErrorDescription)
+        }
+      }
+    } catch (error) {
+      console.error('Error while saving data:', error)
+    }
   }
 
   useEffect(() => {
@@ -970,7 +985,7 @@ const ModalPCT = ({
                           <div className="flex items-center gap-1 whitespace-nowrap">
                             <label className="required  min-w-[90px] text-sm flex justify-end">Ngày</label>
                             <DateField
-                              className="DatePicker_PMH"
+                              className="DatePicker_PMH  w-[115px]"
                               format="DD/MM/YYYY"
                               defaultValue={dayjs()}
                               onChange={(newDate) => {
@@ -1188,9 +1203,7 @@ const ModalPCT = ({
                     background={'purple-500'}
                     bg_hover={'white'}
                     color_hover={'purple-500'}
-                    handleAction={() => {
-                      handleCreate(), handlePrintInCreate()
-                    }}
+                    handleAction={() => handlePrintInCreate()}
                     isModal={true}
                   />
                 </div>
@@ -1238,7 +1251,7 @@ const ModalPCT = ({
                             <div className="flex items-center gap-1 whitespace-nowrap">
                               <label className="required  min-w-[90px] text-sm flex justify-end">Ngày</label>
                               <DateField
-                                className="DatePicker_PMH"
+                                className="DatePicker_PMH w-[115px]"
                                 format="DD/MM/YYYY"
                                 defaultValue={dayjs(dataThongTinSua?.NgayCTu)}
                                 onChange={(newDate) => {

@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
-import { Table, Tooltip, Input, Typography, Segmented } from 'antd'
+import { Table, Tooltip, Input, Typography, Segmented, Radio } from 'antd'
 import icons from '../../untils/icons'
 import { toast } from 'react-toastify'
 import * as apis from '../../apis'
@@ -14,7 +14,7 @@ import { DateField } from '@mui/x-date-pickers'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
 import moment from 'moment'
 const { Text } = Typography
-const { BsSearch } = icons
+// const { BsSearch } = icons
 
 const DuLieuBLQ = () => {
   const optionContainerRef = useRef(null)
@@ -50,7 +50,9 @@ const DuLieuBLQ = () => {
   }
   const [setSearchDuLieuTT, filteredDuLieuTT, searchDuLieuTT] = useSearch(transformedDataSource?.Details)
 
-  const [formKhoanNgay, setFormKhoanNgay] = useState({})
+  const [formKhoanNgay, setFormKhoanNgay] = useState({
+    TrangThaiChotCa: 0,
+  })
   const formPBLQ = {}
 
   // bỏ focus option thì hidden
@@ -139,18 +141,21 @@ const DuLieuBLQ = () => {
         const tokenLogin = localStorage.getItem('TKN')
         const response = await apis.KhoanNgay(tokenLogin)
 
-        if (response.data && response.data.DataError === 0) {
-          setFormKhoanNgay(response.data)
-          setIsLoading(false)
-        } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-          setIsLoading(false)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getKhoanNgay()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-          setIsLoading(false)
+        if (response) {
+          const { DataError, DataErrorDescription } = response.data
+          if (DataError === 0) {
+            setFormKhoanNgay({ ...formKhoanNgay, NgayBatDau: response.data.NgayBatDau, NgayKetThuc: response.data.NgayKetThuc })
+            setIsLoading(false)
+          } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+            setIsLoading(false)
+          } else if (DataError === -107 || DataError === -108) {
+            await RETOKEN()
+            getKhoanNgay()
+          } else {
+            toast.error(DataErrorDescription)
+            setIsLoading(false)
+          }
         }
       } catch (error) {
         console.error('Kiểm tra token thất bại', error)
@@ -866,7 +871,7 @@ const DuLieuBLQ = () => {
       setSearchDuLieuTT(newSearch)
     }
   }
-
+  console.log('formdate', formKhoanNgay)
   return (
     <>
       {dataQuyenHan?.VIEW === false ? (
@@ -904,11 +909,11 @@ const DuLieuBLQ = () => {
                 </div>
                 {/*  */}
               </div>
-              <div className="flex justify-between items-center pl-2  ">
-                <div className="flex flex-col gap-y-2 ">
+              <div className="flex justify-between items-center  ">
+                <div className="flex  gap-1 ">
                   {/* DatePicker */}
-                  <div className="flex gap-3">
-                    <div className="flex gap-x-2 items-center">
+                  <div className="flex gap-2">
+                    <div className="flex gap-x-1 items-center">
                       <label htmlFor="">Ngày</label>
                       <DateField
                         className="DatePicker_PMH w-[115px]"
@@ -933,19 +938,10 @@ const DuLieuBLQ = () => {
                           }
                         }}
                         onFocus={() => setPrevDateValue(formKhoanNgay)}
-                        sx={{
-                          '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                          '& .MuiButtonBase-root': {
-                            padding: '4px',
-                          },
-                          '& .MuiSvgIcon-root': {
-                            width: '18px',
-                            height: '18px',
-                          },
-                        }}
+                        sx={{ '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' } }}
                       />
                     </div>
-                    <div className="flex gap-x-2 items-center">
+                    <div className="flex gap-x-1 items-center">
                       <label htmlFor="">Đến</label>
                       <DateField
                         className="DatePicker_PMH w-[115px]"
@@ -969,18 +965,36 @@ const DuLieuBLQ = () => {
                           }
                         }}
                         onFocus={() => setPrevDateValue(formKhoanNgay)}
-                        sx={{
-                          '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                          '& .MuiButtonBase-root': {
-                            padding: '4px',
-                          },
-                          '& .MuiSvgIcon-root': {
-                            width: '18px',
-                            height: '18px',
-                          },
-                        }}
+                        sx={{ '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' } }}
                       />
                     </div>
+                  </div>
+                  {/* trạng thái chốt ca */}
+                  <div className="flex  truncate">
+                    <Radio.Group
+                      onChange={(e) => {
+                        if (!isChanging) {
+                          setIsChanging(true)
+                          setFormKhoanNgay({
+                            ...formKhoanNgay,
+                            TrangThaiChotCa: e.target.value,
+                          })
+                          setTableLoad(true)
+                          setTimeout(() => {
+                            setIsChanging(false)
+                          }, 1500)
+                        }
+                      }}
+                      value={formKhoanNgay?.TrangThaiChotCa}
+                    >
+                      <Radio className="md:w-[60px] lg:w-auto truncate" value={0}>
+                        Chưa tổng hợp
+                      </Radio>
+                      <Radio className="md:w-[44px] lg:w-auto truncate" value={1}>
+                        Đã tổng hợp
+                      </Radio>
+                      <Radio value={2}>Tất cả</Radio>
+                    </Radio.Group>
                   </div>
                 </div>
 

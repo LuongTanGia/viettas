@@ -640,7 +640,7 @@ const GBL = () => {
   }
 
   const handleRowClick = (record) => {
-    // setDoneGBL([])
+    setDoneGBL([])
     const selectedKey = `${record.MaHang}/${record.HieuLucTu}`
     const isSelected = selectedRowKeys.includes(selectedKey)
     const newSelectedRowKeys = isSelected ? selectedRowKeys.filter((key) => key !== selectedKey) : [...selectedRowKeys, selectedKey]
@@ -933,7 +933,7 @@ const GBL = () => {
                   return (
                     <Table.Summary fixed="bottom">
                       <Table.Summary.Row>
-                        <Table.Summary.Cell className="text-end font-bold bg-[#f1f1f1]"></Table.Summary.Cell>
+                        <Table.Summary.Cell index={0} key="summary-cell-0" className=""></Table.Summary.Cell>
                         {newColumnsHide
                           .filter((column) => column.render)
                           .map((column, index) => {
@@ -941,12 +941,12 @@ const GBL = () => {
                             return (
                               <Table.Summary.Cell
                                 index={index + 1}
-                                key={`summary-cell-${index + 1}`}
+                                key={`summary-cell-${index}`}
                                 align={isNumericColumn ? 'right' : 'left'}
-                                className="text-end font-bold  bg-[#f1f1f1]"
+                                className="text-end font-bold  bg-[#f1f1f1] "
                               >
                                 {column.dataIndex === 'STT' ? (
-                                  <Text className="text-center flex justify-center" strong>
+                                  <Text className="text-center flex justify-center " strong>
                                     {showFull === 'Hiện hành' ? data.length : dataFull.length}
                                   </Text>
                                 ) : null}
