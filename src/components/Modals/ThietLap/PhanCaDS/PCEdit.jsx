@@ -76,7 +76,7 @@ const PCEdit = ({ close, loadingData, setTargetRow, dataPC }) => {
         close()
         loadingData()
         toast.success('Sửa thành công', { autoClose: 1000 })
-        setTargetRow(dataPC?.MaPC)
+        setTargetRow(dataPC?.MaNguoiDung)
       } else {
         toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
       }

@@ -57,6 +57,13 @@ const XDCPrint = ({ close, dataPrint }) => {
   }, [dateData?.NgayBatDau, dateData?.NgayKetThuc])
 
   useEffect(() => {
+    if (dataListChungTu?.length == 0) {
+      setSelectedNhomTo(null)
+      setSelectedNhomFrom(null)
+    }
+  }, [dataListChungTu?.length])
+
+  useEffect(() => {
     const getListChungTu = async () => {
       try {
         if (isLoading == true) {
@@ -160,13 +167,13 @@ const XDCPrint = ({ close, dataPrint }) => {
                 <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
                 <p className="text-blue-700 font-semibold uppercase">In - Phiếu Xuất Điều Chỉnh</p>
               </div>
-              <div className="flex flex-col gap-4 border-2 p-3">
+              <div className="flex flex-col items-center gap-4 border-2 py-3">
                 <div className="flex justify-center">
-                  <div className="DatePicker_XDCKho flex justify-center gap-4">
+                  <div className="DatePicker_XDCKho flex justify-center gap-2">
                     <div className="DatePicker_XDCKho flex items-center gap-2">
-                      <label>Từ</label>
+                      <label className="ml-[20px]">Từ</label>
                       <DateField
-                        className="max-w-[180px]"
+                        className="max-w-[170px]"
                         onBlur={handleDateChange}
                         onKeyDown={handleKeyDown}
                         format="DD/MM/YYYY"
@@ -187,7 +194,7 @@ const XDCPrint = ({ close, dataPrint }) => {
                         }}
                       />
                     </div>
-                    <div className=" flex items-center gap-2 ">
+                    <div className="flex items-center gap-2">
                       <label>Đến</label>
                       <DateField
                         onBlur={handleDateChange}
@@ -214,10 +221,11 @@ const XDCPrint = ({ close, dataPrint }) => {
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <div className="flex gap-2 items-center">
+                  <div className="flex gap-2 items-center whitespace-nowrap w-[50%]">
                     <div>Số chứng từ</div>
                     <Select
                       showSearch
+                      size="small"
                       required
                       value={dataPrint ? dataPrint?.SoChungTu : selectedNhomFrom}
                       placeholder={'Chọn nhóm'}
@@ -244,11 +252,12 @@ const XDCPrint = ({ close, dataPrint }) => {
                         })}
                     </Select>
                   </div>
-                  <div className="flex gap-2 items-center">
-                    <div> Tới</div>
+                  <div className="flex gap-2 items-center w-[40%]">
+                    <div>Tới</div>
                     <Select
                       showSearch
                       required
+                      size="small"
                       placeholder={'Chọn nhóm'}
                       value={dataPrint ? dataPrint?.SoChungTu : selectedNhomTo}
                       onChange={(value) => {

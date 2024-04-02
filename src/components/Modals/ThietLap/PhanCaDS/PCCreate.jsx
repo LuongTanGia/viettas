@@ -98,7 +98,7 @@ const PCCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
   }, [isLoading])
 
   const handleCreate = async (isSave = true) => {
-    if (!PCForm?.MaNguoiDung?.trim() || !PCForm?.SoQuay) {
+    if (!PCForm?.MaNguoiDung?.trim() || !PCForm?.SoQuay || !PCForm?.MaCa) {
       setErrors({
         MaNguoiDung: PCForm?.MaNguoiDung?.trim() ? null : 'Người dùng không được trống',
         SoQuay: !PCForm?.MaCa ? null : PCForm?.SoQuay ? null : 'Quầy không được trống',
@@ -193,7 +193,6 @@ const PCCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
                       <Select
                         style={{ width: '100%' }}
                         showSearch
-                        required
                         className="text-end truncate 2xl:max-w-[8rem] xl:max-w-[7rem] md:max-w-[6rem]"
                         size="small"
                         status={errors.SoQuay ? 'error' : ''}
@@ -220,7 +219,6 @@ const PCCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
                       <Select
                         style={{ width: '100%' }}
                         showSearch
-                        required
                         size="small"
                         className="truncate xl:max-w-[7rem] md:max-w-[6rem]"
                         status={errors.MaCa ? 'error' : ''}

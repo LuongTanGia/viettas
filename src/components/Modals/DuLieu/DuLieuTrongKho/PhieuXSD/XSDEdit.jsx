@@ -487,15 +487,13 @@ const XSDEdit = ({ close, dataXSD, loadingData, setTargetRow }) => {
                   </div>
                   <div className="flex items-center gap-1">
                     <label className="whitespace-nowrap min-w-[100px] flex justify-end text-sm">Ghi chú</label>
-                    <input
-                      type="text"
-                      className="px-2 w-[70rem] resize-none rounded border-[1px] border-solid outline-none text-[1rem] hover:border-blue-500 "
-                      name="GhiChu"
+                    <Input
+                      size="small"
                       value={XSDForm?.GhiChu || ''}
                       onChange={(e) =>
                         setXSDForm({
                           ...XSDForm,
-                          [e.target.name]: e.target.value,
+                          GhiChu: e.target.value,
                         })
                       }
                     />

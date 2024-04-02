@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from 'react'
 import moment from 'moment'
-import { MdPrint } from 'react-icons/md'
+// import { MdPrint } from 'react-icons/md'
 const { Text } = Typography
 import { Table, Tooltip, Typography } from 'antd'
 import HUYPrint from './HUYPrint'
@@ -273,7 +273,7 @@ const HUYXem = ({ close, dataHUY }) => {
                 </div>
                 <div className="flex justify-between">
                   <ActionButton
-                    icon={<MdPrint className="w-5 h-5" />}
+                    // icon={<MdPrint className="w-5 h-5" />}
                     handleAction={handlePrint}
                     title={'In Phiếu'}
                     color={'slate-50'}

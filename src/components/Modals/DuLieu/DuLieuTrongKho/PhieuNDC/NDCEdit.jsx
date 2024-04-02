@@ -78,6 +78,7 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
         const response = await categoryAPI.ListKhoHangNDC(TokenAccess)
         if (response.data.DataError == 0) {
           setDataKhoHang(response.data.DataResults)
+          setIsLoading(true)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
           getDataKhoHangNDC()

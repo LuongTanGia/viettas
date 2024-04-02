@@ -641,12 +641,12 @@ const categoryAPI = {
     }
     return axiosClient.post(url, {}, { headers })
   },
-  ListHangHoaXDC(accessToken) {
+  ListHangHoaXDC(body, accessToken) {
     const url = '/entries/DuLieuXDC/ListHelper_HangHoa'
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     }
-    return axiosClient.post(url, {}, { headers })
+    return axiosClient.post(url, body, { headers })
   },
 
   // DuLieu/DLTK/PhieuXCK
@@ -908,12 +908,12 @@ const categoryAPI = {
     }
     return axiosClient.post(url, {}, { headers })
   },
-  ListHangHoaHUY(accessToken) {
+  ListHangHoaHUY(body, accessToken) {
     const url = '/entries/DuLieuHUY/ListHelper_HangHoa'
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     }
-    return axiosClient.post(url, {}, { headers })
+    return axiosClient.post(url, body, { headers })
   },
   // ThietLap/KhoHang
   KhoHang(accessToken) {

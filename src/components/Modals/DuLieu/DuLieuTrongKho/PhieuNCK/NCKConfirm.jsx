@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react'
 import moment from 'moment'
 import { FaSearch } from 'react-icons/fa'
-import { Table, Tooltip } from 'antd'
+import { Input, Table, Tooltip } from 'antd'
+import { CloseSquareFilled } from '@ant-design/icons'
 import categoryAPI from '../../../../../API/linkAPI'
 import logo from '../../../../../assets/VTS-iSale.ico'
 import { RETOKEN } from '../../../../../action/Actions'
@@ -11,6 +12,7 @@ import ActionButton from '../../../../util/Button/ActionButton'
 import SimpleBackdrop from '../../../../util/Loading/LoadingPage'
 import { useSearch } from '../../../../hooks/Search'
 import { toast } from 'react-toastify'
+import HighlightedCell from '../../../../hooks/HighlightedCell'
 
 const NCKConfirm = ({ close, loadingData, setTargetRow, isXuLy }) => {
   const TokenAccess = localStorage.getItem('TKN')
@@ -22,13 +24,14 @@ const NCKConfirm = ({ close, loadingData, setTargetRow, isXuLy }) => {
   const [tableLoad, setTableLoad] = useState(true)
   const [isShowModal, setIsShowModal] = useState(false)
   const [isShowSearch, setIsShowSearch] = useState(false)
+  const [targetRowXL, setTargetRowXL] = useState('')
   const [setSearchHangHoa, filteredHangHoa, searchHangHoa] = useSearch(dataNCKUnconfirm)
 
   useEffect(() => {
     const listUnconfirmed = async () => {
       try {
         const response = !isXuLy ? await categoryAPI.ListChuaDuyetNCK(TokenAccess) : await categoryAPI.ListChuaDuyet(TokenAccess)
-        if (response.data.DataError == 0) {
+        if (response.data && response.data.DataError == 0) {
           setDataNCKUnconfirm(response.data.DataResults)
           setIsLoading(true)
           setTableLoad(false)
@@ -45,10 +48,8 @@ const NCKConfirm = ({ close, loadingData, setTargetRow, isXuLy }) => {
         setIsLoading(true)
       }
     }
-    if (!isLoading) {
-      listUnconfirmed()
-    }
-  }, [isLoading])
+    listUnconfirmed()
+  }, [searchHangHoa, targetRowXL])
 
   useEffect(() => {
     setTargetRow([])
@@ -64,10 +65,15 @@ const NCKConfirm = ({ close, loadingData, setTargetRow, isXuLy }) => {
     }
     return ''
   }
+
   const handleSearch = (event) => {
-    setTableLoad(true)
-    setSearchHangHoa(event.target.value)
+    let timerId
+    clearTimeout(timerId)
+    timerId = setTimeout(() => {
+      setSearchHangHoa(event.target.value)
+    }, 300)
   }
+
   function formatDateTime(inputDate, includeTime = false) {
     const date = new Date(inputDate)
     const day = date.getDate().toString().padStart(2, '0')
@@ -107,6 +113,7 @@ const NCKConfirm = ({ close, loadingData, setTargetRow, isXuLy }) => {
         setTableLoad(true)
         toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
         setTargetRow(response.data.DataResults[0].SoChungTu)
+        setTargetRowXL(response.data.DataResults[0].SoChungTu)
         setIsShowModal(false)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
@@ -115,7 +122,6 @@ const NCKConfirm = ({ close, loadingData, setTargetRow, isXuLy }) => {
     } catch (error) {
       console.error(error)
       toast.error('Lỗi Server vui lòng thử lại', { autoClose: 1000 })
-      close()
     }
   }
 
@@ -136,7 +142,11 @@ const NCKConfirm = ({ close, loadingData, setTargetRow, isXuLy }) => {
       fixed: 'left',
       align: 'center',
       sorter: (a, b) => a.SoChungTu.localeCompare(b.SoChungTu),
-      render: (text) => <span className="flex justify-center"> {text}</span>,
+      render: (text) => (
+        <span className="flex justify-center">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </span>
+      ),
     },
     {
       title: 'Ngày chứng từ',
@@ -150,7 +160,11 @@ const NCKConfirm = ({ close, loadingData, setTargetRow, isXuLy }) => {
         const dateB = new Date(b.NgayCTu)
         return dateA - dateB
       },
-      render: (text) => <span className="flex justify-center">{formatDateTime(text)}</span>,
+      render: (text) => (
+        <span className="flex justify-center">
+          <HighlightedCell text={formatDateTime(text)} search={searchHangHoa} />
+        </span>
+      ),
     },
     {
       title: 'Kho chuyển',
@@ -160,7 +174,11 @@ const NCKConfirm = ({ close, loadingData, setTargetRow, isXuLy }) => {
       align: 'center',
       width: 120,
       sorter: (a, b) => a.MaKho.localeCompare(b.MaKho),
-      render: (text) => <span className="flex justify-center"> {text}</span>,
+      render: (text) => (
+        <span className="flex justify-center">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </span>
+      ),
     },
     {
       title: 'Số mặt hàng ',
@@ -172,7 +190,7 @@ const NCKConfirm = ({ close, loadingData, setTargetRow, isXuLy }) => {
       align: 'center',
       render: (text) => (
         <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base' : text === 0 || text === null ? 'text-gray-300' : ''}`}>
-          {formatThapPhan(text, dataThongSo.SOLESOLUONG)}
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </span>
       ),
     },
@@ -195,7 +213,7 @@ const NCKConfirm = ({ close, loadingData, setTargetRow, isXuLy }) => {
               justifyContent: 'start',
             }}
           >
-            {text}
+            <HighlightedCell text={text} search={searchHangHoa} />
           </div>
         </Tooltip>
       ),
@@ -218,7 +236,7 @@ const NCKConfirm = ({ close, loadingData, setTargetRow, isXuLy }) => {
               cursor: 'pointer',
             }}
           >
-            {text}
+            <HighlightedCell text={text} search={searchHangHoa} />
           </div>
         </Tooltip>
       ),
@@ -235,7 +253,11 @@ const NCKConfirm = ({ close, loadingData, setTargetRow, isXuLy }) => {
         const dateB = new Date(b.NgayTao)
         return dateA - dateB
       },
-      render: (text) => <span className="flex justify-center">{formatDateTime(text, true)}</span>,
+      render: (text) => (
+        <span className="flex justify-center">
+          <HighlightedCell text={formatDateTime(text, true)} search={searchHangHoa} />
+        </span>
+      ),
     },
     {
       title: 'Người sửa',
@@ -255,7 +277,7 @@ const NCKConfirm = ({ close, loadingData, setTargetRow, isXuLy }) => {
               cursor: 'pointer',
             }}
           >
-            {text}
+            <HighlightedCell text={text} search={searchHangHoa} />{' '}
           </div>
         </Tooltip>
       ),
@@ -272,7 +294,11 @@ const NCKConfirm = ({ close, loadingData, setTargetRow, isXuLy }) => {
         const dateB = new Date(b.NgaySuaCuoi)
         return dateA - dateB
       },
-      render: (text) => <span className="flex justify-center">{text ? formatDateTime(text, true) : ''}</span>,
+      render: (text) => (
+        <span className="flex justify-center">
+          <HighlightedCell text={text ? formatDateTime(text, true) : ''} search={searchHangHoa} />
+        </span>
+      ),
     },
   ]
   const titleXDC = [
@@ -354,25 +380,26 @@ const NCKConfirm = ({ close, loadingData, setTargetRow, isXuLy }) => {
                 <div className="flex gap-2 items-center">
                   <div className="flex gap-2 items-center">
                     <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
-                    <p className="text-blue-700 font-semibold uppercase py-1">Danh Sách Chưa Duyệt</p>
+                    <p className="text-blue-700 font-semibold uppercase py-2">Danh Sách Chưa Duyệt</p>
                     <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
                   </div>
                   <div className="flex w-[20rem] overflow-hidden">
                     {isShowSearch && (
-                      <input
-                        type="text"
-                        value={searchHangHoa}
+                      <Input
+                        allowClear={{
+                          clearIcon: <CloseSquareFilled />,
+                        }}
                         placeholder="Nhập ký tự bạn cần tìm"
-                        onChange={handleSearch}
-                        className="px-2 py-0.5 w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[1px] hover:border-blue-500 outline-none text-[1rem]  "
+                        onBlur={handleSearch}
+                        onPressEnter={handleSearch}
+                        className="w-full"
                       />
                     )}
                   </div>
                 </div>
-                <div className="flex flex-col gap-2 border rounded px-1 py-2.5">
+                <div className="table_NCKConfirm flex flex-col gap-2 border rounded px-1 py-2.5 xl:h-[50vh]">
                   <Table
                     loading={tableLoad}
-                    className="table_view"
                     columns={title}
                     dataSource={filteredHangHoa?.map((item, index) => ({ ...item, key: index }))}
                     size="small"
@@ -404,7 +431,7 @@ const NCKConfirm = ({ close, loadingData, setTargetRow, isXuLy }) => {
                   <div className="flex items-center gap-2">
                     <div className="flex items-center gap-2 py-1">
                       <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
-                      <p className="text-blue-700 font-semibold uppercase">Thông tin xác nhận- Phiếu Xuất Chuyển Kho</p>
+                      <p className="text-blue-700 font-semibold uppercase">Thông tin xác nhận - Phiếu Xuất Chuyển Kho</p>
                     </div>
                   </div>
                   <div className="flex flex-col gap-2 border-2 px-1 py-2.5">

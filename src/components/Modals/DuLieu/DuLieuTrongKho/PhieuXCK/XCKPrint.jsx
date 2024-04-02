@@ -192,7 +192,7 @@ const XCKPrint = ({ close, dataPrint }) => {
                         }}
                       />
                     </div>
-                    <div className=" flex items-center gap-2 ">
+                    <div className="flex items-center gap-2">
                       <label>Đến</label>
                       <DateField
                         onBlur={handleDateChange}
@@ -251,7 +251,7 @@ const XCKPrint = ({ close, dataPrint }) => {
                     </Select>
                   </div>
                   <div className="flex gap-2 items-center w-[40%]">
-                    <div> Tới</div>
+                    <div>Tới</div>
                     <Select
                       showSearch
                       required
