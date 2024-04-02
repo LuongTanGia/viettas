@@ -177,6 +177,9 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
         autoClose: 1000,
       })
     } else {
+      toast.success('Chọn hàng hóa thành công', {
+        autoClose: 1000,
+      })
       const index = selectedRowData.findIndex((item) => item.MaHang === newRow.MaHang)
       const oldQuantity = selectedRowData[index].SoLuong
       selectedRowData[index].SoLuong = oldQuantity + newRow.SoLuong
@@ -304,7 +307,7 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
       ),
     },
     {
-      title: 'Đơn vị tính',
+      title: 'ĐVT',
       dataIndex: 'DVT',
       key: 'DVT',
       showSorterTooltip: false,
@@ -383,7 +386,7 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
                           <Input size="small" disabled value={XDCForm?.SoChungTu || ''} readOnly />
                         </div>
                         <div className="flex items-center gap-1">
-                          <label className="required whitespace-nowrap text-sm">Ngày c.từ</label>
+                          <label className="required whitespace-nowrap text-sm"> Ngày</label>
                           <DatePicker
                             className="DatePicker_XDCKho"
                             format="DD/MM/YYYY"

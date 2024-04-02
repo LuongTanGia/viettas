@@ -500,7 +500,7 @@ const PhieuXuatChuyenKho = ({ isTableLoad, isTargetRow }) => {
       render: (text, record) => <Checkbox className="justify-center" id={`XacNhan_${record.key}`} checked={text} />,
     },
     {
-      title: ' ',
+      title: 'Chức năng',
       key: 'operation',
       fixed: 'right',
       width: 100,

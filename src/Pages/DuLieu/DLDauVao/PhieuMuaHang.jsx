@@ -17,7 +17,7 @@ import { exportToExcel } from '../../../action/Actions'
 import { CloseSquareFilled } from '@ant-design/icons'
 
 const { Text } = Typography
-const { IoAddCircleOutline, TiPrinter, MdDelete, GiPayMoney, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill, CgCloseO } = icons
+const { IoAddCircleOutline, TiPrinter, MdDelete, GiPayMoney, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill } = icons
 const PhieuMuaHang = () => {
   const optionContainerRef = useRef(null)
   const [isLoading, setIsLoading] = useState(true)

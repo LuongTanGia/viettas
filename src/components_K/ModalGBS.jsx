@@ -153,7 +153,7 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
       ),
     },
     {
-      title: 'Đơn vị tính',
+      title: 'ĐVT',
       dataIndex: 'DVT',
       key: 'DVT',
       width: 150,
@@ -802,7 +802,7 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
                   ) : null}
                   <ActionButton
                     color={'slate-50'}
-                    title={'Lưu & Đóng'}
+                    title={'Lưu & đóng'}
                     isModal={true}
                     background={'bg-main'}
                     bg_hover={'white'}
@@ -994,7 +994,7 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
                 <div className="flex items-center gap-3  pt-3">
                   <ActionButton
                     color={'slate-50'}
-                    title={'Lưu & Đóng'}
+                    title={'Lưu & đóng'}
                     isModal={true}
                     background={'bg-main'}
                     bg_hover={'white'}

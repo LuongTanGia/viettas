@@ -505,7 +505,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                     background={'blue-500'}
                     bg_hover={'white'}
                     color_hover={'blue-500'}
-                    title={'Lưu & Đóng'}
+                    title={'Lưu & đóng'}
                     isModal={true}
                     handleAction={handleSubmitAndClose}
                   />

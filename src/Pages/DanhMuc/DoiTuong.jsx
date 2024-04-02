@@ -435,7 +435,7 @@ const DoiTuong = () => {
         const dateB = new Date(b.NgayTao)
         return dateA - dateB
       },
-      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss.SS')} search={searchDoiTuong} />,
+      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss')} search={searchDoiTuong} />,
     },
     {
       title: 'Người sửa',
@@ -474,14 +474,14 @@ const DoiTuong = () => {
       },
       render: (text) => {
         if (text) {
-          return <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss.SS')} search={searchDoiTuong} />
+          return <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss')} search={searchDoiTuong} />
         } else {
           return ''
         }
       },
     },
     {
-      title: ' ',
+      title: 'Chức năng',
       key: 'operation',
       fixed: 'right',
       width: 80,

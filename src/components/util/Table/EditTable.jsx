@@ -115,7 +115,6 @@ const EditTable = ({
         } else {
           updatedRow.TongCong = ''
           handleEditData(newData)
-          console.log(newData)
           // console.error('SoLuong or DonGia is undefined in updatedRow:', updatedRow)
         }
       } else {

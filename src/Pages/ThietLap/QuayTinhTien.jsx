@@ -413,7 +413,7 @@ const QuayTinhTien = () => {
       },
       render: (text) => {
         if (text) {
-          return <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss.SS')} search={searchQuayTinhTien} />
+          return <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss')} search={searchQuayTinhTien} />
         } else {
           return ''
         }
@@ -456,7 +456,7 @@ const QuayTinhTien = () => {
       },
       render: (text) => {
         if (text) {
-          return <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss.SS')} search={searchQuayTinhTien} />
+          return <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss')} search={searchQuayTinhTien} />
         } else {
           return ''
         }
@@ -556,7 +556,7 @@ const QuayTinhTien = () => {
       render: (text, record) => <Checkbox className="justify-center" id={`NA_${record.key}`} checked={text} />,
     },
     {
-      title: '',
+      title: 'Chức năng',
       key: 'operation',
       fixed: 'right',
       width: 80,

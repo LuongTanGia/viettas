@@ -479,7 +479,7 @@ const PhieuXuatHuy = () => {
       render: (text) => <span className="flex justify-center">{text ? formatDateTime(text, true) : ''}</span>,
     },
     {
-      title: ' ',
+      title: 'Chức năng',
       key: 'operation',
       fixed: 'right',
       width: 100,

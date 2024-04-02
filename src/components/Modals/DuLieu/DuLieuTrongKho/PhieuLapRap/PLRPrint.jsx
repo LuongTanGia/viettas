@@ -30,7 +30,7 @@ const PLRPrint = ({ close, dataPrint, type }) => {
     const getTimeSetting = async () => {
       try {
         const response = await categoryAPI.KhoanNgay(TokenAccess)
-        if (response.data.DataError == 0) {
+        if (response.data && response.data.DataError == 0) {
           setDateData(response.data)
           setKhoanNgayFrom(dayjs(response.data.NgayBatDau))
           setKhoanNgayTo(dayjs(response.data.NgayKetThuc))
@@ -38,8 +38,6 @@ const PLRPrint = ({ close, dataPrint, type }) => {
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
           getTimeSetting()
-        } else {
-          console.log(response.data)
         }
       } catch (error) {
         console.log(error)
@@ -212,19 +210,19 @@ const PLRPrint = ({ close, dataPrint, type }) => {
       ) : (
         <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10">
           <div className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"></div>
-          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col min-w-[40rem] min-h-[8rem] bg-white  p-2 rounded shadow-custom overflow-hidden">
-            <div className="flex flex-col gap-2 p-2 max-w-[60rem]">
+          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col bg-white  p-2 rounded shadow-custom overflow-hidden">
+            <div className="flex flex-col gap-2 p-2 xl:w-[50vw] lg:w-[70vw] md:w-[95vw]">
               <div className="flex gap-2">
                 <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
-                <p className="text-blue-700 font-semibold uppercase">In - Phiếu Nhập Điều Chỉnh</p>
+                <p className="text-blue-700 font-semibold uppercase">{type == 'print' ? 'In' : type == 'printImport' ? 'In Nhập' : ' In Xuất'} - Phiếu Nhập Điều Chỉnh</p>
               </div>
-              <div className="flex flex-col gap-4 border-2 p-3">
+              <div className="flex flex-col items-center gap-4 border-2 p-3">
                 <div className="flex justify-center">
-                  <div className="DatePicker_NDCKho flex justify-center gap-4">
+                  <div className="DatePicker_NDCKho flex justify-center gap-2">
                     <div className="DatePicker_NDCKho flex items-center gap-2">
-                      <label>Từ</label>
+                      <label className="ml-[20px]">Từ</label>
                       <DateField
-                        className="max-w-[180px]"
+                        className="max-w-[170px]"
                         onBlur={handleDateChange}
                         onKeyDown={handleKeyDown}
                         format="DD/MM/YYYY"
@@ -245,7 +243,7 @@ const PLRPrint = ({ close, dataPrint, type }) => {
                         }}
                       />
                     </div>
-                    <div className=" flex items-center gap-2 ">
+                    <div className="flex items-center gap-2">
                       <label>Đến</label>
                       <DateField
                         onBlur={handleDateChange}
@@ -272,11 +270,12 @@ const PLRPrint = ({ close, dataPrint, type }) => {
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <div className="flex gap-2 items-center">
+                  <div className="flex gap-2 items-center  whitespace-nowrap w-[50%]">
                     <div>Số chứng từ</div>
                     <Select
                       showSearch
                       required
+                      size="small"
                       value={dataPrint ? dataPrint.SoChungTu : selectedNhomFrom}
                       placeholder={'Chọn nhóm'}
                       onChange={(value) => {
@@ -302,11 +301,12 @@ const PLRPrint = ({ close, dataPrint, type }) => {
                         })}
                     </Select>
                   </div>
-                  <div className="flex gap-2 items-center">
-                    <div> Tới</div>
+                  <div className="flex gap-2 items-center w-[40%]">
+                    <div>Tới</div>
                     <Select
                       showSearch
                       required
+                      size="small"
                       placeholder={'Chọn nhóm'}
                       value={dataPrint ? dataPrint.SoChungTu : selectedNhomTo}
                       onChange={(value) => {

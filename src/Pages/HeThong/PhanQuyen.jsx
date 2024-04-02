@@ -842,7 +842,7 @@ const PhanQuyen = () => {
                     />
                     <ActionButton
                       handleAction={() => handleCreate()}
-                      title={'Lưu & Đóng'}
+                      title={'Lưu & đóng'}
                       isModal={true}
                       color={'slate-50'}
                       background={'blue-500'}

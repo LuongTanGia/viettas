@@ -158,6 +158,9 @@ const XDCCreate = ({ close, loadingData, setTargetRow }) => {
         autoClose: 1000,
       })
     } else {
+      toast.success('Chọn hàng hóa thành công', {
+        autoClose: 1000,
+      })
       const index = selectedRowData.findIndex((item) => item.MaHang === newRow.MaHang)
       const oldQuantity = selectedRowData[index].SoLuong
       selectedRowData[index].SoLuong = oldQuantity + newRow.SoLuong
@@ -296,7 +299,7 @@ const XDCCreate = ({ close, loadingData, setTargetRow }) => {
       ),
     },
     {
-      title: 'Đơn vị tính',
+      title: 'ĐVT',
       dataIndex: 'DVT',
       key: 'DVT',
       showSorterTooltip: false,
@@ -376,7 +379,7 @@ const XDCCreate = ({ close, loadingData, setTargetRow }) => {
                           <Input size="small" disabled value={XDCForm?.SoChungTu || ''} readOnly />
                         </div>
                         <div className="flex items-center gap-1">
-                          <label className="required whitespace-nowrap text-sm">Ngày c.từ</label>
+                          <label className="required whitespace-nowrap text-sm"> Ngày</label>
                           <DatePicker
                             className="DatePicker_XDCKho"
                             format="DD/MM/YYYY"
@@ -525,7 +528,7 @@ const XDCCreate = ({ close, loadingData, setTargetRow }) => {
                     />
                     <ActionButton
                       handleAction={isAdd ? '' : () => handleCreate(false, false)}
-                      title={'Lưu & Đóng'}
+                      title={'Lưu & đóng'}
                       isModal={true}
                       color={'slate-50'}
                       background={isAdd ? 'gray-500' : 'blue-500'}

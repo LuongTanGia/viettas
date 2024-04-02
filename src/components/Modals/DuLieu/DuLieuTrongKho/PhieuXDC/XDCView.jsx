@@ -98,7 +98,7 @@ const XDCXem = ({ close, dataXDC }) => {
       ),
     },
     {
-      title: 'Đơn vị tính',
+      title: 'ĐVT',
       dataIndex: 'DVT',
       key: 'DVT',
       showSorterTooltip: false,
@@ -145,7 +145,7 @@ const XDCXem = ({ close, dataXDC }) => {
                           <input type="text" value={dataXDCView?.SoChungTu || ''} className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate" readOnly />
                         </div>
                         <div className="flex items-center gap-1">
-                          <label className="required whitespace-nowrap text-sm">Ngày C.Từ</label>
+                          <label className="required whitespace-nowrap text-sm">Ngày</label>
                           <input
                             type="text"
                             value={moment(dataXDCView?.NgayCTu)?.format('DD/MM/YYYY') || ''}
