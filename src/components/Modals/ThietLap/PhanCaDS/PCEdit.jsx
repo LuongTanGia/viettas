@@ -15,10 +15,10 @@ const PCEdit = ({ close, loadingData, setTargetRow, dataPC }) => {
   const [dataCa, setDataCa] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const innitProduct = {
-    SoQuay: 0,
+    SoQuay: null,
     MaNguoiDung: '',
     HieuLucTu: '',
-    MaCa: '',
+    MaCa: null,
     GhiChu: '',
   }
   const [PCForm, setPCForm] = useState(() => {
@@ -75,7 +75,7 @@ const PCEdit = ({ close, loadingData, setTargetRow, dataPC }) => {
       if (response.data.DataError == 0) {
         close()
         loadingData()
-        toast.success('Sửa thành công', { autoClose: 1000 })
+        toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
         setTargetRow(dataPC?.MaNguoiDung)
       } else {
         toast.error(response.data.DataErrorDescription, { autoClose: 1000 })

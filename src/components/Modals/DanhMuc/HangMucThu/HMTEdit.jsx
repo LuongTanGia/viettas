@@ -24,7 +24,6 @@ const HMTEdit = ({ close, loadingData, setTargetRow, dataHMT }) => {
   useEffect(() => {
     setTargetRow([])
   }, [])
-  console.log(dataHMT.Ma)
   const handleEdit = async () => {
     if (!HMTForm?.Ten?.trim()) {
       setErrors({
@@ -37,7 +36,7 @@ const HMTEdit = ({ close, loadingData, setTargetRow, dataHMT }) => {
       if (response.data.DataError == 0) {
         close()
         loadingData()
-        toast.success('Sửa thành công', { autoClose: 1000 })
+        toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
         setTargetRow(dataHMT?.Ma)
       } else {
         toast.error(response.data.DataErrorDescription, { autoClose: 1000 })

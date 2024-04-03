@@ -14,7 +14,7 @@ import { useSearch } from '../../../../hooks/Search'
 import { toast } from 'react-toastify'
 import HighlightedCell from '../../../../hooks/HighlightedCell'
 
-const NCKConfirm = ({ close, loadingData, setTargetRow, isXuLy }) => {
+const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
@@ -30,7 +30,7 @@ const NCKConfirm = ({ close, loadingData, setTargetRow, isXuLy }) => {
   useEffect(() => {
     const listUnconfirmed = async () => {
       try {
-        const response = !isXuLy ? await categoryAPI.ListChuaDuyetNCK(TokenAccess) : await categoryAPI.ListChuaDuyet(TokenAccess)
+        const response = await categoryAPI.ListChuaDuyet(TokenAccess)
         if (response.data && response.data.DataError == 0) {
           setDataNCKUnconfirm(response.data.DataResults)
           setIsLoading(true)
@@ -107,7 +107,7 @@ const NCKConfirm = ({ close, loadingData, setTargetRow, isXuLy }) => {
   }
   const handleConfirm = async () => {
     try {
-      const response = !isXuLy ? await categoryAPI.DuyetPhieuNCK(dataXCKView?.SoChungTu, TokenAccess) : await categoryAPI.DuyetPhieuXuLy(dataXCKView.SoChungTu, TokenAccess)
+      const response = await categoryAPI.DuyetPhieuXuLy(dataXCKView.SoChungTu, TokenAccess)
       if (response.data.DataError == 0) {
         loadingData()
         setTableLoad(true)

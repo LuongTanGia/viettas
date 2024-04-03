@@ -397,7 +397,7 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
                             format="DD/MM/YYYY"
                             value={dayjs(PLRForm?.NgayCTu) || ''}
                             onChange={(values) => {
-                              setPLRForm({ ...PLRForm, NgayCTu: dayjs(values).format('YYYY-MM-DDTHH:mm:ss') })
+                              setPLRForm({ ...PLRForm, NgayCTu: dayjs(values).format('YYYY-MM-DD') })
                             }}
                             sx={{
                               '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },

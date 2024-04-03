@@ -99,7 +99,7 @@ const QTTEdit = ({ close, loadingData, setTargetRow, dataQTT }) => {
       if (response.data.DataError == 0) {
         close()
         loadingData()
-        toast.success('Sửa thành công', { autoClose: 1000 })
+        toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
         setTargetRow(dataQTT?.Quay)
       } else {
         toast.error(response.data.DataErrorDescription, { autoClose: 1000 })

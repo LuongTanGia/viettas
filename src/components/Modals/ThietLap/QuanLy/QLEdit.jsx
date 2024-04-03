@@ -68,7 +68,7 @@ const QLEdit = ({ close, loadingData, setTargetRow, dataQL, maNguoiDung }) => {
     try {
       const response = await categoryAPI.SuaQuanLy({ Ma: dataQL?.MaQuanLy, Data: { ...QLForm } }, TokenAccess)
       if (response.data.DataError == 0) {
-        isPrint ? handlePrint() : toast.success('Sửa thành công', { autoClose: 1000 })
+        isPrint ? handlePrint() : toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
         loadingData()
         close()
         setTargetRow(QLForm?.MaQuanLy)

@@ -397,7 +397,7 @@ const XCKEdit = ({ close, dataXCK, loadingData, setTargetRow }) => {
                             format="DD/MM/YYYY"
                             value={dayjs(XCKForm?.NgayCTu) || ''}
                             onChange={(values) => {
-                              const newDate = dayjs(values).format('YYYY-MM-DDTHH:mm:ss')
+                              const newDate = dayjs(values).format('YYYY-MM-DD')
                               setXCKForm({ ...XCKForm, NgayCTu: newDate })
                             }}
                             sx={{

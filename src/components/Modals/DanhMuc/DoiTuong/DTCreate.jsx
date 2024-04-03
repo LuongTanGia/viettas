@@ -76,7 +76,7 @@ const DTCreate = ({ close, loadingData, setTargetRow }) => {
       if (response.data.DataError == 0) {
         isSave ? setDTForm({ Loai: 2 }) : close()
         loadingData()
-        toast.success('Tạo thành công', { autoClose: 1000 })
+        toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
         dataThongSo.SUDUNG_MADOITUONGTUDONG ? setTargetRow(response.data.DataResults[0].Ma) : setTargetRow(DTForm?.Ma)
       } else {
         toast.error(response.data.DataErrorDescription, { autoClose: 1000 })

@@ -41,7 +41,7 @@ const KHOEdit = ({ close, loadingData, setTargetRow, dataKHO }) => {
         close()
         console.log(response.data)
         loadingData()
-        toast.success('Sửa thành công', { autoClose: 1000 })
+        toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
         setTargetRow(dataKHO?.MaKho)
       } else {
         toast.error(response.data.DataErrorDescription, { autoClose: 1000 })

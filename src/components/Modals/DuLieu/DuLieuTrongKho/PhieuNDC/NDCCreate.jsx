@@ -176,7 +176,7 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
         }
       })
       if (newData?.length > 0) {
-        const response = await categoryAPI.NDCCreate({ ...NDCForm, DataDetails: newData, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss') }, TokenAccess)
+        const response = await categoryAPI.NDCCreate({ ...NDCForm, DataDetails: newData, NgayCTu: dayjs(valueDate).format('YYYY-MM-DD') }, TokenAccess)
         if (response.data.DataError == 0) {
           isPrint
             ? (handlePrint(), setNDCForm({ MaKho: dataKhoHang[0]?.MaKho }), setSelectedRowData([]))
@@ -382,7 +382,7 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                             format="DD/MM/YYYY"
                             value={valueDate}
                             onChange={(values) => {
-                              setNDCForm({ ...NDCForm, NgayCTu: dayjs(setValueDate(values)).format('YYYY-MM-DDTHH:mm:ss') })
+                              setNDCForm({ ...NDCForm, NgayCTu: dayjs(setValueDate(values)).format('YYYY-MM-DD') })
                             }}
                             sx={{
                               '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
@@ -537,7 +537,7 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
           <div>
             {isShowModal &&
               (actionType === 'print' ? (
-                <NDCPrint close={() => setIsShowModal(false)} dataPrint={{ ...NDCForm, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss'), SoChungTu: SoCTu }} />
+                <NDCPrint close={() => setIsShowModal(false)} dataPrint={{ ...NDCForm, NgayCTu: dayjs(valueDate).format('YYYY-MM-DD'), SoChungTu: SoCTu }} />
               ) : (
                 <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col xl:w-[87vw] lg:w-[95vw] md:w-[95vw] min-h-[8rem] bg-white  p-2 rounded-xl shadow-custom overflow-hidden z-10">
                   <div className="flex flex-col gap-2 p-2 ">

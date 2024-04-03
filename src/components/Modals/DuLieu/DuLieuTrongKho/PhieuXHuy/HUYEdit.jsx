@@ -397,7 +397,7 @@ const HUYEdit = ({ close, dataHUY, loadingData, setTargetRow }) => {
                             format="DD/MM/YYYY"
                             value={dayjs(HUYForm?.NgayCTu) || ''}
                             onChange={(values) => {
-                              const newDate = dayjs(values).format('YYYY-MM-DDTHH:mm:ss')
+                              const newDate = dayjs(values).format('YYYY-MM-DD')
                               setHUYForm({ ...HUYForm, NgayCTu: newDate })
                             }}
                             sx={{

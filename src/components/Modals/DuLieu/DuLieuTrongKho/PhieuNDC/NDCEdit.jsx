@@ -396,7 +396,7 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
                             format="DD/MM/YYYY"
                             value={dayjs(NDCForm?.NgayCTu) || ''}
                             onChange={(values) => {
-                              const newDate = dayjs(values).format('YYYY-MM-DDTHH:mm:ss')
+                              const newDate = dayjs(values).format('YYYY-MM-DD')
                               setNDCForm({ ...NDCForm, NgayCTu: newDate })
                             }}
                             sx={{

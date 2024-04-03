@@ -396,7 +396,7 @@ const XSDEdit = ({ close, dataXSD, loadingData, setTargetRow }) => {
                             format="DD/MM/YYYY"
                             value={dayjs(XSDForm?.NgayCTu) || ''}
                             onChange={(values) => {
-                              const newDate = dayjs(values).format('YYYY-MM-DDTHH:mm:ss')
+                              const newDate = dayjs(values).format('YYYY-MM-DD')
                               setXSDForm({ ...XSDForm, NgayCTu: newDate })
                             }}
                             sx={{

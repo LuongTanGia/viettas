@@ -107,7 +107,7 @@ const QTTCreate = ({ close, loadingData, setTargetRow, dataQTT }) => {
       if (response.data.DataError == 0) {
         isSave ? setQTTForm({ Quay: QTTForm.Quay + 1 }) : close()
         loadingData()
-        toast.success('Tạo thành công', { autoClose: 1000 })
+        toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
         setTargetRow(QTTForm?.Quay)
       } else {
         toast.error(response.data.DataErrorDescription, { autoClose: 1000 })

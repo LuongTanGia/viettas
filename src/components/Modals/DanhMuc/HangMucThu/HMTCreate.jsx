@@ -39,7 +39,7 @@ const HMTCreate = ({ close, loadingData, setTargetRow }) => {
       if (response.data.DataError == 0) {
         isSave ? setHMTForm([]) : close()
         loadingData()
-        toast.success('Tạo thành công', { autoClose: 1000 })
+        toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
         setTargetRow(HMTForm?.Ma)
       } else {
         toast.error(response.data.DataErrorDescription, { autoClose: 1000 })

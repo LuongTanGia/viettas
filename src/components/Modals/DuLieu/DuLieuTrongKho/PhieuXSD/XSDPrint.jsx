@@ -98,8 +98,8 @@ const XSDPrint = ({ close, dataPrint }) => {
       const response = await categoryAPI.XSDPrint(
         dataPrint
           ? {
-              NgayBatDau: dayjs(dataPrint.NgayCTu).format('YYYY-MM-DDTHH:mm:ss'),
-              NgayKetThuc: dayjs(dataPrint.NgayCTu).format('YYYY-MM-DDTHH:mm:ss'),
+              NgayBatDau: dayjs(dataPrint.NgayCTu).format('YYYY-MM-DD'),
+              NgayKetThuc: dayjs(dataPrint.NgayCTu).format('YYYY-MM-DD'),
               SoChungTuBatDau: dataPrint?.SoChungTu,
               SoChungTuKetThuc: dataPrint?.SoChungTu,
               SoLien: calculateTotal(),
@@ -153,7 +153,6 @@ const XSDPrint = ({ close, dataPrint }) => {
       handleDateChange()
     }
   }
-
   return (
     <>
       {!isLoading ? (

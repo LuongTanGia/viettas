@@ -397,7 +397,7 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
                             format="DD/MM/YYYY"
                             value={dayjs(XDCForm?.NgayCTu) || ''}
                             onChange={(values) => {
-                              const newDate = dayjs(values).format('YYYY-MM-DDTHH:mm:ss')
+                              const newDate = dayjs(values).format('YYYY-MM-DD')
                               setXDCForm({ ...XDCForm, NgayCTu: newDate })
                             }}
                             sx={{

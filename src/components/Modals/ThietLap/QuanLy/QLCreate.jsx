@@ -75,8 +75,8 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
         isPrint
           ? (dataThongSo.ALLOW_MAQUANLYTUDONG ? handlePrint(response.data.DataResults[0].Ma) : handlePrint(), setQLForm({ KhongKetThuc: true }))
           : isSave
-            ? (setQLForm({ KhongKetThuc: true }), toast.success('Tạo thành công', { autoClose: 1000 }))
-            : (close(), toast.success('Tạo thành công', { autoClose: 1000 }))
+            ? (setQLForm({ KhongKetThuc: true }), toast.success(response.data.DataErrorDescription, { autoClose: 1000 }))
+            : (close(), toast.success(response.data.DataErrorDescription, { autoClose: 1000 }))
         loadingData()
         dataThongSo.ALLOW_MAQUANLYTUDONG ? setTargetRow(response.data.DataResults[0].Ma) : setTargetRow(QLForm?.MaQuanLy)
       } else {
