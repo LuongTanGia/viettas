@@ -4,7 +4,7 @@
 import { useEffect, useState, useMemo } from 'react'
 import { toast } from 'react-toastify'
 import { FaSearch } from 'react-icons/fa'
-import { MdPrint } from 'react-icons/md'
+// import { MdPrint } from 'react-icons/md'
 import { IoMdAddCircle } from 'react-icons/io'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { Checkbox, Table, Tooltip, Select, FloatButton, Input } from 'antd'
@@ -57,10 +57,6 @@ const XSDCreate = ({ close, loadingData, setTargetRow }) => {
     return innitProduct
   })
 
-  const [errors, setErrors] = useState({
-    MaKho: '',
-  })
-
   useEffect(() => {
     setTargetRow([])
   }, [])
@@ -83,6 +79,7 @@ const XSDCreate = ({ close, loadingData, setTargetRow }) => {
         const response = await categoryAPI.ListKhoHangXSD(TokenAccess)
         if (response.data.DataError == 0) {
           setDataKhoHang(response.data.DataResults)
+          setXSDForm({ ...XSDForm, MaKho: response?.data?.DataResults[0]?.MaKho })
           setIsLoading(true)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
@@ -101,7 +98,7 @@ const XSDCreate = ({ close, loadingData, setTargetRow }) => {
   useEffect(() => {
     const getDataHangHoaXSD = async () => {
       try {
-        const response = await categoryAPI.ListHangHoaXSD(TokenAccess)
+        const response = await categoryAPI.ListHangHoaXSD({ SoChungTu: null, MaKho: XSDForm?.MaKho }, TokenAccess)
         if (response.data.DataError == 0) {
           setDataHangHoa(response.data.DataResults)
           setIsLoading(true)
@@ -114,10 +111,10 @@ const XSDCreate = ({ close, loadingData, setTargetRow }) => {
         setIsLoading(true)
       }
     }
-    if (!isLoading) {
+    if (XSDForm?.MaKho) {
       getDataHangHoaXSD()
     }
-  }, [isLoading])
+  }, [XSDForm?.MaKho])
 
   const handleSearch = (event) => {
     setSearchHangHoa(event.target.value)
@@ -157,6 +154,9 @@ const XSDCreate = ({ close, loadingData, setTargetRow }) => {
         autoClose: 1000,
       })
     } else {
+      toast.success('Chọn hàng hóa thành công', {
+        autoClose: 1000,
+      })
       const index = selectedRowData.findIndex((item) => item.MaHang === newRow.MaHang)
       const oldQuantity = selectedRowData[index].SoLuong
       selectedRowData[index].SoLuong = oldQuantity + newRow.SoLuong
@@ -165,12 +165,6 @@ const XSDCreate = ({ close, loadingData, setTargetRow }) => {
   }
 
   const handleCreate = async (isSave = true, isPrint = true) => {
-    if (!XSDForm?.MaKho?.trim()) {
-      setErrors({
-        MaKho: XSDForm?.MaKho.trim() ? '' : 'Kho không được trống',
-      })
-      return
-    }
     try {
       const newData = selectedRowData.map((item, index) => {
         return {
@@ -178,18 +172,22 @@ const XSDCreate = ({ close, loadingData, setTargetRow }) => {
           STT: index + 1,
         }
       })
-      const response = await categoryAPI.XSDCreate({ ...XSDForm, DataDetails: newData, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss') }, TokenAccess)
-      if (response.data.DataError == 0) {
-        isPrint
-          ? (handlePrint(), setXSDForm([]), setSelectedRowData([]))
-          : isSave
-            ? (toast.success('Tạo thành công', { autoClose: 1000 }), setXSDForm([]), setSelectedRowData([]))
-            : (close(), toast.success('Tạo thành công', { autoClose: 1000 }))
-        loadingData()
-        setSoCTu(response.data.DataResults[0].SoChungTu)
-        setTargetRow(response.data.DataResults[0].SoChungTu)
+      if (newData?.length > 0) {
+        const response = await categoryAPI.XSDCreate({ ...XSDForm, DataDetails: newData, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss') }, TokenAccess)
+        if (response.data.DataError == 0) {
+          isPrint
+            ? (handlePrint(), setXSDForm({ MaKho: dataKhoHang[0]?.MaKho }), setSelectedRowData([]))
+            : isSave
+              ? (toast.success(response.data.DataErrorDescription, { autoClose: 1000 }), setXSDForm({ MaKho: dataKhoHang[0]?.MaKho }), setSelectedRowData([]))
+              : (close(), toast.success(response.data.DataErrorDescription, { autoClose: 1000 }))
+          loadingData()
+          setSoCTu(response.data.DataResults[0].SoChungTu)
+          setTargetRow(response.data.DataResults[0].SoChungTu)
+        } else {
+          toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
+        }
       } else {
-        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
+        toast.warning('Chi tiết hàng không được để trống', { autoClose: 1000 })
       }
     } catch (error) {
       console.log(error)
@@ -295,7 +293,7 @@ const XSDCreate = ({ close, loadingData, setTargetRow }) => {
       ),
     },
     {
-      title: 'Đơn vị tính',
+      title: 'ĐVT',
       dataIndex: 'DVT',
       key: 'DVT',
       showSorterTooltip: false,
@@ -375,7 +373,7 @@ const XSDCreate = ({ close, loadingData, setTargetRow }) => {
                           <Input disabled size="small" value={XSDForm?.SoChungTu || ''} readOnly />
                         </div>
                         <div className="flex items-center gap-1">
-                          <label className="required whitespace-nowrap text-sm">Ngày c.từ</label>
+                          <label className="required whitespace-nowrap text-sm"> Ngày</label>
                           <DatePicker
                             className="DatePicker_XSDKho"
                             format="DD/MM/YYYY"
@@ -404,14 +402,11 @@ const XSDCreate = ({ close, loadingData, setTargetRow }) => {
                           required
                           size="small"
                           value={XSDForm?.MaKho || undefined}
-                          placeholder={errors.MaKho ? errors.MaKho : ''}
-                          status={errors.MaKho ? 'error' : ''}
                           onChange={(value) => {
                             setXSDForm({
                               ...XSDForm,
                               MaKho: value,
                             })
-                            setErrors({ ...errors, MaKho: '' })
                           }}
                         >
                           {dataKhoHang &&
@@ -449,15 +444,13 @@ const XSDCreate = ({ close, loadingData, setTargetRow }) => {
                   </div>
                   <div className="flex items-center gap-1">
                     <label className="whitespace-nowrap min-w-[100px] text-sm flex justify-end">Ghi chú</label>
-                    <input
-                      type="text"
-                      className="px-2 w-[70rem] resize-none rounded border-[1px] hover:border-blue-500 outline-none text-[1rem]"
-                      name="GhiChu"
+                    <Input
+                      size="small"
                       value={XSDForm?.GhiChu || ''}
                       onChange={(e) =>
                         setXSDForm({
                           ...XSDForm,
-                          [e.target.name]: e.target.value,
+                          GhiChu: e.target.value,
                         })
                       }
                     />
@@ -494,43 +487,39 @@ const XSDCreate = ({ close, loadingData, setTargetRow }) => {
                 <div className="flex justify-between">
                   <div className="flex gap-2 justify-start">
                     <ActionButton
-                      handleAction={
-                        isAdd
-                          ? ''
-                          : () => {
-                              handleCreate(true, true)
-                            }
-                      }
-                      icon={<MdPrint className="w-5 h-5" />}
+                      handleAction={() => {
+                        handleCreate(true, true)
+                      }}
+                      // icon={<MdPrint className="w-5 h-5" />}
                       title={'In Phiếu'}
                       color={'slate-50'}
-                      background={isAdd ? 'gray-500' : 'purple-500'}
-                      color_hover={isAdd ? 'gray-500' : 'purple-500'}
+                      background={'purple-500'}
+                      color_hover={'purple-500'}
                       bg_hover={'white'}
-                      isPermission={isAdd ? false : true}
+                      isPermission={true}
                       isModal={true}
                     />
                   </div>
                   <div className="flex gap-2 justify-end">
                     <ActionButton
-                      handleAction={isAdd ? '' : () => handleCreate(true, false)}
+                      handleAction={() => handleCreate(true, false)}
                       title={'Lưu'}
                       isModal={true}
                       color={'slate-50'}
-                      background={isAdd ? 'gray-500' : 'blue-500'}
-                      color_hover={isAdd ? 'gray-500' : 'blue-500'}
+                      background={'blue-500'}
+                      color_hover={'blue-500'}
                       bg_hover={'white'}
-                      isPermission={isAdd ? false : true}
+                      isPermission={true}
                     />
                     <ActionButton
-                      handleAction={isAdd ? '' : () => handleCreate(false, false)}
-                      title={'Lưu & Đóng'}
+                      handleAction={() => handleCreate(false, false)}
+                      title={'Lưu & đóng'}
                       isModal={true}
                       color={'slate-50'}
-                      background={isAdd ? 'gray-500' : 'blue-500'}
-                      color_hover={isAdd ? 'gray-500' : 'blue-500'}
+                      background={'blue-500'}
+                      color_hover={'blue-500'}
                       bg_hover={'white'}
-                      isPermission={isAdd ? false : true}
+                      isPermission={true}
                     />
                     <ActionButton handleAction={close} title={'Đóng'} isModal={true} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
                   </div>
@@ -548,8 +537,8 @@ const XSDCreate = ({ close, loadingData, setTargetRow }) => {
                     <div className="flex items-center gap-2">
                       <div className="flex items-center gap-2 py-1">
                         <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
-                        <p className="text-blue-700 font-semibold uppercase">Danh Sách Hàng Hóa - Phiếu Xuất Kho Sử Dụng</p>
-                        <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
+                        <p className="text-blue-700 font-semibold uppercase md:text-[12px] lg:text-sm truncate">Danh Sách Hàng Hóa - Phiếu Xuất Kho Sử Dụng</p>
+                        <FaSearch className="hover:text-red-400 cursor-pointer md:text-[14px] lg:text-sm" onClick={() => setIsShowSearch(!isShowSearch)} />
                       </div>
                       <div className="flex w-[20rem] overflow-hidden">
                         {isShowSearch && (

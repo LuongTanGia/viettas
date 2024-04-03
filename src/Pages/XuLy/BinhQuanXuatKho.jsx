@@ -542,9 +542,10 @@ const BinhQuanXuatKho = () => {
                             <div>
                               <Checkbox.Group
                                 style={{
-                                  width: '300px',
+                                  width: '270px',
                                   background: 'white',
-                                  padding: 10,
+                                  paddingTop: 10,
+                                  paddingBottom: 10,
                                   borderRadius: 10,
                                   boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
                                   whiteSpace: 'nowrap',
@@ -553,7 +554,7 @@ const BinhQuanXuatKho = () => {
                                 defaultValue={checkedList}
                                 onChange={onChange}
                               >
-                                <Row>
+                                <Row className="ml-[20px]">
                                   {options && options.length > 0 ? (
                                     options?.map((item, index) => (
                                       <Col span={10} key={(item, index)}>

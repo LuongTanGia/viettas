@@ -3,7 +3,7 @@
 import { useEffect, useState, useMemo } from 'react'
 import { toast } from 'react-toastify'
 import { FaSearch } from 'react-icons/fa'
-import { MdPrint } from 'react-icons/md'
+// import { MdPrint } from 'react-icons/md'
 import { IoMdAddCircle } from 'react-icons/io'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { Checkbox, Table, Tooltip, Select, FloatButton, Input } from 'antd'
@@ -149,13 +149,15 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
         autoClose: 1000,
       })
     } else {
+      toast.success('Chọn hàng hóa thành công', {
+        autoClose: 1000,
+      })
       const index = selectedRowData?.findIndex((item) => item.MaHang === newRow.MaHang)
       const oldQuantity = selectedRowData[index].SoLuong
       selectedRowData[index].SoLuong = oldQuantity + newRow.SoLuong
       setPLRForm({ ...PLRForm, DataDetails: selectedRowData })
     }
   }
-
   const handleEdit = async (actionType) => {
     try {
       const newData = selectedRowData.map((item, index) => {
@@ -164,20 +166,24 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
           STT: index + 1,
         }
       })
-      const response = await categoryAPI.PLREdit({ SoChungTu: dataPLR?.SoChungTu, Data: { ...PLRForm, DataDetails: newData } }, TokenAccess)
-      if (response.data.DataError == 0) {
-        actionType == 'print'
-          ? handlePrint()
-          : actionType == 'printImport'
-            ? handlePrintImport()
-            : actionType == 'printExport'
-              ? handlePrintExport()
-              : (close(), toast.success('Sửa thành công', { autoClose: 1000 }))
-        loadingData()
-        setTargetRow(dataPLR?.SoChungTu)
+      if (newData?.length > 0) {
+        const response = await categoryAPI.PLREdit({ SoChungTu: dataPLR?.SoChungTu, Data: { ...PLRForm, DataDetails: newData } }, TokenAccess)
+        if (response.data.DataError == 0) {
+          actionType == 'print'
+            ? handlePrint()
+            : actionType == 'printImport'
+              ? handlePrintImport()
+              : actionType == 'printExport'
+                ? handlePrintExport()
+                : (close(), toast.success('Sửa thành công', { autoClose: 1000 }))
+          loadingData()
+          setTargetRow(dataPLR?.SoChungTu)
+        } else {
+          console.log('sai', PLRForm)
+          toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
+        }
       } else {
-        console.log('sai', PLRForm)
-        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
+        toast.warning('Chi tiết hàng không được để trống', { autoClose: 1000 })
       }
     } catch (error) {
       console.log(error)
@@ -303,7 +309,7 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
       ),
     },
     {
-      title: 'Đơn vị tính',
+      title: 'ĐVT',
       dataIndex: 'DVT',
       key: 'DVT',
       showSorterTooltip: false,
@@ -385,7 +391,7 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
                           <Input disabled size="small" value={PLRForm?.SoChungTu || ''} readOnly />
                         </div>
                         <div className="flex items-center gap-1">
-                          <label className="required whitespace-nowrap text-sm">Ngày c.từ</label>
+                          <label className="required whitespace-nowrap text-sm"> Ngày</label>
                           <DatePicker
                             className="DatePicker_NDCKho"
                             format="DD/MM/YYYY"
@@ -480,15 +486,14 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
                   </div>
                   <div className="flex items-center gap-1">
                     <label className="whitespace-nowrap min-w-[100px] text-sm flex justify-end">Ghi chú</label>
-                    <input
-                      type="text"
-                      className="px-2 w-[70rem] resize-none rounded border-[1px] hover:border-blue-500 outline-none text-[1rem]"
-                      name="GhiChu"
-                      value={PLRForm?.GhiChu || ''}
+                    <Input
+                      size="small"
+                      className="w-full overflow-hidden whitespace-nowrap overflow-ellipsis"
+                      value={PLRForm?.GhiChu}
                       onChange={(e) =>
                         setPLRForm({
                           ...PLRForm,
-                          [e.target.name]: e.target.value,
+                          GhiChu: e.target.value,
                         })
                       }
                     />
@@ -523,67 +528,55 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
                 <div className="flex justify-between">
                   <div className="flex gap-2 justify-start">
                     <ActionButton
-                      handleAction={
-                        isAdd
-                          ? ''
-                          : () => {
-                              handleEdit('print')
-                            }
-                      }
+                      handleAction={() => {
+                        handleEdit('print')
+                      }}
                       title={'In Phiếu'}
-                      icon={<MdPrint className="w-5 h-5" />}
+                      // icon={<MdPrint className="w-5 h-5" />}
                       color={'slate-50'}
-                      background={isAdd ? 'gray-500' : 'purple-500'}
-                      color_hover={isAdd ? 'gray-500' : 'purple-500'}
+                      background={'purple-500'}
+                      color_hover={'purple-500'}
                       bg_hover={'white'}
-                      isPermission={isAdd ? false : true}
+                      isPermission={true}
                       isModal={true}
                     />
                     <ActionButton
-                      handleAction={
-                        isAdd
-                          ? ''
-                          : () => {
-                              handleEdit('printImport')
-                            }
-                      }
+                      handleAction={() => {
+                        handleEdit('printImport')
+                      }}
                       title={'In Phiếu Nhập'}
-                      icon={<MdPrint className="w-5 h-5" />}
+                      // icon={<MdPrint className="w-5 h-5" />}
                       color={'slate-50'}
-                      background={isAdd ? 'gray-500' : 'purple-500'}
-                      color_hover={isAdd ? 'gray-500' : 'purple-500'}
+                      background={'purple-500'}
+                      color_hover={'purple-500'}
                       bg_hover={'white'}
-                      isPermission={isAdd ? false : true}
+                      isPermission={true}
                       isModal={true}
                     />
                     <ActionButton
-                      handleAction={
-                        isAdd
-                          ? ''
-                          : () => {
-                              handleEdit('printExport')
-                            }
-                      }
+                      handleAction={() => {
+                        handleEdit('printExport')
+                      }}
                       title={'In Phiếu Xuất'}
-                      icon={<MdPrint className="w-5 h-5" />}
+                      // icon={<MdPrint className="w-5 h-5" />}
                       color={'slate-50'}
-                      background={isAdd ? 'gray-500' : 'purple-500'}
-                      color_hover={isAdd ? 'gray-500' : 'purple-500'}
+                      background={'purple-500'}
+                      color_hover={'purple-500'}
                       bg_hover={'white'}
-                      isPermission={isAdd ? false : true}
+                      isPermission={true}
                       isModal={true}
                     />
                   </div>
                   <div className="flex gap-2 justify-end">
                     <ActionButton
-                      handleAction={isAdd ? '' : () => handleEdit(null)}
-                      title={'Xác nhận'}
+                      handleAction={() => handleEdit(null)}
+                      title={'Lưu & đóng'}
                       isModal={true}
                       color={'slate-50'}
-                      background={isAdd ? 'gray-500' : 'blue-500'}
-                      color_hover={isAdd ? 'gray-500' : 'blue-500'}
+                      background={'blue-500'}
+                      color_hover={'blue-500'}
                       bg_hover={'white'}
-                      isPermission={isAdd ? false : true}
+                      isPermission={true}
                     />
                     <ActionButton handleAction={close} title={'Đóng'} isModal={true} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
                   </div>
@@ -601,8 +594,8 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
                     <div className="flex items-center gap-2">
                       <div className="flex items-center gap-2 py-1">
                         <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
-                        <p className="text-blue-700 font-semibold uppercase">Danh Sách Hàng Hóa - Phiếu Lắp Ráp</p>
-                        <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
+                        <p className="text-blue-700 font-semibold uppercase md:text-[12px] lg:text-sm truncate">Danh Sách Hàng Hóa - Phiếu Lắp Ráp</p>
+                        <FaSearch className="hover:text-red-400 cursor-pointer md:text-[14px] lg:text-sm" onClick={() => setIsShowSearch(!isShowSearch)} />
                       </div>
                       <div className="flex w-[20rem] overflow-hidden">
                         {isShowSearch && (

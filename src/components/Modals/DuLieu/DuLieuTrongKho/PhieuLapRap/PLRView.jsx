@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import moment from 'moment'
 const { Text } = Typography
 import { Table, Tooltip, Typography } from 'antd'
-import { MdPrint } from 'react-icons/md'
+// import { MdPrint } from 'react-icons/md'
 import PLRPrint from './PLRPrint'
 import categoryAPI from '../../../../../API/linkAPI'
 import logo from '../../../../../assets/VTS-iSale.ico'
@@ -105,7 +105,7 @@ const PLRView = ({ close, dataPLR }) => {
       ),
     },
     {
-      title: 'Đơn vị tính',
+      title: 'ĐVT',
       dataIndex: 'DVT',
       key: 'DVT',
       showSorterTooltip: false,
@@ -152,7 +152,7 @@ const PLRView = ({ close, dataPLR }) => {
                           <input type="text" value={dataPLRView?.SoChungTu || ''} className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate" readOnly />
                         </div>
                         <div className="flex items-center gap-1">
-                          <label className="required whitespace-nowrap text-sm">Ngày C.Từ</label>
+                          <label className="required whitespace-nowrap text-sm">Ngày</label>
                           <input
                             type="text"
                             value={moment(dataPLRView?.NgayCTu)?.format('DD/MM/YYYY') || ''}
@@ -291,7 +291,7 @@ const PLRView = ({ close, dataPLR }) => {
                     />
                     <ActionButton
                       handleAction={handlePrintImport}
-                      icon={<MdPrint className="w-5 h-5" />}
+                      // icon={<MdPrint className="w-5 h-5" />}
                       title={'In Phiếu Nhập'}
                       color={'slate-50'}
                       background={'purple-500'}
@@ -301,7 +301,7 @@ const PLRView = ({ close, dataPLR }) => {
                     />
                     <ActionButton
                       handleAction={handlePrintExport}
-                      icon={<MdPrint className="w-5 h-5" />}
+                      // icon={<MdPrint className="w-5 h-5" />}
                       title={'In Phiếu Xuất'}
                       color={'slate-50'}
                       background={'purple-500'}

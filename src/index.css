@@ -248,6 +248,10 @@ input.ant-input.ant-input-sm {
   min-height: 276px;
   max-height: 276px;
 }
+.table_NCKConfirm .ant-table-body {
+  min-height: 286px;
+  max-height: 286px;
+}
 .table_viewHH .ant-table-body {
   min-height: 75px;
   max-height: 75px;

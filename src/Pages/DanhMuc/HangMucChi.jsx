@@ -261,7 +261,7 @@ const HangMucChi = () => {
         const dateB = new Date(b.NgayTao)
         return dateA - dateB
       },
-      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss.SS')} search={searchHangMucChi} />,
+      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss')} search={searchHangMucChi} />,
     },
     {
       title: 'Người sửa',
@@ -300,14 +300,14 @@ const HangMucChi = () => {
       },
       render: (text) => {
         if (text) {
-          return <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss.SS')} search={searchHangMucChi} />
+          return <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss')} search={searchHangMucChi} />
         } else {
           return ''
         }
       },
     },
     {
-      title: ' ',
+      title: 'Chức năng',
       key: 'operation',
       fixed: 'right',
       width: 80,

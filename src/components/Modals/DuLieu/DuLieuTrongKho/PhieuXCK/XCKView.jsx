@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import moment from 'moment'
 const { Text } = Typography
 import { Table, Tooltip, Typography } from 'antd'
-import { MdPrint } from 'react-icons/md'
+// import { MdPrint } from 'react-icons/md'
 import XCKPrint from './XCKPrint'
 import categoryAPI from '../../../../../API/linkAPI'
 import logo from '../../../../../assets/VTS-iSale.ico'
@@ -98,7 +98,7 @@ const XCKXem = ({ close, dataXCK }) => {
       ),
     },
     {
-      title: 'Đơn vị tính',
+      title: 'ĐVT',
       dataIndex: 'DVT',
       key: 'DVT',
       showSorterTooltip: false,
@@ -123,8 +123,6 @@ const XCKXem = ({ close, dataXCK }) => {
     },
   ]
 
-  console.log(dataXCKView)
-
   return (
     <>
       {!isLoading ? (
@@ -137,7 +135,7 @@ const XCKXem = ({ close, dataXCK }) => {
               <div className="flex flex-col gap-2 py-1 px-2 xl:w-[80vw] lg:w-[90vw] md:w-[95vw] ">
                 <div className="flex gap-2">
                   <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
-                  <p className="text-blue-700 font-semibold uppercase">Thông tin - Phiếu Nhập Điều Chỉnh</p>
+                  <p className="text-blue-700 font-semibold uppercase">Thông tin - Phiếu Xuất Chuyển Kho</p>
                 </div>
                 <div className="flex flex-col gap-2 border-2 px-1 py-2.5">
                   <div className="grid grid-cols-2 items-center gap-2">
@@ -148,7 +146,7 @@ const XCKXem = ({ close, dataXCK }) => {
                           <input type="text" value={dataXCKView?.SoChungTu || ''} className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate" readOnly />
                         </div>
                         <div className="flex items-center gap-1">
-                          <label className="required whitespace-nowrap text-sm">Ngày C.Từ</label>
+                          <label className="required whitespace-nowrap text-sm">Ngày</label>
                           <input
                             type="text"
                             value={moment(dataXCKView?.NgayCTu)?.format('DD/MM/YYYY') || ''}
@@ -158,7 +156,7 @@ const XCKXem = ({ close, dataXCK }) => {
                         </div>
                       </div>
                       <div className="flex items-center gap-1">
-                        <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Kho hàng</label>
+                        <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Kho</label>
                         <input
                           type="text"
                           value={`${dataXCKView?.MaKho} - ${dataXCKView?.TenKho}` || ''}
@@ -167,7 +165,7 @@ const XCKXem = ({ close, dataXCK }) => {
                         />
                       </div>
                       <div className="flex items-center gap-1">
-                        <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Kho hàng nhận</label>
+                        <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Kho nhận</label>
                         <input
                           type="text"
                           value={`${dataXCKView?.MaKho_Nhan} - ${dataXCKView?.TenKho_Nhan}` || ''}
@@ -286,7 +284,7 @@ const XCKXem = ({ close, dataXCK }) => {
                 <div className="flex justify-between">
                   <div>
                     <ActionButton
-                      icon={<MdPrint className="w-5 h-5" />}
+                      // icon={<MdPrint className="w-5 h-5" />}
                       handleAction={handlePrint}
                       title={'In Phiếu'}
                       color={'slate-50'}

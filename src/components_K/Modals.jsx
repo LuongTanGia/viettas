@@ -1750,7 +1750,7 @@ const Modals = ({
                   <ActionButton color={'slate-50'} title={'Lưu'} isModal={true} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleCreate} />
                   <ActionButton
                     color={'slate-50'}
-                    title={'Lưu & Đóng'}
+                    title={'Lưu & đóng'}
                     isModal={true}
                     background={'bg-main'}
                     bg_hover={'white'}
@@ -2050,7 +2050,7 @@ const Modals = ({
                     <div className="flex justify-end items-center gap-x-3  pt-3">
                       <ActionButton
                         color={'slate-50'}
-                        title={'Lưu & Đóng'}
+                        title={'Lưu & đóng'}
                         isModal={true}
                         background={'bg-main'}
                         bg_hover={'white'}

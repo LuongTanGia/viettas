@@ -100,7 +100,7 @@ const NhomDoiTuong = () => {
     }
     getDataQuyenHan()
   }, [])
-
+  console.log(dataCRUD)
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (showOption.current && !showOption.current.contains(event.target)) {
@@ -261,7 +261,7 @@ const NhomDoiTuong = () => {
         const dateB = new Date(b.NgayTao)
         return dateA - dateB
       },
-      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss.SS')} search={searchNhomDoiTuong} />,
+      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss')} search={searchNhomDoiTuong} />,
     },
     {
       title: 'Người sửa',
@@ -300,14 +300,14 @@ const NhomDoiTuong = () => {
       },
       render: (text) => {
         if (text) {
-          return <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss.SS')} search={searchNhomDoiTuong} />
+          return <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss')} search={searchNhomDoiTuong} />
         } else {
           return ''
         }
       },
     },
     {
-      title: ' ',
+      title: 'Chức năng',
       key: 'operation',
       fixed: 'right',
       width: 80,

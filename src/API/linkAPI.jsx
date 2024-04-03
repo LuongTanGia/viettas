@@ -490,12 +490,12 @@ const categoryAPI = {
     }
     return axiosClient.post(url, {}, { headers })
   },
-  ListHangHoaNDC(accessToken) {
+  ListHangHoaNDC(body, accessToken) {
     const url = '/entries/DuLieuNDC/ListHelper_HangHoa'
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     }
-    return axiosClient.post(url, {}, { headers })
+    return axiosClient.post(url, body, { headers })
   },
 
   // DuLieu/DCTK/PhieuLapRap
@@ -641,12 +641,12 @@ const categoryAPI = {
     }
     return axiosClient.post(url, {}, { headers })
   },
-  ListHangHoaXDC(accessToken) {
+  ListHangHoaXDC(body, accessToken) {
     const url = '/entries/DuLieuXDC/ListHelper_HangHoa'
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     }
-    return axiosClient.post(url, {}, { headers })
+    return axiosClient.post(url, body, { headers })
   },
 
   // DuLieu/DLTK/PhieuXCK
@@ -713,12 +713,12 @@ const categoryAPI = {
     }
     return axiosClient.post(url, {}, { headers })
   },
-  ListHangHoaXCK(accessToken) {
+  ListHangHoaXCK(body, accessToken) {
     const url = '/entries/DuLieuXCK/ListHelper_HangHoa'
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     }
-    return axiosClient.post(url, {}, { headers })
+    return axiosClient.post(url, body, { headers })
   },
 
   // DuLieu/DLTK/PhieuNCK
@@ -836,12 +836,12 @@ const categoryAPI = {
     }
     return axiosClient.post(url, {}, { headers })
   },
-  ListHangHoaXSD(accessToken) {
+  ListHangHoaXSD(body, accessToken) {
     const url = '/entries/DuLieuXSD/ListHelper_HangHoa'
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     }
-    return axiosClient.post(url, {}, { headers })
+    return axiosClient.post(url, body, { headers })
   },
 
   // DuLieu/DLTK/PhieuHUY
@@ -908,12 +908,12 @@ const categoryAPI = {
     }
     return axiosClient.post(url, {}, { headers })
   },
-  ListHangHoaHUY(accessToken) {
+  ListHangHoaHUY(body, accessToken) {
     const url = '/entries/DuLieuHUY/ListHelper_HangHoa'
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     }
-    return axiosClient.post(url, {}, { headers })
+    return axiosClient.post(url, body, { headers })
   },
   // ThietLap/KhoHang
   KhoHang(accessToken) {

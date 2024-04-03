@@ -311,7 +311,7 @@ const HangHoa = () => {
       ),
     },
     {
-      title: 'Đơn vị tính',
+      title: 'ĐVT',
       dataIndex: 'DVTKho',
       key: 'DVTKho',
       align: 'center',
@@ -517,7 +517,7 @@ const HangHoa = () => {
       render: (text, record) => <Checkbox className="justify-center" id={`NA_${record.key}`} checked={text} />,
     },
     {
-      title: ' ',
+      title: 'Chức năng',
       key: 'operation',
       fixed: 'right',
       width: 120,
@@ -809,14 +809,14 @@ const HangHoa = () => {
                       return (
                         <Table.Summary fixed="bottom">
                           <Table.Summary.Row>
-                            <Table.Summary.Cell className="bg-gray-100"></Table.Summary.Cell>
+                            <Table.Summary.Cell className="bg-gray-100" index="0"></Table.Summary.Cell>
                             {newTitles
                               .filter((column) => column.render)
                               .map((column, index) => {
                                 const isNumericColumn = typeof filteredHangHoa[0]?.[column.dataIndex] === 'number'
                                 return (
                                   <Table.Summary.Cell
-                                    index={index}
+                                    index={index + 1}
                                     key={`summary-cell-${index + 1}`}
                                     align={isNumericColumn ? 'right' : 'left'}
                                     className="text-end font-bold  bg-[#f1f1f1]"

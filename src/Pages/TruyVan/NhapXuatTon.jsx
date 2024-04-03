@@ -425,7 +425,7 @@ const NhapXuatTon = () => {
       ),
     },
     {
-      title: 'Đơn vị tính',
+      title: 'ĐVT',
       dataIndex: 'DVT',
       key: 'DVT',
       width: 120,
@@ -883,7 +883,7 @@ const NhapXuatTon = () => {
       ),
     },
     {
-      title: 'Đơn vị tính',
+      title: 'ĐVT',
       dataIndex: 'DVT',
       key: 'DVT',
       width: 120,

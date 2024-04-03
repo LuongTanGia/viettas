@@ -344,7 +344,7 @@ const QuanLy = () => {
         const dateB = new Date(b.NgayTao)
         return dateA - dateB
       },
-      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss.SS')} search={searchQuanLy} />,
+      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss')} search={searchQuanLy} />,
     },
     {
       title: 'Người sửa',
@@ -383,7 +383,7 @@ const QuanLy = () => {
       },
       render: (text) => {
         if (text) {
-          return <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss.SS')} search={searchQuanLy} />
+          return <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss')} search={searchQuanLy} />
         } else {
           return ''
         }
@@ -404,7 +404,7 @@ const QuanLy = () => {
       render: (text, record) => <Checkbox className="justify-center" id={`NA_${record.key}`} checked={text} />,
     },
     {
-      title: ' ',
+      title: 'Chức năng',
       key: 'operation',
       fixed: 'right',
       width: 120,

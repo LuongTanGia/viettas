@@ -118,7 +118,7 @@ const PhieuNhapChuyenKho = ({ isTableLoad, isTargetRow }) => {
       }
     }
     getDataNCK()
-  }, [searchHangHoa, isLoading, targetRow, dateData?.NgayBatDau, dateData?.NgayKetThuc, isTargetRow])
+  }, [searchHangHoa, targetRow, dateData?.NgayBatDau, dateData?.NgayKetThuc, isTargetRow])
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -484,7 +484,7 @@ const PhieuNhapChuyenKho = ({ isTableLoad, isTargetRow }) => {
       render: (text) => <span className="flex justify-center">{text ? formatDateTime(text, true) : ''}</span>,
     },
     {
-      title: ' ',
+      title: 'Chức năng',
       key: 'operation',
       fixed: 'right',
       width: 50,
