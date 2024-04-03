@@ -916,7 +916,7 @@ const DuLieuBLQ = () => {
                     <div className="flex gap-x-1 items-center">
                       <label htmlFor="">Ngày</label>
                       <DateField
-                        className="DatePicker_PMH w-[115px]"
+                        className="DatePicker_PMH max-w-[115px]"
                         format="DD/MM/YYYY"
                         value={dayjs(formKhoanNgay.NgayBatDau)}
                         onChange={(newDate) => {
@@ -938,13 +938,22 @@ const DuLieuBLQ = () => {
                           }
                         }}
                         onFocus={() => setPrevDateValue(formKhoanNgay)}
-                        sx={{ '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' } }}
+                        sx={{
+                          '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                          '& .MuiButtonBase-root': {
+                            padding: '4px',
+                          },
+                          '& .MuiSvgIcon-root': {
+                            width: '18px',
+                            height: '18px',
+                          },
+                        }}
                       />
                     </div>
                     <div className="flex gap-x-1 items-center">
                       <label htmlFor="">Đến</label>
                       <DateField
-                        className="DatePicker_PMH w-[115px]"
+                        className="DatePicker_PMH max-w-[115px]"
                         format="DD/MM/YYYY"
                         value={dayjs(formKhoanNgay.NgayKetThuc)}
                         onChange={(newDate) => {
@@ -965,7 +974,16 @@ const DuLieuBLQ = () => {
                           }
                         }}
                         onFocus={() => setPrevDateValue(formKhoanNgay)}
-                        sx={{ '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' } }}
+                        sx={{
+                          '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                          '& .MuiButtonBase-root': {
+                            padding: '4px',
+                          },
+                          '& .MuiSvgIcon-root': {
+                            width: '18px',
+                            height: '18px',
+                          },
+                        }}
                       />
                     </div>
                   </div>

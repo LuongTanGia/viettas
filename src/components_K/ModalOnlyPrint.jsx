@@ -211,7 +211,7 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
                 <div className="flex gap-x-5 items-center">
                   <label htmlFor="">Ngày</label>
                   <DateField
-                    className="DatePicker_PMH w-[170px]"
+                    className="DatePicker_PMH max-w-[170px]"
                     format="DD/MM/YYYY"
                     value={dayjs(formPrint?.NgayBatDau)}
                     onChange={(newDate) => {
@@ -243,7 +243,7 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
                 <div className="flex gap-x-5 items-center">
                   <label htmlFor="">Đến</label>
                   <DateField
-                    className="DatePicker_PMH w-[170px]"
+                    className="DatePicker_PMH max-w-[170px]"
                     format="DD/MM/YYYY"
                     value={dayjs(formPrint?.NgayKetThuc)}
                     onChange={(newDate) => {

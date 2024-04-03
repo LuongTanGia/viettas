@@ -450,7 +450,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                       Ngày
                     </label>
                     <DateField
-                      className="DatePicker_PMH w-[154px]"
+                      className="DatePicker_PMH max-w-[154px]"
                       format="DD/MM/YYYY"
                       value={dayjs(formPrint.ngayHieuLuc)}
                       onChange={(newDate) => {
@@ -628,7 +628,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                       <div className="flex items-center gap-1">
                         <label className="required  min-w-[70px] text-sm flex justify-end">Hiệu lực từ</label>
                         <DateField
-                          className="DatePicker_PMH  w-[115px]"
+                          className="DatePicker_PMH  max-w-[115px]"
                           format="DD/MM/YYYY"
                           value={dayjs(formAdjustPrice?.HieuLucTu)}
                           onChange={(newDate) => {
@@ -816,7 +816,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                             <div className="flex items-center gap-1 whitespace-nowrap">
                               <label className="required  min-w-[90px] text-sm flex justify-end">Kể từ ngày</label>
                               <DateField
-                                className="DatePicker_PMH  w-[115px]"
+                                className="DatePicker_PMH  max-w-[115px]"
                                 format="DD/MM/YYYY"
                                 value={dayjs(dataRecord?.HieuLucTu)}
                                 disabled
@@ -871,7 +871,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                           <div className="flex items-center gap-1 whitespace-nowrap">
                             <label className="required  min-w-[90px] text-sm flex justify-end">Hiệu lực từ</label>
                             <DateField
-                              className="DatePicker_PMH  w-[115px]"
+                              className="DatePicker_PMH  max-w-[115px]"
                               format="DD/MM/YYYY"
                               value={dayjs(dataRecord?.HieuLucTu)}
                               disabled
@@ -1016,7 +1016,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                             <div className="flex items-center gap-1 whitespace-nowrap">
                               <label className="required  min-w-[90px] text-sm flex justify-end">Kể từ ngày</label>
                               <DateField
-                                className="DatePicker_PMH  w-[115px]"
+                                className="DatePicker_PMH  max-w-[115px]"
                                 format="DD/MM/YYYY"
                                 defaultValue={dayjs()}
                                 onChange={(newDate) => {
@@ -1027,6 +1027,13 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                                 }}
                                 sx={{
                                   '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                                  '& .MuiButtonBase-root': {
+                                    padding: '4px',
+                                  },
+                                  '& .MuiSvgIcon-root': {
+                                    width: '18px',
+                                    height: '18px',
+                                  },
                                 }}
                               />
                             </div>
@@ -1113,7 +1120,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                           <div className="flex items-center gap-1 whitespace-nowrap">
                             <label className="required  min-w-[90px] text-sm flex justify-end">Hiệu lực từ</label>
                             <DateField
-                              className="DatePicker_PMH  w-[115px]"
+                              className="DatePicker_PMH  max-w-[115px]"
                               format="DD/MM/YYYY"
                               value={dayjs(formCreate.HieuLucTu)}
                               onChange={(newDate) => {
@@ -1255,7 +1262,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                             <div className="flex items-center gap-1 whitespace-nowrap">
                               <label className="required  min-w-[90px] text-sm flex justify-end">Kể từ ngày</label>
                               <DateField
-                                className="DatePicker_PMH w-[115px]"
+                                className="DatePicker_PMH max-w-[115px]"
                                 format="DD/MM/YYYY"
                                 value={dayjs(formEdit?.Data?.HieuLucTu)}
                                 onChange={(newDate) => {
@@ -1267,7 +1274,16 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                                     },
                                   })
                                 }}
-                                sx={{ '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' } }}
+                                sx={{
+                                  '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                                  '& .MuiButtonBase-root': {
+                                    padding: '4px',
+                                  },
+                                  '& .MuiSvgIcon-root': {
+                                    width: '18px',
+                                    height: '18px',
+                                  },
+                                }}
                               />
                             </div>
                             <div className="flex items-center gap-1 whitespace-nowrap">
@@ -1340,7 +1356,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                           <div className="flex items-center gap-1 whitespace-nowrap">
                             <label className="required  min-w-[90px] text-sm flex justify-end">Hiệu lực từ</label>
                             <DateField
-                              className="DatePicker_PMH  w-[115px]"
+                              className="DatePicker_PMH  max-w-[115px]"
                               format="DD/MM/YYYY"
                               value={dayjs(formEdit.HieuLuc)}
                               onChange={(newDate) => {

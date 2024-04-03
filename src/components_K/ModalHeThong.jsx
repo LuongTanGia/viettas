@@ -292,7 +292,7 @@ const ModalHeThong = ({ close }) => {
                       <div className="w-full flex gap-2">
                         <div className="flex gap-3">
                           <DateField
-                            className="DatePicker_PMH w-[115px]"
+                            className="DatePicker_PMH max-w-[115px]"
                             format="DD/MM/YYYY"
                             value={dayjs(formHT?.DATERANGEMIN)}
                             maxDate={formHT?.DATERANGEMAX}
@@ -308,7 +308,7 @@ const ModalHeThong = ({ close }) => {
                           <div className="flex gap-2 ">
                             <div className=" text-end">Đến</div>
                             <DateField
-                              className="DatePicker_PMH w-[115px]"
+                              className="DatePicker_PMH max-w-[115px]"
                               format="DD/MM/YYYY"
                               value={dayjs(formHT?.DATERANGEMAX)}
                               minDate={formHT?.DATERANGEMIN}

@@ -1070,7 +1070,7 @@ const Modals = ({
                     <div className="flex gap-x-5 items-center">
                       <label htmlFor="">Ngày</label>
                       <DateField
-                        className="DatePicker_PMH w-[170px]"
+                        className="DatePicker_PMH max-w-[170px]"
                         format="DD/MM/YYYY"
                         // maxDate={dayjs(controlDate.NgayKetThuc)}
                         value={dayjs(formPrint.NgayBatDau)}
@@ -1103,7 +1103,7 @@ const Modals = ({
                     <div className="flex gap-x-5 items-center ">
                       <label htmlFor="">Đến</label>
                       <DateField
-                        className="DatePicker_PMH w-[170px]"
+                        className="DatePicker_PMH max-w-[170px]"
                         format="DD/MM/YYYY"
                         // minDate={dayjs(controlDate.NgayBatDau)}
                         value={dayjs(formPrint.NgayKetThuc)}
@@ -1286,7 +1286,7 @@ const Modals = ({
                         <div className="flex md:px-1 lg:px-4 items-center">
                           <label className=" px-3  text-center ">Ngày</label>
                           <DateField
-                            className="DatePicker_PMH  w-[115px]"
+                            className="DatePicker_PMH  max-w-[115px]"
                             format="DD/MM/YYYY"
                             value={dayjs(dataThongTin?.NgayCTu)}
                             disabled
@@ -1510,7 +1510,7 @@ const Modals = ({
                         <div className="flex md:px-1 lg:px-4 items-center">
                           <label className="pr-1 lg:pr-[30px] lg:pl-[8px]">Ngày</label>
                           <DateField
-                            className="DatePicker_PMH w-[115px]"
+                            className="DatePicker_PMH max-w-[115px]"
                             format="DD/MM/YYYY"
                             value={dayjs(formCreate?.NgayCTu)}
                             onChange={(newDate) => {
@@ -1799,7 +1799,7 @@ const Modals = ({
                           <div className="flex md:px-1 lg:px-4 items-center">
                             <label className="pr-1 lg:pr-[30px] lg:pl-[8px]">Ngày</label>
                             <DateField
-                              className="DatePicker_PMH  w-[115px]"
+                              className="DatePicker_PMH  max-w-[115px]"
                               format="DD/MM/YYYY"
                               defaultValue={dayjs(dataThongTinSua.NgayCTu)}
                               onChange={(newDate) => {

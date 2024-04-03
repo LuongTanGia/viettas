@@ -635,7 +635,7 @@ const ModalPCT = ({
                     <div className="flex gap-x-5 items-center">
                       <label htmlFor="">Ngày</label>
                       <DateField
-                        className="DatePicker_PMH w-[154px]"
+                        className="DatePicker_PMH max-w-[154px]"
                         format="DD/MM/YYYY"
                         // maxDate={dayjs(formPrint.NgayKetThuc)}
                         value={dayjs(formPrint.NgayBatDau)}
@@ -668,7 +668,7 @@ const ModalPCT = ({
                     <div className="flex gap-x-5 items-center ">
                       <label htmlFor="">Đến</label>
                       <DateField
-                        className="DatePicker_PMH w-[154px]"
+                        className="DatePicker_PMH max-w-[154px]"
                         format="DD/MM/YYYY"
                         // minDate={dayjs(formPrint.NgayBatDau)}
                         value={dayjs(formPrint.NgayKetThuc)}
@@ -807,7 +807,7 @@ const ModalPCT = ({
                         <div className="flex items-center gap-1 whitespace-nowrap">
                           <label className="required  min-w-[90px] text-sm flex justify-end">Ngày</label>
                           <DateField
-                            className="DatePicker_PMH  w-[115px]"
+                            className="DatePicker_PMH  max-w-[115px]"
                             format="DD/MM/YYYY"
                             value={dayjs(dataRecord?.NgayCTu)}
                             disabled
@@ -985,7 +985,7 @@ const ModalPCT = ({
                           <div className="flex items-center gap-1 whitespace-nowrap">
                             <label className="required  min-w-[90px] text-sm flex justify-end">Ngày</label>
                             <DateField
-                              className="DatePicker_PMH  w-[115px]"
+                              className="DatePicker_PMH  max-w-[115px]"
                               format="DD/MM/YYYY"
                               defaultValue={dayjs()}
                               onChange={(newDate) => {
@@ -1251,7 +1251,7 @@ const ModalPCT = ({
                             <div className="flex items-center gap-1 whitespace-nowrap">
                               <label className="required  min-w-[90px] text-sm flex justify-end">Ngày</label>
                               <DateField
-                                className="DatePicker_PMH w-[115px]"
+                                className="DatePicker_PMH max-w-[115px]"
                                 format="DD/MM/YYYY"
                                 defaultValue={dayjs(dataThongTinSua?.NgayCTu)}
                                 onChange={(newDate) => {

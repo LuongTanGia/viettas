@@ -811,7 +811,7 @@ const PhieuBanLe = () => {
                   <div className="flex gap-x-2 items-center">
                     <label htmlFor="">Ngày</label>
                     <DateField
-                      className="DatePicker_PBL w-[115px]"
+                      className="DatePicker_PBL max-w-[115px]"
                       format="DD/MM/YYYY"
                       value={dayjs(formKhoanNgay.NgayBatDau)}
                       // maxDate={dayjs(formKhoanNgay.NgayKetThuc)}
@@ -849,7 +849,7 @@ const PhieuBanLe = () => {
                   <div className="flex gap-x-2 items-center">
                     <label htmlFor="">Đến</label>
                     <DateField
-                      className="DatePicker_PBL w-[115px]"
+                      className="DatePicker_PBL max-w-[115px]"
                       format="DD/MM/YYYY"
                       // minDate={dayjs(formKhoanNgay.NgayBatDau)}
                       value={dayjs(formKhoanNgay.NgayKetThuc)}
