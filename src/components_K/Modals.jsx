@@ -1394,7 +1394,7 @@ const Modals = ({
                       <label form="khohang" className="md:w-[104px] lg:w-[110px] ">
                         Kho hàng
                       </label>
-                      <select readOnly className="  border w-full  bg-[#fafafa] rounded-[4px] h-[24px]">
+                      <select disabled className="  border w-full  bg-[#fafafa] rounded-[4px] h-[24px]">
                         <option value="ThongTinKho">
                           {dataThongTin?.MaKho} - {dataThongTin?.TenKho}
                         </option>

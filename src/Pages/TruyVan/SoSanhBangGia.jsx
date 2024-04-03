@@ -521,15 +521,18 @@ const SoSanhBG = () => {
                       className="md:w-[40vw] lg:w-[50vw] "
                       maxTagCount="responsive"
                       optionFilterProp="children"
-                      // maxTagPlaceholder={(omittedValues) => (
-                      //   <Tooltip title={omittedValues?.map(({ label }) => label)} color="blue">
-                      //     <span>+{omittedValues?.length}...</span>
-                      //   </Tooltip>
-                      // )}
+                      maxTagPlaceholder={(omittedValues) => (
+                        <Tooltip title={omittedValues?.map(({ label }) => label)} color="blue">
+                          <span>+{omittedValues?.length}...</span>
+                        </Tooltip>
+                      )}
+                      popupMatchSelectWidth
                     >
                       {dataNhomHang?.map((item) => (
-                        <Option key={item.Ma} value={item.Ma}>
-                          {item.Ma} - {item.Ten}
+                        <Option popupMatchSelectWidth key={item.Ma} value={item.Ma}>
+                          <p className="">
+                            {item.Ma} - {item.Ten}
+                          </p>
                         </Option>
                       ))}
                     </Select>
@@ -595,10 +598,18 @@ const SoSanhBG = () => {
                       className="md:w-[40vw] lg:w-[50vw] truncate"
                       maxTagCount="responsive"
                       optionFilterProp="children"
+                      maxTagPlaceholder={(omittedValues) => (
+                        <Tooltip title={omittedValues?.map(({ label }) => label)} color="blue">
+                          <span>+{omittedValues?.length}...</span>
+                        </Tooltip>
+                      )}
+                      popupMatchSelectWidth
                     >
                       {dataHangHoa?.map((item) => (
-                        <Option key={item.MaHang} value={item.MaHang} title={item.TenHang}>
-                          {item.MaHang} - {item.TenHang}
+                        <Option key={item.MaHang} value={item.MaHang} popupMatchSelectWidth>
+                          <p>
+                            {item.MaHang} - {item.TenHang}
+                          </p>
                         </Option>
                       ))}
                     </Select>

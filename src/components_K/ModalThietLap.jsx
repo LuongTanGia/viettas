@@ -42,18 +42,17 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
 
   const defaultFormEdit = {
     Ma: dataRecord?.MaHang,
-    HieuLuc: dataRecord?.HieuLucTu,
+    HieuLuc: dayjs(dataRecord?.HieuLucTu).format('YYYY-MM-DD'),
     Data: {
-      MaHang: dataRecord?.MaHang,
-      HieuLucTu: dataRecord?.HieuLucTu,
       DonGia: dataRecord?.DonGia,
       CoThue: dataRecord?.CoThue,
       TyLeThue: dataRecord?.TyLeThue,
     },
   }
+
   const defaultFormEditGKH = {
     Ma: dataRecord?.MaDoiTuong,
-    HieuLuc: dataRecord?.HieuLucTu,
+    HieuLuc: dayjs(dataRecord?.HieuLucTu).format('YYYY-MM-DD'),
     Data: {
       NhomGia: dataRecord?.NhomGia,
       GhiChu: dataRecord?.GhiChu,
@@ -88,17 +87,6 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
       setFormAdjustPrice({ ...formAdjustPrice, ToanTu: null })
     }
   }, [formAdjustPrice.GiaTriTinh])
-
-  useEffect(() => {
-    if (typePage === 'GBL') {
-      // if (dataHangHoa && actionType === 'create') {
-      //   setFormCreate({ ...formCreate, MaHang: dataHangHoa[0]?.MaHang })
-      // }
-      if (dataHangHoa && actionType === 'edit') {
-        setFormEdit({ ...formEdit, MaHang: dataRecord.MaHang })
-      }
-    }
-  }, [dataHangHoa, dataRecord])
 
   useEffect(() => {
     if (typePage === 'GKH') {
@@ -387,6 +375,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
     }
   }
 
+  console.log('formEdit', formEdit)
   return (
     <>
       <div className=" fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
@@ -530,10 +519,17 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                       className="w-full truncate"
                       maxTagCount="responsive"
                       optionFilterProp="children"
+                      maxTagPlaceholder={(omittedValues) => (
+                        <Tooltip title={omittedValues?.map(({ label }) => label)} color="blue">
+                          <span>+{omittedValues?.length}...</span>
+                        </Tooltip>
+                      )}
                     >
                       {dataNhomGia?.map((item) => (
                         <Option key={item.Ma} value={item.Ma}>
-                          {item.Ma} - {item.Ten}
+                          <p>
+                            {item.Ma} - {item.Ten}
+                          </p>
                         </Option>
                       ))}
                     </Select>
@@ -597,10 +593,17 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                       className="w-full truncate"
                       maxTagCount="responsive"
                       optionFilterProp="children"
+                      maxTagPlaceholder={(omittedValues) => (
+                        <Tooltip title={omittedValues?.map(({ label }) => label)} color="blue">
+                          <span>+{omittedValues?.length}...</span>
+                        </Tooltip>
+                      )}
                     >
                       {dataHangHoa?.map((item) => (
-                        <Option key={item.MaHang} value={item.MaHang} title={item.TenHang}>
-                          {item.MaHang} - {item.TenHang}
+                        <Option key={item.MaHang} value={item.MaHang}>
+                          <p>
+                            {item.MaHang} - {item.TenHang}
+                          </p>
                         </Option>
                       ))}
                     </Select>
@@ -1264,18 +1267,8 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                               <DateField
                                 className="DatePicker_PMH max-w-[115px]"
                                 format="DD/MM/YYYY"
-                                value={dayjs(formEdit?.Data?.HieuLucTu)}
-                                onChange={(newDate) => {
-                                  setFormEdit({
-                                    ...formEdit,
-                                    Data: {
-                                      ...formEdit.Data,
-                                      HieuLucTu: dayjs(newDate).format('YYYY-MM-DD'),
-                                    },
-                                  })
-                                }}
+                                value={dayjs(formEdit?.HieuLuc)}
                                 sx={{
-                                  '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
                                   '& .MuiButtonBase-root': {
                                     padding: '4px',
                                   },
@@ -1284,6 +1277,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                                     height: '18px',
                                   },
                                 }}
+                                readOnly
                               />
                             </div>
                             <div className="flex items-center gap-1 whitespace-nowrap">
@@ -1356,17 +1350,10 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                           <div className="flex items-center gap-1 whitespace-nowrap">
                             <label className="required  min-w-[90px] text-sm flex justify-end">Hiệu lực từ</label>
                             <DateField
-                              className="DatePicker_PMH  max-w-[115px]"
+                              className="DatePicker_PMH  max-w-[115px] bg-[#fafafa] "
                               format="DD/MM/YYYY"
-                              value={dayjs(formEdit.HieuLuc)}
-                              onChange={(newDate) => {
-                                setFormEdit({
-                                  ...formEdit,
-                                  HieuLucTu: dayjs(newDate).format('YYYY-MM-DD'),
-                                })
-                              }}
+                              value={dayjs(formEdit?.HieuLuc)}
                               sx={{
-                                '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
                                 '& .MuiButtonBase-root': {
                                   padding: '4px',
                                 },
@@ -1375,6 +1362,7 @@ const ModalTL = ({ actionType, typePage, namePage, close, dataRecord, dataThongS
                                   height: '18px',
                                 },
                               }}
+                              disabled
                             />
                           </div>
                           <div className="flex items-center gap-1">

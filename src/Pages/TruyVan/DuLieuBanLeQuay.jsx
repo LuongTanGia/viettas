@@ -209,7 +209,7 @@ const DuLieuBLQ = () => {
       key: 'NgayCTu',
       align: 'center',
       render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY')} search={searchDuLieuQuayCa} />,
-      width: 150,
+      width: 100,
       sorter: (a, b) => {
         const dateA = new Date(a.NgayCTu)
         const dateB = new Date(b.NgayCTu)
@@ -1018,6 +1018,7 @@ const DuLieuBLQ = () => {
 
                 <Segmented
                   options={['Phiếu bán hàng', 'Phiếu thu', 'Phiếu chi']}
+                  size="small"
                   value={typeData}
                   onChange={(value) => {
                     if (!isChanging) {

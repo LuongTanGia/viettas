@@ -57,9 +57,7 @@ const PhieuMuaHang = () => {
         setIsShowOption(false)
       }
     }
-
     document.addEventListener('click', handleClickOutside)
-
     return () => {
       document.removeEventListener('click', handleClickOutside)
     }
@@ -71,7 +69,6 @@ const PhieuMuaHang = () => {
     // Lấy thông tin từ local storage sau khi đăng nhập
     const storedHiddenColumns = localStorage.getItem('hidenColumnPMH')
     const parsedHiddenColumns = storedHiddenColumns ? JSON.parse(storedHiddenColumns) : null
-
     // Áp dụng thông tin đã lưu vào checkedList và setConfirmed để ẩn cột
     if (Array.isArray(parsedHiddenColumns) && parsedHiddenColumns.length > 0) {
       setCheckedList(parsedHiddenColumns)
@@ -131,7 +128,6 @@ const PhieuMuaHang = () => {
         }
         if (actionType === 'view') {
           console.log('get helper tt')
-
           const responseTT = await apis.ThongTinPMH(tokenLogin, dataRecord.SoChungTu)
           if (responseTT.data && responseTT.data.DataError === 0) {
             setDataThongTin(responseTT.data.DataResult)
@@ -175,7 +171,6 @@ const PhieuMuaHang = () => {
         setIsLoadingModal(false)
         setIsShowModal(false)
         setIsLoadingEdit(false)
-
         // toast.error('Lấy data thất bại. Vui lòng thử lại sau.')
       }
     }

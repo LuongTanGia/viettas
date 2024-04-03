@@ -98,12 +98,14 @@ const GBL = () => {
     })
     setDataMaHang(selectedRowObjs)
   }, [selectedRowKeys])
+
   // default showFull
   useEffect(() => {
     if (formFilter.CodeValue1From === undefined || formFilter.CodeValue1To === undefined) {
       setFormFilter({ CodeValue1From: null, CodeValue1To: null })
     }
   }, [formFilter])
+
   // get helper
   useEffect(() => {
     setIsLoadingModal(true)
@@ -111,7 +113,7 @@ const GBL = () => {
     const fetchData = async () => {
       try {
         const tokenLogin = localStorage.getItem('TKN')
-        if (actionType === 'create' || actionType === 'edit' || actionType === 'print' || actionType === 'import') {
+        if (actionType === 'create' || actionType === 'print' || actionType === 'import') {
           console.log('get helper  KH,DT')
           const responseKH = await apis.ListHelperHHGBL(tokenLogin)
           if (responseKH.data && responseKH.data.DataError === 0) {
@@ -131,13 +133,9 @@ const GBL = () => {
       } catch (error) {
         console.error('Lấy data thất bại', error)
         setIsLoadingModal(false)
-        // setIsShowModal(false)
         setIsLoadingEdit(false)
-
-        // toast.error('Lấy data thất bại. Vui lòng thử lại sau.')
       }
     }
-
     if (isShowModal) {
       fetchData()
     }
@@ -165,11 +163,11 @@ const GBL = () => {
     }
     fetchData()
   }, [])
+
   // get Chức năng quyền hạn
   useEffect(() => {
     const getChucNangQuyenHan = async () => {
       try {
-        console.log('đi')
         const tokenLogin = localStorage.getItem('TKN')
         const response = await apis.ChucNangQuyenHan(tokenLogin, 'ThietLap_GiaLe')
 
@@ -198,6 +196,7 @@ const GBL = () => {
       setIsShowNotify(true)
     }
   }, [dataQuyenHan])
+
   //get DSGBL
   useEffect(() => {
     const callApis = () => {
@@ -227,7 +226,6 @@ const GBL = () => {
   const getDSGBL = async () => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
-
       const response = await apis.DanhSachGBL(tokenLogin, { ...formFilter, CodeValue1List: valueList.join(',') })
 
       if (response.data && response.data.DataError === 0) {
@@ -766,9 +764,9 @@ const GBL = () => {
                 )}
               </div>
             </div>
-            <div className="flex justify-between items-center px-2 ">
+            <div className="flex justify-between items-center px-2 pb-1">
               <div className="flex flex-col gap-1 ">
-                <div className="flex  justify-between gap-1">
+                <div className="flex  gap-1">
                   <div className="flex gap-1 items-center">
                     <div className="w-[42px] text-end">Nhóm</div>
                     <Select
@@ -832,10 +830,11 @@ const GBL = () => {
                     </Tooltip>
                   </div>
                 </div>
-                <div className="flex gap-1 ">
+                <div className="flex flex gap-1 ">
                   <div className="w-[42px] text-end">Chọn</div>
                   <Select
                     mode="multiple"
+                    showSearch
                     allowClear
                     maxTagCount="responsive"
                     optionFilterProp="children"
@@ -843,11 +842,18 @@ const GBL = () => {
                     placeholder="Chọn nhóm"
                     value={valueList}
                     onChange={(value) => setValueList(value)}
-                    className="w-[30vw] truncate"
+                    className="md:w-[30vw] lg:w-[50vw] truncate"
+                    maxTagPlaceholder={(omittedValues) => (
+                      <Tooltip title={omittedValues?.map(({ label }) => label)} color="blue">
+                        <span>+{omittedValues?.length}...</span>
+                      </Tooltip>
+                    )}
                   >
                     {dataNhomGia?.map((item) => (
                       <Option key={item.Ma} value={item.Ma}>
-                        {item.Ma} - {item.Ten}
+                        <p className="truncate">
+                          {item.Ma} - {item.Ten}
+                        </p>
                       </Option>
                     ))}
                   </Select>

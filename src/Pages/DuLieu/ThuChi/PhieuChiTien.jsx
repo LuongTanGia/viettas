@@ -226,6 +226,7 @@ const PhieuChiTien = () => {
 
     getChucNangQuyenHan()
   }, [])
+
   useEffect(() => {
     if (dataQuyenHan?.VIEW == false) {
       setIsShowNotify(true)

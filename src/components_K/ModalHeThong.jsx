@@ -44,14 +44,19 @@ const ModalHeThong = ({ close }) => {
   // const [dataHMThu, setDataHMThu] = useState([])
   const [isLoading, setIsLoading] = useState(true)
 
-  const [formHT, setFormHT] = useState({})
+  const [formHT, setFormHT] = useState()
 
   useEffect(() => {
     if (data) {
-      setFormHT(data)
+      setFormHT({
+        ...data,
+        Ca2_BatDau: data.Ca2 ? data.Ca2_BatDau : null,
+        Ca2_KetThuc: data.Ca2 ? data.Ca2_KetThuc : null,
+        Ca3_BatDau: data.Ca3 ? data.Ca3_BatDau : null,
+        Ca3_KetThuc: data.Ca3 ? data.Ca3_KetThuc : null,
+      })
     }
   }, [data])
-
   // get helper
   useEffect(() => {
     const fetchData = async (apiFunc, setDataFunc) => {
@@ -156,12 +161,12 @@ const ModalHeThong = ({ close }) => {
     }
 
     if (formHT?.Ca2_KetThuc - formHT?.Ca1_BatDau > 1440) {
-      toast.warning('Thời gian phân ca không được quá một ngày!')
+      toast.warning('Tổng thời gian của ca không dược quá 24h!')
       return
     }
 
     if (formHT?.Ca3_KetThuc - formHT?.Ca1_BatDau > 1440) {
-      toast.warning('Thời gian phân ca không được quá một ngày!')
+      toast.warning('Tổng thời gian của ca không dược quá 24h!')
       return
     }
 
@@ -460,7 +465,7 @@ const ModalHeThong = ({ close }) => {
                         <div className="flex gap-2 items-center">
                           <label>Từ</label>
                           <TimeField
-                            className="w-[70px]"
+                            className="max-w-[70px]"
                             sx={{
                               '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
                               '& .MuiButtonBase-root': {
@@ -472,8 +477,8 @@ const ModalHeThong = ({ close }) => {
                               },
                             }}
                             format="HH:mm"
-                            maxTime={formHT?.Ca1_KetThuc < 1440 ? dayjs(convertMinutesToHHMM(formHT.Ca1_KetThuc)) : undefined}
-                            value={dayjs(convertMinutesToHHMM(formHT.Ca1_BatDau))}
+                            maxTime={formHT?.Ca1_KetThuc < 1440 ? dayjs(convertMinutesToHHMM(formHT?.Ca1_KetThuc)) : undefined}
+                            value={dayjs(convertMinutesToHHMM(formHT?.Ca1_BatDau))}
                             onChange={(newDate) => {
                               const convertNewDate = convertHHMMToMinutes(dayjs(newDate).format('HH:mm'))
                               setFormHT({ ...formHT, Ca1_BatDau: convertNewDate })
@@ -484,7 +489,7 @@ const ModalHeThong = ({ close }) => {
                         <div className="flex gap-2 items-center">
                           <label>Đến</label>
                           <TimeField
-                            className="w-[70px]"
+                            className="max-w-[70px]"
                             sx={{
                               '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
                               '& .MuiButtonBase-root': {
@@ -496,8 +501,8 @@ const ModalHeThong = ({ close }) => {
                               },
                             }}
                             format="HH:mm"
-                            minTime={formHT?.Ca1_KetThuc < 1440 ? dayjs(convertMinutesToHHMM(formHT.Ca1_BatDau)) : undefined}
-                            value={dayjs(convertMinutesToHHMM(formHT.Ca1_KetThuc))}
+                            minTime={formHT?.Ca1_KetThuc < 1440 ? dayjs(convertMinutesToHHMM(formHT?.Ca1_BatDau)) : undefined}
+                            value={dayjs(convertMinutesToHHMM(formHT?.Ca1_KetThuc))}
                             onChange={(newDate) => {
                               const convertNewDate = convertHHMMToMinutes(dayjs(newDate).format('HH:mm'))
                               setFormHT({ ...formHT, Ca1_KetThuc: convertNewDate })
@@ -508,7 +513,7 @@ const ModalHeThong = ({ close }) => {
                         <Tooltip title="Hôm sau" color="blue">
                           <Checkbox
                             disabled={!formHT?.SUDUNG_BANLE || !formHT?.Ca1}
-                            checked={formHT.Ca1_KetThuc >= 1440 ? true : false}
+                            checked={formHT?.Ca1_KetThuc >= 1440 ? true : false}
                             onChange={(e) => {
                               const newValue = e.target.checked ? formHT.Ca1_KetThuc + 1440 : formHT.Ca1_KetThuc - 1440
                               // const newValueCa2KT = formHT?.Ca1 && formHT.Ca2_KetThuc >= 1440 ? formHT.Ca2_KetThuc - 1440 : formHT.Ca2_KetThuc
@@ -526,7 +531,7 @@ const ModalHeThong = ({ close }) => {
                         <div className="flex gap-2 items-center">
                           <label>Từ</label>
                           <TimeField
-                            className="w-[70px]"
+                            className="max-w-[70px]"
                             format="HH:mm"
                             maxTime={formHT?.Ca2_KetThuc < 1440 ? dayjs(convertMinutesToHHMM(formHT.Ca2_KetThuc)) : undefined}
                             sx={{
@@ -542,7 +547,7 @@ const ModalHeThong = ({ close }) => {
                                 height: '18px',
                               },
                             }}
-                            value={dayjs(convertMinutesToHHMM(formHT.Ca2_BatDau))}
+                            value={dayjs(convertMinutesToHHMM(formHT?.Ca2_BatDau))}
                             onChange={(newDate) => {
                               const convertNewDate = convertHHMMToMinutes(dayjs(newDate).format('HH:mm'))
                               setFormHT({ ...formHT, Ca2_BatDau: convertNewDate })
@@ -553,7 +558,7 @@ const ModalHeThong = ({ close }) => {
                         <div className="flex gap-2 items-center">
                           <label>Đến</label>
                           <TimeField
-                            className="w-[70px]"
+                            className="max-w-[70px]"
                             format="HH:mm"
                             minTime={formHT?.Ca2_KetThuc < 1440 ? dayjs(convertMinutesToHHMM(formHT.Ca2_BatDau)) : undefined}
                             sx={{
@@ -566,7 +571,7 @@ const ModalHeThong = ({ close }) => {
                                 height: '18px',
                               },
                             }}
-                            value={dayjs(convertMinutesToHHMM(formHT.Ca2_KetThuc))}
+                            value={dayjs(convertMinutesToHHMM(formHT?.Ca2_KetThuc))}
                             onChange={(newDate) => {
                               const convertNewDate = convertHHMMToMinutes(dayjs(newDate).format('HH:mm'))
                               setFormHT({ ...formHT, Ca2_KetThuc: convertNewDate })
@@ -576,7 +581,7 @@ const ModalHeThong = ({ close }) => {
                         </div>
                         <Tooltip title="Hôm sau" color="blue">
                           <Checkbox
-                            checked={formHT.Ca2_KetThuc >= 1440 ? true : false}
+                            checked={formHT?.Ca2_KetThuc >= 1440 ? true : false}
                             onChange={(e) => {
                               const newValue = e.target.checked ? formHT.Ca2_KetThuc + 1440 : formHT.Ca2_KetThuc - 1440
 
@@ -597,7 +602,7 @@ const ModalHeThong = ({ close }) => {
                         <div className="flex gap-2 items-center">
                           <label>Từ</label>
                           <TimeField
-                            className="w-[70px]"
+                            className="max-w-[70px]"
                             format="HH:mm"
                             maxTime={formHT?.Ca3_KetThuc < 1440 ? dayjs(convertMinutesToHHMM(formHT.Ca3_KetThuc)) : undefined}
                             sx={{
@@ -610,7 +615,7 @@ const ModalHeThong = ({ close }) => {
                                 height: '18px',
                               },
                             }}
-                            value={dayjs(convertMinutesToHHMM(formHT.Ca3_BatDau))}
+                            value={dayjs(convertMinutesToHHMM(formHT?.Ca3_BatDau))}
                             onChange={(newDate) => {
                               const convertNewDate = convertHHMMToMinutes(dayjs(newDate).format('HH:mm'))
                               setFormHT({ ...formHT, Ca3_BatDau: convertNewDate })
@@ -621,7 +626,7 @@ const ModalHeThong = ({ close }) => {
                         <div className="flex gap-2 items-center">
                           <label>Đến</label>
                           <TimeField
-                            className="w-[70px]"
+                            className="max-w-[70px]"
                             format="HH:mm"
                             maxTime={formHT?.Ca3_KetThuc < 1440 ? dayjs(convertMinutesToHHMM(formHT.Ca3_KetThuc)) : undefined}
                             sx={{
@@ -634,7 +639,7 @@ const ModalHeThong = ({ close }) => {
                                 height: '18px',
                               },
                             }}
-                            value={dayjs(convertMinutesToHHMM(formHT.Ca3_KetThuc))}
+                            value={dayjs(convertMinutesToHHMM(formHT?.Ca3_KetThuc))}
                             onChange={(newDate) => {
                               const convertNewDate = convertHHMMToMinutes(dayjs(newDate).format('HH:mm'))
                               setFormHT({ ...formHT, Ca3_KetThuc: convertNewDate })
@@ -644,7 +649,7 @@ const ModalHeThong = ({ close }) => {
                         </div>
                         <Tooltip title="Hôm sau" color="blue">
                           <Checkbox
-                            checked={formHT.Ca3_KetThuc >= 1440 ? true : false}
+                            checked={formHT?.Ca3_KetThuc >= 1440 ? true : false}
                             onChange={(e) => {
                               const newValue = e.target.checked ? formHT.Ca3_KetThuc + 1440 : formHT.Ca3_KetThuc - 1440
                               setFormHT({ ...formHT, Ca3_KetThuc: newValue })

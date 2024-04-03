@@ -57,9 +57,7 @@ const BangGiaKH = () => {
         setIsShowOption(false)
       }
     }
-
     document.addEventListener('click', handleClickOutside)
-
     return () => {
       document.removeEventListener('click', handleClickOutside)
     }
@@ -93,7 +91,7 @@ const BangGiaKH = () => {
     const fetchData = async () => {
       try {
         const tokenLogin = localStorage.getItem('TKN')
-        if (actionType === 'create' || actionType === 'edit') {
+        if (actionType === 'create') {
           const responseDT = await apis.ListHelperDTGKH(tokenLogin)
           if (responseDT) {
             const { DataError, DataErrorDescription, DataResults } = responseDT.data
@@ -112,6 +110,25 @@ const BangGiaKH = () => {
             }
           }
 
+          const responseNG = await apis.ListHelperNGGKH(tokenLogin)
+          if (responseNG) {
+            const { DataError, DataErrorDescription, DataResults } = responseNG.data
+            if (DataError === 0) {
+              setDataNhomGia(DataResults)
+              setIsLoadingModal(false)
+            } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+              toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+              setIsLoadingModal(false)
+            } else if (DataError === -107 || DataError === -108) {
+              await RETOKEN()
+              fetchData()
+            } else {
+              toast.error(DataErrorDescription)
+              setIsLoadingModal(false)
+            }
+          }
+        }
+        if (actionType === 'edit') {
           const responseNG = await apis.ListHelperNGGKH(tokenLogin)
           if (responseNG) {
             const { DataError, DataErrorDescription, DataResults } = responseNG.data
@@ -199,8 +216,8 @@ const BangGiaKH = () => {
   const getDSGKH = async () => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
-
       const response = await apis.DanhSachGKH(tokenLogin)
+
       if (response) {
         const { DataError, DataErrorDescription, DataResults } = response.data
         if (DataError === 0) {

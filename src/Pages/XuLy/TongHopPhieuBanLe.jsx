@@ -540,7 +540,7 @@ const TongHopPBL = () => {
                   return (
                     <Table.Summary fixed="bottom">
                       <Table.Summary.Row>
-                        <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell>
+                        <Table.Summary.Cell index={0} key={`summary-cell-${0}`} className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell>
                         {newColumnsHide
                           .filter((column) => column.render)
                           .map((column, index) => {
