@@ -869,7 +869,7 @@ const DoanhSoBanHangQuay = () => {
                   </div>
                 </div>
               </div>
-              <div className="TruyVan" id="my-table">
+              <div className="DSBH_KH_HH" id="my-table">
                 <Table
                   loading={tableLoad}
                   className="setHeight"

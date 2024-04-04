@@ -462,6 +462,13 @@ const categoryAPI = {
     }
     return axiosClient.post(url, body, { headers })
   },
+  InfoDSBHKhachHang_HangHoa(body, accessToken) {
+    const url = '/inquiries/DoanhSo/KhachHangHangHoa'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
   InfoDSBHKHO(body, accessToken) {
     const url = '/inquiries/DoanhSo/KhoHang'
     const headers = {
@@ -469,7 +476,6 @@ const categoryAPI = {
     }
     return axiosClient.post(url, body, { headers })
   },
-
   InfoDSBHQuay(body, accessToken) {
     const url = '/inquiries/DoanhSo/Quay'
     const headers = {

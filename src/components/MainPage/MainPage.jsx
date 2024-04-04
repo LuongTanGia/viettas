@@ -26,7 +26,7 @@ import DoiTuong from '../../Pages/DanhMuc/DoiTuong'
 import GiaBanLe from '../../Pages/ThietLap/GiaBanLe'
 import GiaBanSi from '../../Pages/ThietLap/GiaBanSi'
 import BangGiaKH from '../../Pages/ThietLap/BangGiaKH'
-import DSBHKH_HH from '../DoanhSoBanHang/DSBH(KH_HH)'
+// import DSBHKH_HH from '../DoanhSoBanHang/DSBH(KH_HH)'
 import NhomDoiTuong from '../../Pages/DanhMuc/NhomDoiTuong'
 import NhomHang from '../../Pages/DanhMuc/NhomHang'
 import HangMucThu from '../../Pages/DanhMuc/HangMucThu'
@@ -51,6 +51,7 @@ import PhanQuyen from '../../Pages/HeThong/PhanQuyen'
 import ThongKeQuyenHan from '../../Pages/HeThong/ThongKeQuyenHan'
 import CongNoDauVao from '../../Pages/TruyVan/CongNoDauVao'
 import CongNoDauRa from '../../Pages/TruyVan/CongNoDauRa'
+import DoanhSoBanHangKH_HH from '../../Pages/TruyVan/DoanhSoBanHangKH_HH'
 
 function MainPage({ isSidebarVisible, isTableLoad, isTargetRow }) {
   return (
@@ -89,7 +90,7 @@ function MainPage({ isSidebarVisible, isTableLoad, isTargetRow }) {
           <Route path="/TruyVan_CongNoDauVao" element={<CongNoDauVao />} />
           <Route path="/TruyVan_DoanhSoBanHangHH" element={<DoanhSoBanHangHH />} />
           <Route path="/TruyVan_DoanhSoBanHangKH" element={<DoanhSoBanHangKH />} />
-          <Route path="/TruyVan_DoanhSoBanHangKHHH" element={<DSBHKH_HH />} />
+          <Route path="/TruyVan_DoanhSoBanHangKHHH" element={<DoanhSoBanHangKH_HH />} />
           <Route path="/TruyVan_DoanhSoBanHangKhoHang" element={<DoanhSoBanHangKho />} />
           <Route path="/TruyVan_DoanhSoBanHangQuay" element={<DoanhSoBanHangQuay />} />
           <Route path="/TruyVan_SoQuy" element={<SoQuy />} />
