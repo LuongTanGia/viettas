@@ -40,7 +40,7 @@ const DoanhSoBanHangKho = () => {
   const [selectedNhomList, setSelectedNhomList] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [hiddenRow, setHiddenRow] = useState([])
-  const [checkedList, setcheckedList] = useState([])
+  const [checkedList, setCheckedList] = useState([])
   const [selectVisible, setSelectVisible] = useState(false)
   const [options, setOptions] = useState()
   const [tableLoad, setTableLoad] = useState(true)
@@ -100,7 +100,7 @@ const DoanhSoBanHangKho = () => {
           await RETOKEN()
           getListNhomHangNXT()
         } else {
-          console.log(response.data)
+          setNhomHangNXT([])
           setIsLoading(true)
         }
       } catch (error) {
@@ -123,6 +123,7 @@ const DoanhSoBanHangKho = () => {
           await RETOKEN()
           getListHangHoaNXT()
         } else {
+          setHangHoaNXT([])
           console.log(response.data)
           setIsLoading(true)
         }
@@ -166,13 +167,13 @@ const DoanhSoBanHangKho = () => {
       getTimeSetting()
     }
   }, [isLoading])
-  console.log(dayjs(khoanNgayFrom).format('YYYY-MM-DD'), dayjs(khoanNgayTo).format('YYYY-MM-DD'))
+
   useEffect(() => {
     const getDataNXTFirst = async () => {
       try {
         if (isLoading == true) {
           setTableLoad(true)
-          const response = await categoryAPI.InfoBSDHKHO(
+          const response = await categoryAPI.InfoDSBHKHO(
             dateData == {}
               ? {}
               : {
@@ -203,7 +204,7 @@ const DoanhSoBanHangKho = () => {
 
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
-    setcheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
+    setCheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
     const ColKey = filteredHangHoa && filteredHangHoa[0] && Object.keys(filteredHangHoa[0]).filter((item) => typeof item == 'string' && item.includes(`Col_`))
     const key = Object.keys(dataNXT[0] || []).filter((key) => !ColKey.includes(key))
     setOptions(key)
@@ -211,7 +212,7 @@ const DoanhSoBanHangKho = () => {
 
   const getDataNXT = async () => {
     try {
-      const response = await categoryAPI.InfoBSDHKHO(
+      const response = await categoryAPI.InfoDSBHKHO(
         {
           NgayBatDau: dateData.NgayBatDau,
           NgayKetThuc: dateData.NgayKetThuc,
@@ -324,7 +325,7 @@ const DoanhSoBanHangKho = () => {
     setSelectVisible(!selectVisible)
   }
   const onChange = (checkedValues) => {
-    setcheckedList(checkedValues)
+    setCheckedList(checkedValues)
   }
   const onClickSubmit = () => {
     setTableLoad(true)
@@ -370,7 +371,7 @@ const DoanhSoBanHangKho = () => {
                 width: 150,
                 align: 'center',
                 render: (text) => (
-                  <div className={`text-end ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+                  <div className={`text-end ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
                     <HighlightedCell text={formatThapPhan(text, dataThongSo?.SOLESOTIEN)} search={searchHangHoa} />
                   </div>
                 ),
@@ -390,7 +391,7 @@ const DoanhSoBanHangKho = () => {
                   showTitle: false,
                 },
                 render: (text) => (
-                  <div className={`text-end ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+                  <div className={`text-end ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
                     <HighlightedCell text={formatThapPhan(text, dataThongSo?.SOLESOTIEN)} search={searchHangHoa} />
                   </div>
                 ),
@@ -407,7 +408,7 @@ const DoanhSoBanHangKho = () => {
                 ellipsis: true,
                 align: 'center',
                 render: (text) => (
-                  <div className={`text-end ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+                  <div className={`text-end ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
                     <HighlightedCell text={formatThapPhan(text, dataThongSo?.SOLESOTIEN)} search={searchHangHoa} />
                   </div>
                 ),
@@ -443,7 +444,7 @@ const DoanhSoBanHangKho = () => {
                   width: 150,
                   align: 'center',
                   render: (text) => (
-                    <div className={`text-end ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+                    <div className={`text-end ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
                       <HighlightedCell text={formatThapPhan(text, dataThongSo?.SOLESOTIEN)} search={searchHangHoa} />
                     </div>
                   ),
@@ -463,7 +464,7 @@ const DoanhSoBanHangKho = () => {
                     showTitle: false,
                   },
                   render: (text) => (
-                    <div className={`text-end ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+                    <div className={`text-end ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
                       <HighlightedCell text={formatThapPhan(text, dataThongSo?.SOLESOTIEN)} search={searchHangHoa} />
                     </div>
                   ),
@@ -480,7 +481,7 @@ const DoanhSoBanHangKho = () => {
                   ellipsis: true,
                   align: 'center',
                   render: (text) => (
-                    <div className={`text-end ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+                    <div className={`text-end ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
                       <HighlightedCell text={formatThapPhan(text, dataThongSo?.SOLESOTIEN)} search={searchHangHoa} />
                     </div>
                   ),
@@ -505,7 +506,7 @@ const DoanhSoBanHangKho = () => {
           fixed: 'right',
           align: 'center',
           render: (text) => (
-            <div className={`text-end ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+            <div className={`text-end ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
               <HighlightedCell text={formatThapPhan(text, dataThongSo?.SOLESOTIEN)} search={searchHangHoa} />
             </div>
           ),

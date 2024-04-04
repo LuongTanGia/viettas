@@ -98,16 +98,21 @@ const PCCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
   }, [isLoading])
 
   const handleCreate = async (isSave = true) => {
-    // if (!PCForm?.MaNguoiDung?.trim() || !PCForm?.SoQuay || !PCForm?.MaCa) {
-    //   setErrors({
-    //     MaNguoiDung: PCForm?.MaNguoiDung?.trim() ? null : 'Người dùng không được trống',
-    //     SoQuay: !PCForm?.MaCa ? null : PCForm?.SoQuay ? null : 'Quầy không được trống',
-    //     MaCa: !PCForm?.SoQuay ? null : PCForm?.MaCa ? null : 'Ca không được trống',
-    //   })
-    //   return
-    // }
+    if (!PCForm?.MaNguoiDung?.trim()) {
+      setErrors({
+        MaNguoiDung: PCForm?.MaNguoiDung?.trim() ? null : 'Người dùng không được trống',
+      })
+      return
+    } else if (!PCForm?.SoQuay || !PCForm?.MaCa) {
+      setErrors({
+        SoQuay: !PCForm?.MaCa ? null : PCForm?.SoQuay ? null : 'Quầy không được trống',
+        MaCa: !PCForm?.SoQuay ? null : PCForm?.MaCa ? null : 'Ca không được trống',
+      })
+      return
+    }
     try {
-      const response = await categoryAPI.ThemPhanCa({ ...PCForm, HieuLucTu: dayjs(DateFrom).format('YYYY-MM-DDTHH:mm:ss') }, TokenAccess)
+      console.log({ ...PCForm, HieuLucTu: dayjs(DateFrom).format('YYYY-MM-DD') })
+      const response = await categoryAPI.ThemPhanCa({ ...PCForm, HieuLucTu: dayjs(DateFrom).format('YYYY-MM-DD') }, TokenAccess)
       if (response.data.DataError == 0) {
         isSave ? setPCForm([]) : close()
         loadingData()
@@ -172,7 +177,7 @@ const PCCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
                       <DateField
                         className="DatePicker_NXTKho max-w-[130px] "
                         format="DD/MM/YYYY"
-                        value={DateFrom || null}
+                        value={DateFrom}
                         onChange={(values) => {
                           setPCForm({ ...PCForm, HieuLucTu: dayjs(setDateFrom(values)).format('YYYY-MM-DD') })
                         }}

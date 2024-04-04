@@ -3,7 +3,7 @@
 import { toast } from 'react-toastify'
 import moment from 'moment'
 import dayjs from 'dayjs'
-import { MdPrint } from 'react-icons/md'
+// import { MdPrint } from 'react-icons/md'
 import { useEffect, useState } from 'react'
 import categoryAPI from '../../../../API/linkAPI'
 import logo from '../../../../assets/VTS-iSale.ico'
@@ -16,8 +16,6 @@ const QLEdit = ({ close, loadingData, setTargetRow, dataQL, maNguoiDung }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const [dataUser, setDataUser] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [DateFrom, setDateFrom] = useState(dayjs(new Date()))
-  const [DateTo, setDateTo] = useState(null)
   const innitProduct = {
     MaQuanLy: '',
     MaNguoiDung: '',
@@ -66,7 +64,10 @@ const QLEdit = ({ close, loadingData, setTargetRow, dataQL, maNguoiDung }) => {
       return
     }
     try {
-      const response = await categoryAPI.SuaQuanLy({ Ma: dataQL?.MaQuanLy, Data: { ...QLForm } }, TokenAccess)
+      const response = await categoryAPI.SuaQuanLy(
+        { Ma: dataQL?.MaQuanLy, Data: { ...QLForm, TuNgay: dayjs(QLForm?.TuNgay).format('YYYY-MM-DD'), DenNgay: dayjs(QLForm?.DenNgay).format('YYYY-MM-DD') } },
+        TokenAccess,
+      )
       if (response.data.DataError == 0) {
         isPrint ? handlePrint() : toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
         loadingData()
@@ -104,7 +105,7 @@ const QLEdit = ({ close, loadingData, setTargetRow, dataQL, maNguoiDung }) => {
           <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10">
             <div className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"></div>
             <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col bg-white p-2 rounded shadow-custom overflow-hidden">
-              <div className="flex flex-col gap-2 py-1 px-2 md:w-[80vw] lg:w-[65vw] xl:w-[55vw] 2xl:w-[45vw]">
+              <div className="flex flex-col gap-2 py-1 px-2 md:w-[80vw] lg:w-[65vw] xl:w-[50vw] 2xl:w-[45vw]">
                 <div className="flex gap-2">
                   <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
                   <p className="text-blue-700 font-semibold uppercase">Sửa - Quản Lý</p>
@@ -165,9 +166,9 @@ const QLEdit = ({ close, loadingData, setTargetRow, dataQL, maNguoiDung }) => {
                       <DateField
                         className="DatePicker_NXTKho max-w-[130px]  "
                         format="DD/MM/YYYY"
-                        value={DateFrom || null}
+                        value={dayjs(QLForm?.TuNgay)}
                         onChange={(values) => {
-                          setQLForm({ ...QLForm, TuNgay: dayjs(setDateFrom(values)).format('YYYY-MM-DD') })
+                          setQLForm({ ...QLForm, TuNgay: dayjs(values).format('YYYY-MM-DD') })
                         }}
                         sx={{
                           '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
@@ -186,9 +187,9 @@ const QLEdit = ({ close, loadingData, setTargetRow, dataQL, maNguoiDung }) => {
                       <DateField
                         className="DatePicker_NXTKho max-w-[130px]"
                         format="DD/MM/YYYY"
-                        value={DateTo || null}
+                        value={QLForm?.DenNgay ? dayjs(QLForm?.DenNgay) : null}
                         onChange={(values) => {
-                          setQLForm({ ...QLForm, DenNgay: dayjs(setDateTo(values)).format('YYYY-MM-DD') })
+                          setQLForm({ ...QLForm, DenNgay: dayjs(values).format('YYYY-MM-DD') })
                         }}
                         sx={{
                           '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
@@ -283,7 +284,7 @@ const QLEdit = ({ close, loadingData, setTargetRow, dataQL, maNguoiDung }) => {
                 <div className="flex items-center justify-between">
                   <div>
                     <ActionButton
-                      icon={<MdPrint className="w-5 h-5" />}
+                      // icon={<MdPrint className="w-5 h-5" />}
                       handleAction={() => handleEdit(true, true)}
                       title={'In thẻ'}
                       color={'slate-50'}
@@ -296,7 +297,7 @@ const QLEdit = ({ close, loadingData, setTargetRow, dataQL, maNguoiDung }) => {
                   <div className="flex gap-2 justify-end">
                     <ActionButton
                       handleAction={() => handleEdit(false, false)}
-                      title={'Xác nhận'}
+                      title={'Lưu & đóng'}
                       isModal={true}
                       color={'slate-50'}
                       background={'blue-500'}

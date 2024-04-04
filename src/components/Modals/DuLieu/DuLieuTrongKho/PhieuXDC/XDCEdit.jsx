@@ -200,7 +200,10 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
         }
       })
       if (newData?.length > 0) {
-        const response = await categoryAPI.XDCEdit({ SoChungTu: dataXDC?.SoChungTu, Data: { ...XDCForm, DataDetails: newData } }, TokenAccess)
+        const response = await categoryAPI.XDCEdit(
+          { SoChungTu: dataXDC?.SoChungTu, Data: { ...XDCForm, NgayCTu: dayjs(XDCForm?.NgayCTu).format('YYYY-MM-DD'), DataDetails: newData } },
+          TokenAccess,
+        )
         if (response.data.DataError == 0) {
           isPrint ? handlePrint() : (close(), toast.success(response.data.DataErrorDescription, { autoClose: 1000 }))
           loadingData()

@@ -3,7 +3,7 @@
 import { toast } from 'react-toastify'
 import { useEffect, useState } from 'react'
 import dayjs from 'dayjs'
-import { MdPrint } from 'react-icons/md'
+// import { MdPrint } from 'react-icons/md'
 import { Checkbox, Input, Select } from 'antd'
 import { DateField } from '@mui/x-date-pickers'
 import categoryAPI from '../../../../API/linkAPI'
@@ -19,6 +19,7 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
   const [isLoading, setIsLoading] = useState(false)
   const [DateFrom, setDateFrom] = useState(dayjs(new Date()))
   const [DateTo, setDateTo] = useState(null)
+  const [dateChange, setDateChange] = useState(false)
   const innitProduct = {
     MaQuanLy: '',
     MaNguoiDung: '',
@@ -61,6 +62,25 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
     }
   }, [isLoading])
 
+  const handleDateChange = () => {
+    let timerId
+    clearTimeout(timerId)
+    timerId = setTimeout(() => {
+      if (!dateChange && DateTo !== null && DateFrom && DateTo && typeof DateFrom.isAfter === 'function' && typeof DateTo.isAfter === 'function' && DateFrom.isAfter(DateTo)) {
+        setQLForm({ ...QLForm, TuNgay: dayjs(DateFrom).format('YYYY-MM-DD'), DenNgay: dayjs(DateFrom).format('YYYY-MM-DD') })
+        return
+      } else if (dateChange && DateTo !== null && DateFrom && DateTo && DateFrom.isAfter(DateTo)) {
+        setQLForm({ ...QLForm, TuNgay: dayjs(DateTo).format('YYYY-MM-DD'), DenNgay: dayjs(DateTo).format('YYYY-MM-DD') })
+      } else {
+        setQLForm({ ...QLForm, TuNgay: dayjs(DateFrom).format('YYYY-MM-DD'), DenNgay: dayjs(DateTo).format('YYYY-MM-DD') })
+      }
+    }, 300)
+  }
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      handleDateChange()
+    }
+  }
   const handleCreate = async (isSave = true, isPrint = true) => {
     if ((dataThongSo?.ALLOW_MAQUANLYTUDONG ? null : !QLForm?.MaQuanLy?.trim()) || !QLForm?.MaNguoiDung?.trim()) {
       setErrors({
@@ -69,8 +89,9 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
       })
       return
     }
+    console.log({ ...QLForm })
     try {
-      const response = await categoryAPI.ThemQuanLy({ ...QLForm, TuNgay: dayjs(DateFrom).format('YYYY-MM-DDTHH:mm:ss') }, TokenAccess)
+      const response = await categoryAPI.ThemQuanLy({ ...QLForm, TuNgay: dayjs(DateFrom).format('YYYY-MM-DD') }, TokenAccess)
       if (response.data.DataError == 0) {
         isPrint
           ? (dataThongSo.ALLOW_MAQUANLYTUDONG ? handlePrint(response.data.DataResults[0].Ma) : handlePrint(), setQLForm({ KhongKetThuc: true }))
@@ -110,7 +131,7 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
           <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10">
             <div className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"></div>
             <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col bg-white p-2 rounded shadow-custom overflow-hidden">
-              <div className="flex flex-col gap-2 py-1 px-2 md:w-[80vw] lg:w-[65vw] xl:w-[55vw] 2xl:w-[45vw]">
+              <div className="flex flex-col gap-2 py-1 px-2 md:w-[80vw] lg:w-[60vw] xl:w-[50vw] 2xl:w-[45vw]">
                 <div className="flex gap-2">
                   <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
                   <p className="text-blue-700 font-semibold uppercase">Thêm - Quản Lý</p>
@@ -121,10 +142,10 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
                       <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Mã quản lý</label>
                       <Input
                         required
-                        placeholder={errors.MaQuanLy && errors.MaQuanLy}
+                        placeholder={errors?.MaQuanLy && errors?.MaQuanLy}
                         size="small"
                         disabled={dataThongSo && dataThongSo?.ALLOW_MAQUANLYTUDONG === true}
-                        className={`${errors.MaQuanLy ? 'border-red-500' : ''} w-[100%] overflow-hidden whitespace-nowrap overflow-ellipsis`}
+                        className={`${errors?.MaQuanLy ? 'border-red-500' : ''} w-[100%] overflow-hidden whitespace-nowrap overflow-ellipsis`}
                         value={QLForm?.MaQuanLy}
                         onChange={(e) => {
                           setQLForm({
@@ -157,7 +178,7 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
                       showSearch
                       required
                       size="small"
-                      status={errors.MaNguoiDung ? 'error' : ''}
+                      status={errors?.MaNguoiDung ? 'error' : ''}
                       placeholder={errors?.MaNguoiDung ? errors?.MaNguoiDung : ''}
                       value={QLForm?.MaNguoiDung || undefined}
                       onChange={(value) => {
@@ -185,9 +206,12 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
                       <DateField
                         className="DatePicker_NXTKho max-w-[130px]"
                         format="DD/MM/YYYY"
-                        value={DateFrom || null}
+                        value={DateFrom}
+                        onBlur={handleDateChange}
+                        onKeyDown={handleKeyDown}
                         onChange={(values) => {
-                          setQLForm({ ...QLForm, TuNgay: dayjs(setDateFrom(values)).format('YYYY-MM-DD') })
+                          setDateFrom(values)
+                          setDateChange(false)
                         }}
                         sx={{
                           '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
@@ -206,9 +230,18 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
                       <DateField
                         className="DatePicker_NXTKho max-w-[130px]"
                         format="DD/MM/YYYY"
-                        value={DateTo || null}
-                        onChange={(values) => {
-                          setQLForm({ ...QLForm, DenNgay: dayjs(setDateTo(values)).format('YYYY-MM-DD') })
+                        value={QLForm.DenNgay}
+                        onBlur={handleDateChange}
+                        onKeyDown={handleKeyDown}
+                        slotProps={{
+                          input: {
+                            helperText: errors?.DenNgay ? errors?.DenNgay : '',
+                          },
+                        }}
+                        onError={(newError) => setErrors(newError)}
+                        onChange={(value) => {
+                          setDateTo(value)
+                          setDateChange(true)
                         }}
                         sx={{
                           '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
@@ -280,7 +313,7 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
                     <ActionButton
                       handleAction={() => handleCreate(true, true)}
                       title={'In thẻ'}
-                      icon={<MdPrint className="w-5 h-5" />}
+                      // icon={<MdPrint className="w-5 h-5" />}
                       color={'slate-50'}
                       background={'purple-500'}
                       color_hover={'purple-500'}

@@ -221,6 +221,7 @@ export const nameColumsNhapXuatTon_TongKho = {
   SoLuongXuat_XTR: 'S.Lượng Trả',
   TriGiaXuat_XTR: 'T.Giá Trả',
 }
+
 export const nameColumsDSBHKHO = {
   STT: 'STT',
   NhomHang: 'Nhóm',
@@ -242,6 +243,24 @@ export const nameColumsDSBHKHO = {
   Le_TongCong: 'Lẻ - Tổng Cộng',
   Si_TongCong: 'Sỉ - Tổng cộng',
   TongCong: 'Tổng cộng',
+}
+export const nameColumsDSBHHH = {
+  MaHang: 'Mã hàng',
+  TenHang: 'Tên hàng',
+  DVT: 'ĐVT',
+  ThongTinHangHoa: 'Thông tin hàng hóa',
+  SoLuong: 'Số lượng',
+  TienHang: 'Tiền hàng',
+  TienThue: 'Tiền thuế',
+  ThanhTien: 'Thành tiền',
+  TienCKTT: 'Chiết khấu',
+  TongCong: 'Tổng cộng',
+  TongCong_TM: 'Tiền mặt',
+  TongCong_CN: 'Công nợ',
+  // Khách hàng
+  MaDoiTuong: 'Mã khách hàng',
+  TenDoiTuong: 'Tên khách hàng',
+  DiaChiDoiTuong: 'Địa chỉ',
 }
 export const nameColumsDSBHQUAY = {
   STT: 'STT',
@@ -534,13 +553,17 @@ export const nameColumsCongNoDauVao = {
   TenDoiTuong: 'Tên khách hàng',
   DiaChiDoiTuong: 'Địa chỉ',
   SoDuDK: 'Số dư đầu',
-  PhatSinhNo_PMH: 'Mua hàng',
-  PhatSinhNo_DC: 'Điều chỉnh công nợ',
-  PhatSinhNo_Thu_XTR: 'Thu trả hàng',
-  PhatSinhNo: 'Tổng phát sinh nợ',
-  ThanhToan_Chi_PMH: 'Chi công nợ',
-  ThanhToan_DC: 'Điều chỉnh công nợ',
-  ThanhToan_XTR: 'Trả hàng thanh toán',
+  PhatSinhNo_PMH: 'PS Mua hàng',
+  PhatSinhNo_PBS: 'PS Bán hàng',
+  PhatSinhNo_DC: 'PS Điều chỉnh',
+  PhatSinhNo_Thu_XTR: 'PS Thu trả',
+  PhatSinhNo_Chi_NTR: 'PS Chi trả',
+  PhatSinhNo: 'Tổng phát sinh',
+  ThanhToan_Chi_PMH: 'TT Chi hàng',
+  ThanhToan_Thu_PBS: 'TT Thu công nợ',
+  ThanhToan_DC: 'TT Điều chỉnh',
+  ThanhToan_XTR: 'TT Trả hàng',
+  ThanhToan_NTR: 'TT Trả hàng',
   ThanhToan: 'Tổng thanh toán',
   SoDuCK: 'Số dư cuối',
 }

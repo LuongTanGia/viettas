@@ -200,7 +200,10 @@ const HUYEdit = ({ close, dataHUY, loadingData, setTargetRow }) => {
         }
       })
       if (newData?.length > 0) {
-        const response = await categoryAPI.HUYEdit({ SoChungTu: dataHUY?.SoChungTu, Data: { ...HUYForm, DataDetails: newData } }, TokenAccess)
+        const response = await categoryAPI.HUYEdit(
+          { SoChungTu: dataHUY?.SoChungTu, Data: { ...HUYForm, NgayCTu: dayjs(HUYForm?.NgayCTu).format('YYYY-MM-DD'), DataDetails: newData } },
+          TokenAccess,
+        )
         if (response.data.DataError == 0) {
           isPrint ? handlePrint() : (close(), toast.success(response.data.DataErrorDescription, { autoClose: 1000 }))
           loadingData()

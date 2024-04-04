@@ -37,6 +37,21 @@
 .TruyVan .setHeight .ant-table {
   height: calc(100vh - 285px);
 }
+/* Công nợ */
+.CongNo .ant-table-wrapper.setHeight,
+.CongNo .setHeight .ant-spin-container,
+.CongNo .setHeight .ant-table,
+.CongNo .setHeight .ant-table-container .ant-table-body {
+  /* max-height: unset !important; */
+  height: calc(100vh - 370px);
+}
+.CongNo .setHeight .ant-table-container .ant-table-body {
+  max-height: unset !important;
+  /* height: calc(100vh - 500px); */
+}
+.CongNo .setHeight .ant-table {
+  height: calc(100vh - 260px);
+}
 /* XuLy */
 .XuLy_BinhQuan .ant-table-wrapper.setHeight,
 .XuLy_BinhQuan .setHeight .ant-spin-container,
@@ -94,6 +109,20 @@
 }
 .TruyVanDSKho_Child .setHeight .ant-table {
   height: calc(100vh - 290px);
+}
+
+.DSHangHoa .ant-table-wrapper.setHeight,
+.DSHangHoa .setHeight .ant-spin-container,
+.DSHangHoa .setHeight .ant-table,
+.DSHangHoa .setHeight .ant-table-container .ant-table-body {
+  /* max-height: unset !important; */
+  height: calc(100vh - 330px);
+}
+.DSHangHoa .setHeight .ant-table-container .ant-table-body {
+  max-height: unset !important;
+}
+.DSHangHoa .setHeight .ant-table {
+  height: calc(100vh - 260px);
 }
 /* SoQuy */
 .TruyVanSoQuy_Child .ant-table-wrapper.setHeight,
