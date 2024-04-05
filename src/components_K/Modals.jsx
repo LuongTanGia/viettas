@@ -18,7 +18,7 @@ import { Table, Select, Tooltip, Checkbox, FloatButton, Spin } from 'antd'
 import SimpleBackdrop from '../components/util/Loading/LoadingPage'
 const { Option } = Select
 
-const { TiPrinter, IoMdAddCircle } = icons
+const { IoMdAddCircle } = icons
 
 const Modals = ({
   close,
@@ -392,7 +392,6 @@ const Modals = ({
 
   const handleDoiTuongFocus = (selectedValue) => {
     setSelectedDoiTuong(selectedValue)
-
     // Tìm thông tin đối tượng tương ứng và cập nhật state
     const selectedDoiTuongInfo = dataDoiTuong.find((item) => item.Ma === selectedValue)
     setDoiTuongInfo(selectedDoiTuongInfo || { Ten: '', DiaChi: '' })
@@ -435,28 +434,10 @@ const Modals = ({
   }
 
   const handleCreateAndClose = async () => {
-    if (!selectedDoiTuong?.trim()) {
-      setErrors({
-        ...errors,
-        DoiTuong: selectedDoiTuong?.trim() ? null : 'Đối tượng không được để trống',
-      })
-      return
-    }
-    if (selectedDoiTuong === 'NCVL' || selectedDoiTuong === 'KHVL') {
-      if (!formCreate?.TenDoiTuong?.trim() || !formCreate?.DiaChi?.trim()) {
-        setErrors({
-          Ten: formCreate?.TenDoiTuong?.trim() ? '' : 'Tên đối tượng không được để trống',
-          DiaChi: formCreate?.DiaChi?.trim() ? '' : 'Địa chỉ không được để trống',
-        })
-        return
-      }
-    }
-    if (selectedRowData.length <= 0) {
-      toast.warning('Bảng chi tiết không được để trống')
-      return
-    }
-    if (selectedRowData.map((item) => item.MaHang).includes('Chọn mã hàng')) {
-      toast.warning('Mã hàng không được để trống, vui lòng chọn mã hàng!')
+    const errors = handleValidation()
+
+    if (Object.keys(errors).length > 0) {
+      setErrors(errors)
       return
     }
     try {
@@ -469,13 +450,13 @@ const Modals = ({
       let response
       switch (typePage) {
         case 'PMH':
-          response = await handleAPICreate(apis.ThemPMH, tokenLogin, formCreate, dataAddSTT, selectedDoiTuong, selectedKhoHang)
+          response = await apis.ThemPMH(tokenLogin, { ...formCreate, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
           break
         case 'NTR':
-          response = await handleAPICreate(apis.ThemNTR, tokenLogin, formCreate, dataAddSTT, selectedDoiTuong, selectedKhoHang)
+          response = await apis.ThemNTR(tokenLogin, { ...formCreate, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
           break
         case 'XTR':
-          response = await handleAPICreate(apis.ThemXTR, tokenLogin, formCreate, dataAddSTT, selectedDoiTuong, selectedKhoHang)
+          response = await apis.ThemXTR(tokenLogin, { ...formCreate, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
           break
         default:
           break
@@ -504,30 +485,10 @@ const Modals = ({
   }
 
   const handleCreate = async () => {
-    if (!selectedDoiTuong?.trim()) {
-      setErrors({
-        ...errors,
-        DoiTuong: selectedDoiTuong?.trim() ? null : 'Đối tượng không được để trống',
-      })
-      return
-    }
+    const errors = handleValidation()
 
-    if (selectedDoiTuong === 'NCVL' || selectedDoiTuong === 'KHVL') {
-      if (!formCreate?.TenDoiTuong?.trim() || !formCreate?.DiaChi?.trim()) {
-        setErrors({
-          Ten: formCreate?.TenDoiTuong?.trim() ? '' : 'Tên đối tượng không được để trống',
-          DiaChi: formCreate?.DiaChi?.trim() ? '' : 'Địa chỉ không được để trống',
-        })
-        return
-      }
-    }
-
-    if (selectedRowData.length <= 0) {
-      toast.warning('Chi tiết phiếu không được để trống')
-      return
-    }
-    if (selectedRowData.map((item) => item.MaHang).includes('Chọn mã hàng')) {
-      toast.warning('Mã hàng không được để trống, vui lòng chọn mã hàng!')
+    if (Object.keys(errors).length > 0) {
+      setErrors(errors)
       return
     }
     try {
@@ -539,13 +500,13 @@ const Modals = ({
       let response
       switch (typePage) {
         case 'PMH':
-          response = await handleAPICreate(apis.ThemPMH, tokenLogin, formCreate, dataAddSTT, selectedDoiTuong, selectedKhoHang)
+          response = await apis.ThemPMH(tokenLogin, { ...formCreate, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
           break
         case 'NTR':
-          response = await handleAPICreate(apis.ThemNTR, tokenLogin, formCreate, dataAddSTT, selectedDoiTuong, selectedKhoHang)
+          response = await apis.ThemNTR(tokenLogin, { ...formCreate, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
           break
         case 'XTR':
-          response = await handleAPICreate(apis.ThemXTR, tokenLogin, formCreate, dataAddSTT, selectedDoiTuong, selectedKhoHang)
+          response = await apis.ThemXTR(tokenLogin, { ...formCreate, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
           break
         default:
           break
@@ -578,30 +539,10 @@ const Modals = ({
   }
 
   const handlePrintInCreate = async () => {
-    if (!selectedDoiTuong?.trim()) {
-      setErrors({
-        ...errors,
-        DoiTuong: selectedDoiTuong?.trim() ? null : 'Đối tượng không được để trống',
-      })
-      return
-    }
+    const errors = handleValidation()
 
-    if (selectedDoiTuong === 'NCVL' || selectedDoiTuong === 'KHVL') {
-      if (!formCreate?.TenDoiTuong?.trim() || !formCreate?.DiaChi?.trim()) {
-        setErrors({
-          Ten: formCreate?.TenDoiTuong?.trim() ? '' : 'Tên đối tượng không được để trống',
-          DiaChi: formCreate?.DiaChi?.trim() ? '' : 'Địa chỉ không được để trống',
-        })
-        return
-      }
-    }
-
-    if (selectedRowData.length <= 0) {
-      toast.warning('Chi tiết phiếu không được để trống')
-      return
-    }
-    if (selectedRowData.map((item) => item.MaHang).includes('Chọn mã hàng')) {
-      toast.warning('Mã hàng không được để trống, vui lòng chọn mã hàng!')
+    if (Object.keys(errors).length > 0) {
+      setErrors(errors)
       return
     }
     try {
@@ -613,13 +554,13 @@ const Modals = ({
       let response
       switch (typePage) {
         case 'PMH':
-          response = await handleAPICreate(apis.ThemPMH, tokenLogin, formCreate, dataAddSTT, selectedDoiTuong, selectedKhoHang)
+          response = await apis.ThemPMH(tokenLogin, { ...formCreate, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
           break
         case 'NTR':
-          response = await handleAPICreate(apis.ThemNTR, tokenLogin, formCreate, dataAddSTT, selectedDoiTuong, selectedKhoHang)
+          response = await apis.ThemNTR(tokenLogin, { ...formCreate, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
           break
         case 'XTR':
-          response = await handleAPICreate(apis.ThemXTR, tokenLogin, formCreate, dataAddSTT, selectedDoiTuong, selectedKhoHang)
+          response = await apis.ThemXTR(tokenLogin, { ...formCreate, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
           break
         default:
           break
@@ -653,31 +594,11 @@ const Modals = ({
     }
   }
 
-  const handleAPICreate = async (apiFunc, tokenLogin, formCreate, dataAddSTT, selectedDoiTuong, selectedKhoHang) => {
-    try {
-      return await apiFunc(tokenLogin, { ...formCreate, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
-    } catch (error) {
-      console.error('Error while adding data:', error)
-      return null
-    }
-  }
-
   const handleEdit = async (dataRecord) => {
-    if (selectedDoiTuong === 'NCVL' || selectedDoiTuong === 'KHVL') {
-      if (!formEdit?.TenDoiTuong?.trim() || !formEdit?.DiaChi?.trim()) {
-        setErrors({
-          Ten: formEdit?.TenDoiTuong?.trim() ? '' : 'Tên đối tượng không được để trống',
-          DiaChi: formEdit?.DiaChi?.trim() ? '' : 'Địa chỉ không được để trống',
-        })
-        return
-      }
-    }
-    if (selectedRowData.length <= 0) {
-      toast.warning('Bảng chi tiết không được để trống!')
-      return
-    }
-    if (selectedRowData.map((item) => item.MaHang).includes('Chọn mã hàng')) {
-      toast.warning('Mã hàng không được để trống!')
+    const errors = handleValidation()
+
+    if (Object.keys(errors).length > 0) {
+      setErrors(errors)
       return
     }
 
@@ -715,6 +636,52 @@ const Modals = ({
         } else if (DataError === -107 || DataError === -108) {
           await RETOKEN()
           handleEdit()
+        } else {
+          toast.error(DataErrorDescription)
+        }
+      }
+    } catch (error) {
+      console.error('Error while saving data:', error)
+    }
+  }
+  const handlePrintInEdit = async () => {
+    const errors = handleValidation()
+
+    if (Object.keys(errors).length > 0) {
+      setErrors(errors)
+      return
+    }
+    try {
+      const tokenLogin = localStorage.getItem('TKN')
+      let response
+      switch (typePage) {
+        case 'PMH':
+          response = await apis.SuaPMH(tokenLogin, dataRecord.SoChungTu, { ...formEdit, DataDetails: selectedRowData }, selectedDoiTuong, selectedKhoHang)
+          break
+        case 'NTR':
+          response = await apis.SuaNTR(tokenLogin, dataRecord.SoChungTu, { ...formEdit, DataDetails: selectedRowData }, selectedDoiTuong, selectedKhoHang)
+          break
+        case 'XTR':
+          response = await apis.SuaXTR(tokenLogin, dataRecord.SoChungTu, { ...formEdit, DataDetails: selectedRowData }, selectedDoiTuong, selectedKhoHang)
+          break
+        default:
+          break
+      }
+      if (response) {
+        const { DataError, DataErrorDescription } = response.data
+        if (DataError === 0) {
+          loading()
+          setHightLight(dataRecord.SoChungTu)
+          setSelectedRowData([])
+          if (typePrint === 'print') setIsShowModalOnlyPrint(true)
+          else if (typePrint === 'printwarehouse') {
+            setIsShowModalOnlyPrintWareHouse(true)
+          }
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+        } else if (DataError === -107 || DataError === -108) {
+          await RETOKEN()
+          handlePrintInEdit()
         } else {
           toast.error(DataErrorDescription)
         }
@@ -818,16 +785,16 @@ const Modals = ({
         case 'print':
           switch (typePage) {
             case 'PMH':
-              response = await handleAPIPrint(apis.InPMH, tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+              response = await apis.InPMH(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
               break
             case 'NTR':
-              response = await handleAPIPrint(apis.InNTR, tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+              response = await apis.InNTR(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
               break
             case 'XTR':
-              response = await handleAPIPrint(apis.InXTR, tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+              response = await apis.InXTR(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
               break
             case 'PBL':
-              response = await handleAPIPrint(apis.InPBL, tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+              response = await apis.InPBL(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
               break
             default:
               break
@@ -836,16 +803,16 @@ const Modals = ({
         case 'printWareHouse':
           switch (typePage) {
             case 'PMH':
-              response = await handleAPIPrint(apis.InPK, tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+              response = await apis.InPK(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
               break
             case 'NTR':
-              response = await handleAPIPrint(apis.InPKNTR, tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+              response = await apis.InPKNTR(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
               break
             case 'XTR':
-              response = await handleAPIPrint(apis.InPKXTR, tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+              response = await apis.InPKXTR(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
               break
             case 'PBL':
-              response = await handleAPIPrint(apis.InPKPBL, tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+              response = await apis.InPKPBL(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
               break
             default:
               break
@@ -865,73 +832,6 @@ const Modals = ({
         } else if (DataError === -107 || DataError === -108) {
           await RETOKEN()
           handlePrint()
-        } else {
-          toast.error(DataErrorDescription)
-        }
-      }
-    } catch (error) {
-      console.error('Error while saving data:', error)
-    }
-  }
-
-  const handleAPIPrint = async (apiFunc, tokenLogin, form, selectedSctBD, selectedSctKT, lien) => {
-    try {
-      return await apiFunc(tokenLogin, form, selectedSctBD, selectedSctKT, lien)
-    } catch (error) {
-      console.error('Error while adding data:', error)
-      return null
-    }
-  }
-
-  const handlePrintInEdit = async () => {
-    if (selectedDoiTuong === 'NCVL' || selectedDoiTuong === 'KHVL') {
-      if (!formEdit?.TenDoiTuong?.trim() || !formEdit?.DiaChi?.trim()) {
-        setErrors({
-          Ten: formEdit?.TenDoiTuong?.trim() ? '' : 'Tên đối tượng không được để trống',
-          DiaChi: formEdit?.DiaChi?.trim() ? '' : 'Địa chỉ không được để trống',
-        })
-        return
-      }
-    }
-    if (selectedRowData.length <= 0) {
-      toast.warning('Bảng chi tiết không được để trống')
-      return
-    }
-    if (selectedRowData.map((item) => item.MaHang).includes('Chọn mã hàng')) {
-      toast.warning('Mã hàng không được để trống, vui lòng chọn mã hàng!')
-      return
-    }
-    try {
-      const tokenLogin = localStorage.getItem('TKN')
-      let response
-      switch (typePage) {
-        case 'PMH':
-          response = await apis.SuaPMH(tokenLogin, dataRecord.SoChungTu, { ...formEdit, DataDetails: selectedRowData }, selectedDoiTuong, selectedKhoHang)
-          break
-        case 'NTR':
-          response = await apis.SuaNTR(tokenLogin, dataRecord.SoChungTu, { ...formEdit, DataDetails: selectedRowData }, selectedDoiTuong, selectedKhoHang)
-          break
-        case 'XTR':
-          response = await apis.SuaXTR(tokenLogin, dataRecord.SoChungTu, { ...formEdit, DataDetails: selectedRowData }, selectedDoiTuong, selectedKhoHang)
-          break
-        default:
-          break
-      }
-      if (response) {
-        const { DataError, DataErrorDescription } = response.data
-        if (DataError === 0) {
-          loading()
-          setHightLight(dataRecord.SoChungTu)
-          setSelectedRowData([])
-          if (typePrint === 'print') setIsShowModalOnlyPrint(true)
-          else if (typePrint === 'printwarehouse') {
-            setIsShowModalOnlyPrintWareHouse(true)
-          }
-        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
-        } else if (DataError === -107 || DataError === -108) {
-          await RETOKEN()
-          handlePrintInEdit()
         } else {
           toast.error(DataErrorDescription)
         }
@@ -1042,18 +942,82 @@ const Modals = ({
     }
   }
 
+  const handleValidation = () => {
+    let errors = {}
+    let form
+    if (actionType === 'create') {
+      form = formCreate
+    } else if (actionType === 'edit') {
+      form = formEdit
+    }
+
+    if (!selectedDoiTuong?.trim()) {
+      errors.DoiTuong = selectedDoiTuong?.trim() ? null : 'Đối tượng không được để trống'
+      return errors
+    }
+
+    if (selectedDoiTuong === 'NCVL' || selectedDoiTuong === 'KHVL') {
+      if (!form?.TenDoiTuong?.trim() || !form?.DiaChi?.trim()) {
+        errors.Ten = form?.TenDoiTuong?.trim() ? '' : 'Tên đối tượng không được để trống'
+        errors.DiaChi = form?.DiaChi?.trim() ? '' : 'Địa chỉ không được để trống'
+        return errors
+      }
+    }
+
+    if (selectedRowData.length <= 0) {
+      errors.Table = 'Chi tiết phiếu không được để trống'
+      toast.warning('Chi tiết phiếu không được để trống!')
+      return errors
+    }
+
+    if (selectedRowData.map((item) => item.MaHang).includes('Chọn mã hàng')) {
+      errors.MaHang = 'Mã hàng không được để trống, vui lòng chọn mã hàng!'
+      toast.warning('Mã hàng không được để trống, vui lòng chọn mã hàng!')
+      return errors
+    }
+
+    return errors
+  }
+
   return (
     <>
       <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
         <div className="p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
           {(actionType === 'delete' || actionType === 'pay') && (
-            <div className=" flex justify-between items-center ">
+            <div className="  items-center ">
               <label>
                 {`${actionType === 'delete' ? 'Bạn có chắc muốn xóa phiếu' : typePage === 'XTR' ? 'Bạn có chắc muốn lập phiếu thu' : 'Bạn có chắc muốn lập phiếu chi'}`}
                 <span className="font-bold mx-1"> {dataRecord.SoChungTu}</span>
                 không ?
               </label>
-              <div></div>
+              {actionType === 'delete' ? (
+                <div className="flex justify-end mt-4 gap-2">
+                  <ActionButton
+                    color={'slate-50'}
+                    title={'Xác nhận'}
+                    isModal={true}
+                    background={'bg-main'}
+                    bg_hover={'white'}
+                    color_hover={'bg-main'}
+                    handleAction={() => handleDelete(dataRecord)}
+                  />
+
+                  <ActionButton color={'slate-50'} title={'Đóng'} isModal={true} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
+                </div>
+              ) : (
+                <div className="flex justify-end mt-4 gap-2">
+                  <ActionButton
+                    color={'slate-50'}
+                    title={'Xác nhận'}
+                    isModal={true}
+                    background={'bg-main'}
+                    bg_hover={'white'}
+                    color_hover={'bg-main'}
+                    handleAction={() => handlePay(dataRecord)}
+                  />
+                  <ActionButton color={'slate-50'} title={'Đóng'} isModal={true} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
+                </div>
+              )}
             </div>
           )}
 
@@ -1310,7 +1274,7 @@ const Modals = ({
                           disabled
                           type="text"
                           className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px] truncate"
-                          value={`${dataThongTin.MaDoiTuong}- ${dataThongTin.TenDoiTuong}`}
+                          value={`${dataThongTin?.MaDoiTuong}- ${dataThongTin?.TenDoiTuong}`}
                         />
                       </div>
                       <div className="flex items-center justify-between p-1">
@@ -1335,7 +1299,7 @@ const Modals = ({
                                 disabled
                                 type="text"
                                 className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px] truncate"
-                                value={dataThongTin?.NguoiTao}
+                                value={dataThongTin?.NguoiTao || ''}
                                 readOnly
                               />
                             </Tooltip>
@@ -1359,12 +1323,12 @@ const Modals = ({
                         <div className="flex justify-between items-center ">
                           <div className="flex items-center p-1  ">
                             <label className="md:w-[134px] lg:w-[104px]">Sửa cuối</label>
-                            <Tooltip title={dataThongTin?.NguoiSuaCuoi} color="blue">
+                            <Tooltip title={dataThongTin?.NguoiSuaCuoi || ''} color="blue">
                               <input
                                 disabled
                                 type="text"
                                 className="w-full  border border-gray-300 outline-none px-2 rounded-[4px] h-[24px]  truncate"
-                                value={dataThongTin?.NguoiSuaCuoi}
+                                value={dataThongTin?.NguoiSuaCuoi || ''}
                               />
                             </Tooltip>
                           </div>
@@ -1395,14 +1359,14 @@ const Modals = ({
                         Kho hàng
                       </label>
                       <select disabled className="  border w-full  bg-[#fafafa] rounded-[4px] h-[24px]">
-                        <option value="ThongTinKho">
+                        <option key={dataThongTin?.MaKho} value="ThongTinKho">
                           {dataThongTin?.MaKho} - {dataThongTin?.TenKho}
                         </option>
                       </select>
                     </div>
                     <div className="flex items-center p-1 md:w-[65%] lg:w-[80%]">
                       <label className="w-[70px]">Ghi chú</label>
-                      <input disabled type="are" className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px] truncate" value={dataThongTin?.GhiChu} />
+                      <input disabled type="are" className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px] truncate" value={dataThongTin?.GhiChu || ''} />
                     </div>
                   </div>
                   {/* table */}
@@ -2072,36 +2036,6 @@ const Modals = ({
                 </div>
               )}
             </>
-          )}
-          {actionType === 'delete' ? (
-            <div className="flex justify-end mt-4 gap-2">
-              <ActionButton
-                color={'slate-50'}
-                title={'Xác nhận'}
-                isModal={true}
-                background={'bg-main'}
-                bg_hover={'white'}
-                color_hover={'bg-main'}
-                handleAction={() => handleDelete(dataRecord)}
-              />
-
-              <ActionButton color={'slate-50'} title={'Đóng'} isModal={true} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
-            </div>
-          ) : (
-            actionType === 'pay' && (
-              <div className="flex justify-end mt-4 gap-2">
-                <ActionButton
-                  color={'slate-50'}
-                  title={'Xác nhận'}
-                  isModal={true}
-                  background={'bg-main'}
-                  bg_hover={'white'}
-                  color_hover={'bg-main'}
-                  handleAction={() => handlePay(dataRecord)}
-                />
-                <ActionButton color={'slate-50'} title={'Đóng'} isModal={true} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
-              </div>
-            )
           )}
         </div>
 

@@ -605,8 +605,15 @@ const GBL = () => {
     setIsShowModal(true)
   }
   const handleAdjustPrice = () => {
-    setActionType('adjustPrice')
-    setIsShowModal(true)
+    if (!selectedRowKeys.length > 0) {
+      toast.warning('Hãy chọn mã khách hàng để điều chỉnh giá !', {
+        autoClose: 1500,
+      })
+      return
+    } else {
+      setActionType('adjustPrice')
+      setIsShowModal(true)
+    }
   }
   const handleImport = () => {
     setActionType('import')

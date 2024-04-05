@@ -14,7 +14,7 @@ import HighlightedCell from '../../../components/hooks/HighlightedCell'
 import { exportToExcel } from '../../../action/Actions'
 import { CloseSquareFilled } from '@ant-design/icons'
 
-import { ModalSDV, PermissionView } from '../../../components_K'
+import { PermissionView, ModalSDV } from '../../../components_K'
 
 const { Text } = Typography
 const { IoAddCircleOutline, MdDelete, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill } = icons
