@@ -69,7 +69,7 @@ const PhieuXTR = () => {
   useEffect(() => {
     setNewColumns(columns)
     // Lấy thông tin từ local storage sau khi đăng nhập
-    const storedHiddenColumns = localStorage.getItem('hidenColumnPMH')
+    const storedHiddenColumns = localStorage.getItem('hiddenColumnPMH')
     const parsedHiddenColumns = storedHiddenColumns ? JSON.parse(storedHiddenColumns) : null
 
     // Áp dụng thông tin đã lưu vào checkedList và setConfirmed để ẩn cột
@@ -81,8 +81,8 @@ const PhieuXTR = () => {
 
   useEffect(() => {
     if (confirmed) {
-      setCheckedList(JSON.parse(localStorage.getItem('hidenColumnPMH')))
-      setNewColumns(JSON.parse(localStorage.getItem('hidenColumnPMH')))
+      setCheckedList(JSON.parse(localStorage.getItem('hiddenColumnPMH')))
+      setNewColumns(JSON.parse(localStorage.getItem('hiddenColumnPMH')))
     }
   }, [confirmed])
 
@@ -864,7 +864,7 @@ const PhieuXTR = () => {
                               defaultValue={checkedList}
                               onChange={(value) => {
                                 setCheckedList(value)
-                                localStorage.setItem('hidenColumnPMH', JSON.stringify(value))
+                                localStorage.setItem('hiddenColumnPMH', JSON.stringify(value))
                               }}
                             >
                               <Row>

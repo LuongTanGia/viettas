@@ -1076,7 +1076,7 @@ const DoanhSoBanHangKho = () => {
                   </div>
                 </div>
               </div>
-              <div className="TruyVanDSKho_Child" id="my-table">
+              <div className="TruyVan_Child" id="my-table">
                 <Table
                   loading={tableLoad}
                   className="setHeight"

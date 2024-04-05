@@ -59,7 +59,7 @@ const GBS = () => {
   useEffect(() => {
     setNewColumns(columns)
     // Lấy thông tin từ local storage sau khi đăng nhập
-    const storedHiddenColumns = localStorage.getItem('hidenColumnGBS')
+    const storedHiddenColumns = localStorage.getItem('hiddenColumnGBS')
     const parsedHiddenColumns = storedHiddenColumns ? JSON.parse(storedHiddenColumns) : null
 
     // Áp dụng thông tin đã lưu vào checkedList và setConfirmed để ẩn cột
@@ -71,8 +71,8 @@ const GBS = () => {
 
   useEffect(() => {
     if (confirmed) {
-      setCheckedList(JSON.parse(localStorage.getItem('hidenColumnGBS')))
-      setNewColumns(JSON.parse(localStorage.getItem('hidenColumnGBS')))
+      setCheckedList(JSON.parse(localStorage.getItem('hiddenColumnGBS')))
+      setNewColumns(JSON.parse(localStorage.getItem('hiddenColumnGBS')))
     }
   }, [confirmed])
 
@@ -557,7 +557,7 @@ const GBS = () => {
                             defaultValue={checkedList}
                             onChange={(value) => {
                               setCheckedList(value)
-                              localStorage.setItem('hidenColumnGBS', JSON.stringify(value))
+                              localStorage.setItem('hiddenColumnGBS', JSON.stringify(value))
                             }}
                           >
                             <Row className="flex justify-center">

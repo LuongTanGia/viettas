@@ -66,7 +66,7 @@ const HangHoaTKTT = () => {
   useEffect(() => {
     setNewColumns(columns)
     // Lấy thông tin từ local storage sau khi đăng nhập
-    const storedHiddenColumns = localStorage.getItem('hidenColumnHangHoaTKTT')
+    const storedHiddenColumns = localStorage.getItem('hiddenColumnHangHoaTKTT')
     const parsedHiddenColumns = storedHiddenColumns ? JSON.parse(storedHiddenColumns) : null
 
     // Áp dụng thông tin đã lưu vào checkedList và setConfirmed để ẩn cột
@@ -78,8 +78,8 @@ const HangHoaTKTT = () => {
 
   useEffect(() => {
     if (confirmed) {
-      setCheckedList(JSON.parse(localStorage.getItem('hidenColumnHangHoaTKTT')))
-      setNewColumns(JSON.parse(localStorage.getItem('hidenColumnHangHoaTKTT')))
+      setCheckedList(JSON.parse(localStorage.getItem('hiddenColumnHangHoaTKTT')))
+      setNewColumns(JSON.parse(localStorage.getItem('hiddenColumnHangHoaTKTT')))
     }
   }, [confirmed])
 
@@ -438,7 +438,7 @@ const HangHoaTKTT = () => {
                             defaultValue={checkedList}
                             onChange={(value) => {
                               setCheckedList(value)
-                              localStorage.setItem('hidenColumnHangHoaTKTT', JSON.stringify(value))
+                              localStorage.setItem('hiddenColumnHangHoaTKTT', JSON.stringify(value))
                             }}
                           >
                             <Row>

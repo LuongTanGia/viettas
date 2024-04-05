@@ -73,7 +73,7 @@ const GBL = () => {
   useEffect(() => {
     setNewColumns(columns)
     // Lấy thông tin từ local storage sau khi đăng nhập
-    const storedHiddenColumns = localStorage.getItem('hidenColumnGBL')
+    const storedHiddenColumns = localStorage.getItem('hiddenColumnGBL')
     const parsedHiddenColumns = storedHiddenColumns ? JSON.parse(storedHiddenColumns) : null
 
     // Áp dụng thông tin đã lưu vào checkedList và setConfirmed để ẩn cột
@@ -85,8 +85,8 @@ const GBL = () => {
 
   useEffect(() => {
     if (confirmed) {
-      setCheckedList(JSON.parse(localStorage.getItem('hidenColumnGBL')))
-      setNewColumns(JSON.parse(localStorage.getItem('hidenColumnGBL')))
+      setCheckedList(JSON.parse(localStorage.getItem('hiddenColumnGBL')))
+      setNewColumns(JSON.parse(localStorage.getItem('hiddenColumnGBL')))
     }
   }, [confirmed])
 
@@ -744,7 +744,7 @@ const GBL = () => {
                             defaultValue={checkedList}
                             onChange={(value) => {
                               setCheckedList(value)
-                              localStorage.setItem('hidenColumnGBL', JSON.stringify(value))
+                              localStorage.setItem('hiddenColumnGBL', JSON.stringify(value))
                             }}
                           >
                             <Row>
