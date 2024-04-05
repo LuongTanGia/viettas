@@ -58,7 +58,7 @@ const TongHopPBL = () => {
   useEffect(() => {
     setNewColumns(columns)
     // Lấy thông tin từ local storage sau khi đăng nhập
-    const storedHiddenColumns = localStorage.getItem('hidenColumnTongHopPBL')
+    const storedHiddenColumns = localStorage.getItem('hiddenColumnTongHopPBL')
     const parsedHiddenColumns = storedHiddenColumns ? JSON.parse(storedHiddenColumns) : null
 
     // Áp dụng thông tin đã lưu vào checkedList và setConfirmed để ẩn cột
@@ -70,8 +70,8 @@ const TongHopPBL = () => {
 
   useEffect(() => {
     if (confirmed) {
-      setCheckedList(JSON.parse(localStorage.getItem('hidenColumnTongHopPBL')))
-      setNewColumns(JSON.parse(localStorage.getItem('hidenColumnTongHopPBL')))
+      setCheckedList(JSON.parse(localStorage.getItem('hiddenColumnTongHopPBL')))
+      setNewColumns(JSON.parse(localStorage.getItem('hiddenColumnTongHopPBL')))
     }
   }, [confirmed])
 
@@ -462,7 +462,7 @@ const TongHopPBL = () => {
                             defaultValue={checkedList}
                             onChange={(value) => {
                               setCheckedList(value)
-                              localStorage.setItem('hidenColumnTongHopPBL', JSON.stringify(value))
+                              localStorage.setItem('hiddenColumnTongHopPBL', JSON.stringify(value))
                             }}
                           >
                             <Row className="flex justify-center">

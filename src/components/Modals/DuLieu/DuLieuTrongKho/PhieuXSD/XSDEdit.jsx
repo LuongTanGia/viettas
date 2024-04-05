@@ -199,7 +199,10 @@ const XSDEdit = ({ close, dataXSD, loadingData, setTargetRow }) => {
         }
       })
       if (newData?.length > 0) {
-        const response = await categoryAPI.XSDEdit({ SoChungTu: dataXSD?.SoChungTu, Data: { ...XSDForm, DataDetails: newData } }, TokenAccess)
+        const response = await categoryAPI.XSDEdit(
+          { SoChungTu: dataXSD?.SoChungTu, Data: { ...XSDForm, NgayCTu: dayjs(XSDForm?.NgayCTu).format('YYYY-MM-DD'), DataDetails: newData } },
+          TokenAccess,
+        )
         if (response.data.DataError == 0) {
           isPrint ? handlePrint() : (close(), toast.success(response.data.DataErrorDescription, { autoClose: 1000 }))
           loadingData()
@@ -396,7 +399,7 @@ const XSDEdit = ({ close, dataXSD, loadingData, setTargetRow }) => {
                             format="DD/MM/YYYY"
                             value={dayjs(XSDForm?.NgayCTu) || ''}
                             onChange={(values) => {
-                              const newDate = dayjs(values).format('YYYY-MM-DDTHH:mm:ss')
+                              const newDate = dayjs(values).format('YYYY-MM-DD')
                               setXSDForm({ ...XSDForm, NgayCTu: newDate })
                             }}
                             sx={{

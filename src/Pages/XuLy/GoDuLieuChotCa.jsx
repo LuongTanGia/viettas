@@ -63,7 +63,7 @@ const GoChotCa = () => {
   useEffect(() => {
     setNewColumns(columns)
     // Lấy thông tin từ local storage sau khi đăng nhập
-    const storedHiddenColumns = localStorage.getItem('hidenColumnGoChotCa')
+    const storedHiddenColumns = localStorage.getItem('hiddenColumnGoChotCa')
     const parsedHiddenColumns = storedHiddenColumns ? JSON.parse(storedHiddenColumns) : null
 
     // Áp dụng thông tin đã lưu vào checkedList và setConfirmed để ẩn cột
@@ -75,8 +75,8 @@ const GoChotCa = () => {
 
   useEffect(() => {
     if (confirmed) {
-      setCheckedList(JSON.parse(localStorage.getItem('hidenColumnGoChotCa')))
-      setNewColumns(JSON.parse(localStorage.getItem('hidenColumnGoChotCa')))
+      setCheckedList(JSON.parse(localStorage.getItem('hiddenColumnGoChotCa')))
+      setNewColumns(JSON.parse(localStorage.getItem('hiddenColumnGoChotCa')))
     }
   }, [confirmed])
 
@@ -542,7 +542,7 @@ const GoChotCa = () => {
                               defaultValue={checkedList}
                               onChange={(value) => {
                                 setCheckedList(value)
-                                localStorage.setItem('hidenColumnGoChotCa', JSON.stringify(value))
+                                localStorage.setItem('hiddenColumnGoChotCa', JSON.stringify(value))
                               }}
                             >
                               <Row className="flex justify-center">

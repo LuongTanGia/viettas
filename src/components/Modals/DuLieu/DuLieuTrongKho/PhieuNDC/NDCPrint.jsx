@@ -15,19 +15,17 @@ const NDCPrint = ({ close, dataPrint }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const [isLoading, setIsLoading] = useState(false)
   const [dataListChungTu, setDataListChungTu] = useState([])
-  const [khoanNgayFrom, setKhoanNgayFrom] = useState()
-  const [khoanNgayTo, setKhoanNgayTo] = useState()
+  const [khoanNgayFrom, setKhoanNgayFrom] = useState(null)
+  const [khoanNgayTo, setKhoanNgayTo] = useState(null)
   const [selectedNhomFrom, setSelectedNhomFrom] = useState(null)
   const [selectedNhomTo, setSelectedNhomTo] = useState(null)
   const [dateData, setDateData] = useState({})
   const [dateChange, setDateChange] = useState(false)
-
   const [checkboxValues, setCheckboxValues] = useState({
     checkbox1: true,
     checkbox2: false,
     checkbox3: false,
   })
-
   useEffect(() => {
     const getTimeSetting = async () => {
       try {
@@ -47,22 +45,8 @@ const NDCPrint = ({ close, dataPrint }) => {
         console.log(error)
       }
     }
-    if (!isLoading) {
-      getTimeSetting()
-    }
-  }, [isLoading])
-
-  useEffect(() => {
-    setKhoanNgayFrom(dayjs(dateData?.NgayBatDau))
-    setKhoanNgayTo(dayjs(dateData?.NgayKetThuc))
-  }, [dateData?.NgayBatDau, dateData?.NgayKetThuc])
-
-  useEffect(() => {
-    if (dataListChungTu?.length == 0) {
-      setSelectedNhomTo(null)
-      setSelectedNhomFrom(null)
-    }
-  }, [dataListChungTu?.length])
+    getTimeSetting()
+  }, [dataPrint])
 
   useEffect(() => {
     const getListChungTu = async () => {
@@ -88,6 +72,29 @@ const NDCPrint = ({ close, dataPrint }) => {
     getListChungTu()
   }, [dateData?.NgayBatDau, dateData?.NgayKetThuc])
 
+  useEffect(() => {
+    const foundItem = dataListChungTu?.find((item) => item.SoChungTu === dataPrint.SoChungTu)
+    if (dataListChungTu?.length == 0) {
+      setSelectedNhomTo(null)
+      setSelectedNhomFrom(null)
+    } else if (foundItem) {
+      setSelectedNhomTo(foundItem.SoChungTu)
+      setSelectedNhomFrom(foundItem.SoChungTu)
+    }
+  }, [dataListChungTu])
+
+  // useEffect(() => {
+  //   setKhoanNgayFrom(dayjs(dateData?.NgayBatDau))
+  //   setKhoanNgayTo(dayjs(dateData?.NgayKetThuc))
+  // }, [dateData?.NgayBatDau, dateData?.NgayKetThuc])
+
+  useEffect(() => {
+    if (dataPrint) {
+      setKhoanNgayFrom(dayjs(dataPrint?.NgayCTu))
+      setKhoanNgayTo(dayjs(dataPrint?.NgayCTu))
+    }
+  }, [dataPrint])
+
   const calculateTotal = () => {
     let total = 0
     if (checkboxValues.checkbox1) total += 1
@@ -98,13 +105,7 @@ const NDCPrint = ({ close, dataPrint }) => {
     try {
       const response = await categoryAPI.NDCPrint(
         dataPrint
-          ? {
-              NgayBatDau: dayjs(dataPrint.NgayCTu).format('YYYY-MM-DD'),
-              NgayKetThuc: dayjs(dataPrint.NgayCTu).format('YYYY-MM-DD'),
-              SoChungTuBatDau: dataPrint?.SoChungTu,
-              SoChungTuKetThuc: dataPrint?.SoChungTu,
-              SoLien: calculateTotal(),
-            }
+          ? {}
           : {
               NgayBatDau: dateData.NgayBatDau,
               NgayKetThuc: dateData.NgayKetThuc,
@@ -178,7 +179,7 @@ const NDCPrint = ({ close, dataPrint }) => {
                         onBlur={handleDateChange}
                         onKeyDown={handleKeyDown}
                         format="DD/MM/YYYY"
-                        value={dataPrint ? dayjs(dataPrint.NgayCTu) : khoanNgayFrom}
+                        value={khoanNgayFrom}
                         sx={{
                           '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
                           '& .MuiButtonBase-root': {
@@ -202,7 +203,7 @@ const NDCPrint = ({ close, dataPrint }) => {
                         onKeyDown={handleKeyDown}
                         className="max-w-[180px]"
                         format="DD/MM/YYYY"
-                        value={dataPrint ? dayjs(dataPrint.NgayCTu) : khoanNgayTo}
+                        value={khoanNgayTo}
                         sx={{
                           '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
                           '& .MuiButtonBase-root': {
@@ -228,7 +229,7 @@ const NDCPrint = ({ close, dataPrint }) => {
                       showSearch
                       required
                       size="small"
-                      value={dataPrint ? dataPrint?.SoChungTu : selectedNhomFrom}
+                      value={selectedNhomFrom}
                       placeholder={'Chọn nhóm'}
                       onChange={(value) => {
                         setSelectedNhomFrom(value)
@@ -260,7 +261,7 @@ const NDCPrint = ({ close, dataPrint }) => {
                       required
                       size="small"
                       placeholder={'Chọn nhóm'}
-                      value={dataPrint ? dataPrint?.SoChungTu : selectedNhomTo}
+                      value={selectedNhomTo}
                       onChange={(value) => {
                         setSelectedNhomTo(value)
                         if (

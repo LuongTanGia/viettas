@@ -286,7 +286,7 @@ const SoQuy = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.THUCONGNO - b.THUCONGNO,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
         </div>
       ),
@@ -300,7 +300,7 @@ const SoQuy = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.THUTRAHANG - b.THUTRAHANG,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
         </div>
       ),
@@ -314,7 +314,7 @@ const SoQuy = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.THUKHAC - b.THUKHAC,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
         </div>
       ),
@@ -328,7 +328,7 @@ const SoQuy = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.CHICONGNO - b.CHICONGNO,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
         </div>
       ),
@@ -342,7 +342,7 @@ const SoQuy = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.CHITRAHANG - b.CHITRAHANG,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
         </div>
       ),
@@ -356,7 +356,7 @@ const SoQuy = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.CHIKHAC - b.CHIKHAC,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
         </div>
       ),
@@ -370,7 +370,7 @@ const SoQuy = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.ConLai - b.ConLai,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
         </div>
       ),
@@ -456,7 +456,7 @@ const SoQuy = () => {
           showSorterTooltip: false,
           sorter: (a, b) => a.THUCONGNO - b.THUCONGNO,
           render: (text) => (
-            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
               <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
             </div>
           ),
@@ -470,7 +470,7 @@ const SoQuy = () => {
           showSorterTooltip: false,
           sorter: (a, b) => a.THUTRAHANG - b.THUTRAHANG,
           render: (text) => (
-            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
               <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
             </div>
           ),
@@ -484,7 +484,7 @@ const SoQuy = () => {
           showSorterTooltip: false,
           sorter: (a, b) => a.THUKHAC - b.THUKHAC,
           render: (text) => (
-            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
               <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
             </div>
           ),
@@ -505,7 +505,7 @@ const SoQuy = () => {
           showSorterTooltip: false,
           sorter: (a, b) => a.CHICONGNO - b.CHICONGNO,
           render: (text) => (
-            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
               <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
             </div>
           ),
@@ -519,7 +519,7 @@ const SoQuy = () => {
           showSorterTooltip: false,
           sorter: (a, b) => a.CHITRAHANG - b.CHITRAHANG,
           render: (text) => (
-            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
               <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
             </div>
           ),
@@ -533,7 +533,7 @@ const SoQuy = () => {
           showSorterTooltip: false,
           sorter: (a, b) => a.CHIKHAC - b.CHIKHAC,
           render: (text) => (
-            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
               <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
             </div>
           ),
@@ -549,7 +549,7 @@ const SoQuy = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.ConLai - b.ConLai,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
         </div>
       ),

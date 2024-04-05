@@ -68,7 +68,7 @@ const PhieuSDV = () => {
   useEffect(() => {
     setNewColumns(columns)
     // Lấy thông tin từ local storage sau khi đăng nhập
-    const storedHiddenColumns = localStorage.getItem('hidenColumnSDV')
+    const storedHiddenColumns = localStorage.getItem('hiddenColumnSDV')
     const parsedHiddenColumns = storedHiddenColumns ? JSON.parse(storedHiddenColumns) : null
 
     // Áp dụng thông tin đã lưu vào checkedList và setConfirmed để ẩn cột
@@ -80,8 +80,8 @@ const PhieuSDV = () => {
 
   useEffect(() => {
     if (confirmed) {
-      setCheckedList(JSON.parse(localStorage.getItem('hidenColumnSDV')))
-      setNewColumns(JSON.parse(localStorage.getItem('hidenColumnSDV')))
+      setCheckedList(JSON.parse(localStorage.getItem('hiddenColumnSDV')))
+      setNewColumns(JSON.parse(localStorage.getItem('hiddenColumnSDV')))
     }
   }, [confirmed])
 
@@ -653,7 +653,7 @@ const PhieuSDV = () => {
                               defaultValue={checkedList}
                               onChange={(value) => {
                                 setCheckedList(value)
-                                localStorage.setItem('hidenColumnSDV', JSON.stringify(value))
+                                localStorage.setItem('hiddenColumnSDV', JSON.stringify(value))
                               }}
                             >
                               <Row className="flex justify-center">

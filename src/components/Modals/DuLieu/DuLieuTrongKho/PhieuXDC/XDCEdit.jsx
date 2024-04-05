@@ -200,7 +200,10 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
         }
       })
       if (newData?.length > 0) {
-        const response = await categoryAPI.XDCEdit({ SoChungTu: dataXDC?.SoChungTu, Data: { ...XDCForm, DataDetails: newData } }, TokenAccess)
+        const response = await categoryAPI.XDCEdit(
+          { SoChungTu: dataXDC?.SoChungTu, Data: { ...XDCForm, NgayCTu: dayjs(XDCForm?.NgayCTu).format('YYYY-MM-DD'), DataDetails: newData } },
+          TokenAccess,
+        )
         if (response.data.DataError == 0) {
           isPrint ? handlePrint() : (close(), toast.success(response.data.DataErrorDescription, { autoClose: 1000 }))
           loadingData()
@@ -397,7 +400,7 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
                             format="DD/MM/YYYY"
                             value={dayjs(XDCForm?.NgayCTu) || ''}
                             onChange={(values) => {
-                              const newDate = dayjs(values).format('YYYY-MM-DDTHH:mm:ss')
+                              const newDate = dayjs(values).format('YYYY-MM-DD')
                               setXDCForm({ ...XDCForm, NgayCTu: newDate })
                             }}
                             sx={{

@@ -18,10 +18,10 @@ const PCCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
   const [isLoading, setIsLoading] = useState(false)
   const [DateFrom, setDateFrom] = useState(dayjs(new Date()))
   const innitProduct = {
-    SoQuay: 0,
+    SoQuay: null,
     MaNguoiDung: '',
     HieuLucTu: null,
-    MaCa: '',
+    MaCa: null,
     GhiChu: '',
   }
   const [PCForm, setPCForm] = useState(() => {
@@ -29,8 +29,8 @@ const PCCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
   })
   const [errors, setErrors] = useState({
     MaNguoiDung: '',
-    SoQuay: '',
-    MaCa: '',
+    SoQuay: null,
+    MaCa: null,
   })
 
   useEffect(() => {
@@ -98,20 +98,25 @@ const PCCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
   }, [isLoading])
 
   const handleCreate = async (isSave = true) => {
-    if (!PCForm?.MaNguoiDung?.trim() || !PCForm?.SoQuay || !PCForm?.MaCa) {
+    if (!PCForm?.MaNguoiDung?.trim()) {
       setErrors({
         MaNguoiDung: PCForm?.MaNguoiDung?.trim() ? null : 'Người dùng không được trống',
+      })
+      return
+    } else if (!PCForm?.SoQuay || !PCForm?.MaCa) {
+      setErrors({
         SoQuay: !PCForm?.MaCa ? null : PCForm?.SoQuay ? null : 'Quầy không được trống',
         MaCa: !PCForm?.SoQuay ? null : PCForm?.MaCa ? null : 'Ca không được trống',
       })
       return
     }
     try {
-      const response = await categoryAPI.ThemPhanCa({ ...PCForm, HieuLucTu: dayjs(DateFrom).format('YYYY-MM-DDTHH:mm:ss') }, TokenAccess)
+      console.log({ ...PCForm, HieuLucTu: dayjs(DateFrom).format('YYYY-MM-DD') })
+      const response = await categoryAPI.ThemPhanCa({ ...PCForm, HieuLucTu: dayjs(DateFrom).format('YYYY-MM-DD') }, TokenAccess)
       if (response.data.DataError == 0) {
         isSave ? setPCForm([]) : close()
         loadingData()
-        toast.success('Tạo thành công', { autoClose: 1000 })
+        toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
         setTargetRow(PCForm?.MaNguoiDung)
       } else {
         toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
@@ -131,7 +136,7 @@ const PCCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
           <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10">
             <div className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"></div>
             <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col bg-white p-2 rounded shadow-custom overflow-hidden">
-              <div className="flex flex-col gap-2 py-1 px-2 md:w-[80vw] lg:w-[65vw] xl:w-[55vw] 2xl:w-[45vw]">
+              <div className="flex flex-col gap-2 py-1 px-2 md:w-[80vw] lg:w-[60vw] xl:w-[50vw] 2xl:w-[45vw]">
                 <div className="flex gap-2">
                   <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
                   <p className="text-blue-700 font-semibold uppercase">Thêm - Phân Ca</p>
@@ -172,7 +177,7 @@ const PCCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
                       <DateField
                         className="DatePicker_NXTKho max-w-[130px] "
                         format="DD/MM/YYYY"
-                        value={DateFrom || null}
+                        value={DateFrom}
                         onChange={(values) => {
                           setPCForm({ ...PCForm, HieuLucTu: dayjs(setDateFrom(values)).format('YYYY-MM-DD') })
                         }}

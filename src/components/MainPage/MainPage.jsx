@@ -22,15 +22,11 @@ import PhieuXuatChuyenKho from '../../Pages/DuLieu/DLTrongKho/PhieuXuatChuyenKho
 import PhieuNhapChuyenKho from '../../Pages/DuLieu/DLTrongKho/PhieuNhapChuyenKho/PhieuNhapChuyenKho'
 import PhieuXuatSuDung from '../../Pages/DuLieu/DLTrongKho/PhieuXuatSuDung/PhieuXuatSuDung'
 import PhieuXuatHuy from '../../Pages/DuLieu/DLTrongKho/PhieuXuatHuy/PhieuXuatHuy'
-import CongNoDauRa from '../CongNoDauRa/CongNoDauRa'
 import DoiTuong from '../../Pages/DanhMuc/DoiTuong'
 import GiaBanLe from '../../Pages/ThietLap/GiaBanLe'
 import GiaBanSi from '../../Pages/ThietLap/GiaBanSi'
 import BangGiaKH from '../../Pages/ThietLap/BangGiaKH'
-import CongNoDauVao from '../CongNoDauVao/CongNoDauVao'
-import DSBHHH from '../DoanhSoBanHang/DSBH(HH)'
-import DSBHKHH from '../DoanhSoBanHang/DSBH(KH)'
-import DSBHKH_HH from '../DoanhSoBanHang/DSBH(KH_HH)'
+// import DSBHKH_HH from '../DoanhSoBanHang/DSBH(KH_HH)'
 import NhomDoiTuong from '../../Pages/DanhMuc/NhomDoiTuong'
 import NhomHang from '../../Pages/DanhMuc/NhomHang'
 import HangMucThu from '../../Pages/DanhMuc/HangMucThu'
@@ -43,6 +39,8 @@ import SoSanhGB from '../../Pages/TruyVan/SoSanhBangGia'
 import HangHoaTKTT from '../../Pages/TruyVan/HangHoaTonKhoTamTinh'
 import DLBanLeQuay from '../../Pages/TruyVan/DuLieuBanLeQuay'
 import PhanCaDS from '../../Pages/ThietLap/PhanCaDS'
+import DoanhSoBanHangHH from '../../Pages/TruyVan/DoanhSoBanHangHH'
+import DoanhSoBanHangKH from '../../Pages/TruyVan/DoanhSoBanHangKH'
 import DoanhSoBanHangKho from '../../Pages/TruyVan/DoanhSoBanHangKho'
 import DoanhSoBanHangQuay from '../../Pages/TruyVan/DoanhSoBanHangQuay'
 import SoQuy from '../../Pages/TruyVan/SoQuy'
@@ -51,6 +49,9 @@ import TongHopPBL from '../../Pages/XuLy/TongHopPhieuBanLe'
 import GoChotCa from '../../Pages/XuLy/GoDuLieuChotCa'
 import PhanQuyen from '../../Pages/HeThong/PhanQuyen'
 import ThongKeQuyenHan from '../../Pages/HeThong/ThongKeQuyenHan'
+import CongNoDauVao from '../../Pages/TruyVan/CongNoDauVao'
+import CongNoDauRa from '../../Pages/TruyVan/CongNoDauRa'
+import DoanhSoBanHangKH_HH from '../../Pages/TruyVan/DoanhSoBanHangKH_HH'
 
 function MainPage({ isSidebarVisible, isTableLoad, isTargetRow }) {
   return (
@@ -87,18 +88,18 @@ function MainPage({ isSidebarVisible, isTableLoad, isTargetRow }) {
           <Route path="/XuLy_GoDuLieuChotCa" element={<GoChotCa />} />
           <Route path="/TruyVan_CongNoDauRa" element={<CongNoDauRa />} />
           <Route path="/TruyVan_CongNoDauVao" element={<CongNoDauVao />} />
-          <Route path="/TruyVan_DoanhSoBanHangHH" element={<DSBHHH />} />
-          <Route path="/TruyVan_DoanhSoBanHangKH" element={<DSBHKHH />} />
-          <Route path="/TruyVan_DoanhSoBanHangKHHH" element={<DSBHKH_HH />} />
+          <Route path="/TruyVan_DoanhSoBanHangHH" element={<DoanhSoBanHangHH />} />
+          <Route path="/TruyVan_DoanhSoBanHangKH" element={<DoanhSoBanHangKH />} />
+          <Route path="/TruyVan_DoanhSoBanHangKHHH" element={<DoanhSoBanHangKH_HH />} />
           <Route path="/TruyVan_DoanhSoBanHangKhoHang" element={<DoanhSoBanHangKho />} />
           <Route path="/TruyVan_DoanhSoBanHangQuay" element={<DoanhSoBanHangQuay />} />
           <Route path="/TruyVan_SoQuy" element={<SoQuy />} />
           <Route path="/TruyVan_CanDoiNXT_TheoKho" element={<NhapXuatTonKho />} />
           <Route path="/TruyVan_CanDoiNXT_TongKho" element={<NhapXuatTon />} />
           <Route path="/TruyVan_SoSanhBangGia" element={<SoSanhGB />} />
-          <Route path="/ThietLap_GiaLe" element={<GiaBanLe />} />
           <Route path="/TruyVan_TonKho_TheoKho" element={<HangHoaTKTT />} />
           <Route path="/TruyVan_DuLieuBanLeQuay" element={<DLBanLeQuay />} />
+          <Route path="/ThietLap_GiaLe" element={<GiaBanLe />} />
           <Route path="/ThietLap_NhomGiaDoiTuong" element={<BangGiaKH />} />
           <Route path="/ThietLap_GiaLe" element={<GiaBanLe />} />
           <Route path="/ThietLap_GiaSi" element={<GiaBanSi />} />
@@ -108,7 +109,6 @@ function MainPage({ isSidebarVisible, isTableLoad, isTargetRow }) {
           <Route path="/ThietLap_QuayTinhTien" element={<QuayTinhTien />} />
           <Route path="/HeThong_PhanQuyen" element={<PhanQuyen />} />
           <Route path="/HeThong_ThongKeQuyen" element={<ThongKeQuyenHan />} />
-
           <Route path="*" element={<ErrorPage />} />
         </Routes>
       </main>

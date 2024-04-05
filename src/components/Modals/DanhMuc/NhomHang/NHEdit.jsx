@@ -37,7 +37,7 @@ const NHEdit = ({ close, loadingData, setTargetRow, dataNH }) => {
       if (response.data.DataError == 0) {
         close()
         loadingData()
-        toast.success('Sửa thành công', { autoClose: 1000 })
+        toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
         setTargetRow(dataNH?.MaNhom)
       } else {
         toast.error(response.data.DataErrorDescription, { autoClose: 1000 })

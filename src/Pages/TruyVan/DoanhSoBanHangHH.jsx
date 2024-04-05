@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState, useRef } from 'react'
-import { Select, Tooltip, Typography, Checkbox, Row, Button, Col, Spin, Input, Empty, Table, Segmented } from 'antd'
+import { Select, Tooltip, Typography, Checkbox, Row, Button, Col, Spin, Input, Empty, Table } from 'antd'
 const { Text } = Typography
 import dayjs from 'dayjs'
 import { TbEye } from 'react-icons/tb'
@@ -14,42 +14,35 @@ import { useSearch } from '../../components/hooks/Search'
 import { RETOKEN, exportToExcel } from '../../action/Actions'
 import ActionButton from '../../components/util/Button/ActionButton'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
-import { nameColumsDSBHQUAY } from '../../components/util/Table/ColumnName'
+import { nameColumsDSBHHH } from '../../components/util/Table/ColumnName'
 import { DateField } from '@mui/x-date-pickers'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
 import { PermissionView } from '../../components_K'
-const DoanhSoBanHangQuay = () => {
+const DoanhSoBanHangHH = () => {
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
-  const [dataNXT, setDataNXT] = useState('')
-  const [setSearchHangHoa, filteredHangHoa, searchHangHoa] = useSearch(dataNXT)
+  const [dataDSBH, setDataDSBH] = useState('')
+  const [setSearchHangHoa, filteredHangHoa, searchHangHoa] = useSearch(dataDSBH)
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [isShowOption, setIsShowOption] = useState(false)
   const [isShowNotify, setIsShowNotify] = useState(false)
   const showOption = useRef(null)
-  const [nhomHangNXT, setNhomHangNXT] = useState([])
-  const [hangHoaNXT, setHangHoaNXT] = useState([])
+  const [nhomHangDSBH, setNhomHangDSBH] = useState([])
   const [khoanNgayFrom, setKhoanNgayFrom] = useState([])
   const [khoanNgayTo, setKhoanNgayTo] = useState([])
-  const [selectedMaFrom, setSelectedMaFrom] = useState(null)
-  const [selectedMaTo, setSelectedMaTo] = useState(null)
-  const [selectedMaList, setSelectedMaList] = useState([])
   const [selectedNhomFrom, setSelectedNhomFrom] = useState(null)
   const [selectedNhomTo, setSelectedNhomTo] = useState(null)
   const [selectedNhomList, setSelectedNhomList] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [hiddenRow, setHiddenRow] = useState([])
-  const [checkedList, setcheckedList] = useState([])
+  const [checkedList, setCheckedList] = useState([])
   const [selectVisible, setSelectVisible] = useState(false)
   const [options, setOptions] = useState()
   const [tableLoad, setTableLoad] = useState(true)
   const [dataCRUD, setDataCRUD] = useState()
   const [dateData, setDateData] = useState({})
   const [dateChange, setDateChange] = useState(false)
-  const [dataQuay, setDataQuay] = useState(null)
-  const [check, setCheck] = useState('Tiền hàng')
-  const [valueCheck, setValueCheck] = useState(null)
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -72,7 +65,7 @@ const DoanhSoBanHangQuay = () => {
   useEffect(() => {
     const getDataQuyenHan = async () => {
       try {
-        const response = await categoryAPI.QuyenHan('TruyVan_DoanhSoBanHangQuay', TokenAccess)
+        const response = await categoryAPI.QuyenHan('TruyVan_DoanhSoBanHangHH', TokenAccess)
         if (response.data.DataError === 0) {
           setDataCRUD(response.data)
           setIsLoading(true)
@@ -90,17 +83,18 @@ const DoanhSoBanHangQuay = () => {
   }, [])
 
   useEffect(() => {
-    const getListNhomHangNXT = async () => {
+    const getListNhomHangDSBH = async () => {
       try {
-        const response = await categoryAPI.ListNhomHangNXT(TokenAccess)
+        const response = await categoryAPI.ListNhomHang_DSBH(TokenAccess)
         if (response.data.DataError == 0) {
-          setNhomHangNXT(response.data.DataResults)
+          setNhomHangDSBH(response.data.DataResults)
           setIsLoading(true)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
-          getListNhomHangNXT()
+          getListNhomHangDSBH()
         } else {
-          setNhomHangNXT([])
+          setNhomHangDSBH([])
+          console.log(response.data)
           setIsLoading(true)
         }
       } catch (error) {
@@ -108,31 +102,7 @@ const DoanhSoBanHangQuay = () => {
       }
     }
     if (!isLoading) {
-      getListNhomHangNXT()
-    }
-  }, [isLoading])
-
-  useEffect(() => {
-    const getListHangHoaNXT = async () => {
-      try {
-        const response = await categoryAPI.ListHangHoaNXT(TokenAccess)
-        if (response.data.DataError == 0) {
-          setHangHoaNXT(response.data.DataResults)
-          setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getListHangHoaNXT()
-        } else {
-          setHangHoaNXT([])
-          setIsLoading(true)
-        }
-      } catch (error) {
-        console.log(error)
-        setIsLoading(true)
-      }
-    }
-    if (!isLoading) {
-      getListHangHoaNXT()
+      getListNhomHangDSBH()
     }
   }, [isLoading])
 
@@ -168,11 +138,11 @@ const DoanhSoBanHangQuay = () => {
   }, [isLoading])
 
   useEffect(() => {
-    const getDataNXTFirst = async () => {
+    const getDataDSBHFirst = async () => {
       try {
         if (isLoading == true) {
           setTableLoad(true)
-          const response = await categoryAPI.InfoDSBHQuay(
+          const response = await categoryAPI.InfoDSBHHangHoa(
             dateData == {}
               ? {}
               : {
@@ -182,14 +152,14 @@ const DoanhSoBanHangQuay = () => {
             TokenAccess,
           )
           if (response.data.DataError == 0) {
-            setDataNXT(response.data.DataResults)
+            setDataDSBH(response.data.DataResults)
             setIsLoading(true)
             setTableLoad(false)
           } else if ((response.data && response.data.DataError == -107) || (response.data && response.data.DataError == -108)) {
             await RETOKEN()
-            getDataNXTFirst()
+            getDataDSBHFirst()
           } else {
-            setDataNXT([])
+            setDataDSBH([])
             console.log(response.data)
             setTableLoad(false)
           }
@@ -198,41 +168,36 @@ const DoanhSoBanHangQuay = () => {
         console.log(error)
       }
     }
-
-    getDataNXTFirst()
+    getDataDSBHFirst()
   }, [searchHangHoa, isLoading])
 
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
-    setcheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
-    const ColKey = filteredHangHoa && filteredHangHoa[0] && Object.keys(filteredHangHoa[0]).filter((item) => typeof item == 'string' && item.includes(`Col_`))
-    const key = Object.keys(dataNXT[0] || []).filter((key) => !ColKey.includes(key))
+    setCheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
+    const key = Object.keys(dataDSBH[0] || []).filter((key) => key !== 'ThongTinHangHoa')
     setOptions(key)
   }, [selectVisible])
 
-  const getDataNXT = async () => {
+  const getDataDSBH = async () => {
     try {
-      const response = await categoryAPI.InfoDSBHQuay(
+      const response = await categoryAPI.InfoDSBHHangHoa(
         {
           NgayBatDau: dateData.NgayBatDau,
           NgayKetThuc: dateData.NgayKetThuc,
           CodeValue1From: selectedNhomFrom,
           CodeValue1To: selectedNhomTo,
           CodeValue1List: selectedNhomList.join(', '),
-          CodeValue2From: selectedMaFrom,
-          CodeValue2To: selectedMaTo,
-          CodeValue2List: selectedMaList.join(', '),
         },
         TokenAccess,
       )
       if (response.data.DataError == 0) {
-        setDataNXT(response.data.DataResults)
+        setDataDSBH(response.data.DataResults)
         setTableLoad(false)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
-        getDataNXT()
+        getDataDSBH()
       } else if (response.data.DataError == -104) {
-        setDataNXT([])
+        setDataDSBH([])
         setTableLoad(false)
       }
     } catch (error) {
@@ -242,34 +207,9 @@ const DoanhSoBanHangQuay = () => {
   const handleFilterDS = () => {
     setTableLoad(true)
     if (!tableLoad) {
-      getDataNXT()
+      getDataDSBH()
     }
   }
-  useEffect(() => {
-    const getListKhoNXT = async () => {
-      try {
-        const response = await categoryAPI.ListQuayTinhTien(TokenAccess)
-        if (response.data.DataError == 0) {
-          setDataQuay(response.data.DataResults)
-          setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getListKhoNXT()
-        } else {
-          console.log(response.data)
-          setIsLoading(true)
-        }
-      } catch (error) {
-        console.log(error)
-        setIsLoading(true)
-      }
-    }
-
-    if (!isLoading) {
-      getListKhoNXT()
-    }
-  }, [isLoading])
-
   const handleDateChange = () => {
     clearTimeout(timerId)
     timerId = setTimeout(() => {
@@ -325,7 +265,7 @@ const DoanhSoBanHangQuay = () => {
     setSelectVisible(!selectVisible)
   }
   const onChange = (checkedValues) => {
-    setcheckedList(checkedValues)
+    setCheckedList(checkedValues)
   }
   const onClickSubmit = () => {
     setTableLoad(true)
@@ -334,73 +274,6 @@ const DoanhSoBanHangQuay = () => {
       setTableLoad(false)
       localStorage.setItem('hiddenColumns', JSON.stringify(checkedList))
     }, 1000)
-  }
-  useEffect(() => {
-    if (check) {
-      if (check == 'Tiền hàng') {
-        setValueCheck('TienHang')
-      } else if (check == 'Tiền ttimerIdhuế') {
-        setValueCheck('TienThue')
-      } else if (check == 'Thành tiền') {
-        setValueCheck('ThanhTien')
-      } else if (check == 'Chiết khấu') {
-        setValueCheck('ChietKhau')
-      } else if (check == 'Tổng cộng') {
-        setValueCheck('TongCong')
-      }
-    }
-  }, [check])
-
-  const dynamicColumns = () => {
-    const maQuay = dataQuay && dataQuay.map((item) => item.Quay)
-    return filteredHangHoa && filteredHangHoa?.length > 0
-      ? maQuay.reduce((columns, ma) => {
-          const ColKey =
-            filteredHangHoa &&
-            filteredHangHoa[0] &&
-            Object.keys(filteredHangHoa[0]).filter((item) => typeof item == 'string' && item.includes(`Col_${ma}_`) && item.includes(valueCheck))
-          const tenQuayMatch = maQuay[maQuay.indexOf(ma)]
-          columns.push(
-            ...ColKey.map((colKey) => ({
-              title: ` Quầy ${tenQuayMatch} `,
-              dataIndex: colKey,
-              key: colKey,
-              width: 180,
-              ellipsis: true,
-              align: 'center',
-              render: (text) => (
-                <div className={`text-end ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
-                  <HighlightedCell text={formatThapPhan(text, dataThongSo?.SOLESOTIEN)} search={searchHangHoa} />
-                </div>
-              ),
-              sorter: (a, b) => a[colKey] - b[colKey],
-              showSorterTooltip: false,
-            })),
-          )
-          return columns
-        }, [])
-      : []
-  }
-  const lastCols = () => {
-    const lastColumns =
-      filteredHangHoa && filteredHangHoa[0] && Object.keys(filteredHangHoa[0]).filter((item) => typeof item === 'string' && !item.startsWith(`Col_`) && item.includes(valueCheck))
-    return lastColumns
-      ? lastColumns.map((colKey) => ({
-          title: `${check}`,
-          dataIndex: colKey,
-          key: colKey,
-          width: 120,
-          fixed: 'right',
-          align: 'center',
-          render: (text) => (
-            <div className={`text-end ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
-              <HighlightedCell text={formatThapPhan(text, dataThongSo?.SOLESOTIEN)} search={searchHangHoa} />
-            </div>
-          ),
-          sorter: (a, b) => a[colKey] - b[colKey],
-          showSorterTooltip: false,
-        }))
-      : []
   }
   const titles = [
     {
@@ -428,38 +301,8 @@ const DoanhSoBanHangQuay = () => {
       dataIndex: 'TenHang',
       key: 'TenHang',
       align: 'center',
-      width: 180,
-      sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
-      showSorterTooltip: false,
-      render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'start',
-            }}
-          >
-            <div
-              style={{
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                cursor: 'pointer',
-              }}
-            >
-              <HighlightedCell text={text} search={searchHangHoa} />
-            </div>
-          </div>
-        </Tooltip>
-      ),
-    },
-    {
-      title: 'Nhóm',
-      dataIndex: 'NhomHang',
-      key: 'NhomHang',
-      align: 'center',
       width: 150,
-      sorter: (a, b) => a.NhomHang.localeCompare(b.NhomHang),
+      sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       showSorterTooltip: false,
       render: (text) => (
         <Tooltip title={text} color="blue">
@@ -493,8 +336,104 @@ const DoanhSoBanHangQuay = () => {
       showSorterTooltip: false,
       render: (text) => <HighlightedCell text={text} search={searchHangHoa} />,
     },
-    ...dynamicColumns(),
-    ...lastCols(),
+    {
+      title: 'Số lượng',
+      dataIndex: 'SoLuong',
+      key: 'SoLuong',
+      align: 'center',
+      width: 150,
+      showSorterTooltip: false,
+      sorter: (a, b) => a.SoLuong - b.SoLuong,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full px-2 ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+        </div>
+      ),
+    },
+    {
+      title: 'Tiền hàng',
+      dataIndex: 'TienHang',
+      key: 'TienHang',
+      align: 'center',
+      width: 150,
+      showSorterTooltip: false,
+      sorter: (a, b) => a.TienHang - b.TienHang,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full px-2 ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
+        </div>
+      ),
+    },
+    {
+      title: 'Tiền thuế',
+      dataIndex: 'TienThue',
+      key: 'TienThue',
+      align: 'center',
+      width: 150,
+      showSorterTooltip: false,
+      sorter: (a, b) => a.TienThue - b.TienThue,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full px-2 ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
+        </div>
+      ),
+    },
+    {
+      title: 'Tiền chiết khấu',
+      dataIndex: 'TienCKTT',
+      key: 'TienCKTT',
+      align: 'center',
+      width: 150,
+      showSorterTooltip: false,
+      sorter: (a, b) => a.TienCKTT - b.TienCKTT,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full px-2 ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
+        </div>
+      ),
+    },
+    {
+      title: 'Tiền mặt',
+      dataIndex: 'TongCong_TM',
+      key: 'TongCong_TM',
+      align: 'center',
+      width: 150,
+      showSorterTooltip: false,
+      sorter: (a, b) => a.TongCong_TM - b.TongCong_TM,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full px-2 ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
+        </div>
+      ),
+    },
+    {
+      title: 'Công nợ',
+      dataIndex: 'TongCong_CN',
+      key: 'TongCong_CN',
+      align: 'center',
+      width: 150,
+      showSorterTooltip: false,
+      sorter: (a, b) => a.TongCong_CN - b.TongCong_CN,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full px-2 ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
+        </div>
+      ),
+    },
+    {
+      title: 'Tổng cộng',
+      dataIndex: 'ThanhTien',
+      key: 'ThanhTien',
+      align: 'center',
+      width: 150,
+      showSorterTooltip: false,
+      sorter: (a, b) => a.ThanhTien - b.ThanhTien,
+      render: (text) => (
+        <div className={`flex justify-end w-full h-full px-2 ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
+        </div>
+      ),
+    },
   ]
   const newTitles = titles.filter((item) => !hiddenRow?.includes(item.dataIndex))
   return (
@@ -511,7 +450,7 @@ const DoanhSoBanHangQuay = () => {
                 <div className="flex justify-between">
                   <div className="flex gap-2 items-center ">
                     <div className="flex items-center gap-2 py-1">
-                      <h1 className="text-lg font-bold text-black-600 uppercase">Doanh số bán hàng (Quầy)</h1>
+                      <h1 className="text-lg font-bold text-black-600 uppercase">Doanh số bán hàng (Hàng hóa)</h1>
                       <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
                     </div>
                     <div className="flex ">
@@ -564,7 +503,7 @@ const DoanhSoBanHangQuay = () => {
                             <div>
                               <Checkbox.Group
                                 style={{
-                                  width: '320px',
+                                  width: '280px',
                                   background: 'white',
                                   padding: 10,
                                   borderRadius: 10,
@@ -580,7 +519,7 @@ const DoanhSoBanHangQuay = () => {
                                     options?.map((item, index) => (
                                       <Col span={10} key={(item, index)}>
                                         <Checkbox value={item} checked={true}>
-                                          {nameColumsDSBHQUAY[item]}
+                                          {nameColumsDSBHHH[item]}
                                         </Checkbox>
                                       </Col>
                                     ))
@@ -608,7 +547,7 @@ const DoanhSoBanHangQuay = () => {
                         <div className="flex items-center gap-1">
                           <label>Từ</label>
                           <DateField
-                            className="DatePicker_NXTKho  max-w-[120px]"
+                            className="DatePicker_DSBHKho  max-w-[120px]"
                             onBlur={handleDateChange}
                             onKeyDown={handleKeyDown}
                             format="DD/MM/YYYY"
@@ -632,7 +571,7 @@ const DoanhSoBanHangQuay = () => {
                         <div className=" flex items-center gap-1 ">
                           <label>Đến</label>
                           <DateField
-                            className="DatePicker_NXTKho max-w-[120px]"
+                            className="DatePicker_DSBHKho max-w-[120px]"
                             onBlur={handleDateChange}
                             onKeyDown={handleKeyDown}
                             format="DD/MM/YYYY"
@@ -654,17 +593,6 @@ const DoanhSoBanHangQuay = () => {
                           />
                         </div>
                       </div>
-                      <div className="flex items-center">
-                        <div className="flex items-center">
-                          <Segmented
-                            options={['Tiền hàng', 'Tiền thuế', 'Thành tiền', 'Chiết khấu', 'Tổng cộng']}
-                            value={check}
-                            onChange={(value) => {
-                              setCheck(value)
-                            }}
-                          />
-                        </div>
-                      </div>
                       <Tooltip title="Xem dữ liệu" color="blue">
                         <div>
                           <ActionButton
@@ -679,197 +607,98 @@ const DoanhSoBanHangQuay = () => {
                         </div>
                       </Tooltip>
                     </div>
-                    <div className=" flex flex-col gap-2">
-                      <div className="flex gap-1">
-                        <div className="flex gap-1 items-center">
-                          <div>Từ</div>
-                          <Select
-                            allowClear
-                            showSearch
-                            size="small"
-                            placeholder="Chọn nhóm"
-                            value={selectedNhomFrom}
-                            onChange={(value) => {
-                              setSelectedNhomFrom(value)
-                              selectedNhomTo == null ? setSelectedNhomTo(value) : ''
-                              if (selectedNhomTo !== null && nhomHangNXT.findIndex((item) => item.Ma === value) > nhomHangNXT.findIndex((item) => item.Ma === selectedNhomTo)) {
-                                setSelectedNhomTo(value)
-                              }
-                            }}
-                            style={{
-                              width: '12vw',
-                              textOverflow: 'ellipsis',
-                            }}
-                          >
-                            {nhomHangNXT?.map((item, index) => {
-                              return (
-                                <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomHang}>
-                                  <p className="truncate">{item.ThongTinNhomHang}</p>
-                                </Select.Option>
-                              )
-                            })}
-                          </Select>
-                        </div>
-                        <div className="flex gap-1 items-center">
-                          <div>Đến</div>
-                          <Select
-                            allowClear
-                            showSearch
-                            size="small"
-                            placeholder="Chọn nhóm"
-                            value={selectedNhomTo}
-                            onChange={(value) => {
+                    <div className="flex gap-1">
+                      <div className="flex gap-1 items-center">
+                        <div>Từ</div>
+                        <Select
+                          allowClear
+                          showSearch
+                          size="small"
+                          placeholder="Chọn nhóm"
+                          value={selectedNhomFrom}
+                          onChange={(value) => {
+                            setSelectedNhomFrom(value)
+                            selectedNhomTo == null ? setSelectedNhomTo(value) : ''
+                            if (selectedNhomTo !== null && nhomHangDSBH.findIndex((item) => item.Ma === value) > nhomHangDSBH.findIndex((item) => item.Ma === selectedNhomTo)) {
                               setSelectedNhomTo(value)
-                              if (selectedNhomFrom !== null && nhomHangNXT.findIndex((item) => item.Ma === value) < nhomHangNXT.findIndex((item) => item.Ma === selectedNhomFrom)) {
-                                setSelectedNhomFrom(value)
-                              }
-                              selectedNhomFrom == null ? setSelectedNhomFrom(value) : ''
-                            }}
-                            style={{
-                              width: '12vw',
-                              textOverflow: 'ellipsis',
-                            }}
-                          >
-                            {nhomHangNXT?.map((item, index) => {
-                              return (
-                                <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomHang}>
-                                  <p className="truncate">{item.ThongTinNhomHang}</p>
-                                </Select.Option>
-                              )
-                            })}
-                          </Select>
-                        </div>
-                        <div className="flex gap-1 items-center">
-                          <div>Chọn</div>
-                          <Select
-                            mode="multiple"
-                            allowClear
-                            filterOption
-                            size="small"
-                            placeholder="Danh sách nhóm"
-                            value={selectedNhomList}
-                            onChange={(value) => setSelectedNhomList(value)}
-                            className="md:w-[30vw] lg:w-[40vw] xl:w-[50vw]"
-                            maxTagCount="responsive"
-                            optionFilterProp="children"
-                            maxTagPlaceholder={(omittedValues) => (
-                              <Tooltip title={omittedValues?.map(({ label }) => label)} color="blue">
-                                <span>+{omittedValues?.length}...</span>
-                              </Tooltip>
-                            )}
-                          >
-                            {nhomHangNXT?.map((item) => {
-                              return (
-                                <Select.Option key={item.Ma} value={item.Ma} title={item.ThongTinNhomHang}>
-                                  <p className="truncate">{item.ThongTinNhomHang}</p>
-                                </Select.Option>
-                              )
-                            })}
-                          </Select>
-                        </div>
+                            }
+                          }}
+                          style={{
+                            width: '12vw',
+                            textOverflow: 'ellipsis',
+                          }}
+                        >
+                          {nhomHangDSBH?.map((item, index) => {
+                            return (
+                              <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomHang}>
+                                <p className="truncate">{item.Ma}</p>
+                              </Select.Option>
+                            )
+                          })}
+                        </Select>
                       </div>
-                      <div className="flex gap-1">
-                        <div className="flex gap-1 items-center">
-                          <div>Từ</div>
-                          <Select
-                            allowClear
-                            showSearch
-                            placeholder="Chọn mã hàng"
-                            size="small"
-                            value={selectedMaFrom}
-                            onChange={(value) => {
-                              setSelectedMaFrom(value)
-                              selectedMaTo == null ? setSelectedMaTo(value) : ''
-                              if (selectedMaTo !== null && hangHoaNXT.findIndex((item) => item.MaHang === value) > hangHoaNXT.findIndex((item) => item.MaHang === selectedMaTo)) {
-                                setSelectedMaTo(value)
-                              }
-                            }}
-                            style={{
-                              width: '12vw',
-                              textOverflow: 'ellipsis',
-                            }}
-                          >
-                            {hangHoaNXT?.map((item, index) => {
-                              return (
-                                <Select.Option key={index} value={item.MaHang} title={item.TenHang}>
-                                  <p className="truncate">
-                                    {item.MaHang} - {item.TenHang}
-                                  </p>
-                                </Select.Option>
-                              )
-                            })}
-                          </Select>
-                        </div>
-                        <div className="flex gap-1 items-center">
-                          <div>Đến</div>
-                          <Select
-                            allowClear
-                            showSearch
-                            size="small"
-                            placeholder="Chọn mã hàng"
-                            value={selectedMaTo}
-                            onChange={(value) => {
-                              setSelectedMaTo(value)
-                              selectedMaFrom == null ? setSelectedMaFrom(value) : ''
-                              if (
-                                selectedMaFrom !== null &&
-                                hangHoaNXT.findIndex((item) => item.MaHang === value) < hangHoaNXT.findIndex((item) => item.MaHang === selectedMaFrom)
-                              ) {
-                                setSelectedMaFrom(value)
-                              }
-                            }}
-                            style={{
-                              width: '12vw',
-                              textOverflow: 'ellipsis',
-                            }}
-                          >
-                            {hangHoaNXT?.map((item, index) => {
-                              return (
-                                <Select.Option key={index} value={item.MaHang} title={item.TenHang}>
-                                  <p className="truncate">
-                                    {item.MaHang} - {item.TenHang}
-                                  </p>
-                                </Select.Option>
-                              )
-                            })}
-                          </Select>
-                        </div>
-                        <div className="flex items-center gap-1 col-span-2">
-                          <div>Chọn</div>
-                          <Select
-                            mode="multiple"
-                            allowClear
-                            size="small"
-                            filterOption
-                            value={selectedMaList}
-                            onChange={(value) => setSelectedMaList(value)}
-                            placeholder="Chọn mã hàng"
-                            className="md:w-[30vw] lg:w-[40vw] xl:w-[50vw]"
-                            maxTagCount="responsive"
-                            optionFilterProp="children"
-                            maxTagPlaceholder={(omittedValues) => (
-                              <Tooltip title={omittedValues?.map(({ label }) => label)} color="blue">
-                                <span>+{omittedValues?.length}...</span>
-                              </Tooltip>
-                            )}
-                          >
-                            {hangHoaNXT?.map((item, index) => {
-                              return (
-                                <Select.Option key={index} value={item.MaHang} title={item.TenHang}>
-                                  <p className="truncate">
-                                    {item.MaHang}-{item.TenHang}
-                                  </p>
-                                </Select.Option>
-                              )
-                            })}
-                          </Select>
-                        </div>
+                      <div className="flex gap-1 items-center">
+                        <div>Đến</div>
+                        <Select
+                          allowClear
+                          showSearch
+                          size="small"
+                          placeholder="Chọn nhóm"
+                          value={selectedNhomTo}
+                          onChange={(value) => {
+                            setSelectedNhomTo(value)
+                            if (selectedNhomFrom !== null && nhomHangDSBH.findIndex((item) => item.Ma === value) < nhomHangDSBH.findIndex((item) => item.Ma === selectedNhomFrom)) {
+                              setSelectedNhomFrom(value)
+                            }
+                            selectedNhomFrom == null ? setSelectedNhomFrom(value) : ''
+                          }}
+                          style={{
+                            width: '12vw',
+                            textOverflow: 'ellipsis',
+                          }}
+                        >
+                          {nhomHangDSBH?.map((item, index) => {
+                            return (
+                              <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomHang}>
+                                <p className="truncate">{item.Ma}</p>
+                              </Select.Option>
+                            )
+                          })}
+                        </Select>
+                      </div>
+                      <div className="flex gap-1 items-center">
+                        <div>Chọn</div>
+                        <Select
+                          mode="multiple"
+                          allowClear
+                          filterOption
+                          size="small"
+                          placeholder="Danh sách nhóm"
+                          value={selectedNhomList}
+                          onChange={(value) => setSelectedNhomList(value)}
+                          className="md:w-[30vw] lg:w-[40vw] xl:w-[50vw]"
+                          maxTagCount="responsive"
+                          optionFilterProp="children"
+                          maxTagPlaceholder={(omittedValues) => (
+                            <Tooltip title={omittedValues?.map(({ label }) => label)} color="blue">
+                              <span>+{omittedValues?.length}...</span>
+                            </Tooltip>
+                          )}
+                        >
+                          {nhomHangDSBH?.map((item) => {
+                            return (
+                              <Select.Option key={item.Ma} value={item.Ma} title={item.ThongTinNhomHang}>
+                                <p className="truncate">{item.Ma}</p>
+                              </Select.Option>
+                            )
+                          })}
+                        </Select>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="DSBH_KH_HH" id="my-table">
+              <div className="DSHangHoa" id="my-table">
                 <Table
                   loading={tableLoad}
                   className="setHeight"
@@ -902,7 +731,7 @@ const DoanhSoBanHangQuay = () => {
                           {newTitles
                             .filter((column) => column.render)
                             .map((column, index) => {
-                              const isNumericColumn = typeof filteredHangHoa[0]?.[column.dataIndex] == 'number'
+                              const isNumericColumn = typeof filteredHangHoa[0]?.[column.dataIndex] == 'number' && column.dataIndex !== 'SoLuong'
                               return (
                                 <Table.Summary.Cell
                                   index={index}
@@ -919,7 +748,7 @@ const DoanhSoBanHangQuay = () => {
                                     </Text>
                                   ) : column.dataIndex == 'STT' ? (
                                     <Text className="text-center flex justify-center" strong>
-                                      {dataNXT?.length}
+                                      {dataDSBH?.length}
                                     </Text>
                                   ) : null}
                                 </Table.Summary.Cell>
@@ -939,4 +768,4 @@ const DoanhSoBanHangQuay = () => {
   )
 }
 
-export default DoanhSoBanHangQuay
+export default DoanhSoBanHangHH

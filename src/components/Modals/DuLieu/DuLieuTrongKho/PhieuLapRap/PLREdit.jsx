@@ -167,7 +167,10 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
         }
       })
       if (newData?.length > 0) {
-        const response = await categoryAPI.PLREdit({ SoChungTu: dataPLR?.SoChungTu, Data: { ...PLRForm, DataDetails: newData } }, TokenAccess)
+        const response = await categoryAPI.PLREdit(
+          { SoChungTu: dataPLR?.SoChungTu, Data: { ...PLRForm, NgayCTu: dayjs(PLRForm?.NgayCTu).format('YYYY-MM-DD'), DataDetails: newData } },
+          TokenAccess,
+        )
         if (response.data.DataError == 0) {
           actionType == 'print'
             ? handlePrint()
@@ -175,7 +178,7 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
               ? handlePrintImport()
               : actionType == 'printExport'
                 ? handlePrintExport()
-                : (close(), toast.success('Sửa thành công', { autoClose: 1000 }))
+                : (close(), toast.success(response.data.DataErrorDescription, { autoClose: 1000 }))
           loadingData()
           setTargetRow(dataPLR?.SoChungTu)
         } else {
@@ -397,7 +400,7 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
                             format="DD/MM/YYYY"
                             value={dayjs(PLRForm?.NgayCTu) || ''}
                             onChange={(values) => {
-                              setPLRForm({ ...PLRForm, NgayCTu: dayjs(values).format('YYYY-MM-DDTHH:mm:ss') })
+                              setPLRForm({ ...PLRForm, NgayCTu: dayjs(values).format('YYYY-MM-DD') })
                             }}
                             sx={{
                               '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },

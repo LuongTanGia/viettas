@@ -65,7 +65,6 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
       })
       setNewData(filteredData)
     }
-
     handleFilterPrint()
   }, [formPrint, data])
 
@@ -101,7 +100,6 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
     const endDate = formPrint.NgayKetThuc
 
     if (dayjs(startDate).isAfter(dayjs(endDate))) {
-      // Nếu ngày bắt đầu lớn hơn ngày kết thúc, cập nhật ngày kết thúc
       setFormPrint({
         ...formPrint,
         NgayBatDau: startDate,
@@ -120,7 +118,6 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
     const endDate = dayjs(newDate).format('YYYY-MM-DD')
 
     if (dayjs(startDate).isAfter(dayjs(endDate))) {
-      // Nếu ngày kết thúc nhỏ hơn ngày bắt đầu, cập nhật ngày bắt đầu
       setFormPrint({
         ...formPrint,
         NgayBatDau: endDate,

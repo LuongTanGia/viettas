@@ -37,7 +37,7 @@ const HMCEdit = ({ close, loadingData, setTargetRow, dataHMC }) => {
       if (response.data.DataError == 0) {
         close()
         loadingData()
-        toast.success('Sửa thành công', { autoClose: 1000 })
+        toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
         setTargetRow(dataHMC?.Ma)
       } else {
         toast.error(response.data.DataErrorDescription, { autoClose: 1000 })

@@ -48,11 +48,9 @@ const PhieuMuaHang = () => {
   const [lastSearchTime, setLastSearchTime] = useState(0)
   const [isShowNotify, setIsShowNotify] = useState(false)
 
-  // bỏ focus option thì hidden
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (optionContainerRef.current && !optionContainerRef.current.contains(event.target)) {
-        // Click ngoài phần tử chứa isShowOption, ẩn isShowOption
         setIsShowOption(false)
       }
     }
@@ -65,10 +63,8 @@ const PhieuMuaHang = () => {
   // hide Columns
   useEffect(() => {
     setNewColumns(columns)
-    // Lấy thông tin từ local storage sau khi đăng nhập
-    const storedHiddenColumns = localStorage.getItem('hidenColumnPMH')
+    const storedHiddenColumns = localStorage.getItem('hiddenColumnPMH')
     const parsedHiddenColumns = storedHiddenColumns ? JSON.parse(storedHiddenColumns) : null
-    // Áp dụng thông tin đã lưu vào checkedList và setConfirmed để ẩn cột
     if (Array.isArray(parsedHiddenColumns) && parsedHiddenColumns.length > 0) {
       setCheckedList(parsedHiddenColumns)
       setConfirmed(true)
@@ -77,8 +73,8 @@ const PhieuMuaHang = () => {
 
   useEffect(() => {
     if (confirmed) {
-      setCheckedList(JSON.parse(localStorage.getItem('hidenColumnPMH')))
-      setNewColumns(JSON.parse(localStorage.getItem('hidenColumnPMH')))
+      setCheckedList(JSON.parse(localStorage.getItem('hiddenColumnPMH')))
+      setNewColumns(JSON.parse(localStorage.getItem('hiddenColumnPMH')))
     }
   }, [confirmed])
 
@@ -170,7 +166,6 @@ const PhieuMuaHang = () => {
         setIsLoadingModal(false)
         setIsShowModal(false)
         setIsLoadingEdit(false)
-        // toast.error('Lấy data thất bại. Vui lòng thử lại sau.')
       }
     }
 
@@ -851,7 +846,7 @@ const PhieuMuaHang = () => {
                               defaultValue={checkedList}
                               onChange={(value) => {
                                 setCheckedList(value)
-                                localStorage.setItem('hidenColumnPMH', JSON.stringify(value))
+                                localStorage.setItem('hiddenColumnPMH', JSON.stringify(value))
                               }}
                             >
                               <Row>

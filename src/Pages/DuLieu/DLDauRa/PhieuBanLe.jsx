@@ -69,7 +69,7 @@ const PhieuBanLe = () => {
   useEffect(() => {
     setNewColumns(columns)
     // Lấy thông tin từ local storage sau khi đăng nhập
-    const storedHiddenColumns = localStorage.getItem('hidenColumnPBL')
+    const storedHiddenColumns = localStorage.getItem('hiddenColumnPBL')
     const parsedHiddenColumns = storedHiddenColumns ? JSON.parse(storedHiddenColumns) : null
 
     // Áp dụng thông tin đã lưu vào checkedList và setConfirmed để ẩn cột
@@ -81,8 +81,8 @@ const PhieuBanLe = () => {
 
   useEffect(() => {
     if (confirmed) {
-      setCheckedList(JSON.parse(localStorage.getItem('hidenColumnPBL')))
-      setNewColumns(JSON.parse(localStorage.getItem('hidenColumnPBL')))
+      setCheckedList(JSON.parse(localStorage.getItem('hiddenColumnPBL')))
+      setNewColumns(JSON.parse(localStorage.getItem('hiddenColumnPBL')))
     }
   }, [confirmed])
 
@@ -783,7 +783,7 @@ const PhieuBanLe = () => {
                               defaultValue={checkedList}
                               onChange={(value) => {
                                 setCheckedList(value)
-                                localStorage.setItem('hidenColumnPBL', JSON.stringify(value))
+                                localStorage.setItem('hiddenColumnPBL', JSON.stringify(value))
                               }}
                             >
                               <Row>
