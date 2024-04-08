@@ -23,7 +23,7 @@ function BtnAction({ handleEdit, handleDelete, record, handleChangePhieuThu, typ
           </div>
         ) : (
           <div className=" flex gap-1 items-center justify-center ">
-            <Tooltip title="Lập phiếu chi" color="blue">
+            <Tooltip title="Lập phiếu thu" color="blue">
               <div
                 // disabled="true"
                 onClick={() => (record.PhieuThu ? null : handleChangePhieuThu(record))}

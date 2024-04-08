@@ -390,15 +390,7 @@ const PhieuNhapDieuChinh = () => {
       sorter: (a, b) => (a.GhiChu?.toString() || '').localeCompare(b.GhiChu?.toString() || ''),
       render: (text) => (
         <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-              justifyContent: 'start',
-            }}
-          >
+          <div className="truncate text-start">
             <HighlightedCell text={text} search={searchHangHoa} />
           </div>
         </Tooltip>

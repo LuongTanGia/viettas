@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import Logo from '../../assets/VTS-iSale.ico'
 import { FloatButton, Checkbox } from 'antd'
@@ -75,6 +76,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
     }
     loadData()
   }, [isShow])
+
   useEffect(() => {
     typeAction === 'edit' || typeAction === 'view' ? setForm(data_chitiet.DataResult) : setForm({ ...initState, ...Dates })
     setDataChitiet(form?.DataDetails)
@@ -121,14 +123,12 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
 
     const result_listHp = await DANHSACHHANGHOA_PBS(API.DANHSACHHANGHOA_PBS, token, { ...form, MaDoiTuong, TenDoiTuong, DiaChi })
     setDataListHP(result_listHp)
-    // setSelectDataOption(result_listHp)
   }
 
   const handleChangeInput_kho = async (value) => {
     setForm({ ...form, MaKho: value })
     const result_listHp = await DANHSACHHANGHOA_PBS(API.DANHSACHHANGHOA_PBS, token, form)
     setDataListHP(result_listHp)
-    // setSelectDataOption(result_listHp)
   }
 
   const handleAddData = (record) => {
@@ -199,7 +199,6 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
       })
       const data = { ...form, DataDetails: newData }
       const res = await SUAPHIEUBANHANG(API.SUAPHIEUBANHANG, token, { SoChungTu: data.SoChungTu, Data: data })
-      console.log(data)
       setMaHang(data.SoChungTu)
       if (res.DataError === 0) {
         handleClose()
@@ -212,7 +211,6 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
     } else {
       handleSubmit()
       handleShowPrint_action(form?.NgayCTu, form?.SoChungTu)
-
       const x = await THONGTINPHIEU(API.CHITIETPBS, token, form?.SoChungTu, dispatch)
       setForm(x.DataResult)
     }
@@ -236,24 +234,19 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
       {
         DonGia: 0,
         GiaBan: 0,
-
         MaHang: 'Chọn mã',
-
         SoLuong: 1,
-
         TenHang: 'Chọn tên',
         ThanhTien: 0,
         TienCKTT: 0,
         TienHang: 0,
         TienThue: 0,
-
         TongCong: 133000,
         TyLeCKTT: 0,
         TyLeThue: 0,
         key: dataListHP.length + dataChitiet.length,
       },
     ])
-    console.log(dataChitiet)
   }
 
   return (

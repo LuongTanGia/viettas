@@ -830,7 +830,7 @@ const categoryAPI = {
     return axiosClient.post(url, body, { headers })
   },
   ListChungTuNCK(body, accessToken) {
-    const url = '/entries/DuLieuNCK/ListHelper_ChungTuTheo'
+    const url = '/entries/DuLieuNCK/ListHelper_ChungTuTheoNgay'
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     }

@@ -83,7 +83,7 @@ export const nameColumsNhomHang = {
   NgaySuaCuoi: 'Ngày sửa cuối',
   NA: 'Ngưng dùng',
 }
-export const nameColumsPhieuBanHang = {
+export const nameColumnsPhieuBanHang = {
   SoChungTu: 'Số chứng từ',
   NgayCTu: 'Ngày chứng từ',
   DaoHan: 'Đáo hạn',

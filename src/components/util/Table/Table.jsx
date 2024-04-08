@@ -72,16 +72,15 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
         width: 200,
         dataIndex: item,
         key: index,
-        sorter: (a, b) => a.DiaChi.localeCompare(b.DiaChi),
+        sorter: (a, b) => (a.DiaChi || '').localeCompare(b.DiaChi || ''),
         showSorterTooltip: false,
         align: 'center',
-        // fixed: 'left',
         ellipsis: {
           showTitle: false,
         },
         render: (address) => (
-          <Tooltip placement="topLeft" title={address} className="truncate" color="blue">
-            {renderHighlightedCell(address)}
+          <Tooltip placement="topLeft" title={address} color="blue">
+            <div className="truncate text-start">{renderHighlightedCell(address)}</div>
           </Tooltip>
         ),
       }
@@ -95,7 +94,6 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
         sorter: (a, b) => a.NhomHang.localeCompare(b.NhomHang),
         showSorterTooltip: false,
         align: 'center',
-        // fixed: 'left',
         ellipsis: {
           showTitle: false,
         },
@@ -143,26 +141,6 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
         ),
       }
     }
-    // if (item === 'LapRap' || item === 'TonKho') {
-    //   return {
-    //     title: columName[item] || item,
-    //     width: 100,
-    //     dataIndex: item,
-    //     key: index,
-    //     sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
-    //     showSorterTooltip: false,
-    //     align: 'center',
-    //     // fixed: 'left',
-    //     ellipsis: {
-    //       showTitle: false,
-    //     },
-    //     render: (address) => (
-    //       <Tooltip placement="topLeft" title={address}>
-    //         {address}
-    //       </Tooltip>
-    //     ),
-    //   }
-    // }
     if (item === 'NgayCTu' || item === 'DaoHan') {
       return {
         title: columName[item] || item,
@@ -339,13 +317,13 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
 
   const columns = [
     ...newColumns,
-
     typeTable === 'listHelper' || typeTable === 'DSBH'
       ? {}
       : {
-          title: 'Action',
+          title: 'Chức năng',
           key: 'operation',
           fixed: 'right',
+          align: 'center',
           width: 100,
           render: (record) => <BtnAction handleView={handleView} record={record} handleEdit={handleEdit} handleDelete={handleDelete} handleChangePhieuThu={handleChangePhieuThu} />,
         },
@@ -395,7 +373,6 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
   useEffect(() => {
     setData(originData)
     const setKey = originData?.filter((item) => initialSelectedRowKeys.includes(item.SoChungTu))
-
     setSelectedRowKeys(setKey?.map((item) => item.SoChungTu))
     setSelectedRecord(selectMH)
   }, [param, selectMH])
@@ -469,7 +446,6 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
             columns={mergedColumns}
             dataSource={data}
             // rowClassName="editable-row"
-
             rowClassName={(record) => {
               if (record.SoChungTu === selectedRecord && typeTable !== 'DSBH') {
                 return 'highlight-row'
@@ -483,7 +459,7 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
             })}
             scroll={{
               y: 300,
-              x: 200,
+              x: 'max-content',
             }}
             scrollToFirstRowOnChange
             size="small"
@@ -492,7 +468,6 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
                 ? () => (
                     <Table.Summary fixed="bottom">
                       <Table.Summary.Row>
-                        {/* <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"> {data.length + 1}</Table.Summary.Cell> */}
                         {columns
                           .filter((column) => column.render)
                           .map((column, index) => {
@@ -583,7 +558,7 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
             })}
             scroll={{
               y: 300,
-              x: 200,
+              x: 'max-content',
             }}
             scrollToFirstRowOnChange
             size="small"

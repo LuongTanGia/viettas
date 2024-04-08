@@ -13,13 +13,14 @@ import { RETOKEN, base64ToPDF } from '../../../../../action/Actions'
 
 const PLRPrint = ({ close, dataPrint, type }) => {
   const TokenAccess = localStorage.getItem('TKN')
-  const [khoanNgayFrom, setKhoanNgayFrom] = useState()
-  const [khoanNgayTo, setKhoanNgayTo] = useState()
   const [isLoading, setIsLoading] = useState(false)
   const [dataListChungTu, setDataListChungTu] = useState([])
   const [selectedNhomFrom, setSelectedNhomFrom] = useState(null)
   const [selectedNhomTo, setSelectedNhomTo] = useState(null)
-  const [dateData, setDateData] = useState({})
+  const [dateData, setDateData] = useState({
+    NgayBatDau: null,
+    NgayKetThuc: null,
+  })
   const [dateChange, setDateChange] = useState(false)
   const [checkboxValues, setCheckboxValues] = useState({
     checkbox1: true,
@@ -31,9 +32,10 @@ const PLRPrint = ({ close, dataPrint, type }) => {
       try {
         const response = await categoryAPI.KhoanNgay(TokenAccess)
         if (response.data && response.data.DataError == 0) {
-          setDateData(response.data)
-          setKhoanNgayFrom(dayjs(response.data.NgayBatDau))
-          setKhoanNgayTo(dayjs(response.data.NgayKetThuc))
+          setDateData({
+            NgayBatDau: dayjs(dataPrint ? dataPrint.NgayCTu : response.data.NgayBatDau),
+            NgayKetThuc: dayjs(dataPrint ? dataPrint.NgayCTu : response.data.NgayKetThuc),
+          })
           setIsLoading(true)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
@@ -49,30 +51,52 @@ const PLRPrint = ({ close, dataPrint, type }) => {
   }, [isLoading])
 
   useEffect(() => {
-    setKhoanNgayFrom(dayjs(dateData?.NgayBatDau))
-    setKhoanNgayTo(dayjs(dateData?.NgayKetThuc))
-  }, [dateData?.NgayBatDau, dateData?.NgayKetThuc])
+    clearTimeout(timerId)
+    timerId = setTimeout(() => {
+      if (dateData && dateData.NgayBatDau && dateData.NgayKetThuc) {
+        getListChungTu()
+      }
+    }, 800)
+  }, [dateData?.NgayBatDau, dateData?.NgayKetThuc, isLoading])
 
-  useEffect(() => {
-    const getListChungTu = async () => {
-      try {
-        const response = await categoryAPI.ListChungTuPLR({ NgayBatDau: dateData?.NgayBatDau, NgayKetThuc: dateData?.NgayKetThuc }, TokenAccess)
+  const getListChungTu = async () => {
+    try {
+      if (isLoading) {
+        const response = await categoryAPI.ListChungTuPLR(
+          {
+            NgayBatDau: dateData?.NgayBatDau.format('YYYY-MM-DD'),
+            NgayKetThuc: dateData?.NgayKetThuc.format('YYYY-MM-DD'),
+          },
+          TokenAccess,
+        )
         if (response.data.DataError == 0) {
           setDataListChungTu(response.data.DataResults)
           setIsLoading(true)
-        }
-        if (response.data.DataError == -104) {
+        } else if (response.data.DataError == -104) {
           setDataListChungTu([])
           setIsLoading(true)
         }
-      } catch (error) {
-        console.log(error)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  useEffect(() => {
+    if (dataPrint) {
+      if (dataListChungTu?.length == 0) {
+        setSelectedNhomTo(null)
+        setSelectedNhomFrom(null)
+      } else {
+        setSelectedNhomTo(dataPrint?.SoChungTu)
+        setSelectedNhomFrom(dataPrint?.SoChungTu)
+      }
+    } else {
+      if (dataListChungTu?.length == 0) {
+        setSelectedNhomTo(null)
+        setSelectedNhomFrom(null)
       }
     }
-    if (dateData && dateData.NgayBatDau && dateData.NgayKetThuc) {
-      getListChungTu()
-    }
-  }, [dateData?.NgayBatDau, dateData?.NgayKetThuc, isLoading])
+  }, [dataPrint, dataListChungTu])
 
   const calculateTotal = () => {
     let total = 0
@@ -80,25 +104,17 @@ const PLRPrint = ({ close, dataPrint, type }) => {
     if (checkboxValues.checkbox2) total += 2
     return total
   }
-  console.log(dataPrint)
+
   const handlePrint = async () => {
     try {
       const response = await categoryAPI.PLRPrint(
-        dataPrint
-          ? {
-              NgayBatDau: dayjs(dataPrint.NgayCTu).format('YYYY-MM-DD'),
-              NgayKetThuc: dayjs(dataPrint.NgayCTu).format('YYYY-MM-DD'),
-              SoChungTuBatDau: dataPrint?.SoChungTu,
-              SoChungTuKetThuc: dataPrint?.SoChungTu,
-              SoLien: calculateTotal(),
-            }
-          : {
-              NgayBatDau: dateData.NgayBatDau,
-              NgayKetThuc: dateData.NgayKetThuc,
-              SoChungTuBatDau: selectedNhomFrom,
-              SoChungTuKetThuc: selectedNhomTo,
-              SoLien: calculateTotal(),
-            },
+        {
+          NgayBatDau: dateData.NgayBatDau.format('YYYY-MM-DD'),
+          NgayKetThuc: dateData.NgayKetThuc.format('YYYY-MM-DD'),
+          SoChungTuBatDau: selectedNhomFrom,
+          SoChungTuKetThuc: selectedNhomTo,
+          SoLien: calculateTotal(),
+        },
         TokenAccess,
       )
       if (response.data.DataError == 0) {
@@ -116,21 +132,13 @@ const PLRPrint = ({ close, dataPrint, type }) => {
   const handlePrintImport = async () => {
     try {
       const response = await categoryAPI.PLRPrintNhap(
-        dataPrint
-          ? {
-              NgayBatDau: dayjs(dataPrint.NgayCTu).format('YYYY-MM-DD'),
-              NgayKetThuc: dayjs(dataPrint.NgayCTu).format('YYYY-MM-DD'),
-              SoChungTuBatDau: dataPrint.SoChungTu,
-              SoChungTuKetThuc: dataPrint.SoChungTu,
-              SoLien: calculateTotal(),
-            }
-          : {
-              NgayBatDau: dateData.NgayBatDau,
-              NgayKetThuc: dateData.NgayKetThuc,
-              SoChungTuBatDau: selectedNhomFrom,
-              SoChungTuKetThuc: selectedNhomTo,
-              SoLien: calculateTotal(),
-            },
+        {
+          NgayBatDau: dateData.NgayBatDau.format('YYYY-MM-DD'),
+          NgayKetThuc: dateData.NgayKetThuc.format('YYYY-MM-DD'),
+          SoChungTuBatDau: selectedNhomFrom,
+          SoChungTuKetThuc: selectedNhomTo,
+          SoLien: calculateTotal(),
+        },
         TokenAccess,
       )
       if (response.data.DataError == 0) {
@@ -147,21 +155,13 @@ const PLRPrint = ({ close, dataPrint, type }) => {
   const handlePrintExport = async () => {
     try {
       const response = await categoryAPI.PLRPrintXuat(
-        dataPrint
-          ? {
-              NgayBatDau: dayjs(dataPrint.NgayCTu).format('YYYY-MM-DD'),
-              NgayKetThuc: dayjs(dataPrint.NgayCTu).format('YYYY-MM-DD'),
-              SoChungTuBatDau: dataPrint.SoChungTu,
-              SoChungTuKetThuc: dataPrint.SoChungTu,
-              SoLien: calculateTotal(),
-            }
-          : {
-              NgayBatDau: dateData.NgayBatDau,
-              NgayKetThuc: dateData.NgayKetThuc,
-              SoChungTuBatDau: selectedNhomFrom,
-              SoChungTuKetThuc: selectedNhomTo,
-              SoLien: calculateTotal(),
-            },
+        {
+          NgayBatDau: dateData.NgayBatDau.format('YYYY-MM-DD'),
+          NgayKetThuc: dateData.NgayKetThuc.format('YYYY-MM-DD'),
+          SoChungTuBatDau: selectedNhomFrom,
+          SoChungTuKetThuc: selectedNhomTo,
+          SoLien: calculateTotal(),
+        },
         TokenAccess,
       )
       if (response.data.DataError == 0) {
@@ -175,28 +175,28 @@ const PLRPrint = ({ close, dataPrint, type }) => {
       close()
     }
   }
+  let timerId
   const handleDateChange = () => {
-    let timerId
     clearTimeout(timerId)
     timerId = setTimeout(() => {
-      if (!dateChange && khoanNgayFrom && khoanNgayTo && khoanNgayFrom.isAfter(khoanNgayTo)) {
+      if (!dateChange && dateData?.NgayBatDau && dateData?.NgayKetThuc && dateData?.NgayBatDau.isAfter(dateData?.NgayKetThuc)) {
         setDateData({
-          NgayBatDau: dayjs(khoanNgayFrom).format('YYYY-MM-DD'),
-          NgayKetThuc: dayjs(khoanNgayFrom).format('YYYY-MM-DD'),
+          NgayBatDau: dayjs(dateData?.NgayBatDau),
+          NgayKetThuc: dayjs(dateData?.NgayBatDau),
         })
         return
-      } else if (dateChange && khoanNgayFrom && khoanNgayTo && khoanNgayFrom.isAfter(khoanNgayTo)) {
+      } else if (dateChange && dateData?.NgayBatDau && dateData?.NgayKetThuc && dateData?.NgayBatDau.isAfter(dateData?.NgayKetThuc)) {
         setDateData({
-          NgayBatDau: dayjs(khoanNgayTo).format('YYYY-MM-DD'),
-          NgayKetThuc: dayjs(khoanNgayTo).format('YYYY-MM-DD'),
+          NgayBatDau: dayjs(dateData?.NgayKetThuc),
+          NgayKetThuc: dayjs(dateData?.NgayKetThuc),
         })
       } else {
         setDateData({
-          NgayBatDau: dayjs(khoanNgayFrom).format('YYYY-MM-DD'),
-          NgayKetThuc: dayjs(khoanNgayTo).format('YYYY-MM-DD'),
+          NgayBatDau: dayjs(dateData?.NgayBatDau),
+          NgayKetThuc: dayjs(dateData?.NgayKetThuc),
         })
       }
-    }, 300)
+    }, 800)
   }
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
@@ -226,7 +226,7 @@ const PLRPrint = ({ close, dataPrint, type }) => {
                         onBlur={handleDateChange}
                         onKeyDown={handleKeyDown}
                         format="DD/MM/YYYY"
-                        value={dataPrint ? dayjs(dataPrint.NgayCTu) : khoanNgayFrom}
+                        value={dateData?.NgayBatDau}
                         sx={{
                           '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
                           '& .MuiButtonBase-root': {
@@ -238,7 +238,10 @@ const PLRPrint = ({ close, dataPrint, type }) => {
                           },
                         }}
                         onChange={(values) => {
-                          setKhoanNgayFrom(values)
+                          setDateData({
+                            ...dateData,
+                            NgayBatDau: dayjs(values),
+                          })
                           setDateChange(false)
                         }}
                       />
@@ -250,7 +253,7 @@ const PLRPrint = ({ close, dataPrint, type }) => {
                         onKeyDown={handleKeyDown}
                         className=" max-w-[180px]"
                         format="DD/MM/YYYY"
-                        value={dataPrint ? dayjs(dataPrint.NgayCTu) : khoanNgayTo}
+                        value={dateData?.NgayKetThuc}
                         sx={{
                           '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
                           '& .MuiButtonBase-root': {
@@ -262,7 +265,10 @@ const PLRPrint = ({ close, dataPrint, type }) => {
                           },
                         }}
                         onChange={(values) => {
-                          setKhoanNgayTo(values)
+                          setDateData({
+                            ...dateData,
+                            NgayKetThuc: dayjs(values),
+                          })
                           setDateChange(true)
                         }}
                       />
@@ -276,7 +282,7 @@ const PLRPrint = ({ close, dataPrint, type }) => {
                       showSearch
                       required
                       size="small"
-                      value={dataPrint ? dataPrint.SoChungTu : selectedNhomFrom}
+                      value={selectedNhomFrom}
                       placeholder={'Chọn nhóm'}
                       onChange={(value) => {
                         setSelectedNhomFrom(value)
@@ -284,6 +290,8 @@ const PLRPrint = ({ close, dataPrint, type }) => {
                           selectedNhomTo !== null &&
                           dataListChungTu.findIndex((item) => item.SoChungTu === value) > dataListChungTu.findIndex((item) => item.SoChungTu === selectedNhomTo)
                         ) {
+                          setSelectedNhomTo(value)
+                        } else {
                           setSelectedNhomTo(value)
                         }
                       }}
@@ -308,13 +316,15 @@ const PLRPrint = ({ close, dataPrint, type }) => {
                       required
                       size="small"
                       placeholder={'Chọn nhóm'}
-                      value={dataPrint ? dataPrint.SoChungTu : selectedNhomTo}
+                      value={selectedNhomTo}
                       onChange={(value) => {
                         setSelectedNhomTo(value)
                         if (
                           selectedNhomFrom !== null &&
                           dataListChungTu.findIndex((item) => item.SoChungTu === value) < dataListChungTu.findIndex((item) => item.SoChungTu === selectedNhomFrom)
                         ) {
+                          setSelectedNhomFrom(value)
+                        } else {
                           setSelectedNhomFrom(value)
                         }
                       }}
