@@ -78,9 +78,6 @@ const CongNoDauVao = () => {
         if (response.data.DataError == 0) {
           setnhomDoiTuongCNDV(response.data.DataResults)
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          ListNhomDoiTuongCNDV()
         } else {
           setnhomDoiTuongCNDV([])
           console.log(response.data)
@@ -121,9 +118,6 @@ const CongNoDauVao = () => {
         if (response.data.DataError == 0) {
           setDateData(response.data)
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getTimeSetting()
         } else {
           console.log(response.data)
           setIsLoading(true)
@@ -157,9 +151,6 @@ const CongNoDauVao = () => {
             setDataCNDV(response.data.DataResults)
             setIsLoading(true)
             setTableLoad(false)
-          } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-            await RETOKEN()
-            getDataCNDVFirst()
           } else {
             setDataCNDV([])
             console.log(response.data)
@@ -193,9 +184,6 @@ const CongNoDauVao = () => {
       if (response.data.DataError == 0) {
         setDataCNDV(response.data.DataResults)
         setTableLoad(false)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getDataCNDV()
       } else if (response.data.DataError == -104) {
         setDataCNDV([])
         setTableLoad(false)

@@ -68,9 +68,6 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
         if (response.data.DataError == 0) {
           setDataHangHoa(response.data.DataResults)
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getDataHangHoa()
         }
       } catch (error) {
         console.log(error)
@@ -89,9 +86,6 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
         if (response.data.DataError == 0) {
           setDataKhoHang(response.data.DataResults)
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getDataKhoHang()
         }
       } catch (error) {
         console.log(error)

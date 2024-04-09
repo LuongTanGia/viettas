@@ -106,9 +106,6 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
         if (response.data && response.data.DataError == 0) {
           setDataHangHoa(response.data.DataResults)
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getDataHangHoaNDC()
         }
       } catch (error) {
         console.log(error)

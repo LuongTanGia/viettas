@@ -497,9 +497,6 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
         loadingData()
         close()
         setTargetRow(getMaHang)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        handleStatus()
       } else {
         toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
       }
@@ -529,9 +526,6 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
         loadingData()
         close()
         setTargetRow(getMaHang)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        handleGroup()
       }
     } catch (error) {
       console.log(error)
@@ -562,9 +556,6 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
       if (response.data.DataError === 0) {
         base64ToPDF(response.data.DataResults)
         close()
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        handlePrintBar()
       } else {
         toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
       }

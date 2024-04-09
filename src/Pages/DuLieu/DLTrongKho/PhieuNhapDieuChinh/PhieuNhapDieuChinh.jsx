@@ -69,9 +69,6 @@ const PhieuNhapDieuChinh = () => {
           setKhoanNgayFrom(dayjs(response.data.NgayBatDau))
           setKhoanNgayTo(dayjs(response.data.NgayKetThuc))
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getTimeSetting()
         } else {
           console.log(response.data)
         }
@@ -147,9 +144,6 @@ const PhieuNhapDieuChinh = () => {
         if (response.data.DataError === 0) {
           setDataCRUD(response.data)
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getDataQuyenHan()
         }
       } catch (error) {
         console.log(error)
@@ -390,15 +384,7 @@ const PhieuNhapDieuChinh = () => {
       sorter: (a, b) => (a.GhiChu?.toString() || '').localeCompare(b.GhiChu?.toString() || ''),
       render: (text) => (
         <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-              justifyContent: 'start',
-            }}
-          >
+          <div className="truncate text-start">
             <HighlightedCell text={text} search={searchHangHoa} />
           </div>
         </Tooltip>

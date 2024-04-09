@@ -85,9 +85,6 @@ const PhanCaDS = () => {
         setDataPhanCa(response.data.DataResults)
         setTableLoad(false)
         setIsLoading(true)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getListPhanCa()
       } else {
         setDataPhanCa([])
         setTableLoad(false)
@@ -106,9 +103,6 @@ const PhanCaDS = () => {
         setDataPhanCa(response.data.DataResults)
         setTableLoad(false)
         setIsLoading(true)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getListPhanCa()
       } else {
         setDataPhanCa([])
         setTableLoad(false)

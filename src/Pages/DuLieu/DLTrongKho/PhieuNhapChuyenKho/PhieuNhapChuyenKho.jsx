@@ -67,9 +67,6 @@ const PhieuNhapChuyenKho = ({ isTableLoad, isTargetRow }) => {
           setKhoanNgayFrom(dayjs(response.data.NgayBatDau))
           setKhoanNgayTo(dayjs(response.data.NgayKetThuc))
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getTimeSetting()
         } else {
           console.log(response.data)
         }
@@ -145,9 +142,6 @@ const PhieuNhapChuyenKho = ({ isTableLoad, isTargetRow }) => {
         if (response.data.DataError === 0) {
           setDataCRUD(response.data)
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getDataQuyenHan()
         }
       } catch (error) {
         console.log(error)

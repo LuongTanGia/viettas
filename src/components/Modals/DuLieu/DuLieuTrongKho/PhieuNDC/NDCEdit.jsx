@@ -100,9 +100,6 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
         if (response.data.DataError == 0) {
           setIsLoading(true)
           setDataHangHoa(response.data.DataResults)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getDataHangHoaNDC()
         }
       } catch (error) {
         console.log(error)
@@ -120,9 +117,6 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
         const response = await categoryAPI.NDCView(dataNDC?.SoChungTu, TokenAccess)
         if (response.data.DataError == 0) {
           setDataNDCView(response.data.DataResult)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleView()
         }
       } catch (error) {
         console.error(error)

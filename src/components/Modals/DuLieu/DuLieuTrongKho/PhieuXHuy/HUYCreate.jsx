@@ -102,9 +102,6 @@ const HUYCreate = ({ close, loadingData, setTargetRow }) => {
         if (response.data.DataError == 0) {
           setDataHangHoa(response.data.DataResults)
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getDataHangHoaHUY()
         }
       } catch (error) {
         console.log(error)

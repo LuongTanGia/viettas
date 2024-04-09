@@ -32,9 +32,6 @@ const ThongKeQuyenHan = () => {
         if (response.data.DataError === 0) {
           setDataCRUD(response.data)
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getDataQuyenHan()
         }
       } catch (error) {
         console.log(error)

@@ -59,9 +59,6 @@ const PhanQuyen = () => {
           setDataUser(response.data.DataResults)
           setIsLoading(true)
           setTableLoadLeft(false)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getDataNguoiDung()
         } else {
           setDataUser([])
           setIsLoading(true)

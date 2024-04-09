@@ -89,9 +89,6 @@ const DoanhSoBanHangHH = () => {
         if (response.data.DataError == 0) {
           setNhomHangDSBH(response.data.DataResults)
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getListNhomHangDSBH()
         } else {
           setNhomHangDSBH([])
           console.log(response.data)
@@ -120,9 +117,6 @@ const DoanhSoBanHangHH = () => {
           setKhoanNgayFrom(dayjs(response.data.NgayBatDau))
           setKhoanNgayTo(dayjs(response.data.NgayKetThuc))
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getTimeSetting()
         } else {
           console.log(response.data)
           setIsLoading(true)
@@ -193,9 +187,6 @@ const DoanhSoBanHangHH = () => {
       if (response.data.DataError == 0) {
         setDataDSBH(response.data.DataResults)
         setTableLoad(false)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getDataDSBH()
       } else if (response.data.DataError == -104) {
         setDataDSBH([])
         setTableLoad(false)

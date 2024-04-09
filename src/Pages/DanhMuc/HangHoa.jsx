@@ -86,9 +86,6 @@ const HangHoa = () => {
         if (response.data.DataError === 0) {
           setDataCRUD(response.data)
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getDataQuyenHan()
         }
       } catch (error) {
         console.log(error)
@@ -177,9 +174,6 @@ const HangHoa = () => {
         )
         if (response.data.DataError === 0) {
           base64ToPDF(response.data.DataResults)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handlePrintABarcode()
         } else {
           toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
         }
@@ -193,9 +187,6 @@ const HangHoa = () => {
         )
         if (response.data.DataError === 0) {
           base64ToPDF(response.data.DataResults)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handlePrintABarcode()
         } else {
           toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
         }

@@ -101,9 +101,6 @@ const XCKEdit = ({ close, dataXCK, loadingData, setTargetRow }) => {
         if (response.data.DataError == 0) {
           setIsLoading(true)
           setDataHangHoa(response.data.DataResults)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getDataHangHoaXCK()
         }
       } catch (error) {
         console.log(error)
@@ -121,9 +118,6 @@ const XCKEdit = ({ close, dataXCK, loadingData, setTargetRow }) => {
         const response = await categoryAPI.XCKView(dataXCK?.SoChungTu, TokenAccess)
         if (response.data.DataError == 0) {
           setDataXCKView(response.data.DataResult)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleView()
         }
       } catch (error) {
         console.error(error)

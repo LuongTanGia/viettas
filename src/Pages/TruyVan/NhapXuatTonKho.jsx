@@ -71,9 +71,6 @@ const NhapXuatTonKho = () => {
             setDataNXT(response.data.DataResults)
             setIsLoading(true)
             setTableLoad(false)
-          } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-            await RETOKEN()
-            getDataNXTFirst()
           } else {
             setDataNXT([])
             console.log(response.data)
@@ -134,9 +131,6 @@ const NhapXuatTonKho = () => {
         if (response.data.DataError == 0) {
           setNhomHangNXT(response.data.DataResults)
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getListNhomHangNXT()
         } else {
           console.log(response.data)
           setIsLoading(true)
@@ -158,9 +152,6 @@ const NhapXuatTonKho = () => {
         if (response.data.DataError == 0) {
           setHangHoaNXT(response.data.DataResults)
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getListHangHoaNXT()
         } else {
           console.log(response.data)
           setIsLoading(true)
@@ -182,9 +173,6 @@ const NhapXuatTonKho = () => {
         if (response.data.DataError == 0) {
           setKhoHangNXT(response.data.DataResults)
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getListKhoNXT()
         } else {
           console.log(response.data)
           setIsLoading(true)
@@ -211,9 +199,6 @@ const NhapXuatTonKho = () => {
         if (response.data.DataError == 0) {
           setDateData(response.data)
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getTimeSetting()
         } else {
           console.log(response.data)
           setIsLoading(true)
@@ -254,9 +239,6 @@ const NhapXuatTonKho = () => {
       if (response.data.DataError == 0) {
         setDataNXT(response.data.DataResults)
         setTableLoad(false)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getDataNXT()
       } else {
         setDataNXT([])
         setTableLoad(false)
@@ -291,9 +273,6 @@ const NhapXuatTonKho = () => {
       if (response.data.DataError == 0) {
         setDataNXT(response.data.DataResults)
         setTableLoad(false)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getDataNXT_DVTQD()
       } else {
         setDataNXT([])
         setTableLoad(false)

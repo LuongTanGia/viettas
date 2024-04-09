@@ -78,9 +78,6 @@ const CongNoDauRa = () => {
         if (response.data.DataError == 0) {
           setnhomDoiTuongCNDR(response.data.DataResults)
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          ListNhomDoiTuongCNDR()
         } else {
           setnhomDoiTuongCNDR([])
           console.log(response.data)
@@ -121,9 +118,6 @@ const CongNoDauRa = () => {
         if (response.data.DataError == 0) {
           setDateData(response.data)
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getTimeSetting()
         } else {
           console.log(response.data)
           setIsLoading(true)
@@ -157,9 +151,6 @@ const CongNoDauRa = () => {
             setDataCNDR(response.data.DataResults)
             setIsLoading(true)
             setTableLoad(false)
-          } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-            await RETOKEN()
-            getDataCNDRFirst()
           } else {
             setDataCNDR([])
             console.log(response.data)
@@ -193,9 +184,6 @@ const CongNoDauRa = () => {
       if (response.data.DataError == 0) {
         setDataCNDR(response.data.DataResults)
         setTableLoad(false)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getDataCNDR()
       } else if (response.data.DataError == -104) {
         setDataCNDR([])
         setTableLoad(false)
