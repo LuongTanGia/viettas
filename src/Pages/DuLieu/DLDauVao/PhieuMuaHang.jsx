@@ -636,7 +636,13 @@ const PhieuMuaHang = () => {
     value: key,
   }))
 
-  const newColumnsHide = columns.filter((item) => !newColumns.includes(item.dataIndex))
+  const newColumnsHide = columns.filter((item) => {
+    if (newColumns && newColumns.length > 0) {
+      return !newColumns.includes(item.dataIndex)
+    } else {
+      return true
+    }
+  })
 
   const handleHideColumns = () => {
     setNewColumns(checkedList)
@@ -668,21 +674,18 @@ const PhieuMuaHang = () => {
     }
   }
 
-  const handleCreate = (record) => {
+  const handleCreate = () => {
     setActionType('create')
-    setDataRecord(record)
     setIsShowModal(true)
   }
-  const handlePrint = (record) => {
+  const handlePrint = () => {
     setActionType('print')
-    setDataRecord(record)
     setIsShowModal(true)
   }
-  const handlePrintWareHouse = (record) => {
+  const handlePrintWareHouse = () => {
     setActionType('printWareHouse')
-    setDataRecord(record)
     setIsShowModal(true)
-    setIsLoadingModal(false)
+    // setIsLoadingModal(false)
   }
 
   const handlePay = (record) => {
@@ -770,7 +773,7 @@ const PhieuMuaHang = () => {
                 </div>
                 <div className="flex  ">
                   {isShowSearch && (
-                    <div className={`flex absolute left-[14rem] -top-[2px] transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
+                    <div className={`flex absolute left-[14rem] top-[2px] transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
                       <Input
                         allowClear={{
                           clearIcon: <CloseSquareFilled />,
@@ -896,7 +899,6 @@ const PhieuMuaHang = () => {
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') {
                           handleStartDateChange(formKhoanNgay.NgayBatDau)
-
                           setPrevDateValue(formKhoanNgay)
                           handleFilterDS()
                         }

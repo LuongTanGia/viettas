@@ -233,10 +233,12 @@ const CreateThuChi = ({ actionType, data, typePage, namePage, dataHangMuc, dataD
 
   return (
     <>
-      <div className="w-[700px] h-[400px]">
-        <div className="flex gap-2">
-          <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
-          <label className="text-blue-700 font-semibold uppercase pb-1">Thêm - {namePage} </label>
+      <div className="px-4 py-2 absolute shadow-lg bg-white rounded-md flex flex-col ">
+        <div className="w-[700px]">
+          <div className="flex gap-2">
+            <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
+            <label className="text-blue-700 font-semibold uppercase pb-1">Thêm - {namePage} </label>
+          </div>
         </div>
 
         <Spin spinning={isLoadingModal}>
@@ -450,7 +452,7 @@ const CreateThuChi = ({ actionType, data, typePage, namePage, dataHangMuc, dataD
           </div>
         </Spin>
         {/* button */}
-        <div className="flex justify-between items-center pt-[10px] ">
+        <div className="flex justify-between items-center pt-2 ">
           <div className="flex gap-x-3   ">
             <ActionButton
               color={'slate-50'}

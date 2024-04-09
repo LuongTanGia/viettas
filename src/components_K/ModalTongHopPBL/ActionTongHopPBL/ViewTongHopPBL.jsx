@@ -303,230 +303,242 @@ const ViewTongHopPBL = ({ typePage, namePage, dataRecord, dataThongSo, loading, 
   }
 
   return (
-    <div className="w-[90vw] ">
-      <div className="flex gap-2">
-        <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
-        <label className="text-blue-700 font-semibold uppercase pb-1">{namePage}</label>
-      </div>
-      <div className="border w-full  rounded-[4px]-sm text-sm ">
-        <div className="grid grid-cols-4  gap-2 m-2 pb-[2px]">
-          <div className="flex  items-center gap-1 ">
-            <label className="min-w-[90px] text-sm flex justify-end">Quầy</label>
-            <input
-              value={dataRecord.Quay}
-              type="text"
-              className="text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate"
-              disabled
-            />
-          </div>
-          <div className="flex items-center  gap-2 ">
-            <label className="text-sm ">Ngày</label>
-            <DateField
-              className="max-w-[135px] bg-[#fafafa]"
-              format="DD/MM/YYYY"
-              value={dayjs(dataRecord?.NgayCTu)}
-              disabled
-              sx={{
-                '& .MuiButtonBase-root': {
-                  padding: '4px',
-                },
-
-                '& .MuiSvgIcon-root': {
-                  width: '18px',
-                  height: '18px',
-                },
-              }}
-            />
-          </div>
-          <div className="flex items-center gap-1 ">
-            <label className="w-[30px] text-sm flex justify-end">Ca</label>
-            <input
-              value={dataRecord.Ca}
-              type="text"
-              className="text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate"
-              disabled
-            />
-          </div>
+    <div className="px-4 pt-4 pb-2 absolute shadow-lg bg-white rounded-md flex flex-col ">
+      <div className="w-[90vw] ">
+        <div className="flex gap-2">
+          <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
+          <label className="text-blue-700 font-semibold uppercase pb-1">{namePage}</label>
         </div>
+        <div className="border w-full  rounded-[4px]-sm text-sm ">
+          <div className="grid grid-cols-4  gap-2 m-2 pb-[2px]">
+            <div className="flex  items-center gap-1 ">
+              <label className="min-w-[90px] text-sm flex justify-end">Quầy</label>
+              <input
+                value={dataRecord.Quay}
+                type="text"
+                className="text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate"
+                disabled
+              />
+            </div>
+            <div className="flex items-center  gap-2 ">
+              <label className="text-sm ">Ngày</label>
+              <DateField
+                className="max-w-[135px] bg-[#fafafa]"
+                format="DD/MM/YYYY"
+                value={dayjs(dataRecord?.NgayCTu)}
+                disabled
+                sx={{
+                  '& .MuiButtonBase-root': {
+                    padding: '4px',
+                  },
 
-        <div className="grid grid-cols-4  gap-2 m-2">
-          <div className="flex items-center gap-1 ">
-            <label className="min-w-[90px] text-sm flex justify-end whitespace-nowrap">Nhân viên</label>
-            <input
-              value={dataRecord.NhanVien}
-              type="text"
-              className="text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate"
-              disabled
-            />
+                  '& .MuiSvgIcon-root': {
+                    width: '18px',
+                    height: '18px',
+                  },
+                }}
+              />
+            </div>
+            <div className="flex items-center gap-1 ">
+              <label className="w-[30px] text-sm flex justify-end">Ca</label>
+              <input
+                value={dataRecord.Ca}
+                type="text"
+                className="text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate"
+                disabled
+              />
+            </div>
           </div>
-          <div className="flex items-center gap-1 ">
-            <input
-              // value={dataRecord.SoChungTu}
-              type="text"
-              className="h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate"
-              disabled
-            />
+
+          <div className="grid grid-cols-4  gap-2 m-2">
+            <div className="flex items-center gap-1 ">
+              <label className="min-w-[90px] text-sm flex justify-end whitespace-nowrap">Nhân viên</label>
+              <input
+                value={dataRecord.NhanVien}
+                type="text"
+                className="text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate"
+                disabled
+              />
+            </div>
+            <div className="flex items-center gap-1 ">
+              <input
+                // value={dataRecord.SoChungTu}
+                type="text"
+                className="h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate"
+                disabled
+              />
+            </div>
+            <div className="flex items-center gap-1 ">
+              <label className=" w-[30px] text-sm flex justify-end">Kho</label>
+              <input
+                // value={dataRecord.SoChungTu}
+                type="text"
+                className="h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate"
+                disabled
+              />
+            </div>
+            <div className="flex items-center gap-1 ">
+              <input
+                // value={dataRecord.SoChungTu}
+                type="text"
+                className="h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate"
+                disabled
+              />
+            </div>
+            <div className="flex items-center gap-1 ">
+              <label className="min-w-[90px] text-sm flex justify-end whitespace-nowrap">Tổng tiền bán</label>
+              <input
+                value={formatPrice(dataRecord.TongThanhTien, dataThongSo.SOLESOTIEN)}
+                type="text"
+                className="text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate"
+                disabled
+              />
+            </div>
+            <div className="flex items-center gap-1 ">
+              <label className="text-sm flex justify-end whitespace-nowrap">Thu khác tại quầy</label>
+              <input
+                value={formatPrice(dataRecord.TongThu, dataThongSo.SOLESOTIEN)}
+                type="text"
+                className="text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate"
+                disabled
+              />
+            </div>
+            <div className="flex items-center gap-1 ">
+              <label className=" text-sm flex justify-end whitespace-nowrap">Chi khác tại quầy</label>
+              <input
+                value={formatPrice(dataRecord.TongChi, dataThongSo.SOLESOTIEN)}
+                type="text"
+                className="text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate"
+                disabled
+              />
+            </div>
+            <div className="flex items-center gap-1 ">
+              <label className="   text-sm flex justify-end whitespace-nowrap">Số tiền phải nộp</label>
+              <input
+                value={formatPrice(dataRecord.TienPhaiNop, dataThongSo.SOLESOTIEN)}
+                type="text"
+                className="text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate"
+                disabled
+              />
+            </div>
           </div>
-          <div className="flex items-center gap-1 ">
-            <label className=" w-[30px] text-sm flex justify-end">Kho</label>
-            <input
-              // value={dataRecord.SoChungTu}
-              type="text"
-              className="h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate"
-              disabled
-            />
-          </div>
-          <div className="flex items-center gap-1 ">
-            <input
-              // value={dataRecord.SoChungTu}
-              type="text"
-              className="h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate"
-              disabled
-            />
-          </div>
-          <div className="flex items-center gap-1 ">
-            <label className="min-w-[90px] text-sm flex justify-end whitespace-nowrap">Tổng tiền bán</label>
-            <input
-              value={formatPrice(dataRecord.TongThanhTien, dataThongSo.SOLESOTIEN)}
-              type="text"
-              className="text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate"
-              disabled
-            />
-          </div>
-          <div className="flex items-center gap-1 ">
-            <label className="text-sm flex justify-end whitespace-nowrap">Thu khác tại quầy</label>
-            <input
-              value={formatPrice(dataRecord.TongThu, dataThongSo.SOLESOTIEN)}
-              type="text"
-              className="text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate"
-              disabled
-            />
-          </div>
-          <div className="flex items-center gap-1 ">
-            <label className=" text-sm flex justify-end whitespace-nowrap">Chi khác tại quầy</label>
-            <input
-              value={formatPrice(dataRecord.TongChi, dataThongSo.SOLESOTIEN)}
-              type="text"
-              className="text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate"
-              disabled
-            />
-          </div>
-          <div className="flex items-center gap-1 ">
-            <label className="   text-sm flex justify-end whitespace-nowrap">Số tiền phải nộp</label>
-            <input
-              value={formatPrice(dataRecord.TienPhaiNop, dataThongSo.SOLESOTIEN)}
-              type="text"
-              className="text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate"
-              disabled
-            />
-          </div>
+
+          <Segmented
+            options={['Phiếu bán hàng', 'Phiếu thu', 'Phiếu chi']}
+            value={typeData}
+            onChange={(value) => {
+              if (!isChanging) {
+                setIsChanging(true)
+                setTypeData(value)
+                setTableLoad(true)
+                setTimeout(() => {
+                  setIsChanging(false)
+                }, 1000)
+              }
+            }}
+          />
+
+          {/* table */}
+          <Spin spinning={tableLoad}>
+            <div>
+              <Table
+                className="TongHopPBL_view "
+                columns={typeData === 'Phiếu bán hàng' ? columns : column2}
+                dataSource={dataSource}
+                size="small"
+                scroll={{
+                  x: 'max-content',
+                  y: 200,
+                }}
+                bordered
+                pagination={false}
+                summary={() => {
+                  return !dataSource ? null : (
+                    <Table.Summary fixed="bottom">
+                      <Table.Summary.Row>
+                        {columns
+                          .filter((column) => column.render)
+                          .map((column, index) => {
+                            const isNumericColumn = typeof dataSource[0]?.[column.dataIndex] === 'number'
+                            return typeData === 'Phiếu bán hàng' ? (
+                              <Table.Summary.Cell
+                                index={index}
+                                key={`summary-cell-${index}`}
+                                align={isNumericColumn ? 'right' : 'left'}
+                                className="text-end font-bold  bg-[#f1f1f1]"
+                              >
+                                {column.dataIndex === 'TyLeCKTT' || column.dataIndex === 'TyLeThue' ? (
+                                  <Text strong>
+                                    {Number(dataSource.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                      minimumFractionDigits: dataThongSo?.SOLETYLE,
+                                      maximumFractionDigits: dataThongSo?.SOLETYLE,
+                                    })}
+                                  </Text>
+                                ) : column.dataIndex === 'SoLuong' ? (
+                                  <Text strong>
+                                    {Number(dataSource.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                      minimumFractionDigits: dataThongSo?.SOLESOLUONG,
+                                      maximumFractionDigits: dataThongSo?.SOLESOLUONG,
+                                    })}
+                                  </Text>
+                                ) : column.dataIndex === 'TienHang' ||
+                                  column.dataIndex === 'TienThue' ||
+                                  column.dataIndex === 'ThanhTien' ||
+                                  column.dataIndex === 'TienCKTT' ||
+                                  column.dataIndex === 'DonGia' ||
+                                  column.dataIndex === 'SoTien' ||
+                                  column.dataIndex === 'TongCong' ? (
+                                  <Text strong>
+                                    {Number(dataSource.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                      minimumFractionDigits: dataThongSo?.SOLESOTIEN,
+                                      maximumFractionDigits: dataThongSo?.SOLESOTIEN,
+                                    })}
+                                  </Text>
+                                ) : column.dataIndex === 'STT' ? (
+                                  <Text strong>{dataSource?.length}</Text>
+                                ) : null}
+                              </Table.Summary.Cell>
+                            ) : (
+                              <Table.Summary.Cell
+                                index={index}
+                                key={`summary-cell-${index}`}
+                                align={isNumericColumn ? 'right' : 'left'}
+                                className="text-end font-bold  bg-[#f1f1f1]"
+                              >
+                                {column.dataIndex === 'SoTien' ? (
+                                  <Text strong>
+                                    {Number(dataSource.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                      minimumFractionDigits: dataThongSo?.SOLESOTIEN,
+                                      maximumFractionDigits: dataThongSo?.SOLESOTIEN,
+                                    })}
+                                  </Text>
+                                ) : column.dataIndex === 'STT' ? (
+                                  <Text strong>{dataSource?.length}</Text>
+                                ) : null}
+                              </Table.Summary.Cell>
+                            )
+                          })}
+                      </Table.Summary.Row>
+                    </Table.Summary>
+                  )
+                }}
+              ></Table>
+            </div>
+          </Spin>
         </div>
-
-        <Segmented
-          options={['Phiếu bán hàng', 'Phiếu thu', 'Phiếu chi']}
-          value={typeData}
-          onChange={(value) => {
-            if (!isChanging) {
-              setIsChanging(true)
-              setTypeData(value)
-              setTableLoad(true)
-              setTimeout(() => {
-                setIsChanging(false)
-              }, 1000)
-            }
-          }}
-        />
-
-        {/* table */}
-        <Spin spinning={tableLoad}>
-          <div>
-            <Table
-              className="TongHopPBL_view "
-              columns={typeData === 'Phiếu bán hàng' ? columns : column2}
-              dataSource={dataSource}
-              size="small"
-              scroll={{
-                x: 'max-content',
-                y: 200,
-              }}
-              bordered
-              pagination={false}
-              summary={() => {
-                return !dataSource ? null : (
-                  <Table.Summary fixed="bottom">
-                    <Table.Summary.Row>
-                      {columns
-                        .filter((column) => column.render)
-                        .map((column, index) => {
-                          const isNumericColumn = typeof dataSource[0]?.[column.dataIndex] === 'number'
-                          return typeData === 'Phiếu bán hàng' ? (
-                            <Table.Summary.Cell index={index} key={`summary-cell-${index}`} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
-                              {column.dataIndex === 'TyLeCKTT' || column.dataIndex === 'TyLeThue' ? (
-                                <Text strong>
-                                  {Number(dataSource.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                    minimumFractionDigits: dataThongSo?.SOLETYLE,
-                                    maximumFractionDigits: dataThongSo?.SOLETYLE,
-                                  })}
-                                </Text>
-                              ) : column.dataIndex === 'SoLuong' ? (
-                                <Text strong>
-                                  {Number(dataSource.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                    minimumFractionDigits: dataThongSo?.SOLESOLUONG,
-                                    maximumFractionDigits: dataThongSo?.SOLESOLUONG,
-                                  })}
-                                </Text>
-                              ) : column.dataIndex === 'TienHang' ||
-                                column.dataIndex === 'TienThue' ||
-                                column.dataIndex === 'ThanhTien' ||
-                                column.dataIndex === 'TienCKTT' ||
-                                column.dataIndex === 'DonGia' ||
-                                column.dataIndex === 'SoTien' ||
-                                column.dataIndex === 'TongCong' ? (
-                                <Text strong>
-                                  {Number(dataSource.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                    minimumFractionDigits: dataThongSo?.SOLESOTIEN,
-                                    maximumFractionDigits: dataThongSo?.SOLESOTIEN,
-                                  })}
-                                </Text>
-                              ) : column.dataIndex === 'STT' ? (
-                                <Text strong>{dataSource?.length}</Text>
-                              ) : null}
-                            </Table.Summary.Cell>
-                          ) : (
-                            <Table.Summary.Cell index={index} key={`summary-cell-${index}`} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
-                              {column.dataIndex === 'SoTien' ? (
-                                <Text strong>
-                                  {Number(dataSource.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                    minimumFractionDigits: dataThongSo?.SOLESOTIEN,
-                                    maximumFractionDigits: dataThongSo?.SOLESOTIEN,
-                                  })}
-                                </Text>
-                              ) : column.dataIndex === 'STT' ? (
-                                <Text strong>{dataSource?.length}</Text>
-                              ) : null}
-                            </Table.Summary.Cell>
-                          )
-                        })}
-                    </Table.Summary.Row>
-                  </Table.Summary>
-                )
-              }}
-            ></Table>
-          </div>
-        </Spin>
-      </div>
-      {/* button */}
-      <div className="flex justify-end items-center mt-[10px] gap-2 ">
-        <ActionButton
-          color={'slate-50'}
-          title={'Lập chứng từ'}
-          isModal={true}
-          background={'bg-main'}
-          bg_hover={'white'}
-          color_hover={'bg-main'}
-          handleAction={() => handleLapChungTu()}
-        />
-        <ActionButton color={'slate-50'} title={'Đóng'} isModal={true} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
+        {/* button */}
+        <div className="flex justify-end items-center mt-[10px] gap-2 ">
+          <ActionButton
+            color={'slate-50'}
+            title={'Lập chứng từ'}
+            isModal={true}
+            background={'bg-main'}
+            bg_hover={'white'}
+            color_hover={'bg-main'}
+            handleAction={() => handleLapChungTu()}
+          />
+          <ActionButton color={'slate-50'} title={'Đóng'} isModal={true} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
+        </div>
       </div>
     </div>
   )

@@ -64,7 +64,7 @@ const ModalDieuChinh = ({ close, namePage, dataThongSo, typePage, dataRecord, se
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
-      <div className="  m-6  p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
+      <div className=" m-6  p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
         <div className="w-[700px] h-[160px]">
           <div className="flex gap-2">
             <img src={logo} alt="logo" className="w-[25px] h-[20px]" />

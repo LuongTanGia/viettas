@@ -570,7 +570,13 @@ const GBL = () => {
     value: key,
   }))
 
-  const newColumnsHide = columns.filter((item) => !newColumns.includes(item.dataIndex))
+  const newColumnsHide = columns.filter((item) => {
+    if (newColumns && newColumns.length > 0) {
+      return !newColumns.includes(item.dataIndex)
+    } else {
+      return true
+    }
+  })
 
   const handleHideColumns = () => {
     setNewColumns(checkedList)

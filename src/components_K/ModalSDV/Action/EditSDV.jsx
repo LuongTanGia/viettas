@@ -95,7 +95,7 @@ const EditSDV = ({ namePage, dataRecord, dataThongTinSua, dataDoiTuong, dataThon
   }
 
   return (
-    <>
+    <div className="p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
       <div className="w-[700px] h-[400px]">
         <div className="flex gap-2">
           <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
@@ -283,7 +283,7 @@ const EditSDV = ({ namePage, dataRecord, dataThongTinSua, dataDoiTuong, dataThon
           </div>
         </div>
       </div>
-    </>
+    </div>
   )
 }
 
