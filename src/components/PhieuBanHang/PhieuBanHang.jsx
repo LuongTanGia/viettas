@@ -63,7 +63,7 @@ function PhieuBanHang() {
     }
     const isDateTime = dayjs(stringValue).isValid()
     if (isDateTime) {
-      const formattedValue = dayjs(stringValue).format('DD/MM/YYYY').toString()
+      const formattedValue = dayjs(stringValue).format('DD/MM/YYYY HH:mm:ss').toString()
       const formattedSearchText = searchTextLower
       if (formattedValue.includes(formattedSearchText)) {
         return true
@@ -112,14 +112,8 @@ function PhieuBanHang() {
   }
 
   useEffect(() => {
-    // setDataDate(dateHT)
     const getListData = async () => {
       setLoadingSearch(true)
-      // const searchData = {
-      //   ...dataDate,
-      //   searchText: searchText.trim(),
-      // }
-
       const filteredDataRes = await DANHSACHPHIEUBANHANG(API.DANHSACHPBS, token, searchData, dispatch)
       if (filteredDataRes === -1) {
         setData([])
@@ -159,10 +153,8 @@ function PhieuBanHang() {
     setType('view')
     setDataRecord(record)
   }
-
   const handleEdit = async (record) => {
     await THONGTINPHIEU(API.CHITIETPBS, token, record?.SoChungTu, dispatch)
-
     setIsShow(true)
     setType('edit')
     setDataRecord(record)
@@ -376,7 +368,7 @@ function PhieuBanHang() {
                             <div>
                               <Checkbox.Group
                                 style={{
-                                  width: '600px',
+                                  width: '650px',
                                   background: 'white',
                                   padding: 10,
                                   borderRadius: 10,
@@ -386,7 +378,7 @@ function PhieuBanHang() {
                                 defaultValue={checkedList}
                                 onChange={onChange}
                               >
-                                <Row>
+                                <Row className="flex justify-center">
                                   {options && options.length > 0 ? (
                                     options?.map((item, index) => (
                                       <Col span={6} key={(item, index)}>
@@ -414,13 +406,13 @@ function PhieuBanHang() {
                 </div>
               </div>
               <div className="flex gap-3 mb-1 justify-between ">
-                <div className="flex gap-3 ">
-                  <div className="flex gap-x-2 items-center max-w-[200px]">
+                <div className="flex gap-1">
+                  <div className="flex gap-x-2 items-center">
                     <label htmlFor="">Ngày</label>
                     <DateField
                       onBlur={handleDateChange}
                       onKeyDown={handleKeyDown}
-                      className="DatePicker_PMH min-w-[100px] w-[60%]"
+                      className="DatePicker_PMH max-w-[120px]"
                       format="DD/MM/YYYY"
                       defaultValue={dayjs(dataDate?.NgayBatDau)}
                       maxDate={dayjs(dataDate.NgayKetThuc)}
@@ -442,12 +434,12 @@ function PhieuBanHang() {
                       }}
                     />
                   </div>
-                  <div className="flex gap-x-2 items-center max-w-[200px]">
+                  <div className="flex gap-x-2 items-center">
                     <label htmlFor="">Đến</label>
                     <DateField
                       onBlur={handleDateChange}
                       onKeyDown={handleKeyDown}
-                      className="DatePicker_PMH min-w-[100px] w-[60%]"
+                      className="DatePicker_PMH max-w-[120px]"
                       format="DD/MM/YYYY"
                       defaultValue={dayjs(dataDate?.NgayKetThuc)}
                       onChange={(newDate) => {
