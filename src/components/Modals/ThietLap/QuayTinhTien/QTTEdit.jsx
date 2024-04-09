@@ -71,9 +71,6 @@ const QTTEdit = ({ close, loadingData, setTargetRow, dataQTT }) => {
         if (response.data.DataError == 0) {
           setDataNhomGia(response.data.DataResults)
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getListHelper()
         }
       } catch (error) {
         setIsLoading(true)

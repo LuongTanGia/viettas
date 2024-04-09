@@ -78,9 +78,6 @@ const NDCPrint = ({ close, dataPrint }) => {
         } else if (response.data.DataError == -104) {
           setDataListChungTu([])
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getListChungTu()
         }
       }
     } catch (error) {

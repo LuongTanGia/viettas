@@ -106,9 +106,6 @@ const XCKCreate = ({ close, loadingData, setTargetRow }) => {
         if (response.data && response.data.DataError == 0) {
           setDataHangHoa(response.data.DataResults)
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getDataHangHoaXCK()
         }
       } catch (error) {
         console.log(error)

@@ -60,9 +60,6 @@ const QuayTinhTien = () => {
           setDataQuayTinhTien(response.data.DataResults)
           setTableLoad(false)
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getListQuayTinhTien()
         } else {
           setDataQuayTinhTien([])
           setTableLoad(false)

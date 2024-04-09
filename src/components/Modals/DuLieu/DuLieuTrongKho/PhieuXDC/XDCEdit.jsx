@@ -101,9 +101,6 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
         if (response.data.DataError == 0) {
           setIsLoading(true)
           setDataHangHoa(response.data.DataResults)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getDataHangHoaXDC()
         }
       } catch (error) {
         console.log(error)
@@ -121,9 +118,6 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
         const response = await categoryAPI.XDCView(dataXDC?.SoChungTu, TokenAccess)
         if (response.data.DataError == 0) {
           setDataXDCView(response.data.DataResult)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleView()
         }
       } catch (error) {
         console.error(error)

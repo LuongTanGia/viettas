@@ -66,9 +66,6 @@ const DTGroup = ({ close, type, dataDT, loadingData, setTargetRow }) => {
         loadingData()
         close()
         setTargetRow(dataDT)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        handlePrice()
       } else {
         toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
       }

@@ -64,9 +64,6 @@ const PCCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
         if (response.data.DataError == 0) {
           setDataQuay(response.data.DataResults)
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getListHelperQuay()
         }
       } catch (error) {
         setIsLoading(true)
@@ -84,9 +81,6 @@ const PCCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
         if (response.data.DataError == 0) {
           setDataCa(response.data.DataResults)
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getListHelperCa()
         }
       } catch (error) {
         setIsLoading(true)

@@ -56,9 +56,6 @@ const PCEdit = ({ close, loadingData, setTargetRow, dataPC }) => {
         if (response.data.DataError == 0) {
           setDataCa(response.data.DataResults)
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getListHelperCa()
         }
       } catch (error) {
         setIsLoading(true)

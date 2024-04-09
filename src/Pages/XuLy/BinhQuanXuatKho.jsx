@@ -88,9 +88,6 @@ const BinhQuanXuatKho = () => {
           setDataGiaXuatKho([])
           setTableLoadLeft(false)
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getDataGiaXuatKho()
         }
       } catch (error) {
         console.log(error)

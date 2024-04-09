@@ -95,9 +95,6 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
       if (response.data.DataError == 0) {
         setDataXCKView(response.data.DataResult)
         setTableLoad(false)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        handleView()
       }
     } catch (error) {
       console.error(error)
@@ -115,9 +112,6 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
         setTargetRow(response.data.DataResults[0].SoChungTu)
         setTargetRowXL(response.data.DataResults[0].SoChungTu)
         setIsShowModal(false)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        handleView()
       }
     } catch (error) {
       console.error(error)

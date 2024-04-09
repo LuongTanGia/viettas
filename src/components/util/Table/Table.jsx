@@ -12,7 +12,7 @@ import { bool } from 'prop-types'
 
 const { Text } = Typography
 
-function Tables({ hiden, loadingSearch, param, columName, height, handleView, handleEdit, typeTable, handleAddData, handleDelete, handleChangePhieuThu, selectMH, textSearch }) {
+function Tables({ hidden, loadingSearch, param, columName, height, handleView, handleEdit, typeTable, handleAddData, handleDelete, handleChangePhieuThu, selectMH, textSearch }) {
   const [soLuong, setSoLuong] = useState(1)
 
   const DataColumns = param ? param[0] : []
@@ -46,7 +46,7 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
     )
   }
   keysOnly?.unshift('STT')
-  const listColumns = keysOnly?.filter((value) => !hiden?.includes(value))
+  const listColumns = keysOnly?.filter((value) => !hidden?.includes(value))
   const newColumns = listColumns?.map((item, index) => {
     if (item === 'STT') {
       return {

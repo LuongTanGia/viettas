@@ -26,7 +26,6 @@ import { FaEyeSlash } from 'react-icons/fa'
 import { CloseSquareFilled } from '@ant-design/icons'
 function PhieuBanHang() {
   const optionContainerRef = useRef(null)
-
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const token = localStorage.getItem('TKN')
@@ -495,7 +494,7 @@ function PhieuBanHang() {
                   loadingSearch={loadingSearch}
                   selectMH={selectMH}
                   textSearch={searchText}
-                  hiden={hidden}
+                  hidden={hidden}
                 />
               </div>
               <ActionModals

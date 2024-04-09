@@ -96,9 +96,6 @@ const DoanhSoBanHangKho = () => {
         if (response.data.DataError == 0) {
           setNhomHangNXT(response.data.DataResults)
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getListNhomHangNXT()
         } else {
           setNhomHangNXT([])
           setIsLoading(true)
@@ -119,9 +116,6 @@ const DoanhSoBanHangKho = () => {
         if (response.data.DataError == 0) {
           setHangHoaNXT(response.data.DataResults)
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getListHangHoaNXT()
         } else {
           setHangHoaNXT([])
           console.log(response.data)
@@ -151,9 +145,6 @@ const DoanhSoBanHangKho = () => {
           setKhoanNgayFrom(dayjs(response.data.NgayBatDau))
           setKhoanNgayTo(dayjs(response.data.NgayKetThuc))
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getTimeSetting()
         } else {
           console.log(response.data)
           setIsLoading(true)
@@ -228,9 +219,6 @@ const DoanhSoBanHangKho = () => {
       if (response.data.DataError == 0) {
         setDataNXT(response.data.DataResults)
         setTableLoad(false)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getDataNXT()
       } else if (response.data.DataError == -104) {
         setDataNXT([])
         setTableLoad(false)
@@ -252,9 +240,6 @@ const DoanhSoBanHangKho = () => {
         if (response.data.DataError == 0) {
           setDataKhoHang(response.data.DataResults)
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getListKhoNXT()
         } else {
           console.log(response.data)
           setIsLoading(true)

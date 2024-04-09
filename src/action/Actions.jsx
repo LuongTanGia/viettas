@@ -319,7 +319,6 @@ export const DANHSACHPHIEUBANHANG = async (API, token, data, dispatch) => {
         window.localStorage.removeItem('tokenDuLieu')
         window.localStorage.removeItem('RTKN')
         window.localStorage.removeItem('userName')
-
         window.location.href = '/login'
       }
     }

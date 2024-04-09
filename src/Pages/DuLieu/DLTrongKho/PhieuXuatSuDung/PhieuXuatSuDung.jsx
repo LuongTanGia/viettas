@@ -69,9 +69,6 @@ const PhieuXuatSuDung = () => {
           setKhoanNgayFrom(dayjs(response.data.NgayBatDau))
           setKhoanNgayTo(dayjs(response.data.NgayKetThuc))
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getTimeSetting()
         } else {
           console.log(response.data)
         }
@@ -109,9 +106,6 @@ const PhieuXuatSuDung = () => {
           } else if (response.data.DataError == -104) {
             setDataXSD([])
             setTableLoad(false)
-          } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-            await RETOKEN()
-            getDataXSD()
           }
         }
       } catch (error) {
