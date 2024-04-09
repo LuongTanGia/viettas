@@ -871,7 +871,7 @@ const DuLieuBLQ = () => {
       setSearchDuLieuTT(newSearch)
     }
   }
-  console.log('formdate', formKhoanNgay)
+
   return (
     <>
       {dataQuyenHan?.VIEW === false ? (
@@ -916,7 +916,7 @@ const DuLieuBLQ = () => {
                     <div className="flex gap-x-1 items-center">
                       <label htmlFor="">Ngày</label>
                       <DateField
-                        className="DatePicker_PMH max-w-[115px]"
+                        className="DatePicker_PMH  max-w-[115px]"
                         format="DD/MM/YYYY"
                         value={dayjs(formKhoanNgay.NgayBatDau)}
                         onChange={(newDate) => {
@@ -953,7 +953,7 @@ const DuLieuBLQ = () => {
                     <div className="flex gap-x-1 items-center">
                       <label htmlFor="">Đến</label>
                       <DateField
-                        className="DatePicker_PMH max-w-[115px]"
+                        className="DatePicker_PMH  max-w-[115px] "
                         format="DD/MM/YYYY"
                         value={dayjs(formKhoanNgay.NgayKetThuc)}
                         onChange={(newDate) => {

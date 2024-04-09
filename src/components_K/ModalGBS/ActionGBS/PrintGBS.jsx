@@ -52,43 +52,45 @@ const PrintGBS = ({ namePage, data, close }) => {
     }
   }
   return (
-    <div className="h-[140px]">
-      <div className="flex gap-2">
-        <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
-        <label className="text-blue-700 font-semibold uppercase pb-1">In - {namePage} </label>
-      </div>
+    <div className="p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
+      <div className="h-[140px]">
+        <div className="flex gap-2">
+          <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
+          <label className="text-blue-700 font-semibold uppercase pb-1">In - {namePage} </label>
+        </div>
 
-      <div className="border-2 my-1 ">
-        <div className="p-4 flex flex-col gap-3 ">
-          <div className="flex  ">
-            <div className="flex gap-2 ">
-              <label className="required w-[70px] text-end">Bảng giá</label>
-              <Select size="small" showSearch optionFilterProp="children" className="w-[200px]" value={formPrint.CodeValue1From} onChange={handleFromChange}>
-                {data?.map((item) => (
-                  <Option key={item.NhomGia} value={item.NhomGia}>
-                    {item.NhomGia}
-                  </Option>
-                ))}
-              </Select>
-            </div>
-            <div className="flex gap-2">
-              <label className="required w-[50px]  text-end">Đến</label>
-              <Select size="small" showSearch optionFilterProp="children" className="w-[200px]" value={formPrint.CodeValue1To} onChange={handleToChange}>
-                {data?.map((item) => (
-                  <Option key={item.NhomGia} value={item.NhomGia}>
-                    {item.NhomGia}
-                  </Option>
-                ))}
-              </Select>
+        <div className="border-2 my-1 ">
+          <div className="p-4 flex flex-col gap-3 ">
+            <div className="flex  ">
+              <div className="flex gap-2 ">
+                <label className="required w-[70px] text-end">Bảng giá</label>
+                <Select size="small" showSearch optionFilterProp="children" className="w-[200px]" value={formPrint.CodeValue1From} onChange={handleFromChange}>
+                  {data?.map((item) => (
+                    <Option key={item.NhomGia} value={item.NhomGia}>
+                      {item.NhomGia}
+                    </Option>
+                  ))}
+                </Select>
+              </div>
+              <div className="flex gap-2">
+                <label className="required w-[50px]  text-end">Đến</label>
+                <Select size="small" showSearch optionFilterProp="children" className="w-[200px]" value={formPrint.CodeValue1To} onChange={handleToChange}>
+                  {data?.map((item) => (
+                    <Option key={item.NhomGia} value={item.NhomGia}>
+                      {item.NhomGia}
+                    </Option>
+                  ))}
+                </Select>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div className="flex justify-end pt-1 gap-2">
-        <ActionButton color={'slate-50'} title={'Xác nhận'} isModal={true} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handlePrint} />
+        <div className="flex justify-end pt-2 gap-2">
+          <ActionButton color={'slate-50'} title={'Xác nhận'} isModal={true} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handlePrint} />
 
-        <ActionButton color={'slate-50'} title={'Đóng'} isModal={true} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
+          <ActionButton color={'slate-50'} title={'Đóng'} isModal={true} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
+        </div>
       </div>
     </div>
   )

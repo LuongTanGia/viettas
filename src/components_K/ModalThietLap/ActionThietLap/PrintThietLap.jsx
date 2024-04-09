@@ -85,196 +85,198 @@ const PrintThietLap = ({ namePage, dataNhomGia, dataHangHoa, close }) => {
   }
 
   return (
-    <div className="h-[306px]">
-      <div className="flex gap-2">
-        <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
-        <label className="text-blue-700 font-semibold uppercase pb-1">In - {namePage} </label>
-      </div>
+    <div className="p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
+      <div className="h-[306px]">
+        <div className="flex gap-2">
+          <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
+          <label className="text-blue-700 font-semibold uppercase pb-1">In - {namePage} </label>
+        </div>
 
-      <div className="border-2 my-1 ">
-        <div className="p-4 flex flex-col gap-3 ">
-          {/* DatePicker */}
-          <div className=" flex  items-center gap-2 ">
-            <label htmlFor="" className="w-[90px] text-end">
-              Ngày
-            </label>
-            <DateField
-              className="DatePicker_PMH max-w-[154px]"
-              format="DD/MM/YYYY"
-              value={dayjs(formPrint.ngayHieuLuc)}
-              onChange={(newDate) => {
-                setFormPrint({
-                  ...formPrint,
-                  ngayHieuLuc: dayjs(newDate).format('YYYY-MM-DD'),
-                })
-              }}
-              sx={{
-                '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                '& .MuiButtonBase-root': {
-                  padding: '4px',
-                },
-                '& .MuiSvgIcon-root': {
-                  width: '18px',
-                  height: '18px',
-                },
-              }}
-            />
-          </div>
-          <div className="flex  ">
-            <div className="flex gap-2 ">
-              <label className="w-[90px] text-end">Nhóm</label>
-              <Select
-                showSearch
-                optionFilterProp="children"
-                allowClear
-                size="small"
-                placeholder="Chọn nhóm"
-                value={formPrint.CodeValue1From}
-                onChange={handleFromChange}
-                style={{
-                  width: '170px',
-                  textOverflow: 'ellipsis',
+        <div className="border-2 my-1 ">
+          <div className="p-4 flex flex-col gap-3 ">
+            {/* DatePicker */}
+            <div className=" flex  items-center gap-2 ">
+              <label htmlFor="" className="w-[90px] text-end">
+                Ngày
+              </label>
+              <DateField
+                className="DatePicker_PMH max-w-[154px]"
+                format="DD/MM/YYYY"
+                value={dayjs(formPrint.ngayHieuLuc)}
+                onChange={(newDate) => {
+                  setFormPrint({
+                    ...formPrint,
+                    ngayHieuLuc: dayjs(newDate).format('YYYY-MM-DD'),
+                  })
                 }}
-                popupMatchSelectWidth={false}
+                sx={{
+                  '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                  '& .MuiButtonBase-root': {
+                    padding: '4px',
+                  },
+                  '& .MuiSvgIcon-root': {
+                    width: '18px',
+                    height: '18px',
+                  },
+                }}
+              />
+            </div>
+            <div className="flex  ">
+              <div className="flex gap-2 ">
+                <label className="w-[90px] text-end">Nhóm</label>
+                <Select
+                  showSearch
+                  optionFilterProp="children"
+                  allowClear
+                  size="small"
+                  placeholder="Chọn nhóm"
+                  value={formPrint.CodeValue1From}
+                  onChange={handleFromChange}
+                  style={{
+                    width: '170px',
+                    textOverflow: 'ellipsis',
+                  }}
+                  popupMatchSelectWidth={false}
+                >
+                  {dataNhomGia?.map((item) => (
+                    <Option key={item.Ma} value={item.Ma} title={item.Ten}>
+                      {item.Ma} - {item.Ten}
+                    </Option>
+                  ))}
+                </Select>
+              </div>
+              <div className="flex gap-2">
+                <label className="w-[50px]  text-end">Đến</label>
+                <Select
+                  showSearch
+                  optionFilterProp="children"
+                  allowClear
+                  size="small"
+                  placeholder="Chọn nhóm"
+                  value={formPrint.CodeValue1To}
+                  onChange={handleToChange}
+                  style={{
+                    width: '170px',
+                    textOverflow: 'ellipsis',
+                  }}
+                  popupMatchSelectWidth={false}
+                >
+                  {dataNhomGia?.map((item) => (
+                    <Option key={item.Ma} value={item.Ma} title={item.Ten}>
+                      {item.Ma} - {item.Ten}
+                    </Option>
+                  ))}
+                </Select>
+              </div>
+            </div>
+            <div className="">
+              <Select
+                mode="multiple"
+                allowClear
+                placeholder="Chọn nhóm"
+                size="small"
+                value={value1List}
+                onChange={(value) => setValue1List(value)}
+                className="w-full truncate"
+                maxTagCount="responsive"
+                optionFilterProp="children"
+                maxTagPlaceholder={(omittedValues) => (
+                  <Tooltip title={omittedValues?.map(({ label }) => label)} color="blue">
+                    <span>+{omittedValues?.length}...</span>
+                  </Tooltip>
+                )}
               >
                 {dataNhomGia?.map((item) => (
-                  <Option key={item.Ma} value={item.Ma} title={item.Ten}>
-                    {item.Ma} - {item.Ten}
+                  <Option key={item.Ma} value={item.Ma}>
+                    <p>
+                      {item.Ma} - {item.Ten}
+                    </p>
                   </Option>
                 ))}
               </Select>
             </div>
-            <div className="flex gap-2">
-              <label className="w-[50px]  text-end">Đến</label>
+            <div className="flex  ">
+              <div className="flex gap-2 ">
+                <label className="w-[90px] text-end">Hàng hóa</label>
+                <Select
+                  showSearch
+                  optionFilterProp="children"
+                  allowClear
+                  size="small"
+                  placeholder="Chọn hàng hóa"
+                  value={formPrint.CodeValue2From}
+                  onChange={handle2FromChange}
+                  style={{
+                    width: '170px',
+                    textOverflow: 'ellipsis',
+                  }}
+                  popupMatchSelectWidth={false}
+                >
+                  {dataHangHoa?.map((item) => (
+                    <Option key={item.MaHang} value={item.MaHang} title={item.TenHang}>
+                      {item.MaHang} - {item.TenHang}
+                    </Option>
+                  ))}
+                </Select>
+              </div>
+              <div className="flex gap-2">
+                <label className="w-[50px]  text-end">Đến</label>
+                <Select
+                  showSearch
+                  optionFilterProp="children"
+                  allowClear
+                  size="small"
+                  placeholder="Chọn hàng hóa"
+                  value={formPrint.CodeValue2To}
+                  onChange={handle2ToChange}
+                  style={{
+                    width: '170px',
+                    textOverflow: 'ellipsis',
+                  }}
+                  popupMatchSelectWidth={false}
+                >
+                  {dataHangHoa?.map((item) => (
+                    <Option key={item.MaHang} value={item.MaHang} title={item.TenHang}>
+                      {item.MaHang} - {item.TenHang}
+                    </Option>
+                  ))}
+                </Select>
+              </div>
+            </div>
+            <div className="">
               <Select
-                showSearch
-                optionFilterProp="children"
+                mode="multiple"
                 allowClear
-                size="small"
                 placeholder="Chọn nhóm"
-                value={formPrint.CodeValue1To}
-                onChange={handleToChange}
-                style={{
-                  width: '170px',
-                  textOverflow: 'ellipsis',
-                }}
-                popupMatchSelectWidth={false}
-              >
-                {dataNhomGia?.map((item) => (
-                  <Option key={item.Ma} value={item.Ma} title={item.Ten}>
-                    {item.Ma} - {item.Ten}
-                  </Option>
-                ))}
-              </Select>
-            </div>
-          </div>
-          <div className="">
-            <Select
-              mode="multiple"
-              allowClear
-              placeholder="Chọn nhóm"
-              size="small"
-              value={value1List}
-              onChange={(value) => setValue1List(value)}
-              className="w-full truncate"
-              maxTagCount="responsive"
-              optionFilterProp="children"
-              maxTagPlaceholder={(omittedValues) => (
-                <Tooltip title={omittedValues?.map(({ label }) => label)} color="blue">
-                  <span>+{omittedValues?.length}...</span>
-                </Tooltip>
-              )}
-            >
-              {dataNhomGia?.map((item) => (
-                <Option key={item.Ma} value={item.Ma}>
-                  <p>
-                    {item.Ma} - {item.Ten}
-                  </p>
-                </Option>
-              ))}
-            </Select>
-          </div>
-          <div className="flex  ">
-            <div className="flex gap-2 ">
-              <label className="w-[90px] text-end">Hàng hóa</label>
-              <Select
-                showSearch
-                optionFilterProp="children"
-                allowClear
                 size="small"
-                placeholder="Chọn hàng hóa"
-                value={formPrint.CodeValue2From}
-                onChange={handle2FromChange}
-                style={{
-                  width: '170px',
-                  textOverflow: 'ellipsis',
-                }}
-                popupMatchSelectWidth={false}
+                value={value2List}
+                onChange={(value) => setValue2List(value)}
+                className="w-full truncate"
+                maxTagCount="responsive"
+                optionFilterProp="children"
+                maxTagPlaceholder={(omittedValues) => (
+                  <Tooltip title={omittedValues?.map(({ label }) => label)} color="blue">
+                    <span>+{omittedValues?.length}...</span>
+                  </Tooltip>
+                )}
               >
                 {dataHangHoa?.map((item) => (
-                  <Option key={item.MaHang} value={item.MaHang} title={item.TenHang}>
-                    {item.MaHang} - {item.TenHang}
+                  <Option key={item.MaHang} value={item.MaHang}>
+                    <p>
+                      {item.MaHang} - {item.TenHang}
+                    </p>
                   </Option>
                 ))}
               </Select>
             </div>
-            <div className="flex gap-2">
-              <label className="w-[50px]  text-end">Đến</label>
-              <Select
-                showSearch
-                optionFilterProp="children"
-                allowClear
-                size="small"
-                placeholder="Chọn hàng hóa"
-                value={formPrint.CodeValue2To}
-                onChange={handle2ToChange}
-                style={{
-                  width: '170px',
-                  textOverflow: 'ellipsis',
-                }}
-                popupMatchSelectWidth={false}
-              >
-                {dataHangHoa?.map((item) => (
-                  <Option key={item.MaHang} value={item.MaHang} title={item.TenHang}>
-                    {item.MaHang} - {item.TenHang}
-                  </Option>
-                ))}
-              </Select>
-            </div>
-          </div>
-          <div className="">
-            <Select
-              mode="multiple"
-              allowClear
-              placeholder="Chọn nhóm"
-              size="small"
-              value={value2List}
-              onChange={(value) => setValue2List(value)}
-              className="w-full truncate"
-              maxTagCount="responsive"
-              optionFilterProp="children"
-              maxTagPlaceholder={(omittedValues) => (
-                <Tooltip title={omittedValues?.map(({ label }) => label)} color="blue">
-                  <span>+{omittedValues?.length}...</span>
-                </Tooltip>
-              )}
-            >
-              {dataHangHoa?.map((item) => (
-                <Option key={item.MaHang} value={item.MaHang}>
-                  <p>
-                    {item.MaHang} - {item.TenHang}
-                  </p>
-                </Option>
-              ))}
-            </Select>
           </div>
         </div>
-      </div>
 
-      <div className="flex justify-end pt-1 gap-2">
-        <ActionButton color={'slate-50'} title={'Xác nhận'} isModal={true} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handlePrint} />
+        <div className="flex justify-end pt-1 gap-2">
+          <ActionButton color={'slate-50'} title={'Xác nhận'} isModal={true} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handlePrint} />
 
-        <ActionButton color={'slate-50'} title={'Đóng'} isModal={true} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
+          <ActionButton color={'slate-50'} title={'Đóng'} isModal={true} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
+        </div>
       </div>
     </div>
   )

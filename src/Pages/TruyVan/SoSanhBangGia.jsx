@@ -314,7 +314,13 @@ const SoSanhBG = () => {
     value: key,
   }))
 
-  const newColumnsHide = columns.filter((item) => !newColumns.includes(item.dataIndex))
+  const newColumnsHide = columns.filter((item) => {
+    if (newColumns && newColumns.length > 0) {
+      return !newColumns.includes(item.dataIndex)
+    } else {
+      return true
+    }
+  })
 
   const handleHideColumns = () => {
     setNewColumns(checkedList)
@@ -478,6 +484,7 @@ const SoSanhBG = () => {
                       popupMatchSelectWidth={false}
                       showSearch
                       optionFilterProp="children"
+                      optionLabelProp="value"
                     >
                       {dataNhomHang?.map((item) => (
                         <Option key={item.Ma} value={item.Ma} title={item.Ten}>
@@ -501,6 +508,7 @@ const SoSanhBG = () => {
                         textOverflow: 'ellipsis',
                       }}
                       popupMatchSelectWidth={false}
+                      optionLabelProp="value"
                     >
                       {dataNhomHang?.map((item) => (
                         <Option key={item.Ma} value={item.Ma} title={item.Ten}>
@@ -513,6 +521,8 @@ const SoSanhBG = () => {
                     <div className="w-[42px] text-end">Chọn</div>
                     <Select
                       mode="multiple"
+                      showSearch
+                      optionFilterProp="children"
                       allowClear
                       size="small"
                       placeholder="Chọn nhóm"
@@ -520,7 +530,6 @@ const SoSanhBG = () => {
                       onChange={(value) => setValueList1(value)}
                       className="md:w-[40vw] lg:w-[50vw] "
                       maxTagCount="responsive"
-                      optionFilterProp="children"
                       maxTagPlaceholder={(omittedValues) => (
                         <Tooltip title={omittedValues?.map(({ label }) => label)} color="blue">
                           <span>+{omittedValues?.length}...</span>
@@ -555,6 +564,7 @@ const SoSanhBG = () => {
                         textOverflow: 'ellipsis',
                       }}
                       popupMatchSelectWidth={false}
+                      optionLabelProp="value"
                     >
                       {dataHangHoa?.map((item) => (
                         <Option key={item.MaHang} value={item.MaHang} title={item.TenHang}>
@@ -578,6 +588,7 @@ const SoSanhBG = () => {
                         textOverflow: 'ellipsis',
                       }}
                       popupMatchSelectWidth={false}
+                      optionLabelProp="value"
                     >
                       {dataHangHoa?.map((item) => (
                         <Option key={item.MaHang} value={item.MaHang} title={item.TenHang}>

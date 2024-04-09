@@ -314,7 +314,13 @@ const HangHoaTKTT = () => {
     value: key,
   }))
 
-  const newColumnsHide = columns.filter((item) => !newColumns.includes(item.dataIndex))
+  const newColumnsHide = columns.filter((item) => {
+    if (newColumns && newColumns.length > 0) {
+      return !newColumns.includes(item.dataIndex)
+    } else {
+      return true
+    }
+  })
 
   const handleHideColumns = () => {
     setNewColumns(checkedList)
@@ -467,6 +473,7 @@ const HangHoaTKTT = () => {
                     <div className="w-[42px] text-end">Nhóm</div>
                     <Select
                       showSearch
+                      optionFilterProp="children"
                       size="small"
                       allowClear
                       placeholder="Chọn nhóm"
@@ -477,6 +484,7 @@ const HangHoaTKTT = () => {
                         textOverflow: 'ellipsis',
                       }}
                       popupMatchSelectWidth={false}
+                      optionLabelProp="value"
                     >
                       {dataNhomHang?.map((item) => (
                         <Option key={item.Ma} value={item.Ma} title={item.Ten}>
@@ -490,6 +498,7 @@ const HangHoaTKTT = () => {
                     <Select
                       showSearch
                       allowClear
+                      optionFilterProp="children"
                       size="small"
                       placeholder="Chọn nhóm"
                       value={formFilter.CodeValue1To}
@@ -499,6 +508,7 @@ const HangHoaTKTT = () => {
                         textOverflow: 'ellipsis',
                       }}
                       popupMatchSelectWidth={false}
+                      optionLabelProp="value"
                     >
                       {dataNhomHang?.map((item) => (
                         <Option key={item.Ma} value={item.Ma} title={item.Ten}>
@@ -512,16 +522,24 @@ const HangHoaTKTT = () => {
                     <Select
                       mode="multiple"
                       allowClear
-                      maxTagCount={2}
                       size="small"
                       placeholder="Chọn nhóm"
                       value={valueList1}
                       onChange={(value) => setValueList1(value)}
                       className="md:w-[40vw] lg:w-[50vw] truncate"
+                      maxTagCount="responsive"
+                      maxTagPlaceholder={(omittedValues) => (
+                        <Tooltip title={omittedValues?.map(({ label }) => label)} color="blue">
+                          <span>+{omittedValues?.length}...</span>
+                        </Tooltip>
+                      )}
+                      popupMatchSelectWidth
                     >
                       {dataNhomHang?.map((item) => (
                         <Option key={item.Ma} value={item.Ma}>
-                          {item.Ma} - {item.Ten}
+                          <p>
+                            {item.Ma} - {item.Ten}
+                          </p>
                         </Option>
                       ))}
                     </Select>
@@ -533,6 +551,7 @@ const HangHoaTKTT = () => {
                     <div className="w-[42px] text-end">H.Hóa</div>
                     <Select
                       showSearch
+                      optionFilterProp="children"
                       size="small"
                       allowClear
                       placeholder="Chọn nhóm"
@@ -543,6 +562,7 @@ const HangHoaTKTT = () => {
                         textOverflow: 'ellipsis',
                       }}
                       popupMatchSelectWidth={false}
+                      optionLabelProp="value"
                     >
                       {dataHangHoa?.map((item) => (
                         <Option key={item.MaHang} value={item.MaHang} title={item.TenHang}>
@@ -555,6 +575,7 @@ const HangHoaTKTT = () => {
                     <div className=" text-center">Đến</div>
                     <Select
                       showSearch
+                      optionFilterProp="children"
                       allowClear
                       size="small"
                       placeholder="Chọn nhóm"
@@ -565,6 +586,7 @@ const HangHoaTKTT = () => {
                         textOverflow: 'ellipsis',
                       }}
                       popupMatchSelectWidth={false}
+                      optionLabelProp="value"
                     >
                       {dataHangHoa?.map((item) => (
                         <Option key={item.MaHang} value={item.MaHang} title={item.TenHang}>
@@ -577,17 +599,27 @@ const HangHoaTKTT = () => {
                     <div className="w-[42px] text-end">Chọn</div>
                     <Select
                       mode="multiple"
+                      showSearch
                       allowClear
-                      maxTagCount={2}
                       size="small"
                       placeholder="Chọn nhóm"
                       value={valueList2}
                       onChange={(value) => setValueList2(value)}
                       className="md:w-[40vw] lg:w-[50vw] truncate"
+                      maxTagCount="responsive"
+                      optionFilterProp="children"
+                      maxTagPlaceholder={(omittedValues) => (
+                        <Tooltip title={omittedValues?.map(({ label }) => label)} color="blue">
+                          <span>+{omittedValues?.length}...</span>
+                        </Tooltip>
+                      )}
+                      popupMatchSelectWidth
                     >
                       {dataHangHoa?.map((item) => (
                         <Option key={item.MaHang} value={item.MaHang} title={item.TenHang}>
-                          {item.MaHang} - {item.TenHang}
+                          <p>
+                            {item.MaHang} - {item.TenHang}
+                          </p>
                         </Option>
                       ))}
                     </Select>

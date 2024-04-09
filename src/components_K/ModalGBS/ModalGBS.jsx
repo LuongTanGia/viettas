@@ -33,49 +33,48 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
   return (
     <>
       <div className=" fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
-        <div className="p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
-          {actionType === 'delete' && <DeleteGBS dataRecord={dataRecord} loading={loading} close={close} />}
+        {actionType === 'delete' && <DeleteGBS dataRecord={dataRecord} loading={loading} close={close} />}
 
-          {actionType === 'print' && <PrintGBS namePage={namePage} data={data} close={close} />}
+        {actionType === 'print' && <PrintGBS namePage={namePage} data={data} close={close} />}
 
-          {actionType === 'view' && (
-            <ViewGBS namePage={namePage} data={data} dataThongTin={dataThongTin} dataThongSo={dataThongSo} isLoadingModal={isLoadingModal} loading={loading} close={close} />
-          )}
+        {actionType === 'view' && (
+          <ViewGBS namePage={namePage} data={data} dataThongTin={dataThongTin} dataThongSo={dataThongSo} isLoadingModal={isLoadingModal} loading={loading} close={close} />
+        )}
 
-          {(actionType === 'create' || actionType === 'clone') && (
-            <CreateGBS
-              actionType={actionType}
-              typePage={typePage}
-              namePage={namePage}
-              dataThongTin={dataThongTin}
-              dataHangHoa={dataHangHoa}
-              dataThongSo={dataThongSo}
-              setHightLight={setHightLight}
-              isLoadingModal={isLoadingModal}
-              loading={loading}
-              close={close}
-            />
-          )}
+        {(actionType === 'create' || actionType === 'clone') && (
+          <CreateGBS
+            actionType={actionType}
+            typePage={typePage}
+            namePage={namePage}
+            dataThongTin={dataThongTin}
+            dataHangHoa={dataHangHoa}
+            dataThongSo={dataThongSo}
+            setHightLight={setHightLight}
+            isLoadingModal={isLoadingModal}
+            loading={loading}
+            close={close}
+          />
+        )}
 
-          {actionType === 'edit' && (
-            <EditGBS
-              actionType={actionType}
-              typePage={typePage}
-              namePage={namePage}
-              dataThongTin={dataThongTin}
-              dataHangHoa={dataHangHoa}
-              dataThongSo={dataThongSo}
-              setHightLight={setHightLight}
-              isLoadingModal={isLoadingModal}
-              loading={loading}
-              close={close}
-            />
-          )}
-        </div>
+        {actionType === 'edit' && (
+          <EditGBS
+            actionType={actionType}
+            typePage={typePage}
+            namePage={namePage}
+            dataThongTin={dataThongTin}
+            dataHangHoa={dataHangHoa}
+            dataThongSo={dataThongSo}
+            setHightLight={setHightLight}
+            isLoadingModal={isLoadingModal}
+            loading={loading}
+            close={close}
+          />
+        )}
+
+        {actionType === 'adjustPrice' && (
+          <ModalDieuChinh dataThongSo={dataThongSo} namePage={namePage} typePage={typePage} dataRecord={dataRecord} setHightLight={setHightLight} close={close} />
+        )}
       </div>
-      {actionType === 'adjustPrice' && (
-        <ModalDieuChinh dataThongSo={dataThongSo} namePage={namePage} typePage={typePage} dataRecord={dataRecord} setHightLight={setHightLight} close={close} />
-      )}
     </>
   )
 }

@@ -140,7 +140,7 @@ const CreateSDV = ({ namePage, isLoadingModal, dataDoiTuong, dataThongSo, typePa
     return errors
   }
   return (
-    <>
+    <div className="p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
       <div className="w-[700px] h-[370px]">
         <div className="flex gap-2">
           <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
@@ -324,7 +324,7 @@ const CreateSDV = ({ namePage, isLoadingModal, dataDoiTuong, dataThongSo, typePa
           </div>
         </div>
       </div>
-    </>
+    </div>
   )
 }
 

@@ -1,39 +1,35 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useState } from 'react'
-import dayjs from 'dayjs'
-import logo from '../../../assets/VTS-iSale.ico'
-import { DateField } from '@mui/x-date-pickers'
-import ActionButton from '../../../components/util/Button/ActionButton'
 import * as apis from '../../../apis'
-import { RETOKEN, base64ToPDF } from '../../../action/Actions'
 import { toast } from 'react-toastify'
-import { Checkbox, Select } from 'antd'
+import logo from '../../../assets/VTS-iSale.ico'
+import ActionButton from '../../../components/util/Button/ActionButton'
+import { useEffect, useState } from 'react'
+
+import dayjs from 'dayjs'
+import { RETOKEN, base64ToPDF } from '../../../action/Actions'
+import { DateField } from '@mui/x-date-pickers/DateField'
+import { Select, Checkbox } from 'antd'
+
 const { Option } = Select
 
-const PrintThuChi = ({ namePage, typePage, actionType, data, controlDate, close }) => {
+const PrintDuLieu = ({ typePage, actionType, namePage, data, controlDate, close }) => {
   const [newData, setNewData] = useState(data)
   const [selectedSctBD, setSelectedSctBD] = useState()
   const [selectedSctKT, setSelectedSctKT] = useState()
-  const startDate = dayjs(controlDate?.NgayBatDau).format('YYYY-MM-DD')
-  const endDate = dayjs(controlDate?.NgayKetThuc).format('YYYY-MM-DD')
+
+  const startDate = dayjs(controlDate.NgayBatDau).format('YYYY-MM-DD')
+  const endDate = dayjs(controlDate.NgayKetThuc).format('YYYY-MM-DD')
+
   const [formPrint, setFormPrint] = useState({
     NgayBatDau: startDate,
     NgayKetThuc: endDate,
   })
-  const [formPrintFilter, setFormPrintFilter] = useState({
-    NgayBatDau: startDate,
-    NgayKetThuc: endDate,
-  })
+
   const [checkboxValues, setCheckboxValues] = useState({
     checkbox1: true,
     checkbox2: false,
     checkbox3: false,
   })
-
-  useEffect(() => {
-    setSelectedSctBD('Chọn số chứng từ')
-    setSelectedSctKT('Chọn số chứng từ')
-  }, [newData, actionType])
 
   const calculateTotal = () => {
     let total = 0
@@ -43,29 +39,82 @@ const PrintThuChi = ({ namePage, typePage, actionType, data, controlDate, close 
     return total
   }
 
+  useEffect(() => {
+    const handleFilterPrint = () => {
+      const ngayBD = dayjs(formPrint.NgayBatDau)
+      const ngayKT = dayjs(formPrint.NgayKetThuc)
+      // Lọc hàng hóa dựa trên ngày bắt đầu và ngày kết thúc
+      const filteredData = data.filter((item) => {
+        const itemDate = dayjs(item.NgayCTu)
+        if (ngayBD.isValid() && ngayKT.isValid()) {
+          return itemDate >= ngayBD && itemDate <= ngayKT
+        }
+      })
+      setNewData(filteredData)
+    }
+    handleFilterPrint()
+  }, [formPrint, data])
+
+  useEffect(() => {
+    if (actionType !== 'create') {
+      setSelectedSctBD('Chọn số chứng từ')
+      setSelectedSctKT('Chọn số chứng từ')
+    }
+  }, [newData, actionType])
+
   const handlePrint = async () => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
       const lien = calculateTotal()
-
       let response
-      switch (typePage) {
-        case 'PCT':
-          response = await apis.InPCT(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+      switch (actionType) {
+        case 'print':
+          switch (typePage) {
+            case 'PMH':
+              response = await apis.InPMH(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+              break
+            case 'NTR':
+              response = await apis.InNTR(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+              break
+            case 'XTR':
+              response = await apis.InXTR(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+              break
+            case 'PBL':
+              response = await apis.InPBL(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+              break
+            default:
+              break
+          }
           break
-        case 'PTT':
-          response = await apis.InPTT(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+        case 'printWareHouse':
+          switch (typePage) {
+            case 'PMH':
+              response = await apis.InPK(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+              break
+            case 'NTR':
+              response = await apis.InPKNTR(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+              break
+            case 'XTR':
+              response = await apis.InPKXTR(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+              break
+            case 'PBL':
+              response = await apis.InPKPBL(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+              break
+            default:
+              break
+          }
           break
 
         default:
           break
       }
+
       if (response) {
         const { DataError, DataErrorDescription, DataResults } = response.data
         if (DataError === 0) {
           base64ToPDF(DataResults)
         } else if (DataError === -1 || DataError === -2 || DataError === -3) {
-          toast.warning(DataErrorDescription)
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
         } else if (DataError === -107 || DataError === -108) {
           await RETOKEN()
           handlePrint()
@@ -78,25 +127,6 @@ const PrintThuChi = ({ namePage, typePage, actionType, data, controlDate, close 
     }
   }
 
-  useEffect(() => {
-    const handleFilterPrint = () => {
-      const ngayBD = dayjs(formPrintFilter.NgayBatDau)
-      const ngayKT = dayjs(formPrintFilter.NgayKetThuc)
-
-      // Lọc hàng hóa dựa trên ngày bắt đầu và ngày kết thúc
-      const filteredData = data.filter((item) => {
-        const itemDate = dayjs(item.NgayCTu)
-
-        if (ngayBD.isValid() && ngayKT.isValid()) {
-          return itemDate >= ngayBD && itemDate <= ngayKT
-        }
-      })
-      setNewData(filteredData)
-    }
-
-    handleFilterPrint()
-  }, [formPrintFilter?.NgayKetThuc, formPrintFilter?.NgayBatDau])
-
   const handleStartDateChange = (newDate) => {
     const startDate = newDate
     const endDate = formPrint.NgayKetThuc
@@ -108,13 +138,11 @@ const PrintThuChi = ({ namePage, typePage, actionType, data, controlDate, close 
         NgayBatDau: startDate,
         NgayKetThuc: startDate,
       })
-      setFormPrintFilter({ ...formPrintFilter, NgayBatDau: startDate, NgayKetThuc: startDate })
     } else {
       setFormPrint({
         ...formPrint,
         NgayBatDau: startDate,
       })
-      setFormPrintFilter({ ...formPrintFilter, NgayBatDau: startDate })
     }
   }
 
@@ -129,13 +157,11 @@ const PrintThuChi = ({ namePage, typePage, actionType, data, controlDate, close 
         NgayBatDau: endDate,
         NgayKetThuc: endDate,
       })
-      setFormPrintFilter({ ...formPrintFilter, NgayBatDau: endDate, NgayKetThuc: endDate })
     } else {
       setFormPrint({
         ...formPrint,
         NgayKetThuc: endDate,
       })
-      setFormPrintFilter({ ...formPrintFilter, NgayKetThuc: endDate })
     }
   }
 
@@ -160,9 +186,8 @@ const PrintThuChi = ({ namePage, typePage, actionType, data, controlDate, close 
       <div className=" h-[244px]">
         <div className="flex gap-2">
           <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
-          <label className="text-blue-700 font-semibold uppercase pb-1">In - ${namePage} </label>
+          <label className="text-blue-700 font-semibold uppercase pb-1">{`${actionType === 'print' ? `In - ${namePage}` : `In - ${namePage} (kho)`}`}</label>
         </div>
-
         <div className="border-2 my-1">
           <div className="p-4 ">
             <div className=" flex justify-center items-center  gap-3 pl-[52px]">
@@ -170,9 +195,9 @@ const PrintThuChi = ({ namePage, typePage, actionType, data, controlDate, close 
               <div className="flex gap-x-5 items-center">
                 <label htmlFor="">Ngày</label>
                 <DateField
-                  className="DatePicker_PMH max-w-[154px]"
+                  className="DatePicker_PMH max-w-[170px]"
                   format="DD/MM/YYYY"
-                  // maxDate={dayjs(formPrint.NgayKetThuc)}
+                  // maxDate={dayjs(controlDate.NgayKetThuc)}
                   value={dayjs(formPrint.NgayBatDau)}
                   onChange={(newDate) => {
                     setFormPrint({
@@ -203,9 +228,9 @@ const PrintThuChi = ({ namePage, typePage, actionType, data, controlDate, close 
               <div className="flex gap-x-5 items-center ">
                 <label htmlFor="">Đến</label>
                 <DateField
-                  className="DatePicker_PMH max-w-[154px]"
+                  className="DatePicker_PMH max-w-[170px]"
                   format="DD/MM/YYYY"
-                  // minDate={dayjs(formPrint.NgayBatDau)}
+                  // minDate={dayjs(controlDate.NgayBatDau)}
                   value={dayjs(formPrint.NgayKetThuc)}
                   onChange={(newDate) => {
                     setFormPrint({
@@ -239,10 +264,10 @@ const PrintThuChi = ({ namePage, typePage, actionType, data, controlDate, close 
               <div className="flex ">
                 <label className="pr-[23px]">Số chứng từ</label>
 
-                <Select size="small" showSearch optionFilterProp="children" style={{ width: '154px' }} value={selectedSctBD} onChange={handleSctBDChange}>
+                <Select size="small" showSearch optionFilterProp="children" style={{ width: '170px' }} onChange={handleSctBDChange} value={selectedSctBD}>
                   {newData?.map((item) => (
                     <Option key={item.SoChungTu} value={item.SoChungTu}>
-                      {item.SoChungTu}
+                      {actionType === 'print' ? item.SoChungTu : `${item.SoChungTu}_GV`}
                     </Option>
                   ))}
                 </Select>
@@ -250,10 +275,10 @@ const PrintThuChi = ({ namePage, typePage, actionType, data, controlDate, close 
               <div className="flex ">
                 <label className="pl-[18px] pr-[18px]">Đến</label>
 
-                <Select size="small" showSearch optionFilterProp="children" style={{ width: '154px' }} onChange={handleSctKTChange} value={selectedSctKT}>
+                <Select size="small" showSearch optionFilterProp="children" style={{ width: '170px' }} onChange={handleSctKTChange} value={selectedSctKT}>
                   {newData?.map((item) => (
                     <Option key={item.SoChungTu} value={item.SoChungTu}>
-                      {item.SoChungTu}
+                      {actionType === 'print' ? item.SoChungTu : `${item.SoChungTu}_GV`}
                     </Option>
                   ))}
                 </Select>
@@ -310,10 +335,8 @@ const PrintThuChi = ({ namePage, typePage, actionType, data, controlDate, close 
             </div>
           </div>
         </div>
-
         <div className="flex justify-end pt-2 gap-2">
           <ActionButton color={'slate-50'} title={'Xác nhận'} isModal={true} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handlePrint} />
-
           <ActionButton color={'slate-50'} title={'Đóng'} isModal={true} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
         </div>
       </div>
@@ -321,4 +344,4 @@ const PrintThuChi = ({ namePage, typePage, actionType, data, controlDate, close 
   )
 }
 
-export default PrintThuChi
+export default PrintDuLieu

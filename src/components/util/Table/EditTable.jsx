@@ -638,7 +638,9 @@ const EditTable = ({
           return pageData.length !== 0 && tableName !== 'Import' ? (
             <Table.Summary fixed="bottom">
               <Table.Summary.Row>
-                <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell>
+                <Table.Summary.Cell index={0} key={`summary-cell-${0}`} className="text-center font-bold ">
+                  {dataSource?.length}
+                </Table.Summary.Cell>
 
                 {columns
                   .filter((column) => column.render)
@@ -646,7 +648,12 @@ const EditTable = ({
                     const isNumericColumn = typeof dataSource[0]?.[column.dataIndex] === 'number' && column.dataIndex !== 'STT'
 
                     return (
-                      <Table.Summary.Cell key={`summary-cell-${index}`} align={isNumericColumn ? 'center' : 'center'} className="text-end font-bold  bg-[#f1f1f1] pr-5">
+                      <Table.Summary.Cell
+                        index={index + 1}
+                        key={`summary-cell-${index + 1}`}
+                        align={isNumericColumn ? 'center' : 'center'}
+                        className="text-end font-bold  bg-[#f1f1f1] pr-5"
+                      >
                         {isNumericColumn ? (
                           // <Text strong align="center">
                           //   {Number(pageData.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {

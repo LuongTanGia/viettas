@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-
+import logo from '../../../assets/VTS-iSale.ico'
 import * as apis from '../../../apis'
 import { RETOKEN } from '../../../action/Actions'
 import { toast } from 'react-toastify'
@@ -39,25 +39,35 @@ const DeleteThietLap = ({ typePage, dataRecord, close, loading }) => {
       console.error('Error while saving data:', error)
     }
   }
-  return (
-    <div className=" items-center ">
-      <label>
-        Bạn có chắc muốn xóa
-        <span className="font-bold mx-1"> {typePage === 'GBL' ? dataRecord.MaHang : dataRecord.MaDoiTuong}</span>
-        không ?
-      </label>
-      <div className="flex justify-end mt-4 gap-2">
-        <ActionButton
-          color={'slate-50'}
-          title={'Xác nhận'}
-          isModal={true}
-          background={'bg-main'}
-          bg_hover={'white'}
-          color_hover={'bg-main'}
-          handleAction={() => handleDelete(dataRecord)}
-        />
 
-        <ActionButton color={'slate-50'} title={'Đóng'} isModal={true} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} />
+  return (
+    <div className="px-3 py-[12px] absolute shadow-lg bg-white rounded-md flex flex-col ">
+      <div className="flex flex-col  gap-2">
+        <div className="flex gap-2">
+          <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
+          <p className="text-blue-700 font-semibold uppercase">Xóa dữ liệu</p>
+        </div>
+        <div className="flex flex-col gap-2 border-2 p-4  text-lg">
+          <div className="flex gap-1">
+            <p className="text-blue-700 ">Bạn có chắc muốn xóa </p>
+            <p className="text-red-600">{typePage === 'GBL' ? dataRecord.MaHang : dataRecord.MaDoiTuong}</p>
+            <p className="text-blue-700 ">không ?</p>
+          </div>
+          <p className=" text-base ">Thao tác không thể hoàn tác !</p>
+        </div>
+
+        <div className="flex gap-2 justify-end mt-1">
+          <ActionButton
+            handleAction={() => handleDelete(dataRecord)}
+            title={'Xác nhận'}
+            isModal={true}
+            color={'slate-50'}
+            background={'blue-500'}
+            color_hover={'blue-500'}
+            bg_hover={'white'}
+          />
+          <ActionButton handleAction={close} title={'Đóng'} isModal={true} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
+        </div>
       </div>
     </div>
   )

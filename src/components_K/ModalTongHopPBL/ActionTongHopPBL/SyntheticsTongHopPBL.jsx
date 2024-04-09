@@ -12,57 +12,32 @@ const { GoQuestion } = icons
 const SyntheticsTongHopPBL = ({ formSynthetics, loading, close }) => {
   const [isLoading, setIsLoading] = useState(false)
 
-  // const formTest = [
-  //   {
-  //     NgayCTu: '2024-03-22T06:44:20.558Z',
-  //     Quay: 2,
-  //     Ca: '1',
-  //     NhanVien: 'nhanvien1',
-  //   },
-  //   {
-  //     NgayCTu: '2024-03-23T06:44:20.558Z',
-  //     Quay: 2,
-  //     Ca: '1',
-  //     NhanVien: 'nhanvien2',
-  //   },
-  //   {
-  //     NgayCTu: '2024-03-24T06:44:20.558Z',
-  //     Quay: 2,
-  //     Ca: '1',
-  //     NhanVien: 'nhanvien3',
-  //   },
-  //   {
-  //     NgayCTu: '2024-03-25T06:44:20.558Z',
-  //     Quay: 2,
-  //     Ca: '1',
-  //     NhanVien: 'nhanvien4',
-  //   },
-  // ]
-
   const handleSynthetics = async () => {
     setIsLoading(true)
     try {
       const tokenLogin = localStorage.getItem('TKN')
-      let allSuccess
-      // for (const obj of formTest) {
+      let allSuccess = true
+
       for (const obj of formSynthetics.DanhSach) {
         await new Promise((resolve) => setTimeout(resolve, 1000))
         let response
         response = await apis.TongHopPBL(tokenLogin, obj)
         if (response) {
-          const { DataError } = response
+          const { DataError } = response.data
           if (DataError === 0) {
-            allSuccess = true
+            // console.log('thanh cong', allSuccess)
           } else if (DataError === -1 || DataError === -2 || DataError === -3) {
             allSuccess = false
           } else if (DataError === -107 || DataError === -108) {
             await RETOKEN()
-            handleSynthetics()
+            // handleSynthetics()
+            allSuccess = false
           } else {
             allSuccess = false
           }
         }
       }
+
       setIsLoading(false)
       if (allSuccess === true) {
         toast.success('Xử lý dự liệu thành công')

@@ -1,5 +1,5 @@
-export { default as Modal } from './Modals'
-export { default as Modals } from './Modals'
+export { default as Modal } from './ModalDuLieu/Modals'
+export { default as Modals } from './ModalDuLieu/Modals'
 export { default as ModalHH } from './ModalHH'
 export { default as ModalHHGBS } from './ModalHHGBS'
 export { default as ModalGBS } from './ModalGBS/ModalGBS'
