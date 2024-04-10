@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import Logo from '../../assets/VTS-iSale.ico'
@@ -21,31 +22,48 @@ const { Option } = Select
 
 function ModelPrint({ soChungTuPrint, isShowModel, handleCloseAction, data, modelType, selectMH }) {
   const token = localStorage.getItem('TKN')
-
-  const [dateFrom, setDateFrom] = useState(dayjs(data?.NgayBatDau))
-  const [dateTo, setDateTo] = useState(dayjs(data?.NgayKetThuc))
+  console.log(data)
+  // const [dateFrom, setDateFrom] = useState(data?.NgayBatDau)
+  // const [dateTo, setDateTo] = useState(data?.NgayKetThuc)
   const [soLien, setSoLien] = useState([1])
   const [loading, setLoading] = useState(true)
   const [dataSoChungTu, setDataSoChungTu] = useState([])
-  const [searchData, setSearchData] = useState()
+  const [dataDate, setDataDate] = useState({
+    NgayBatDau: null,
+    NgayKetThuc: null,
+  })
+  const [dateChange, setDateChange] = useState(false)
   const [soChungTuFrom, setSoChungTuFrom] = useState(soChungTuPrint !== '' ? soChungTuPrint : selectMH)
   const [soChungTuTo, setSoChungTuTo] = useState(soChungTuPrint !== '' ? soChungTuPrint : selectMH)
-
+  console.log(dataDate)
   useEffect(() => {
     setLoading(true)
-    setDateFrom(dayjs(data?.NgayBatDau))
-    setDateTo(dayjs(data?.NgayKetThuc))
+    // setDateFrom(dayjs(data?.NgayBatDau))
+    // setDateTo(dayjs(data?.NgayKetThuc))
+    setDataDate({
+      NgayBatDau: dayjs(data?.NgayBatDau),
+      NgayKetThuc: dayjs(data?.NgayKetThuc),
+    })
     setSoChungTuFrom(soChungTuPrint !== '' ? soChungTuPrint : selectMH)
     setSoChungTuTo(soChungTuPrint !== '' ? soChungTuPrint : selectMH)
     setTimeout(() => {
       setLoading(false)
     }, 300)
   }, [data?.NgayBatDau, data?.NgayKetThuc, soChungTuPrint, selectMH])
+
   const handleDateFromChange = (newValue) => {
-    setDateFrom(newValue)
+    setDataDate({
+      ...dataDate,
+      NgayBatDau: dayjs(newValue),
+    })
+    setDateChange(false)
   }
   const handleDateToChange = (newValue) => {
-    setDateTo(newValue)
+    setDataDate({
+      ...dataDate,
+      NgayKetThuc: dayjs(newValue),
+    })
+    setDateChange(true)
   }
   const onChange = (value) => {
     setSoLien(value)
@@ -54,8 +72,7 @@ function ModelPrint({ soChungTuPrint, isShowModel, handleCloseAction, data, mode
   useEffect(() => {
     const handleListPhieuThu = async () => {
       setLoading(true)
-
-      const response = await LISTCHUNGTU(API.LISTCHUNGTU, token, searchData)
+      const response = await LISTCHUNGTU(API.LISTCHUNGTU, token, dataDate)
       setDataSoChungTu(response)
       setLoading(false)
     }
@@ -63,41 +80,42 @@ function ModelPrint({ soChungTuPrint, isShowModel, handleCloseAction, data, mode
       handleListPhieuThu()
       setSoLien([1])
     }
-
-    if (dataSoChungTu < 1) {
-      setSoChungTuTo()
-      setSoChungTuFrom()
+    if (dataSoChungTu?.length < 1) {
+      setSoChungTuTo(null)
+      setSoChungTuFrom(null)
     }
-  }, [isShowModel, searchData?.NgayBatDau, searchData?.NgayKetThuc])
+  }, [isShowModel, dataDate?.NgayBatDau, dataDate?.NgayKetThuc])
 
   const handleChangeSCTFrom = (value) => {
+    // setSoChungTuFrom(value)
     setSoChungTuFrom(value)
+    if (soChungTuTo !== null && dataSoChungTu?.findIndex((item) => item.SoChungTu === value) > dataSoChungTu?.findIndex((item) => item.SoChungTu === soChungTuTo)) {
+      setSoChungTuTo(value)
+    } else {
+      setSoChungTuTo(value)
+    }
   }
   const handleChangeSCTTo = (value) => {
+    // setSoChungTuTo(value)
     setSoChungTuTo(value)
+    if (soChungTuFrom !== null && dataSoChungTu?.findIndex((item) => item.SoChungTu === value) < dataSoChungTu?.findIndex((item) => item.SoChungTu === soChungTuFrom)) {
+      setSoChungTuFrom(value)
+    } else {
+      setSoChungTuTo(value)
+    }
   }
-  // const handleListPhieuThu = async () => {
-  //   setLoading(true)
-
-  //   const response = await LISTCHUNGTU(API.LISTCHUNGTU, token, { NgayBatDau: dateFrom.format('YYYY-MM-DD'), NgayKetThuc: dateTo.format('YYYY-MM-DD') })
-  //   setDataSoChungTu(response)
-  //   setLoading(false)
-  // }
-
   const handleInPhieu = async () => {
     if (soLien !== null) {
-      console.log(soLien)
       const response = await INPHIEUPBS(modelType !== 'PhieuKho' ? API.INPHIEU : API.INPHIEUKHO, token, {
-        NgayBatDau: dateFrom.format('YYYY-MM-DD'),
-        NgayKetThuc: dateTo.format('YYYY-MM-DD'),
+        NgayBatDau: dataDate?.NgayBatDau.format('YYYY-MM-DD'),
+        NgayKetThuc: dataDate?.NgayKetThuc.format('YYYY-MM-DD'),
         SoChungTuBatDau: soChungTuFrom,
         SoChungTuKetThuc: soChungTuTo,
         SoLien: soLien.reduce((accumulator, currentValue) => accumulator + currentValue, 0),
       })
-
       base64ToPDF(response)
     } else {
-      toast.info('Chọn Số Liên Muốn In !')
+      toast.warning('Chọn số liên muốn in !')
     }
   }
   const close = () => {
@@ -109,8 +127,24 @@ function ModelPrint({ soChungTuPrint, isShowModel, handleCloseAction, data, mode
   const handleDateChange = () => {
     clearTimeout(timerId)
     timerId = setTimeout(() => {
-      setSearchData({ NgayBatDau: dateFrom.format('YYYY-MM-DD'), NgayKetThuc: dateTo.format('YYYY-MM-DD') })
-    }, 300)
+      if (!dateChange && dataDate?.NgayBatDau && dataDate?.NgayKetThuc && dataDate?.NgayBatDau.isAfter(dataDate?.NgayKetThuc)) {
+        setDataDate({
+          NgayBatDau: dayjs(dataDate?.NgayBatDau),
+          NgayKetThuc: dayjs(dataDate?.NgayBatDau),
+        })
+        return
+      } else if (dateChange && dataDate?.NgayBatDau && dataDate?.NgayKetThuc && dataDate?.NgayBatDau.isAfter(dataDate?.NgayKetThuc)) {
+        setDataDate({
+          NgayBatDau: dayjs(dataDate?.NgayKetThuc),
+          NgayKetThuc: dayjs(dataDate?.NgayKetThuc),
+        })
+      } else {
+        setDataDate({
+          NgayBatDau: dayjs(dataDate?.NgayBatDau),
+          NgayKetThuc: dayjs(dataDate?.NgayKetThuc),
+        })
+      }
+    }, 800)
   }
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
@@ -120,21 +154,21 @@ function ModelPrint({ soChungTuPrint, isShowModel, handleCloseAction, data, mode
   return (
     <>
       {isShowModel ? (
-        <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
-          <div className="m-6 px-4 pb-0 pt-4 shadow-lg bg-white rounded-md flex flex-col h-[45%] justify-between">
+        <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10">
+          <div className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"></div>
+          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col bg-white p-2 rounded shadow-custom overflow-hidden">
             <Spin tip="Loading..." spinning={loading}>
-              <div className="w-[40vw] h-[280px] min-w-[420px] flex flex-col justify-between">
-                <div className="flex justify-between items-start ">
-                  <label className=" flex gap-1 mb-2 text-blue-700 uppercase font-semibold ">
-                    <img src={Logo} alt="logo" className="w-[20px]" />
-                    {modelType !== 'PhieuKho' ? 'In Phiếu Bán Hàng' : 'In Phiếu Bán Sỉ (Kho)(Phiếu Kho)'}
-                  </label>
+              <div className="flex flex-col gap-2 p-2 xl:w-[50vw] lg:w-[70vw] md:w-[95vw]">
+                <div className="flex gap-2 text-blue-700 font-semibold uppercase">
+                  <img src={Logo} alt="logo" className="w-[20px]" />
+                  {modelType !== 'PhieuKho' ? 'In - Phiếu Bán Hàng' : 'In - Phiếu Bán Hàng (Kho)'}
                 </div>
-                <div className="w-full h-[270px] rounded-sm text-sm border border-gray-300 flex flex-col justify-between">
-                  <div>
-                    <div className="w-full flex items-center justify-center mt-3 gap-5  ">
+                <div className="flex flex-col items-center gap-4 border-2 py-3">
+                  <div className="flex justify-center gap-2">
+                    <div className="DatePicker_NDCKho flex items-center gap-2">
+                      <label className="ml-[20px]">Từ</label>
                       <DateField
-                        className="DatePicker_PMH min-w-[100px] w-[30%]"
+                        className="max-w-[170px]"
                         sx={{
                           '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
                           '& .MuiButtonBase-root': {
@@ -145,14 +179,17 @@ function ModelPrint({ soChungTuPrint, isShowModel, handleCloseAction, data, mode
                             height: '18px',
                           },
                         }}
-                        value={dateFrom}
+                        value={dataDate?.NgayBatDau}
                         onChange={handleDateFromChange}
                         onBlur={handleDateChange}
                         onKeyDown={handleKeyDown}
                         format="DD/MM/YYYY"
                       />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <label>Đến</label>
                       <DateField
-                        className="DatePicker_PMH min-w-[100px] w-[30%]"
+                        className="max-w-[180px]"
                         sx={{
                           '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
                           '& .MuiButtonBase-root': {
@@ -163,97 +200,98 @@ function ModelPrint({ soChungTuPrint, isShowModel, handleCloseAction, data, mode
                             height: '18px',
                           },
                         }}
-                        value={dateTo}
+                        value={dataDate?.NgayKetThuc}
                         onChange={handleDateToChange}
                         onBlur={handleDateChange}
                         onKeyDown={handleKeyDown}
                         format="DD/MM/YYYY"
                       />
                     </div>
-                    <div className="w-full flex items-center justify-center gap-5 mt-3 ">
-                      <div className="flex justify-center w-[30%] ">
-                        <Select className="w-full outline-none" placeholder="Số Chứng từ " value={soChungTuFrom} onChange={handleChangeSCTFrom} showSearch>
-                          {dataSoChungTu?.map((item, index) => (
-                            <Option value={item?.SoChungTu} key={index}>
-                              {modelType !== 'PhieuKho' ? item?.SoChungTu : `${item?.SoChungTu}_GV`}
-                            </Option>
-                          ))}
-                        </Select>
-                      </div>
-                      <div className=" flex justify-center w-[30%]">
-                        <Select className="w-full outline-none" placeholder="Đến" value={soChungTuTo} onChange={handleChangeSCTTo} showSearch>
-                          {dataSoChungTu?.map((item, index) => (
-                            <Option value={item?.SoChungTu} key={index}>
-                              {modelType !== 'PhieuKho' ? item?.SoChungTu : `${item?.SoChungTu}_GV`}
-                            </Option>
-                          ))}
-                        </Select>
-                      </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <div className="flex gap-2 items-center whitespace-nowrap w-[50%]">
+                      <div>Số chứng từ</div>
+                      <Select
+                        style={{
+                          width: '200px',
+                        }}
+                        placeholder={'Chọn nhóm'}
+                        value={soChungTuFrom}
+                        onChange={handleChangeSCTFrom}
+                        showSearch
+                        size="small"
+                      >
+                        {dataSoChungTu?.map((item, index) => (
+                          <Option value={item?.SoChungTu} key={index}>
+                            {modelType !== 'PhieuKho' ? item?.SoChungTu : `${item?.SoChungTu}_GV`}
+                          </Option>
+                        ))}
+                      </Select>
                     </div>
-                    <div className="w-full  flex items-center justify-center gap-2  mt-3">
-                      {modelType !== 'PhieuKho' ? (
-                        <Checkbox.Group
-                          style={{
-                            width: '100%',
-                          }}
-                          defaultValue={[1]}
-                          onChange={onChange}
-                          className="phieuKhoLien"
-                        >
-                          <Row>
-                            <Col span={6}>
-                              <Checkbox value={1}>Liên 1</Checkbox>
-                            </Col>
-                            <Col span={6}>
-                              <Checkbox value={2}>Liên 2</Checkbox>
-                            </Col>
-                            <Col span={6}>
-                              <Checkbox value={4}>Liên 3</Checkbox>
-                            </Col>
-                          </Row>
-                        </Checkbox.Group>
-                      ) : (
-                        <Checkbox.Group
-                          style={{
-                            width: '100%',
-                          }}
-                          defaultValue={[1]}
-                          onChange={onChange}
-                          className="phieuKhoLien"
-                        >
-                          <Row>
-                            <Col span={6}>
-                              <Checkbox value={1}>Liên 1</Checkbox>
-                            </Col>
-                            <Col span={6}>
-                              <Checkbox value={2}>Liên 2</Checkbox>
-                            </Col>
-                          </Row>
-                        </Checkbox.Group>
-                      )}
+                    <div className="flex gap-2 items-center w-[40%]">
+                      <div>Tới</div>
+                      <Select
+                        style={{
+                          width: '200px',
+                        }}
+                        placeholder={'Chọn nhóm'}
+                        value={soChungTuTo}
+                        onChange={handleChangeSCTTo}
+                        showSearch
+                        size="small"
+                      >
+                        {dataSoChungTu?.map((item, index) => (
+                          <Option value={item?.SoChungTu} key={index}>
+                            {modelType !== 'PhieuKho' ? item?.SoChungTu : `${item?.SoChungTu}_GV`}
+                          </Option>
+                        ))}
+                      </Select>
                     </div>
                   </div>
+                  <div className="flex items-center justify-center gap-2">
+                    {modelType !== 'PhieuKho' ? (
+                      <Checkbox.Group
+                        style={{
+                          width: '100%',
+                        }}
+                        defaultValue={[1]}
+                        onChange={onChange}
+                        className="phieuKhoLien"
+                      >
+                        <Row className="flex gap-2 items-center">
+                          <Checkbox value={1}>Liên 1</Checkbox>
+                          <Checkbox value={2}>Liên 2</Checkbox>
+                          <Checkbox value={4}>Liên 3</Checkbox>
+                        </Row>
+                      </Checkbox.Group>
+                    ) : (
+                      <Checkbox.Group
+                        style={{
+                          width: '100%',
+                        }}
+                        defaultValue={[1]}
+                        onChange={onChange}
+                        className="phieuKhoLien"
+                      >
+                        <Row className="flex gap-2 items-center">
+                          <Checkbox value={1}>Liên 1</Checkbox>
+                          <Checkbox value={2}>Liên 2</Checkbox>
+                        </Row>
+                      </Checkbox.Group>
+                    )}
+                  </div>
                 </div>
-                <div className="w-full h-[20%] flex items-center justify-end gap-2 mt-2 pr-4">
+                <div className="flex justify-end gap-2">
                   <ActionButton
                     color={'slate-50'}
-                    title={'Xem Bản In'}
+                    title={'Xác nhận'}
                     background={'blue-500'}
-                    icon={<HiOutlineDocumentMagnifyingGlass />}
                     bg_hover={'white'}
                     color_hover={'blue-500'}
                     handleAction={handleInPhieu}
-                  />
-                  <ActionButton
-                    color={'slate-50'}
-                    title={'Đóng'}
                     isModal={true}
-                    background={'red-500'}
-                    icon={<IoIosCloseCircleOutline />}
-                    bg_hover={'white'}
-                    color_hover={'red-500'}
-                    handleAction={close}
                   />
+                  <ActionButton color={'slate-50'} title={'Đóng'} isModal={true} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={close} />
                 </div>
               </div>
             </Spin>

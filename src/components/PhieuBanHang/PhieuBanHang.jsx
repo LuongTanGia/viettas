@@ -24,6 +24,7 @@ import { Button, Spin } from 'antd'
 import { IoAddCircleOutline } from 'react-icons/io5'
 import { FaEyeSlash } from 'react-icons/fa'
 import { CloseSquareFilled } from '@ant-design/icons'
+
 function PhieuBanHang() {
   const optionContainerRef = useRef(null)
   const dispatch = useDispatch()
@@ -46,14 +47,15 @@ function PhieuBanHang() {
   const [dataRecord, setDataRecord] = useState([])
   const [selectMH, setSelectMH] = useState()
   const [isShowOption, setIsShowOption] = useState(false)
-  const [dataDate, setDataDate] = useState({})
+  const [dataDate, setDataDate] = useState({
+    NgayBatDau: null,
+    NgayKetThuc: null,
+  })
+  const [dateChange, setDateChange] = useState(false)
   const [soChungTuPrint, setSoChungTuPrint] = useState()
   const [hidden, setHidden] = useState([])
   const [checkedList, setCheckedList] = useState([])
-  const [searchData, setSearchData] = useState([])
   const [dataCRUD, setDataCRUD] = useState()
-
-  // const [searchTimeout, setSearchTimeout] = useState(null)
 
   const isMatch = (value, searchText) => {
     const stringValue = String(value).toLowerCase()
@@ -85,12 +87,13 @@ function PhieuBanHang() {
         Ma: 'DuLieu_PBS',
       })
       setDataCRUD(quyenHan)
-      setDataDate(date)
+      setDataDate({
+        NgayBatDau: dayjs(date.NgayBatDau),
+        NgayKetThuc: dayjs(date.NgayKetThuc),
+      })
     }
     getDate()
   }, [])
-
-  console.log(data)
 
   let timerId
   const handleInputChange = (e) => {
@@ -104,17 +107,39 @@ function PhieuBanHang() {
   const handleDateChange = () => {
     clearTimeout(timerId)
     timerId = setTimeout(() => {
-      setSearchData({
-        ...dataDate,
-        searchText: searchText.trim(),
-      })
-    }, 300)
+      if (!dateChange && dataDate?.NgayBatDau && dataDate?.NgayKetThuc && dataDate?.NgayBatDau.isAfter(dataDate?.NgayKetThuc)) {
+        setDataDate({
+          NgayBatDau: dayjs(dataDate?.NgayBatDau),
+          NgayKetThuc: dayjs(dataDate?.NgayBatDau),
+        })
+        return
+      } else if (dateChange && dataDate?.NgayBatDau && dataDate?.NgayKetThuc && dataDate?.NgayBatDau.isAfter(dataDate?.NgayKetThuc)) {
+        setDataDate({
+          NgayBatDau: dayjs(dataDate?.NgayKetThuc),
+          NgayKetThuc: dayjs(dataDate?.NgayKetThuc),
+        })
+      } else {
+        setDataDate({
+          NgayBatDau: dayjs(dataDate?.NgayBatDau),
+          NgayKetThuc: dayjs(dataDate?.NgayKetThuc),
+        })
+      }
+    }, 800)
   }
 
   useEffect(() => {
     const getListData = async () => {
       setLoadingSearch(true)
-      const filteredDataRes = await DANHSACHPHIEUBANHANG(API.DANHSACHPBS, token, searchData, dispatch)
+      const filteredDataRes = await DANHSACHPHIEUBANHANG(
+        API.DANHSACHPBS,
+        token,
+        {
+          ...dataDate,
+          NgayBatDau: dayjs(dataDate?.NgayBatDau).format('YYYY-MM-DD'),
+          NgayKetThuc: dayjs(dataDate?.NgayKetThuc).format('YYYY-MM-DD'),
+        },
+        dispatch,
+      )
       if (filteredDataRes === -1) {
         setData([])
       } else {
@@ -126,8 +151,13 @@ function PhieuBanHang() {
       setDataLoaded(true)
       setLoadingSearch(false)
     }
-    getListData()
-  }, [searchText, selectMH, searchData.NgayBatDau, searchData.NgayKetThuc])
+    clearTimeout(timerId)
+    timerId = setTimeout(() => {
+      if (dataDate && dataDate?.NgayBatDau && dataDate?.NgayKetThuc) {
+        getListData()
+      }
+    }, 800)
+  }, [searchText, selectMH, dataDate?.NgayBatDau, dataDate?.NgayKetThuc])
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -173,7 +203,6 @@ function PhieuBanHang() {
   }
   const handleCloseAction = () => {
     setIsShowPrint(false)
-    setDataDate({})
     setDataRecord([])
   }
   const handleDelete = async (record) => {
@@ -328,10 +357,10 @@ function PhieuBanHang() {
                             icon={<RiFileExcel2Fill className="w-6 h-6" />}
                             color={'slate-50'}
                             title={'Xuất Excel'}
-                            background={'green-500'}
+                            background={dataCRUD?.EXCEL == false ? 'gray-400' : 'green-500'}
                             bg_hover={'white'}
-                            color_hover={'green-500'}
-                            handleAction={exportToExcel}
+                            color_hover={dataCRUD?.EXCEL == false ? 'gray-500' : 'green-500'}
+                            handleAction={() => (dataCRUD?.EXCEL == false ? '' : exportToExcel())}
                           />
                           <ActionButton
                             icon={<MdPrint className="w-6 h-6" />}
@@ -412,15 +441,15 @@ function PhieuBanHang() {
                     <DateField
                       onBlur={handleDateChange}
                       onKeyDown={handleKeyDown}
-                      className="DatePicker_PMH max-w-[120px]"
+                      className="DatePicker_PMH max-w-[115px]"
                       format="DD/MM/YYYY"
-                      defaultValue={dayjs(dataDate?.NgayBatDau)}
-                      maxDate={dayjs(dataDate.NgayKetThuc)}
+                      value={dataDate?.NgayBatDau}
                       onChange={(newDate) => {
                         setDataDate({
                           ...dataDate,
-                          NgayBatDau: dayjs(newDate).format('YYYY-MM-DD'),
+                          NgayBatDau: dayjs(newDate),
                         })
+                        setDateChange(false)
                       }}
                       sx={{
                         '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
@@ -439,14 +468,15 @@ function PhieuBanHang() {
                     <DateField
                       onBlur={handleDateChange}
                       onKeyDown={handleKeyDown}
-                      className="DatePicker_PMH max-w-[120px]"
+                      className="max-w-[115px]"
                       format="DD/MM/YYYY"
-                      defaultValue={dayjs(dataDate?.NgayKetThuc)}
+                      value={dataDate?.NgayKetThuc}
                       onChange={(newDate) => {
                         setDataDate({
                           ...dataDate,
-                          NgayKetThuc: dayjs(newDate).format('YYYY-MM-DD'),
+                          NgayKetThuc: dayjs(newDate),
                         })
+                        setDateChange(true)
                       }}
                       sx={{
                         '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
@@ -465,11 +495,12 @@ function PhieuBanHang() {
                   <ActionButton
                     color={'slate-50'}
                     title={'Thêm Phiếu'}
-                    background={'blue-500'}
-                    icon={<IoAddCircleOutline size={20} />}
+                    background={dataCRUD?.ADD == false ? 'gray-400' : 'blue-500'}
+                    icon={<IoAddCircleOutline className="w-6 h-6" />}
                     bg_hover={'white'}
-                    color_hover={'blue-500'}
-                    handleAction={handleCreate}
+                    color_hover={dataCRUD?.ADD == false ? 'gray-500' : 'blue-500'}
+                    handleAction={() => (dataCRUD?.ADD == false ? '' : handleCreate())}
+                    isPermission={dataCRUD?.ADD}
                   />
                 </div>
               </div>
@@ -504,7 +535,11 @@ function PhieuBanHang() {
                 soChungTuPrint={soChungTuPrint}
                 isShowModel={isShowPrint}
                 handleCloseAction={handleCloseAction}
-                data={dataDate}
+                data={{
+                  ...dataDate,
+                  NgayBatDau: dayjs(dataDate?.NgayBatDau).format('YYYY-MM-DD'),
+                  NgayKetThuc: dayjs(dataDate?.NgayKetThuc).format('YYYY-MM-DD'),
+                }}
                 modelType={modelType}
               />
             </>
@@ -514,5 +549,4 @@ function PhieuBanHang() {
     </>
   )
 }
-
 export default PhieuBanHang

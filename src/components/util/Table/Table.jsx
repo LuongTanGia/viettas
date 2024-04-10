@@ -28,7 +28,6 @@ function Tables({ hidden, loadingSearch, param, columName, height, handleView, h
   }, [textSearch])
 
   const renderHighlightedCell = (text) => {
-    console.log(text)
     if (
       !searchText ||
       typeof text !== 'string' ||

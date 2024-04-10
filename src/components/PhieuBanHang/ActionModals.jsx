@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import Logo from '../../assets/VTS-iSale.ico'
-import { FloatButton, Checkbox, Tooltip } from 'antd'
+import { FloatButton, Checkbox, Tooltip, Input } from 'antd'
 import { useEffect, useState } from 'react'
 // import icons from '../../untils/icons'
 import { chiTietPBS } from '../../redux/selector'
@@ -46,7 +46,10 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
   const dispatch = useDispatch()
   const token = window.localStorage.getItem('TKN')
   const [isModalOpen, setIsModalOpen] = useState(isShow)
-  const [Dates, setDates] = useState({ NgayCTu: dayjs(new Date()), DaoHan: dayjs(new Date()) })
+  const [Dates, setDates] = useState({
+    NgayCTu: dayjs(new Date()),
+    DaoHan: dayjs(new Date()),
+  })
   const [form, setForm] = useState()
   const [listDoiTuong, setListDoiTuong] = useState([])
   const [listKhoHang, setListKhoHang] = useState([])
@@ -62,7 +65,6 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
         const result_doituong = isShow ? await DANHSACHDOITUONG(API.DANHSACHDOITUONG_PBS, token) : null
         const result_khohang = isShow ? await DANHSACHKHOHANG(API.DANHSACHKHOHANG_PBS, token) : null
         setDataListHP(result_listHp)
-        // setSelectDataOption(result_listHp)
         setListDoiTuong(result_doituong)
         setListKhoHang(result_khohang)
         setIsModalOpen(isShow)
@@ -104,7 +106,6 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
   // const handleShowPopup = () => {
   //   setShowPopup(true)
   // }
-  // Action Sửa
   const handleChangeInput_other = (e) => {
     const { name, value } = e.target
     setForm({ ...form, [name]: value })
@@ -140,8 +141,9 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
           STT: index + 1,
         }
       })
-      const data = { ...form, ...Dates, DataDetails: newData }
+      const data = { ...form, ...Dates, NgayCTu: Dates.NgayCTu.format('YYYY-MM-DD'), DaoHan: dayjs(Dates?.DaoHan).format('YYYY-MM-DD'), DataDetails: newData }
       const res = await THEMPHIEUBANHANG(API.THEMPHIEUBANHANG, token, data)
+      console.log({ ...form, ...Dates, NgayCTu: dayjs(Dates.NgayCTu).format('YYYY-MM-DD'), DaoHan: dayjs(Dates?.DaoHan).format('YYYY-MM-DD'), DataDetails: newData })
       setMaHang(res[0]?.SoChungTu)
       if (res[0]?.SoChungTu) {
         setForm(initState)
@@ -170,8 +172,9 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
           STT: index + 1,
         }
       })
-      const data = { ...form, ...Dates, DataDetails: newData }
+      const data = { ...form, ...Dates, ...Dates, NgayCTu: Dates.NgayCTu.format('YYYY-MM-DD'), DaoHan: dayjs(Dates?.DaoHan).format('YYYY-MM-DD'), DataDetails: newData }
       const res = await THEMPHIEUBANHANG(API.THEMPHIEUBANHANG, token, data)
+      console.log({ ...form, ...Dates, DataDetails: newData })
       setMaHang(res[0]?.SoChungTu)
       if (res[0]?.SoChungTu) {
         handleClose()
@@ -206,9 +209,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
       handleShowPrint_kho_action(form?.NgayCTu, form?.SoChungTu)
     } else {
       handleSubmit()
-
       handleShowPrint_kho_action(form?.NgayCTu, form?.SoChungTu)
-
       const x = await THONGTINPHIEU(API.CHITIETPBS, token, form?.SoChungTu, dispatch)
       setForm(x.DataResult)
     }
@@ -238,40 +239,50 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
     <>
       {isModalOpen ? (
         <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10 ">
-          <div className=" p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
-            <div className=" w-[90vw] h-[600px] ">
+          <div className=" p-4 absolute shadow-lg bg-white rounded-md flex flex-col gap-2">
+            <div className="flex flex-col gap-2 py-1 px-2 lg:w-[90vw] md:w-[95vw]">
               <div className="flex gap-2">
                 <img src={Logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
                 <p className="text-blue-700 uppercase font-semibold">{`${typeAction === 'view' ? 'Thông Tin' : typeAction === 'edit' ? 'Sửa' : 'Thêm'} - Phiếu Bán Hàng`}</p>
               </div>
-              <div className=" w-full h-[90%] rounded-sm text-sm border border-gray-300">
-                <div className={`flex  md:gap-0 lg:gap-1 pl-1 box_thongtin ${typeAction == 'create' ? 'create' : typeAction == 'edit' ? 'edit' : ''}`}>
-                  {/* thong tin phieu */}
+              <div className="w-full h-[90%] flex flex-col border-2 px-1 gap-1 py-2 text-sm">
+                <div className={`flex md:gap-0 gap-1 pl-1 box_thongtin ${typeAction == 'create' ? 'create' : typeAction == 'edit' ? 'edit' : ''}`}>
                   <div className="w-[62%]">
                     <div className="flex p-1">
                       <div className=" flex items-center  ">
-                        <label className="md:w-[114px] lg:w-[110px]  pr-1">Số C.từ</label>
-                        <input readOnly type="text" value={form?.SoChungTu} className=" w-full border border-gray-300 outline-none  px-2   bg-[#fafafa] rounded-[4px] h-[24px]" />
-                      </div>
-                      <div className="flex justify-center items-center"></div>
-                      <div className="flex  md:px-1 lg:px-4 items-center ">
-                        <label htmlFor="" className="pr-1 lg:pr-[30px] lg:pl-[8px]">
-                          Ngày
-                        </label>
-                        <DateField
-                          className="DatePicker_PMH max-w-[120px]"
-                          format="DD/MM/YYYY"
-                          defaultValue={typeAction === 'create' ? Dates.NgayCTu : dayjs(form?.NgayCTu)}
-                          onChange={(newDate) => {
-                            setDates({
-                              ...Dates,
-                              NgayCTu: dayjs(newDate).format('YYYY-MM-DD'),
-                            })
-                          }}
-                          sx={{
-                            '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                          }}
+                        <label className="md:w-[114px] lg:w-[110px] pr-1">Số C.từ</label>
+                        <input
+                          readOnly
+                          type="text"
+                          value={form?.SoChungTu || null}
+                          className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px] resize-none"
                         />
+                      </div>
+                      <div className="flex md:px-1 lg:px-4 items-center ">
+                        <label className="pr-1 lg:pr-[30px] lg:pl-[8px]">Ngày</label>
+                        {typeAction === 'view' ? (
+                          <input
+                            readOnly
+                            type="text"
+                            value={dayjs(form?.NgayCTu).format('DD/MM/YYYY')}
+                            className="px-2 resize-none rounded-[3px] border outline-none text-center text-sm w-[120px]"
+                          />
+                        ) : (
+                          <DateField
+                            className="max-w-[115px]"
+                            format="DD/MM/YYYY"
+                            value={typeAction === 'create' ? Dates.NgayCTu : dayjs(form?.NgayCTu)}
+                            onChange={(newDate) => {
+                              setDates({
+                                ...Dates,
+                                NgayCTu: dayjs(newDate).format('YYYY-MM-DD'),
+                              })
+                            }}
+                            sx={{
+                              '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                            }}
+                          />
+                        )}
                       </div>
                       {typeAction === 'create' ? (
                         <div className="flex items-center w-[200px]">
@@ -289,13 +300,14 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                         </div>
                       ) : null}
                     </div>
-                    <div className="p-1 flex ">
+                    <div className="p-1 flex">
                       <label form="doituong" className="w-[86px]">
                         Đối tượng
                       </label>
                       <Select
+                        size="small"
                         className="w-full outline-none"
-                        value={`${form?.MaDoiTuong}  ${form?.TenDoiTuong}  ${form?.DiaChi}`}
+                        value={`${form?.MaDoiTuong} ${form?.TenDoiTuong} ${form?.DiaChi}`}
                         disabled={typeAction === 'view'}
                         onChange={handleChangeInput}
                         showSearch
@@ -311,7 +323,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                       <label className="w-[86px]">Tên</label>
                       <input
                         type="text"
-                        className="w-full   outline-none px-2 "
+                        className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm"
                         value={form?.TenDoiTuong}
                         name="TenDoiTuong"
                         readOnly={typeAction === 'view' || typeAction === 'edit' ? true : false}
@@ -319,64 +331,70 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                         disabled
                       />
                     </div>
-                    <div className="flex  items-center p-1">
-                      <label className="w-[86px]">Địa chỉ</label>
-                      <input
-                        type="text"
-                        className="w-full outline-none px-2"
-                        value={form?.DiaChi}
-                        name="DiaChi"
-                        readOnly={typeAction === 'view' || typeAction === 'edit' ? true : false}
-                        onChange={handleChangeInput}
-                        disabled
-                      />
-                    </div>
                   </div>
-                  <div className="w-[38%] py-1 box_content">
-                    <div className="text-center p-1 font-medium text_capnhat">Thông tin cập nhật</div>
-                    <div className="rounded-md w-[98%]  box_capnhat px-1 py-3 ">
-                      <div className="flex justify-between items-center">
-                        <div className="flex items-center p-1 ">
-                          <label className="md:w-[134px] lg:w-[104px] ">Người tạo</label>
-                          <input type="text" className="w-full outline-none px-2 truncate" value={form?.NguoiTao} readOnly title={form?.NguoiTao} />
-                        </div>
-                        <div className="flex items-center p-1">
-                          <label className="w-[30px] pr-1">Lúc</label>
-                          <input
-                            readOnly
-                            type="text"
-                            className="w-full outline-none px-2 text-center"
-                            value={form?.NgayTao ? dayjs(form?.NgayTao).format('DD/MM/YYYY HH:mm:ss') : ''}
-                          />
-                        </div>
+                  <div className="grid grid-cols-1 px-2 border-2 py-2 border-black-200 rounded relative">
+                    <div className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</div>
+                    <div className="flex gap-1">
+                      <div className="flex items-center ">
+                        <label className="md:w-[134px] lg:w-[104px]">Người tạo</label>
+                        <input type="text" className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm" value={form?.NguoiTao} readOnly title={form?.NguoiTao} />
                       </div>
-                      <div className="flex justify-between items-center">
-                        <div className="flex items-center p-1 ">
-                          <label className="md:w-[134px] lg:w-[104px] ">Sửa cuối</label>
-                          <input readOnly type="text" className="w-full outline-none px-2 truncate" value={form?.NguoiSuaCuoi} title={form?.NguoiSuaCuoi} />
-                        </div>
-                        <div className="flex items-center p-1">
-                          <label className="w-[30px] pr-1">Lúc</label>
-                          <input
-                            readOnly
-                            type="text"
-                            className="w-full outline-none px-2 text-center"
-                            value={form?.NgaySuaCuo ? dayjs(form?.NgaySuaCuoi).format('DD/MM/YYYY HH:mm:ss') : ''}
-                          />
-                        </div>
+                      <div className="flex items-center">
+                        <label className="w-[30px] pr-1">Lúc</label>
+                        <input
+                          readOnly
+                          type="text"
+                          className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm"
+                          value={form?.NgayTao ? dayjs(form?.NgayTao).format('DD/MM/YYYY HH:mm:ss') : ''}
+                        />
+                      </div>
+                    </div>
+                    <div className="flex gap-1">
+                      <div className="flex items-center">
+                        <label className="md:w-[134px] lg:w-[104px] ">Người sửa</label>
+                        <input
+                          readOnly
+                          type="text"
+                          className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm"
+                          value={form?.NguoiSuaCuoi}
+                          title={form?.NguoiSuaCuoi}
+                        />
+                      </div>
+                      <div className="flex items-center">
+                        <label className="w-[30px] pr-1">Lúc</label>
+                        <input
+                          readOnly
+                          type="text"
+                          className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm"
+                          value={form?.NgaySuaCuoi ? dayjs(form?.NgaySuaCuoi).format('DD/MM/YYYY HH:mm:ss') : ''}
+                        />
                       </div>
                     </div>
                   </div>
                 </div>
-                {/* kho and ghi chu */}
-                <div className="flex gap-3 pl-1 lg:pr-[6px] items-center  w-full">
-                  <div className="p-1 flex  items-center ">
-                    <label form="khohang" className="md:w-[106px] lg:w-[116px]">
+                <div className="flex items-center gap-1">
+                  <label className="whitespace-nowrap w-[100px] flex justify-end">Địa chỉ</label>
+                  {typeAction === 'view' ? (
+                    <input
+                      type="text"
+                      className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm"
+                      value={form?.DiaChi}
+                      name="DiaChi"
+                      readOnly={typeAction === 'view' || typeAction === 'edit' ? true : false}
+                      onChange={handleChangeInput}
+                      disabled
+                    />
+                  ) : (
+                    <Input size="small" className="w-full overflow-hidden whitespace-nowrap overflow-ellipsis" value={form?.DiaChi} onChange={handleChangeInput} readOnly />
+                  )}
+                </div>
+                <div className="flex items-center gap-2 py-1">
+                  <div className="flex items-center gap-1">
+                    <label form="khohang" className="whitespace-nowrap w-[145px] flex justify-end ">
                       Kho hàng
                     </label>
-
                     <Select
-                      className={`  hover:-gray-500  ${typeAction === 'edit' ? 'bg-white' : ''} bg-white`}
+                      className={`hover:-gray-500 ${typeAction === 'edit' ? 'bg-white' : ''} bg-white`}
                       style={{ width: '100%' }}
                       size="small"
                       readOnly={typeAction === 'view' ? true : false}
@@ -393,8 +411,8 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                       ))}
                     </Select>
                   </div>
-                  <div className="flex items-center p-1 w-full">
-                    <label className="w-[70px]">Ghi chú</label>
+                  <div className="flex items-center gap-1 w-full">
+                    <label className="whitespace-nowrap flex justify-end text-sm">Ghi chú</label>
                     <input
                       type="text"
                       name="GhiChu"
@@ -406,19 +424,20 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                   </div>
                 </div>
                 <div className="pb-0 relative">
-                  <Tooltip title="Bấm vào đây để thêm hàng hoặc F9 để chọn từ danh sách !" color="blue">
-                    <FloatButton
-                      className="z-3 absolute w-[30px] h-[30px]"
-                      style={{
-                        right: 5,
-                        top: 4,
-                      }}
-                      type="primary"
-                      icon={<IoMdAddCircle />}
-                      onClick={addRecord}
-                    />
-                  </Tooltip>
-
+                  {typeAction !== 'view' ? (
+                    <Tooltip title="Bấm vào đây để thêm hàng hoặc F9 để chọn từ danh sách !" placement="topLeft" color="blue">
+                      <FloatButton
+                        className="z-3 absolute w-[30px] h-[30px]"
+                        style={{
+                          right: 5,
+                          top: 4,
+                        }}
+                        type="primary"
+                        icon={<IoMdAddCircle />}
+                        onClick={addRecord}
+                      />
+                    </Tooltip>
+                  ) : null}
                   {data_chitiet ? (
                     <TableEdit
                       listHP={dataListHP}
@@ -436,7 +455,6 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                 </div>
               </div>
             </div>
-
             <div>
               {form?.MaDoiTuong !== '' && form?.MaKho !== '' ? (
                 showPopup ? (

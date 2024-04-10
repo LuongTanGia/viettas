@@ -28,23 +28,15 @@
 .box_thongtin .DatePicker_PMH input:hover {
   border: unset;
 }
-.box_thongtin.create *,
-.box_thongtin.create select,
-.box_thongtin.create input {
-  /* background-color: white; */
-  /* font-weight: 500; */
-
-  /* outline: none; */
-}
 
 /* .box_thongtin.create .sochungtu {
   background-color: gray;
 } */
-.box_thongtin input,
+/* .box_thongtin input,
 .box_thongtin select,
 .box_thongtin option {
   border: 1px solid rgb(152, 151, 151);
-}
+} */
 
 /* label {
 /* label {
@@ -69,15 +61,11 @@
 .box_thongtin.edit div[name='MaKho'] * {
   background-color: white;
 }
-.box_thongtin input {
-  /* padding: 0 11px; */
+/* .box_thongtin input {
   height: 24px;
   border: 1px solid #ccc;
   border-radius: 6px;
-}
-.box_thongtin .ant-select {
-  height: 24px;
-}
+} */
 
 .box_thongtin .ant-select-selector {
   overflow: hidden;
@@ -93,9 +81,10 @@
   justify-content: flex-start;
   align-items: center;
 }
-.box_thongtin input:hover {
+/* .box_thongtin input:hover {
   border: 1px solid #4897e6;
-}
+} */
+
 .DateBox .css-14s5rfu-MuiFormLabel-root-MuiInputLabel-root {
   transform: translate(14px, 8px) scale(1) !important;
   font-weight: bold;

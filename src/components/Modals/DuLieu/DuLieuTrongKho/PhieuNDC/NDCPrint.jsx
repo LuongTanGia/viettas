@@ -177,62 +177,60 @@ const NDCPrint = ({ close, dataPrint }) => {
                 <p className="text-blue-700 font-semibold uppercase">In - Phiếu Nhập Điều Chỉnh</p>
               </div>
               <div className="flex flex-col items-center gap-4 border-2 py-3">
-                <div className="flex justify-center">
-                  <div className="DatePicker_NDCKho flex justify-center gap-2">
-                    <div className="DatePicker_NDCKho flex items-center gap-2">
-                      <label className="ml-[20px]">Từ</label>
-                      <DateField
-                        className="max-w-[170px]"
-                        onBlur={handleDateChange}
-                        onKeyDown={handleKeyDown}
-                        format="DD/MM/YYYY"
-                        value={dateData?.NgayBatDau}
-                        sx={{
-                          '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                          '& .MuiButtonBase-root': {
-                            padding: '4px',
-                          },
-                          '& .MuiSvgIcon-root': {
-                            width: '18px',
-                            height: '18px',
-                          },
-                        }}
-                        onChange={(values) => {
-                          setDateData({
-                            ...dateData,
-                            NgayBatDau: dayjs(values),
-                          })
-                          setDateChange(false)
-                        }}
-                      />
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <label>Đến</label>
-                      <DateField
-                        onBlur={handleDateChange}
-                        onKeyDown={handleKeyDown}
-                        className="max-w-[180px]"
-                        format="DD/MM/YYYY"
-                        value={dateData?.NgayKetThuc}
-                        sx={{
-                          '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                          '& .MuiButtonBase-root': {
-                            padding: '4px',
-                          },
-                          '& .MuiSvgIcon-root': {
-                            width: '18px',
-                            height: '18px',
-                          },
-                        }}
-                        onChange={(values) => {
-                          setDateData({
-                            ...dateData,
-                            NgayKetThuc: dayjs(values),
-                          })
-                          setDateChange(true)
-                        }}
-                      />
-                    </div>
+                <div className="DatePicker_NDCKho flex justify-center gap-2">
+                  <div className="DatePicker_NDCKho flex items-center gap-2">
+                    <label className="ml-[20px]">Từ</label>
+                    <DateField
+                      className="max-w-[170px]"
+                      onBlur={handleDateChange}
+                      onKeyDown={handleKeyDown}
+                      format="DD/MM/YYYY"
+                      value={dateData?.NgayBatDau}
+                      sx={{
+                        '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                        '& .MuiButtonBase-root': {
+                          padding: '4px',
+                        },
+                        '& .MuiSvgIcon-root': {
+                          width: '18px',
+                          height: '18px',
+                        },
+                      }}
+                      onChange={(values) => {
+                        setDateData({
+                          ...dateData,
+                          NgayBatDau: dayjs(values),
+                        })
+                        setDateChange(false)
+                      }}
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <label>Đến</label>
+                    <DateField
+                      onBlur={handleDateChange}
+                      onKeyDown={handleKeyDown}
+                      className="max-w-[180px]"
+                      format="DD/MM/YYYY"
+                      value={dateData?.NgayKetThuc}
+                      sx={{
+                        '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                        '& .MuiButtonBase-root': {
+                          padding: '4px',
+                        },
+                        '& .MuiSvgIcon-root': {
+                          width: '18px',
+                          height: '18px',
+                        },
+                      }}
+                      onChange={(values) => {
+                        setDateData({
+                          ...dateData,
+                          NgayKetThuc: dayjs(values),
+                        })
+                        setDateChange(true)
+                      }}
+                    />
                   </div>
                 </div>
                 <div className="flex gap-2">
@@ -304,47 +302,34 @@ const NDCPrint = ({ close, dataPrint }) => {
                   </div>
                 </div>
                 <div className="flex items-center justify-center gap-2">
-                  <div>
-                    <Checkbox
-                      value="checkbox1"
-                      checked={checkboxValues.checkbox1}
-                      onChange={(e) =>
-                        setCheckboxValues((prevValues) => ({
-                          ...prevValues,
-                          [e.target.value]: !prevValues[e.target.value],
-                        }))
-                      }
-                    >
-                      Liên 1
-                    </Checkbox>
-                  </div>
-                  <div>
-                    <Checkbox
-                      value="checkbox2"
-                      checked={checkboxValues.checkbox2}
-                      onChange={(e) =>
-                        setCheckboxValues((prevValues) => ({
-                          ...prevValues,
-                          [e.target.value]: !prevValues[e.target.value],
-                        }))
-                      }
-                    >
-                      Liên 2
-                    </Checkbox>
-                  </div>
+                  <Checkbox
+                    value="checkbox1"
+                    checked={checkboxValues.checkbox1}
+                    onChange={(e) =>
+                      setCheckboxValues((prevValues) => ({
+                        ...prevValues,
+                        [e.target.value]: !prevValues[e.target.value],
+                      }))
+                    }
+                  >
+                    Liên 1
+                  </Checkbox>
+                  <Checkbox
+                    value="checkbox2"
+                    checked={checkboxValues.checkbox2}
+                    onChange={(e) =>
+                      setCheckboxValues((prevValues) => ({
+                        ...prevValues,
+                        [e.target.value]: !prevValues[e.target.value],
+                      }))
+                    }
+                  >
+                    Liên 2
+                  </Checkbox>
                 </div>
               </div>
               <div className="flex gap-2 justify-end">
-                <ActionButton
-                  handleAction={handlePrint}
-                  title={'Xác nhận'}
-                  isModal={true}
-                  color={'slate-50'}
-                  background={'blue-500'}
-                  color_hover={'blue-500'}
-                  bg_hover={'white'}
-                  disable
-                />
+                <ActionButton handleAction={handlePrint} title={'Xác nhận'} isModal={true} color={'slate-50'} background={'blue-500'} color_hover={'blue-500'} bg_hover={'white'} />
                 <ActionButton handleAction={close} title={'Đóng'} isModal={true} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
               </div>
             </div>

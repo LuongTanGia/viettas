@@ -8,7 +8,6 @@ import * as XLSX from 'xlsx'
 import dayjs from 'dayjs'
 
 import API from '../API/API'
-// CallBack API Function
 const axiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
@@ -17,7 +16,7 @@ const axiosInstance = axios.create({
 
 const handleAPIError = (response) => {
   if (response.data.DataError !== 0) {
-    toast.error(response.data.DataErrorDescription)
+    toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
   }
 }
 export const CallBackAPI = async (API, token, data) => {
@@ -28,7 +27,6 @@ export const CallBackAPI = async (API, token, data) => {
         Authorization: `Bearer ${token}`,
       },
     })
-
     if (response && response.data) {
       if (response.data.DataError === -107 || response.data.DataError === -108) {
         const newToken = await RETOKEN()
@@ -55,7 +53,6 @@ const handleTokenRefreshError = () => {
   window.localStorage.removeItem('tokenDuLieu')
   window.localStorage.removeItem('RTKN')
   window.localStorage.removeItem('userName')
-
   window.location.href = '/login'
 }
 const handleResponseError = () => {
@@ -68,7 +65,6 @@ const handleError = (error) => {
 //------------------------------------------------------------------------------
 export const RETOKEN = async () => {
   const token = window.localStorage.getItem('RTKN')
-
   try {
     const response = await axios.post('https://isalewebapi.viettassaigon.vn/api/Auth/RefreshToken', {
       TokenID: token,
@@ -79,8 +75,6 @@ export const RETOKEN = async () => {
       return response.data.TKN
     } else if (response.data.DataError === -107 || response.data.DataError === -111) {
       window.location.href = '/login'
-      // toast.error(response.data.DataErrorDescription);
-
       return 0
     }
   } catch (error) {
@@ -88,7 +82,6 @@ export const RETOKEN = async () => {
   }
 }
 export const DANHSACHDULIEU = async (API, data) => {
-  // console.log('DANHSACHDULIEU')
   try {
     const response = await axiosInstance.post(API, data)
     window.localStorage.setItem('tokenDuLieu', response.data.TKN)
@@ -96,7 +89,7 @@ export const DANHSACHDULIEU = async (API, data) => {
     if (response.data.DataError === 0) {
       return response.data
     } else {
-      console.log('Error')
+      toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
     }
     return response.data
   } catch (error) {
@@ -104,7 +97,6 @@ export const DANHSACHDULIEU = async (API, data) => {
   }
 }
 export const LOGIN = async (API1, API2, TKN, RemoteDB, data, dispatch) => {
-  // console.log('LOGIN')
   try {
     const response = await axiosInstance.post(API1, {
       TokenID: TKN,
@@ -115,18 +107,14 @@ export const LOGIN = async (API1, API2, TKN, RemoteDB, data, dispatch) => {
       window.localStorage.setItem('TKN', response.data.TKN)
       window.localStorage.setItem('RTKN', response.data.RTKN)
       window.localStorage.setItem('User', response.data.MappingUser)
-
       dispatch(loginSlice.actions.login(response.data))
-
       return 1
     } else {
       dispatch(loginSlice.actions.login([]))
       console.log('Error')
     }
-
     if (response.data.DataError !== 0) {
       handleAPIError(response)
-
       await DANHSACHDULIEU(API2, data)
     }
   } catch (error) {
@@ -146,7 +134,7 @@ export const DANHSACHCHUCNANG = async (API, token, dispatch) => {
       },
     )
     if (response.data.DataError === -107) {
-      toast.error(response.data.DataErrorDescription)
+      toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
       const newToken = await RETOKEN()
       if (newToken) {
         await DANHSACHCHUCNANG(API, newToken, dispatch)
@@ -174,7 +162,6 @@ export const DANHSACHHANGHOA = async (API, token, dispatch) => {
       },
     )
     if (response.data.DataError === -107 || response.data.DataError === -108) {
-      // toast.error(response.data.DataErrorDescription);
       const newToken = await RETOKEN()
       if (newToken !== 0) {
         await DANHSACHHANGHOA(API, newToken, dispatch)
@@ -187,8 +174,7 @@ export const DANHSACHHANGHOA = async (API, token, dispatch) => {
     }
     dispatch(MainSlice.actions.getDSHH(response.data))
   } catch (error) {
-    // window.location.href = "/login";
-
+    // window.location.href = "/login"
     console.error('Error adding user:', error)
   }
 }
@@ -262,7 +248,7 @@ export const THAYDOIRMATKHAU = async (API, data, token) => {
       toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
       return 0
     } else {
-      toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
+      toast.error(response.data.DataErrorDescription, { autoClose: 2000 })
       return 1
     }
   } catch (error) {
@@ -278,7 +264,6 @@ export const DoanhSoHangHoa_TopChart = async (API, token, data) => {
       },
     })
     if (response.data.DataError === -107 || response.data.DataError === -108) {
-      // toast.error(response.data.DataErrorDescription);
       const newToken = await RETOKEN()
       if (newToken !== '') {
         await DoanhSoHangHoa_TopChart(API, newToken, data)
@@ -308,7 +293,6 @@ export const DANHSACHPHIEUBANHANG = async (API, token, data, dispatch) => {
       },
     })
     if (response.data.DataError === -107 || response.data.DataError === -108) {
-      // toast.error(response.data.DataErrorDescription);
       const newToken = await RETOKEN()
       if (newToken !== '') {
         await DANHSACHPHIEUBANHANG(API, newToken, dispatch)
@@ -323,7 +307,6 @@ export const DANHSACHPHIEUBANHANG = async (API, token, data, dispatch) => {
       }
     }
     if (response.data.DataError === -104) {
-      toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
       return -1
     }
     return response.data.DataResults
@@ -344,7 +327,6 @@ export const THONGTINPHIEU = async (API, token, maphieu, dispatch) => {
       },
     )
     if (response.data.DataError === -107 || response.data.DataError === -108) {
-      // toast.error(response.data.DataErrorDescription);
       const newToken = await RETOKEN()
       if (newToken !== '') {
         await THONGTINPHIEU(API, newToken, maphieu, dispatch)
@@ -355,7 +337,6 @@ export const THONGTINPHIEU = async (API, token, maphieu, dispatch) => {
         window.localStorage.removeItem('tokenDuLieu')
         window.localStorage.removeItem('RTKN')
         window.localStorage.removeItem('userName')
-
         window.location.href = '/login'
       }
     }
@@ -378,7 +359,6 @@ export const DANHSACHDOITUONG = async (API, token, dispatch) => {
       },
     )
     if (response.data.DataError === -107 || response.data.DataError === -108) {
-      // toast.error(response.data.DataErrorDescription);
       const newToken = await RETOKEN()
       if (newToken !== '') {
         await DANHSACHDOITUONG(API, newToken, dispatch)
@@ -389,7 +369,6 @@ export const DANHSACHDOITUONG = async (API, token, dispatch) => {
         window.localStorage.removeItem('tokenDuLieu')
         window.localStorage.removeItem('RTKN')
         window.localStorage.removeItem('userName')
-
         window.location.href = '/login'
       }
     }
@@ -411,7 +390,6 @@ export const DANHSACHKHOHANG = async (API, token, dispatch) => {
       },
     )
     if (response.data.DataError === -107 || response.data.DataError === -108) {
-      // toast.error(response.data.DataErrorDescription);
       const newToken = await RETOKEN()
       if (newToken !== '') {
         await DANHSACHKHOHANG(API, newToken, dispatch)
@@ -422,7 +400,6 @@ export const DANHSACHKHOHANG = async (API, token, dispatch) => {
         window.localStorage.removeItem('tokenDuLieu')
         window.localStorage.removeItem('RTKN')
         window.localStorage.removeItem('userName')
-
         window.location.href = '/login'
       }
     }
@@ -442,7 +419,6 @@ export const DANHSACHHANGHOA_PBS = async (API, token, data) => {
 
     if (response && response.data) {
       if (response.data.DataError === -107 || response.data.DataError === -108) {
-        // toast.error(response.data.DataErrorDescription);
         const newToken = await RETOKEN()
         if (newToken !== '') {
           await DANHSACHHANGHOA_PBS(API, newToken, data)
@@ -453,7 +429,6 @@ export const DANHSACHHANGHOA_PBS = async (API, token, data) => {
           window.localStorage.removeItem('tokenDuLieu')
           window.localStorage.removeItem('RTKN')
           window.localStorage.removeItem('userName')
-
           window.location.href = '/login'
         }
       }
@@ -481,7 +456,6 @@ export const THEMPHIEUBANHANG = async (API, token, data) => {
 
     if (response && response.data) {
       if (response.data.DataError === -107 || response.data.DataError === -108) {
-        // toast.error(response.data.DataErrorDescription);
         const newToken = await RETOKEN()
         if (newToken !== '') {
           await THEMPHIEUBANHANG(API, newToken, data)
@@ -492,15 +466,13 @@ export const THEMPHIEUBANHANG = async (API, token, data) => {
           window.localStorage.removeItem('tokenDuLieu')
           window.localStorage.removeItem('RTKN')
           window.localStorage.removeItem('userName')
-
           window.location.href = '/login'
         }
       }
-
-      if (response.data) {
+      if (response.data && response.data.DataError == 0) {
         toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
       } else {
-        toast.error('DataResults is undefined or null.', { autoClose: 1000 })
+        toast.error(response.data.DataErrorDescription, { autoClose: 2000 })
       }
     } else {
       toast.error('Response or response.data is undefined or null.', { autoClose: 1000 })
@@ -534,15 +506,14 @@ export const XOAPHIEUBANHANG = async (API, token, data) => {
           window.localStorage.removeItem('tokenDuLieu')
           window.localStorage.removeItem('RTKN')
           window.localStorage.removeItem('userName')
-
           window.location.href = '/login'
         }
       }
 
-      if (response.data) {
-        toast.success(response.data.DataErrorDescription)
+      if (response.data && response.data.DataError == 0) {
+        toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
       } else {
-        toast.error('DataResults is undefined or null.')
+        toast.error(response.data.DataErrorDescription, { autoClose: 2000 })
       }
     } else {
       toast.error('Response or response.data is undefined or null.')
@@ -577,11 +548,10 @@ export const SUAPHIEUBANHANG = async (API, token, data) => {
           window.location.href = '/login'
         }
       }
-
-      if (response.data) {
-        toast.success(response.data.DataErrorDescription)
+      if (response.data && response.data.DataError == 0) {
+        toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
       } else {
-        toast.error('DataResults is undefined or null.')
+        toast.error(response.data.DataErrorDescription, { autoClose: 2000 })
       }
     } else {
       toast.error('Response or response.data is undefined or null.')
@@ -613,13 +583,12 @@ export const LAPPHIEUTHU = async (API, token, data) => {
           window.localStorage.removeItem('tokenDuLieu')
           window.localStorage.removeItem('RTKN')
           window.localStorage.removeItem('userName')
-
           window.location.href = '/login'
         }
       }
 
       if (response.data) {
-        toast.success(response.data.DataErrorDescription)
+        toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
       } else {
         toast.error('DataResults is undefined or null.')
       }
@@ -665,7 +634,7 @@ export const LISTCHUNGTU = async (API, token, data) => {
 
       return response.data.DataResults
     } else {
-      toast.error('Response or response.data is undefined or null.')
+      toast.error('Response or response.data is undefined or null.', { autoClose: 1000 })
     }
   } catch (error) {
     toast.error('Error adding user:', error)
@@ -679,7 +648,6 @@ export const INPHIEUPBS = async (API, token, data) => {
         Authorization: `Bearer ${token}`,
       },
     })
-
     if (response && response.data) {
       if (response.data.DataError === -107 || response.data.DataError === -108) {
         // toast.error(response.data.DataErrorDescription);
@@ -693,15 +661,14 @@ export const INPHIEUPBS = async (API, token, data) => {
           window.localStorage.removeItem('tokenDuLieu')
           window.localStorage.removeItem('RTKN')
           window.localStorage.removeItem('userName')
-
           window.location.href = '/login'
         }
       }
 
       if (response.data) {
-        toast.success(response.data.DataErrorDescription)
+        toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
       } else {
-        toast.error('DataResults is undefined or null.')
+        toast.error('DataResults is undefined or null.', { autoClose: 1000 })
       }
 
       return response.data.DataResults
@@ -733,12 +700,11 @@ export const CNDRTONGHOP = async (API, token, data) => {
         window.localStorage.removeItem('tokenDuLieu')
         window.localStorage.removeItem('RTKN')
         window.localStorage.removeItem('userName')
-
         window.location.href = '/login'
       }
     }
     if (response.data.DataError === -104) {
-      toast.error(response.data.DataErrorDescription)
+      toast.error(response.data.DataErrorDescription, { autoClose: 2000 })
       return -1
     }
     return response.data
@@ -760,7 +726,7 @@ export const CNDRTONGHOP_listHelper = async (API, token, data) => {
       if (newToken !== '') {
         await CNDRTONGHOP_listHelper(API, newToken, data)
       } else if (newToken === 0) {
-        toast.error('Failed to refresh token!')
+        toast.error('Failed to refresh token!', { autoClose: 2000 })
         window.localStorage.removeItem('firstLogin')
         window.localStorage.removeItem('TKN')
         window.localStorage.removeItem('tokenDuLieu')
@@ -792,23 +758,16 @@ export const APIPHANQUYEN = async (token, data) => {
     toast.error('Error adding user:', error)
   }
 }
-// function Normal
 export const base64ToPDF = (Base64PMH) => {
-  // Decode base64 string
   const decodedData = atob(Base64PMH)
-  // Convert decoded data to array buffer
   const arrayBuffer = new ArrayBuffer(decodedData.length)
   const uint8Array = new Uint8Array(arrayBuffer)
   for (let i = 0; i < decodedData.length; i++) {
     uint8Array[i] = decodedData.charCodeAt(i)
   }
-  // Create Blob from array buffer
   const blob = new Blob([arrayBuffer], { type: 'application/pdf' })
-  // Create a data URL from the Blob
   const dataUrl = URL.createObjectURL(blob)
-  // Open a new window with the data URL
   const newWindow = window.open(dataUrl, '_blank')
-  // Print the opened window
   newWindow.onload = function () {
     newWindow.print()
   }
@@ -837,30 +796,18 @@ export const formatCurrency = (value) => {
 export const formatPrice = (price, odd) => {
   if (price === null || price === undefined) return
   const numberOfDecimals = odd || 0
-
-  // Làm tròn số thập phân
   const roundedAmount = price.toFixed(numberOfDecimals)
-
-  // Tách phần nguyên và phần thập phân
   const parts = roundedAmount.split('.')
   let integerPart = parts[0]
   let decimalPart = parts[1] || ''
-
-  // Định dạng hàng nghìn với dấu phẩy
   integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-
-  // Kiểm tra để xem có cần thêm số chữ số thập phân không
   if (numberOfDecimals > 0) {
-    // Bổ sung số chữ số thập phân bằng cách sử dụng `padEnd`
     decimalPart = decimalPart.padEnd(numberOfDecimals, '0')
     decimalPart = `.${decimalPart}`
   } else {
     decimalPart = ''
   }
-
-  // Kết hợp lại và thêm số chữ số thập phân nếu cần
   const formattedAmount = `${integerPart}${decimalPart}`
-
   return formattedAmount
 }
 
@@ -877,13 +824,10 @@ export const exportSampleExcel = (sheet1Data, sheet2Data) => {
   const wb = XLSX.utils.book_new()
   const ws1 = XLSX.utils.aoa_to_sheet(sheet1Data)
   ws1['!cols'] = [{ width: 30 }, { width: 30 }]
-
   const ws2 = XLSX.utils.aoa_to_sheet(sheet2Data)
   ws2['!cols'] = [{ width: 30 }, { width: 40 }, { width: 10 }]
-
   XLSX.utils.book_append_sheet(wb, ws1, 'Thay đổi bảng giá')
   XLSX.utils.book_append_sheet(wb, ws2, 'Danh sách hàng hóa')
-
   // Xuất file Excel
   XLSX.writeFile(wb, 'fileSampleExcel.xlsx')
 }
