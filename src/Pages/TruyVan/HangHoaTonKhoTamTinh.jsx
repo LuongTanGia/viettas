@@ -337,32 +337,36 @@ const HangHoaTKTT = () => {
     setTableLoad(true)
   }
   const handleFromChange = (value) => {
-    setFormFilter({ ...formFilter, CodeValue1From: value })
-
-    if (formFilter.CodeValue1To === null || value > formFilter.CodeValue1To) {
+    const valueCheck = dataNhomHang?.findIndex((item) => item.Ma === value) > dataNhomHang.findIndex((item) => item.Ma === formFilter?.CodeValue1To)
+    if (formFilter.CodeValue1To === null || valueCheck) {
       setFormFilter({ ...formFilter, CodeValue1From: value, CodeValue1To: value })
+    } else {
+      setFormFilter({ ...formFilter, CodeValue1From: value })
     }
   }
   const handleToChange = (value) => {
-    setFormFilter({ ...formFilter, CodeValue1To: value })
-
-    if (formFilter.CodeValue1From === null || value < formFilter.CodeValue1From) {
+    const valueCheck = dataNhomHang?.findIndex((item) => item.Ma === value) < dataNhomHang.findIndex((item) => item.Ma === formFilter?.CodeValue1From)
+    if (formFilter.CodeValue1From === null || valueCheck) {
       setFormFilter({ ...formFilter, CodeValue1From: value, CodeValue1To: value })
+    } else {
+      setFormFilter({ ...formFilter, CodeValue1To: value })
     }
   }
 
   const handleFrom2Change = (value) => {
-    setFormFilter({ ...formFilter, CodeValue2From: value })
-
-    if (formFilter.CodeValue2To === null || value > formFilter.CodeValue2To) {
+    const valueCheck = dataHangHoa?.findIndex((item) => item.MaHang === value) > dataHangHoa.findIndex((item) => item.MaHang === formFilter?.CodeValue2To)
+    if (formFilter.CodeValue2To === null || valueCheck) {
       setFormFilter({ ...formFilter, CodeValue2From: value, CodeValue2To: value })
+    } else {
+      setFormFilter({ ...formFilter, CodeValue2From: value })
     }
   }
   const handleTo2Change = (value) => {
-    setFormFilter({ ...formFilter, CodeValue2To: value })
-
-    if (formFilter.CodeValue2From === null || value < formFilter.CodeValue2From) {
+    const valueCheck = dataHangHoa?.findIndex((item) => item.MaHang === value) < dataHangHoa.findIndex((item) => item.MaHang === formFilter?.CodeValue2From)
+    if (formFilter.CodeValue2From === null || valueCheck) {
       setFormFilter({ ...formFilter, CodeValue2From: value, CodeValue2To: value })
+    } else {
+      setFormFilter({ ...formFilter, CodeValue2To: value })
     }
   }
 

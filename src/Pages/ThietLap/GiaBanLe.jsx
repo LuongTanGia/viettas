@@ -636,17 +636,21 @@ const GBL = () => {
     setTableLoad(true)
   }
   const handleFromChange = (value) => {
-    setFormFilter({ ...formFilter, CodeValue1From: value })
+    const valueCheck = dataNhomGia?.findIndex((item) => item.Ma === value) > dataNhomGia.findIndex((item) => item.Ma === formFilter?.CodeValue1To)
 
-    if (formFilter.CodeValue1To === null || value > formFilter.CodeValue1To) {
+    if (formFilter.CodeValue1To === null || valueCheck) {
       setFormFilter({ CodeValue1From: value, CodeValue1To: value })
+    } else {
+      setFormFilter({ ...formFilter, CodeValue1From: value })
     }
   }
   const handleToChange = (value) => {
-    setFormFilter({ ...formFilter, CodeValue1To: value })
+    const valueCheck = dataNhomGia?.findIndex((item) => item.Ma === value) < dataNhomGia.findIndex((item) => item.Ma === formFilter?.CodeValue1From)
 
-    if (formFilter.CodeValue1From === null || value < formFilter.CodeValue1From) {
+    if (formFilter.CodeValue1From === null || valueCheck) {
       setFormFilter({ CodeValue1From: value, CodeValue1To: value })
+    } else {
+      setFormFilter({ ...formFilter, CodeValue1To: value })
     }
   }
 
@@ -795,6 +799,7 @@ const GBL = () => {
                         textOverflow: 'ellipsis',
                       }}
                       popupMatchSelectWidth={false}
+                      optionLabelProp="value"
                     >
                       {dataNhomGia?.map((item) => (
                         <Option key={item.Ma} value={item.Ma} title={item.Ten}>
@@ -818,6 +823,7 @@ const GBL = () => {
                         textOverflow: 'ellipsis',
                       }}
                       popupMatchSelectWidth={false}
+                      optionLabelProp="value"
                     >
                       {dataNhomGia?.map((item) => (
                         <Option key={item.Ma} value={item.Ma} title={item.Ten}>

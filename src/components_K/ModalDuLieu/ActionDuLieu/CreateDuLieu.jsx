@@ -419,8 +419,8 @@ const CreateDuLieu = ({ actionType, typePage, namePage, data, dataThongSo, dataD
           </div>
 
           <Spin spinning={isLoadingModal}>
-            <div className="border w-full h-[89%] rounded-sm text-sm">
-              <div className="flex md:gap-0 lg:gap-1 pl-1 ">
+            <div className=" border w-full h-[89%] rounded-sm text-sm">
+              <div className="flex  md:gap-0 lg:gap-1 pl-1 ">
                 {/* thong tin phieu */}
                 <div className="w-[62%]">
                   <div className="flex p-1  ">
@@ -579,7 +579,7 @@ const CreateDuLieu = ({ actionType, typePage, namePage, data, dataThongSo, dataD
               {/* kho hang and Ghi chu */}
               <div className="flex gap-3 pl-1 lg:pr-[6px] items-center  w-full">
                 <div className="p-1 flex  items-center ">
-                  <label form="khohang" className="md:w-[98px] lg:w-[110px]">
+                  <label form="khohang" className="md:w-[98px] lg:w-[118px]">
                     Kho hàng
                   </label>
 

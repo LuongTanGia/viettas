@@ -116,23 +116,15 @@ const SoSanhBG = () => {
   useEffect(() => {
     const getChucNangQuyenHan = async () => {
       try {
-        console.log('đi')
         const tokenLogin = localStorage.getItem('TKN')
         const response = await apis.ChucNangQuyenHan(tokenLogin, 'TruyVan_TonKho_TheoKho')
 
         if (response.data && response.data.DataError === 0) {
           setDataQuyenHan(response.data)
-        }
-        // else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        //   toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        // }
-        else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
           getChucNangQuyenHan()
         }
-        // else {
-        //   toast.error(response.data.DataErrorDescription)
-        // }
       } catch (error) {
         console.error('Kiểm tra token thất bại', error)
       }
@@ -337,32 +329,40 @@ const SoSanhBG = () => {
     setTableLoad(true)
   }
   const handleFromChange = (value) => {
-    setFormFilter({ ...formFilter, CodeValue1From: value })
+    const valueCheck = dataNhomHang?.findIndex((item) => item.Ma === value) > dataNhomHang.findIndex((item) => item.Ma === formFilter?.CodeValue1To)
 
-    if (formFilter.CodeValue1To === null || value > formFilter.CodeValue1To) {
+    if (formFilter.CodeValue1To === null || valueCheck) {
       setFormFilter({ ...formFilter, CodeValue1From: value, CodeValue1To: value })
+    } else {
+      setFormFilter({ ...formFilter, CodeValue1From: value })
     }
   }
-  const handleToChange = (value) => {
-    setFormFilter({ ...formFilter, CodeValue1To: value })
 
-    if (formFilter.CodeValue1From === null || value < formFilter.CodeValue1From) {
+  const handleToChange = (value) => {
+    const valueCheck = dataNhomHang?.findIndex((item) => item.Ma === value) < dataNhomHang.findIndex((item) => item.Ma === formFilter?.CodeValue1From)
+
+    if (formFilter.CodeValue1From === null || valueCheck) {
       setFormFilter({ ...formFilter, CodeValue1From: value, CodeValue1To: value })
+    } else {
+      setFormFilter({ ...formFilter, CodeValue1To: value })
     }
   }
 
   const handleFrom2Change = (value) => {
-    setFormFilter({ ...formFilter, CodeValue2From: value })
-
-    if (formFilter.CodeValue2To === null || value > formFilter.CodeValue2To) {
+    const valueCheck = dataHangHoa?.findIndex((item) => item.MaHang === value) > dataHangHoa.findIndex((item) => item.MaHang === formFilter?.CodeValue2To)
+    if (formFilter.CodeValue2To === null || valueCheck) {
       setFormFilter({ ...formFilter, CodeValue2From: value, CodeValue2To: value })
+    } else {
+      setFormFilter({ ...formFilter, CodeValue2From: value })
     }
   }
-  const handleTo2Change = (value) => {
-    setFormFilter({ ...formFilter, CodeValue2To: value })
 
-    if (formFilter.CodeValue2From === null || value < formFilter.CodeValue2From) {
+  const handleTo2Change = (value) => {
+    const valueCheck = dataHangHoa?.findIndex((item) => item.MaHang === value) < dataHangHoa.findIndex((item) => item.MaHang === formFilter?.CodeValue2From)
+    if (formFilter.CodeValue2From === null || valueCheck) {
       setFormFilter({ ...formFilter, CodeValue2From: value, CodeValue2To: value })
+    } else {
+      setFormFilter({ ...formFilter, CodeValue2To: value })
     }
   }
 
