@@ -97,7 +97,7 @@ const NhomDoiTuong = () => {
     }
     getDataQuyenHan()
   }, [])
-  console.log(dataCRUD)
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (showOption.current && !showOption.current.contains(event.target)) {

@@ -1,8 +1,12 @@
 export const nameColumsHangHoa = {
   Nhom: 'Nhóm',
   MaHang: 'Mã hàng',
+  NhomHang: 'Nhóm hàng',
   TenNhom: 'Tên nhóm',
   TenHang: 'Tên hàng',
+  DVT: 'ĐVT',
+  SoLuongTon: 'Số lượng',
+  GiaBan: 'Giá bán',
   DVTKho: 'Đơn vị tính',
   TyLeQuyDoi: 'Tỷ lệ quy đổi',
   DVTQuyDoi: 'Đơn vị tính (quy đổi)',

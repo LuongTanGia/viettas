@@ -56,7 +56,6 @@ function PhieuBanHang() {
   const [hidden, setHidden] = useState([])
   const [checkedList, setCheckedList] = useState([])
   const [dataCRUD, setDataCRUD] = useState()
-
   const isMatch = (value, searchText) => {
     const stringValue = String(value).toLowerCase()
     const searchTextLower = searchText.toLowerCase()
@@ -240,14 +239,16 @@ function PhieuBanHang() {
     setModelType('PhieuKho')
   }
   const handleShowPrint_action = (value, soCT) => {
+    console.log('pbs', soCT)
     setSoChungTuPrint(soCT)
-    setDataDate({ ...dataDate, NgayBatDau: value, NgayKetThuc: value })
+    setDataDate({ ...dataDate, NgayBatDau: dayjs(value), NgayKetThuc: dayjs(value) })
     setIsShowPrint(!isShowPrint)
     setModelType('')
   }
   const handleShowPrint_kho_action = (value, soCT) => {
+    console.log('pbs_kho', soCT)
     setSoChungTuPrint(soCT)
-    setDataDate({ ...dataDate, NgayBatDau: value, NgayKetThuc: value })
+    setDataDate({ ...dataDate, NgayBatDau: dayjs(value), NgayKetThuc: dayjs(value) })
     setIsShowPrint(!isShowPrint)
     setModelType('PhieuKho')
   }
@@ -535,7 +536,7 @@ function PhieuBanHang() {
                 soChungTuPrint={soChungTuPrint}
                 isShowModel={isShowPrint}
                 handleCloseAction={handleCloseAction}
-                data={{
+                dataDatePrint={{
                   ...dataDate,
                   NgayBatDau: dayjs(dataDate?.NgayBatDau).format('YYYY-MM-DD'),
                   NgayKetThuc: dayjs(dataDate?.NgayKetThuc).format('YYYY-MM-DD'),

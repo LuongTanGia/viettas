@@ -14,15 +14,14 @@ const { Text } = Typography
 function Tables({ hidden, loadingSearch, param, columName, height, handleView, handleEdit, typeTable, handleAddData, handleDelete, handleChangePhieuThu, selectMH, textSearch }) {
   const [soLuong, setSoLuong] = useState(1)
   const DataColumns = param ? param[0] : []
-
   const keysOnly =
     typeTable !== 'listHelper'
       ? Object.keys(DataColumns || []).filter((key) => key !== 'MaSoThue' && key !== 'MaKho')
       : ['MaHang', 'TenHang', 'DVT', 'LapRap', 'TonKho', 'SoLuongTon', 'GiaBan', 'NhomHang']
 
   const ThongSo = JSON.parse(localStorage.getItem('ThongSo'))
-
   const [searchText, setSearchText] = useState('')
+
   useEffect(() => {
     setSearchText(textSearch)
   }, [textSearch])
@@ -384,7 +383,7 @@ function Tables({ hidden, loadingSearch, param, columName, height, handleView, h
           inputype,
           dataIndex: col.dataIndex,
           title: col.title,
-          editing: isEditing(record),
+          // editing: isEditing(record),
         }
       },
     }
@@ -407,8 +406,8 @@ function Tables({ hidden, loadingSearch, param, columName, height, handleView, h
     setSelectedRecord(selectMH)
   }, [param, selectMH])
 
-  const [editingKey, setEditingKey] = useState('')
-  const isEditing = (record) => record.index === editingKey
+  // const [editingKey, setEditingKey] = useState('')
+  // const isEditing = (record) => record.index === editingKey
 
   const onRowClick = (record) => {
     return {
@@ -455,7 +454,6 @@ function Tables({ hidden, loadingSearch, param, columName, height, handleView, h
   const onChangeInphutSL = (value) => {
     setSoLuong(value)
   }
-
   return (
     <>
       <Form form={form} component={false}>
@@ -490,7 +488,7 @@ function Tables({ hidden, loadingSearch, param, columName, height, handleView, h
                         {columns
                           .filter((column) => column.render)
                           .map((column, index) => {
-                            const isNumericColumn = typeof data[0]?.[column.dataIndex] === 'number'
+                            const isNumericColumn = data?.length > 0 ? typeof data[0]?.[column.dataIndex] === 'number' : null
                             return (
                               <Table.Summary.Cell
                                 index={index}

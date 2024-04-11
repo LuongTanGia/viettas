@@ -433,9 +433,10 @@ export const DANHSACHHANGHOA_PBS = async (API, token, data) => {
 
       if (response.data.DataResults) {
         return response.data.DataResults
-      } else {
-        console.error('DataResults is undefined or null.')
       }
+      // else {
+      //   console.error('DataResults is undefined or null.')
+      // }
     } else {
       console.error('Response or response.data is undefined or null.')
     }

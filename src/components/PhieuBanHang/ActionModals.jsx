@@ -24,7 +24,7 @@ import { IoMdAddCircle } from 'react-icons/io'
 const { Option } = Select
 
 const initState = {
-  NgayCTu: '',
+  NgayCTu: null,
   DaoHan: '',
   MaDoiTuong: '',
   TenDoiTuong: '',
@@ -50,6 +50,9 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
     NgayCTu: dayjs(new Date()),
     DaoHan: dayjs(new Date()),
   })
+  const [errors, setErrors] = useState({
+    MaDoiTuong: '',
+  })
   const [form, setForm] = useState()
   const [listDoiTuong, setListDoiTuong] = useState([])
   const [listKhoHang, setListKhoHang] = useState([])
@@ -61,13 +64,18 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
   useEffect(() => {
     const loadData = async () => {
       try {
-        const result_listHp = isShow ? await DANHSACHHANGHOA_PBS(API.DANHSACHHANGHOA_PBS, token, form) : null
+        const result_listHp = isShow
+          ? await DANHSACHHANGHOA_PBS(API.DANHSACHHANGHOA_PBS, token, {
+              ...form,
+              NgayCTu: null,
+            })
+          : null
         const result_doituong = isShow ? await DANHSACHDOITUONG(API.DANHSACHDOITUONG_PBS, token) : null
         const result_khohang = isShow ? await DANHSACHKHOHANG(API.DANHSACHKHOHANG_PBS, token) : null
         setDataListHP(result_listHp)
         setListDoiTuong(result_doituong)
         setListKhoHang(result_khohang)
-        typeAction === 'create' ? setForm({ ...form, MaKho: result_khohang?.length > 0 ? result_khohang[0]?.MaKho : '' }) : ''
+        typeAction === 'create' ? setForm({ ...initState, MaKho: result_khohang?.length > 0 ? result_khohang[0]?.MaKho : '' }) : ''
         setIsModalOpen(isShow)
       } catch (error) {
         console.error('Error fetching data:', error)
@@ -76,12 +84,10 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
     loadData()
   }, [isShow, typeAction])
 
-  console.log(form)
-
   useEffect(() => {
     typeAction === 'edit' || typeAction === 'view' ? setForm(data_chitiet.DataResult) : setForm({ ...initState, ...Dates })
     setDataChitiet(form?.DataDetails)
-  }, [dataRecord, form?.DataDetails, typeAction])
+  }, [dataRecord, form?.DataDetails])
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -102,13 +108,10 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
   const handleClosePopup = () => {
     setShowPopup(false)
   }
-  const handleChangeInput_other = (e) => {
-    const { name, value } = e.target
-    setForm({ ...form, [name]: value })
-  }
   const handleChangeInput = async (value) => {
     const [MaDoiTuong, TenDoiTuong, DiaChi] = value.split(' - ')
     setForm({ ...form, MaDoiTuong, TenDoiTuong, DiaChi })
+    setErrors({ ...errors, MaDoiTuong: '' })
     const result_listHp = await DANHSACHHANGHOA_PBS(API.DANHSACHHANGHOA_PBS, token, { ...form, MaDoiTuong, TenDoiTuong, DiaChi })
     setDataListHP(result_listHp)
   }
@@ -118,19 +121,48 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
     setDataListHP(result_listHp)
   }
   const handleAddData = (record) => {
-    const isMaHangExists = dataChitiet.some((item) => item.MaHang === record.MaHang)
+    const defaultValues = {
+      SoLuong: 1,
+      DonGia: 0,
+      TienHang: 0,
+      TyLeThue: '',
+      TienThue: '',
+      ThanhTien: '',
+      TyLeCKTT: '',
+      TienCKTT: '',
+      TonKho: '',
+      TyLeQuyDoi: '',
+      MaHangLR: '',
+    }
+    const newRow = { ...record, ...defaultValues }
+    const isMaHangExists = dataChitiet.some((item) => item.MaHang === newRow.MaHang)
     if (isMaHangExists) {
-      toast.warn('Đã tồn tại mã hàng trong chi tiết !!')
+      toast.success('Thêm thành công 2 !', {
+        autoClose: 1000,
+      })
+      const index = dataChitiet.findIndex((item) => item.MaHang === newRow.MaHang)
+      const oldQuantity = dataChitiet[index].SoLuong
+      dataChitiet[index].SoLuong = oldQuantity + newRow.SoLuong
+      setDataChitiet([...dataChitiet])
     } else {
-      setDataChitiet([...dataChitiet, record])
-      toast.success('Thêm thành công !')
+      setDataChitiet([...dataChitiet, newRow])
+      toast.success('Thêm thành công !', {
+        autoClose: 1000,
+      })
     }
   }
+
   const handleEditData = (data) => {
     setDataChitiet(data)
   }
   const handleSubmit = async () => {
     if (typeAction === 'create') {
+      if (!form?.MaDoiTuong?.trim()) {
+        setErrors({
+          MaDoiTuong: form?.MaDoiTuong?.trim() ? null : 'Đối tượng không được trống',
+        })
+        return
+      }
       const newData = dataChitiet.map((item, index) => {
         return {
           ...item,
@@ -161,15 +193,20 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
   }
   const handleSubmitAndClose = async () => {
     if (typeAction === 'create') {
+      if (!form?.MaDoiTuong?.trim()) {
+        setErrors({
+          MaDoiTuong: form?.MaDoiTuong?.trim() ? null : 'Đối tượng không được trống',
+        })
+        return
+      }
       const newData = dataChitiet.map((item, index) => {
         return {
           ...item,
           STT: index + 1,
         }
       })
-      const data = { ...form, ...Dates, ...Dates, NgayCTu: Dates.NgayCTu.format('YYYY-MM-DD'), DaoHan: dayjs(Dates?.DaoHan).format('YYYY-MM-DD'), DataDetails: newData }
+      const data = { ...form, ...Dates, NgayCTu: Dates.NgayCTu.format('YYYY-MM-DD'), DaoHan: dayjs(Dates?.DaoHan).format('YYYY-MM-DD'), DataDetails: newData }
       const res = await THEMPHIEUBANHANG(API.THEMPHIEUBANHANG, token, data)
-      console.log({ ...form, ...Dates, DataDetails: newData })
       setMaHang(res[0]?.SoChungTu)
       if (res[0]?.SoChungTu) {
         handleClose()
@@ -235,25 +272,20 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
       {isModalOpen ? (
         <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10 ">
           <div className=" p-2 absolute shadow-lg bg-white rounded-md flex flex-col gap-2">
-            <div className="flex flex-col gap-2 p-1 lg:w-[90vw] md:w-[98vw]">
+            <div className="flex flex-col gap-2 p-1 xl:w-[80vw] lg:w-[90vw] md:w-[98vw]">
               <div className="flex gap-2">
                 <img src={Logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
                 <p className="text-blue-700 uppercase font-semibold">{`${typeAction === 'view' ? 'Thông Tin' : typeAction === 'edit' ? 'Sửa' : 'Thêm'} - Phiếu Bán Hàng`}</p>
               </div>
               <div className="w-full h-[90%] flex flex-col border-2 px-1 gap-2 py-2.5 text-sm">
-                <div className={`grid lg:grid-cols-5 md:grid-cols-2 gap-1 box_thongtin ${typeAction == 'create' ? 'create' : typeAction == 'edit' ? 'edit' : ''}`}>
-                  <div className="flex flex-col lg:col-span-3 gap-2">
+                <div className={`grid lg:grid-cols-5 md:grid-cols-7 gap-1 box_thongtin ${typeAction == 'create' ? 'create' : typeAction == 'edit' ? 'edit' : ''}`}>
+                  <div className="flex flex-col lg:col-span-3 md:col-span-4 gap-2">
                     <div className="flex items-center gap-1">
                       <div className="flex items-center gap-1">
                         <label className="text-sm required whitespace-nowrap min-w-[70px] flex justify-end">Số C.từ</label>
-                        <input
-                          readOnly
-                          type="text"
-                          value={form?.SoChungTu || null}
-                          className="lg:w-full md:w-[120px] border border-gray-300 outline-none px-2 rounded-[3px] resize-none"
-                        />
+                        <input readOnly type="text" value={form?.SoChungTu} className="lg:w-full md:w-[120px] border border-gray-300 outline-none px-2 rounded-[3px] resize-none" />
                       </div>
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-1 text-sm">
                         <label className="min-w-[40px] flex justify-end">Ngày</label>
                         {typeAction === 'view' ? (
                           <input
@@ -264,13 +296,13 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                           />
                         ) : (
                           <DateField
-                            className="max-w-[115px]"
+                            className="max-w-[115px] text-sm"
                             format="DD/MM/YYYY"
                             value={typeAction === 'create' ? Dates.NgayCTu : dayjs(form?.NgayCTu)}
                             onChange={(newDate) => {
                               setDates({
                                 ...Dates,
-                                NgayCTu: dayjs(newDate).format('YYYY-MM-DD'),
+                                NgayCTu: dayjs(newDate),
                               })
                             }}
                             sx={{
@@ -311,13 +343,16 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                         <Select
                           size="small"
                           className="w-full outline-none truncate"
-                          value={form?.MaDoiTuong !== '' ? `${form?.MaDoiTuong} - ${form?.TenDoiTuong}` : undefined}
+                          placeholder={errors.MaDoiTuong ? errors.MaDoiTuong : ''}
+                          status={errors.MaDoiTuong ? 'error' : ''}
+                          value={form?.MaDoiTuong !== '' ? `${form?.MaDoiTuong} - ${form?.TenDoiTuong}` : null}
                           onChange={handleChangeInput}
                           showSearch
+                          optionFilterProp="children"
                         >
                           {listDoiTuong?.map((item, index) => (
                             <Option value={`${item.Ma} - ${item.Ten} - ${item.DiaChi}`} key={index}>
-                              {item?.Ma} {item?.Ten}
+                              {item?.Ma} - {item?.Ten}
                             </Option>
                           ))}
                         </Select>
@@ -336,42 +371,44 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                       />
                     </div>
                   </div>
-                  <div className="grid grid-cols-1 lg:col-span-2 px-2 border-2 py-2 border-black-200 rounded relative">
+                  <div className="grid grid-cols-1 lg:col-span-2 md:col-span-3 px-2 border-2 py-2 border-black-200 rounded relative">
                     <div className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</div>
                     <div className="flex gap-1">
                       <div className="flex items-center ">
                         <label className="md:w-[134px] lg:w-[104px]">Người tạo</label>
-                        <input type="text" className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm" value={form?.NguoiTao} readOnly title={form?.NguoiTao} />
+                        <Tooltip title={form?.NguoiTao} color="blue">
+                          <input type="text" className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm truncate" value={form?.NguoiTao} readOnly />
+                        </Tooltip>
                       </div>
                       <div className="flex items-center">
                         <label className="w-[30px] pr-1">Lúc</label>
-                        <input
-                          readOnly
-                          type="text"
-                          className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm"
-                          value={form?.NgayTao ? dayjs(form?.NgayTao).format('DD/MM/YYYY HH:mm:ss') : ''}
-                        />
+                        <Tooltip title={dayjs(form?.NgayTao).format('DD/MM/YYYY HH:mm:ss')} color="blue">
+                          <input
+                            readOnly
+                            type="text"
+                            className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm truncate"
+                            value={dayjs(form?.NgayTao).format('DD/MM/YYYY HH:mm:ss')}
+                          />
+                        </Tooltip>
                       </div>
                     </div>
                     <div className="flex gap-1">
                       <div className="flex items-center">
-                        <label className="md:w-[134px] lg:w-[104px] ">Người sửa</label>
-                        <input
-                          readOnly
-                          type="text"
-                          className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm"
-                          value={form?.NguoiSuaCuoi}
-                          title={form?.NguoiSuaCuoi}
-                        />
+                        <label className="md:w-[134px] lg:w-[104px]">Người sửa</label>
+                        <Tooltip title={form?.NguoiSuaCuoi} color="blue">
+                          <input readOnly type="text" className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm truncate" value={form?.NguoiSuaCuoi} />
+                        </Tooltip>
                       </div>
                       <div className="flex items-center">
                         <label className="w-[30px] pr-1">Lúc</label>
-                        <input
-                          readOnly
-                          type="text"
-                          className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm"
-                          value={form?.NgaySuaCuoi ? dayjs(form?.NgaySuaCuoi).format('DD/MM/YYYY HH:mm:ss') : ''}
-                        />
+                        <Tooltip title={form?.NgaySuaCuoi ? dayjs(form?.NgaySuaCuoi).format('DD/MM/YYYY HH:mm:ss') : ''} color="blue">
+                          <input
+                            readOnly
+                            type="text"
+                            className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm truncate"
+                            value={form?.NgaySuaCuoi ? dayjs(form?.NgaySuaCuoi).format('DD/MM/YYYY HH:mm:ss') : ''}
+                          />
+                        </Tooltip>
                       </div>
                     </div>
                   </div>
@@ -422,7 +459,14 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                     {typeAction === 'view' ? (
                       <input type="text" className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm" value={form?.GhiChu} readOnly disabled />
                     ) : (
-                      <Input size="small" className="w-full overflow-hidden whitespace-nowrap overflow-ellipsis" value={form?.GhiChu} onChange={handleChangeInput_other} />
+                      <Input
+                        size="small"
+                        className="w-full overflow-hidden whitespace-nowrap overflow-ellipsis"
+                        value={form?.GhiChu}
+                        onChange={(e) => {
+                          setForm({ ...form, GhiChu: e.target.value })
+                        }}
+                      />
                     )}
                   </div>
                 </div>

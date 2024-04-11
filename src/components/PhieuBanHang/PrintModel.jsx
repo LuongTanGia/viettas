@@ -20,7 +20,7 @@ import { DateField } from '@mui/x-date-pickers/DateField'
 
 const { Option } = Select
 
-function ModelPrint({ soChungTuPrint, isShowModel, handleCloseAction, data, modelType, selectMH }) {
+function ModelPrint({ soChungTuPrint, isShowModel, handleCloseAction, dataDatePrint, modelType, selectMH }) {
   const token = localStorage.getItem('TKN')
   // const [dateFrom, setDateFrom] = useState(data?.NgayBatDau)
   // const [dateTo, setDateTo] = useState(data?.NgayKetThuc)
@@ -32,22 +32,23 @@ function ModelPrint({ soChungTuPrint, isShowModel, handleCloseAction, data, mode
     NgayKetThuc: null,
   })
   const [dateChange, setDateChange] = useState(false)
-  const [soChungTuFrom, setSoChungTuFrom] = useState(soChungTuPrint !== '' ? soChungTuPrint : selectMH)
-  const [soChungTuTo, setSoChungTuTo] = useState(soChungTuPrint !== '' ? soChungTuPrint : selectMH)
+  const [soChungTuFrom, setSoChungTuFrom] = useState(null)
+  const [soChungTuTo, setSoChungTuTo] = useState(null)
+  console.log(selectMH)
   useEffect(() => {
     setLoading(true)
     // setDateFrom(dayjs(data?.NgayBatDau))
     // setDateTo(dayjs(data?.NgayKetThuc))
     setDataDate({
-      NgayBatDau: dayjs(data?.NgayBatDau),
-      NgayKetThuc: dayjs(data?.NgayKetThuc),
+      NgayBatDau: dayjs(dataDatePrint?.NgayBatDau),
+      NgayKetThuc: dayjs(dataDatePrint?.NgayKetThuc),
     })
     setSoChungTuFrom(soChungTuPrint !== '' ? soChungTuPrint : selectMH)
     setSoChungTuTo(soChungTuPrint !== '' ? soChungTuPrint : selectMH)
     setTimeout(() => {
       setLoading(false)
     }, 300)
-  }, [data?.NgayBatDau, data?.NgayKetThuc, soChungTuPrint, selectMH])
+  }, [dataDatePrint?.NgayBatDau, dataDatePrint?.NgayKetThuc, soChungTuPrint, selectMH])
 
   const handleDateFromChange = (newValue) => {
     setDataDate({
@@ -70,7 +71,11 @@ function ModelPrint({ soChungTuPrint, isShowModel, handleCloseAction, data, mode
   useEffect(() => {
     const handleListPhieuThu = async () => {
       setLoading(true)
-      const response = await LISTCHUNGTU(API.LISTCHUNGTU, token, dataDate)
+      const response = await LISTCHUNGTU(API.LISTCHUNGTU, token, {
+        ...dataDate,
+        NgayBatDau: dayjs(dataDate?.NgayBatDau).format('YYYY-MM-DD'),
+        NgayKetThuc: dayjs(dataDate?.NgayKetThuc).format('YYYY-MM-DD'),
+      })
       setDataSoChungTu(response)
       setLoading(false)
     }
@@ -118,8 +123,8 @@ function ModelPrint({ soChungTuPrint, isShowModel, handleCloseAction, data, mode
   }
   const close = () => {
     handleCloseAction()
-    setSoChungTuFrom('')
-    setSoChungTuTo('')
+    setSoChungTuFrom(null)
+    setSoChungTuTo(null)
   }
   let timerId
   const handleDateChange = () => {
