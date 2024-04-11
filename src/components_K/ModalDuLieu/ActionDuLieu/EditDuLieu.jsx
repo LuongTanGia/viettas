@@ -523,8 +523,8 @@ const EditDuLieu = ({ actionType, typePage, namePage, data, dataRecord, dataThon
               </div>
             </div>
             {/* kho hang and ghi chu */}
-            <div className="flex gap-3 pl-1  items-center  w-full">
-              <div className="p-1 flex  items-center ">
+            <div className="flex gap-3   items-center  w-full">
+              <div className="px-2 py-2 flex  items-center ">
                 <label form="khohang" className="min-w-[78px]  max-w-[78px]">
                   Kho hàng
                 </label>
@@ -545,7 +545,7 @@ const EditDuLieu = ({ actionType, typePage, namePage, data, dataRecord, dataThon
                   ))}
                 </Select>
               </div>
-              <div className="flex items-center p-1 w-full">
+              <div className="flex items-center  w-full">
                 <label className="w-[70px]">Ghi chú</label>
                 <input
                   type="text"

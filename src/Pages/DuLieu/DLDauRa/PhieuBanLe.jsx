@@ -252,8 +252,6 @@ const PhieuBanLe = () => {
 
   const getDSPBL = async () => {
     try {
-      console.log('đi2')
-
       const tokenLogin = localStorage.getItem('TKN')
 
       const response = await apis.DanhSachPBL(tokenLogin, formKhoanNgay)

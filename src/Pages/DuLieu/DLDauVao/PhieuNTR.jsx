@@ -102,8 +102,8 @@ const PhieuNTR = () => {
             toast.warning(responseKH.data.DataErrorDescription)
             setIsLoadingModal(false)
           } else if (responseKH.data.DataError === -107 || responseKH.data.DataError === -108) {
-            await RETOKEN()
-            fetchData()
+            // await RETOKEN()
+            // fetchData()
           } else {
             toast.error(responseKH.data.DataErrorDescription)
             setIsLoadingModal(false)
@@ -122,8 +122,8 @@ const PhieuNTR = () => {
             toast.warning(responseDT.data.DataErrorDescription)
             setIsLoadingModal(false)
           } else if (responseDT.data.DataError === -107 || responseDT.data.DataError === -108) {
-            await RETOKEN()
-            fetchData()
+            // await RETOKEN()
+            // fetchData()
           } else {
             toast.error(responseDT.data.DataErrorDescription)
             setIsLoadingModal(false)
@@ -246,7 +246,6 @@ const PhieuNTR = () => {
 
   const getDSPNTR = async () => {
     try {
-      console.log('get ds PMH')
       const tokenLogin = localStorage.getItem('TKN')
       const response = await apis.DanhSachNTR(tokenLogin, formKhoanNgay)
       if (response) {
