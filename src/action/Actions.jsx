@@ -40,7 +40,6 @@ export const CallBackAPI = async (API, token, data) => {
 
       return response.data.DataResult
     }
-
     handleResponseError()
   } catch (error) {
     handleError(error)
@@ -85,11 +84,11 @@ export const DANHSACHDULIEU = async (API, data) => {
   try {
     const response = await axiosInstance.post(API, data)
     window.localStorage.setItem('tokenDuLieu', response.data.TKN)
-
     if (response.data.DataError === 0) {
       return response.data
     } else {
-      toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
+      console.log('Error')
+      // handleAPIError(response)
     }
     return response.data
   } catch (error) {
@@ -102,7 +101,6 @@ export const LOGIN = async (API1, API2, TKN, RemoteDB, data, dispatch) => {
       TokenID: TKN,
       RemoteDB: RemoteDB,
     })
-
     if (response.data.DataError === 0) {
       window.localStorage.setItem('TKN', response.data.TKN)
       window.localStorage.setItem('RTKN', response.data.RTKN)

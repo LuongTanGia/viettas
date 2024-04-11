@@ -369,7 +369,7 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                     <div className="flex flex-col gap-3">
                       <div className="flex gap-2">
                         <div className="flex items-center gap-1">
-                          <label className="text-sm  required whitespace-nowrap min-w-[100px] flex justify-end">Số chứng từ</label>
+                          <label className="text-sm required whitespace-nowrap min-w-[100px] flex justify-end">Số chứng từ</label>
                           <Input disabled size="small" value={NDCForm?.SoChungTu || ''} readOnly />
                         </div>
                         <div className="flex items-center gap-1">
@@ -404,6 +404,7 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                           value={NDCForm?.MaKho || undefined}
                           placeholder={errors.MaKho ? errors.MaKho : ''}
                           status={errors.MaKho ? 'error' : ''}
+                          optionFilterProp="children"
                           onChange={(value) => {
                             setNDCForm({
                               ...NDCForm,

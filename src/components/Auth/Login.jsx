@@ -185,10 +185,9 @@ const App = () => {
                 <label htmlFor="rememberMe" className="text-base font-medium">
                   Sử dụng cookie
                 </label>
-
                 <p>
                   Chúng tôi đang sử dụng <strong className="underline decoration-sky-500">cookie</strong> để cung cấp cho bạn những trải nghiệm tốt nhất trên trang web này. Bằng
-                  cách tiếp tục truy cập, bạn đồng ý với
+                  cách tiếp tục truy cập, bạn đồng ý với <br />
                   <a
                     className="underline decoration-sky-500 font-bold"
                     onClick={() => {

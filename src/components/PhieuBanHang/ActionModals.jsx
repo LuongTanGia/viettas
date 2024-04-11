@@ -67,18 +67,21 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
         setDataListHP(result_listHp)
         setListDoiTuong(result_doituong)
         setListKhoHang(result_khohang)
+        typeAction === 'create' ? setForm({ ...form, MaKho: result_khohang?.length > 0 ? result_khohang[0]?.MaKho : '' }) : ''
         setIsModalOpen(isShow)
       } catch (error) {
         console.error('Error fetching data:', error)
       }
     }
     loadData()
-  }, [isShow])
+  }, [isShow, typeAction])
+
   console.log(form)
+
   useEffect(() => {
     typeAction === 'edit' || typeAction === 'view' ? setForm(data_chitiet.DataResult) : setForm({ ...initState, ...Dates })
     setDataChitiet(form?.DataDetails)
-  }, [dataRecord, form?.DataDetails])
+  }, [dataRecord, form?.DataDetails, typeAction])
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -96,16 +99,9 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
     }
   }, [form])
 
-  // const setSelectDataOption = (data) => {
-  //   setYourMaHangOptions(data)
-  //   setYourTenHangOptions(data)
-  // }
   const handleClosePopup = () => {
     setShowPopup(false)
   }
-  // const handleShowPopup = () => {
-  //   setShowPopup(true)
-  // }
   const handleChangeInput_other = (e) => {
     const { name, value } = e.target
     setForm({ ...form, [name]: value })
@@ -143,7 +139,6 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
       })
       const data = { ...form, ...Dates, NgayCTu: Dates.NgayCTu.format('YYYY-MM-DD'), DaoHan: dayjs(Dates?.DaoHan).format('YYYY-MM-DD'), DataDetails: newData }
       const res = await THEMPHIEUBANHANG(API.THEMPHIEUBANHANG, token, data)
-      console.log({ ...form, ...Dates, NgayCTu: dayjs(Dates.NgayCTu).format('YYYY-MM-DD'), DaoHan: dayjs(Dates?.DaoHan).format('YYYY-MM-DD'), DataDetails: newData })
       setMaHang(res[0]?.SoChungTu)
       if (res[0]?.SoChungTu) {
         setForm(initState)
@@ -239,27 +234,27 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
     <>
       {isModalOpen ? (
         <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10 ">
-          <div className=" p-4 absolute shadow-lg bg-white rounded-md flex flex-col gap-2">
-            <div className="flex flex-col gap-2 py-1 px-2 lg:w-[90vw] md:w-[95vw]">
+          <div className=" p-2 absolute shadow-lg bg-white rounded-md flex flex-col gap-2">
+            <div className="flex flex-col gap-2 p-1 lg:w-[90vw] md:w-[98vw]">
               <div className="flex gap-2">
                 <img src={Logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
                 <p className="text-blue-700 uppercase font-semibold">{`${typeAction === 'view' ? 'Thông Tin' : typeAction === 'edit' ? 'Sửa' : 'Thêm'} - Phiếu Bán Hàng`}</p>
               </div>
-              <div className="w-full h-[90%] flex flex-col border-2 px-1 gap-1 py-2 text-sm">
-                <div className={`flex md:gap-0 gap-1 pl-1 box_thongtin ${typeAction == 'create' ? 'create' : typeAction == 'edit' ? 'edit' : ''}`}>
-                  <div className="w-[62%]">
-                    <div className="flex p-1">
-                      <div className=" flex items-center  ">
-                        <label className="md:w-[114px] lg:w-[110px] pr-1">Số C.từ</label>
+              <div className="w-full h-[90%] flex flex-col border-2 px-1 gap-2 py-2.5 text-sm">
+                <div className={`grid lg:grid-cols-5 md:grid-cols-2 gap-1 box_thongtin ${typeAction == 'create' ? 'create' : typeAction == 'edit' ? 'edit' : ''}`}>
+                  <div className="flex flex-col lg:col-span-3 gap-2">
+                    <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-1">
+                        <label className="text-sm required whitespace-nowrap min-w-[70px] flex justify-end">Số C.từ</label>
                         <input
                           readOnly
                           type="text"
                           value={form?.SoChungTu || null}
-                          className="w-full border border-gray-300 outline-none px-2 rounded-[4px] h-[24px] resize-none"
+                          className="lg:w-full md:w-[120px] border border-gray-300 outline-none px-2 rounded-[3px] resize-none"
                         />
                       </div>
-                      <div className="flex md:px-1 lg:px-4 items-center ">
-                        <label className="pr-1 lg:pr-[30px] lg:pl-[8px]">Ngày</label>
+                      <div className="flex items-center gap-1">
+                        <label className="min-w-[40px] flex justify-end">Ngày</label>
                         {typeAction === 'view' ? (
                           <input
                             readOnly
@@ -285,9 +280,9 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                         )}
                       </div>
                       {typeAction === 'create' ? (
-                        <div className="flex items-center w-[200px]">
+                        <div className="flex items-center ">
                           <Checkbox
-                            className=" w-full"
+                            className="text-sm whitespace-nowrap lg:min-w-[120px] flex justify-end"
                             onChange={(e) =>
                               setForm({
                                 ...form,
@@ -300,25 +295,23 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                         </div>
                       ) : null}
                     </div>
-                    <div className="p-1 flex">
-                      <label form="doituong" className="w-[86px]">
+                    <div className="flex items-center gap-1">
+                      <label form="doituong" className="text-sm whitespace-nowrap min-w-[70px] flex justify-end">
                         Đối tượng
                       </label>
                       {typeAction === 'view' ? (
                         <input
                           type="text"
                           className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm"
-                          value={`${form?.MaDoiTuong} ${form?.TenDoiTuong} ${form?.DiaChi}`}
-                          name="DiaChi"
-                          readOnly={typeAction === 'view' || typeAction === 'edit' ? true : false}
+                          value={`${form?.MaDoiTuong} - ${form?.TenDoiTuong}`}
+                          readOnly={true}
                           disabled
                         />
                       ) : (
                         <Select
                           size="small"
-                          className="w-full outline-none"
-                          value={`${form?.MaDoiTuong} ${form?.TenDoiTuong} ${form?.DiaChi}`}
-                          disabled={typeAction === 'view'}
+                          className="w-full outline-none truncate"
+                          value={form?.MaDoiTuong !== '' ? `${form?.MaDoiTuong} - ${form?.TenDoiTuong}` : undefined}
                           onChange={handleChangeInput}
                           showSearch
                         >
@@ -330,8 +323,8 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                         </Select>
                       )}
                     </div>
-                    <div className="flex items-center p-1">
-                      <label className="w-[86px]">Tên</label>
+                    <div className="flex items-center gap-1">
+                      <label className="text-sm whitespace-nowrap min-w-[70px] flex justify-end">Tên</label>
                       <input
                         type="text"
                         className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm"
@@ -343,7 +336,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                       />
                     </div>
                   </div>
-                  <div className="grid grid-cols-1 px-2 border-2 py-2 border-black-200 rounded relative">
+                  <div className="grid grid-cols-1 lg:col-span-2 px-2 border-2 py-2 border-black-200 rounded relative">
                     <div className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</div>
                     <div className="flex gap-1">
                       <div className="flex items-center ">
@@ -384,7 +377,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                   </div>
                 </div>
                 <div className="flex items-center gap-1">
-                  <label className="whitespace-nowrap flex justify-end">Địa chỉ</label>
+                  <label className="text-sm whitespace-nowrap min-w-[70px] flex justify-end">Địa chỉ</label>
                   {typeAction === 'view' ? (
                     <input type="text" className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm" value={form?.DiaChi} name="DiaChi" readOnly disabled />
                   ) : (
@@ -398,28 +391,27 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                     />
                   )}
                 </div>
-                <div className="flex items-center gap-2 py-1">
-                  <div className="flex items-center gap-1">
-                    <label form="khohang" className="whitespace-nowrap flex justify-end">
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1 ">
+                    <label form="khohang" className="whitespace-nowrap required min-w-[70px] flex justify-end">
                       Kho hàng
                     </label>
                     {typeAction === 'view' ? (
                       <input type="text" className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm" value={form?.MaKho} name="DiaChi" readOnly disabled />
                     ) : (
                       <Select
-                        className={`hover:-gray-500 ${typeAction === 'edit' ? 'bg-white' : ''} bg-white`}
-                        style={{ width: '100%' }}
+                        className="min-w-[150px]"
                         size="small"
                         readOnly={typeAction === 'view' ? true : false}
                         onChange={handleChangeInput_kho}
-                        value={form?.MaKho || 'Chọn kho hàng'}
-                        name="MaKho"
+                        value={form?.MaKho || undefined}
                         showSearch
+                        optionFilterProp="children"
                         disabled={typeAction === 'view' ? true : false}
                       >
                         {listKhoHang?.map((item, index) => (
                           <Option value={item.MaKho} key={index}>
-                            {item?.MaKho} {item?.TenKho}
+                            {item?.MaKho} - {item?.TenKho}
                           </Option>
                         ))}
                       </Select>
@@ -427,14 +419,11 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                   </div>
                   <div className="flex items-center gap-1 w-full">
                     <label className="whitespace-nowrap flex justify-end text-sm">Ghi chú</label>
-                    <input
-                      type="text"
-                      name="GhiChu"
-                      className={`w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] hover:border-[#4897e6] h-[24px] ${typeAction === 'edit' ? 'bg-white' : ''}`}
-                      value={form?.GhiChu}
-                      readOnly={typeAction === 'view' ? true : false}
-                      onChange={handleChangeInput_other}
-                    />
+                    {typeAction === 'view' ? (
+                      <input type="text" className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm" value={form?.GhiChu} readOnly disabled />
+                    ) : (
+                      <Input size="small" className="w-full overflow-hidden whitespace-nowrap overflow-ellipsis" value={form?.GhiChu} onChange={handleChangeInput_other} />
+                    )}
                   </div>
                 </div>
                 <div className="pb-0 relative">
