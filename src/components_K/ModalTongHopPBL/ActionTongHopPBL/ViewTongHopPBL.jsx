@@ -390,7 +390,8 @@ const ViewTongHopPBL = ({ typePage, namePage, dataRecord, dataThongSo, loading, 
               <input
                 value={formatPrice(dataRecord.TongThanhTien, dataThongSo.SOLESOTIEN)}
                 type="text"
-                className="text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate"
+                className={`text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate 
+                ${dataRecord.TongThanhTien < 0 ? 'text-red-600 ' : dataRecord.TongThanhTien === 0 ? 'text-gray-300' : ''}`}
                 disabled
               />
             </div>
@@ -399,7 +400,8 @@ const ViewTongHopPBL = ({ typePage, namePage, dataRecord, dataThongSo, loading, 
               <input
                 value={formatPrice(dataRecord.TongThu, dataThongSo.SOLESOTIEN)}
                 type="text"
-                className="text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate"
+                className={`text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate 
+                ${dataRecord.TongThu < 0 ? 'text-red-600 ' : dataRecord.TongThu === 0 ? 'text-gray-300' : ''}`}
                 disabled
               />
             </div>
@@ -408,7 +410,8 @@ const ViewTongHopPBL = ({ typePage, namePage, dataRecord, dataThongSo, loading, 
               <input
                 value={formatPrice(dataRecord.TongChi, dataThongSo.SOLESOTIEN)}
                 type="text"
-                className="text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate"
+                className={`text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate 
+                ${dataRecord.TongChi < 0 ? 'text-red-600 ' : dataRecord.TongChi === 0 ? 'text-gray-300' : ''}`}
                 disabled
               />
             </div>
@@ -417,7 +420,8 @@ const ViewTongHopPBL = ({ typePage, namePage, dataRecord, dataThongSo, loading, 
               <input
                 value={formatPrice(dataRecord.TienPhaiNop, dataThongSo.SOLESOTIEN)}
                 type="text"
-                className="text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate"
+                className={`text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate 
+                ${dataRecord.TienPhaiNop < 0 ? 'text-red-600 ' : dataRecord.TienPhaiNop === 0 ? 'text-gray-300' : ''}`}
                 disabled
               />
             </div>
@@ -464,8 +468,8 @@ const ViewTongHopPBL = ({ typePage, namePage, dataRecord, dataThongSo, loading, 
                               <Table.Summary.Cell
                                 index={index}
                                 key={`summary-cell-${index}`}
-                                align={isNumericColumn ? 'right' : 'left'}
-                                className="text-end font-bold  bg-[#f1f1f1]"
+                                align={isNumericColumn ? 'right' : column.dataIndex === 'STT' ? 'center' : 'left'}
+                                // className="text-end font-bold  bg-[#f1f1f1]"
                               >
                                 {column.dataIndex === 'TyLeCKTT' || column.dataIndex === 'TyLeThue' ? (
                                   <Text strong>
@@ -499,12 +503,7 @@ const ViewTongHopPBL = ({ typePage, namePage, dataRecord, dataThongSo, loading, 
                                 ) : null}
                               </Table.Summary.Cell>
                             ) : (
-                              <Table.Summary.Cell
-                                index={index}
-                                key={`summary-cell-${index}`}
-                                align={isNumericColumn ? 'right' : 'left'}
-                                className="text-end font-bold  bg-[#f1f1f1]"
-                              >
+                              <Table.Summary.Cell index={index} key={`summary-cell-${index}`} align={isNumericColumn ? 'right' : column.dataIndex === 'STT' ? 'center' : 'left'}>
                                 {column.dataIndex === 'SoTien' ? (
                                   <Text strong>
                                     {Number(dataSource.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {

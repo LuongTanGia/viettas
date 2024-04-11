@@ -54,8 +54,8 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
     if (actionType !== 'create' && newData) {
       const foundItem = newData.find((item) => item.SoChungTu === dataThongTin?.SoChungTu)
       if (newData.length <= 0) {
-        setSelectedSctBD('Chọn mã hàng')
-        setSelectedSctKT('Chọn mã hàng')
+        setSelectedSctBD('Chọn số chứng từ')
+        setSelectedSctKT('Chọn số chứng từ')
       } else if (foundItem) {
         setSelectedSctBD(foundItem.SoChungTu)
         setSelectedSctKT(foundItem.SoChungTu)
@@ -116,6 +116,10 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
   }
 
   const handleOnlyPrintWareHouse = async () => {
+    if (selectedSctBD === 'Chọn số chứng từ' || selectedSctKT === 'Chọn số chứng từ') {
+      toast.warning('Vui lòng chọn số chứng từ !')
+      return
+    }
     try {
       const tokenLogin = localStorage.getItem('TKN')
       const lien = calculateTotal()
@@ -183,10 +187,12 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
           </div>
           <div className="border-2 my-1">
             <div className="p-4">
-              <div className="flex justify-center items-center  gap-3 pl-[52px] ">
+              <div className="grid grid-cols-2 gap-3 ">
                 {/* DatePicker */}
-                <div className="flex gap-x-5 items-center">
-                  <label htmlFor="">Ngày</label>
+                <div className="flex gap-x-2 items-center justify-end">
+                  <label htmlFor="" className="required">
+                    Ngày
+                  </label>
                   <DateField
                     className="DatePicker_PMH max-w-[170px]"
                     format="DD/MM/YYYY"
@@ -218,8 +224,10 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
                     }}
                   />
                 </div>
-                <div className="flex gap-x-5 items-center">
-                  <label htmlFor="">Đến</label>
+                <div className="flex gap-x-2 items-center">
+                  <label htmlFor="" className="required">
+                    Đến
+                  </label>
                   <DateField
                     className="DatePicker_PMH max-w-[170px]"
                     format="DD/MM/YYYY"
@@ -250,19 +258,9 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
                     }}
                   />
                 </div>
-                {/* <ActionButton
-                  color={'slate-50'}
-                  title={'Lọc'}
-                  icon={<MdFilterAlt size={20} />}
-                  background={'bg-main'}
-                  bg_hover={'white'}
-                  color_hover={'bg-main'}
-                  handleAction={handleFilterPrint}
-                /> */}
-              </div>
-              <div className="flex  mt-4">
-                <div className="flex ">
-                  <label className="pr-[22px]">Số chứng từ</label>
+
+                <div className="flex gap-x-2 items-center justify-end ">
+                  <label className="required">Số chứng từ</label>
 
                   <Select
                     size="small"
@@ -281,8 +279,8 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
                   </Select>
                 </div>
 
-                <div className="flex ">
-                  <label className="pl-[18px] pr-[18px]">Đến</label>
+                <div className="flex gap-x-2 items-center">
+                  <label className="required">Đến</label>
 
                   <Select
                     size="small"
@@ -301,6 +299,7 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
                   </Select>
                 </div>
               </div>
+
               {/* liên */}
               <div className="flex justify-center items-center gap-6 mt-4">
                 <div>

@@ -429,10 +429,10 @@ const CreateDuLieu = ({ actionType, typePage, namePage, data, dataThongSo, dataD
                       <input readOnly type="text" className="md:w-[50px] lg:w-full border border-gray-300 outline-none bg-[#fafafa] rounded-[4px] h-[24px]" />
                     </div>
                     {/* DatePicker */}
-                    <div className="flex md:px-1 lg:px-4 items-center">
+                    <div className="flex md:px-1 lg:px-4 items-center text-center">
                       <label className="pr-1 lg:pr-[30px] lg:pl-[8px]">Ngày</label>
                       <DateField
-                        className="DatePicker_PMH max-w-[115px]"
+                        className="DatePicker_PMH max-w-[115px]  "
                         format="DD/MM/YYYY"
                         value={dayjs(formCreate?.NgayCTu)}
                         onChange={(newDate) => {
