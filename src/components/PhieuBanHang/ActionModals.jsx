@@ -74,7 +74,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
     }
     loadData()
   }, [isShow])
-
+  console.log(form)
   useEffect(() => {
     typeAction === 'edit' || typeAction === 'view' ? setForm(data_chitiet.DataResult) : setForm({ ...initState, ...Dates })
     setDataChitiet(form?.DataDetails)
@@ -304,20 +304,31 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                       <label form="doituong" className="w-[86px]">
                         Đối tượng
                       </label>
-                      <Select
-                        size="small"
-                        className="w-full outline-none"
-                        value={`${form?.MaDoiTuong} ${form?.TenDoiTuong} ${form?.DiaChi}`}
-                        disabled={typeAction === 'view'}
-                        onChange={handleChangeInput}
-                        showSearch
-                      >
-                        {listDoiTuong?.map((item, index) => (
-                          <Option value={`${item.Ma} - ${item.Ten} - ${item.DiaChi}`} key={index}>
-                            {item?.Ma} {item?.Ten}
-                          </Option>
-                        ))}
-                      </Select>
+                      {typeAction === 'view' ? (
+                        <input
+                          type="text"
+                          className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm"
+                          value={`${form?.MaDoiTuong} ${form?.TenDoiTuong} ${form?.DiaChi}`}
+                          name="DiaChi"
+                          readOnly={typeAction === 'view' || typeAction === 'edit' ? true : false}
+                          disabled
+                        />
+                      ) : (
+                        <Select
+                          size="small"
+                          className="w-full outline-none"
+                          value={`${form?.MaDoiTuong} ${form?.TenDoiTuong} ${form?.DiaChi}`}
+                          disabled={typeAction === 'view'}
+                          onChange={handleChangeInput}
+                          showSearch
+                        >
+                          {listDoiTuong?.map((item, index) => (
+                            <Option value={`${item.Ma} - ${item.Ten} - ${item.DiaChi}`} key={index}>
+                              {item?.Ma} {item?.Ten}
+                            </Option>
+                          ))}
+                        </Select>
+                      )}
                     </div>
                     <div className="flex items-center p-1">
                       <label className="w-[86px]">Tên</label>
@@ -373,43 +384,46 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                   </div>
                 </div>
                 <div className="flex items-center gap-1">
-                  <label className="whitespace-nowrap w-[100px] flex justify-end">Địa chỉ</label>
+                  <label className="whitespace-nowrap flex justify-end">Địa chỉ</label>
                   {typeAction === 'view' ? (
-                    <input
-                      type="text"
-                      className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm"
+                    <input type="text" className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm" value={form?.DiaChi} name="DiaChi" readOnly disabled />
+                  ) : (
+                    <Input
+                      size="small"
+                      className="w-full overflow-hidden whitespace-nowrap overflow-ellipsis"
                       value={form?.DiaChi}
-                      name="DiaChi"
-                      readOnly={typeAction === 'view' || typeAction === 'edit' ? true : false}
                       onChange={handleChangeInput}
+                      readOnly
                       disabled
                     />
-                  ) : (
-                    <Input size="small" className="w-full overflow-hidden whitespace-nowrap overflow-ellipsis" value={form?.DiaChi} onChange={handleChangeInput} readOnly />
                   )}
                 </div>
                 <div className="flex items-center gap-2 py-1">
                   <div className="flex items-center gap-1">
-                    <label form="khohang" className="whitespace-nowrap w-[145px] flex justify-end ">
+                    <label form="khohang" className="whitespace-nowrap flex justify-end">
                       Kho hàng
                     </label>
-                    <Select
-                      className={`hover:-gray-500 ${typeAction === 'edit' ? 'bg-white' : ''} bg-white`}
-                      style={{ width: '100%' }}
-                      size="small"
-                      readOnly={typeAction === 'view' ? true : false}
-                      onChange={handleChangeInput_kho}
-                      value={form?.MaKho || 'Chọn kho hàng'}
-                      name="MaKho"
-                      showSearch
-                      disabled={typeAction === 'view' ? true : false}
-                    >
-                      {listKhoHang?.map((item, index) => (
-                        <Option value={item.MaKho} key={index}>
-                          {item?.MaKho} {item?.TenKho}
-                        </Option>
-                      ))}
-                    </Select>
+                    {typeAction === 'view' ? (
+                      <input type="text" className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm" value={form?.MaKho} name="DiaChi" readOnly disabled />
+                    ) : (
+                      <Select
+                        className={`hover:-gray-500 ${typeAction === 'edit' ? 'bg-white' : ''} bg-white`}
+                        style={{ width: '100%' }}
+                        size="small"
+                        readOnly={typeAction === 'view' ? true : false}
+                        onChange={handleChangeInput_kho}
+                        value={form?.MaKho || 'Chọn kho hàng'}
+                        name="MaKho"
+                        showSearch
+                        disabled={typeAction === 'view' ? true : false}
+                      >
+                        {listKhoHang?.map((item, index) => (
+                          <Option value={item.MaKho} key={index}>
+                            {item?.MaKho} {item?.TenKho}
+                          </Option>
+                        ))}
+                      </Select>
+                    )}
                   </div>
                   <div className="flex items-center gap-1 w-full">
                     <label className="whitespace-nowrap flex justify-end text-sm">Ghi chú</label>

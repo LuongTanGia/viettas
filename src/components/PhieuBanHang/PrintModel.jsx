@@ -22,7 +22,6 @@ const { Option } = Select
 
 function ModelPrint({ soChungTuPrint, isShowModel, handleCloseAction, data, modelType, selectMH }) {
   const token = localStorage.getItem('TKN')
-  console.log(data)
   // const [dateFrom, setDateFrom] = useState(data?.NgayBatDau)
   // const [dateTo, setDateTo] = useState(data?.NgayKetThuc)
   const [soLien, setSoLien] = useState([1])
@@ -35,7 +34,6 @@ function ModelPrint({ soChungTuPrint, isShowModel, handleCloseAction, data, mode
   const [dateChange, setDateChange] = useState(false)
   const [soChungTuFrom, setSoChungTuFrom] = useState(soChungTuPrint !== '' ? soChungTuPrint : selectMH)
   const [soChungTuTo, setSoChungTuTo] = useState(soChungTuPrint !== '' ? soChungTuPrint : selectMH)
-  console.log(dataDate)
   useEffect(() => {
     setLoading(true)
     // setDateFrom(dayjs(data?.NgayBatDau))
