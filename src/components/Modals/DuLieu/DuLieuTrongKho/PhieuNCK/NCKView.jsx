@@ -177,7 +177,7 @@ const NCKView = ({ close, dataNCK }) => {
                             <input
                               className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-[1rem] overflow-ellipsis truncate"
                               value={dataNCKView?.NguoiTao || ''}
-                              readOnly
+                              disabled
                             />
                           </Tooltip>
                         </div>
@@ -185,9 +185,9 @@ const NCKView = ({ close, dataNCK }) => {
                           <label className="text-sm">Lúc</label>
                           <Tooltip title={moment(dataNCKView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''} color="blue">
                             <input
-                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
+                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate text-center"
                               value={moment(dataNCKView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
-                              readOnly
+                              disabled
                             />
                           </Tooltip>
                         </div>
@@ -199,7 +199,7 @@ const NCKView = ({ close, dataNCK }) => {
                             <input
                               className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border  outline-none text-[1rem] overflow-ellipsis truncate"
                               value={dataNCKView?.NguoiSuaCuoi || ''}
-                              readOnly
+                              disabled
                             />
                           </Tooltip>
                         </div>
@@ -207,9 +207,9 @@ const NCKView = ({ close, dataNCK }) => {
                           <label className="text-sm">Lúc</label>
                           <Tooltip title={dataNCKView?.NgaySuaCuoi ? moment(dataNCKView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''} color="blue">
                             <input
-                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
+                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate text-center"
                               value={dataNCKView?.NgaySuaCuoi ? moment(dataNCKView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                              readOnly
+                              disabled
                             />
                           </Tooltip>
                         </div>

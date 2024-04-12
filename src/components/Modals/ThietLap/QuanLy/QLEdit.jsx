@@ -114,7 +114,13 @@ const QLEdit = ({ close, loadingData, setTargetRow, dataQL, maNguoiDung }) => {
                   <div className="flex items-center gap-2">
                     <div className="flex items-center gap-1">
                       <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Mã quản lý</label>
-                      <Input required size="small" readOnly disabled className="w-[100%] overflow-hidden whitespace-nowrap overflow-ellipsis" value={QLForm?.MaQuanLy} />
+                      <input
+                        required
+                        size="small"
+                        disabled
+                        className="h-[24px] w-full  px-2 rounded-[4px] resize-none border-[1px] border-gray-300 outline-none truncate "
+                        value={QLForm?.MaQuanLy}
+                      />
                     </div>
                     <div className="flex items-center">
                       <Checkbox
@@ -164,7 +170,8 @@ const QLEdit = ({ close, loadingData, setTargetRow, dataQL, maNguoiDung }) => {
                     <div className="flex items-center gap-1">
                       <label className="required whitespace-nowrap text-sm">Hiệu lực từ</label>
                       <DateField
-                        className="DatePicker_NXTKho max-w-[130px]  "
+                        // className="DatePicker_NXTKho max-w-[130px]  "
+                        className="max-w-[115px]"
                         format="DD/MM/YYYY"
                         value={dayjs(QLForm?.TuNgay)}
                         onChange={(values) => {
@@ -185,7 +192,7 @@ const QLEdit = ({ close, loadingData, setTargetRow, dataQL, maNguoiDung }) => {
                     <div className="flex items-center gap-1">
                       <label className="whitespace-nowrap min-w-[90px] text-sm flex justify-end">Ngày hết hạn</label>
                       <DateField
-                        className="DatePicker_NXTKho max-w-[130px]"
+                        className="max-w-[130px]"
                         format="DD/MM/YYYY"
                         value={QLForm?.DenNgay ? dayjs(QLForm?.DenNgay) : null}
                         onChange={(values) => {
@@ -241,7 +248,7 @@ const QLEdit = ({ close, loadingData, setTargetRow, dataQL, maNguoiDung }) => {
                           <input
                             value={dataQL?.NguoiTao || ''}
                             className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded resize-none border outline-none text-[1rem] truncate"
-                            readOnly
+                            disabled
                           />
                         </Tooltip>
                       </div>
@@ -252,7 +259,7 @@ const QLEdit = ({ close, loadingData, setTargetRow, dataQL, maNguoiDung }) => {
                             value={moment(dataQL?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
                             type="text"
                             className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
-                            readOnly
+                            disabled
                           />
                         </Tooltip>
                       </div>
@@ -264,7 +271,7 @@ const QLEdit = ({ close, loadingData, setTargetRow, dataQL, maNguoiDung }) => {
                           <input
                             value={dataQL?.NguoiSuaCuoi || ''}
                             className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded  resize-none border outline-none text-[1rem] truncate"
-                            readOnly
+                            disabled
                           />
                         </Tooltip>
                       </div>
@@ -274,7 +281,7 @@ const QLEdit = ({ close, loadingData, setTargetRow, dataQL, maNguoiDung }) => {
                           <input
                             value={dataQL?.NgaySuaCuoi ? moment(dataQL?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
                             className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
-                            readOnly
+                            disabled
                           />
                         </Tooltip>
                       </div>

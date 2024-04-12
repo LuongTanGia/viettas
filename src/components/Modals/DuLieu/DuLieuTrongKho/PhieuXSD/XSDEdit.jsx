@@ -3,7 +3,7 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState, useCallback, useMemo } from 'react'
 import { Checkbox, FloatButton, Input, InputNumber, Select, Table, Tooltip } from 'antd'
-import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+
 import { FaSearch } from 'react-icons/fa'
 // import { MdPrint } from 'react-icons/md'
 import { toast } from 'react-toastify'
@@ -20,6 +20,7 @@ import HighlightedCell from '../../../../hooks/HighlightedCell'
 import SimpleBackdrop from '../../../../util/Loading/LoadingPage'
 import EditTable from '../../../../util/Table/EditTable'
 import { nameColumsPhieuXuatSuDung } from '../../../../util/Table/ColumnName'
+import { DateField } from '@mui/x-date-pickers'
 
 const XSDEdit = ({ close, dataXSD, loadingData, setTargetRow }) => {
   const TokenAccess = localStorage.getItem('TKN')
@@ -384,12 +385,17 @@ const XSDEdit = ({ close, dataXSD, loadingData, setTargetRow }) => {
                       <div className="flex gap-2">
                         <div className="flex items-center gap-1">
                           <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Số chứng từ</label>
-                          <Input disabled size="small" value={XSDForm?.SoChungTu || ''} readOnly />
+                          <input
+                            size="small"
+                            disabled
+                            value={XSDForm?.SoChungTu || ''}
+                            className="h-[24px] w-full  px-2 rounded-[4px] resize-none border-[1px] border-gray-300 outline-none truncate"
+                          />
                         </div>
                         <div className="flex items-center gap-1">
                           <label className="required whitespace-nowrap text-sm"> Ngày</label>
-                          <DatePicker
-                            className="DatePicker_XSDKho"
+                          <DateField
+                            className="DatePicker_XSDKho max-w-[115px]"
                             format="DD/MM/YYYY"
                             value={dayjs(XSDForm?.NgayCTu) || ''}
                             onChange={(values) => {
@@ -415,6 +421,7 @@ const XSDEdit = ({ close, dataXSD, loadingData, setTargetRow }) => {
                           style={{ width: '100%' }}
                           type="text"
                           showSearch
+                          optionFilterProp="children"
                           required
                           size="small"
                           value={XSDForm?.MaKho}
@@ -428,7 +435,7 @@ const XSDEdit = ({ close, dataXSD, loadingData, setTargetRow }) => {
                           {dataKhoHang &&
                             dataKhoHang?.map((item, index) => (
                               <Select.Option key={index} value={item.MaKho}>
-                                {item.ThongTinKho}
+                                {item.MaKho} - {item.TenKho}
                               </Select.Option>
                             ))}
                         </Select>
@@ -443,7 +450,7 @@ const XSDEdit = ({ close, dataXSD, loadingData, setTargetRow }) => {
                             <input
                               className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-[1rem] overflow-ellipsis truncate"
                               value={dataXSDView?.NguoiTao || ''}
-                              readOnly
+                              disabled
                             />
                           </Tooltip>
                         </div>
@@ -451,9 +458,9 @@ const XSDEdit = ({ close, dataXSD, loadingData, setTargetRow }) => {
                           <label className="text-sm">Lúc</label>
                           <Tooltip title={moment(dataXSDView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''} color="blue">
                             <input
-                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
+                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate text-center"
                               value={moment(dataXSDView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
-                              readOnly
+                              disabled
                             />
                           </Tooltip>
                         </div>
@@ -465,7 +472,7 @@ const XSDEdit = ({ close, dataXSD, loadingData, setTargetRow }) => {
                             <input
                               className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border  outline-none text-[1rem] overflow-ellipsis truncate"
                               value={dataXSDView?.NguoiSuaCuoi || ''}
-                              readOnly
+                              disabled
                             />
                           </Tooltip>
                         </div>
@@ -473,9 +480,9 @@ const XSDEdit = ({ close, dataXSD, loadingData, setTargetRow }) => {
                           <label className="text-sm">Lúc</label>
                           <Tooltip title={dataXSDView?.NgaySuaCuoi ? moment(dataXSDView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''} color="blue">
                             <input
-                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
+                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate text-center"
                               value={dataXSDView?.NgaySuaCuoi ? moment(dataXSDView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                              readOnly
+                              disabled
                             />
                           </Tooltip>
                         </div>
@@ -567,7 +574,7 @@ const XSDEdit = ({ close, dataXSD, loadingData, setTargetRow }) => {
                     <div className="flex items-center gap-2">
                       <div className="flex items-center gap-2 py-1">
                         <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
-                        <p className="text-blue-700 font-semibold uppercase md:text-[12px] lg:text-sm truncate">Danh Sách Hàng Hóa - Phiếu Xuất Kho Sử Dụng</p>
+                        <p className="text-blue-700 font-semibold uppercase md:text-[12px] lg:text-sm truncate">Danh Sách Hàng Hóa</p>
                         <FaSearch className="hover:text-red-400 cursor-pointer md:text-[14px] lg:text-sm" onClick={() => setIsShowSearch(!isShowSearch)} />
                       </div>
                       <div className="flex w-[20rem] overflow-hidden">

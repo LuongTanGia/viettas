@@ -51,7 +51,7 @@ const PCView = ({ close, dataPC }) => {
                 <div className="flex flex-col gap-2 border-2 px-3 py-2.5">
                   <div className="flex items-center gap-1">
                     <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Người dùng</label>
-                    <input type="text" value={dataPCView?.MaNguoiDung || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" readOnly />
+                    <input type="text" value={dataPCView?.MaNguoiDung || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" disabled />
                   </div>
                   <div className="flex items-center ml-[15px] ">
                     <div className="flex items-center gap-1 w-full">
@@ -60,12 +60,12 @@ const PCView = ({ close, dataPC }) => {
                         type="text"
                         value={moment(dataPCView?.HieuLucTu)?.format('DD/MM/YYYY') || ''}
                         className="px-2 w-full resize-none rounded border outline-none text-sm truncate"
-                        readOnly
+                        disabled
                       />
                     </div>
                     <div className="flex items-center gap-1 w-full">
                       <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Quầy</label>
-                      <input type="text" value={dataPCView?.SoQuay || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" readOnly />
+                      <input type="text" value={dataPCView?.SoQuay || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" disabled />
                     </div>
                     <div className="flex items-center gap-1 w-[90%]">
                       <label className=" whitespace-nowrap min-w-[90px] text-sm flex justify-end">Ca</label>
@@ -73,13 +73,13 @@ const PCView = ({ close, dataPC }) => {
                         type="text"
                         value={`${dataPCView?.MaCa || ''} - ${dataPCView?.TenCa || ''}`}
                         className="px-2 w-full resize-none rounded border outline-none text-sm truncate"
-                        readOnly
+                        disabled
                       />
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
                     <label className=" whitespace-nowrap  min-w-[90px] text-sm flex justify-end">Ghi chú</label>
-                    <input type="text" value={dataPCView?.GhiChu || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" readOnly />
+                    <input type="text" value={dataPCView?.GhiChu || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" disabled />
                   </div>
                   <div className="grid grid-cols-1 mt-1 gap-2 px-2 py-2.5 rounded border-black-200 ml-[95px] relative border-[0.125rem]">
                     <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
@@ -90,7 +90,7 @@ const PCView = ({ close, dataPC }) => {
                           <input
                             value={dataPCView?.NguoiTao || ''}
                             className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded resize-none border outline-none text-[1rem] truncate"
-                            readOnly
+                            disabled
                           />
                         </Tooltip>
                       </div>
@@ -101,7 +101,7 @@ const PCView = ({ close, dataPC }) => {
                             type="text"
                             value={moment(dataPCView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
                             className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
-                            readOnly
+                            disabled
                           />
                         </Tooltip>
                       </div>
@@ -113,7 +113,7 @@ const PCView = ({ close, dataPC }) => {
                           <input
                             value={dataPCView?.NguoiSuaCuoi || ''}
                             className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded  resize-none border outline-none text-[1rem] truncate"
-                            readOnly
+                            disabled
                           />
                         </Tooltip>
                       </div>
@@ -123,7 +123,7 @@ const PCView = ({ close, dataPC }) => {
                           <input
                             value={dataPCView?.NgaySuaCuoi ? moment(dataPCView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
                             className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
-                            readOnly
+                            disabled
                           />
                         </Tooltip>
                       </div>

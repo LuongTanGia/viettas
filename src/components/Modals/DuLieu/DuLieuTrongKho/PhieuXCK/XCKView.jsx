@@ -143,7 +143,7 @@ const XCKXem = ({ close, dataXCK }) => {
                       <div className="flex gap-2">
                         <div className="flex items-center gap-1">
                           <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Số chứng từ</label>
-                          <input type="text" value={dataXCKView?.SoChungTu || ''} className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate" readOnly />
+                          <input type="text" value={dataXCKView?.SoChungTu || ''} className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate" disabled />
                         </div>
                         <div className="flex items-center gap-1">
                           <label className="required whitespace-nowrap text-sm">Ngày</label>
@@ -151,7 +151,7 @@ const XCKXem = ({ close, dataXCK }) => {
                             type="text"
                             value={moment(dataXCKView?.NgayCTu)?.format('DD/MM/YYYY') || ''}
                             className="px-2 w-[7rem] rounded resize-none border outline-none text-[1rem] text-center truncate"
-                            readOnly
+                            disabled
                           />
                         </div>
                       </div>
@@ -161,7 +161,7 @@ const XCKXem = ({ close, dataXCK }) => {
                           type="text"
                           value={`${dataXCKView?.MaKho} - ${dataXCKView?.TenKho}` || ''}
                           className="px-2 w-full rounded resize-none border outline-none text-[1rem]"
-                          readOnly
+                          disabled
                         />
                       </div>
                       <div className="flex items-center gap-1">
@@ -170,7 +170,7 @@ const XCKXem = ({ close, dataXCK }) => {
                           type="text"
                           value={`${dataXCKView?.MaKho_Nhan} - ${dataXCKView?.TenKho_Nhan}` || ''}
                           className="px-2 w-full rounded resize-none border outline-none text-[1rem]"
-                          readOnly
+                          disabled
                         />
                       </div>
                     </div>
@@ -183,7 +183,7 @@ const XCKXem = ({ close, dataXCK }) => {
                             <input
                               className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-[1rem] overflow-ellipsis truncate"
                               value={dataXCKView?.NguoiTao || ''}
-                              readOnly
+                              disabled
                             />
                           </Tooltip>
                         </div>
@@ -191,9 +191,9 @@ const XCKXem = ({ close, dataXCK }) => {
                           <label className="text-sm">Lúc</label>
                           <Tooltip title={moment(dataXCKView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''} color="blue">
                             <input
-                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
+                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate text-center"
                               value={moment(dataXCKView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
-                              readOnly
+                              disabled
                             />
                           </Tooltip>
                         </div>
@@ -205,7 +205,7 @@ const XCKXem = ({ close, dataXCK }) => {
                             <input
                               className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border  outline-none text-[1rem] overflow-ellipsis truncate"
                               value={dataXCKView?.NguoiSuaCuoi || ''}
-                              readOnly
+                              disabled
                             />
                           </Tooltip>
                         </div>
@@ -213,9 +213,9 @@ const XCKXem = ({ close, dataXCK }) => {
                           <label className="text-sm">Lúc</label>
                           <Tooltip title={dataXCKView?.NgaySuaCuoi ? moment(dataXCKView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''} color="blue">
                             <input
-                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
+                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate text-center"
                               value={dataXCKView?.NgaySuaCuoi ? moment(dataXCKView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                              readOnly
+                              disabled
                             />
                           </Tooltip>
                         </div>
@@ -224,7 +224,7 @@ const XCKXem = ({ close, dataXCK }) => {
                   </div>
                   <div className="flex items-center gap-1">
                     <label className="whitespace-nowrap min-w-[100px] flex justify-end text-sm">Ghi chú</label>
-                    <input type="text" value={dataXCKView?.GhiChu || ''} className="px-2 w-[70rem] rounded resize-none border outline-none text-[1rem]" readOnly />
+                    <input type="text" value={dataXCKView?.GhiChu || ''} className="px-2 w-[70rem] rounded resize-none border outline-none text-[1rem]" disabled />
                   </div>
                   <div className="border rounded">
                     <Table

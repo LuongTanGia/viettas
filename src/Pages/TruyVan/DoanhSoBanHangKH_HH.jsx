@@ -584,7 +584,8 @@ const DoanhSoBanHangKH_HH = () => {
                         <div className="flex items-center gap-1">
                           <label>Từ</label>
                           <DateField
-                            className="DatePicker_NXTKho  max-w-[120px]"
+                            // className="DatePicker_NXTKho  max-w-[120px]"
+                            className=" max-w-[115px]"
                             onBlur={handleDateChange}
                             onKeyDown={handleKeyDown}
                             format="DD/MM/YYYY"
@@ -608,7 +609,7 @@ const DoanhSoBanHangKH_HH = () => {
                         <div className=" flex items-center gap-1 ">
                           <label>Đến</label>
                           <DateField
-                            className="DatePicker_NXTKho max-w-[120px]"
+                            className=" max-w-[115px]"
                             onBlur={handleDateChange}
                             onKeyDown={handleKeyDown}
                             format="DD/MM/YYYY"
@@ -665,11 +666,14 @@ const DoanhSoBanHangKH_HH = () => {
                               width: '12vw',
                               textOverflow: 'ellipsis',
                             }}
+                            optionFilterProp="children"
+                            popupMatchSelectWidth={false}
+                            optionLabelProp="value"
                           >
                             {nhomHang?.map((item, index) => {
                               return (
                                 <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomHang}>
-                                  <p className="truncate">{item.Ma}</p>
+                                  {item.Ma} - {item.Ten}
                                 </Select.Option>
                               )
                             })}
@@ -694,11 +698,14 @@ const DoanhSoBanHangKH_HH = () => {
                               width: '12vw',
                               textOverflow: 'ellipsis',
                             }}
+                            optionFilterProp="children"
+                            popupMatchSelectWidth={false}
+                            optionLabelProp="value"
                           >
                             {nhomHang?.map((item, index) => {
                               return (
                                 <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomHang}>
-                                  <p className="truncate">{item.Ma}</p>
+                                  {item.Ma} - {item.Ten}
                                 </Select.Option>
                               )
                             })}
@@ -726,7 +733,7 @@ const DoanhSoBanHangKH_HH = () => {
                             {nhomHang?.map((item) => {
                               return (
                                 <Select.Option key={item.Ma} value={item.Ma} title={item.ThongTinNhomHang}>
-                                  <p className="truncate">{item.ThongTinNhomHang}</p>
+                                  <p>{item.ThongTinNhomHang}</p>
                                 </Select.Option>
                               )
                             })}
@@ -753,11 +760,14 @@ const DoanhSoBanHangKH_HH = () => {
                               width: '12vw',
                               textOverflow: 'ellipsis',
                             }}
+                            optionFilterProp="children"
+                            popupMatchSelectWidth={false}
+                            optionLabelProp="value"
                           >
                             {nhomDoiTuong?.map((item, index) => {
                               return (
                                 <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomDoiTuong}>
-                                  <p className="truncate">{item.Ma}</p>
+                                  {item.Ma} - {item.Ten}
                                 </Select.Option>
                               )
                             })}
@@ -782,11 +792,14 @@ const DoanhSoBanHangKH_HH = () => {
                               width: '12vw',
                               textOverflow: 'ellipsis',
                             }}
+                            optionFilterProp="children"
+                            popupMatchSelectWidth={false}
+                            optionLabelProp="value"
                           >
                             {nhomDoiTuong?.map((item, index) => {
                               return (
                                 <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomDoiTuong}>
-                                  <p className="truncate">{item.Ma}</p>
+                                  {item.Ma} - {item.Ten}
                                 </Select.Option>
                               )
                             })}
@@ -814,7 +827,7 @@ const DoanhSoBanHangKH_HH = () => {
                             {nhomDoiTuong?.map((item, index) => {
                               return (
                                 <Select.Option key={index} value={item.Ma}>
-                                  <p className="truncate">{item.ThongTinNhomDoiTuong}</p>
+                                  <p>{item.ThongTinNhomDoiTuong}</p>
                                 </Select.Option>
                               )
                             })}

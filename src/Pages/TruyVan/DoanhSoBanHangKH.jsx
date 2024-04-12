@@ -478,7 +478,8 @@ const DoanhSoBanHangKH = () => {
                         <div className="flex items-center gap-1">
                           <label>Từ</label>
                           <DateField
-                            className="DatePicker_DSBHKho  max-w-[120px]"
+                            // className="DatePicker_DSBHKho  max-w-[120px]"
+                            className=" max-w-[115px]"
                             onBlur={handleDateChange}
                             onKeyDown={handleKeyDown}
                             format="DD/MM/YYYY"
@@ -502,7 +503,7 @@ const DoanhSoBanHangKH = () => {
                         <div className=" flex items-center gap-1 ">
                           <label>Đến</label>
                           <DateField
-                            className="DatePicker_DSBHKho max-w-[120px]"
+                            className=" max-w-[115px]"
                             onBlur={handleDateChange}
                             onKeyDown={handleKeyDown}
                             format="DD/MM/YYYY"
@@ -558,11 +559,14 @@ const DoanhSoBanHangKH = () => {
                             width: '12vw',
                             textOverflow: 'ellipsis',
                           }}
+                          optionFilterProp="children"
+                          popupMatchSelectWidth={false}
+                          optionLabelProp="value"
                         >
                           {NhomDoiTuong?.map((item, index) => {
                             return (
                               <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomHang}>
-                                <p className="truncate">{item.Ma}</p>
+                                {item.Ma} - {item.Ten}
                               </Select.Option>
                             )
                           })}
@@ -587,11 +591,14 @@ const DoanhSoBanHangKH = () => {
                             width: '12vw',
                             textOverflow: 'ellipsis',
                           }}
+                          optionFilterProp="children"
+                          popupMatchSelectWidth={false}
+                          optionLabelProp="value"
                         >
                           {NhomDoiTuong?.map((item, index) => {
                             return (
                               <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomHang}>
-                                <p className="truncate">{item.Ma}</p>
+                                {item.Ma} - {item.Ten}
                               </Select.Option>
                             )
                           })}
@@ -619,7 +626,9 @@ const DoanhSoBanHangKH = () => {
                           {NhomDoiTuong?.map((item) => {
                             return (
                               <Select.Option key={item.Ma} value={item.Ma} title={item.ThongTinNhomHang}>
-                                <p className="truncate">{item.Ma}</p>
+                                <p>
+                                  {item.Ma} - {item.Ten}
+                                </p>
                               </Select.Option>
                             )
                           })}

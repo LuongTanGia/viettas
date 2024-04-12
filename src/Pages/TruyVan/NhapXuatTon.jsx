@@ -1557,7 +1557,8 @@ const NhapXuatTon = () => {
                         <div className="flex items-center gap-1">
                           <label>Từ</label>
                           <DateField
-                            className="DatePicker_NXTKho  max-w-[120px]"
+                            // className="DatePicker_NXTKho  max-w-[120px]"
+                            className=" max-w-[115px]"
                             onBlur={handleDateChange}
                             onKeyDown={handleKeyDown}
                             format="DD/MM/YYYY"
@@ -1581,7 +1582,7 @@ const NhapXuatTon = () => {
                         <div className=" flex items-center gap-1 ">
                           <label>Đến</label>
                           <DateField
-                            className="DatePicker_NXTKho max-w-[120px]"
+                            className=" max-w-[115px]"
                             onBlur={handleDateChange}
                             onKeyDown={handleKeyDown}
                             format="DD/MM/YYYY"
@@ -1653,11 +1654,14 @@ const NhapXuatTon = () => {
                               width: '12vw',
                               textOverflow: 'ellipsis',
                             }}
+                            optionFilterProp="children"
+                            popupMatchSelectWidth={false}
+                            optionLabelProp="value"
                           >
                             {nhomHangNXT?.map((item, index) => {
                               return (
                                 <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomHang}>
-                                  <p className="truncate">{item.ThongTinNhomHang}</p>
+                                  {item.Ma} - {item.Ten}
                                 </Select.Option>
                               )
                             })}
@@ -1682,11 +1686,14 @@ const NhapXuatTon = () => {
                               width: '12vw',
                               textOverflow: 'ellipsis',
                             }}
+                            optionFilterProp="children"
+                            popupMatchSelectWidth={false}
+                            optionLabelProp="value"
                           >
                             {nhomHangNXT?.map((item, index) => {
                               return (
                                 <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomHang}>
-                                  <p className="truncate">{item.ThongTinNhomHang}</p>
+                                  {item.Ma} - {item.Ten}
                                 </Select.Option>
                               )
                             })}
@@ -1714,7 +1721,7 @@ const NhapXuatTon = () => {
                             {nhomHangNXT?.map((item) => {
                               return (
                                 <Select.Option key={item.Ma} value={item.Ma} title={item.ThongTinNhomHang}>
-                                  <p className="truncate">{item.ThongTinNhomHang}</p>
+                                  <p>{item.ThongTinNhomHang}</p>
                                 </Select.Option>
                               )
                             })}
@@ -1741,13 +1748,14 @@ const NhapXuatTon = () => {
                               width: '12vw',
                               textOverflow: 'ellipsis',
                             }}
+                            optionFilterProp="children"
+                            popupMatchSelectWidth={false}
+                            optionLabelProp="value"
                           >
                             {hangHoaNXT?.map((item, index) => {
                               return (
                                 <Select.Option key={index} value={item.MaHang} title={item.TenHang}>
-                                  <p className="truncate">
-                                    {item.MaHang} - {item.TenHang}
-                                  </p>
+                                  {item.MaHang} - {item.TenHang}
                                 </Select.Option>
                               )
                             })}
@@ -1775,13 +1783,14 @@ const NhapXuatTon = () => {
                               width: '12vw',
                               textOverflow: 'ellipsis',
                             }}
+                            optionFilterProp="children"
+                            popupMatchSelectWidth={false}
+                            optionLabelProp="value"
                           >
                             {hangHoaNXT?.map((item, index) => {
                               return (
                                 <Select.Option key={index} value={item.MaHang} title={item.TenHang}>
-                                  <p className="truncate">
-                                    {item.MaHang} - {item.TenHang}
-                                  </p>
+                                  {item.MaHang} - {item.TenHang}
                                 </Select.Option>
                               )
                             })}
@@ -1809,7 +1818,7 @@ const NhapXuatTon = () => {
                             {hangHoaNXT?.map((item, index) => {
                               return (
                                 <Select.Option key={index} value={item.MaHang} title={item.TenHang}>
-                                  <p className="truncate">
+                                  <p>
                                     {item.MaHang}-{item.TenHang}
                                   </p>
                                 </Select.Option>

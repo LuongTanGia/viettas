@@ -16,8 +16,9 @@ const ViewTongHopPBL = ({ typePage, namePage, dataRecord, dataThongSo, loading, 
   const [typeData, setTypeData] = useState('Phiếu bán hàng')
   const [isChanging, setIsChanging] = useState(false)
   const [tableLoad, setTableLoad] = useState(true)
-  const formSynthetic = {
-    NgayCTu: dataRecord ? dataRecord.NgayCTu : '',
+
+  const form = {
+    NgayCTu: dataRecord ? dayjs(dataRecord.NgayCTu).format('YYYY-MM-DD') : '',
     Quay: dataRecord ? dataRecord.Quay : 0,
     Ca: dataRecord ? dataRecord.Ca : '',
     NhanVien: dataRecord ? dataRecord.NhanVien : '',
@@ -28,7 +29,7 @@ const ViewTongHopPBL = ({ typePage, namePage, dataRecord, dataThongSo, loading, 
     const fetchData = async () => {
       try {
         const tokenLogin = localStorage.getItem('TKN')
-        const response = await apis.ThongTinTongHopPBL(tokenLogin, dataRecord)
+        const response = await apis.ThongTinTongHopPBL(tokenLogin, form)
         if (response) {
           const { DataError, DataErrorDescription } = response.data
           if (DataError === 0) {
@@ -264,7 +265,7 @@ const ViewTongHopPBL = ({ typePage, namePage, dataRecord, dataThongSo, loading, 
       let response
       switch (typePage) {
         case 'TongHopPBL':
-          response = await apis.TongHopPBL(tokenLogin, formSynthetic)
+          response = await apis.TongHopPBL(tokenLogin, form)
           break
         // case 'SDR':
         //   response = await apis.ThemSDR(tokenLogin, formCreate)
@@ -309,141 +310,142 @@ const ViewTongHopPBL = ({ typePage, namePage, dataRecord, dataThongSo, loading, 
           <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
           <label className="text-blue-700 font-semibold uppercase pb-1">{namePage}</label>
         </div>
-        <div className="border w-full  rounded-[4px]-sm text-sm ">
-          <div className="grid grid-cols-4  gap-2 m-2 pb-[2px]">
-            <div className="flex  items-center gap-1 ">
-              <label className="min-w-[90px] text-sm flex justify-end">Quầy</label>
-              <input
-                value={dataRecord.Quay}
-                type="text"
-                className="text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate"
-                disabled
-              />
-            </div>
-            <div className="flex items-center  gap-2 ">
-              <label className="text-sm ">Ngày</label>
-              <DateField
-                className="max-w-[135px] bg-[#fafafa]"
-                format="DD/MM/YYYY"
-                value={dayjs(dataRecord?.NgayCTu)}
-                disabled
-                sx={{
-                  '& .MuiButtonBase-root': {
-                    padding: '4px',
-                  },
+        <Spin spinning={tableLoad}>
+          <div className="border w-full  rounded-[4px]-sm text-sm ">
+            <div className="grid grid-cols-4  gap-2 m-2 pb-[2px]">
+              <div className="flex  items-center gap-1 ">
+                <label className="min-w-[90px] text-sm flex justify-end">Quầy</label>
+                <input
+                  value={dataThongTin?.Quay}
+                  type="text"
+                  className="text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate"
+                  disabled
+                />
+              </div>
+              <div className="flex items-center  gap-2 ">
+                <label className="text-sm ">Ngày</label>
+                <DateField
+                  className="max-w-[135px] bg-[#fafafa]"
+                  format="DD/MM/YYYY"
+                  value={dayjs(dataThongTin?.NgayCTu)}
+                  disabled
+                  sx={{
+                    '& .MuiButtonBase-root': {
+                      padding: '4px',
+                    },
 
-                  '& .MuiSvgIcon-root': {
-                    width: '18px',
-                    height: '18px',
-                  },
-                }}
-              />
+                    '& .MuiSvgIcon-root': {
+                      width: '18px',
+                      height: '18px',
+                    },
+                  }}
+                />
+              </div>
+              <div className="flex items-center gap-1 ">
+                <label className="w-[30px] text-sm flex justify-end">Ca</label>
+                <input
+                  value={dataThongTin?.Ca}
+                  type="text"
+                  className="text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate"
+                  disabled
+                />
+              </div>
             </div>
-            <div className="flex items-center gap-1 ">
-              <label className="w-[30px] text-sm flex justify-end">Ca</label>
-              <input
-                value={dataRecord.Ca}
-                type="text"
-                className="text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate"
-                disabled
-              />
-            </div>
-          </div>
 
-          <div className="grid grid-cols-4  gap-2 m-2">
-            <div className="flex items-center gap-1 ">
-              <label className="min-w-[90px] text-sm flex justify-end whitespace-nowrap">Nhân viên</label>
-              <input
-                value={dataRecord.NhanVien}
-                type="text"
-                className="text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate"
-                disabled
-              />
-            </div>
-            <div className="flex items-center gap-1 ">
-              <input
-                // value={dataRecord.SoChungTu}
-                type="text"
-                className="h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate"
-                disabled
-              />
-            </div>
-            <div className="flex items-center gap-1 ">
-              <label className=" w-[30px] text-sm flex justify-end">Kho</label>
-              <input
-                // value={dataRecord.SoChungTu}
-                type="text"
-                className="h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate"
-                disabled
-              />
-            </div>
-            <div className="flex items-center gap-1 ">
-              <input
-                // value={dataRecord.SoChungTu}
-                type="text"
-                className="h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate"
-                disabled
-              />
-            </div>
-            <div className="flex items-center gap-1 ">
-              <label className="min-w-[90px] text-sm flex justify-end whitespace-nowrap">Tổng tiền bán</label>
-              <input
-                value={formatPrice(dataRecord.TongThanhTien, dataThongSo.SOLESOTIEN)}
-                type="text"
-                className={`text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate 
+            <div className="grid grid-cols-4  gap-2 m-2">
+              <div className="flex items-center gap-1 ">
+                <label className="min-w-[90px] text-sm flex justify-end whitespace-nowrap">Nhân viên</label>
+                <input
+                  value={dataThongTin?.NhanVien}
+                  type="text"
+                  className="text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate"
+                  disabled
+                />
+              </div>
+              <div className="flex items-center gap-1 ">
+                <input
+                  value={dataThongTin?.NhanVien}
+                  type="text"
+                  className="text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate "
+                  disabled
+                />
+              </div>
+              <div className="flex items-center gap-1 ">
+                <label className=" w-[30px] text-sm flex justify-end">Kho</label>
+                <input
+                  value={dataThongTin?.MaKho}
+                  type="text"
+                  className="text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate"
+                  disabled
+                />
+              </div>
+              <div className="flex items-center gap-1 ">
+                <input
+                  value={dataThongTin?.TenKho}
+                  type="text"
+                  className="text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate"
+                  disabled
+                />
+              </div>
+              <div className="flex items-center gap-1 ">
+                <label className="min-w-[90px] text-sm flex justify-end whitespace-nowrap">Tổng tiền bán</label>
+                <input
+                  value={formatPrice(dataRecord.TongThanhTien, dataThongSo.SOLESOTIEN)}
+                  type="text"
+                  className={`text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate 
                 ${dataRecord.TongThanhTien < 0 ? 'text-red-600 ' : dataRecord.TongThanhTien === 0 ? 'text-gray-300' : ''}`}
-                disabled
-              />
-            </div>
-            <div className="flex items-center gap-1 ">
-              <label className="text-sm flex justify-end whitespace-nowrap">Thu khác tại quầy</label>
-              <input
-                value={formatPrice(dataRecord.TongThu, dataThongSo.SOLESOTIEN)}
-                type="text"
-                className={`text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate 
+                  disabled
+                />
+              </div>
+              <div className="flex items-center gap-1 ">
+                <label className="text-sm flex justify-end whitespace-nowrap">Thu khác tại quầy</label>
+                <input
+                  value={formatPrice(dataRecord.TongThu, dataThongSo.SOLESOTIEN)}
+                  type="text"
+                  className={`text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate 
                 ${dataRecord.TongThu < 0 ? 'text-red-600 ' : dataRecord.TongThu === 0 ? 'text-gray-300' : ''}`}
-                disabled
-              />
-            </div>
-            <div className="flex items-center gap-1 ">
-              <label className=" text-sm flex justify-end whitespace-nowrap">Chi khác tại quầy</label>
-              <input
-                value={formatPrice(dataRecord.TongChi, dataThongSo.SOLESOTIEN)}
-                type="text"
-                className={`text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate 
+                  disabled
+                />
+              </div>
+              <div className="flex items-center gap-1 ">
+                <label className=" text-sm flex justify-end whitespace-nowrap">Chi khác tại quầy</label>
+                <input
+                  value={formatPrice(dataRecord.TongChi, dataThongSo.SOLESOTIEN)}
+                  type="text"
+                  className={`text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate 
                 ${dataRecord.TongChi < 0 ? 'text-red-600 ' : dataRecord.TongChi === 0 ? 'text-gray-300' : ''}`}
-                disabled
-              />
-            </div>
-            <div className="flex items-center gap-1 ">
-              <label className="   text-sm flex justify-end whitespace-nowrap">Số tiền phải nộp</label>
-              <input
-                value={formatPrice(dataRecord.TienPhaiNop, dataThongSo.SOLESOTIEN)}
-                type="text"
-                className={`text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate 
+                  disabled
+                />
+              </div>
+              <div className="flex items-center gap-1 ">
+                <label className="   text-sm flex justify-end whitespace-nowrap">Số tiền phải nộp</label>
+                <input
+                  value={formatPrice(dataRecord.TienPhaiNop, dataThongSo.SOLESOTIEN)}
+                  type="text"
+                  className={`text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate 
                 ${dataRecord.TienPhaiNop < 0 ? 'text-red-600 ' : dataRecord.TienPhaiNop === 0 ? 'text-gray-300' : ''}`}
-                disabled
-              />
+                  disabled
+                />
+              </div>
             </div>
-          </div>
 
-          <Segmented
-            options={['Phiếu bán hàng', 'Phiếu thu', 'Phiếu chi']}
-            value={typeData}
-            onChange={(value) => {
-              if (!isChanging) {
-                setIsChanging(true)
-                setTypeData(value)
-                setTableLoad(true)
-                setTimeout(() => {
-                  setIsChanging(false)
-                }, 1000)
-              }
-            }}
-          />
+            <Segmented
+              options={['Phiếu bán hàng', 'Phiếu thu', 'Phiếu chi']}
+              value={typeData}
+              onChange={(value) => {
+                if (!isChanging) {
+                  setIsChanging(true)
+                  setTypeData(value)
+                  setTableLoad(true)
+                  setTimeout(() => {
+                    setIsChanging(false)
+                  }, 1000)
+                }
+              }}
+            />
 
-          {/* table */}
-          <Spin spinning={tableLoad}>
+            {/* table */}
+
             <div>
               <Table
                 className="TongHopPBL_view "
@@ -523,8 +525,8 @@ const ViewTongHopPBL = ({ typePage, namePage, dataRecord, dataThongSo, loading, 
                 }}
               ></Table>
             </div>
-          </Spin>
-        </div>
+          </div>
+        </Spin>
         {/* button */}
         <div className="flex justify-end items-center mt-[10px] gap-2 ">
           <ActionButton

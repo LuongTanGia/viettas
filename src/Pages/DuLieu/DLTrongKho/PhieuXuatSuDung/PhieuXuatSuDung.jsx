@@ -673,7 +673,8 @@ const PhieuXuatSuDung = () => {
                         <DateField
                           onBlur={handleDateChange}
                           onKeyDown={handleKeyDown}
-                          className="DatePicker_NXTKho max-w-[120px]"
+                          // className="DatePicker_NXTKho max-w-[120px]"
+                          className=" max-w-[115px]"
                           format="DD/MM/YYYY"
                           value={khoanNgayFrom}
                           sx={{
@@ -697,7 +698,7 @@ const PhieuXuatSuDung = () => {
                         <DateField
                           onBlur={handleDateChange}
                           onKeyDown={handleKeyDown}
-                          className="DatePicker_NXTKho max-w-[120px]"
+                          className=" max-w-[115px]"
                           format="DD/MM/YYYY"
                           value={khoanNgayTo}
                           sx={{

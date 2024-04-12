@@ -100,17 +100,22 @@ const PCEdit = ({ close, loadingData, setTargetRow, dataPC }) => {
                 <div className="flex flex-col gap-2 border-2 px-3 py-2.5">
                   <div className="flex items-center gap-1">
                     <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Người dùng</label>
-                    <Input readOnly disabled required size="small" className="w-full overflow-hidden whitespace-nowrap overflow-ellipsis" value={PCForm?.MaNguoiDung} />
+                    <input
+                      disabled
+                      required
+                      size="small"
+                      className="h-[24px] w-full  px-2 rounded-[4px] resize-none border-[1px] border-gray-300 outline-none truncate "
+                      value={PCForm?.MaNguoiDung}
+                    />
                   </div>
                   <div className="flex items-center ml-[15px] ">
                     <div className="flex items-center gap-1 w-full">
                       <label className="required whitespace-nowrap text-sm">Kể từ ngày</label>
-                      <Input
-                        readOnly
+                      <input
                         disabled
                         required
                         size="small"
-                        className="w-full overflow-hidden whitespace-nowrap overflow-ellipsis"
+                        className="h-[24px] w-full  px-2 rounded-[4px] resize-none border-[1px] border-gray-300 outline-none truncate "
                         value={moment(dataPC?.HieuLucTu)?.format('DD/MM/YYYY')}
                       />
                     </div>
@@ -185,7 +190,7 @@ const PCEdit = ({ close, loadingData, setTargetRow, dataPC }) => {
                           <input
                             value={dataPC?.NguoiTao || ''}
                             className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded resize-none border outline-none text-[1rem] truncate"
-                            readOnly
+                            disabled
                           />
                         </Tooltip>
                       </div>
@@ -196,7 +201,7 @@ const PCEdit = ({ close, loadingData, setTargetRow, dataPC }) => {
                             value={moment(dataPC?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
                             type="text"
                             className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
-                            readOnly
+                            disabled
                           />
                         </Tooltip>
                       </div>
@@ -208,7 +213,7 @@ const PCEdit = ({ close, loadingData, setTargetRow, dataPC }) => {
                           <input
                             value={dataPC?.NguoiSuaCuoi || ''}
                             className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded  resize-none border outline-none text-[1rem] truncate"
-                            readOnly
+                            disabled
                           />
                         </Tooltip>
                       </div>
@@ -218,7 +223,7 @@ const PCEdit = ({ close, loadingData, setTargetRow, dataPC }) => {
                           <input
                             value={dataPC?.NgaySuaCuoi ? moment(dataPC?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
                             className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
-                            readOnly
+                            disabled
                           />
                         </Tooltip>
                       </div>

@@ -166,7 +166,7 @@ const XSDPrint = ({ close, dataPrint }) => {
       ) : (
         <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10">
           <div className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"></div>
-          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col min-w-[40rem] min-h-[8rem] bg-white  p-2 rounded shadow-custom overflow-hidden">
+          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col bg-white  p-2 rounded shadow-custom overflow-hidden">
             <div className="flex flex-col gap-2 p-2 xl:w-[50vw] lg:w-[70vw] md:w-[95vw]">
               <div className="flex gap-2">
                 <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
@@ -174,9 +174,9 @@ const XSDPrint = ({ close, dataPrint }) => {
               </div>
               <div className="flex flex-col items-center gap-4 border-2 py-3">
                 <div className="flex justify-center">
-                  <div className="DatePicker_XSDKho flex justify-center gap-2">
-                    <div className="DatePicker_XSDKho flex items-center gap-2">
-                      <label className="ml-[20px]">Từ</label>
+                  <div className="DatePicker_NDCKho flex justify-center gap-2">
+                    <div className="DatePicker_NDCKho flex items-center gap-2">
+                      <label className="ml-[20px] required">Ngày</label>
                       <DateField
                         className="max-w-[170px]"
                         onBlur={handleDateChange}
@@ -203,7 +203,7 @@ const XSDPrint = ({ close, dataPrint }) => {
                       />
                     </div>
                     <div className="flex items-center gap-2">
-                      <label>Đến</label>
+                      <label className="required">Đến</label>
                       <DateField
                         onBlur={handleDateChange}
                         onKeyDown={handleKeyDown}
@@ -231,9 +231,9 @@ const XSDPrint = ({ close, dataPrint }) => {
                     </div>
                   </div>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 pl-5">
                   <div className="flex gap-2 items-center whitespace-nowrap w-[50%]">
-                    <div>Số chứng từ</div>
+                    <div className="required">Số chứng từ</div>
                     <Select
                       showSearch
                       required
@@ -266,7 +266,7 @@ const XSDPrint = ({ close, dataPrint }) => {
                     </Select>
                   </div>
                   <div className="flex gap-2 items-center w-[40%]">
-                    <div>Tới</div>
+                    <div className="required">Đến</div>
                     <Select
                       showSearch
                       required
@@ -285,7 +285,7 @@ const XSDPrint = ({ close, dataPrint }) => {
                         }
                       }}
                       style={{
-                        width: '200px',
+                        width: '188px',
                       }}
                     >
                       {dataListChungTu &&

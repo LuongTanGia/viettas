@@ -4,6 +4,7 @@ import * as apis from '../../../apis'
 import { RETOKEN } from '../../../action/Actions'
 import { toast } from 'react-toastify'
 import ActionButton from '../../../components/util/Button/ActionButton'
+import { Tooltip } from 'antd'
 
 const DeleteThietLap = ({ typePage, dataRecord, close, loading }) => {
   const handleDelete = async (dataRecord) => {
@@ -41,7 +42,7 @@ const DeleteThietLap = ({ typePage, dataRecord, close, loading }) => {
   }
 
   return (
-    <div className="px-3 py-[12px] absolute shadow-lg bg-white rounded-md flex flex-col ">
+    <div className="px-3 py-[12px] absolute shadow-lg bg-white rounded-md flex flex-col  max-w-[700px]">
       <div className="flex flex-col  gap-2">
         <div className="flex gap-2">
           <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
@@ -50,7 +51,10 @@ const DeleteThietLap = ({ typePage, dataRecord, close, loading }) => {
         <div className="flex flex-col gap-2 border-2 p-4  text-lg">
           <div className="flex gap-1">
             <p className="text-blue-700 ">Bạn có chắc muốn xóa </p>
-            <p className="text-red-600">{typePage === 'GBL' ? dataRecord.MaHang : dataRecord.MaDoiTuong}</p>
+            <Tooltip title={typePage === 'GBL' ? dataRecord.MaHang : dataRecord.MaDoiTuong} color="blue">
+              <p className="text-red-600 truncate">{typePage === 'GBL' ? dataRecord.MaHang : dataRecord.MaDoiTuong}</p>
+            </Tooltip>
+
             <p className="text-blue-700 ">không ?</p>
           </div>
           <p className=" text-base ">Thao tác không thể hoàn tác !</p>
