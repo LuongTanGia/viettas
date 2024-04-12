@@ -63,6 +63,11 @@ const PrintDuLieu = ({ typePage, actionType, namePage, data, controlDate, close 
   }, [newData, actionType])
 
   const handlePrint = async () => {
+    if (selectedSctBD === 'Chọn số chứng từ' || selectedSctKT === 'Chọn số chứng từ') {
+      toast.warning('Vui lòng chọn số chứng từ !')
+      return
+    }
+
     try {
       const tokenLogin = localStorage.getItem('TKN')
       const lien = calculateTotal()
@@ -190,10 +195,12 @@ const PrintDuLieu = ({ typePage, actionType, namePage, data, controlDate, close 
         </div>
         <div className="border-2 my-1">
           <div className="p-4 ">
-            <div className=" flex justify-center items-center  gap-3 pl-[52px]">
+            <div className=" grid grid-cols-2 gap-3  ">
               {/* DatePicker */}
-              <div className="flex gap-x-5 items-center">
-                <label htmlFor="">Ngày</label>
+              <div className="flex gap-x-2 items-center justify-end">
+                <label htmlFor="" className="required">
+                  Ngày
+                </label>
                 <DateField
                   className="DatePicker_PMH max-w-[170px]"
                   format="DD/MM/YYYY"
@@ -225,8 +232,10 @@ const PrintDuLieu = ({ typePage, actionType, namePage, data, controlDate, close 
                   }}
                 />
               </div>
-              <div className="flex gap-x-5 items-center ">
-                <label htmlFor="">Đến</label>
+              <div className="flex gap-x-2 items-center ">
+                <label htmlFor="" className="required">
+                  Đến
+                </label>
                 <DateField
                   className="DatePicker_PMH max-w-[170px]"
                   format="DD/MM/YYYY"
@@ -258,11 +267,9 @@ const PrintDuLieu = ({ typePage, actionType, namePage, data, controlDate, close 
                   }}
                 />
               </div>
-            </div>
 
-            <div className="flex  mt-4 ">
-              <div className="flex ">
-                <label className="pr-[23px]">Số chứng từ</label>
+              <div className="flex gap-x-2 items-center justify-end">
+                <label className=" required">Số chứng từ</label>
 
                 <Select size="small" showSearch optionFilterProp="children" style={{ width: '170px' }} onChange={handleSctBDChange} value={selectedSctBD}>
                   {newData?.map((item) => (
@@ -272,8 +279,8 @@ const PrintDuLieu = ({ typePage, actionType, namePage, data, controlDate, close 
                   ))}
                 </Select>
               </div>
-              <div className="flex ">
-                <label className="pl-[18px] pr-[18px]">Đến</label>
+              <div className="flex gap-x-2 items-center ">
+                <label className=" required">Đến</label>
 
                 <Select size="small" showSearch optionFilterProp="children" style={{ width: '170px' }} onChange={handleSctKTChange} value={selectedSctKT}>
                   {newData?.map((item) => (

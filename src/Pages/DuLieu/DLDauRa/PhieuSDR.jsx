@@ -89,7 +89,6 @@ const PhieuSDR = () => {
     setIsLoadingEdit(true)
     const fetchData = async () => {
       try {
-        console.log('get helper')
         const tokenLogin = localStorage.getItem('TKN')
         if (actionType === 'create' || actionType === 'edit') {
           const responseDT = await apis.ListHelperDoiTuongSDR(tokenLogin)
@@ -114,7 +113,6 @@ const PhieuSDR = () => {
           }
         }
         if (actionType === 'edit') {
-          console.log('get helper tt')
           const responseTT = await apis.ThongTinSuaSDR(tokenLogin, dataRecord.SoChungTu)
           if (responseTT.data && responseTT.data.DataError === 0) {
             setDataThongTinSua(responseTT.data.DataResult)
@@ -153,7 +151,6 @@ const PhieuSDR = () => {
   useEffect(() => {
     const getKhoanNgay = async () => {
       try {
-        console.log('get Khoảng ngày')
         const tokenLogin = localStorage.getItem('TKN')
         const response = await apis.KhoanNgay(tokenLogin)
 
@@ -183,7 +180,6 @@ const PhieuSDR = () => {
   useEffect(() => {
     const getChucNangQuyenHan = async () => {
       try {
-        console.log('đi')
         const tokenLogin = localStorage.getItem('TKN')
         const response = await apis.ChucNangQuyenHan(tokenLogin, 'DuLieu_SDR')
 

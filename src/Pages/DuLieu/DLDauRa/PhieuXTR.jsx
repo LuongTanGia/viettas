@@ -92,8 +92,6 @@ const PhieuXTR = () => {
     setIsLoadingEdit(true)
     const fetchData = async () => {
       try {
-        console.log('get helper')
-
         const tokenLogin = localStorage.getItem('TKN')
         if (actionType === 'create' || actionType === 'edit') {
           console.log('get helper  KH,DT')
@@ -105,8 +103,8 @@ const PhieuXTR = () => {
             toast.warning(responseKH.data.DataErrorDescription)
             setIsLoadingModal(false)
           } else if (responseKH.data.DataError === -107 || responseKH.data.DataError === -108) {
-            await RETOKEN()
-            fetchData()
+            // await RETOKEN()
+            // fetchData()
           } else {
             toast.error(responseKH.data.DataErrorDescription)
             setIsLoadingModal(false)
@@ -125,8 +123,8 @@ const PhieuXTR = () => {
             toast.warning(responseDT.data.DataErrorDescription)
             setIsLoadingModal(false)
           } else if (responseDT.data.DataError === -107 || responseDT.data.DataError === -108) {
-            await RETOKEN()
-            fetchData()
+            // await RETOKEN()
+            // fetchData()
           } else {
             toast.error(responseDT.data.DataErrorDescription)
             setIsLoadingModal(false)
@@ -189,7 +187,6 @@ const PhieuXTR = () => {
   useEffect(() => {
     const getKhoanNgay = async () => {
       try {
-        console.log('get Khoảng ngày')
         const tokenLogin = localStorage.getItem('TKN')
         const response = await apis.KhoanNgay(tokenLogin)
 
@@ -220,23 +217,15 @@ const PhieuXTR = () => {
   useEffect(() => {
     const getChucNangQuyenHan = async () => {
       try {
-        console.log('đi')
         const tokenLogin = localStorage.getItem('TKN')
         const response = await apis.ChucNangQuyenHan(tokenLogin, 'DuLieu_XTR')
 
         if (response.data && response.data.DataError === 0) {
           setDataQuyenHan(response.data)
-        }
-        // else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        //   toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        // }
-        else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
           getChucNangQuyenHan()
         }
-        // else {
-        //   toast.error(response.data.DataErrorDescription)
-        // }
       } catch (error) {
         console.error('Kiểm tra token thất bại', error)
       }
@@ -260,7 +249,6 @@ const PhieuXTR = () => {
 
   const getDSPXTR = async () => {
     try {
-      console.log('get ds PMH')
       const tokenLogin = localStorage.getItem('TKN')
       const response = await apis.DanhSachXTR(tokenLogin, formKhoanNgay)
       if (response) {

@@ -386,7 +386,7 @@ const EditTable = ({
     if (item === 'CoThue' && (tableName === 'GBS' || tableName === 'Import')) {
       return {
         title: columName[item] || item,
-        width: 100,
+        width: 120,
         dataIndex: item,
         // editable: true,
         key: item,

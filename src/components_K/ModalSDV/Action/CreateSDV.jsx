@@ -255,48 +255,29 @@ const CreateSDV = ({ namePage, isLoadingModal, dataDoiTuong, dataThongSo, typePa
                     <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
                     <div className="flex justify-between ">
                       <div className="flex items-center gap-1.5 whitespace-nowrap">
-                        <label className=" text-sm min-w-[70px] ">Người tạo</label>
+                        <label className=" text-sm min-w-[64px] ">Người tạo</label>
                         <Tooltip color="blue">
-                          <input
-                            disabled
-                            type="text"
-                            // value={dataRecord?.NguoiTao}
-                            className="h-[24px] w-[20vw] lg:w-[18vw] md:w-[15vw] px-2 rounded-[4px] resize-none border-[1px] border-gray-300 outline-none truncate"
-                          />
+                          <input disabled type="text" className="w-[270px] h-[24px]  px-2 rounded-[4px] resize-none border-[1px] border-gray-300 outline-none truncate" />
                         </Tooltip>
                       </div>
                       <div className="flex items-center gap-2 whitespace-nowrap">
                         <label className=" text-sm">Lúc</label>
                         <Tooltip color="blue">
-                          <input
-                            disabled
-                            type="text"
-                            // value={dayjs(dataRecord?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss')}
-                            className="px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none text-center truncate"
-                          />
+                          <input disabled type="text" className="px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none text-center truncate" />
                         </Tooltip>
                       </div>
                     </div>
-                    <div className="flex justify-between ">
+                    <div className="flex justify-between text-end ">
                       <div className="flex items-center gap-1.5 whitespace-nowrap">
-                        <label className=" text-sm min-w-[70px]">Sửa cuối</label>
+                        <label className=" text-sm min-w-[64px]">Sửa cuối</label>
                         <Tooltip color="blue">
-                          <input
-                            disabled
-                            type="text"
-                            className="h-[24px]  lg:w-[18vw] md:w-[15vw] px-2 rounded-[4px] resize-none border-[1px] border-gray-300 outline-none truncate"
-                          />
+                          <input disabled type="text" className="w-[270px] h-[24px]  px-2 rounded-[4px] resize-none border-[1px] border-gray-300 outline-none truncate" />
                         </Tooltip>
                       </div>
                       <div className="flex items-center gap-2 whitespace-nowrap">
                         <label className=" text-sm">Lúc</label>
                         <Tooltip color="blue">
-                          <input
-                            disabled
-                            type="text"
-                            // value={dataRecord?.NgaySuaCuoi && dayjs(dataRecord.NgaySuaCuoi).isValid() ? dayjs(dataRecord.NgaySuaCuoi).format('DD/MM/YYYY hh:mm:ss') : ''}
-                            className="px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none text-center truncate"
-                          />
+                          <input disabled type="text" className="px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none text-center truncate" />
                         </Tooltip>
                       </div>
                     </div>

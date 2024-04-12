@@ -343,18 +343,18 @@ const EditThuChi = ({ actionType, typePage, namePage, data, dataRecord, dataThon
                   <div className="grid grid-cols-1 mt-4 gap-2 px-2 py-2.5 rounded-[4px] border-black-200 ml-[95px] relative border-[1px] border-gray-300 ">
                     <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
                     <div className="flex justify-between">
-                      <div className="flex items-center gap-1.5 whitespace-nowrap">
-                        <label className=" text-sm min-w-[70px] ">Người tạo</label>
+                      <div className="flex items-center gap-2 whitespace-nowrap">
+                        <label className=" text-sm min-w-[64px] ">Người tạo</label>
                         <Tooltip color="blue" title={dataThongTinSua?.NguoiTao}>
                           <input
                             disabled
                             type="text"
                             value={dataThongTinSua?.NguoiTao}
-                            className="h-[24px] w-[20vw] lg:w-[18vw] md:w-[15vw] px-2 rounded-[4px] resize-none border-[1px] border-gray-300 outline-none truncate"
+                            className="h-[24px] w-[270px] px-2 rounded-[4px] resize-none border-[1px] border-gray-300 outline-none truncate"
                           />
                         </Tooltip>
                       </div>
-                      <div className="flex items-center gap-1 whitespace-nowrap">
+                      <div className="flex items-center gap-2 whitespace-nowrap">
                         <label className=" text-sm">Lúc</label>
                         <Tooltip color="blue" title={dayjs(dataThongTinSua?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss')}>
                           <input
@@ -366,19 +366,19 @@ const EditThuChi = ({ actionType, typePage, namePage, data, dataRecord, dataThon
                         </Tooltip>
                       </div>
                     </div>
-                    <div className="flex justify-between ">
-                      <div className="flex items-center gap-1.5 whitespace-nowrap">
-                        <label className=" text-sm min-w-[70px]">Sửa cuối</label>
+                    <div className="flex justify-between text-end">
+                      <div className="flex items-center gap-2 whitespace-nowrap">
+                        <label className=" text-sm min-w-[64px]">Sửa cuối</label>
                         <Tooltip color="blue">
                           <input
                             disabled
                             value={dataThongTinSua?.NguoiSuaCuoi}
                             type="text"
-                            className="h-[24px] w-[20vw] lg:w-[18vw] md:w-[15vw] px-2 rounded-[4px] resize-none border-[1px] border-gray-300 outline-none truncate"
+                            className="h-[24px] w-[270px]  px-2 rounded-[4px] resize-none border-[1px] border-gray-300 outline-none truncate"
                           />
                         </Tooltip>
                       </div>
-                      <div className="flex items-center gap-1 whitespace-nowrap">
+                      <div className="flex items-center gap-2 whitespace-nowrap">
                         <label className=" text-sm">Lúc</label>
                         <Tooltip color="blue">
                           <input
