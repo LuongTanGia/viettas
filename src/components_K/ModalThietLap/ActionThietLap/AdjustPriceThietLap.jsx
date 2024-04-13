@@ -72,7 +72,7 @@ const AdjustPriceThietLap = ({ namePage, dataMaHang, dataThongSo, loading, close
                 <div className="flex items-center gap-1">
                   <label className="required  min-w-[70px] text-sm flex justify-end">Hiệu lực từ</label>
                   <DateField
-                    className="DatePicker_PMH  max-w-[115px]"
+                    className="DatePicker_PMH min-w-[140px] max-w-[140px]"
                     format="DD/MM/YYYY"
                     value={dayjs(formAdjustPrice?.HieuLucTu)}
                     onChange={(newDate) => {

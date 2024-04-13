@@ -425,14 +425,14 @@ const CreateDuLieu = ({ actionType, typePage, namePage, data, dataThongSo, dataD
                 <div className="w-[62%]">
                   <div className="flex p-1  ">
                     <div className="flex items-center ">
-                      <label className="md:w-[72px] lg:w-[60%] pr-1">Số C.từ</label>
+                      <label className="min-w-[78px] max-w-[78px] pr-1">Số C.từ</label>
                       <input readOnly type="text" className="md:w-[50px] lg:w-full border border-gray-300 outline-none bg-[#fafafa] rounded-[4px] h-[24px]" />
                     </div>
                     {/* DatePicker */}
-                    <div className="flex md:px-1 lg:px-4 items-center">
+                    <div className="flex md:px-1 lg:px-4 items-center text-center">
                       <label className="pr-1 lg:pr-[30px] lg:pl-[8px]">Ngày</label>
                       <DateField
-                        className="DatePicker_PMH max-w-[115px]"
+                        className="DatePicker_PMH max-w-[115px]  "
                         format="DD/MM/YYYY"
                         value={dayjs(formCreate?.NgayCTu)}
                         onChange={(newDate) => {
@@ -465,7 +465,7 @@ const CreateDuLieu = ({ actionType, typePage, namePage, data, dataThongSo, dataD
                     </div>
                   </div>
                   <div className="p-1 flex  ">
-                    <label form="doituong" className="w-[86px]">
+                    <label form="doituong" className="min-w-[78px]  max-w-[78px]">
                       Đối tượng
                     </label>
 
@@ -488,7 +488,7 @@ const CreateDuLieu = ({ actionType, typePage, namePage, data, dataThongSo, dataD
                     </Select>
                   </div>
                   <div className="flex items-center  p-1">
-                    <label className="w-[86px]">Tên</label>
+                    <label className="min-w-[78px]  max-w-[78px]">Tên</label>
                     <input
                       placeholder={errors.Ten}
                       type="text"
@@ -518,7 +518,7 @@ const CreateDuLieu = ({ actionType, typePage, namePage, data, dataThongSo, dataD
                     />
                   </div>
                   <div className="flex  items-center p-1">
-                    <label className="w-[86px]">Địa chỉ</label>
+                    <label className="min-w-[78px]  max-w-[78px] ">Địa chỉ</label>
                     <input
                       placeholder={errors.DiaChi}
                       type="text"
@@ -579,11 +579,19 @@ const CreateDuLieu = ({ actionType, typePage, namePage, data, dataThongSo, dataD
               {/* kho hang and Ghi chu */}
               <div className="flex gap-3 pl-1 lg:pr-[6px] items-center  w-full">
                 <div className="p-1 flex  items-center ">
-                  <label form="khohang" className="md:w-[98px] lg:w-[118px]">
+                  <label form="khohang" className="min-w-[78px] max-w-[78px]">
                     Kho hàng
                   </label>
 
-                  <Select className="w-full" showSearch size="small" optionFilterProp="children" onChange={(value) => setSelectedKhoHang(value)} value={selectedKhoHang}>
+                  <Select
+                    className="w-[160px]"
+                    showSearch
+                    size="small"
+                    optionFilterProp="children"
+                    onChange={(value) => setSelectedKhoHang(value)}
+                    value={selectedKhoHang}
+                    popupMatchSelectWidth={false}
+                  >
                     {dataKhoHang?.map((item) => (
                       <Option key={item.MaKho} value={item.MaKho}>
                         {item.ThongTinKho}

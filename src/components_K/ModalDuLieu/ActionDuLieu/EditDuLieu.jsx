@@ -366,8 +366,8 @@ const EditDuLieu = ({ actionType, typePage, namePage, data, dataRecord, dataThon
               <div className="w-[62%] ">
                 <div className="flex p-1  ">
                   <div className=" flex items-center">
-                    <label className="md:w-[106px] lg:w-[110px] pr-1">Số C.từ</label>
-                    <input readOnly type="text" className="w-full border border-gray-300 outline-none  px-2   bg-[#fafafa] rounded-[4px] h-[24px]" value={formEdit?.SoChungTu} />
+                    <label className="min-w-[78px]  max-w-[78px] pr-1">Số C.từ</label>
+                    <input readOnly type="text" className="w-[160px] border border-gray-300 outline-none  px-2   bg-[#fafafa] rounded-[4px] h-[24px]" value={formEdit?.SoChungTu} />
                   </div>
 
                   {/* DatePicker */}
@@ -397,7 +397,7 @@ const EditDuLieu = ({ actionType, typePage, namePage, data, dataRecord, dataThon
                   </div>
                 </div>
                 <div className="p-1 flex ">
-                  <label form="doituong" className="w-[86px]">
+                  <label form="doituong" className="min-w-[78px]  max-w-[78px]">
                     Đối tượng
                   </label>
                   <Select showSearch size="small" optionFilterProp="children" onChange={(value) => handleDoiTuongFocus(value)} style={{ width: '100%' }} value={selectedDoiTuong}>
@@ -409,7 +409,7 @@ const EditDuLieu = ({ actionType, typePage, namePage, data, dataRecord, dataThon
                   </Select>
                 </div>
                 <div className="flex items-center   p-1">
-                  <label className="w-[86px]">Tên</label>
+                  <label className="min-w-[78px]  max-w-[78px]">Tên</label>
                   <input
                     placeholder={errors.Ten}
                     type="text"
@@ -441,7 +441,7 @@ const EditDuLieu = ({ actionType, typePage, namePage, data, dataRecord, dataThon
                   />
                 </div>
                 <div className="flex  items-center  p-1">
-                  <label className="w-[86px]">Địa chỉ</label>
+                  <label className="min-w-[78px]  max-w-[78px]">Địa chỉ</label>
                   <input
                     placeholder={errors.DiaChi}
                     type="text"
@@ -523,13 +523,21 @@ const EditDuLieu = ({ actionType, typePage, namePage, data, dataRecord, dataThon
               </div>
             </div>
             {/* kho hang and ghi chu */}
-            <div className="flex gap-3 pl-1 lg:pr-[6px] items-center  w-full">
-              <div className="p-1 flex  items-center ">
-                <label form="khohang" className="md:w-[100px] lg:w-[110px]">
+            <div className="flex gap-3   items-center  w-full">
+              <div className="px-2 py-2 flex  items-center ">
+                <label form="khohang" className="min-w-[78px]  max-w-[78px]">
                   Kho hàng
                 </label>
 
-                <Select showSearch size="small" optionFilterProp="children" onChange={(value) => setSelectedKhoHang(value)} style={{ width: '100%' }} value={selectedKhoHang}>
+                <Select
+                  className="w-[160px]"
+                  showSearch
+                  size="small"
+                  optionFilterProp="children"
+                  onChange={(value) => setSelectedKhoHang(value)}
+                  value={selectedKhoHang}
+                  popupMatchSelectWidth={false}
+                >
                   {dataKhoHang?.map((item) => (
                     <Option key={item.MaKho} value={item.MaKho}>
                       {item.ThongTinKho}
@@ -537,7 +545,7 @@ const EditDuLieu = ({ actionType, typePage, namePage, data, dataRecord, dataThon
                   ))}
                 </Select>
               </div>
-              <div className="flex items-center p-1 w-full">
+              <div className="flex items-center  w-full">
                 <label className="w-[70px]">Ghi chú</label>
                 <input
                   type="text"
