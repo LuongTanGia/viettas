@@ -500,6 +500,7 @@ function PhieuBanHang() {
                     color_hover={dataCRUD?.ADD == false ? 'gray-500' : 'blue-500'}
                     handleAction={() => (dataCRUD?.ADD == false ? '' : handleCreate())}
                     isPermission={dataCRUD?.ADD}
+                    isModal={true}
                   />
                 </div>
               </div>

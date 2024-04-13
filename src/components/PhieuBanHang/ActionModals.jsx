@@ -164,8 +164,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
               ? handleShowPrint_kho_action(dateCT.NgayCTu, res.DataResults[0]?.SoChungTu)
               : toast.success(res.DataErrorDescription, { autoClose: 1000 })
           setMaHang(res.DataResults[0]?.SoChungTu)
-          setForm({ MaKho: listKhoHang?.length > 0 ? listKhoHang[0]?.MaKho : '' })
-          console.log({ MaKho: listKhoHang?.length > 0 ? listKhoHang[0]?.MaKho : '' })
+          setForm({ ...initState, MaKho: listKhoHang?.length > 0 ? listKhoHang[0]?.MaKho : '' })
           setDataChitiet([])
         } else {
           toast.error(res.DataErrorDescription, { autoClose: 2000 })

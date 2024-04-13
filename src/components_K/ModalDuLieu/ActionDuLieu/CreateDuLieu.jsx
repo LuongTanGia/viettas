@@ -582,7 +582,6 @@ const CreateDuLieu = ({ actionType, typePage, namePage, data, dataThongSo, dataD
                   <label form="khohang" className="min-w-[78px] max-w-[78px]">
                     Kho hàng
                   </label>
-
                   <Select
                     className="w-[160px]"
                     showSearch
