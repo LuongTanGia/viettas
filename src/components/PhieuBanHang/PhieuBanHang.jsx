@@ -47,12 +47,13 @@ function PhieuBanHang() {
   const [dataRecord, setDataRecord] = useState([])
   const [selectMH, setSelectMH] = useState()
   const [isShowOption, setIsShowOption] = useState(false)
+  const [dateModal, setDateModal] = useState()
   const [dataDate, setDataDate] = useState({
     NgayBatDau: null,
     NgayKetThuc: null,
   })
   const [dateChange, setDateChange] = useState(false)
-  const [soChungTuPrint, setSoChungTuPrint] = useState()
+  // const [soChungTuPrint, setSoChungTuPrint] = useState()
   const [hidden, setHidden] = useState([])
   const [checkedList, setCheckedList] = useState([])
   const [dataCRUD, setDataCRUD] = useState()
@@ -102,7 +103,6 @@ function PhieuBanHang() {
       setSearchText(inputValue)
     }, 1000)
   }
-
   const handleDateChange = () => {
     clearTimeout(timerId)
     timerId = setTimeout(() => {
@@ -155,7 +155,7 @@ function PhieuBanHang() {
       if (dataDate && dataDate?.NgayBatDau && dataDate?.NgayKetThuc) {
         getListData()
       }
-    }, 800)
+    }, 1000)
   }, [searchText, selectMH, dataDate?.NgayBatDau, dataDate?.NgayKetThuc])
 
   useEffect(() => {
@@ -239,16 +239,14 @@ function PhieuBanHang() {
     setModelType('PhieuKho')
   }
   const handleShowPrint_action = (value, soCT) => {
-    console.log('pbs', soCT)
-    setSoChungTuPrint(soCT)
-    setDataDate({ ...dataDate, NgayBatDau: dayjs(value), NgayKetThuc: dayjs(value) })
+    setDateModal(value)
+    setMaHang(soCT)
     setIsShowPrint(!isShowPrint)
     setModelType('')
   }
   const handleShowPrint_kho_action = (value, soCT) => {
-    console.log('pbs_kho', soCT)
-    setSoChungTuPrint(soCT)
-    setDataDate({ ...dataDate, NgayBatDau: dayjs(value), NgayKetThuc: dayjs(value) })
+    setDateModal(value)
+    setMaHang(soCT)
     setIsShowPrint(!isShowPrint)
     setModelType('PhieuKho')
   }
@@ -533,14 +531,15 @@ function PhieuBanHang() {
               <Model isShow={isShowDelete} handleClose={handleClose} record={dataRecord} ActionDelete={ActionDelete} typeModel={typeModel} ActionPay={ActionPay} />
               <ModelPrint
                 selectMH={selectMH}
-                soChungTuPrint={soChungTuPrint}
+                dateModal={dateModal}
                 isShowModel={isShowPrint}
                 handleCloseAction={handleCloseAction}
-                dataDatePrint={{
-                  ...dataDate,
-                  NgayBatDau: dayjs(dataDate?.NgayBatDau).format('YYYY-MM-DD'),
-                  NgayKetThuc: dayjs(dataDate?.NgayKetThuc).format('YYYY-MM-DD'),
-                }}
+                handleClose={handleClose}
+                // dataDatePrint={{
+                //   ...dataDate,
+                //   NgayBatDau: dayjs(dataDate?.NgayBatDau).format('YYYY-MM-DD'),
+                //   NgayKetThuc: dayjs(dataDate?.NgayKetThuc).format('YYYY-MM-DD'),
+                // }}
                 modelType={modelType}
               />
             </>

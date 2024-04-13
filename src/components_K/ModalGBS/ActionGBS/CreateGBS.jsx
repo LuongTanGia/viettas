@@ -298,7 +298,7 @@ const CreateGBS = ({ actionType, typePage, namePage, dataThongTin, dataHangHoa, 
               <div className=" pb-0  relative mt-1">
                 <Tooltip
                   placement="topLeft"
-                  title={isAdd ? 'Vui lòng chọn hàng hóa hoặc F9 để chọn từ danh sách' : 'Bấm vào đây để thêm hàng mới hoặc F9 để chọn từ danh sách!'}
+                  title={isAdd ? 'Vui lòng chọn hàng hóa hoặc F9 để chọn từ danh sách' : 'Bấm vào đây để thêm hàng mới hoặc F9 để chọn từ danh sách.'}
                   color="blue"
                 >
                   <FloatButton

@@ -202,7 +202,6 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
           loadingData()
           setTargetRow(dataNDC?.SoChungTu)
         } else {
-          console.log('sai', { SoChungTu: dataNDC?.SoChungTu, Data: { ...NDCForm, DataDetails: newData } })
           toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
         }
       } else {
@@ -507,7 +506,7 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
                     />
                     <Tooltip
                       placement="topLeft"
-                      title={isAdd ? 'Vui lòng chọn tên hàng!' : 'Bấm vào đây để thêm hàng mới hoặc F9 để chọn từ danh sách!'}
+                      title={isAdd ? 'Vui lòng chọn tên hàng.' : 'Bấm vào đây để thêm hàng mới hoặc F9 để chọn từ danh sách.'}
                       color={isAdd ? 'gray' : 'blue'}
                     >
                       <FloatButton

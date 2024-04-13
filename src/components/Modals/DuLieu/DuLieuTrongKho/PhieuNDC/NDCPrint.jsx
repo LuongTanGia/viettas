@@ -84,7 +84,6 @@ const NDCPrint = ({ close, dataPrint }) => {
       console.log(error)
     }
   }
-
   useEffect(() => {
     if (dataPrint) {
       if (dataListChungTu?.length == 0) {
@@ -108,7 +107,6 @@ const NDCPrint = ({ close, dataPrint }) => {
     if (checkboxValues.checkbox2) total += 2
     return total
   }
-
   const handlePrint = async () => {
     try {
       const response = await categoryAPI.NDCPrint(
@@ -133,7 +131,6 @@ const NDCPrint = ({ close, dataPrint }) => {
       close()
     }
   }
-
   let timerId
   const handleDateChange = () => {
     clearTimeout(timerId)

@@ -31,7 +31,6 @@ const EditTable = ({
 
   useEffect(() => {
     setDataSource(param)
-
     const updatePrices = () => {
       setDataSource((prevDataSource) => {
         const newData = prevDataSource?.map((item) => {
@@ -39,7 +38,6 @@ const EditTable = ({
           if (matchingHP) {
             return {
               ...item,
-
               DonGia: matchingHP.GiaBan || 0,
               TienHang: matchingHP.GiaBan * item.SoLuong,
               TienThue: (matchingHP.GiaBan * item.SoLuong * item.TyLeThue) / 100,
@@ -51,7 +49,6 @@ const EditTable = ({
                 (((matchingHP.GiaBan * item.SoLuong * item.TyLeThue) / 100 + matchingHP.GiaBan * item.SoLuong) * item.TyLeCKTT) / 100,
             }
           }
-
           return item
         })
 
@@ -75,7 +72,6 @@ const EditTable = ({
     setDataSource((prevDataSource) => {
       const newData = [...prevDataSource]
       const index = newData.findIndex((item) => (typeAction === 'create' ? item.key === row.key : item.STT === row.STT))
-
       if (index !== -1) {
         const item = newData[index]
 
@@ -324,7 +320,6 @@ const EditTable = ({
         </div>
       )
     }
-
     return <td {...restProps}>{childNode}</td>
   }
   const handleDelete = (MaHang) => {

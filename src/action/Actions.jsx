@@ -468,15 +468,10 @@ export const THEMPHIEUBANHANG = async (API, token, data) => {
           window.location.href = '/login'
         }
       }
-      if (response.data && response.data.DataError == 0) {
-        toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
-      } else {
-        toast.error(response.data.DataErrorDescription, { autoClose: 2000 })
-      }
     } else {
       toast.error('Response or response.data is undefined or null.', { autoClose: 1000 })
     }
-    return response.data.DataResults
+    return response.data
   } catch (error) {
     toast.error('Error adding user:', error)
   }
@@ -663,13 +658,9 @@ export const INPHIEUPBS = async (API, token, data) => {
           window.location.href = '/login'
         }
       }
-
-      if (response.data) {
-        toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
-      } else {
-        toast.error('DataResults is undefined or null.', { autoClose: 1000 })
+      if (response.data.DataError !== 0) {
+        toast.error(response.data.DataErrorDescription, { autoClose: 2000 })
       }
-
       return response.data.DataResults
     } else {
       toast.error('Response or response.data is undefined or null.')
