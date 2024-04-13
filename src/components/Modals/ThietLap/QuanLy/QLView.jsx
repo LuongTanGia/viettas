@@ -66,7 +66,7 @@ const QLView = ({ close, dataQL }) => {
                   <div className="flex items-center gap-2">
                     <div className="flex items-center gap-1 w-[60%]">
                       <label className="whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Mã quản lý</label>
-                      <input type="text" value={dataQLView?.MaQuanLy || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" readOnly />
+                      <input type="text" value={dataQLView?.MaQuanLy || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" disabled />
                     </div>
                     <div className="flex items-center">
                       <Checkbox className="text-sm" checked={dataQLView?.NA}>
@@ -76,7 +76,7 @@ const QLView = ({ close, dataQL }) => {
                   </div>
                   <div className="flex items-center gap-1">
                     <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Người dùng</label>
-                    <input type="text" value={dataQLView?.TenNguoiDung || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" readOnly />
+                    <input type="text" value={dataQLView?.TenNguoiDung || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" disabled />
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="flex items-center gap-1">
@@ -85,7 +85,7 @@ const QLView = ({ close, dataQL }) => {
                         type="text"
                         value={moment(dataQLView?.TuNgay)?.format('DD/MM/YYYY') || ''}
                         className="px-2 w-full resize-none rounded border outline-none text-sm truncate"
-                        readOnly
+                        disabled
                       />
                     </div>
                     <div className="flex items-center gap-1">
@@ -94,7 +94,7 @@ const QLView = ({ close, dataQL }) => {
                         type="text"
                         value={dataQLView?.DenNgay ? moment(dataQLView?.DenNgay).format('DD/MM/YYYY') : '' || ''}
                         className="px-2 w-full resize-none rounded border outline-none text-sm truncate"
-                        readOnly
+                        disabled
                       />
                     </div>
                     <div className="flex items-center">
@@ -105,7 +105,7 @@ const QLView = ({ close, dataQL }) => {
                   </div>
                   <div className="flex items-center gap-1">
                     <label className=" whitespace-nowrap  min-w-[90px] text-sm flex justify-end">Ghi chú</label>
-                    <input type="text" value={dataQLView?.GhiChu || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" readOnly />
+                    <input type="text" value={dataQLView?.GhiChu || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" disabled />
                   </div>
                   <div className="grid grid-cols-1 mt-1 gap-2 px-2 py-2.5 rounded border-black-200 ml-[95px] relative border-[0.125rem]">
                     <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
@@ -116,7 +116,7 @@ const QLView = ({ close, dataQL }) => {
                           <input
                             value={dataQLView?.NguoiTao || ''}
                             className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded resize-none border outline-none text-[1rem] truncate"
-                            readOnly
+                            disabled
                           />
                         </Tooltip>
                       </div>
@@ -127,7 +127,7 @@ const QLView = ({ close, dataQL }) => {
                             type="text"
                             value={moment(dataQLView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
                             className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
-                            readOnly
+                            disabled
                           />
                         </Tooltip>
                       </div>
@@ -139,7 +139,7 @@ const QLView = ({ close, dataQL }) => {
                           <input
                             value={dataQLView?.NguoiSuaCuoi || ''}
                             className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded  resize-none border outline-none text-[1rem] truncate"
-                            readOnly
+                            disabled
                           />
                         </Tooltip>
                       </div>
@@ -149,7 +149,7 @@ const QLView = ({ close, dataQL }) => {
                           <input
                             value={dataQLView?.NgaySuaCuoi ? moment(dataQLView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
                             className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
-                            readOnly
+                            disabled
                           />
                         </Tooltip>
                       </div>

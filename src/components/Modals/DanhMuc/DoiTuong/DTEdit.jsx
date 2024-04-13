@@ -153,7 +153,14 @@ const DTEdit = ({ close, loadingData, setTargetRow, dataDT }) => {
                   </div>
                   <div className="flex items-center gap-1">
                     <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Mã</label>
-                    <Input disabled readOnly required size="small" className="w-full overflow-hidden whitespace-nowrap overflow-ellipsis" value={DTForm?.Ma} />
+                    <input
+                      disabled
+                      readOnly
+                      required
+                      size="small"
+                      className="h-[24px] w-full  px-2 rounded-[4px] resize-none border-[1px] border-gray-300 outline-none truncate"
+                      value={DTForm?.Ma}
+                    />
                   </div>
                   <div className="flex items-center gap-1">
                     <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Tên</label>
@@ -303,7 +310,7 @@ const DTEdit = ({ close, loadingData, setTargetRow, dataDT }) => {
                           <input
                             value={dataDT?.NguoiTao || ''}
                             className="2xl:w-[17vw] xl:w-[21vw] lg:w-[22vw] md:w-[24vw] px-2 rounded resize-none border outline-none text-[1rem] truncate"
-                            readOnly
+                            disabled
                           />
                         </Tooltip>
                       </div>
@@ -314,7 +321,7 @@ const DTEdit = ({ close, loadingData, setTargetRow, dataDT }) => {
                             value={moment(dataDT?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
                             type="text"
                             className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
-                            readOnly
+                            disabled
                           />
                         </Tooltip>
                       </div>
@@ -326,7 +333,7 @@ const DTEdit = ({ close, loadingData, setTargetRow, dataDT }) => {
                           <input
                             value={dataDT?.NguoiSuaCuoi || ''}
                             className="2xl:w-[17vw] xl:w-[21vw] lg:w-[22vw] md:w-[24vw] px-2 rounded  resize-none border outline-none text-[1rem] truncate"
-                            readOnly
+                            disabled
                           />
                         </Tooltip>
                       </div>
@@ -336,7 +343,7 @@ const DTEdit = ({ close, loadingData, setTargetRow, dataDT }) => {
                           <input
                             value={dataDT?.NgaySuaCuoi ? moment(dataDT?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
                             className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
-                            readOnly
+                            disabled
                           />
                         </Tooltip>
                       </div>

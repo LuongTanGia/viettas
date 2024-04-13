@@ -808,7 +808,7 @@ const CongNoDauVao = () => {
                         <div className={`flex ${selectVisible ? '' : 'flex-col'} items-center gap-2`}>
                           <ActionButton
                             handleAction={() => (dataCRUD?.EXCEL == false ? '' : exportToExcel())}
-                            title={'Xuất Excel'}
+                            title={'Xuất excel'}
                             isPermission={dataCRUD?.EXCEL}
                             icon={<RiFileExcel2Fill className="w-5 h-5" />}
                             color={'slate-50'}
@@ -818,7 +818,7 @@ const CongNoDauVao = () => {
                           />
                           <ActionButton
                             handleAction={handleHidden}
-                            title={'Ẩn Cột'}
+                            title={'Ẩn cột'}
                             icon={<FaEyeSlash className="w-5 h-5" />}
                             color={'slate-50'}
                             background={'red-500'}
@@ -875,7 +875,8 @@ const CongNoDauVao = () => {
                         <div className="flex items-center gap-1">
                           <label>Từ</label>
                           <DateField
-                            className="DatePicker_NXTKho  max-w-[120px]"
+                            // className="DatePicker_NXTKho  max-w-[120px]"
+                            className=" max-w-[115px]"
                             onBlur={handleDateChange}
                             onKeyDown={handleKeyDown}
                             format="DD/MM/YYYY"
@@ -899,7 +900,7 @@ const CongNoDauVao = () => {
                         <div className=" flex items-center gap-1 ">
                           <label>Đến</label>
                           <DateField
-                            className="DatePicker_NXTKho max-w-[120px]"
+                            className=" max-w-[115px]"
                             onBlur={handleDateChange}
                             onKeyDown={handleKeyDown}
                             format="DD/MM/YYYY"
@@ -960,11 +961,14 @@ const CongNoDauVao = () => {
                             width: '12vw',
                             textOverflow: 'ellipsis',
                           }}
+                          optionFilterProp="children"
+                          popupMatchSelectWidth={false}
+                          optionLabelProp="value"
                         >
                           {nhomDoiTuongCNDV?.map((item, index) => {
                             return (
                               <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomDoiTuong}>
-                                <p className="truncate">{item.ThongTinNhomDoiTuong}</p>
+                                {item.Ma} - {item.Ten}
                               </Select.Option>
                             )
                           })}
@@ -992,11 +996,14 @@ const CongNoDauVao = () => {
                             width: '12vw',
                             textOverflow: 'ellipsis',
                           }}
+                          optionFilterProp="children"
+                          popupMatchSelectWidth={false}
+                          optionLabelProp="value"
                         >
                           {nhomDoiTuongCNDV?.map((item, index) => {
                             return (
                               <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomDoiTuong}>
-                                <p className="truncate">{item.ThongTinNhomDoiTuong}</p>
+                                {item.Ma} - {item.Ten}
                               </Select.Option>
                             )
                           })}
@@ -1024,7 +1031,7 @@ const CongNoDauVao = () => {
                           {nhomDoiTuongCNDV?.map((item) => {
                             return (
                               <Select.Option key={item.Ma} value={item.Ma} title={item.ThongTinNhomDoiTuong}>
-                                <p className="truncate">{item.ThongTinNhomDoiTuong}</p>
+                                <p>{item.ThongTinNhomDoiTuong}</p>
                               </Select.Option>
                             )
                           })}

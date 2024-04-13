@@ -481,7 +481,7 @@ const PhieuNhapChuyenKho = ({ isTableLoad, isTargetRow }) => {
       title: 'Chức năng',
       key: 'operation',
       fixed: 'right',
-      width: 50,
+      width: 80,
       align: 'center',
       render: (record) => {
         return (
@@ -608,7 +608,7 @@ const PhieuNhapChuyenKho = ({ isTableLoad, isTargetRow }) => {
                           />
                           <ActionButton
                             handleAction={() => (dataCRUD?.EXCEL == false ? '' : exportToExcel())}
-                            title={'Xuất Excel'}
+                            title={'Xuất excel'}
                             isPermission={dataCRUD?.EXCEL}
                             icon={<RiFileExcel2Fill className="w-5 h-5" />}
                             color={'slate-50'}
@@ -618,7 +618,7 @@ const PhieuNhapChuyenKho = ({ isTableLoad, isTargetRow }) => {
                           />
                           <ActionButton
                             handleAction={() => handleHidden()}
-                            title={'Ẩn Cột'}
+                            title={'Ẩn cột'}
                             icon={<FaEyeSlash className="w-5 h-5" />}
                             color={'slate-50'}
                             background={'red-500'}
@@ -675,7 +675,7 @@ const PhieuNhapChuyenKho = ({ isTableLoad, isTargetRow }) => {
                         <DateField
                           onBlur={handleDateChange}
                           onKeyDown={handleKeyDown}
-                          className="DatePicker_NXTKho max-w-[120px]"
+                          className=" max-w-[120px]"
                           format="DD/MM/YYYY"
                           value={khoanNgayFrom}
                           sx={{
@@ -699,7 +699,7 @@ const PhieuNhapChuyenKho = ({ isTableLoad, isTargetRow }) => {
                         <DateField
                           onBlur={handleDateChange}
                           onKeyDown={handleKeyDown}
-                          className="DatePicker_NXTKho max-w-[120px]"
+                          className=" max-w-[120px]"
                           format="DD/MM/YYYY"
                           value={khoanNgayTo}
                           sx={{

@@ -6,7 +6,7 @@ import { toast } from 'react-toastify'
 import { FaSearch } from 'react-icons/fa'
 // import { MdPrint } from 'react-icons/md'
 import { IoMdAddCircle } from 'react-icons/io'
-import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import { DateField } from '@mui/x-date-pickers'
 import { Checkbox, Table, Tooltip, Select, FloatButton, Input } from 'antd'
 import dayjs from 'dayjs'
 import NDCPrint from './NDCPrint'
@@ -374,8 +374,8 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                         </div>
                         <div className="flex items-center gap-1">
                           <label className="required whitespace-nowrap text-sm">Ngày</label>
-                          <DatePicker
-                            className="DatePicker_NDCKho"
+                          <DateField
+                            className="DatePicker_NDCKho max-w-[115px]"
                             format="DD/MM/YYYY"
                             value={valueDate}
                             onChange={(values) => {
@@ -399,6 +399,7 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                         <Select
                           style={{ width: '100%' }}
                           showSearch
+                          optionFilterProp="children"
                           required
                           size="small"
                           value={NDCForm?.MaKho || undefined}
@@ -416,7 +417,7 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                           {dataKhoHang &&
                             dataKhoHang?.map((item) => (
                               <Select.Option key={item.MaKho} value={item.MaKho}>
-                                {item.ThongTinKho}
+                                {item.MaKho} - {item.TenKho}
                               </Select.Option>
                             ))}
                         </Select>
@@ -427,21 +428,21 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                       <div className="flex gap-1">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người tạo</label>
-                          <input className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-[1rem]" readOnly />
+                          <input className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-[1rem]" disabled />
                         </div>
                         <div className="flex gap-1 items-center">
                           <label className="text-sm">Lúc</label>
-                          <input className="px-2 w-full resize-none rounded border outline-none text-[1rem]" readOnly />
+                          <input className="px-2 w-full resize-none rounded border outline-none text-[1rem]" disabled />
                         </div>
                       </div>
                       <div className="flex gap-1">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người sửa</label>
-                          <input className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-[1rem]" readOnly />
+                          <input className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-[1rem]" disabled />
                         </div>
                         <div className="flex gap-1 items-center">
                           <label className="text-sm">Lúc</label>
-                          <input className="px-2 w-full resize-none rounded border outline-none text-[1rem]" readOnly />
+                          <input className="px-2 w-full resize-none rounded border outline-none text-[1rem]" disabled />
                         </div>
                       </div>
                     </div>
@@ -542,7 +543,7 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                     <div className="flex items-center gap-2">
                       <div className="flex items-center gap-2 py-1">
                         <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
-                        <p className="text-blue-700 font-semibold uppercase whitespace-nowrap md:text-[12px] lg:text-sm truncate">Danh Sách Hàng Hóa - Phiếu Nhập Điều Chỉnh</p>
+                        <p className="text-blue-700 font-semibold uppercase whitespace-nowrap md:text-[12px] lg:text-sm truncate">Danh Sách Hàng Hóa</p>
                         <FaSearch className="hover:text-red-400 cursor-pointer md:text-[14px] lg:text-sm" onClick={() => setIsShowSearch(!isShowSearch)} />
                       </div>
                       <div className="flex w-[20rem] overflow-hidden">

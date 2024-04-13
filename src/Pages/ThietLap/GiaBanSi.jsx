@@ -535,7 +535,7 @@ const GBS = () => {
                         <div className="pr-1">
                           <TiPrinter size={20} />
                         </div>
-                        <div>In phiếu</div>
+                        <div>In bảng giá</div>
                       </button>
 
                       <button

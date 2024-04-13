@@ -52,7 +52,7 @@ const NHView = ({ close, dataNH }) => {
                   <div className="flex items-center gap-2">
                     <div className="flex items-center gap-1 w-[60%]">
                       <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Mã</label>
-                      <input type="text" value={dataNHView?.MaNhom || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" readOnly />
+                      <input type="text" value={dataNHView?.MaNhom || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" disabled />
                     </div>
                     <div className="flex items-center">
                       <Checkbox className="text-sm" checked={dataNHView?.NA}>
@@ -62,55 +62,47 @@ const NHView = ({ close, dataNH }) => {
                   </div>
                   <div className="flex items-center gap-1">
                     <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Tên</label>
-                    <input type="text" value={dataNHView?.TenNhom || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" readOnly />
+                    <input type="text" value={dataNHView?.TenNhom || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" disabled />
                   </div>
                   <div className="flex items-center gap-1">
                     <label className=" whitespace-nowrap  min-w-[90px] text-sm flex justify-end">Ghi chú</label>
-                    <input type="text" value={dataNHView?.GhiChu || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" readOnly />
+                    <input type="text" value={dataNHView?.GhiChu || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" disabled />
                   </div>
                   <div className="grid grid-cols-1 mt-1 gap-2 px-2 py-2.5 rounded border-black-200 ml-[95px] relative border-[0.125rem]">
                     <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
                     <div className="flex gap-2">
-                      <div className="flex items-center gap-1.5 whitespace-nowrap">
+                      <div className="flex items-center gap-2 whitespace-nowrap">
                         <label className=" text-sm">Người tạo</label>
                         <Tooltip title={dataNHView?.NguoiTao} color="blue">
-                          <input
-                            value={dataNHView?.NguoiTao || ''}
-                            className="2xl:w-[18vw] xl:w-[21vw] lg:w-[23vw] md:w-[25vw] px-2 rounded resize-none border outline-none text-[1rem] truncate"
-                            readOnly
-                          />
+                          <input value={dataNHView?.NguoiTao || ''} className="w-full px-2 rounded resize-none border outline-none text-[1rem] truncate" disabled />
                         </Tooltip>
                       </div>
-                      <div className="flex items-center gap-1 whitespace-nowrap">
+                      <div className="flex items-center gap-2 whitespace-nowrap ">
                         <label className=" text-sm">Lúc</label>
                         <Tooltip title={moment(dataNHView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss')} color="blue">
                           <input
                             type="text"
                             value={moment(dataNHView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
-                            className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
-                            readOnly
+                            className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate text-center"
+                            disabled
                           />
                         </Tooltip>
                       </div>
                     </div>
                     <div className="flex gap-2">
-                      <div className="flex items-center gap-1 whitespace-nowrap">
+                      <div className="flex items-center gap-2 whitespace-nowrap">
                         <label className=" text-sm">Người sửa</label>
                         <Tooltip title={dataNHView?.NguoiSuaCuoi} color="blue">
-                          <input
-                            value={dataNHView?.NguoiSuaCuoi || ''}
-                            className="2xl:w-[18vw] xl:w-[21vw] lg:w-[23vw] md:w-[25vw] px-2 rounded  resize-none border outline-none text-[1rem] truncate"
-                            readOnly
-                          />
+                          <input value={dataNHView?.NguoiSuaCuoi || ''} className="w-full px-2 rounded  resize-none border outline-none text-[1rem] truncate" disabled />
                         </Tooltip>
                       </div>
-                      <div className="flex items-center gap-1 whitespace-nowrap">
+                      <div className="flex items-center gap-2 whitespace-nowrap ">
                         <label className=" text-sm">Lúc</label>
                         <Tooltip title={dataNHView?.NgaySuaCuoi ? moment(dataNHView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : ''} color="blue">
                           <input
                             value={dataNHView?.NgaySuaCuoi ? moment(dataNHView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                            className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
-                            readOnly
+                            className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate text-center"
+                            disabled
                           />
                         </Tooltip>
                       </div>

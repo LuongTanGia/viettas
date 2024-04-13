@@ -288,11 +288,13 @@ const QTTCreate = ({ close, loadingData, setTargetRow, dataQTT }) => {
                         })
                         setErrors({ ...errors, MaKho: '' })
                       }}
+                      optionFilterProp="children"
+                      popupMatchSelectWidth={false}
                     >
                       {dataKho &&
                         dataKho?.map((item, index) => (
                           <Select.Option key={index} value={item.MaKho}>
-                            {item.ThongTinKho}
+                            {item.MaKho} - {item.TenKho}
                           </Select.Option>
                         ))}
                     </Select>
@@ -331,11 +333,13 @@ const QTTCreate = ({ close, loadingData, setTargetRow, dataQTT }) => {
                           NhomGia: value,
                         })
                       }}
+                      optionFilterProp="children"
+                      popupMatchSelectWidth={false}
                     >
                       {dataNhomGia &&
                         dataNhomGia?.map((item, index) => (
                           <Select.Option key={index} value={item.Ma}>
-                            {item.ThongTinNhomGia}
+                            {item.Ma} - {item.Ten}
                           </Select.Option>
                         ))}
                     </Select>
@@ -359,21 +363,21 @@ const QTTCreate = ({ close, loadingData, setTargetRow, dataQTT }) => {
                     <div className="flex gap-1">
                       <div className="flex items-center gap-1.5 whitespace-nowrap">
                         <label className=" text-sm">Người tạo</label>
-                        <input className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded resize-none border outline-none text-[1rem] truncate" readOnly />
+                        <input className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded resize-none border outline-none text-[1rem] truncate" disabled />
                       </div>
                       <div className="flex items-center gap-1 whitespace-nowrap">
                         <label className=" text-sm">Lúc</label>
-                        <input type="text" className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate" readOnly />
+                        <input type="text" className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate" disabled />
                       </div>
                     </div>
                     <div className="flex gap-1">
                       <div className="flex items-center gap-1 whitespace-nowrap">
                         <label className=" text-sm">Người sửa</label>
-                        <input className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded  resize-none border outline-none text-[1rem] truncate" readOnly />
+                        <input className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded  resize-none border outline-none text-[1rem] truncate" disabled />
                       </div>
                       <div className="flex items-center gap-1 whitespace-nowrap">
                         <label className=" text-sm">Lúc</label>
-                        <input className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate" readOnly />
+                        <input className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate" disabled />
                       </div>
                     </div>
                   </div>

@@ -471,7 +471,7 @@ const DoanhSoBanHangHH = () => {
                         <div className={`flex ${selectVisible ? '' : 'flex-col'} items-center gap-2`}>
                           <ActionButton
                             handleAction={() => (dataCRUD?.EXCEL == false ? '' : exportToExcel())}
-                            title={'Xuất Excel'}
+                            title={'Xuất excel'}
                             isPermission={dataCRUD?.EXCEL}
                             icon={<RiFileExcel2Fill className="w-5 h-5" />}
                             color={'slate-50'}
@@ -481,7 +481,7 @@ const DoanhSoBanHangHH = () => {
                           />
                           <ActionButton
                             handleAction={handleHidden}
-                            title={'Ẩn Cột'}
+                            title={'Ẩn cột'}
                             icon={<FaEyeSlash className="w-5 h-5" />}
                             color={'slate-50'}
                             background={'red-500'}
@@ -538,7 +538,8 @@ const DoanhSoBanHangHH = () => {
                         <div className="flex items-center gap-1">
                           <label>Từ</label>
                           <DateField
-                            className="DatePicker_DSBHKho  max-w-[120px]"
+                            // className="DatePicker_DSBHKho  max-w-[120px]"
+                            className=" max-w-[115px]"
                             onBlur={handleDateChange}
                             onKeyDown={handleKeyDown}
                             format="DD/MM/YYYY"
@@ -562,7 +563,7 @@ const DoanhSoBanHangHH = () => {
                         <div className=" flex items-center gap-1 ">
                           <label>Đến</label>
                           <DateField
-                            className="DatePicker_DSBHKho max-w-[120px]"
+                            className=" max-w-[115px]"
                             onBlur={handleDateChange}
                             onKeyDown={handleKeyDown}
                             format="DD/MM/YYYY"
@@ -618,11 +619,14 @@ const DoanhSoBanHangHH = () => {
                             width: '12vw',
                             textOverflow: 'ellipsis',
                           }}
+                          optionFilterProp="children"
+                          popupMatchSelectWidth={false}
+                          optionLabelProp="value"
                         >
                           {nhomHangDSBH?.map((item, index) => {
                             return (
                               <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomHang}>
-                                <p className="truncate">{item.Ma}</p>
+                                {item.Ma} - {item.Ten}
                               </Select.Option>
                             )
                           })}
@@ -647,11 +651,14 @@ const DoanhSoBanHangHH = () => {
                             width: '12vw',
                             textOverflow: 'ellipsis',
                           }}
+                          optionFilterProp="children"
+                          popupMatchSelectWidth={false}
+                          optionLabelProp="value"
                         >
                           {nhomHangDSBH?.map((item, index) => {
                             return (
                               <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomHang}>
-                                <p className="truncate">{item.Ma}</p>
+                                {item.Ma} - {item.Ten}
                               </Select.Option>
                             )
                           })}
@@ -679,7 +686,9 @@ const DoanhSoBanHangHH = () => {
                           {nhomHangDSBH?.map((item) => {
                             return (
                               <Select.Option key={item.Ma} value={item.Ma} title={item.ThongTinNhomHang}>
-                                <p className="truncate">{item.Ma}</p>
+                                <p>
+                                  {item.Ma} - {item.Ten}
+                                </p>
                               </Select.Option>
                             )
                           })}

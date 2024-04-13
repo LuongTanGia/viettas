@@ -61,7 +61,13 @@ const HMCEdit = ({ close, loadingData, setTargetRow, dataHMC }) => {
             <div className="flex flex-col gap-2 border-2 px-3 py-2.5">
               <div className="flex items-center gap-1">
                 <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Mã</label>
-                <Input readOnly disabled required size="small" className="w-full overflow-hidden whitespace-nowrap overflow-ellipsis" value={HMCForm?.Ma} />
+                <input
+                  disabled
+                  required
+                  size="small"
+                  className="h-[24px] w-[30%]  px-2 rounded-[4px] resize-none border-[1px] border-gray-300 outline-none truncate"
+                  value={HMCForm?.Ma}
+                />
               </div>
               <div className="flex items-center gap-1">
                 <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Tên</label>
@@ -104,7 +110,7 @@ const HMCEdit = ({ close, loadingData, setTargetRow, dataHMC }) => {
                       <input
                         value={dataHMC?.NguoiTao || ''}
                         className="2xl:w-[17vw] xl:w-[20vw] lg:w-[22vw] md:w-[24vw] px-2 rounded resize-none border outline-none text-[1rem] truncate"
-                        readOnly
+                        disabled
                       />
                     </Tooltip>
                   </div>
@@ -115,7 +121,7 @@ const HMCEdit = ({ close, loadingData, setTargetRow, dataHMC }) => {
                         value={moment(dataHMC?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
                         type="text"
                         className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
-                        readOnly
+                        disabled
                       />
                     </Tooltip>
                   </div>
@@ -127,7 +133,7 @@ const HMCEdit = ({ close, loadingData, setTargetRow, dataHMC }) => {
                       <input
                         value={dataHMC?.NguoiSuaCuoi || ''}
                         className="2xl:w-[17vw] xl:w-[20vw] lg:w-[22vw] md:w-[24vw] px-2 rounded  resize-none border outline-none text-[1rem] truncate"
-                        readOnly
+                        disabled
                       />
                     </Tooltip>
                   </div>
@@ -137,7 +143,7 @@ const HMCEdit = ({ close, loadingData, setTargetRow, dataHMC }) => {
                       <input
                         value={dataHMC?.NgaySuaCuoi ? moment(dataHMC?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
                         className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
-                        readOnly
+                        disabled
                       />
                     </Tooltip>
                   </div>

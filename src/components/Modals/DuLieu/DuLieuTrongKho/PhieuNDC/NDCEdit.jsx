@@ -3,7 +3,7 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState, useCallback, useMemo } from 'react'
 import { Checkbox, FloatButton, Input, InputNumber, Select, Table, Tooltip } from 'antd'
-import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import { DateField } from '@mui/x-date-pickers'
 import { FaSearch } from 'react-icons/fa'
 import { toast } from 'react-toastify'
 // import { MdPrint } from 'react-icons/md'
@@ -384,12 +384,17 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
                       <div className="flex gap-2">
                         <div className="flex items-center gap-1">
                           <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Số chứng từ</label>
-                          <Input className="truncate" disabled size="small" value={NDCForm?.SoChungTu || ''} readOnly />
+                          <input
+                            className=" h-[24px] w-full  px-2 rounded-[4px] resize-none border-[1px] border-gray-300 outline-none truncate"
+                            disabled
+                            size="small"
+                            value={NDCForm?.SoChungTu || ''}
+                          />
                         </div>
                         <div className="flex items-center gap-1">
                           <label className="required whitespace-nowrap text-sm"> Ngày</label>
-                          <DatePicker
-                            className="DatePicker_NDCKho truncate"
+                          <DateField
+                            className="DatePicker_NDCKho max-w-[115px]"
                             format="DD/MM/YYYY"
                             value={dayjs(NDCForm?.NgayCTu) || ''}
                             onChange={(values) => {
@@ -415,6 +420,7 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
                           style={{ width: '100%' }}
                           type="text"
                           showSearch
+                          optionFilterProp="children"
                           required
                           size="small"
                           value={NDCForm?.MaKho}
@@ -428,7 +434,7 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
                           {dataKhoHang &&
                             dataKhoHang?.map((item, index) => (
                               <Select.Option key={index} value={item.MaKho}>
-                                {item.ThongTinKho}
+                                {item.MaKho} - {item.TenKho}
                               </Select.Option>
                             ))}
                         </Select>
@@ -443,7 +449,7 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
                             <input
                               className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-[1rem] overflow-ellipsis truncate"
                               value={dataNDCView?.NguoiTao || ''}
-                              readOnly
+                              disabled
                             />
                           </Tooltip>
                         </div>
@@ -451,9 +457,9 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
                           <label className="text-sm">Lúc</label>
                           <Tooltip title={moment(dataNDCView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''} color="blue">
                             <input
-                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
+                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate text-center"
                               value={moment(dataNDCView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
-                              readOnly
+                              disabled
                             />
                           </Tooltip>
                         </div>
@@ -465,7 +471,7 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
                             <input
                               className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border  outline-none text-[1rem] overflow-ellipsis truncate"
                               value={dataNDCView?.NguoiSuaCuoi || ''}
-                              readOnly
+                              disabled
                             />
                           </Tooltip>
                         </div>
@@ -473,9 +479,9 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
                           <label className="text-sm">Lúc</label>
                           <Tooltip title={dataNDCView?.NgaySuaCuoi ? moment(dataNDCView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''} color="blue">
                             <input
-                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
+                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate text-center"
                               value={dataNDCView?.NgaySuaCuoi ? moment(dataNDCView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                              readOnly
+                              disabled
                             />
                           </Tooltip>
                         </div>
@@ -568,7 +574,7 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
                     <div className="flex items-center gap-2">
                       <div className="flex items-center gap-2 py-1">
                         <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
-                        <p className="text-blue-700 font-semibold uppercase whitespace-nowrap md:text-[12px] lg:text-sm truncate">Danh Sách Hàng Hóa - Phiếu Nhập Điều Chỉnh</p>
+                        <p className="text-blue-700 font-semibold uppercase whitespace-nowrap md:text-[12px] lg:text-sm truncate">Danh Sách Hàng Hóa </p>
                         <FaSearch className="hover:text-red-400 cursor-pointer md:text-[14px] lg:text-sm" onClick={() => setIsShowSearch(!isShowSearch)} />
                       </div>
                       <div className="flex w-[20rem] overflow-hidden">

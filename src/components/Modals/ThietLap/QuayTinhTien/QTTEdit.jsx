@@ -125,7 +125,13 @@ const QTTEdit = ({ close, loadingData, setTargetRow, dataQTT }) => {
                   <div className="flex items-center gap-2">
                     <div className="flex items-center gap-1">
                       <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Quầy</label>
-                      <InputNumber required size="small" className="w-[100%] overflow-hidden whitespace-nowrap overflow-ellipsis" value={QTTForm?.Quay} readOnly disabled />
+                      <input
+                        required
+                        size="small"
+                        className="h-[24px] w-full  px-2 rounded-[4px] resize-none border-[1px] border-gray-300 outline-none truncate text-end"
+                        value={QTTForm?.Quay}
+                        disabled
+                      />
                     </div>
                     <div className="flex items-center">
                       <Checkbox
@@ -267,11 +273,13 @@ const QTTEdit = ({ close, loadingData, setTargetRow, dataQTT }) => {
                         })
                         setErrors({ ...errors, MaKho: '' })
                       }}
+                      optionFilterProp="children"
+                      popupMatchSelectWidth={false}
                     >
                       {dataKho &&
                         dataKho?.map((item, index) => (
                           <Select.Option key={index} value={item.MaKho}>
-                            {item.ThongTinKho}
+                            {item.MaKho} - {item.TenKho}
                           </Select.Option>
                         ))}
                     </Select>
@@ -311,11 +319,13 @@ const QTTEdit = ({ close, loadingData, setTargetRow, dataQTT }) => {
                           NhomGia: value,
                         })
                       }}
+                      optionFilterProp="children"
+                      popupMatchSelectWidth={false}
                     >
                       {dataNhomGia &&
                         dataNhomGia?.map((item, index) => (
                           <Select.Option key={index} value={item.Ma}>
-                            {item.ThongTinNhomGia}
+                            {item.Ma} - {item.Ten}
                           </Select.Option>
                         ))}
                     </Select>
@@ -343,7 +353,7 @@ const QTTEdit = ({ close, loadingData, setTargetRow, dataQTT }) => {
                           <input
                             value={dataQTT?.NguoiTao || ''}
                             className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded resize-none border outline-none text-[1rem] truncate"
-                            readOnly
+                            disabled
                           />
                         </Tooltip>
                       </div>
@@ -354,7 +364,7 @@ const QTTEdit = ({ close, loadingData, setTargetRow, dataQTT }) => {
                             value={moment(dataQTT?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
                             type="text"
                             className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
-                            readOnly
+                            disabled
                           />
                         </Tooltip>
                       </div>
@@ -366,7 +376,7 @@ const QTTEdit = ({ close, loadingData, setTargetRow, dataQTT }) => {
                           <input
                             value={dataQTT?.NguoiSuaCuoi || ''}
                             className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded  resize-none border outline-none text-[1rem] truncate"
-                            readOnly
+                            disabled
                           />
                         </Tooltip>
                       </div>
@@ -376,7 +386,7 @@ const QTTEdit = ({ close, loadingData, setTargetRow, dataQTT }) => {
                           <input
                             value={dataQTT?.NgaySuaCuoi ? moment(dataQTT?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
                             className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
-                            readOnly
+                            disabled
                           />
                         </Tooltip>
                       </div>

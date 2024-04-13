@@ -61,7 +61,7 @@ const NDTEdit = ({ close, loadingData, setTargetRow, dataNDT }) => {
             <div className="flex flex-col gap-2 border-2 px-3 py-2.5">
               <div className="flex items-center gap-1">
                 <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Mã</label>
-                <Input readOnly disabled required size="small" className="w-full overflow-hidden whitespace-nowrap overflow-ellipsis" value={NDTForm?.Ma} />
+                <input disabled required size="small" className="px-2 w-[30%] resize-none rounded border outline-none text-sm truncate" value={NDTForm?.Ma} />
               </div>
               <div className="flex items-center gap-1">
                 <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Tên</label>
@@ -104,7 +104,7 @@ const NDTEdit = ({ close, loadingData, setTargetRow, dataNDT }) => {
                       <input
                         value={dataNDT?.NguoiTao || ''}
                         className="2xl:w-[20vw] lg:w-[18vw] md:w-[24vw] px-2 rounded resize-none border outline-none text-[1rem] truncate"
-                        readOnly
+                        disabled
                       />
                     </Tooltip>
                   </div>
@@ -114,8 +114,8 @@ const NDTEdit = ({ close, loadingData, setTargetRow, dataNDT }) => {
                       <input
                         value={moment(dataNDT?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
                         type="text"
-                        className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
-                        readOnly
+                        className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate text-center"
+                        disabled
                       />
                     </Tooltip>
                   </div>
@@ -127,7 +127,7 @@ const NDTEdit = ({ close, loadingData, setTargetRow, dataNDT }) => {
                       <input
                         value={dataNDT?.NguoiSuaCuoi || ''}
                         className="2xl:w-[20vw] lg:w-[18vw] md:w-[24vw] px-2 rounded  resize-none border outline-none text-[1rem] truncate"
-                        readOnly
+                        disabled
                       />
                     </Tooltip>
                   </div>
@@ -136,8 +136,8 @@ const NDTEdit = ({ close, loadingData, setTargetRow, dataNDT }) => {
                     <Tooltip title={dataNDT?.NgaySuaCuoi ? moment(dataNDT?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : ''} color="blue">
                       <input
                         value={dataNDT?.NgaySuaCuoi ? moment(dataNDT?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                        className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
-                        readOnly
+                        className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate text-center"
+                        disabled
                       />
                     </Tooltip>
                   </div>

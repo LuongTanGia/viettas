@@ -4,6 +4,7 @@ import ActionButton from '../../../components/util/Button/ActionButton'
 import * as apis from '../../../apis'
 import { toast } from 'react-toastify'
 import { RETOKEN } from '../../../action/Actions'
+import { Tooltip } from 'antd'
 
 const DeleteThuChi = ({ typePage, dataRecord, loading, close }) => {
   const handleDelete = async (dataRecord) => {
@@ -43,7 +44,7 @@ const DeleteThuChi = ({ typePage, dataRecord, loading, close }) => {
     }
   }
   return (
-    <div className="px-3 py-[12px] absolute shadow-lg bg-white rounded-md flex flex-col ">
+    <div className="px-3 py-[12px] absolute shadow-lg bg-white rounded-md flex flex-col  max-w-[700px]">
       <div className="flex flex-col  gap-2">
         <div className="flex gap-2">
           <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
@@ -52,7 +53,10 @@ const DeleteThuChi = ({ typePage, dataRecord, loading, close }) => {
         <div className="flex flex-col gap-2 border-2 p-4  text-lg">
           <div className="flex gap-1">
             <p className="text-blue-700 ">Bạn có chắc muốn xóa </p>
-            <p className="text-red-600">{dataRecord?.SoChungTu}</p>
+            <Tooltip title={dataRecord?.SoChungTu} color="blue">
+              <p className="text-red-600 truncate">{dataRecord?.SoChungTu}</p>
+            </Tooltip>
+
             <p className="text-blue-700 ">không ?</p>
           </div>
           <p className=" text-base ">Thao tác không thể hoàn tác !</p>

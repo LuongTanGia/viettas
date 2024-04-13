@@ -188,13 +188,15 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
                         })
                         setErrors({ ...errors, MaNguoiDung: '' })
                       }}
+                      optionFilterProp="children"
+                      popupMatchSelectWidth={false}
                     >
                       {dataUser &&
                         dataUser.map(
                           (item, index) =>
                             !maNguoiDung.includes(item.Ma) && (
                               <Select.Option key={index} value={item.Ma}>
-                                {item.ThongTinNguoiDung}
+                                {item.Ma} - {item.Ten}
                               </Select.Option>
                             ),
                         )}
@@ -204,7 +206,8 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
                     <div className="flex items-center gap-1">
                       <label className="required whitespace-nowrap text-sm">Hiệu lực từ</label>
                       <DateField
-                        className="DatePicker_NXTKho max-w-[130px]"
+                        // className="DatePicker_NXTKho max-w-[130px]"
+                        className=" max-w-[115px]"
                         format="DD/MM/YYYY"
                         value={DateFrom}
                         onBlur={handleDateChange}
@@ -228,7 +231,8 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
                     <div className="flex items-center gap-1">
                       <label className="whitespace-nowrap min-w-[90px] text-sm flex justify-end">Ngày hết hạn</label>
                       <DateField
-                        className="DatePicker_NXTKho max-w-[130px]"
+                        // className="DatePicker_NXTKho max-w-[130px]"
+                        className=" max-w-[130px]"
                         format="DD/MM/YYYY"
                         value={QLForm.DenNgay}
                         onBlur={handleDateChange}
@@ -289,21 +293,21 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
                     <div className="flex gap-1">
                       <div className="flex items-center gap-1.5 whitespace-nowrap">
                         <label className=" text-sm">Người tạo</label>
-                        <input className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded resize-none border outline-none text-[1rem] truncate" readOnly />
+                        <input className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded resize-none border outline-none text-[1rem] truncate" disabled />
                       </div>
                       <div className="flex items-center gap-1 whitespace-nowrap">
                         <label className=" text-sm">Lúc</label>
-                        <input type="text" className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate" readOnly />
+                        <input type="text" className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate" disabled />
                       </div>
                     </div>
                     <div className="flex gap-1">
                       <div className="flex items-center gap-1 whitespace-nowrap">
                         <label className=" text-sm">Người sửa</label>
-                        <input className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded  resize-none border outline-none text-[1rem] truncate" readOnly />
+                        <input className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded  resize-none border outline-none text-[1rem] truncate" disabled />
                       </div>
                       <div className="flex items-center gap-1 whitespace-nowrap">
                         <label className=" text-sm">Lúc</label>
-                        <input className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate" readOnly />
+                        <input className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate" disabled />
                       </div>
                     </div>
                   </div>

@@ -55,7 +55,7 @@ const QTTView = ({ close, dataQTT }) => {
                   <div className="flex items-center gap-2">
                     <div className="flex items-center gap-1">
                       <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Quầy</label>
-                      <input type="text" value={dataQTTView?.Quay || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate text-end" readOnly />
+                      <input type="text" value={dataQTTView?.Quay || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate text-end" disabled />
                     </div>
                     <div className="flex items-center">
                       <Checkbox checked={dataQTTView?.CungServer} className="text-sm whitespace-nowrap">
@@ -75,16 +75,16 @@ const QTTView = ({ close, dataQTT }) => {
                   </div>
                   <div className="flex items-center gap-1">
                     <label className="whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Tên máy tính</label>
-                    <input type="text" value={dataQTTView?.TenMayTinh || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" readOnly />
+                    <input type="text" value={dataQTTView?.TenMayTinh || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" disabled />
                   </div>
                   <div className="flex items-center gap-1">
                     <label className="whitespace-nowrap required min-w-[90px] text-sm flex justify-end">SQL trạm</label>
-                    <input type="text" value={dataQTTView?.SQLServer || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" readOnly />
+                    <input type="text" value={dataQTTView?.SQLServer || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" disabled />
                   </div>
                   <div className="flex">
                     <div className="flex items-center gap-1 w-[100%]">
                       <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">SQL user</label>
-                      <input type="text" value={dataQTTView?.SQLUser || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" readOnly />
+                      <input type="text" value={dataQTTView?.SQLUser || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" disabled />
                     </div>
                     <div className="flex items-center gap-1 w-[100%]">
                       <label className="whitespace-nowrap min-w-[90px] text-sm flex justify-end">SQL pass</label>
@@ -92,7 +92,7 @@ const QTTView = ({ close, dataQTT }) => {
                         type={isShow ? 'text' : 'password'}
                         value={dataQTTView?.SQLPassword || ''}
                         className="relative px-2 w-full resize-none rounded border outline-none text-sm truncate"
-                        readOnly
+                        disabled
                       />
                       <div className="absolute right-10 text-gray-400 hover:text-blue-500 cursor-pointer" onClick={() => setIsShow(!isShow)}>
                         {isShow ? <FaEye /> : <FaEyeSlash />}
@@ -101,7 +101,7 @@ const QTTView = ({ close, dataQTT }) => {
                   </div>
                   <div className="flex items-center gap-1">
                     <label className=" whitespace-nowrap  min-w-[90px] text-sm flex justify-end">Dữ liệu</label>
-                    <input type="text" value={dataQTTView?.SQLDatabase || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" readOnly />
+                    <input type="text" value={dataQTTView?.SQLDatabase || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" disabled />
                   </div>
                   <div className="flex items-center gap-1 w-[100%]">
                     <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Kho</label>
@@ -109,7 +109,7 @@ const QTTView = ({ close, dataQTT }) => {
                       type="text"
                       value={`${dataQTTView?.MaKho || ''} - ${dataQTTView?.TenKho || ''}`}
                       className="px-2 w-full resize-none rounded border outline-none text-sm truncate"
-                      readOnly
+                      disabled
                     />
                   </div>
                   <div className="flex items-center gap-12 ml-[100px]">
@@ -130,12 +130,12 @@ const QTTView = ({ close, dataQTT }) => {
                       type="text"
                       value={dataQTTView?.NhomGia || dataQTTView?.TenNhomGia ? `${dataQTTView?.NhomGia || ''} - ${dataQTTView?.TenNhomGia || ''}` : ''}
                       className="px-2 w-full resize-none rounded border outline-none text-sm truncate"
-                      readOnly
+                      disabled
                     />
                   </div>
                   <div className="flex items-center gap-1">
                     <label className=" whitespace-nowrap  min-w-[90px] text-sm flex justify-end">Ghi chú</label>
-                    <input type="text" value={dataQTTView?.GhiChu || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" readOnly />
+                    <input type="text" value={dataQTTView?.GhiChu || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" disabled />
                   </div>
                   <div className="grid grid-cols-1 mt-1 gap-2 px-2 py-2.5 rounded border-black-200 ml-[95px] relative border-[0.125rem]">
                     <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
@@ -146,7 +146,7 @@ const QTTView = ({ close, dataQTT }) => {
                           <input
                             value={dataQTTView?.NguoiTao || ''}
                             className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded resize-none border outline-none text-[1rem] truncate"
-                            readOnly
+                            disabled
                           />
                         </Tooltip>
                       </div>
@@ -157,7 +157,7 @@ const QTTView = ({ close, dataQTT }) => {
                             type="text"
                             value={moment(dataQTTView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
                             className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
-                            readOnly
+                            disabled
                           />
                         </Tooltip>
                       </div>
@@ -169,7 +169,7 @@ const QTTView = ({ close, dataQTT }) => {
                           <input
                             value={dataQTTView?.NguoiSuaCuoi || ''}
                             className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded  resize-none border outline-none text-[1rem] truncate"
-                            readOnly
+                            disabled
                           />
                         </Tooltip>
                       </div>
@@ -179,7 +179,7 @@ const QTTView = ({ close, dataQTT }) => {
                           <input
                             value={dataQTTView?.NgaySuaCuoi ? moment(dataQTTView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
                             className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
-                            readOnly
+                            disabled
                           />
                         </Tooltip>
                       </div>

@@ -142,7 +142,7 @@ const XSDXem = ({ close, dataXSD }) => {
                       <div className="flex gap-2">
                         <div className="flex items-center gap-1">
                           <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Số chứng từ</label>
-                          <input type="text" value={dataXSDView?.SoChungTu || ''} className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate" readOnly />
+                          <input type="text" value={dataXSDView?.SoChungTu || ''} className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate" disabled />
                         </div>
                         <div className="flex items-center gap-1">
                           <label className="required whitespace-nowrap text-sm">Ngày</label>
@@ -150,7 +150,7 @@ const XSDXem = ({ close, dataXSD }) => {
                             type="text"
                             value={moment(dataXSDView?.NgayCTu)?.format('DD/MM/YYYY') || ''}
                             className="px-2 w-[7rem] rounded resize-none border outline-none text-[1rem] text-center truncate"
-                            readOnly
+                            disabled
                           />
                         </div>
                       </div>
@@ -160,7 +160,7 @@ const XSDXem = ({ close, dataXSD }) => {
                           type="text"
                           value={`${dataXSDView?.MaKho} - ${dataXSDView?.TenKho}` || ''}
                           className="px-2 w-full rounded resize-none border outline-none text-[1rem]"
-                          readOnly
+                          disabled
                         />
                       </div>
                     </div>
@@ -173,7 +173,7 @@ const XSDXem = ({ close, dataXSD }) => {
                             <input
                               className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-[1rem] overflow-ellipsis truncate"
                               value={dataXSDView?.NguoiTao || ''}
-                              readOnly
+                              disabled
                             />
                           </Tooltip>
                         </div>
@@ -181,9 +181,9 @@ const XSDXem = ({ close, dataXSD }) => {
                           <label className="text-sm">Lúc</label>
                           <Tooltip title={moment(dataXSDView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''} color="blue">
                             <input
-                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
+                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate text-center"
                               value={moment(dataXSDView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
-                              readOnly
+                              disabled
                             />
                           </Tooltip>
                         </div>
@@ -195,7 +195,7 @@ const XSDXem = ({ close, dataXSD }) => {
                             <input
                               className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border  outline-none text-[1rem] overflow-ellipsis truncate"
                               value={dataXSDView?.NguoiSuaCuoi || ''}
-                              readOnly
+                              disabled
                             />
                           </Tooltip>
                         </div>
@@ -203,9 +203,9 @@ const XSDXem = ({ close, dataXSD }) => {
                           <label className="text-sm">Lúc</label>
                           <Tooltip title={dataXSDView?.NgaySuaCuoi ? moment(dataXSDView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''} color="blue">
                             <input
-                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
+                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate text-center"
                               value={dataXSDView?.NgaySuaCuoi ? moment(dataXSDView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                              readOnly
+                              disabled
                             />
                           </Tooltip>
                         </div>
@@ -214,7 +214,7 @@ const XSDXem = ({ close, dataXSD }) => {
                   </div>
                   <div className="flex items-center gap-1">
                     <label className="whitespace-nowrap min-w-[100px] flex justify-end text-sm">Ghi chú</label>
-                    <input type="text" value={dataXSDView?.GhiChu || ''} className="px-2 w-[70rem] rounded resize-none border outline-none text-[1rem]" readOnly />
+                    <input type="text" value={dataXSDView?.GhiChu || ''} className="px-2 w-[70rem] rounded resize-none border outline-none text-[1rem]" disabled />
                   </div>
                   <div className="border rounded">
                     <Table

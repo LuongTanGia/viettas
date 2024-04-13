@@ -179,7 +179,7 @@ const NDCPrint = ({ close, dataPrint }) => {
               <div className="flex flex-col items-center gap-4 border-2 py-3">
                 <div className="DatePicker_NDCKho flex justify-center gap-2">
                   <div className="DatePicker_NDCKho flex items-center gap-2">
-                    <label className="ml-[20px]">Từ</label>
+                    <label className="ml-[20px] required">Ngày</label>
                     <DateField
                       className="max-w-[170px]"
                       onBlur={handleDateChange}
@@ -206,7 +206,7 @@ const NDCPrint = ({ close, dataPrint }) => {
                     />
                   </div>
                   <div className="flex items-center gap-2">
-                    <label>Đến</label>
+                    <label className="required">Đến</label>
                     <DateField
                       onBlur={handleDateChange}
                       onKeyDown={handleKeyDown}
@@ -233,9 +233,9 @@ const NDCPrint = ({ close, dataPrint }) => {
                     />
                   </div>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 pl-5">
                   <div className="flex gap-2 items-center whitespace-nowrap w-[50%]">
-                    <div>Số chứng từ</div>
+                    <div className="required">Số chứng từ</div>
                     <Select
                       showSearch
                       required
@@ -268,7 +268,7 @@ const NDCPrint = ({ close, dataPrint }) => {
                     </Select>
                   </div>
                   <div className="flex gap-2 items-center w-[40%]">
-                    <div>Tới</div>
+                    <div className="required">Đến</div>
                     <Select
                       showSearch
                       required
@@ -287,7 +287,7 @@ const NDCPrint = ({ close, dataPrint }) => {
                         }
                       }}
                       style={{
-                        width: '200px',
+                        width: '188px',
                       }}
                     >
                       {dataListChungTu &&

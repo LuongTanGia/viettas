@@ -18,7 +18,7 @@ const { IoAddCircleOutline, TiPrinter, MdDelete, BsSearch, TfiMoreAlt, MdEdit, F
 const GBL = () => {
   const optionContainerRef = useRef(null)
   const [tableLoad, setTableLoad] = useState(true)
-  const [isLoadingEdit, setIsLoadingEdit] = useState(true)
+
   const [isLoadingModal, setIsLoadingModal] = useState(true)
   const [isShowModal, setIsShowModal] = useState(false)
   const [showFull, setShowFull] = useState('Hiện hành')
@@ -109,7 +109,6 @@ const GBL = () => {
   // get helper
   useEffect(() => {
     setIsLoadingModal(true)
-    setIsLoadingEdit(true)
     const fetchData = async () => {
       try {
         const tokenLogin = localStorage.getItem('TKN')
@@ -133,7 +132,6 @@ const GBL = () => {
       } catch (error) {
         console.error('Lấy data thất bại', error)
         setIsLoadingModal(false)
-        setIsLoadingEdit(false)
       }
     }
     if (isShowModal) {
@@ -998,7 +996,6 @@ const GBL = () => {
                 data={dataFull}
                 dataNhomGia={dataNhomGia}
                 isLoadingModal={isLoadingModal}
-                isLoadingEdit={isLoadingEdit}
                 dataThongSo={dataThongSo}
                 loading={() => setTableLoad(true)}
                 setHightLight={setDoneGBL}

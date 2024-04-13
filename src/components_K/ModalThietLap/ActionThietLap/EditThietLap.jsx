@@ -7,11 +7,11 @@ import { RETOKEN } from '../../../action/Actions'
 import { DateField } from '@mui/x-date-pickers'
 import ActionButton from '../../../components/util/Button/ActionButton'
 import { toast } from 'react-toastify'
-import { Checkbox, InputNumber, Select, Spin, Tooltip } from 'antd'
+import { Checkbox, InputNumber, Select, Tooltip } from 'antd'
 
 const { Option } = Select
 
-const EditThietLap = ({ typePage, namePage, dataRecord, dataThongSo, dataNhomGia, setHightLight, isLoadingModal, loading, close }) => {
+const EditThietLap = ({ typePage, namePage, dataRecord, dataThongSo, dataNhomGia, setHightLight, loading, close }) => {
   const [errors, setErrors] = useState({
     MaHang: '',
     DonGia: '',
@@ -90,7 +90,7 @@ const EditThietLap = ({ typePage, namePage, dataRecord, dataThongSo, dataNhomGia
           <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
           <label className="text-blue-700 font-semibold uppercase pb-1">Sửa - {namePage}</label>
         </div>
-        {/* <Spin spinning={`${typePage === 'GKH' ? isLoadingModal : false}`}> */}
+
         <div className="border w-full h-[78%] rounded-[4px]-sm text-sm">
           <div className="flex flex-col px-2 ">
             <div className=" py-2 px-2 gap-2  grid grid-cols-1">
@@ -99,14 +99,11 @@ const EditThietLap = ({ typePage, namePage, dataRecord, dataThongSo, dataNhomGia
                   <>
                     <div className="flex items-center gap-1">
                       <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Hàng hóa</label>
-                      <Select
+                      <input
                         disabled
-                        className="w-full truncate "
-                        showSearch
-                        size="small"
-                        optionFilterProp="children"
+                        className="h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none "
                         value={`${dataRecord?.MaHang}-${dataRecord?.TenHang} (${dataRecord?.DVT}) `}
-                      ></Select>
+                      ></input>
                     </div>
                     <div className="grid grid-cols-2  gap-2 items-center">
                       <div className="flex items-center gap-1 whitespace-nowrap">
@@ -192,7 +189,7 @@ const EditThietLap = ({ typePage, namePage, dataRecord, dataThongSo, dataNhomGia
                   <>
                     <div className="flex items-center gap-1">
                       <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Khách hàng</label>
-                      <Select className="w-full truncate" showSearch size="small" optionFilterProp="children" value={formEdit.Ma} disabled></Select>
+                      <input className="h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none" value={formEdit.Ma} disabled></input>
                     </div>
                     <div className="flex items-center gap-1 whitespace-nowrap">
                       <label className="required  min-w-[90px] text-sm flex justify-end">Hiệu lực từ</label>
@@ -215,7 +212,7 @@ const EditThietLap = ({ typePage, namePage, dataRecord, dataThongSo, dataNhomGia
                     <div className="flex items-center gap-1">
                       <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Nhóm giá</label>
                       <Select
-                        className="w-full truncate"
+                        className="w-full truncate "
                         showSearch
                         size="small"
                         optionFilterProp="children"
@@ -315,7 +312,6 @@ const EditThietLap = ({ typePage, namePage, dataRecord, dataThongSo, dataNhomGia
             </div>
           </div>
         </div>
-        {/* </Spin> */}
 
         {/* button */}
         <div className="flex justify-end items-center pt-[10px] ">

@@ -20,6 +20,7 @@ import HighlightedCell from '../../../../hooks/HighlightedCell'
 import SimpleBackdrop from '../../../../util/Loading/LoadingPage'
 import EditTable from '../../../../util/Table/EditTable'
 import { nameColumsPhieuXuatDieuChinh } from '../../../../util/Table/ColumnName'
+import { DateField } from '@mui/x-date-pickers'
 
 const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
   const TokenAccess = localStorage.getItem('TKN')
@@ -385,12 +386,17 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
                       <div className="flex gap-2">
                         <div className="flex items-center gap-1">
                           <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Số chứng từ</label>
-                          <Input size="small" disabled value={XDCForm?.SoChungTu || ''} readOnly />
+                          <input
+                            size="small"
+                            disabled
+                            value={XDCForm?.SoChungTu || ''}
+                            className="h-[24px] w-full  px-2 rounded-[4px] resize-none border-[1px] border-gray-300 outline-none truncate"
+                          />
                         </div>
                         <div className="flex items-center gap-1">
                           <label className="required whitespace-nowrap text-sm"> Ngày</label>
-                          <DatePicker
-                            className="DatePicker_XDCKho"
+                          <DateField
+                            className="DatePicker_XDCKho max-w-[115px]"
                             format="DD/MM/YYYY"
                             value={dayjs(XDCForm?.NgayCTu) || ''}
                             onChange={(values) => {
@@ -416,6 +422,7 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
                           style={{ width: '100%' }}
                           type="text"
                           showSearch
+                          optionFilterProp="children"
                           required
                           size="small"
                           value={XDCForm?.MaKho}
@@ -429,7 +436,7 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
                           {dataKhoHang &&
                             dataKhoHang?.map((item, index) => (
                               <Select.Option key={index} value={item.MaKho}>
-                                {item.ThongTinKho}
+                                {item.MaKho} - {item.TenKho}
                               </Select.Option>
                             ))}
                         </Select>
@@ -444,7 +451,7 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
                             <input
                               className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-[1rem] overflow-ellipsis truncate"
                               value={dataXDCView?.NguoiTao || ''}
-                              readOnly
+                              disabled
                             />
                           </Tooltip>
                         </div>
@@ -452,9 +459,9 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
                           <label className="text-sm">Lúc</label>
                           <Tooltip title={moment(dataXDCView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''} color="blue">
                             <input
-                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
+                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate  text-center"
                               value={moment(dataXDCView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
-                              readOnly
+                              disabled
                             />
                           </Tooltip>
                         </div>
@@ -466,7 +473,7 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
                             <input
                               className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border  outline-none text-[1rem] overflow-ellipsis truncate"
                               value={dataXDCView?.NguoiSuaCuoi || ''}
-                              readOnly
+                              disabled
                             />
                           </Tooltip>
                         </div>
@@ -474,9 +481,9 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
                           <label className="text-sm">Lúc</label>
                           <Tooltip title={dataXDCView?.NgaySuaCuoi ? moment(dataXDCView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''} color="blue">
                             <input
-                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
+                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate text-center"
                               value={dataXDCView?.NgaySuaCuoi ? moment(dataXDCView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                              readOnly
+                              disabled
                             />
                           </Tooltip>
                         </div>
@@ -568,7 +575,7 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
                     <div className="flex items-center gap-2">
                       <div className="flex items-center gap-2 py-1">
                         <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
-                        <p className="text-blue-700 font-semibold uppercase md:text-[12px] lg:text-sm truncate">Danh Sách Hàng Hóa - Phiếu Xuất Điều Chỉnh</p>
+                        <p className="text-blue-700 font-semibold uppercase md:text-[12px] lg:text-sm truncate">Danh Sách Hàng Hóa</p>
                         <FaSearch className="hover:text-red-400 cursor-pointer md:text-[14px] lg:text-sm" onClick={() => setIsShowSearch(!isShowSearch)} />
                       </div>
                       <div className="flex w-[20rem] overflow-hidden">
