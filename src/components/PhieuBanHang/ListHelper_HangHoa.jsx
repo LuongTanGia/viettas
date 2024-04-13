@@ -17,7 +17,6 @@ function ListHelper_HangHoa({ data, close, handleAddData, form }) {
   const [loadingSearch, setLoadingSearch] = useState(false)
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [dataList, setData] = useState(data)
-
   const [dataDate] = useState({
     NgayBatDau: '',
     NgayKetThuc: '',
@@ -26,11 +25,9 @@ function ListHelper_HangHoa({ data, close, handleAddData, form }) {
   const isMatch = (value, searchText) => {
     const stringValue = String(value).toLowerCase()
     const searchTextLower = searchText.toLowerCase()
-
     if (stringValue.includes(searchTextLower)) {
       return true
     }
-
     const isDateTime = dayjs(stringValue).isValid()
     if (isDateTime) {
       const formattedValue = dayjs(stringValue).format('DD/MM/YYYY').toString()

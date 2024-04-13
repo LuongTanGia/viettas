@@ -2,16 +2,16 @@
 /* eslint-disable react/prop-types */
 import Logo from '../../assets/VTS-iSale.ico'
 import { FloatButton, Checkbox, Tooltip, Input } from 'antd'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 // import icons from '../../untils/icons'
 import { chiTietPBS } from '../../redux/selector'
 import './phieubanhang.css'
 import dayjs from 'dayjs'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import TableEdit from '../util/Table/EditTable'
 // import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { DateField } from '@mui/x-date-pickers/DateField'
-import { DANHSACHDOITUONG, DANHSACHKHOHANG, THEMPHIEUBANHANG, SUAPHIEUBANHANG, DANHSACHHANGHOA_PBS, THONGTINPHIEU } from '../../action/Actions'
+import { DANHSACHDOITUONG, DANHSACHKHOHANG, THEMPHIEUBANHANG, SUAPHIEUBANHANG, DANHSACHHANGHOA_PBS } from '../../action/Actions'
 import API from '../../API/API'
 import ListHelper_HangHoa from './ListHelper_HangHoa'
 import { toast } from 'react-toastify'
@@ -25,7 +25,6 @@ const { Option } = Select
 
 const initState = {
   NgayCTu: null,
-  DaoHan: '',
   MaDoiTuong: '',
   TenDoiTuong: '',
   DiaChi: '',
@@ -43,7 +42,6 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
   // const [yourMaHangOptions, setYourMaHangOptions] = useState([])
   // const [yourTenHangOptions, setYourTenHangOptions] = useState([])
   // const [loadingTable, setloadingTable] = useState(false)
-  const dispatch = useDispatch()
   const token = window.localStorage.getItem('TKN')
   const [isModalOpen, setIsModalOpen] = useState(isShow)
   const [Dates, setDates] = useState({
@@ -121,23 +119,10 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
     setDataListHP(result_listHp)
   }
   const handleAddData = (record) => {
-    const defaultValues = {
-      SoLuong: 1,
-      DonGia: 0,
-      TienHang: 0,
-      TyLeThue: '',
-      TienThue: '',
-      ThanhTien: '',
-      TyLeCKTT: '',
-      TienCKTT: '',
-      TonKho: '',
-      TyLeQuyDoi: '',
-      MaHangLR: '',
-    }
-    const newRow = { ...record, ...defaultValues }
+    const newRow = { ...record }
     const isMaHangExists = dataChitiet.some((item) => item.MaHang === newRow.MaHang)
     if (isMaHangExists) {
-      toast.success('Thêm thành công 2 !', {
+      toast.success('Thêm thành công!', {
         autoClose: 1000,
       })
       const index = dataChitiet.findIndex((item) => item.MaHang === newRow.MaHang)
@@ -151,11 +136,10 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
       })
     }
   }
-
   const handleEditData = (data) => {
     setDataChitiet(data)
   }
-  const handleSubmit = async () => {
+  const handleSubmit = async (actionType) => {
     if (typeAction === 'create') {
       if (!form?.MaDoiTuong?.trim()) {
         setErrors({
@@ -163,31 +147,31 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
         })
         return
       }
-      const newData = dataChitiet.map((item, index) => {
+      const newData = dataChitiet?.map((item, index) => {
         return {
           ...item,
           STT: index + 1,
         }
       })
-      const data = { ...form, ...Dates, NgayCTu: Dates.NgayCTu.format('YYYY-MM-DD'), DaoHan: dayjs(Dates?.DaoHan).format('YYYY-MM-DD'), DataDetails: newData }
-      const res = await THEMPHIEUBANHANG(API.THEMPHIEUBANHANG, token, data)
-      setMaHang(res[0]?.SoChungTu)
-      if (res[0]?.SoChungTu) {
-        setForm(initState)
-        setDataChitiet([])
-      }
-    } else if (typeAction === 'edit') {
-      const newData = dataChitiet.map((item, index) => {
-        return {
-          ...item,
-          STT: index + 1,
+      if (newData?.length > 0) {
+        const data = { ...form, ...Dates, NgayCTu: Dates.NgayCTu.format('YYYY-MM-DD'), DataDetails: newData }
+        const res = await THEMPHIEUBANHANG(API.THEMPHIEUBANHANG, token, data)
+        const dateCT = { ...form, ...Dates, NgayCTu: Dates.NgayCTu.format('YYYY-MM-DD') }
+        if (res.DataError == 0) {
+          actionType === 'print'
+            ? handleShowPrint_action(dateCT.NgayCTu, res.DataResults[0]?.SoChungTu)
+            : actionType === 'printKho'
+              ? handleShowPrint_kho_action(dateCT.NgayCTu, res.DataResults[0]?.SoChungTu)
+              : toast.success(res.DataErrorDescription, { autoClose: 1000 })
+          setMaHang(res.DataResults[0]?.SoChungTu)
+          setForm({ MaKho: listKhoHang?.length > 0 ? listKhoHang[0]?.MaKho : '' })
+          console.log({ MaKho: listKhoHang?.length > 0 ? listKhoHang[0]?.MaKho : '' })
+          setDataChitiet([])
+        } else {
+          toast.error(res.DataErrorDescription, { autoClose: 2000 })
         }
-      })
-      const data = { ...form, DataDetails: newData }
-      const res = await SUAPHIEUBANHANG(API.SUAPHIEUBANHANG, token, { SoChungTu: data.SoChungTu, Data: data })
-      setMaHang(data.SoChungTu)
-      if (res.DataError === 0) {
-        console.log('sua')
+      } else {
+        toast.warning('Chi tiết hàng không được để trống', { autoClose: 1000 })
       }
     }
   }
@@ -199,17 +183,21 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
         })
         return
       }
-      const newData = dataChitiet.map((item, index) => {
+      const newData = dataChitiet?.map((item, index) => {
         return {
           ...item,
           STT: index + 1,
         }
       })
-      const data = { ...form, ...Dates, NgayCTu: Dates.NgayCTu.format('YYYY-MM-DD'), DaoHan: dayjs(Dates?.DaoHan).format('YYYY-MM-DD'), DataDetails: newData }
-      const res = await THEMPHIEUBANHANG(API.THEMPHIEUBANHANG, token, data)
-      setMaHang(res[0]?.SoChungTu)
-      if (res[0]?.SoChungTu) {
-        handleClose()
+      if (newData?.length > 0) {
+        const data = { ...form, ...Dates, NgayCTu: Dates.NgayCTu.format('YYYY-MM-DD'), DataDetails: newData }
+        const res = await THEMPHIEUBANHANG(API.THEMPHIEUBANHANG, token, data)
+        if (res[0]?.SoChungTu) {
+          setMaHang(res[0]?.SoChungTu)
+          handleClose()
+        }
+      } else {
+        toast.warning('Chi tiết hàng không được để trống', { autoClose: 1000 })
       }
     } else if (typeAction === 'edit') {
       const newData = dataChitiet.map((item, index) => {
@@ -218,43 +206,35 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
           STT: index + 1,
         }
       })
-      const data = { ...form, DataDetails: newData }
-      const res = await SUAPHIEUBANHANG(API.SUAPHIEUBANHANG, token, { SoChungTu: data.SoChungTu, Data: data })
-      setMaHang(data.SoChungTu)
-      if (res.DataError === 0) {
-        handleClose()
+      if (newData?.length > 0) {
+        const data = { ...form, DataDetails: newData }
+        const res = await SUAPHIEUBANHANG(API.SUAPHIEUBANHANG, token, { SoChungTu: data.SoChungTu, Data: data })
+        setMaHang(data.SoChungTu)
+        if (res.DataError === 0) {
+          handleClose()
+        }
+      } else {
+        toast.warning('Chi tiết hàng không được để trống', { autoClose: 1000 })
       }
     }
   }
   const Print = async () => {
-    if (typeAction === 'view') {
-      handleShowPrint_action(form?.NgayCTu, form?.SoChungTu)
-    } else {
-      handleSubmit()
-      handleShowPrint_action(form?.NgayCTu, form?.SoChungTu)
-      const x = await THONGTINPHIEU(API.CHITIETPBS, token, form?.SoChungTu, dispatch)
-      setForm(x.DataResult)
-    }
+    handleShowPrint_action(form?.NgayCTu, form?.SoChungTu)
   }
   const Print_kho = async () => {
-    if (typeAction === 'view') {
-      handleShowPrint_kho_action(form?.NgayCTu, form?.SoChungTu)
-    } else {
-      handleSubmit()
-      handleShowPrint_kho_action(form?.NgayCTu, form?.SoChungTu)
-      const x = await THONGTINPHIEU(API.CHITIETPBS, token, form?.SoChungTu, dispatch)
-      setForm(x.DataResult)
-    }
+    handleShowPrint_kho_action(form?.NgayCTu, form?.SoChungTu)
   }
+  const isAdd = useMemo(() => dataChitiet?.map((item) => item.MaHang).includes('Chọn mã hàng'), [dataChitiet])
+
   const addRecord = () => {
     setDataChitiet([
       ...dataChitiet,
       {
         DonGia: 0,
         GiaBan: 0,
-        MaHang: 'Chọn mã',
+        MaHang: 'Chọn mã hàng',
         SoLuong: 1,
-        TenHang: 'Chọn tên',
+        TenHang: 'Chọn mã hàng',
         ThanhTien: 0,
         TienCKTT: 0,
         TienHang: 0,
@@ -283,7 +263,12 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                     <div className="flex items-center gap-1">
                       <div className="flex items-center gap-1">
                         <label className="text-sm required whitespace-nowrap min-w-[70px] flex justify-end">Số C.từ</label>
-                        <input readOnly type="text" value={form?.SoChungTu} className="lg:w-full md:w-[120px] border border-gray-300 outline-none px-2 rounded-[3px] resize-none" />
+                        <input
+                          readOnly
+                          type="text"
+                          value={form?.SoChungTu}
+                          className={`${typeAction == 'create' ? 'md:w-[100px]' : 'md:w-[120px]'} lg:w-full  border border-gray-300 outline-none px-2 rounded-[3px] resize-none`}
+                        />
                       </div>
                       <div className="flex items-center gap-1 text-sm">
                         <label className="min-w-[40px] flex justify-end">Ngày</label>
@@ -382,12 +367,12 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                       </div>
                       <div className="flex items-center">
                         <label className="w-[30px] pr-1">Lúc</label>
-                        <Tooltip title={dayjs(form?.NgayTao).format('DD/MM/YYYY HH:mm:ss')} color="blue">
+                        <Tooltip title={form?.NgayTao ? dayjs(form?.NgayTao).format('DD/MM/YYYY HH:mm:ss') : ''} color="blue">
                           <input
                             readOnly
                             type="text"
                             className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm truncate"
-                            value={dayjs(form?.NgayTao).format('DD/MM/YYYY HH:mm:ss')}
+                            value={form?.NgayTao ? dayjs(form?.NgayTao).format('DD/MM/YYYY HH:mm:ss') : ''}
                           />
                         </Tooltip>
                       </div>
@@ -472,14 +457,18 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                 </div>
                 <div className="pb-0 relative">
                   {typeAction !== 'view' ? (
-                    <Tooltip title="Bấm vào đây để thêm hàng hoặc F9 để chọn từ danh sách !" placement="topLeft" color="blue">
+                    <Tooltip
+                      title={isAdd ? 'Vui lòng chọn tên hàng.' : 'Bấm vào đây để thêm hàng hoặc F9 để chọn từ danh sách.'}
+                      placement="topLeft"
+                      color={isAdd ? 'gray' : 'blue'}
+                    >
                       <FloatButton
                         className="z-3 absolute w-[30px] h-[30px]"
                         style={{
                           right: 5,
                           top: 4,
                         }}
-                        type="primary"
+                        type={isAdd ? 'default' : 'primary'}
                         icon={<IoMdAddCircle />}
                         onClick={addRecord}
                       />
@@ -524,7 +513,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                   background={'purple-500'}
                   bg_hover={'white'}
                   color_hover={'purple-500'}
-                  handleAction={Print}
+                  handleAction={() => (typeAction == 'view' ? Print() : handleSubmit('print'))}
                   isModal={true}
                 />
                 <ActionButton
@@ -534,13 +523,21 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                   background={'purple-500'}
                   bg_hover={'white'}
                   color_hover={'purple-500'}
-                  handleAction={Print_kho}
+                  handleAction={() => (typeAction == 'view' ? Print_kho() : handleSubmit('printKho'))}
                   isModal={true}
                 />
               </div>
               <div className="w-full flex justify-end  gap-2">
                 {typeAction === 'edit' || typeAction === 'view' ? null : (
-                  <ActionButton color={'slate-50'} background={'blue-500'} bg_hover={'white'} color_hover={'blue-500'} title={'Lưu'} isModal={true} handleAction={handleSubmit} />
+                  <ActionButton
+                    color={'slate-50'}
+                    background={'blue-500'}
+                    bg_hover={'white'}
+                    color_hover={'blue-500'}
+                    title={'Lưu'}
+                    isModal={true}
+                    handleAction={() => handleSubmit(null)}
+                  />
                 )}
                 {typeAction === 'view' ? null : (
                   <ActionButton

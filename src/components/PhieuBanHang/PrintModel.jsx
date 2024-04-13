@@ -13,14 +13,15 @@ import { IoIosCloseCircleOutline } from 'react-icons/io'
 import { HiOutlineDocumentMagnifyingGlass } from 'react-icons/hi2'
 import { TfiPrinter } from 'react-icons/tfi'
 import { RiFilePaper2Line } from 'react-icons/ri'
-import { INPHIEUPBS, LISTCHUNGTU, base64ToPDF } from '../../action/Actions'
+import { INPHIEUPBS, LISTCHUNGTU, RETOKEN, base64ToPDF } from '../../action/Actions'
 import API from '../../API/API'
 import { toast } from 'react-toastify'
 import { DateField } from '@mui/x-date-pickers/DateField'
+import categoryAPI from '../../API/linkAPI'
 
 const { Option } = Select
 
-function ModelPrint({ soChungTuPrint, isShowModel, handleCloseAction, dataDatePrint, modelType, selectMH }) {
+function ModelPrint({ isShowModel, handleClose, handleCloseAction, modelType, selectMH, dateModal }) {
   const token = localStorage.getItem('TKN')
   // const [dateFrom, setDateFrom] = useState(data?.NgayBatDau)
   // const [dateTo, setDateTo] = useState(data?.NgayKetThuc)
@@ -34,21 +35,33 @@ function ModelPrint({ soChungTuPrint, isShowModel, handleCloseAction, dataDatePr
   const [dateChange, setDateChange] = useState(false)
   const [soChungTuFrom, setSoChungTuFrom] = useState(null)
   const [soChungTuTo, setSoChungTuTo] = useState(null)
-  console.log(selectMH)
+
   useEffect(() => {
-    setLoading(true)
-    // setDateFrom(dayjs(data?.NgayBatDau))
-    // setDateTo(dayjs(data?.NgayKetThuc))
-    setDataDate({
-      NgayBatDau: dayjs(dataDatePrint?.NgayBatDau),
-      NgayKetThuc: dayjs(dataDatePrint?.NgayKetThuc),
-    })
-    setSoChungTuFrom(soChungTuPrint !== '' ? soChungTuPrint : selectMH)
-    setSoChungTuTo(soChungTuPrint !== '' ? soChungTuPrint : selectMH)
-    setTimeout(() => {
-      setLoading(false)
-    }, 300)
-  }, [dataDatePrint?.NgayBatDau, dataDatePrint?.NgayKetThuc, soChungTuPrint, selectMH])
+    const getTimeSetting = async () => {
+      try {
+        if (isShowModel) {
+          const response = await categoryAPI.KhoanNgay(token)
+          if (response.data.DataError == 0) {
+            setDataDate({
+              NgayBatDau: dayjs(dateModal ? dateModal : response.data.NgayBatDau),
+              NgayKetThuc: dayjs(dateModal ? dateModal : response.data.NgayKetThuc),
+            })
+            setLoading(true)
+          } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+            await RETOKEN()
+            getTimeSetting()
+          } else {
+            console.log(response.data)
+          }
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    if (isShowModel) {
+      getTimeSetting()
+    }
+  }, [isShowModel])
 
   const handleDateFromChange = (newValue) => {
     setDataDate({
@@ -76,21 +89,39 @@ function ModelPrint({ soChungTuPrint, isShowModel, handleCloseAction, dataDatePr
         NgayBatDau: dayjs(dataDate?.NgayBatDau).format('YYYY-MM-DD'),
         NgayKetThuc: dayjs(dataDate?.NgayKetThuc).format('YYYY-MM-DD'),
       })
-      setDataSoChungTu(response)
+      if (response == null) {
+        setDataSoChungTu([])
+      } else {
+        setDataSoChungTu(response)
+      }
       setLoading(false)
     }
     if (isShowModel) {
-      handleListPhieuThu()
-      setSoLien([1])
-    }
-    if (dataSoChungTu?.length < 1) {
-      setSoChungTuTo(null)
-      setSoChungTuFrom(null)
+      if (dataDate && dataDate.NgayBatDau && dataDate.NgayKetThuc) {
+        handleListPhieuThu()
+        setSoLien([1])
+      }
     }
   }, [isShowModel, dataDate?.NgayBatDau, dataDate?.NgayKetThuc])
 
+  useEffect(() => {
+    if (selectMH) {
+      if (dataSoChungTu?.length == 0) {
+        setSoChungTuTo(null)
+        setSoChungTuFrom(null)
+      } else {
+        setSoChungTuTo(selectMH)
+        setSoChungTuFrom(selectMH)
+      }
+    } else {
+      if (dataSoChungTu?.length == 0) {
+        setSoChungTuTo(null)
+        setSoChungTuFrom(null)
+      }
+    }
+  }, [dataSoChungTu, selectMH])
+
   const handleChangeSCTFrom = (value) => {
-    // setSoChungTuFrom(value)
     setSoChungTuFrom(value)
     if (soChungTuTo !== null && dataSoChungTu?.findIndex((item) => item.SoChungTu === value) > dataSoChungTu?.findIndex((item) => item.SoChungTu === soChungTuTo)) {
       setSoChungTuTo(value)
@@ -99,7 +130,6 @@ function ModelPrint({ soChungTuPrint, isShowModel, handleCloseAction, dataDatePr
     }
   }
   const handleChangeSCTTo = (value) => {
-    // setSoChungTuTo(value)
     setSoChungTuTo(value)
     if (soChungTuFrom !== null && dataSoChungTu?.findIndex((item) => item.SoChungTu === value) < dataSoChungTu?.findIndex((item) => item.SoChungTu === soChungTuFrom)) {
       setSoChungTuFrom(value)
@@ -116,7 +146,11 @@ function ModelPrint({ soChungTuPrint, isShowModel, handleCloseAction, dataDatePr
         SoChungTuKetThuc: soChungTuTo,
         SoLien: soLien.reduce((accumulator, currentValue) => accumulator + currentValue, 0),
       })
-      base64ToPDF(response)
+      if (response) {
+        base64ToPDF(response)
+        handleClose()
+        handleCloseAction()
+      }
     } else {
       toast.warning('Chọn số liên muốn in !')
     }
@@ -147,7 +181,7 @@ function ModelPrint({ soChungTuPrint, isShowModel, handleCloseAction, dataDatePr
           NgayKetThuc: dayjs(dataDate?.NgayKetThuc),
         })
       }
-    }, 800)
+    }, 500)
   }
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {

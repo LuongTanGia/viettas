@@ -513,7 +513,7 @@ const XSDEdit = ({ close, dataXSD, loadingData, setTargetRow }) => {
                     />
                     <Tooltip
                       placement="topLeft"
-                      title={isAdd ? 'Vui lòng chọn tên hàng!' : 'Bấm vào đây để thêm hàng mới hoặc F9 để chọn từ danh sách!'}
+                      title={isAdd ? 'Vui lòng chọn tên hàng.' : 'Bấm vào đây để thêm hàng mới hoặc F9 để chọn từ danh sách.'}
                       color={isAdd ? 'gray' : 'blue'}
                     >
                       <FloatButton

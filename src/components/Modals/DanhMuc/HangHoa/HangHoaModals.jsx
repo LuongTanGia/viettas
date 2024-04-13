@@ -1383,7 +1383,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                           </div>
                           <Tooltip
                             placement="topRight"
-                            title={isAddHHCT ? 'Vui lòng chọn tên hàng!' : hangHoaForm.LapRap == false ? '' : 'Bấm vào đây để thêm hàng mới hoặc nhấn F9 để chọn hàng!'}
+                            title={isAddHHCT ? 'Vui lòng chọn tên hàng.' : hangHoaForm.LapRap == false ? '' : 'Bấm vào đây để thêm hàng mới hoặc nhấn F9 để chọn hàng!'}
                             color={isAddHHCT ? 'gray' : 'blue'}
                           >
                             <FloatButton
@@ -1883,7 +1883,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                           </div>
                           <Tooltip
                             placement="topRight"
-                            title={isAddHHCT ? 'Vui lòng chọn tên hàng!' : hangHoaForm.LapRap == false ? '' : 'Bấm vào đây để thêm hàng mới hoặc nhấn F9 để chọn hàng!'}
+                            title={isAddHHCT ? 'Vui lòng chọn tên hàng.' : hangHoaForm.LapRap == false ? '' : 'Bấm vào đây để thêm hàng mới hoặc nhấn F9 để chọn hàng!'}
                             color={isAddHHCT ? 'gray' : 'blue'}
                           >
                             <FloatButton
@@ -1916,7 +1916,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                 </div>
               )}
               {type == 'delete' && (
-                <div className="flex flex-col gap-2 p-2">
+                <div className="flex flex-col gap-2 p-2  min-w-[40rem] min-h-[8rem]">
                   <div className="flex items-center justify-between">
                     <div className="flex gap-2">
                       <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
