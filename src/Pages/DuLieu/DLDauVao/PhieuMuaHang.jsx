@@ -951,7 +951,7 @@ const PhieuMuaHang = () => {
                 <div className="flex items-center gap-2">
                   <ActionButton
                     color={'slate-50'}
-                    title={'Thêm phiếu'}
+                    title={'Thêm'}
                     icon={<IoAddCircleOutline size={20} />}
                     bg_hover={!dataQuyenHan?.ADD ? '' : 'white'}
                     background={!dataQuyenHan?.ADD ? 'gray-400' : 'bg-main'}

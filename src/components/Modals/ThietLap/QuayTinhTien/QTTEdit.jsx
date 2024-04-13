@@ -273,11 +273,13 @@ const QTTEdit = ({ close, loadingData, setTargetRow, dataQTT }) => {
                         })
                         setErrors({ ...errors, MaKho: '' })
                       }}
+                      optionFilterProp="children"
+                      popupMatchSelectWidth={false}
                     >
                       {dataKho &&
                         dataKho?.map((item, index) => (
                           <Select.Option key={index} value={item.MaKho}>
-                            {item.ThongTinKho}
+                            {item.MaKho} - {item.TenKho}
                           </Select.Option>
                         ))}
                     </Select>
@@ -317,11 +319,13 @@ const QTTEdit = ({ close, loadingData, setTargetRow, dataQTT }) => {
                           NhomGia: value,
                         })
                       }}
+                      optionFilterProp="children"
+                      popupMatchSelectWidth={false}
                     >
                       {dataNhomGia &&
                         dataNhomGia?.map((item, index) => (
                           <Select.Option key={index} value={item.Ma}>
-                            {item.ThongTinNhomGia}
+                            {item.Ma} - {item.Ten}
                           </Select.Option>
                         ))}
                     </Select>

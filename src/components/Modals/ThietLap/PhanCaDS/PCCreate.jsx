@@ -153,13 +153,15 @@ const PCCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
                         })
                         setErrors({ ...errors, MaNguoiDung: '' })
                       }}
+                      optionFilterProp="children"
+                      popupMatchSelectWidth={false}
                     >
                       {dataUser &&
                         dataUser.map(
                           (item, index) =>
                             !maNguoiDung.includes(item.Ma) && (
                               <Select.Option key={index} value={item.Ma}>
-                                {item.ThongTinNguoiDung}
+                                {item.Ma} - {item.Ten}
                               </Select.Option>
                             ),
                         )}
@@ -230,11 +232,13 @@ const PCCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
                           })
                           setErrors({ ...errors, MaCa: '' })
                         }}
+                        optionFilterProp="children"
+                        popupMatchSelectWidth={false}
                       >
                         {dataCa &&
                           dataCa.map((item, index) => (
                             <Select.Option key={index} value={item.Ma}>
-                              {item.ThongTinCaLamViec}
+                              {item.Ma} - {item.Ten}
                             </Select.Option>
                           ))}
                       </Select>

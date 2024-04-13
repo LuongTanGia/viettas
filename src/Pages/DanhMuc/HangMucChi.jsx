@@ -427,7 +427,7 @@ const HangMucChi = () => {
                         <div className={`flex ${selectVisible ? '' : 'flex-col'} items-center gap-2`}>
                           <ActionButton
                             handleAction={() => (dataCRUD?.EXCEL == false ? '' : exportToExcel())}
-                            title={'Xuất Excel'}
+                            title={'Xuất excel'}
                             isPermission={dataCRUD?.EXCEL}
                             icon={<RiFileExcel2Fill className="w-5 h-5" />}
                             color={'slate-50'}
@@ -437,7 +437,7 @@ const HangMucChi = () => {
                           />
                           <ActionButton
                             handleAction={() => handleHidden()}
-                            title={'Ẩn Cột'}
+                            title={'Ẩn cột'}
                             icon={<FaEyeSlash className="w-5 h-5" />}
                             color={'slate-50'}
                             background={'red-500'}
@@ -490,13 +490,14 @@ const HangMucChi = () => {
                   <div className="flex gap-2">
                     <ActionButton
                       handleAction={() => (dataCRUD?.ADD == false ? '' : handleCreate())}
-                      title={'Thêm Hạng Mục'}
+                      title={'Thêm'}
                       icon={<IoMdAddCircleOutline className="w-6 h-6" />}
                       color={'slate-50'}
                       background={dataCRUD?.ADD == false ? 'gray-400' : 'blue-500'}
                       color_hover={dataCRUD?.ADD == false ? 'gray-500' : 'blue-500'}
                       bg_hover={'white'}
                       isPermission={dataCRUD?.ADD}
+                      isModal={true}
                     />
                   </div>
                 </div>

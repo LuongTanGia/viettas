@@ -89,7 +89,7 @@ const ViewThietLap = ({ typePage, namePage, dataRecord, dataThongSo, close }) =>
                     <div className="flex items-center gap-1 whitespace-nowrap">
                       <label className="required  min-w-[90px] text-sm flex justify-end">Hiệu lực từ</label>
                       <DateField
-                        className="DatePicker_PMH  max-w-[115px]"
+                        className="DatePicker_PMH  max-w-[115px] bg-[#fafafa] "
                         format="DD/MM/YYYY"
                         value={dayjs(dataRecord?.HieuLucTu)}
                         disabled

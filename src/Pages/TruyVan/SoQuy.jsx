@@ -611,7 +611,7 @@ const SoQuy = () => {
                         <div className={`flex ${selectVisible ? '' : 'flex-col'} items-center gap-2`}>
                           <ActionButton
                             handleAction={() => (dataCRUD?.EXCEL == false ? '' : exportToExcel())}
-                            title={'Xuất Excel'}
+                            title={'Xuất excel'}
                             isPermission={dataCRUD?.EXCEL}
                             icon={<RiFileExcel2Fill className="w-5 h-5" />}
                             color={'slate-50'}
@@ -621,7 +621,7 @@ const SoQuy = () => {
                           />
                           <ActionButton
                             handleAction={() => handleHidden()}
-                            title={'Ẩn Cột'}
+                            title={'Ẩn cột'}
                             icon={<FaEyeSlash className="w-5 h-5" />}
                             color={'slate-50'}
                             background={'red-500'}

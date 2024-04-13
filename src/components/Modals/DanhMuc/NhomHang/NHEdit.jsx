@@ -62,7 +62,13 @@ const NHEdit = ({ close, loadingData, setTargetRow, dataNH }) => {
               <div className="flex items-center gap-2 ">
                 <div className="flex items-center gap-1 w-[60%]">
                   <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Mã</label>
-                  <Input required readOnly disabled size="small" className="w-full overflow-hidden whitespace-nowrap overflow-ellipsis" value={NHForm?.MaNhom} />
+                  <input
+                    required
+                    disabled
+                    size="small"
+                    className="h-[24px] w-[30%]  px-2 rounded-[4px] resize-none border-[1px] border-gray-300 outline-none truncate"
+                    value={NHForm?.MaNhom}
+                  />
                 </div>
                 <div className="whitespace-nowrap">
                   <Checkbox
@@ -116,7 +122,7 @@ const NHEdit = ({ close, loadingData, setTargetRow, dataNH }) => {
                   <div className="flex items-center gap-2 whitespace-nowrap">
                     <label className=" text-sm">Người tạo</label>
                     <Tooltip title={dataNH?.NguoiTao} color="blue">
-                      <input value={dataNH?.NguoiTao || ''} className="w-full px-2 rounded resize-none border outline-none text-[1rem] truncate" readOnly />
+                      <input value={dataNH?.NguoiTao || ''} className="w-full px-2 rounded resize-none border outline-none text-[1rem] truncate" disabled />
                     </Tooltip>
                   </div>
                   <div className="flex items-center gap-2 whitespace-nowrap">
@@ -126,7 +132,7 @@ const NHEdit = ({ close, loadingData, setTargetRow, dataNH }) => {
                         value={moment(dataNH?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
                         type="text"
                         className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate text-center"
-                        readOnly
+                        disabled
                       />
                     </Tooltip>
                   </div>
@@ -135,7 +141,7 @@ const NHEdit = ({ close, loadingData, setTargetRow, dataNH }) => {
                   <div className="flex items-center gap-2 whitespace-nowrap">
                     <label className=" text-sm">Người sửa</label>
                     <Tooltip title={dataNH?.NguoiSuaCuoi} color="blue">
-                      <input value={dataNH?.NguoiSuaCuoi || ''} className="w-full px-2 rounded  resize-none border outline-none text-[1rem] truncate" readOnly />
+                      <input value={dataNH?.NguoiSuaCuoi || ''} className="w-full px-2 rounded  resize-none border outline-none text-[1rem] truncate" disabled />
                     </Tooltip>
                   </div>
                   <div className="flex items-center gap-2 whitespace-nowrap">
@@ -144,7 +150,7 @@ const NHEdit = ({ close, loadingData, setTargetRow, dataNH }) => {
                       <input
                         value={dataNH?.NgaySuaCuoi ? moment(dataNH?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
                         className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate text-center"
-                        readOnly
+                        disabled
                       />
                     </Tooltip>
                   </div>

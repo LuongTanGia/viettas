@@ -157,11 +157,13 @@ const PCEdit = ({ close, loadingData, setTargetRow, dataPC }) => {
                             MaCa: value,
                           })
                         }}
+                        optionFilterProp="children"
+                        popupMatchSelectWidth={false}
                       >
                         {dataCa &&
                           dataCa.map((item, index) => (
                             <Select.Option key={index} value={item.Ma}>
-                              {item.ThongTinCaLamViec}
+                              {item.Ma} - {item.Ten}
                             </Select.Option>
                           ))}
                       </Select>

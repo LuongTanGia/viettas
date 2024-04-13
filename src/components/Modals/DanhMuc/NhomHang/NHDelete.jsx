@@ -4,6 +4,7 @@ import categoryAPI from '../../../../API/linkAPI'
 import logo from '../../../../assets/VTS-iSale.ico'
 import { toast } from 'react-toastify'
 import ActionButton from '../../../util/Button/ActionButton'
+import { Tooltip } from 'antd'
 const NHDelete = ({ close, dataNH, loadingData, setTargetRow }) => {
   const TokenAccess = localStorage.getItem('TKN')
 
@@ -26,23 +27,25 @@ const NHDelete = ({ close, dataNH, loadingData, setTargetRow }) => {
     }
   }
   return (
-    <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10">
-      <div className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"></div>
-      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col min-w-[40rem] min-h-[8rem] bg-white  p-2 rounded shadow-custom overflow-hidden">
-        <div className="flex flex-col gap-2 p-2">
+    <div className=" fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
+      <div className="px-3 py-[12px] absolute shadow-lg bg-white rounded-md flex flex-col  max-w-[700px]">
+        <div className="flex flex-col  gap-2">
           <div className="flex gap-2">
             <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
-            <p className="text-blue-700 font-semibold uppercase">Xóa dữ liệu - Nhóm Hàng</p>
+            <p className="text-blue-700 font-semibold uppercase">Xóa dữ liệu</p>
           </div>
-          <div className="flex flex-col gap-2 border-2 p-3 font-bold text-lg">
+          <div className="flex flex-col gap-2 border-2 p-4  text-lg">
             <div className="flex gap-1">
-              <p className="text-blue-700 uppercase">Bạn có chắc muốn xóa</p>
-              <p className="text-red-600">{dataNH?.MaNhom}</p>
-              <p className="text-blue-700 uppercase">?</p>
+              <p className="text-blue-700 whitespace-nowrap">Bạn có chắc muốn xóa </p>
+              <Tooltip title={dataNH?.MaNhom} color="blue">
+                <p className="text-red-600 truncate">{dataNH?.MaNhom}</p>
+              </Tooltip>
+              <p className="text-blue-700 whitespace-nowrap">không ?</p>
             </div>
-            <p className="text-slate-500 text-lg font-light">Thông tin không thể hoàn tác nếu bạn xóa !</p>
+            <p className=" text-base ">Thao tác không thể hoàn tác !</p>
           </div>
-          <div className="flex gap-2 justify-end">
+
+          <div className="flex gap-2 justify-end mt-1">
             <ActionButton handleAction={handleDelete} title={'Xác nhận'} isModal={true} color={'slate-50'} background={'blue-500'} color_hover={'blue-500'} bg_hover={'white'} />
             <ActionButton handleAction={close} title={'Đóng'} isModal={true} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
           </div>

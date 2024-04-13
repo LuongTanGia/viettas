@@ -356,7 +356,7 @@ function PhieuBanHang() {
                           <ActionButton
                             icon={<RiFileExcel2Fill className="w-6 h-6" />}
                             color={'slate-50'}
-                            title={'Xuất Excel'}
+                            title={'Xuất excel'}
                             background={dataCRUD?.EXCEL == false ? 'gray-400' : 'green-500'}
                             bg_hover={'white'}
                             color_hover={dataCRUD?.EXCEL == false ? 'gray-500' : 'green-500'}
@@ -494,7 +494,7 @@ function PhieuBanHang() {
                 <div className="flex justify-end gap-2    ">
                   <ActionButton
                     color={'slate-50'}
-                    title={'Thêm Phiếu'}
+                    title={'Thêm'}
                     background={dataCRUD?.ADD == false ? 'gray-400' : 'blue-500'}
                     icon={<IoAddCircleOutline className="w-6 h-6" />}
                     bg_hover={'white'}
