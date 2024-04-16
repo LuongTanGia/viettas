@@ -21,7 +21,7 @@ import categoryAPI from '../../API/linkAPI'
 
 const { Option } = Select
 
-function ModelPrint({ isShowModel, handleClose, handleCloseAction, modelType, selectMH, dateModal }) {
+function ModelPrint({ isShowModel, handleClose, handleCloseAction, modelType, selectMH, dateModal, typeAction }) {
   const token = localStorage.getItem('TKN')
   // const [dateFrom, setDateFrom] = useState(data?.NgayBatDau)
   // const [dateTo, setDateTo] = useState(data?.NgayKetThuc)
@@ -148,7 +148,7 @@ function ModelPrint({ isShowModel, handleClose, handleCloseAction, modelType, se
       })
       if (response) {
         base64ToPDF(response)
-        handleClose()
+        typeAction == 'edit' ? handleClose() : null
         handleCloseAction()
       }
     } else {

@@ -35,7 +35,7 @@ const initState = {
   DataDetails: [],
   SoChungTu: '',
 }
-
+console.log(initState)
 // eslint-disable-next-line react/prop-types
 function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, handleShowPrint_action, handleShowPrint_kho_action }) {
   // yourMaHangOptions, yourTenHangOptions
@@ -154,20 +154,51 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
         }
       })
       if (newData?.length > 0) {
-        const data = { ...form, ...Dates, NgayCTu: Dates.NgayCTu.format('YYYY-MM-DD'), DataDetails: newData }
-        const res = await THEMPHIEUBANHANG(API.THEMPHIEUBANHANG, token, data)
-        const dateCT = { ...form, ...Dates, NgayCTu: Dates.NgayCTu.format('YYYY-MM-DD') }
-        if (res.DataError == 0) {
-          actionType === 'print'
-            ? handleShowPrint_action(dateCT.NgayCTu, res.DataResults[0]?.SoChungTu)
-            : actionType === 'printKho'
-              ? handleShowPrint_kho_action(dateCT.NgayCTu, res.DataResults[0]?.SoChungTu)
-              : toast.success(res.DataErrorDescription, { autoClose: 1000 })
-          setMaHang(res.DataResults[0]?.SoChungTu)
-          setForm({ ...initState, MaKho: listKhoHang?.length > 0 ? listKhoHang[0]?.MaKho : '' })
-          setDataChitiet([])
+        if (isAdd) {
+          toast.warning('Vui lòng chọn mã hàng', { autoClose: 2000 })
         } else {
-          toast.error(res.DataErrorDescription, { autoClose: 2000 })
+          const data = { ...form, ...Dates, NgayCTu: Dates.NgayCTu.format('YYYY-MM-DD'), DataDetails: newData }
+          const res = await THEMPHIEUBANHANG(API.THEMPHIEUBANHANG, token, data)
+          const dateCT = { ...form, ...Dates, NgayCTu: Dates.NgayCTu.format('YYYY-MM-DD') }
+          if (res.DataError == 0) {
+            actionType === 'print'
+              ? handleShowPrint_action(dateCT.NgayCTu, res.DataResults[0]?.SoChungTu, 'create')
+              : actionType === 'printKho'
+                ? handleShowPrint_kho_action(dateCT.NgayCTu, res.DataResults[0]?.SoChungTu, 'create')
+                : toast.success(res.DataErrorDescription, { autoClose: 1000 })
+            setMaHang(res.DataResults[0]?.SoChungTu)
+            setForm({ ...initState, MaKho: listKhoHang?.length > 0 ? listKhoHang[0]?.MaKho : '' })
+            setDataChitiet([])
+          } else {
+            toast.error(res.DataErrorDescription, { autoClose: 2000 })
+          }
+        }
+      } else {
+        toast.warning('Chi tiết hàng không được để trống', { autoClose: 1000 })
+      }
+    } else if (typeAction === 'edit') {
+      const newData = dataChitiet.map((item, index) => {
+        return {
+          ...item,
+          STT: index + 1,
+        }
+      })
+      if (newData?.length > 0) {
+        if (isAdd) {
+          toast.warning('Vui lòng chọn mã hàng', { autoClose: 2000 })
+        } else {
+          const data = { ...form, DataDetails: newData }
+          const res = await SUAPHIEUBANHANG(API.SUAPHIEUBANHANG, token, { SoChungTu: data.SoChungTu, Data: data })
+          if (res.DataError == 0) {
+            actionType === 'print'
+              ? handleShowPrint_action(data?.NgayCTu, data?.SoChungTu, 'edit')
+              : actionType === 'printKho'
+                ? handleShowPrint_kho_action(data?.NgayCTu, data?.SoChungTu, 'edit')
+                : toast.success(res.DataErrorDescription, { autoClose: 1000 })
+            setMaHang(data?.SoChungTu)
+          } else {
+            toast.error(res.DataErrorDescription, { autoClose: 2000 })
+          }
         }
       } else {
         toast.warning('Chi tiết hàng không được để trống', { autoClose: 1000 })
@@ -189,11 +220,18 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
         }
       })
       if (newData?.length > 0) {
-        const data = { ...form, ...Dates, NgayCTu: Dates.NgayCTu.format('YYYY-MM-DD'), DataDetails: newData }
-        const res = await THEMPHIEUBANHANG(API.THEMPHIEUBANHANG, token, data)
-        if (res[0]?.SoChungTu) {
-          setMaHang(res[0]?.SoChungTu)
-          handleClose()
+        if (isAdd) {
+          toast.warning('Vui lòng chọn mã hàng', { autoClose: 2000 })
+        } else {
+          const data = { ...form, ...Dates, NgayCTu: Dates.NgayCTu.format('YYYY-MM-DD'), DataDetails: newData }
+          const res = await THEMPHIEUBANHANG(API.THEMPHIEUBANHANG, token, data)
+          if (res.DataError == 0) {
+            setMaHang(res.DataResults[0]?.SoChungTu)
+            toast.success(res.DataErrorDescription, { autoClose: 1000 })
+            handleClose()
+          } else {
+            toast.error(res.DataErrorDescription, { autoClose: 2000 })
+          }
         }
       } else {
         toast.warning('Chi tiết hàng không được để trống', { autoClose: 1000 })
@@ -206,11 +244,18 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
         }
       })
       if (newData?.length > 0) {
-        const data = { ...form, DataDetails: newData }
-        const res = await SUAPHIEUBANHANG(API.SUAPHIEUBANHANG, token, { SoChungTu: data.SoChungTu, Data: data })
-        setMaHang(data.SoChungTu)
-        if (res.DataError === 0) {
-          handleClose()
+        if (isAdd) {
+          toast.warning('Vui lòng chọn mã hàng', { autoClose: 2000 })
+        } else {
+          const data = { ...form, DataDetails: newData }
+          const res = await SUAPHIEUBANHANG(API.SUAPHIEUBANHANG, token, { SoChungTu: data.SoChungTu, Data: data })
+          if (res.DataError == 0) {
+            setMaHang(data?.SoChungTu)
+            toast.success(res.DataErrorDescription, { autoClose: 1000 })
+            handleClose()
+          } else {
+            toast.error(res.DataErrorDescription, { autoClose: 2000 })
+          }
         }
       } else {
         toast.warning('Chi tiết hàng không được để trống', { autoClose: 1000 })
@@ -223,9 +268,16 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
   const Print_kho = async () => {
     handleShowPrint_kho_action(form?.NgayCTu, form?.SoChungTu)
   }
-  const isAdd = useMemo(() => dataChitiet?.map((item) => item.MaHang).includes('Chọn mã hàng'), [dataChitiet])
+  const isAdd = useMemo(() => dataChitiet && dataChitiet?.map((item) => item.MaHang).includes('Chọn mã hàng'), [dataChitiet])
 
   const addRecord = () => {
+    if (!form?.MaDoiTuong?.trim()) {
+      setErrors({
+        MaDoiTuong: form?.MaDoiTuong?.trim() ? null : 'Đối tượng không được trống',
+      })
+      return
+    }
+    if (dataChitiet.map((item) => item.MaHang).includes('Chọn mã hàng')) return
     setDataChitiet([
       ...dataChitiet,
       {
@@ -457,17 +509,17 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                 <div className="pb-0 relative">
                   {typeAction !== 'view' ? (
                     <Tooltip
-                      title={isAdd ? 'Vui lòng chọn tên hàng.' : 'Bấm vào đây để thêm hàng hoặc F9 để chọn từ danh sách.'}
+                      title={isAdd ? 'Vui lòng chọn tên hàng.' : form.MaDoiTuong == null ? 'Vui lòng chọn đối tượng' : 'Bấm vào đây để thêm hàng hoặc F9 để chọn từ danh sách.'}
                       placement="topLeft"
-                      color={isAdd ? 'gray' : 'blue'}
+                      color={isAdd || form.MaDoiTuong == null ? 'gray' : 'blue'}
                     >
                       <FloatButton
                         className="z-3 absolute w-[30px] h-[30px]"
                         style={{
-                          right: 5,
+                          right: dataChitiet?.length > 0 ? 10 : 5,
                           top: 4,
                         }}
-                        type={isAdd ? 'default' : 'primary'}
+                        type={isAdd || form.MaDoiTuong == null ? 'default' : 'primary'}
                         icon={<IoMdAddCircle />}
                         onClick={addRecord}
                       />

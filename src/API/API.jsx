@@ -17,6 +17,7 @@ const API = {
 
   DANHSACHPBS: `${BASE_URL}/api/entries/DuLieuPBS/DanhSach`,
   CHITIETPBS: `${BASE_URL}/api/entries/DuLieuPBS/ThongTin`,
+  CHITIETEDITPBS: `${BASE_URL}/api/entries/DuLieuPBS/ThongTinSua`,
   DANHSACHDOITUONG_PBS: `${BASE_URL}/api/entries/DuLieuPBS/ListHelper_DoiTuong`,
   DANHSACHKHOHANG_PBS: `${BASE_URL}/api/entries/DuLieuPBS/ListHelper_KhoHang`,
   DANHSACHHANGHOA_PBS: `${BASE_URL}/api/entries/DuLieuPBS/ListHelper_HangHoa`,

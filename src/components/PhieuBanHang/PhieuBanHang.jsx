@@ -183,7 +183,7 @@ function PhieuBanHang() {
     setDataRecord(record)
   }
   const handleEdit = async (record) => {
-    await THONGTINPHIEU(API.CHITIETPBS, token, record?.SoChungTu, dispatch)
+    await THONGTINPHIEU(API.CHITIETEDITPBS, token, record?.SoChungTu, dispatch)
     setIsShow(true)
     setType('edit')
     setDataRecord(record)
@@ -202,7 +202,7 @@ function PhieuBanHang() {
   }
   const handleCloseAction = () => {
     setIsShowPrint(false)
-    setDataRecord([])
+    // setDataRecord([])
   }
   const handleDelete = async (record) => {
     setIsShowDelete(true)
@@ -215,6 +215,7 @@ function PhieuBanHang() {
       setIsShowDelete(false)
       setIsShow(false)
       setDataRecord([])
+      setSelectMH([])
     } else {
       toast.info(`${record?.SoChungTu} đã lập phiếu thu tiền!`)
     }
@@ -238,17 +239,19 @@ function PhieuBanHang() {
     setIsShowPrint(!isShowPrint)
     setModelType('PhieuKho')
   }
-  const handleShowPrint_action = (value, soCT) => {
+  const handleShowPrint_action = (value, soCT, type) => {
     setDateModal(value)
     setMaHang(soCT)
     setIsShowPrint(!isShowPrint)
     setModelType('')
+    setType(type)
   }
-  const handleShowPrint_kho_action = (value, soCT) => {
+  const handleShowPrint_kho_action = (value, soCT, type) => {
     setDateModal(value)
     setMaHang(soCT)
     setIsShowPrint(!isShowPrint)
     setModelType('PhieuKho')
+    setType(type)
   }
   const handleShow_hidden = () => {
     setSelectVisible(!selectVisible)
@@ -536,12 +539,8 @@ function PhieuBanHang() {
                 isShowModel={isShowPrint}
                 handleCloseAction={handleCloseAction}
                 handleClose={handleClose}
-                // dataDatePrint={{
-                //   ...dataDate,
-                //   NgayBatDau: dayjs(dataDate?.NgayBatDau).format('YYYY-MM-DD'),
-                //   NgayKetThuc: dayjs(dataDate?.NgayKetThuc).format('YYYY-MM-DD'),
-                // }}
                 modelType={modelType}
+                typeAction={type}
               />
             </>
           )}
