@@ -170,18 +170,22 @@ const HUYCreate = ({ close, loadingData, setTargetRow }) => {
         }
       })
       if (newData?.length > 0) {
-        const response = await categoryAPI.HUYCreate({ ...HUYForm, DataDetails: newData, NgayCTu: dayjs(valueDate).format('YYYY-MM-DD') }, TokenAccess)
-        if (response.data.DataError == 0) {
-          isPrint
-            ? (handlePrint(), setHUYForm({ MaKho: dataKhoHang[0]?.MaKho }), setSelectedRowData([]))
-            : isSave
-              ? (toast.success(response.data.DataErrorDescription, { autoClose: 1000 }), setHUYForm({ MaKho: dataKhoHang[0]?.MaKho }), setSelectedRowData([]))
-              : (close(), toast.success(response.data.DataErrorDescription, { autoClose: 1000 }))
-          loadingData()
-          setSoCTu(response.data.DataResults[0].SoChungTu)
-          setTargetRow(response.data.DataResults[0].SoChungTu)
+        if (isAdd) {
+          toast.warning('Vui lòng chọn mã hàng', { autoClose: 2000 })
         } else {
-          toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
+          const response = await categoryAPI.HUYCreate({ ...HUYForm, DataDetails: newData, NgayCTu: dayjs(valueDate).format('YYYY-MM-DD') }, TokenAccess)
+          if (response.data.DataError == 0) {
+            isPrint
+              ? (handlePrint(), setHUYForm({ MaKho: dataKhoHang[0]?.MaKho }), setSelectedRowData([]))
+              : isSave
+                ? (toast.success(response.data.DataErrorDescription, { autoClose: 1000 }), setHUYForm({ MaKho: dataKhoHang[0]?.MaKho }), setSelectedRowData([]))
+                : (close(), toast.success(response.data.DataErrorDescription, { autoClose: 1000 }))
+            loadingData()
+            setSoCTu(response.data.DataResults[0].SoChungTu)
+            setTargetRow(response.data.DataResults[0].SoChungTu)
+          } else {
+            toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
+          }
         }
       } else {
         toast.warning('Chi tiết hàng không được để trống', { autoClose: 1000 })
@@ -426,21 +430,21 @@ const HUYCreate = ({ close, loadingData, setTargetRow }) => {
                       <div className="flex gap-1">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người tạo</label>
-                          <input className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-sm" disabled />
+                          <input className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm" disabled />
                         </div>
                         <div className="flex gap-1 items-center">
                           <label className="text-sm">Lúc</label>
-                          <input className="px-2 w-full resize-none rounded border outline-none text-sm text-center" disabled />
+                          <input className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm text-center" disabled />
                         </div>
                       </div>
                       <div className="flex gap-1">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người sửa</label>
-                          <input className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-sm" disabled />
+                          <input className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm" disabled />
                         </div>
                         <div className="flex gap-1 items-center">
                           <label className="text-sm">Lúc</label>
-                          <input className="px-2 w-full resize-none rounded border outline-none text-sm text-center" disabled />
+                          <input className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm text-center" disabled />
                         </div>
                       </div>
                     </div>

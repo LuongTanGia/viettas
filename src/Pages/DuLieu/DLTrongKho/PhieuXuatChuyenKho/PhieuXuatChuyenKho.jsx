@@ -476,7 +476,11 @@ const PhieuXuatChuyenKho = ({ isTableLoad, isTargetRow }) => {
         const dateB = new Date(b.NgaySuaCuoi)
         return dateA - dateB
       },
-      render: (text) => <span className="flex justify-center">{text ? formatDateTime(text, true) : ''}</span>,
+      render: (text) => (
+        <span className="flex justify-center">
+          <HighlightedCell text={text ? formatDateTime(text, true) : ''} search={searchHangHoa} />
+        </span>
+      ),
     },
     {
       title: 'Xác nhận',

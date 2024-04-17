@@ -949,9 +949,9 @@ const CongNoDauVao = () => {
                           value={selectedNhomFrom}
                           onChange={(value) => {
                             setSelectedNhomFrom(value)
-                            selectedNhomTo == null ? setSelectedNhomTo(value) : ''
+                            selectedNhomTo == null || selectedNhomTo == undefined ? setSelectedNhomTo(value) : ''
                             if (
-                              selectedNhomTo !== null &&
+                              (selectedNhomTo !== null || selectedNhomTo !== undefined) &&
                               nhomDoiTuongCNDV.findIndex((item) => item.Ma === value) > nhomDoiTuongCNDV.findIndex((item) => item.Ma === selectedNhomTo)
                             ) {
                               setSelectedNhomTo(value)
@@ -984,13 +984,14 @@ const CongNoDauVao = () => {
                           value={selectedNhomTo}
                           onChange={(value) => {
                             setSelectedNhomTo(value)
+                            selectedNhomFrom == null || selectedNhomFrom == undefined ? setSelectedNhomFrom(value) : ''
+
                             if (
                               selectedNhomFrom !== null &&
                               nhomDoiTuongCNDV.findIndex((item) => item.Ma === value) < nhomDoiTuongCNDV.findIndex((item) => item.Ma === selectedNhomFrom)
                             ) {
                               setSelectedNhomFrom(value)
                             }
-                            selectedNhomFrom == null ? setSelectedNhomFrom(value) : ''
                           }}
                           style={{
                             width: '12vw',
@@ -1031,7 +1032,7 @@ const CongNoDauVao = () => {
                           {nhomDoiTuongCNDV?.map((item) => {
                             return (
                               <Select.Option key={item.Ma} value={item.Ma} title={item.ThongTinNhomDoiTuong}>
-                                <p>{item.ThongTinNhomDoiTuong}</p>
+                                {item.ThongTinNhomDoiTuong} <br />
                               </Select.Option>
                             )
                           })}

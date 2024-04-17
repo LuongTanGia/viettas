@@ -58,9 +58,10 @@ const BinhQuanXuatKho = () => {
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
     setCheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
-    const key = Object?.keys(dataGiaXuatKho ? dataGiaXuatKho[0] : [] || []).filter((key) => key != 'ThangFormat')
+    // const key = Object?.keys(dataGiaXuatKho ? dataGiaXuatKho[0] : [] || []).filter((key) => key != 'ThangFormat')
     const key2 = Object?.keys((dataBinhQuan && dataBinhQuan[0]) || []).filter((key) => key != 'Thang' && key != 'ThangFormat')
-    setOptions(key.length > 0 && key2.length > 0 ? [...key, ...key2] : [])
+    // setOptions(key.length > 0 && key2.length > 0 ? [...key, ...key2] : [])
+    setOptions(key2.length > 0 ? [...key2] : [])
   }, [selectVisible])
 
   useEffect(() => {
@@ -133,7 +134,7 @@ const BinhQuanXuatKho = () => {
     const newTimerId = setTimeout(() => {
       handleView(record)
       setTimerId(null)
-    }, 700)
+    }, 800)
     setTimerId(newTimerId)
     return () => clearTimeout(newTimerId)
   }

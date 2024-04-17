@@ -721,6 +721,7 @@ const CongNoDauRa = () => {
       }
     })
     .filter((item) => item !== null)
+  console.log('1', selectedNhomFrom, '2', selectedNhomTo)
   return (
     <>
       {dataCRUD?.VIEW == false ? (
@@ -948,10 +949,11 @@ const CongNoDauRa = () => {
                           value={selectedNhomFrom}
                           onChange={(value) => {
                             setSelectedNhomFrom(value)
-                            selectedNhomTo == null ? setSelectedNhomTo(value) : ''
+                            selectedNhomTo == null || selectedNhomTo == undefined ? setSelectedNhomTo(value) : ''
                             if (
-                              selectedNhomTo !== null &&
-                              nhomDoiTuongCNDR.findIndex((item) => item.Ma === value) > nhomDoiTuongCNDR.findIndex((item) => item.Ma === selectedNhomTo)
+                              selectedNhomTo !== null ||
+                              (selectedNhomTo !== undefined &&
+                                nhomDoiTuongCNDR.findIndex((item) => item.Ma === value) > nhomDoiTuongCNDR.findIndex((item) => item.Ma === selectedNhomTo))
                             ) {
                               setSelectedNhomTo(value)
                             }
@@ -967,7 +969,7 @@ const CongNoDauRa = () => {
                           {nhomDoiTuongCNDR?.map((item, index) => {
                             return (
                               <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomDoiTuong}>
-                                {item.Ma} - {item.Ten}
+                                {item.ThongTinNhomDoiTuong}
                               </Select.Option>
                             )
                           })}
@@ -983,13 +985,15 @@ const CongNoDauRa = () => {
                           value={selectedNhomTo}
                           onChange={(value) => {
                             setSelectedNhomTo(value)
+                            selectedNhomFrom == null || selectedNhomFrom == undefined ? setSelectedNhomFrom(value) : ''
+
                             if (
-                              selectedNhomFrom !== null &&
-                              nhomDoiTuongCNDR.findIndex((item) => item.Ma === value) < nhomDoiTuongCNDR.findIndex((item) => item.Ma === selectedNhomFrom)
+                              selectedNhomFrom !== null ||
+                              (selectedNhomFrom !== undefined &&
+                                nhomDoiTuongCNDR.findIndex((item) => item.Ma === value) < nhomDoiTuongCNDR.findIndex((item) => item.Ma === selectedNhomFrom))
                             ) {
                               setSelectedNhomFrom(value)
                             }
-                            selectedNhomFrom == null ? setSelectedNhomFrom(value) : ''
                           }}
                           style={{
                             width: '12vw',
@@ -1002,7 +1006,7 @@ const CongNoDauRa = () => {
                           {nhomDoiTuongCNDR?.map((item, index) => {
                             return (
                               <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomDoiTuong}>
-                                {item.Ma} - {item.Ten}
+                                {item.ThongTinNhomDoiTuong}
                               </Select.Option>
                             )
                           })}
@@ -1030,7 +1034,7 @@ const CongNoDauRa = () => {
                           {nhomDoiTuongCNDR?.map((item) => {
                             return (
                               <Select.Option key={item.Ma} value={item.Ma} title={item.ThongTinNhomDoiTuong}>
-                                <p>{item.ThongTinNhomDoiTuong}</p>
+                                {item.ThongTinNhomDoiTuong} <br />
                               </Select.Option>
                             )
                           })}

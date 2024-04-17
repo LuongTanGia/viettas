@@ -390,7 +390,7 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
                             disabled
                             size="small"
                             value={PLRForm?.SoChungTu || ''}
-                            className="h-[24px] w-full  px-2 rounded-[4px] resize-none border-[1px] border-gray-300 outline-none truncate"
+                            className="h-[24px] w-full  px-2 rounded-[3px] resize-none border-[1px] border-gray-300 outline-none truncate"
                           />
                         </div>
                         <div className="flex items-center gap-1">
@@ -447,7 +447,7 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
                           <label className="whitespace-nowrap text-sm">Người tạo</label>
                           <Tooltip title={dataPLRView?.NguoiTao} color="blue">
                             <input
-                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-sm overflow-ellipsis truncate"
+                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm overflow-ellipsis truncate"
                               value={dataPLRView?.NguoiTao || ''}
                               disabled
                             />
@@ -457,7 +457,7 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
                           <label className="text-sm">Lúc</label>
                           <Tooltip title={moment(dataPLRView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''} color="blue">
                             <input
-                              className="px-2 w-full resize-none rounded border outline-none text-sm truncate text-center "
+                              className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate text-center "
                               value={moment(dataPLRView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
                               disabled
                             />
@@ -469,7 +469,7 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
                           <label className="whitespace-nowrap text-sm">Người sửa</label>
                           <Tooltip title={dataPLRView?.NguoiSuaCuoi} color="blue">
                             <input
-                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border  outline-none text-sm overflow-ellipsis truncate"
+                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border  outline-none text-sm overflow-ellipsis truncate"
                               value={dataPLRView?.NguoiSuaCuoi || ''}
                               disabled
                             />
@@ -479,7 +479,7 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
                           <label className="text-sm">Lúc</label>
                           <Tooltip title={dataPLRView?.NgaySuaCuoi ? moment(dataPLRView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''} color="blue">
                             <input
-                              className="px-2 w-full resize-none rounded border outline-none text-sm truncate text-center"
+                              className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate text-center"
                               value={dataPLRView?.NgaySuaCuoi ? moment(dataPLRView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
                               disabled
                             />
@@ -608,7 +608,7 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
                             value={searchHangHoa}
                             placeholder="Nhập ký tự bạn cần tìm"
                             onChange={handleSearch}
-                            className="px-2 py-0.5 w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[1px] hover:border-blue-500 outline-none text-sm  "
+                            className="px-2 py-0.5 w-[20rem] border-slate-200  resize-none rounded-[3px] border-[1px] hover:border-blue-500 outline-none text-sm  "
                           />
                         )}
                       </div>
