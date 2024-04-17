@@ -335,7 +335,11 @@ const PhieuMuaHang = () => {
       align: 'center',
       render: (text) => (
         <div className="truncate text-start">
-          <HighlightedCell text={text} search={searchPMH} />
+          <Tooltip title={text} color="blue">
+            <span>
+              <HighlightedCell text={text} search={searchPMH} />
+            </span>
+          </Tooltip>
         </div>
       ),
     },

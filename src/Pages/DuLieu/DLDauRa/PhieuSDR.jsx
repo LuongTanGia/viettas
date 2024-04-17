@@ -302,7 +302,11 @@ const PhieuSDR = () => {
       align: 'center',
       render: (text) => (
         <div className="truncate text-start">
-          <HighlightedCell text={text} search={searchSDR} />
+          <Tooltip title={text} color="blue">
+            <span>
+              <HighlightedCell text={text} search={searchSDR} />
+            </span>
+          </Tooltip>
         </div>
       ),
     },

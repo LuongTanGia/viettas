@@ -310,7 +310,11 @@ const PhieuSDV = () => {
       align: 'center',
       render: (text) => (
         <div className="truncate text-start">
-          <HighlightedCell text={text} search={searchSDV} />
+          <Tooltip title={text} color="blue">
+            <span>
+              <HighlightedCell text={text} search={searchSDV} />
+            </span>
+          </Tooltip>
         </div>
       ),
     },

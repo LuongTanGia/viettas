@@ -340,7 +340,11 @@ const PhieuXTR = () => {
       align: 'center',
       render: (text) => (
         <div className="truncate text-start">
-          <HighlightedCell text={text} search={searchPXTR} />
+          <Tooltip title={text} color="blue">
+            <span>
+              <HighlightedCell text={text} search={searchPXTR} />
+            </span>
+          </Tooltip>
         </div>
       ),
     },

@@ -344,7 +344,11 @@ const PhieuBanLe = () => {
       align: 'center',
       render: (text) => (
         <div className="truncate text-start">
-          <HighlightedCell text={text} search={searchPBL} />
+          <Tooltip title={text} color="blue">
+            <span>
+              <HighlightedCell text={text} search={searchPBL} />
+            </span>
+          </Tooltip>
         </div>
       ),
     },

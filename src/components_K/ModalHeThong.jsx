@@ -10,6 +10,7 @@ import { TimeField } from '@mui/x-date-pickers/TimeField'
 import { RETOKEN } from '../action/Actions'
 import { toast } from 'react-toastify'
 import ActionCheckBox from '../components/util/CheckBox/ActionCheckBox'
+import { useMediaQuery } from '@mui/material'
 
 const { Option } = Select
 
@@ -45,6 +46,8 @@ const ModalHeThong = ({ close }) => {
   const [isLoading, setIsLoading] = useState(true)
 
   const [formHT, setFormHT] = useState()
+
+  const isTablet = useMediaQuery('(min-width: 768px) and (max-width: 1024px)')
 
   useEffect(() => {
     if (data) {
@@ -510,7 +513,7 @@ const ModalHeThong = ({ close }) => {
                             disabled={!formHT?.SUDUNG_BANLE || !formHT?.Ca1}
                           />
                         </div>
-                        <Tooltip title="Hôm sau" color="blue">
+                        <Tooltip title={isTablet ? 'Hôm sau' : ''} color="blue">
                           <Checkbox
                             disabled={!formHT?.SUDUNG_BANLE || !formHT?.Ca1}
                             checked={formHT?.Ca1_KetThuc >= 1440 ? true : false}
@@ -579,7 +582,7 @@ const ModalHeThong = ({ close }) => {
                             disabled={!formHT?.SUDUNG_BANLE || !formHT?.Ca2}
                           />
                         </div>
-                        <Tooltip title="Hôm sau" color="blue">
+                        <Tooltip title={isTablet ? 'Hôm sau' : ''} color="blue">
                           <Checkbox
                             checked={formHT?.Ca2_KetThuc >= 1440 ? true : false}
                             onChange={(e) => {
@@ -647,7 +650,7 @@ const ModalHeThong = ({ close }) => {
                             disabled={!formHT?.SUDUNG_BANLE || !formHT?.Ca3}
                           />
                         </div>
-                        <Tooltip title="Hôm sau" color="blue">
+                        <Tooltip title={isTablet ? 'Hôm sau' : ''} color="blue">
                           <Checkbox
                             checked={formHT?.Ca3_KetThuc >= 1440 ? true : false}
                             onChange={(e) => {
