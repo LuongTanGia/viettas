@@ -65,7 +65,7 @@ const HMCEdit = ({ close, loadingData, setTargetRow, dataHMC }) => {
                   disabled
                   required
                   size="small"
-                  className="h-[24px] w-[30%]  px-2 rounded-[4px] resize-none border-[1px] border-gray-300 outline-none truncate"
+                  className="h-[24px] w-[30%]  px-2 rounded-[3px] resize-none border-[1px] border-gray-300 outline-none truncate"
                   value={HMCForm?.Ma}
                 />
               </div>
@@ -109,7 +109,7 @@ const HMCEdit = ({ close, loadingData, setTargetRow, dataHMC }) => {
                     <Tooltip title={dataHMC?.NguoiTao} color="blue">
                       <input
                         value={dataHMC?.NguoiTao || ''}
-                        className="2xl:w-[17vw] xl:w-[20vw] lg:w-[22vw] md:w-[24vw] px-2 rounded resize-none border outline-none text-[1rem] truncate"
+                        className="2xl:w-[17vw] xl:w-[20vw] lg:w-[22vw] md:w-[24vw] px-2 rounded-[3px] resize-none border outline-none text-sm truncate"
                         disabled
                       />
                     </Tooltip>
@@ -120,7 +120,7 @@ const HMCEdit = ({ close, loadingData, setTargetRow, dataHMC }) => {
                       <input
                         value={moment(dataHMC?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
                         type="text"
-                        className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
+                        className="px-2 rounded-[3px] w-full resize-none border outline-none text-sm truncate"
                         disabled
                       />
                     </Tooltip>
@@ -132,7 +132,7 @@ const HMCEdit = ({ close, loadingData, setTargetRow, dataHMC }) => {
                     <Tooltip title={dataHMC?.NguoiSuaCuoi} color="blue">
                       <input
                         value={dataHMC?.NguoiSuaCuoi || ''}
-                        className="2xl:w-[17vw] xl:w-[20vw] lg:w-[22vw] md:w-[24vw] px-2 rounded  resize-none border outline-none text-[1rem] truncate"
+                        className="2xl:w-[17vw] xl:w-[20vw] lg:w-[22vw] md:w-[24vw] px-2 rounded-[3px] resize-none border outline-none text-sm truncate"
                         disabled
                       />
                     </Tooltip>
@@ -142,7 +142,7 @@ const HMCEdit = ({ close, loadingData, setTargetRow, dataHMC }) => {
                     <Tooltip title={dataHMC?.NgaySuaCuoi ? moment(dataHMC?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : ''} color="blue">
                       <input
                         value={dataHMC?.NgaySuaCuoi ? moment(dataHMC?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                        className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
+                        className="px-2 rounded-[3px] d w-full resize-none border outline-none text-sm truncate"
                         disabled
                       />
                     </Tooltip>

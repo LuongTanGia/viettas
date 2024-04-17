@@ -141,7 +141,7 @@ const HangHoa = () => {
   }
   const handleStatusMany = () => {
     if (selectedRowKeys.length > 0) {
-      setActionType('statusMany')
+      setActionType('status')
       setIsShowModal(true)
       setIsMaHang(selectedRowKeys)
     } else {
@@ -150,7 +150,7 @@ const HangHoa = () => {
   }
   const handleGroupMany = () => {
     if (selectedRowKeys.length > 0) {
-      setActionType('groupMany')
+      setActionType('group')
       setIsShowModal(true)
       setIsMaHang(selectedRowKeys)
     } else {

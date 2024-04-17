@@ -74,7 +74,7 @@ const NHView = ({ close, dataNH }) => {
                       <div className="flex items-center gap-2 whitespace-nowrap">
                         <label className=" text-sm">Người tạo</label>
                         <Tooltip title={dataNHView?.NguoiTao} color="blue">
-                          <input value={dataNHView?.NguoiTao || ''} className="w-full px-2 rounded resize-none border outline-none text-[1rem] truncate" disabled />
+                          <input value={dataNHView?.NguoiTao || ''} className="w-full px-2 rounded resize-none border outline-none text-sm truncate" disabled />
                         </Tooltip>
                       </div>
                       <div className="flex items-center gap-2 whitespace-nowrap ">
@@ -83,7 +83,7 @@ const NHView = ({ close, dataNH }) => {
                           <input
                             type="text"
                             value={moment(dataNHView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
-                            className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate text-center"
+                            className="px-2 rounded w-full resize-none border outline-none text-sm truncate text-center"
                             disabled
                           />
                         </Tooltip>
@@ -93,7 +93,7 @@ const NHView = ({ close, dataNH }) => {
                       <div className="flex items-center gap-2 whitespace-nowrap">
                         <label className=" text-sm">Người sửa</label>
                         <Tooltip title={dataNHView?.NguoiSuaCuoi} color="blue">
-                          <input value={dataNHView?.NguoiSuaCuoi || ''} className="w-full px-2 rounded  resize-none border outline-none text-[1rem] truncate" disabled />
+                          <input value={dataNHView?.NguoiSuaCuoi || ''} className="w-full px-2 rounded  resize-none border outline-none text-sm truncate" disabled />
                         </Tooltip>
                       </div>
                       <div className="flex items-center gap-2 whitespace-nowrap ">
@@ -101,7 +101,7 @@ const NHView = ({ close, dataNH }) => {
                         <Tooltip title={dataNHView?.NgaySuaCuoi ? moment(dataNHView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : ''} color="blue">
                           <input
                             value={dataNHView?.NgaySuaCuoi ? moment(dataNHView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                            className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate text-center"
+                            className="px-2 rounded w-full resize-none border outline-none text-sm truncate text-center"
                             disabled
                           />
                         </Tooltip>

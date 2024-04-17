@@ -142,14 +142,14 @@ const NCKView = ({ close, dataNCK }) => {
                       <div className="flex gap-2">
                         <div className="flex items-center gap-1">
                           <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Số chứng từ</label>
-                          <input type="text" value={dataNCKView?.SoChungTu || ''} className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate" readOnly />
+                          <input type="text" value={dataNCKView?.SoChungTu || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" readOnly />
                         </div>
                         <div className="flex items-center gap-1">
                           <label className="required whitespace-nowrap text-sm">Ngày</label>
                           <input
                             type="text"
                             value={moment(dataNCKView?.NgayCTu)?.format('DD/MM/YYYY') || ''}
-                            className="px-2 w-[7rem] rounded resize-none border outline-none text-[1rem] text-center truncate"
+                            className="px-2 w-[7rem] rounded resize-none border outline-none text-sm text-center truncate"
                             readOnly
                           />
                         </div>
@@ -159,13 +159,13 @@ const NCKView = ({ close, dataNCK }) => {
                         <input
                           type="text"
                           value={`${dataNCKView?.MaKho} - ${dataNCKView?.TenKho}` || ''}
-                          className="px-2 w-full rounded resize-none border outline-none text-[1rem]"
+                          className="px-2 w-full rounded resize-none border outline-none text-sm"
                           readOnly
                         />
                       </div>
                       <div className="flex items-center gap-1">
                         <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Chứng từ gốc</label>
-                        <input type="text" value={dataNCKView?.SoThamChieu || ''} className="px-2 w-full rounded resize-none border outline-none text-[1rem]" readOnly />
+                        <input type="text" value={dataNCKView?.SoThamChieu || ''} className="px-2 w-full rounded resize-none border outline-none text-sm" readOnly />
                       </div>
                     </div>
                     <div className="grid grid-cols-1 gap-2 border-2 px-2 py-3 border-black-200 rounded relative">
@@ -175,7 +175,7 @@ const NCKView = ({ close, dataNCK }) => {
                           <label className="whitespace-nowrap text-sm">Người tạo</label>
                           <Tooltip title={dataNCKView?.NguoiTao} color="blue">
                             <input
-                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-[1rem] overflow-ellipsis truncate"
+                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-sm overflow-ellipsis truncate"
                               value={dataNCKView?.NguoiTao || ''}
                               disabled
                             />
@@ -185,7 +185,7 @@ const NCKView = ({ close, dataNCK }) => {
                           <label className="text-sm">Lúc</label>
                           <Tooltip title={moment(dataNCKView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''} color="blue">
                             <input
-                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate text-center"
+                              className="px-2 w-full resize-none rounded border outline-none text-sm truncate text-center"
                               value={moment(dataNCKView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
                               disabled
                             />
@@ -197,7 +197,7 @@ const NCKView = ({ close, dataNCK }) => {
                           <label className="whitespace-nowrap text-sm">Người sửa</label>
                           <Tooltip title={dataNCKView?.NguoiSuaCuoi} color="blue">
                             <input
-                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border  outline-none text-[1rem] overflow-ellipsis truncate"
+                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border  outline-none text-sm overflow-ellipsis truncate"
                               value={dataNCKView?.NguoiSuaCuoi || ''}
                               disabled
                             />
@@ -207,7 +207,7 @@ const NCKView = ({ close, dataNCK }) => {
                           <label className="text-sm">Lúc</label>
                           <Tooltip title={dataNCKView?.NgaySuaCuoi ? moment(dataNCKView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''} color="blue">
                             <input
-                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate text-center"
+                              className="px-2 w-full resize-none rounded border outline-none text-sm truncate text-center"
                               value={dataNCKView?.NgaySuaCuoi ? moment(dataNCKView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
                               disabled
                             />
@@ -218,7 +218,7 @@ const NCKView = ({ close, dataNCK }) => {
                   </div>
                   <div className="flex items-center gap-1">
                     <label className="whitespace-nowrap min-w-[100px] flex justify-end text-sm">Ghi chú</label>
-                    <input type="text" value={dataNCKView?.GhiChu || ''} className="px-2 w-[70rem] rounded resize-none border outline-none text-[1rem]" readOnly />
+                    <input type="text" value={dataNCKView?.GhiChu || ''} className="px-2 w-[70rem] rounded resize-none border outline-none text-sm" readOnly />
                   </div>
                   <div className="border rounded">
                     <Table

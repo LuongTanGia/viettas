@@ -17,7 +17,6 @@ const NDCXoa = ({ close, dataNDC, loadingData, setTargetRow }) => {
         setTargetRow([])
       } else {
         toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
-        console.log(response.data)
       }
     } catch (error) {
       console.log(error)
@@ -26,7 +25,7 @@ const NDCXoa = ({ close, dataNDC, loadingData, setTargetRow }) => {
     }
   }
   return (
-    <div className=" fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
+    <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
       <div className="px-3 py-[12px] absolute shadow-lg bg-white rounded-md flex flex-col  max-w-[700px]">
         <div className="flex flex-col  gap-2">
           <div className="flex gap-2">

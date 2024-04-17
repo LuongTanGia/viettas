@@ -449,7 +449,7 @@ const HUYEdit = ({ close, dataHUY, loadingData, setTargetRow }) => {
                           <label className="whitespace-nowrap text-sm">Người tạo</label>
                           <Tooltip title={dataHUYView?.NguoiTao} color="blue">
                             <input
-                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-[1rem] overflow-ellipsis truncate"
+                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-sm overflow-ellipsis truncate"
                               value={dataHUYView?.NguoiTao || ''}
                               disabled
                             />
@@ -459,7 +459,7 @@ const HUYEdit = ({ close, dataHUY, loadingData, setTargetRow }) => {
                           <label className="text-sm">Lúc</label>
                           <Tooltip title={moment(dataHUYView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''} color="blue">
                             <input
-                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate text-center"
+                              className="px-2 w-full resize-none rounded border outline-none text-sm truncate text-center"
                               value={moment(dataHUYView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
                               disabled
                             />
@@ -471,7 +471,7 @@ const HUYEdit = ({ close, dataHUY, loadingData, setTargetRow }) => {
                           <label className="whitespace-nowrap text-sm">Người sửa</label>
                           <Tooltip title={dataHUYView?.NguoiSuaCuoi} color="blue">
                             <input
-                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border  outline-none text-[1rem] overflow-ellipsis truncate"
+                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border  outline-none text-sm overflow-ellipsis truncate"
                               value={dataHUYView?.NguoiSuaCuoi || ''}
                               disabled
                             />
@@ -481,7 +481,7 @@ const HUYEdit = ({ close, dataHUY, loadingData, setTargetRow }) => {
                           <label className="text-sm">Lúc</label>
                           <Tooltip title={dataHUYView?.NgaySuaCuoi ? moment(dataHUYView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''} color="blue">
                             <input
-                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate text-center"
+                              className="px-2 w-full resize-none rounded border outline-none text-sm truncate text-center"
                               value={dataHUYView?.NgaySuaCuoi ? moment(dataHUYView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
                               disabled
                             />
@@ -586,7 +586,7 @@ const HUYEdit = ({ close, dataHUY, loadingData, setTargetRow }) => {
                             value={searchHangHoa}
                             placeholder="Nhập ký tự bạn cần tìm"
                             onChange={handleSearch}
-                            className="px-2 py-0.5 w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[1px] hover:border-blue-500 outline-none text-[1rem]  "
+                            className="px-2 py-0.5 w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[1px] hover:border-blue-500 outline-none text-sm  "
                           />
                         )}
                       </div>

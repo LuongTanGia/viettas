@@ -89,7 +89,7 @@ const PCView = ({ close, dataPC }) => {
                         <Tooltip title={dataPCView?.NguoiTao} color="blue">
                           <input
                             value={dataPCView?.NguoiTao || ''}
-                            className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded resize-none border outline-none text-[1rem] truncate"
+                            className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded resize-none border outline-none text-sm truncate"
                             disabled
                           />
                         </Tooltip>
@@ -100,7 +100,7 @@ const PCView = ({ close, dataPC }) => {
                           <input
                             type="text"
                             value={moment(dataPCView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
-                            className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
+                            className="px-2 rounded w-full resize-none border outline-none text-sm truncate"
                             disabled
                           />
                         </Tooltip>
@@ -112,7 +112,7 @@ const PCView = ({ close, dataPC }) => {
                         <Tooltip title={dataPCView?.NguoiSuaCuoi} color="blue">
                           <input
                             value={dataPCView?.NguoiSuaCuoi || ''}
-                            className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded  resize-none border outline-none text-[1rem] truncate"
+                            className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded  resize-none border outline-none text-sm truncate"
                             disabled
                           />
                         </Tooltip>
@@ -122,7 +122,7 @@ const PCView = ({ close, dataPC }) => {
                         <Tooltip title={dataPCView?.NgaySuaCuoi ? moment(dataPCView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : ''} color="blue">
                           <input
                             value={dataPCView?.NgaySuaCuoi ? moment(dataPCView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                            className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
+                            className="px-2 rounded w-full resize-none border outline-none text-sm truncate"
                             disabled
                           />
                         </Tooltip>

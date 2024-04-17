@@ -35,7 +35,6 @@ const initState = {
   DataDetails: [],
   SoChungTu: '',
 }
-console.log(initState)
 // eslint-disable-next-line react/prop-types
 function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, handleShowPrint_action, handleShowPrint_kho_action }) {
   // yourMaHangOptions, yourTenHangOptions
@@ -50,6 +49,8 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
   })
   const [errors, setErrors] = useState({
     MaDoiTuong: '',
+    TenDoiTuong: '',
+    DiaChi: '',
   })
   const [form, setForm] = useState()
   const [listDoiTuong, setListDoiTuong] = useState([])
@@ -83,6 +84,14 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
   }, [isShow, typeAction])
 
   useEffect(() => {
+    if (typeAction == 'create') {
+      const getKHVL = listDoiTuong?.find((item) => item.Ma === 'KHVL')
+      const defaultMa = getKHVL?.Ma || listDoiTuong[0]?.Ma
+      handleChangeInput(defaultMa)
+    }
+  }, [listDoiTuong])
+
+  useEffect(() => {
     typeAction === 'edit' || typeAction === 'view' ? setForm(data_chitiet.DataResult) : setForm({ ...initState, ...Dates })
     setDataChitiet(form?.DataDetails)
   }, [dataRecord, form?.DataDetails])
@@ -107,11 +116,23 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
     setShowPopup(false)
   }
   const handleChangeInput = async (value) => {
-    const [MaDoiTuong, TenDoiTuong, DiaChi] = value.split(' - ')
-    setForm({ ...form, MaDoiTuong, TenDoiTuong, DiaChi })
-    setErrors({ ...errors, MaDoiTuong: '' })
-    const result_listHp = await DANHSACHHANGHOA_PBS(API.DANHSACHHANGHOA_PBS, token, { ...form, MaDoiTuong, TenDoiTuong, DiaChi })
-    setDataListHP(result_listHp)
+    if (value === 'KHVL') {
+      const selectedDoiTuong = listDoiTuong?.find((item) => item.Ma === value)
+      setForm({ ...form, MaDoiTuong: selectedDoiTuong.Ma, TenDoiTuong: selectedDoiTuong.Ten, DiaChi: selectedDoiTuong.DiaChi })
+      const result_listHp = await DANHSACHHANGHOA_PBS(API.DANHSACHHANGHOA_PBS, token, {
+        ...form,
+        MaDoiTuong: selectedDoiTuong.Ma,
+        TenDoiTuong: selectedDoiTuong.Ten,
+        DiaChi: selectedDoiTuong.DiaChi,
+      })
+      setDataListHP(result_listHp)
+    } else {
+      const [MaDoiTuong, TenDoiTuong, DiaChi] = value.split(' - ')
+      setForm({ ...form, MaDoiTuong, TenDoiTuong, DiaChi })
+      setErrors({ ...errors, MaDoiTuong: '' })
+      const result_listHp = await DANHSACHHANGHOA_PBS(API.DANHSACHHANGHOA_PBS, token, { ...form, MaDoiTuong, TenDoiTuong, DiaChi })
+      setDataListHP(result_listHp)
+    }
   }
   const handleChangeInput_kho = async (value) => {
     setForm({ ...form, MaKho: value })
@@ -147,6 +168,15 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
         })
         return
       }
+      if (form?.MaDoiTuong == 'KHVL') {
+        if (!form?.TenDoiTuong?.trim() || !form?.DiaChi?.trim()) {
+          setErrors({
+            TenDoiTuong: form?.TenDoiTuong?.trim() ? null : 'Tên đối tượng không được để trống',
+            DiaChi: form?.DiaChi?.trim() ? null : 'Địa chỉ không được để trống',
+          })
+          return
+        }
+      }
       const newData = dataChitiet?.map((item, index) => {
         return {
           ...item,
@@ -160,6 +190,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
           const data = { ...form, ...Dates, NgayCTu: Dates.NgayCTu.format('YYYY-MM-DD'), DataDetails: newData }
           const res = await THEMPHIEUBANHANG(API.THEMPHIEUBANHANG, token, data)
           const dateCT = { ...form, ...Dates, NgayCTu: Dates.NgayCTu.format('YYYY-MM-DD') }
+          const selectedDoiTuong = listDoiTuong?.find((item) => item.Ma === 'KHVL')
           if (res.DataError == 0) {
             actionType === 'print'
               ? handleShowPrint_action(dateCT.NgayCTu, res.DataResults[0]?.SoChungTu, 'create')
@@ -167,7 +198,13 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                 ? handleShowPrint_kho_action(dateCT.NgayCTu, res.DataResults[0]?.SoChungTu, 'create')
                 : toast.success(res.DataErrorDescription, { autoClose: 1000 })
             setMaHang(res.DataResults[0]?.SoChungTu)
-            setForm({ ...initState, MaKho: listKhoHang?.length > 0 ? listKhoHang[0]?.MaKho : '' })
+            setForm({
+              ...initState,
+              MaKho: listKhoHang?.length > 0 ? listKhoHang[0]?.MaKho : '',
+              MaDoiTuong: selectedDoiTuong.Ma,
+              TenDoiTuong: selectedDoiTuong.Ten,
+              DiaChi: selectedDoiTuong.DiaChi,
+            })
             setDataChitiet([])
           } else {
             toast.error(res.DataErrorDescription, { autoClose: 2000 })
@@ -177,6 +214,15 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
         toast.warning('Chi tiết hàng không được để trống', { autoClose: 1000 })
       }
     } else if (typeAction === 'edit') {
+      if (form?.MaDoiTuong == 'KHVL') {
+        if (!form?.TenDoiTuong?.trim() || !form?.DiaChi?.trim()) {
+          setErrors({
+            TenDoiTuong: form?.TenDoiTuong?.trim() ? null : 'Tên đối tượng không được để trống',
+            DiaChi: form?.DiaChi?.trim() ? null : 'Địa chỉ không được để trống',
+          })
+          return
+        }
+      }
       const newData = dataChitiet.map((item, index) => {
         return {
           ...item,
@@ -213,6 +259,15 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
         })
         return
       }
+      if (form?.MaDoiTuong == 'KHVL') {
+        if (!form?.TenDoiTuong?.trim() || !form?.DiaChi?.trim()) {
+          setErrors({
+            TenDoiTuong: form?.TenDoiTuong?.trim() ? null : 'Tên đối tượng không được để trống',
+            DiaChi: form?.DiaChi?.trim() ? null : 'Địa chỉ không được để trống',
+          })
+          return
+        }
+      }
       const newData = dataChitiet?.map((item, index) => {
         return {
           ...item,
@@ -237,6 +292,15 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
         toast.warning('Chi tiết hàng không được để trống', { autoClose: 1000 })
       }
     } else if (typeAction === 'edit') {
+      if (form?.MaDoiTuong == 'KHVL') {
+        if (!form?.TenDoiTuong?.trim() || !form?.DiaChi?.trim()) {
+          setErrors({
+            TenDoiTuong: form?.TenDoiTuong?.trim() ? null : 'Tên đối tượng không được để trống',
+            DiaChi: form?.DiaChi?.trim() ? null : 'Địa chỉ không được để trống',
+          })
+          return
+        }
+      }
       const newData = dataChitiet.map((item, index) => {
         return {
           ...item,
@@ -269,7 +333,6 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
     handleShowPrint_kho_action(form?.NgayCTu, form?.SoChungTu)
   }
   const isAdd = useMemo(() => dataChitiet && dataChitiet?.map((item) => item.MaHang).includes('Chọn mã hàng'), [dataChitiet])
-
   const addRecord = () => {
     if (!form?.MaDoiTuong?.trim()) {
       setErrors({
@@ -297,12 +360,11 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
       },
     ])
   }
-
   return (
     <>
       {isModalOpen ? (
         <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10 ">
-          <div className=" p-2 absolute shadow-lg bg-white rounded-md flex flex-col gap-2">
+          <div className="p-2 absolute shadow-lg bg-white rounded-md flex flex-col gap-2">
             <div className="flex flex-col gap-2 p-1 xl:w-[80vw] lg:w-[90vw] md:w-[98vw]">
               <div className="flex gap-2">
                 <img src={Logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
@@ -381,13 +443,15 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                           className="w-full outline-none truncate"
                           placeholder={errors.MaDoiTuong ? errors.MaDoiTuong : ''}
                           status={errors.MaDoiTuong ? 'error' : ''}
-                          value={form?.MaDoiTuong !== '' ? `${form?.MaDoiTuong} - ${form?.TenDoiTuong}` : null}
+                          value={
+                            form?.MaDoiTuong == null ? null : form?.MaDoiTuong === 'KHVL' ? `${form?.MaDoiTuong} - Khách vãng lai` : `${form?.MaDoiTuong} - ${form?.TenDoiTuong}`
+                          }
                           onChange={handleChangeInput}
                           showSearch
                           optionFilterProp="children"
                         >
-                          {listDoiTuong?.map((item, index) => (
-                            <Option value={`${item.Ma} - ${item.Ten} - ${item.DiaChi}`} key={index}>
+                          {listDoiTuong?.map((item) => (
+                            <Option value={`${item.Ma} - ${item.Ten} - ${item.DiaChi}`} key={item.Ma}>
                               {item?.Ma} - {item?.Ten}
                             </Option>
                           ))}
@@ -396,15 +460,28 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                     </div>
                     <div className="flex items-center gap-1">
                       <label className="text-sm whitespace-nowrap min-w-[70px] flex justify-end">Tên</label>
-                      <input
-                        type="text"
-                        className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm"
-                        value={form?.TenDoiTuong}
-                        name="TenDoiTuong"
-                        readOnly={typeAction === 'view' || typeAction === 'edit' ? true : false}
-                        onChange={handleChangeInput}
-                        disabled
-                      />
+                      {typeAction === 'view' ? (
+                        <input type="text" className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm" value={form?.TenDoiTuong} disabled />
+                      ) : (
+                        <Input
+                          size="small"
+                          className={`${errors.TenDoiTuong ? 'border-red-500' : ''} w-full overflow-hidden whitespace-nowrap overflow-ellipsis`}
+                          value={form?.TenDoiTuong}
+                          placeholder={errors.TenDoiTuong && errors.TenDoiTuong}
+                          onChange={(e) => {
+                            if (form?.DoiTuong !== 'KHVL') {
+                              setForm({
+                                ...form,
+                                TenDoiTuong: e.target.value,
+                              })
+                              setErrors({ ...errors, TenDoiTuong: '' })
+                            } else {
+                              handleChangeInput
+                            }
+                          }}
+                          disabled={form?.MaDoiTuong == 'KHVL' ? false : true}
+                        />
+                      )}
                     </div>
                   </div>
                   <div className="grid grid-cols-1 lg:col-span-2 md:col-span-3 px-2 border-2 py-2 border-black-200 rounded relative">
@@ -456,11 +533,21 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                   ) : (
                     <Input
                       size="small"
-                      className="w-full overflow-hidden whitespace-nowrap overflow-ellipsis"
                       value={form?.DiaChi}
-                      onChange={handleChangeInput}
-                      readOnly
-                      disabled
+                      placeholder={errors.DiaChi && errors.DiaChi}
+                      className={`${errors.DiaChi ? 'border-red-500' : ''} w-full overflow-hidden whitespace-nowrap overflow-ellipsis`}
+                      onChange={(e) => {
+                        if (form?.DoiTuong !== 'KHVL') {
+                          setForm({
+                            ...form,
+                            DiaChi: e.target.value,
+                          })
+                          setErrors({ ...errors, DiaChi: '' })
+                        } else {
+                          handleChangeInput
+                        }
+                      }}
+                      disabled={form?.MaDoiTuong == 'KHVL' ? false : true}
                     />
                   )}
                 </div>
@@ -470,14 +557,21 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                       Kho hàng
                     </label>
                     {typeAction === 'view' ? (
-                      <input type="text" className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm" value={form?.MaKho} name="DiaChi" readOnly disabled />
+                      <input
+                        type="text"
+                        className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm"
+                        value={`${form?.MaKho} - ${form?.TenKho}`}
+                        name="DiaChi"
+                        readOnly
+                        disabled
+                      />
                     ) : (
                       <Select
                         className="min-w-[150px]"
                         size="small"
                         readOnly={typeAction === 'view' ? true : false}
                         onChange={handleChangeInput_kho}
-                        value={form?.MaKho || undefined}
+                        value={form?.MaKho}
                         showSearch
                         optionFilterProp="children"
                         disabled={typeAction === 'view' ? true : false}
@@ -509,9 +603,9 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                 <div className="pb-0 relative">
                   {typeAction !== 'view' ? (
                     <Tooltip
-                      title={isAdd ? 'Vui lòng chọn tên hàng.' : form.MaDoiTuong == null ? 'Vui lòng chọn đối tượng' : 'Bấm vào đây để thêm hàng hoặc F9 để chọn từ danh sách.'}
+                      title={isAdd ? 'Vui lòng chọn tên hàng.' : form?.MaDoiTuong == null ? 'Vui lòng chọn đối tượng' : 'Bấm vào đây để thêm hàng hoặc F9 để chọn từ danh sách.'}
                       placement="topLeft"
-                      color={isAdd || form.MaDoiTuong == null ? 'gray' : 'blue'}
+                      color={isAdd || form?.MaDoiTuong == null ? 'gray' : 'blue'}
                     >
                       <FloatButton
                         className="z-3 absolute w-[30px] h-[30px]"
@@ -519,7 +613,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                           right: dataChitiet?.length > 0 ? 10 : 5,
                           top: 4,
                         }}
-                        type={isAdd || form.MaDoiTuong == null ? 'default' : 'primary'}
+                        type={isAdd || form?.MaDoiTuong == null ? 'default' : 'primary'}
                         icon={<IoMdAddCircle />}
                         onClick={addRecord}
                       />

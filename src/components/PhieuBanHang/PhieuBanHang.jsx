@@ -183,10 +183,14 @@ function PhieuBanHang() {
     setDataRecord(record)
   }
   const handleEdit = async (record) => {
-    await THONGTINPHIEU(API.CHITIETEDITPBS, token, record?.SoChungTu, dispatch)
-    setIsShow(true)
-    setType('edit')
-    setDataRecord(record)
+    const res = await THONGTINPHIEU(API.CHITIETEDITPBS, token, record?.SoChungTu, dispatch)
+    if (res.DataError == 0) {
+      setIsShow(true)
+      setType('edit')
+      setDataRecord(record)
+    } else {
+      toast.warning(res.DataErrorDescription, { autoClose: 2000 })
+    }
   }
   const handleCreate = async () => {
     setIsShow(true)
@@ -224,7 +228,8 @@ function PhieuBanHang() {
     await LAPPHIEUTHU(API.LAPPHIEUTHU, token, { SoChungTu: record?.SoChungTu }, dispatch)
     setIsShowDelete(false)
     setIsShow(false)
-    setDataRecord([])
+    setDataRecord(record?.SoChungTu)
+    setSelectMH(record?.SoChungTu)
   }
   const handleChangePhieuThu = async (record) => {
     setIsShowDelete(true)
@@ -523,15 +528,17 @@ function PhieuBanHang() {
                   hidden={hidden}
                 />
               </div>
-              <ActionModals
-                isShow={isShow}
-                handleClose={handleClose}
-                dataRecord={dataRecord}
-                typeAction={type}
-                setMaHang={setMaHang}
-                handleShowPrint_action={handleShowPrint_action}
-                handleShowPrint_kho_action={handleShowPrint_kho_action}
-              />
+              {isShow ? (
+                <ActionModals
+                  isShow={isShow}
+                  handleClose={handleClose}
+                  dataRecord={dataRecord}
+                  typeAction={type}
+                  setMaHang={setMaHang}
+                  handleShowPrint_action={handleShowPrint_action}
+                  handleShowPrint_kho_action={handleShowPrint_kho_action}
+                />
+              ) : null}
               <Model isShow={isShowDelete} handleClose={handleClose} record={dataRecord} ActionDelete={ActionDelete} typeModel={typeModel} ActionPay={ActionPay} />
               <ModelPrint
                 selectMH={selectMH}

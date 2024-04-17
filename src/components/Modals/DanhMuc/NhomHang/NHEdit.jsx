@@ -122,7 +122,7 @@ const NHEdit = ({ close, loadingData, setTargetRow, dataNH }) => {
                   <div className="flex items-center gap-2 whitespace-nowrap">
                     <label className=" text-sm">Người tạo</label>
                     <Tooltip title={dataNH?.NguoiTao} color="blue">
-                      <input value={dataNH?.NguoiTao || ''} className="w-full px-2 rounded resize-none border outline-none text-[1rem] truncate" disabled />
+                      <input value={dataNH?.NguoiTao || ''} className="w-full px-2 rounded resize-none border outline-none text-sm truncate" disabled />
                     </Tooltip>
                   </div>
                   <div className="flex items-center gap-2 whitespace-nowrap">
@@ -131,7 +131,7 @@ const NHEdit = ({ close, loadingData, setTargetRow, dataNH }) => {
                       <input
                         value={moment(dataNH?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
                         type="text"
-                        className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate text-center"
+                        className="px-2 rounded w-full resize-none border outline-none text-sm truncate text-center"
                         disabled
                       />
                     </Tooltip>
@@ -141,7 +141,7 @@ const NHEdit = ({ close, loadingData, setTargetRow, dataNH }) => {
                   <div className="flex items-center gap-2 whitespace-nowrap">
                     <label className=" text-sm">Người sửa</label>
                     <Tooltip title={dataNH?.NguoiSuaCuoi} color="blue">
-                      <input value={dataNH?.NguoiSuaCuoi || ''} className="w-full px-2 rounded  resize-none border outline-none text-[1rem] truncate" disabled />
+                      <input value={dataNH?.NguoiSuaCuoi || ''} className="w-full px-2 rounded  resize-none border outline-none text-sm truncate" disabled />
                     </Tooltip>
                   </div>
                   <div className="flex items-center gap-2 whitespace-nowrap">
@@ -149,7 +149,7 @@ const NHEdit = ({ close, loadingData, setTargetRow, dataNH }) => {
                     <Tooltip title={dataNH?.NgaySuaCuoi ? moment(dataNH?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : ''} color="blue">
                       <input
                         value={dataNH?.NgaySuaCuoi ? moment(dataNH?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                        className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate text-center"
+                        className="px-2 rounded w-full resize-none border outline-none text-sm truncate text-center"
                         disabled
                       />
                     </Tooltip>

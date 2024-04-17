@@ -191,7 +191,7 @@ const PCEdit = ({ close, loadingData, setTargetRow, dataPC }) => {
                         <Tooltip title={dataPC?.NguoiTao} color="blue">
                           <input
                             value={dataPC?.NguoiTao || ''}
-                            className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded resize-none border outline-none text-[1rem] truncate"
+                            className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded resize-none border outline-none text-sm truncate"
                             disabled
                           />
                         </Tooltip>
@@ -202,7 +202,7 @@ const PCEdit = ({ close, loadingData, setTargetRow, dataPC }) => {
                           <input
                             value={moment(dataPC?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
                             type="text"
-                            className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
+                            className="px-2 rounded w-full resize-none border outline-none text-sm truncate"
                             disabled
                           />
                         </Tooltip>
@@ -214,7 +214,7 @@ const PCEdit = ({ close, loadingData, setTargetRow, dataPC }) => {
                         <Tooltip title={dataPC?.NguoiSuaCuoi} color="blue">
                           <input
                             value={dataPC?.NguoiSuaCuoi || ''}
-                            className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded  resize-none border outline-none text-[1rem] truncate"
+                            className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded  resize-none border outline-none text-sm truncate"
                             disabled
                           />
                         </Tooltip>
@@ -224,7 +224,7 @@ const PCEdit = ({ close, loadingData, setTargetRow, dataPC }) => {
                         <Tooltip title={dataPC?.NgaySuaCuoi ? moment(dataPC?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : ''} color="blue">
                           <input
                             value={dataPC?.NgaySuaCuoi ? moment(dataPC?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                            className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
+                            className="px-2 rounded w-full resize-none border outline-none text-sm truncate"
                             disabled
                           />
                         </Tooltip>

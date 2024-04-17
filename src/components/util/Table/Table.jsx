@@ -149,7 +149,7 @@ function Tables({ hidden, loadingSearch, param, columName, height, handleView, h
         },
         render: (address) => (
           <Tooltip placement="topLeft" title={address} className=" truncate" color="blue">
-            <div className="truncate">{address}</div>
+            <div className="truncate text-start">{address}</div>
           </Tooltip>
         ),
       }

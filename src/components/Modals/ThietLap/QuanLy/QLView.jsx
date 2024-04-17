@@ -115,7 +115,7 @@ const QLView = ({ close, dataQL }) => {
                         <Tooltip title={dataQLView?.NguoiTao} color="blue">
                           <input
                             value={dataQLView?.NguoiTao || ''}
-                            className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded resize-none border outline-none text-[1rem] truncate"
+                            className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded resize-none border outline-none text-sm truncate"
                             disabled
                           />
                         </Tooltip>
@@ -126,7 +126,7 @@ const QLView = ({ close, dataQL }) => {
                           <input
                             type="text"
                             value={moment(dataQLView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
-                            className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
+                            className="px-2 rounded w-full resize-none border outline-none text-sm truncate"
                             disabled
                           />
                         </Tooltip>
@@ -138,7 +138,7 @@ const QLView = ({ close, dataQL }) => {
                         <Tooltip title={dataQLView?.NguoiSuaCuoi} color="blue">
                           <input
                             value={dataQLView?.NguoiSuaCuoi || ''}
-                            className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded  resize-none border outline-none text-[1rem] truncate"
+                            className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded  resize-none border outline-none text-sm truncate"
                             disabled
                           />
                         </Tooltip>
@@ -148,7 +148,7 @@ const QLView = ({ close, dataQL }) => {
                         <Tooltip title={dataQLView?.NgaySuaCuoi ? moment(dataQLView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : ''} color="blue">
                           <input
                             value={dataQLView?.NgaySuaCuoi ? moment(dataQLView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                            className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
+                            className="px-2 rounded w-full resize-none border outline-none text-sm truncate"
                             disabled
                           />
                         </Tooltip>

@@ -142,14 +142,14 @@ const XDCXem = ({ close, dataXDC }) => {
                       <div className="flex gap-2">
                         <div className="flex items-center gap-1">
                           <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Số chứng từ</label>
-                          <input type="text" value={dataXDCView?.SoChungTu || ''} className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate" readOnly />
+                          <input type="text" value={dataXDCView?.SoChungTu || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" readOnly />
                         </div>
                         <div className="flex items-center gap-1">
                           <label className="required whitespace-nowrap text-sm">Ngày</label>
                           <input
                             type="text"
                             value={moment(dataXDCView?.NgayCTu)?.format('DD/MM/YYYY') || ''}
-                            className="px-2 w-[7rem] rounded resize-none border outline-none text-[1rem] text-center truncate"
+                            className="px-2 w-[7rem] rounded resize-none border outline-none text-sm text-center truncate"
                             readOnly
                           />
                         </div>
@@ -159,7 +159,7 @@ const XDCXem = ({ close, dataXDC }) => {
                         <input
                           type="text"
                           value={`${dataXDCView?.MaKho} - ${dataXDCView?.TenKho}` || ''}
-                          className="px-2 w-full rounded resize-none border outline-none text-[1rem]"
+                          className="px-2 w-full rounded resize-none border outline-none text-sm"
                           readOnly
                         />
                       </div>
@@ -171,7 +171,7 @@ const XDCXem = ({ close, dataXDC }) => {
                           <label className="whitespace-nowrap text-sm">Người tạo</label>
                           <Tooltip title={dataXDCView?.NguoiTao} color="blue">
                             <input
-                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-[1rem] overflow-ellipsis truncate"
+                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-sm overflow-ellipsis truncate"
                               value={dataXDCView?.NguoiTao || ''}
                               readOnly
                             />
@@ -181,7 +181,7 @@ const XDCXem = ({ close, dataXDC }) => {
                           <label className="text-sm">Lúc</label>
                           <Tooltip title={moment(dataXDCView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''} color="blue">
                             <input
-                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
+                              className="px-2 w-full resize-none rounded border outline-none text-sm truncate"
                               value={moment(dataXDCView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
                               readOnly
                             />
@@ -193,7 +193,7 @@ const XDCXem = ({ close, dataXDC }) => {
                           <label className="whitespace-nowrap text-sm">Người sửa</label>
                           <Tooltip title={dataXDCView?.NguoiSuaCuoi} color="blue">
                             <input
-                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border  outline-none text-[1rem] overflow-ellipsis truncate"
+                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border  outline-none text-sm overflow-ellipsis truncate"
                               value={dataXDCView?.NguoiSuaCuoi || ''}
                               readOnly
                             />
@@ -203,7 +203,7 @@ const XDCXem = ({ close, dataXDC }) => {
                           <label className="text-sm">Lúc</label>
                           <Tooltip title={dataXDCView?.NgaySuaCuoi ? moment(dataXDCView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''} color="blue">
                             <input
-                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
+                              className="px-2 w-full resize-none rounded border outline-none text-sm truncate"
                               value={dataXDCView?.NgaySuaCuoi ? moment(dataXDCView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
                               readOnly
                             />
@@ -214,7 +214,7 @@ const XDCXem = ({ close, dataXDC }) => {
                   </div>
                   <div className="flex items-center gap-1">
                     <label className="whitespace-nowrap min-w-[100px] flex justify-end text-sm">Ghi chú</label>
-                    <input type="text" value={dataXDCView?.GhiChu || ''} className="px-2 w-[70rem] rounded resize-none border outline-none text-[1rem]" readOnly />
+                    <input type="text" value={dataXDCView?.GhiChu || ''} className="px-2 w-[70rem] rounded resize-none border outline-none text-sm" readOnly />
                   </div>
                   <div className="border rounded">
                     <Table

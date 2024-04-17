@@ -171,7 +171,7 @@ const KHOEdit = ({ close, loadingData, setTargetRow, dataKHO }) => {
                     <Tooltip title={dataKHO?.NguoiTao} color="blue">
                       <input
                         value={dataKHO?.NguoiTao || ''}
-                        className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded resize-none border outline-none text-[1rem] truncate"
+                        className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded resize-none border outline-none text-sm truncate"
                         disabled
                       />
                     </Tooltip>
@@ -182,7 +182,7 @@ const KHOEdit = ({ close, loadingData, setTargetRow, dataKHO }) => {
                       <input
                         value={moment(dataKHO?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
                         type="text"
-                        className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
+                        className="px-2 rounded w-full resize-none border outline-none text-sm truncate"
                         disabled
                       />
                     </Tooltip>
@@ -194,7 +194,7 @@ const KHOEdit = ({ close, loadingData, setTargetRow, dataKHO }) => {
                     <Tooltip title={dataKHO?.NguoiSuaCuoi} color="blue">
                       <input
                         value={dataKHO?.NguoiSuaCuoi || ''}
-                        className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded  resize-none border outline-none text-[1rem] truncate"
+                        className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded  resize-none border outline-none text-sm truncate"
                         disabled
                       />
                     </Tooltip>
@@ -204,7 +204,7 @@ const KHOEdit = ({ close, loadingData, setTargetRow, dataKHO }) => {
                     <Tooltip title={dataKHO?.NgaySuaCuoi ? moment(dataKHO?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : ''} color="blue">
                       <input
                         value={dataKHO?.NgaySuaCuoi ? moment(dataKHO?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                        className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
+                        className="px-2 rounded w-full resize-none border outline-none text-sm truncate"
                         disabled
                       />
                     </Tooltip>
