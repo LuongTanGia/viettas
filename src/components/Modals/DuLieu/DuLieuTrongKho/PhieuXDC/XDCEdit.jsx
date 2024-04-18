@@ -195,17 +195,21 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
         }
       })
       if (newData?.length > 0) {
-        const response = await categoryAPI.XDCEdit(
-          { SoChungTu: dataXDC?.SoChungTu, Data: { ...XDCForm, NgayCTu: dayjs(XDCForm?.NgayCTu).format('YYYY-MM-DD'), DataDetails: newData } },
-          TokenAccess,
-        )
-        if (response.data.DataError == 0) {
-          isPrint ? handlePrint() : (close(), toast.success(response.data.DataErrorDescription, { autoClose: 1000 }))
-          loadingData()
-          setTargetRow(dataXDC?.SoChungTu)
+        if (isAdd) {
+          toast.warning('Vui lòng chọn mã hàng', { autoClose: 2000 })
         } else {
-          console.log('sai', { SoChungTu: dataXDC?.SoChungTu, Data: { ...XDCForm, DataDetails: selectedRowData } })
-          toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
+          const response = await categoryAPI.XDCEdit(
+            { SoChungTu: dataXDC?.SoChungTu, Data: { ...XDCForm, NgayCTu: dayjs(XDCForm?.NgayCTu).format('YYYY-MM-DD'), DataDetails: newData } },
+            TokenAccess,
+          )
+          if (response.data.DataError == 0) {
+            isPrint ? handlePrint() : (close(), toast.success(response.data.DataErrorDescription, { autoClose: 1000 }))
+            loadingData()
+            setTargetRow(dataXDC?.SoChungTu)
+          } else {
+            console.log('sai', { SoChungTu: dataXDC?.SoChungTu, Data: { ...XDCForm, DataDetails: selectedRowData } })
+            toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
+          }
         }
       } else {
         toast.warning('Chi tiết hàng không được để trống', { autoClose: 1000 })
@@ -449,7 +453,7 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
                           <label className="whitespace-nowrap text-sm">Người tạo</label>
                           <Tooltip title={dataXDCView?.NguoiTao} color="blue">
                             <input
-                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-[1rem] overflow-ellipsis truncate"
+                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm overflow-ellipsis truncate"
                               value={dataXDCView?.NguoiTao || ''}
                               disabled
                             />
@@ -459,7 +463,7 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
                           <label className="text-sm">Lúc</label>
                           <Tooltip title={moment(dataXDCView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''} color="blue">
                             <input
-                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate  text-center"
+                              className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate  text-center"
                               value={moment(dataXDCView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
                               disabled
                             />
@@ -471,7 +475,7 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
                           <label className="whitespace-nowrap text-sm">Người sửa</label>
                           <Tooltip title={dataXDCView?.NguoiSuaCuoi} color="blue">
                             <input
-                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border  outline-none text-[1rem] overflow-ellipsis truncate"
+                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border  outline-none text-sm overflow-ellipsis truncate"
                               value={dataXDCView?.NguoiSuaCuoi || ''}
                               disabled
                             />
@@ -481,7 +485,7 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
                           <label className="text-sm">Lúc</label>
                           <Tooltip title={dataXDCView?.NgaySuaCuoi ? moment(dataXDCView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''} color="blue">
                             <input
-                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate text-center"
+                              className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate text-center"
                               value={dataXDCView?.NgaySuaCuoi ? moment(dataXDCView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
                               disabled
                             />
@@ -585,7 +589,7 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
                             value={searchHangHoa}
                             placeholder="Nhập ký tự bạn cần tìm"
                             onChange={handleSearch}
-                            className="px-2 py-0.5 w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[1px] hover:border-blue-500 outline-none text-[1rem]  "
+                            className="px-2 py-0.5 w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[1px] hover:border-blue-500 outline-none text-sm  "
                           />
                         )}
                       </div>

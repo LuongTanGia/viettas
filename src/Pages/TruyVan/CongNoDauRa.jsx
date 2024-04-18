@@ -72,6 +72,10 @@ const CongNoDauRa = () => {
   }, [dataCRUD])
 
   useEffect(() => {
+    selectedNhomFrom == null ? setSelectedNhomTo(null) : ''
+  }, [selectedNhomFrom])
+
+  useEffect(() => {
     const ListNhomDoiTuongCNDR = async () => {
       try {
         const response = await categoryAPI.ListNhomDoiTuong_CNDR(TokenAccess)
@@ -721,6 +725,7 @@ const CongNoDauRa = () => {
       }
     })
     .filter((item) => item !== null)
+  console.log('1', selectedNhomFrom, '2', selectedNhomTo)
   return (
     <>
       {dataCRUD?.VIEW == false ? (
@@ -967,7 +972,7 @@ const CongNoDauRa = () => {
                           {nhomDoiTuongCNDR?.map((item, index) => {
                             return (
                               <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomDoiTuong}>
-                                {item.Ma} - {item.Ten}
+                                {item.ThongTinNhomDoiTuong}
                               </Select.Option>
                             )
                           })}
@@ -983,13 +988,14 @@ const CongNoDauRa = () => {
                           value={selectedNhomTo}
                           onChange={(value) => {
                             setSelectedNhomTo(value)
+                            selectedNhomFrom == null ? setSelectedNhomFrom(value) : ''
+
                             if (
                               selectedNhomFrom !== null &&
                               nhomDoiTuongCNDR.findIndex((item) => item.Ma === value) < nhomDoiTuongCNDR.findIndex((item) => item.Ma === selectedNhomFrom)
                             ) {
                               setSelectedNhomFrom(value)
                             }
-                            selectedNhomFrom == null ? setSelectedNhomFrom(value) : ''
                           }}
                           style={{
                             width: '12vw',
@@ -1002,7 +1008,7 @@ const CongNoDauRa = () => {
                           {nhomDoiTuongCNDR?.map((item, index) => {
                             return (
                               <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomDoiTuong}>
-                                {item.Ma} - {item.Ten}
+                                {item.ThongTinNhomDoiTuong}
                               </Select.Option>
                             )
                           })}
@@ -1030,7 +1036,7 @@ const CongNoDauRa = () => {
                           {nhomDoiTuongCNDR?.map((item) => {
                             return (
                               <Select.Option key={item.Ma} value={item.Ma} title={item.ThongTinNhomDoiTuong}>
-                                <p>{item.ThongTinNhomDoiTuong}</p>
+                                {item.ThongTinNhomDoiTuong} <br />
                               </Select.Option>
                             )
                           })}

@@ -3,7 +3,7 @@
 import moment from 'moment'
 import { toast } from 'react-toastify'
 import { useEffect, useState } from 'react'
-import { Checkbox, Input, InputNumber, Select, Tooltip } from 'antd'
+import { Checkbox, Input, Select, Tooltip } from 'antd'
 import categoryAPI from '../../../../API/linkAPI'
 import logo from '../../../../assets/VTS-iSale.ico'
 import { RETOKEN } from '../../../../action/Actions'
@@ -99,7 +99,7 @@ const QTTEdit = ({ close, loadingData, setTargetRow, dataQTT }) => {
         toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
         setTargetRow(dataQTT?.Quay)
       } else {
-        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
+        toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
       }
     } catch (error) {
       console.log(error)
@@ -128,7 +128,7 @@ const QTTEdit = ({ close, loadingData, setTargetRow, dataQTT }) => {
                       <input
                         required
                         size="small"
-                        className="h-[24px] w-full  px-2 rounded-[4px] resize-none border-[1px] border-gray-300 outline-none truncate text-end"
+                        className="h-[24px] w-full  px-2 rounded-[3px] resize-none border-[1px] border-gray-300 outline-none truncate text-end"
                         value={QTTForm?.Quay}
                         disabled
                       />
@@ -352,7 +352,7 @@ const QTTEdit = ({ close, loadingData, setTargetRow, dataQTT }) => {
                         <Tooltip title={dataQTT?.NguoiTao} color="blue">
                           <input
                             value={dataQTT?.NguoiTao || ''}
-                            className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded resize-none border outline-none text-[1rem] truncate"
+                            className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded-[3px] resize-none border outline-none text-[1rem] truncate"
                             disabled
                           />
                         </Tooltip>
@@ -363,7 +363,7 @@ const QTTEdit = ({ close, loadingData, setTargetRow, dataQTT }) => {
                           <input
                             value={moment(dataQTT?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
                             type="text"
-                            className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
+                            className="px-2 rounded-[3px] w-full resize-none border outline-none text-[1rem] truncate"
                             disabled
                           />
                         </Tooltip>
@@ -375,7 +375,7 @@ const QTTEdit = ({ close, loadingData, setTargetRow, dataQTT }) => {
                         <Tooltip title={dataQTT?.NguoiSuaCuoi} color="blue">
                           <input
                             value={dataQTT?.NguoiSuaCuoi || ''}
-                            className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded  resize-none border outline-none text-[1rem] truncate"
+                            className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded-[3px]  resize-none border outline-none text-[1rem] truncate"
                             disabled
                           />
                         </Tooltip>
@@ -385,7 +385,7 @@ const QTTEdit = ({ close, loadingData, setTargetRow, dataQTT }) => {
                         <Tooltip title={dataQTT?.NgaySuaCuoi ? moment(dataQTT?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : ''} color="blue">
                           <input
                             value={dataQTT?.NgaySuaCuoi ? moment(dataQTT?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                            className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
+                            className="px-2 rounded-[3px] w-full resize-none border outline-none text-[1rem] truncate"
                             disabled
                           />
                         </Tooltip>

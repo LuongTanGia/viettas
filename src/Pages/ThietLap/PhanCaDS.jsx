@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Button, Checkbox, Col, Empty, Input, Row, Segmented, Spin, Table, Tooltip, Typography } from 'antd'
 const { Text } = Typography
 import moment from 'moment'
+import dayjs from 'dayjs'
 import { CgCloseO } from 'react-icons/cg'
 import { TfiMoreAlt } from 'react-icons/tfi'
 import { RiFileExcel2Fill } from 'react-icons/ri'
@@ -429,7 +430,7 @@ const PhanCaDS = () => {
     },
   ]
   const newTitles = titles.filter((item) => !hiddenRow?.includes(item.dataIndex))
-  const maNguoiDung = dataPhanCa?.map((item) => item.MaNguoiDung)
+  const getInfUser = dataPhanCa?.map((item) => ({ MaNguoiDung: item.MaNguoiDung, HieuLucTu: dayjs(item.HieuLucTu).format('YYYY-MM-DD') }))
   return (
     <>
       {dataCRUD?.VIEW == false ? (
@@ -695,11 +696,11 @@ const PhanCaDS = () => {
               <div>
                 {isShowModal &&
                   (actionType == 'create' ? (
-                    <PCCreate close={() => setIsShowModal(false)} loadingData={handleLoading} setTargetRow={setTargetRow} dataPC={dataPhanCa} maNguoiDung={maNguoiDung} />
+                    <PCCreate close={() => setIsShowModal(false)} loadingData={handleLoading} setTargetRow={setTargetRow} dataPC={dataPhanCa} maNguoiDung={getInfUser} />
                   ) : actionType == 'view' ? (
                     <PCView close={() => setIsShowModal(false)} dataPC={isMaHang} />
                   ) : actionType == 'edit' ? (
-                    <PCEdit close={() => setIsShowModal(false)} dataPC={isMaHang} loadingData={handleLoading} setTargetRow={setTargetRow} maNguoiDung={maNguoiDung} />
+                    <PCEdit close={() => setIsShowModal(false)} dataPC={isMaHang} loadingData={handleLoading} setTargetRow={setTargetRow} maNguoiDung={getInfUser} />
                   ) : actionType == 'delete' ? (
                     <PCDelete close={() => setIsShowModal(false)} dataPC={isMaHang} loadingData={handleLoading} setTargetRow={setTargetRow} />
                   ) : null)}

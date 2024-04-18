@@ -39,7 +39,7 @@ const HMTEdit = ({ close, loadingData, setTargetRow, dataHMT }) => {
         toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
         setTargetRow(dataHMT?.Ma)
       } else {
-        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
+        toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
       }
     } catch (error) {
       console.log(error)
@@ -64,7 +64,7 @@ const HMTEdit = ({ close, loadingData, setTargetRow, dataHMT }) => {
                   disabled
                   required
                   size="small"
-                  className="h-[24px] w-[30%]  px-2 rounded-[4px] resize-none border-[1px] border-gray-300 outline-none truncate"
+                  className="h-[24px] w-[30%]  px-2 rounded-[3px] resize-none border-[1px] border-gray-300 outline-none truncate"
                   value={HMTForm?.Ma}
                 />
               </div>
@@ -108,7 +108,7 @@ const HMTEdit = ({ close, loadingData, setTargetRow, dataHMT }) => {
                     <Tooltip title={dataHMT?.NguoiTao} color="blue">
                       <input
                         value={dataHMT?.NguoiTao || ''}
-                        className="2xl:w-[17vw] xl:w-[20vw] lg:w-[22vw] md:w-[24vw] px-2 rounded resize-none border outline-none text-[1rem] truncate"
+                        className="2xl:w-[17vw] xl:w-[20vw] lg:w-[22vw] md:w-[24vw] px-2 rounded-[3px] resize-none border outline-none text-sm truncate"
                         disabled
                       />
                     </Tooltip>
@@ -119,7 +119,7 @@ const HMTEdit = ({ close, loadingData, setTargetRow, dataHMT }) => {
                       <input
                         value={moment(dataHMT?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
                         type="text"
-                        className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
+                        className="px-2 rounded-[3px] w-full resize-none border outline-none text-sm truncate"
                         disabled
                       />
                     </Tooltip>
@@ -131,7 +131,7 @@ const HMTEdit = ({ close, loadingData, setTargetRow, dataHMT }) => {
                     <Tooltip title={dataHMT?.NguoiSuaCuoi} color="blue">
                       <input
                         value={dataHMT?.NguoiSuaCuoi || ''}
-                        className="2xl:w-[17vw] xl:w-[20vw] lg:w-[22vw] md:w-[24vw] px-2 rounded resize-none border outline-none text-[1rem] truncate"
+                        className="2xl:w-[17vw] xl:w-[20vw] lg:w-[22vw] md:w-[24vw] px-2 rounded-[3px] resize-none border outline-none text-sm truncate"
                         disabled
                       />
                     </Tooltip>
@@ -141,7 +141,7 @@ const HMTEdit = ({ close, loadingData, setTargetRow, dataHMT }) => {
                     <Tooltip title={dataHMT?.NgaySuaCuoi ? moment(dataHMT?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : ''} color="blue">
                       <input
                         value={dataHMT?.NgaySuaCuoi ? moment(dataHMT?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                        className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
+                        className="px-2 rounded-[3px] w-full resize-none border outline-none text-sm truncate"
                         disabled
                       />
                     </Tooltip>

@@ -72,6 +72,10 @@ const CongNoDauVao = () => {
   }, [dataCRUD])
 
   useEffect(() => {
+    selectedNhomFrom == null ? setSelectedNhomTo(null) : ''
+  }, [selectedNhomFrom])
+
+  useEffect(() => {
     const ListNhomDoiTuongCNDV = async () => {
       try {
         const response = await categoryAPI.ListNhomDoiTuong_CNDV(TokenAccess)
@@ -968,7 +972,7 @@ const CongNoDauVao = () => {
                           {nhomDoiTuongCNDV?.map((item, index) => {
                             return (
                               <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomDoiTuong}>
-                                {item.Ma} - {item.Ten}
+                                {item.ThongTinNhomDoiTuong}
                               </Select.Option>
                             )
                           })}
@@ -984,13 +988,14 @@ const CongNoDauVao = () => {
                           value={selectedNhomTo}
                           onChange={(value) => {
                             setSelectedNhomTo(value)
+                            selectedNhomFrom == null ? setSelectedNhomFrom(value) : ''
+
                             if (
                               selectedNhomFrom !== null &&
                               nhomDoiTuongCNDV.findIndex((item) => item.Ma === value) < nhomDoiTuongCNDV.findIndex((item) => item.Ma === selectedNhomFrom)
                             ) {
                               setSelectedNhomFrom(value)
                             }
-                            selectedNhomFrom == null ? setSelectedNhomFrom(value) : ''
                           }}
                           style={{
                             width: '12vw',
@@ -1003,7 +1008,7 @@ const CongNoDauVao = () => {
                           {nhomDoiTuongCNDV?.map((item, index) => {
                             return (
                               <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomDoiTuong}>
-                                {item.Ma} - {item.Ten}
+                                {item.ThongTinNhomDoiTuong}
                               </Select.Option>
                             )
                           })}
@@ -1031,7 +1036,7 @@ const CongNoDauVao = () => {
                           {nhomDoiTuongCNDV?.map((item) => {
                             return (
                               <Select.Option key={item.Ma} value={item.Ma} title={item.ThongTinNhomDoiTuong}>
-                                <p>{item.ThongTinNhomDoiTuong}</p>
+                                {item.ThongTinNhomDoiTuong} <br />
                               </Select.Option>
                             )
                           })}

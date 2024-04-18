@@ -171,18 +171,22 @@ const XDCCreate = ({ close, loadingData, setTargetRow }) => {
         }
       })
       if (newData?.length > 0) {
-        const response = await categoryAPI.XDCCreate({ ...XDCForm, DataDetails: newData, NgayCTu: dayjs(valueDate).format('YYYY-MM-DD') }, TokenAccess)
-        if (response.data.DataError == 0) {
-          isPrint
-            ? (handlePrint(), setXDCForm({ MaKho: dataKhoHang[0]?.MaKho }), setSelectedRowData([]))
-            : isSave
-              ? (toast.success(response.data.DataErrorDescription, { autoClose: 1000 }), setXDCForm({ MaKho: dataKhoHang[0]?.MaKho }), setSelectedRowData([]))
-              : (close(), toast.success(response.data.DataErrorDescription, { autoClose: 1000 }))
-          loadingData()
-          setSoCTu(response.data.DataResults[0].SoChungTu)
-          setTargetRow(response.data.DataResults[0].SoChungTu)
+        if (isAdd) {
+          toast.warning('Vui lòng chọn mã hàng', { autoClose: 2000 })
         } else {
-          toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
+          const response = await categoryAPI.XDCCreate({ ...XDCForm, DataDetails: newData, NgayCTu: dayjs(valueDate).format('YYYY-MM-DD') }, TokenAccess)
+          if (response.data.DataError == 0) {
+            isPrint
+              ? (handlePrint(), setXDCForm({ MaKho: dataKhoHang[0]?.MaKho }), setSelectedRowData([]))
+              : isSave
+                ? (toast.success(response.data.DataErrorDescription, { autoClose: 1000 }), setXDCForm({ MaKho: dataKhoHang[0]?.MaKho }), setSelectedRowData([]))
+                : (close(), toast.success(response.data.DataErrorDescription, { autoClose: 1000 }))
+            loadingData()
+            setSoCTu(response.data.DataResults[0].SoChungTu)
+            setTargetRow(response.data.DataResults[0].SoChungTu)
+          } else {
+            toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
+          }
         }
       } else {
         toast.warning('Chi tiết hàng không được để trống', { autoClose: 1000 })
@@ -427,21 +431,21 @@ const XDCCreate = ({ close, loadingData, setTargetRow }) => {
                       <div className="flex gap-1">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người tạo</label>
-                          <input className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-[1rem]" disabled />
+                          <input className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm" disabled />
                         </div>
                         <div className="flex gap-1 items-center">
                           <label className="text-sm">Lúc</label>
-                          <input className="px-2 w-full resize-none rounded border outline-none text-[1rem] text-center" disabled />
+                          <input className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm text-center" disabled />
                         </div>
                       </div>
                       <div className="flex gap-1">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người sửa</label>
-                          <input className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-[1rem]" disabled />
+                          <input className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm" disabled />
                         </div>
                         <div className="flex gap-1 items-center">
                           <label className="text-sm">Lúc</label>
-                          <input className="px-2 w-full resize-none rounded border outline-none text-[1rem]  text-center" disabled />
+                          <input className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm  text-center" disabled />
                         </div>
                       </div>
                     </div>
@@ -551,7 +555,7 @@ const XDCCreate = ({ close, loadingData, setTargetRow }) => {
                             value={searchHangHoa}
                             placeholder="Nhập ký tự bạn cần tìm"
                             onChange={handleSearch}
-                            className="px-2 py-0.5 w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[1px] hover:border-blue-500 outline-none text-[1rem]  "
+                            className="px-2 py-0.5 w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[1px] hover:border-blue-500 outline-none text-sm  "
                           />
                         )}
                       </div>

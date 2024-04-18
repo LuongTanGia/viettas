@@ -124,7 +124,7 @@ const PhanQuyen = () => {
       //   toast.success('Tạo thành công', { autoClose: 1000 })
       //   setTargetRow(selectedRowKeys)
       // } else {
-      //   toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
+      // toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
       // }
     } catch (error) {
       toast.error('Lỗi Server vui lòng thử lại', { autoClose: 1000 })

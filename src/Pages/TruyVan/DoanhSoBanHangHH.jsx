@@ -83,6 +83,10 @@ const DoanhSoBanHangHH = () => {
   }, [])
 
   useEffect(() => {
+    selectedNhomFrom == null ? setSelectedNhomTo(null) : ''
+  }, [selectedNhomFrom])
+
+  useEffect(() => {
     const getListNhomHangDSBH = async () => {
       try {
         const response = await categoryAPI.ListNhomHang_DSBH(TokenAccess)
@@ -626,7 +630,7 @@ const DoanhSoBanHangHH = () => {
                           {nhomHangDSBH?.map((item, index) => {
                             return (
                               <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomHang}>
-                                {item.Ma} - {item.Ten}
+                                {item.ThongTinNhomHang}
                               </Select.Option>
                             )
                           })}
@@ -658,7 +662,7 @@ const DoanhSoBanHangHH = () => {
                           {nhomHangDSBH?.map((item, index) => {
                             return (
                               <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomHang}>
-                                {item.Ma} - {item.Ten}
+                                {item.ThongTinNhomHang}
                               </Select.Option>
                             )
                           })}
@@ -686,9 +690,7 @@ const DoanhSoBanHangHH = () => {
                           {nhomHangDSBH?.map((item) => {
                             return (
                               <Select.Option key={item.Ma} value={item.Ma} title={item.ThongTinNhomHang}>
-                                <p>
-                                  {item.Ma} - {item.Ten}
-                                </p>
+                                {item.ThongTinNhomHang} <br />
                               </Select.Option>
                             )
                           })}

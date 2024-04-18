@@ -11,6 +11,9 @@ import logo from '../../../../assets/VTS-iSale.ico'
 import { RETOKEN, base64ToPDF } from '../../../../action/Actions'
 import ActionButton from '../../../util/Button/ActionButton'
 import SimpleBackdrop from '../../../util/Loading/LoadingPage'
+import { TextField } from '@mui/material'
+import { validateDate } from '@mui/x-date-pickers/internals'
+import { isDate } from 'date-fns'
 const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
@@ -36,6 +39,7 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
   const [errors, setErrors] = useState({
     MaQuanLy: '',
     MaNguoiDung: '',
+    DenNgay: null,
   })
 
   useEffect(() => {
@@ -82,14 +86,17 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
     }
   }
   const handleCreate = async (isSave = true, isPrint = true) => {
+    console.log(QLForm)
     if ((dataThongSo?.ALLOW_MAQUANLYTUDONG ? null : !QLForm?.MaQuanLy?.trim()) || !QLForm?.MaNguoiDung?.trim()) {
       setErrors({
         MaQuanLy: dataThongSo.ALLOW_MAQUANLYTUDONG ? null : QLForm?.MaQuanLy?.trim() ? null : 'Mã không được trống',
         MaNguoiDung: QLForm?.MaNguoiDung?.trim() ? null : 'Người dùng không được trống',
+        DenNgay: errors.DenNgay,
       })
       return
     }
-    console.log({ ...QLForm })
+
+    console.log({ ...QLForm, TuNgay: dayjs(DateFrom).format('YYYY-MM-DD') })
     try {
       const response = await categoryAPI.ThemQuanLy({ ...QLForm, TuNgay: dayjs(DateFrom).format('YYYY-MM-DD') }, TokenAccess)
       if (response.data.DataError == 0) {
@@ -101,7 +108,7 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
         loadingData()
         dataThongSo.ALLOW_MAQUANLYTUDONG ? setTargetRow(response.data.DataResults[0].Ma) : setTargetRow(QLForm?.MaQuanLy)
       } else {
-        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
+        toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
       }
     } catch (error) {
       console.log(error)
@@ -207,7 +214,7 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
                       <label className="required whitespace-nowrap text-sm">Hiệu lực từ</label>
                       <DateField
                         // className="DatePicker_NXTKho max-w-[130px]"
-                        className=" max-w-[115px]"
+                        className="max-w-[115px]"
                         format="DD/MM/YYYY"
                         value={DateFrom}
                         onBlur={handleDateChange}
@@ -216,6 +223,7 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
                           setDateFrom(values)
                           setDateChange(false)
                         }}
+                        // color="info"
                         sx={{
                           '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
                           '& .MuiButtonBase-root': {
@@ -231,32 +239,59 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
                     <div className="flex items-center gap-1">
                       <label className="whitespace-nowrap min-w-[90px] text-sm flex justify-end">Ngày hết hạn</label>
                       <DateField
-                        // className="DatePicker_NXTKho max-w-[130px]"
-                        className=" max-w-[130px]"
+                        className=" max-w-[130px] text-center "
                         format="DD/MM/YYYY"
                         value={QLForm.DenNgay}
                         onBlur={handleDateChange}
                         onKeyDown={handleKeyDown}
-                        slotProps={{
-                          input: {
-                            helperText: errors?.DenNgay ? errors?.DenNgay : '',
-                          },
-                        }}
-                        onError={(newError) => setErrors(newError)}
+                        // renderInput={(params) => (
+                        //   <TextField
+                        //     {...params}
+                        //     error={!!errors.DenNgay} // Set error prop based on whether there's an error
+                        //     helperText={errors.DenNgay || ''} // Display error message if there's an error
+                        //   />
+                        // )}
                         onChange={(value) => {
                           setDateTo(value)
                           setDateChange(true)
+                          const isValid = validateDate(value) // Implement your own validation logic
+
+                          setErrors({ DenNgay: isValid ? null : 'Invalid date' })
                         }}
-                        sx={{
-                          '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                          '& .MuiButtonBase-root': {
-                            padding: '4px',
-                          },
-                          '& .MuiSvgIcon-root': {
-                            width: '18px',
-                            height: '18px',
-                          },
-                        }}
+                        sx={
+                          QLForm.KhongKetThuc
+                            ? {
+                                '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                                '& .MuiButtonBase-root': {
+                                  padding: '4px',
+                                },
+                                '& .MuiSvgIcon-root': {
+                                  width: '18px',
+                                  height: '18px',
+                                },
+                              }
+                            : !QLForm.KhongKetThuc && isDate(errors.DenNgay)
+                              ? {
+                                  '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': { border: '1px solid red' },
+                                  '& .MuiButtonBase-root': {
+                                    padding: '4px',
+                                  },
+                                  '& .MuiSvgIcon-root': {
+                                    width: '18px',
+                                    height: '18px',
+                                  },
+                                }
+                              : {
+                                  '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                                  '& .MuiButtonBase-root': {
+                                    padding: '4px',
+                                  },
+                                  '& .MuiSvgIcon-root': {
+                                    width: '18px',
+                                    height: '18px',
+                                  },
+                                }
+                        }
                       />
                     </div>
                     <div className="flex items-center">
@@ -293,21 +328,21 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
                     <div className="flex gap-1">
                       <div className="flex items-center gap-1.5 whitespace-nowrap">
                         <label className=" text-sm">Người tạo</label>
-                        <input className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded resize-none border outline-none text-[1rem] truncate" disabled />
+                        <input className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded-[3px] resize-none border outline-none text-sm truncate" disabled />
                       </div>
                       <div className="flex items-center gap-1 whitespace-nowrap">
                         <label className=" text-sm">Lúc</label>
-                        <input type="text" className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate" disabled />
+                        <input type="text" className="px-2 rounded-[3px] w-full resize-none border outline-none text-sm truncate" disabled />
                       </div>
                     </div>
                     <div className="flex gap-1">
                       <div className="flex items-center gap-1 whitespace-nowrap">
                         <label className=" text-sm">Người sửa</label>
-                        <input className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded  resize-none border outline-none text-[1rem] truncate" disabled />
+                        <input className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded-[3px]  resize-none border outline-none text-sm truncate" disabled />
                       </div>
                       <div className="flex items-center gap-1 whitespace-nowrap">
                         <label className=" text-sm">Lúc</label>
-                        <input className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate" disabled />
+                        <input className="px-2 rounded-[3px] w-full resize-none border outline-none text-sm truncate" disabled />
                       </div>
                     </div>
                   </div>

@@ -143,14 +143,14 @@ const XCKXem = ({ close, dataXCK }) => {
                       <div className="flex gap-2">
                         <div className="flex items-center gap-1">
                           <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Số chứng từ</label>
-                          <input type="text" value={dataXCKView?.SoChungTu || ''} className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate" disabled />
+                          <input type="text" value={dataXCKView?.SoChungTu || ''} className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
                         </div>
                         <div className="flex items-center gap-1">
                           <label className="required whitespace-nowrap text-sm">Ngày</label>
                           <input
                             type="text"
                             value={moment(dataXCKView?.NgayCTu)?.format('DD/MM/YYYY') || ''}
-                            className="px-2 w-[7rem] rounded resize-none border outline-none text-[1rem] text-center truncate"
+                            className="px-2 w-[7rem] rounded-[3px] resize-none border outline-none text-sm text-center truncate"
                             disabled
                           />
                         </div>
@@ -160,7 +160,7 @@ const XCKXem = ({ close, dataXCK }) => {
                         <input
                           type="text"
                           value={`${dataXCKView?.MaKho} - ${dataXCKView?.TenKho}` || ''}
-                          className="px-2 w-full rounded resize-none border outline-none text-[1rem]"
+                          className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm"
                           disabled
                         />
                       </div>
@@ -169,7 +169,7 @@ const XCKXem = ({ close, dataXCK }) => {
                         <input
                           type="text"
                           value={`${dataXCKView?.MaKho_Nhan} - ${dataXCKView?.TenKho_Nhan}` || ''}
-                          className="px-2 w-full rounded resize-none border outline-none text-[1rem]"
+                          className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm"
                           disabled
                         />
                       </div>
@@ -181,7 +181,7 @@ const XCKXem = ({ close, dataXCK }) => {
                           <label className="whitespace-nowrap text-sm">Người tạo</label>
                           <Tooltip title={dataXCKView?.NguoiTao} color="blue">
                             <input
-                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-[1rem] overflow-ellipsis truncate"
+                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm overflow-ellipsis truncate"
                               value={dataXCKView?.NguoiTao || ''}
                               disabled
                             />
@@ -191,7 +191,7 @@ const XCKXem = ({ close, dataXCK }) => {
                           <label className="text-sm">Lúc</label>
                           <Tooltip title={moment(dataXCKView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''} color="blue">
                             <input
-                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate text-center"
+                              className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate text-center"
                               value={moment(dataXCKView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
                               disabled
                             />
@@ -203,7 +203,7 @@ const XCKXem = ({ close, dataXCK }) => {
                           <label className="whitespace-nowrap text-sm">Người sửa</label>
                           <Tooltip title={dataXCKView?.NguoiSuaCuoi} color="blue">
                             <input
-                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border  outline-none text-[1rem] overflow-ellipsis truncate"
+                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border  outline-none text-sm overflow-ellipsis truncate"
                               value={dataXCKView?.NguoiSuaCuoi || ''}
                               disabled
                             />
@@ -213,7 +213,7 @@ const XCKXem = ({ close, dataXCK }) => {
                           <label className="text-sm">Lúc</label>
                           <Tooltip title={dataXCKView?.NgaySuaCuoi ? moment(dataXCKView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''} color="blue">
                             <input
-                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate text-center"
+                              className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate text-center"
                               value={dataXCKView?.NgaySuaCuoi ? moment(dataXCKView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
                               disabled
                             />
@@ -224,7 +224,7 @@ const XCKXem = ({ close, dataXCK }) => {
                   </div>
                   <div className="flex items-center gap-1">
                     <label className="whitespace-nowrap min-w-[100px] flex justify-end text-sm">Ghi chú</label>
-                    <input type="text" value={dataXCKView?.GhiChu || ''} className="px-2 w-[70rem] rounded resize-none border outline-none text-[1rem]" disabled />
+                    <input type="text" value={dataXCKView?.GhiChu || ''} className="px-2 w-[70rem] rounded-[3px] resize-none border outline-none text-sm" disabled />
                   </div>
                   <div className="border rounded">
                     <Table

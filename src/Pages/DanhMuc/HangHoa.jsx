@@ -141,7 +141,7 @@ const HangHoa = () => {
   }
   const handleStatusMany = () => {
     if (selectedRowKeys.length > 0) {
-      setActionType('statusMany')
+      setActionType('status')
       setIsShowModal(true)
       setIsMaHang(selectedRowKeys)
     } else {
@@ -150,7 +150,7 @@ const HangHoa = () => {
   }
   const handleGroupMany = () => {
     if (selectedRowKeys.length > 0) {
-      setActionType('groupMany')
+      setActionType('group')
       setIsShowModal(true)
       setIsMaHang(selectedRowKeys)
     } else {
@@ -175,7 +175,7 @@ const HangHoa = () => {
         if (response.data.DataError === 0) {
           base64ToPDF(response.data.DataResults)
         } else {
-          toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
+          toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
         }
       } else {
         const response = await categoryAPI.InMaVach(
@@ -188,7 +188,7 @@ const HangHoa = () => {
         if (response.data.DataError === 0) {
           base64ToPDF(response.data.DataResults)
         } else {
-          toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
+          toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
         }
       }
     } catch (error) {

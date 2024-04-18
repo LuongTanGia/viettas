@@ -183,10 +183,14 @@ function PhieuBanHang() {
     setDataRecord(record)
   }
   const handleEdit = async (record) => {
-    await THONGTINPHIEU(API.CHITIETPBS, token, record?.SoChungTu, dispatch)
-    setIsShow(true)
-    setType('edit')
-    setDataRecord(record)
+    const res = await THONGTINPHIEU(API.CHITIETEDITPBS, token, record?.SoChungTu, dispatch)
+    if (res.DataError == 0) {
+      setIsShow(true)
+      setType('edit')
+      setDataRecord(record)
+    } else {
+      toast.warning(res.DataErrorDescription, { autoClose: 2000 })
+    }
   }
   const handleCreate = async () => {
     setIsShow(true)
@@ -202,7 +206,7 @@ function PhieuBanHang() {
   }
   const handleCloseAction = () => {
     setIsShowPrint(false)
-    setDataRecord([])
+    // setDataRecord([])
   }
   const handleDelete = async (record) => {
     setIsShowDelete(true)
@@ -215,6 +219,7 @@ function PhieuBanHang() {
       setIsShowDelete(false)
       setIsShow(false)
       setDataRecord([])
+      setSelectMH([])
     } else {
       toast.info(`${record?.SoChungTu} đã lập phiếu thu tiền!`)
     }
@@ -223,7 +228,8 @@ function PhieuBanHang() {
     await LAPPHIEUTHU(API.LAPPHIEUTHU, token, { SoChungTu: record?.SoChungTu }, dispatch)
     setIsShowDelete(false)
     setIsShow(false)
-    setDataRecord([])
+    setDataRecord(record?.SoChungTu)
+    setSelectMH(record?.SoChungTu)
   }
   const handleChangePhieuThu = async (record) => {
     setIsShowDelete(true)
@@ -238,17 +244,19 @@ function PhieuBanHang() {
     setIsShowPrint(!isShowPrint)
     setModelType('PhieuKho')
   }
-  const handleShowPrint_action = (value, soCT) => {
+  const handleShowPrint_action = (value, soCT, type) => {
     setDateModal(value)
     setMaHang(soCT)
     setIsShowPrint(!isShowPrint)
     setModelType('')
+    setType(type)
   }
-  const handleShowPrint_kho_action = (value, soCT) => {
+  const handleShowPrint_kho_action = (value, soCT, type) => {
     setDateModal(value)
     setMaHang(soCT)
     setIsShowPrint(!isShowPrint)
     setModelType('PhieuKho')
+    setType(type)
   }
   const handleShow_hidden = () => {
     setSelectVisible(!selectVisible)
@@ -520,15 +528,17 @@ function PhieuBanHang() {
                   hidden={hidden}
                 />
               </div>
-              <ActionModals
-                isShow={isShow}
-                handleClose={handleClose}
-                dataRecord={dataRecord}
-                typeAction={type}
-                setMaHang={setMaHang}
-                handleShowPrint_action={handleShowPrint_action}
-                handleShowPrint_kho_action={handleShowPrint_kho_action}
-              />
+              {isShow ? (
+                <ActionModals
+                  isShow={isShow}
+                  handleClose={handleClose}
+                  dataRecord={dataRecord}
+                  typeAction={type}
+                  setMaHang={setMaHang}
+                  handleShowPrint_action={handleShowPrint_action}
+                  handleShowPrint_kho_action={handleShowPrint_kho_action}
+                />
+              ) : null}
               <Model isShow={isShowDelete} handleClose={handleClose} record={dataRecord} ActionDelete={ActionDelete} typeModel={typeModel} ActionPay={ActionPay} />
               <ModelPrint
                 selectMH={selectMH}
@@ -536,12 +546,8 @@ function PhieuBanHang() {
                 isShowModel={isShowPrint}
                 handleCloseAction={handleCloseAction}
                 handleClose={handleClose}
-                // dataDatePrint={{
-                //   ...dataDate,
-                //   NgayBatDau: dayjs(dataDate?.NgayBatDau).format('YYYY-MM-DD'),
-                //   NgayKetThuc: dayjs(dataDate?.NgayKetThuc).format('YYYY-MM-DD'),
-                // }}
                 modelType={modelType}
+                typeAction={type}
               />
             </>
           )}

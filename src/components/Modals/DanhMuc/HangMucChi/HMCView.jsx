@@ -50,15 +50,15 @@ const HMCView = ({ close, dataHMC }) => {
                 <div className="flex flex-col gap-2 border-2 px-3 py-2.5">
                   <div className="flex items-center gap-1">
                     <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Mã</label>
-                    <input type="text" value={dataHMCView?.Ma || ''} className="px-2 w-[30%] resize-none rounded border outline-none text-sm truncate" disabled />
+                    <input type="text" value={dataHMCView?.Ma || ''} className="px-2 w-[30%] resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
                   </div>
                   <div className="flex items-center gap-1">
                     <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Tên</label>
-                    <input type="text" value={dataHMCView?.Ten || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" disabled />
+                    <input type="text" value={dataHMCView?.Ten || ''} className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
                   </div>
                   <div className="flex items-center gap-1">
                     <label className=" whitespace-nowrap  min-w-[90px] text-sm flex justify-end">Ghi chú</label>
-                    <input type="text" value={dataHMCView?.GhiChu || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" disabled />
+                    <input type="text" value={dataHMCView?.GhiChu || ''} className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
                   </div>
                   <div className="grid grid-cols-1 mt-1 gap-2 px-2 py-2.5 rounded border-black-200 ml-[95px] relative border-[0.125rem]">
                     <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
@@ -68,7 +68,7 @@ const HMCView = ({ close, dataHMC }) => {
                         <Tooltip title={dataHMCView?.NguoiTao} color="blue">
                           <input
                             value={dataHMCView?.NguoiTao || ''}
-                            className="2xl:w-[17vw] xl:w-[20vw] lg:w-[22vw] md:w-[24vw] px-2 rounded resize-none border outline-none text-[1rem] truncate"
+                            className="2xl:w-[17vw] xl:w-[20vw] lg:w-[22vw] md:w-[24vw] px-2 rounded-[3px] resize-none border outline-none text-sm truncate"
                             disabled
                           />
                         </Tooltip>
@@ -79,7 +79,7 @@ const HMCView = ({ close, dataHMC }) => {
                           <input
                             type="text"
                             value={moment(dataHMCView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
-                            className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
+                            className="px-2 rounded-[3px] w-full resize-none border outline-none text-sm truncate"
                             disabled
                           />
                         </Tooltip>
@@ -91,7 +91,7 @@ const HMCView = ({ close, dataHMC }) => {
                         <Tooltip title={dataHMCView?.NguoiSuaCuoi} color="blue">
                           <input
                             value={dataHMCView?.NguoiSuaCuoi || ''}
-                            className="2xl:w-[17vw] xl:w-[20vw] lg:w-[22vw] md:w-[24vw] px-2 rounded  resize-none border outline-none text-[1rem] truncate"
+                            className="2xl:w-[17vw] xl:w-[20vw] lg:w-[22vw] md:w-[24vw] px-2 rounded-[3px] resize-none border outline-none text-sm truncate"
                             disabled
                           />
                         </Tooltip>
@@ -101,7 +101,7 @@ const HMCView = ({ close, dataHMC }) => {
                         <Tooltip title={dataHMCView?.NgaySuaCuoi ? moment(dataHMCView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : ''} color="blue">
                           <input
                             value={dataHMCView?.NgaySuaCuoi ? moment(dataHMCView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                            className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
+                            className="px-2 rounded-[3px] w-full resize-none border outline-none text-sm truncate"
                             disabled
                           />
                         </Tooltip>

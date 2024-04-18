@@ -58,6 +58,10 @@ const DoanhSoBanHangKH = () => {
   }, [])
 
   useEffect(() => {
+    selectedNhomFrom == null ? setSelectedNhomTo(null) : ''
+  }, [selectedNhomFrom])
+
+  useEffect(() => {
     if (dataCRUD?.VIEW == false) {
       setIsShowNotify(true)
     }

@@ -67,7 +67,7 @@ const DTGroup = ({ close, type, dataDT, loadingData, setTargetRow }) => {
         close()
         setTargetRow(dataDT)
       } else {
-        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
+        toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
       }
     } catch (error) {
       console.error(error)
@@ -101,7 +101,7 @@ const DTGroup = ({ close, type, dataDT, loadingData, setTargetRow }) => {
         await RETOKEN()
         handleGroup()
       } else {
-        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
+        toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
       }
     } catch (error) {
       console.error('API call failed:', error)

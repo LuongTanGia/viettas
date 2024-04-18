@@ -452,7 +452,6 @@ export const THEMPHIEUBANHANG = async (API, token, data) => {
         Authorization: `Bearer ${token}`,
       },
     })
-
     if (response && response.data) {
       if (response.data.DataError === -107 || response.data.DataError === -108) {
         const newToken = await RETOKEN()
@@ -541,11 +540,6 @@ export const SUAPHIEUBANHANG = async (API, token, data) => {
 
           window.location.href = '/login'
         }
-      }
-      if (response.data && response.data.DataError == 0) {
-        toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
-      } else {
-        toast.error(response.data.DataErrorDescription, { autoClose: 2000 })
       }
     } else {
       toast.error('Response or response.data is undefined or null.')

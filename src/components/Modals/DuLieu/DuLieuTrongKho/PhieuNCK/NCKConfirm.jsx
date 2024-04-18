@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react'
 import moment from 'moment'
 import { FaSearch } from 'react-icons/fa'
-import { Input, Table, Tooltip } from 'antd'
+import { Input, Table, Tooltip, Typography } from 'antd'
+const { Text } = Typography
 import { CloseSquareFilled } from '@ant-design/icons'
 import categoryAPI from '../../../../../API/linkAPI'
 import logo from '../../../../../assets/VTS-iSale.ico'
@@ -124,6 +125,7 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
       title: 'STT',
       render: (text, record, index) => index + 1,
       width: 80,
+      dataIndex: 'STT',
       align: 'center',
       fixed: 'left',
     },
@@ -192,6 +194,7 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
       title: 'Ghi chú',
       dataIndex: 'GhiChu',
       key: 'GhiChu',
+      width: 180,
       showSorterTooltip: false,
       align: 'center',
       sorter: (a, b) => (a.GhiChu?.toString() || '').localeCompare(b.GhiChu?.toString() || ''),
@@ -300,6 +303,7 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
       title: 'STT',
       render: (text, record, index) => index + 1,
       width: 80,
+      dataIndex: 'STT',
       align: 'center',
     },
     {
@@ -398,7 +402,7 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
                     dataSource={filteredHangHoa?.map((item, index) => ({ ...item, key: index }))}
                     size="small"
                     scroll={{
-                      x: 1800,
+                      x: 'max-content',
                       y: 300,
                     }}
                     bordered
@@ -408,6 +412,33 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
                       },
                     })}
                     pagination={false}
+                    summary={() => {
+                      return (
+                        <Table.Summary fixed="bottom">
+                          <Table.Summary.Row>
+                            {title
+                              .filter((column) => column.render)
+                              .map((column, index) => {
+                                const isNumericColumn = typeof filteredHangHoa[0]?.[column.dataIndex] == 'number'
+                                return (
+                                  <Table.Summary.Cell
+                                    index={index}
+                                    key={`summary-cell-${index + 1}`}
+                                    align={isNumericColumn ? 'right' : 'left'}
+                                    className="text-end font-bold  bg-[#f1f1f1]"
+                                  >
+                                    {column.dataIndex == 'STT' ? (
+                                      <Text className="text-center flex justify-center" strong>
+                                        {dataNCKUnconfirm?.length}
+                                      </Text>
+                                    ) : null}
+                                  </Table.Summary.Cell>
+                                )
+                              })}
+                          </Table.Summary.Row>
+                        </Table.Summary>
+                      )
+                    }}
                   ></Table>
                 </div>
                 <div className="flex justify-end gap-2">
@@ -434,14 +465,19 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
                         <div className="flex gap-2">
                           <div className="flex items-center gap-1">
                             <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Số chứng từ</label>
-                            <input type="text" value={dataXCKView?.SoChungTu || ''} className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate" readOnly />
+                            <input
+                              type="text"
+                              value={dataXCKView?.SoChungTu || ''}
+                              className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate"
+                              readOnly
+                            />
                           </div>
                           <div className="flex items-center gap-1">
                             <label className="required whitespace-nowrap text-sm">Ngày</label>
                             <input
                               type="text"
                               value={moment(dataXCKView?.NgayCTu)?.format('DD/MM/YYYY') || ''}
-                              className="px-2 w-[7rem] rounded resize-none border outline-none text-[1rem] text-center truncate"
+                              className="px-2 w-[7rem] rounded-[3px] resize-none border outline-none text-sm text-center truncate"
                               readOnly
                             />
                           </div>
@@ -451,7 +487,7 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
                           <input
                             type="text"
                             value={`${dataXCKView?.MaKho} - ${dataXCKView?.TenKho}` || ''}
-                            className="px-2 w-full rounded resize-none border outline-none text-[1rem]"
+                            className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm"
                             readOnly
                           />
                         </div>
@@ -463,7 +499,7 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
                             <label className="whitespace-nowrap text-sm">Người tạo</label>
                             <Tooltip title={dataXCKView?.NguoiTao} color="blue">
                               <input
-                                className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-[1rem] overflow-ellipsis truncate"
+                                className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm overflow-ellipsis truncate"
                                 value={dataXCKView?.NguoiTao || ''}
                                 readOnly
                               />
@@ -473,7 +509,7 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
                             <label className="text-sm">Lúc</label>
                             <Tooltip title={moment(dataXCKView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''} color="blue">
                               <input
-                                className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
+                                className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate"
                                 value={moment(dataXCKView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
                                 readOnly
                               />
@@ -485,7 +521,7 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
                             <label className="whitespace-nowrap text-sm">Người sửa</label>
                             <Tooltip title={dataXCKView?.NguoiSuaCuoi} color="blue">
                               <input
-                                className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border  outline-none text-[1rem] overflow-ellipsis truncate"
+                                className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border  outline-none text-sm overflow-ellipsis truncate"
                                 value={dataXCKView?.NguoiSuaCuoi || ''}
                                 readOnly
                               />
@@ -495,7 +531,7 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
                             <label className="text-sm">Lúc</label>
                             <Tooltip title={dataXCKView?.NgaySuaCuoi ? moment(dataXCKView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''} color="blue">
                               <input
-                                className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
+                                className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate"
                                 value={dataXCKView?.NgaySuaCuoi ? moment(dataXCKView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
                                 readOnly
                               />
@@ -506,7 +542,7 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
                     </div>
                     <div className="flex items-center gap-1">
                       <label className="whitespace-nowrap min-w-[100px] flex justify-end text-sm">Ghi chú</label>
-                      <input type="text" value={dataXCKView?.GhiChu || ''} className="px-2 w-[70rem] rounded resize-none border outline-none text-[1rem]" readOnly />
+                      <input type="text" value={dataXCKView?.GhiChu || ''} className="px-2 w-[70rem] rounded-[3px] resize-none border outline-none text-sm" readOnly />
                     </div>
                     <div className="border rounded">
                       <Table

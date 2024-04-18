@@ -79,7 +79,7 @@ const DTCreate = ({ close, loadingData, setTargetRow }) => {
         toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
         dataThongSo.SUDUNG_MADOITUONGTUDONG ? setTargetRow(response.data.DataResults[0].Ma) : setTargetRow(DTForm?.Ma)
       } else {
-        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
+        toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
       }
     } catch (error) {
       console.log(error)
@@ -321,21 +321,21 @@ const DTCreate = ({ close, loadingData, setTargetRow }) => {
                     <div className="flex gap-1">
                       <div className="flex items-center gap-1.5 whitespace-nowrap">
                         <label className=" text-sm">Người tạo</label>
-                        <input className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded resize-none border outline-none text-[1rem] truncate" disabled />
+                        <input className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded resize-none border outline-none text-sm truncate" disabled />
                       </div>
                       <div className="flex items-center gap-1 whitespace-nowrap">
                         <label className=" text-sm">Lúc</label>
-                        <input type="text" className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate" disabled />
+                        <input type="text" className="px-2 rounded w-full resize-none border outline-none text-sm truncate" disabled />
                       </div>
                     </div>
                     <div className="flex gap-1">
                       <div className="flex items-center gap-1 whitespace-nowrap">
                         <label className=" text-sm">Người sửa</label>
-                        <input className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded  resize-none border outline-none text-[1rem] truncate" disabled />
+                        <input className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded  resize-none border outline-none text-sm truncate" disabled />
                       </div>
                       <div className="flex items-center gap-1 whitespace-nowrap">
                         <label className=" text-sm">Lúc</label>
-                        <input className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate" disabled />
+                        <input className="px-2 rounded w-full resize-none border outline-none text-sm truncate" disabled />
                       </div>
                     </div>
                   </div>

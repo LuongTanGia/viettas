@@ -142,14 +142,14 @@ const NDCXem = ({ close, dataNDC }) => {
                       <div className="flex gap-2">
                         <div className="flex items-center gap-1">
                           <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Số chứng từ</label>
-                          <input type="text" value={dataNDCView?.SoChungTu || ''} className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate" disabled />
+                          <input type="text" value={dataNDCView?.SoChungTu || ''} className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
                         </div>
                         <div className="flex items-center gap-1">
                           <label className="required whitespace-nowrap text-sm">Ngày</label>
                           <input
                             type="text"
                             value={moment(dataNDCView?.NgayCTu)?.format('DD/MM/YYYY') || ''}
-                            className="px-2 w-[7rem] rounded resize-none border outline-none text-[1rem] text-center truncate"
+                            className="px-2 w-[7rem] rounded-[3px] resize-none border outline-none text-sm text-center truncate"
                             disabled
                           />
                         </div>
@@ -159,7 +159,7 @@ const NDCXem = ({ close, dataNDC }) => {
                         <input
                           type="text"
                           value={`${dataNDCView?.MaKho} - ${dataNDCView?.TenKho}` || ''}
-                          className="px-2 w-full rounded resize-none border outline-none text-[1rem]"
+                          className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm"
                           disabled
                         />
                       </div>
@@ -171,7 +171,7 @@ const NDCXem = ({ close, dataNDC }) => {
                           <label className="whitespace-nowrap text-sm">Người tạo</label>
                           <Tooltip title={dataNDCView?.NguoiTao} color="blue">
                             <input
-                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-[1rem] overflow-ellipsis truncate"
+                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm overflow-ellipsis truncate"
                               value={dataNDCView?.NguoiTao || ''}
                               disabled
                             />
@@ -181,7 +181,7 @@ const NDCXem = ({ close, dataNDC }) => {
                           <label className="text-sm">Lúc</label>
                           <Tooltip title={moment(dataNDCView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''} color="blue">
                             <input
-                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate text-center"
+                              className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate text-center"
                               value={moment(dataNDCView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
                               disabled
                             />
@@ -193,7 +193,7 @@ const NDCXem = ({ close, dataNDC }) => {
                           <label className="whitespace-nowrap text-sm">Người sửa</label>
                           <Tooltip title={dataNDCView?.NguoiSuaCuoi} color="blue">
                             <input
-                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border  outline-none text-[1rem] overflow-ellipsis truncate"
+                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border  outline-none text-sm overflow-ellipsis truncate"
                               value={dataNDCView?.NguoiSuaCuoi || ''}
                               disabled
                             />
@@ -203,7 +203,7 @@ const NDCXem = ({ close, dataNDC }) => {
                           <label className="text-sm">Lúc</label>
                           <Tooltip title={dataNDCView?.NgaySuaCuoi ? moment(dataNDCView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''} color="blue">
                             <input
-                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate text-center"
+                              className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate text-center"
                               value={dataNDCView?.NgaySuaCuoi ? moment(dataNDCView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
                               disabled
                             />
@@ -214,7 +214,7 @@ const NDCXem = ({ close, dataNDC }) => {
                   </div>
                   <div className="flex items-center gap-1">
                     <label className="whitespace-nowrap min-w-[100px] flex justify-end text-sm">Ghi chú</label>
-                    <input type="text" value={dataNDCView?.GhiChu || ''} className="px-2 w-[70rem] rounded resize-none border outline-none text-[1rem]" disabled />
+                    <input type="text" value={dataNDCView?.GhiChu || ''} className="px-2 w-[70rem] rounded-[3px] resize-none border outline-none text-sm" disabled />
                   </div>
                   <div className="border rounded">
                     <Table

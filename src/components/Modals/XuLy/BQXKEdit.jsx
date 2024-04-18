@@ -24,7 +24,7 @@ const BQXKEdit = ({ close, dataBQXK, loadingData, setTargetRow, setDataBinhQuan 
         close()
         setTargetRow(dataBQXK?.Thang)
       } else {
-        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
+        toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
         console.log(response.data)
         setDataBinhQuan([])
         loadingData()
@@ -58,7 +58,7 @@ const BQXKEdit = ({ close, dataBQXK, loadingData, setTargetRow, setDataBinhQuan 
                 <input
                   type="text"
                   value={moment(dataBQXK?.Thang)?.format('MM/YYYY') || ''}
-                  className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate text-center"
+                  className="px-2 rounded w-full resize-none border outline-none text-sm truncate text-center"
                   readOnly
                 />
               </div>
@@ -67,7 +67,7 @@ const BQXKEdit = ({ close, dataBQXK, loadingData, setTargetRow, setDataBinhQuan 
                 <input
                   type="text"
                   value={moment(dataBQXK?.Thang)?.format('MM/YYYY') || ''}
-                  className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate text-center"
+                  className="px-2 rounded w-full resize-none border outline-none text-sm truncate text-center"
                   readOnly
                 />
               </div>

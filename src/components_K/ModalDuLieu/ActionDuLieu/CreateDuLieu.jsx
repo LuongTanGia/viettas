@@ -54,7 +54,6 @@ const CreateDuLieu = ({ actionType, typePage, namePage, data, dataThongSo, dataD
 
   const isAdd = useMemo(() => selectedRowData.map((item) => item.MaHang).includes('Chọn mã hàng'), [selectedRowData])
 
-  //  show modal HH = F9
   const handleKeyDown = (event) => {
     if (event.key === 'F9') {
       setIsShowModalHH(true)
@@ -63,7 +62,6 @@ const CreateDuLieu = ({ actionType, typePage, namePage, data, dataThongSo, dataD
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown)
-
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
     }
@@ -72,16 +70,12 @@ const CreateDuLieu = ({ actionType, typePage, namePage, data, dataThongSo, dataD
   // set default Value
   useEffect(() => {
     if ((typePage === 'PMH' || typePage === 'XTR') && dataDoiTuong) {
-      // Tìm giá trị có mã là 'NCVL' trong mảng dataDoiTuong
       const ncvlDoiTuong = dataDoiTuong.find((item) => item.Ma === 'NCVL')
-      // Sử dụng 'NCVL' nếu có, ngược lại sử dụng mã đầu tiên trong mảng
       const defaultMa = ncvlDoiTuong?.Ma || dataDoiTuong[0]?.Ma || ''
       handleDoiTuongFocus(defaultMa)
     }
     if (dataDoiTuong && typePage === 'NTR') {
-      // Tìm giá trị có mã là 'NCVL' trong mảng dataDoiTuong
       const ncvlDoiTuong = dataDoiTuong.find((item) => item.Ma === 'KHVL')
-      // Sử dụng 'NCVL' nếu có, ngược lại sử dụng mã đầu tiên trong mảng
       const defaultMa = ncvlDoiTuong?.Ma || dataDoiTuong[0]?.Ma || ''
       handleDoiTuongFocus(defaultMa)
     }
@@ -188,7 +182,6 @@ const CreateDuLieu = ({ actionType, typePage, namePage, data, dataThongSo, dataD
 
   const handleDoiTuongFocus = (selectedValue) => {
     setSelectedDoiTuong(selectedValue)
-    // Tìm thông tin đối tượng tương ứng và cập nhật state
     const selectedDoiTuongInfo = dataDoiTuong.find((item) => item.Ma === selectedValue)
     setDoiTuongInfo(selectedDoiTuongInfo || { Ten: '', DiaChi: '' })
 
