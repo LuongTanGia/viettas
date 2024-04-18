@@ -13,6 +13,7 @@ import ActionButton from '../../../util/Button/ActionButton'
 import SimpleBackdrop from '../../../util/Loading/LoadingPage'
 import { TextField } from '@mui/material'
 import { validateDate } from '@mui/x-date-pickers/internals'
+import { isDate } from 'date-fns'
 const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
@@ -222,6 +223,7 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
                           setDateFrom(values)
                           setDateChange(false)
                         }}
+                        // color="info"
                         sx={{
                           '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
                           '& .MuiButtonBase-root': {
@@ -242,13 +244,13 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
                         value={QLForm.DenNgay}
                         onBlur={handleDateChange}
                         onKeyDown={handleKeyDown}
-                        renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            error={!!errors.DenNgay} // Set error prop based on whether there's an error
-                            helperText={errors.DenNgay || ''} // Display error message if there's an error
-                          />
-                        )}
+                        // renderInput={(params) => (
+                        //   <TextField
+                        //     {...params}
+                        //     error={!!errors.DenNgay} // Set error prop based on whether there's an error
+                        //     helperText={errors.DenNgay || ''} // Display error message if there's an error
+                        //   />
+                        // )}
                         onChange={(value) => {
                           setDateTo(value)
                           setDateChange(true)
@@ -256,16 +258,40 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
 
                           setErrors({ DenNgay: isValid ? null : 'Invalid date' })
                         }}
-                        sx={{
-                          '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                          '& .MuiButtonBase-root': {
-                            padding: '4px',
-                          },
-                          '& .MuiSvgIcon-root': {
-                            width: '18px',
-                            height: '18px',
-                          },
-                        }}
+                        sx={
+                          QLForm.KhongKetThuc
+                            ? {
+                                '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                                '& .MuiButtonBase-root': {
+                                  padding: '4px',
+                                },
+                                '& .MuiSvgIcon-root': {
+                                  width: '18px',
+                                  height: '18px',
+                                },
+                              }
+                            : !QLForm.KhongKetThuc && isDate(errors.DenNgay)
+                              ? {
+                                  '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': { border: '1px solid red' },
+                                  '& .MuiButtonBase-root': {
+                                    padding: '4px',
+                                  },
+                                  '& .MuiSvgIcon-root': {
+                                    width: '18px',
+                                    height: '18px',
+                                  },
+                                }
+                              : {
+                                  '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                                  '& .MuiButtonBase-root': {
+                                    padding: '4px',
+                                  },
+                                  '& .MuiSvgIcon-root': {
+                                    width: '18px',
+                                    height: '18px',
+                                  },
+                                }
+                        }
                       />
                     </div>
                     <div className="flex items-center">
