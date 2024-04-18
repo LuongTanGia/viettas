@@ -246,7 +246,7 @@ const NDCPrint = ({ close, dataPrint }) => {
                           dataListChungTu.findIndex((item) => item.SoChungTu === value) > dataListChungTu.findIndex((item) => item.SoChungTu === selectedNhomTo)
                         ) {
                           setSelectedNhomTo(value)
-                        } else {
+                        } else if (selectedNhomTo == null) {
                           setSelectedNhomTo(value)
                         }
                       }}
@@ -279,7 +279,7 @@ const NDCPrint = ({ close, dataPrint }) => {
                           dataListChungTu.findIndex((item) => item.SoChungTu === value) < dataListChungTu.findIndex((item) => item.SoChungTu === selectedNhomFrom)
                         ) {
                           setSelectedNhomFrom(value)
-                        } else {
+                        } else if (selectedNhomFrom == null) {
                           setSelectedNhomFrom(value)
                         }
                       }}
