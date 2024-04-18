@@ -45,8 +45,7 @@ const KHOCreate = ({ close, loadingData, setTargetRow }) => {
         toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
         setTargetRow(KHOForm?.MaKho)
       } else {
-        console.log(response.data)
-        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
+        toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
       }
     } catch (error) {
       console.log(error)

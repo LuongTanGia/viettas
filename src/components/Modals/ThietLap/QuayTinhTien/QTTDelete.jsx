@@ -17,7 +17,7 @@ const QTTDelete = ({ close, dataQTT, loadingData, setTargetRow }) => {
         toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
         setTargetRow([])
       } else {
-        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
+        toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
         console.log(response.data)
       }
     } catch (error) {

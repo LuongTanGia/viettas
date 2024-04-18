@@ -17,8 +17,7 @@ const KHODelete = ({ close, dataKHO, loadingData, setTargetRow }) => {
         toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
         setTargetRow([])
       } else {
-        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
-        console.log(response.data)
+        toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
       }
     } catch (error) {
       console.log(error)

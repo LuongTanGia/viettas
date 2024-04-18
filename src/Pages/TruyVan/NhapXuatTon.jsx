@@ -90,6 +90,11 @@ const NhapXuatTon = () => {
   }, [])
 
   useEffect(() => {
+    selectedMaFrom == null ? setSelectedMaTo(null) : ''
+    selectedNhomFrom == null ? setSelectedNhomTo(null) : ''
+  }, [selectedMaFrom, selectedNhomFrom])
+
+  useEffect(() => {
     const getListNhomHangNXT = async () => {
       try {
         const response = await categoryAPI.ListNhomHangNXT(TokenAccess)
@@ -1661,7 +1666,7 @@ const NhapXuatTon = () => {
                             {nhomHangNXT?.map((item, index) => {
                               return (
                                 <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomHang}>
-                                  {item.Ma} - {item.Ten}
+                                  {item.ThongTinNhomHang}
                                 </Select.Option>
                               )
                             })}
@@ -1693,7 +1698,7 @@ const NhapXuatTon = () => {
                             {nhomHangNXT?.map((item, index) => {
                               return (
                                 <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomHang}>
-                                  {item.Ma} - {item.Ten}
+                                  {item.ThongTinNhomHang}
                                 </Select.Option>
                               )
                             })}
@@ -1721,7 +1726,7 @@ const NhapXuatTon = () => {
                             {nhomHangNXT?.map((item) => {
                               return (
                                 <Select.Option key={item.Ma} value={item.Ma} title={item.ThongTinNhomHang}>
-                                  <p>{item.ThongTinNhomHang}</p>
+                                  {item.ThongTinNhomHang} <br />
                                 </Select.Option>
                               )
                             })}
@@ -1818,9 +1823,7 @@ const NhapXuatTon = () => {
                             {hangHoaNXT?.map((item, index) => {
                               return (
                                 <Select.Option key={index} value={item.MaHang} title={item.TenHang}>
-                                  <p>
-                                    {item.MaHang}-{item.TenHang}
-                                  </p>
+                                  {item.MaHang}-{item.TenHang} <br />
                                 </Select.Option>
                               )
                             })}

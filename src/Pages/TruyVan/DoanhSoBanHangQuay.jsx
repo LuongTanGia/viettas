@@ -70,6 +70,11 @@ const DoanhSoBanHangQuay = () => {
   }, [dataCRUD])
 
   useEffect(() => {
+    selectedMaFrom == null ? setSelectedMaTo(null) : ''
+    selectedNhomFrom == null ? setSelectedNhomTo(null) : ''
+  }, [selectedMaFrom, selectedNhomFrom])
+
+  useEffect(() => {
     const getDataQuyenHan = async () => {
       try {
         const response = await categoryAPI.QuyenHan('TruyVan_DoanhSoBanHangQuay', TokenAccess)
@@ -693,7 +698,7 @@ const DoanhSoBanHangQuay = () => {
                             {nhomHangNXT?.map((item, index) => {
                               return (
                                 <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomHang}>
-                                  {item.Ma} - {item.Ten}
+                                  {item.ThongTinNhomHang}
                                 </Select.Option>
                               )
                             })}
@@ -725,7 +730,7 @@ const DoanhSoBanHangQuay = () => {
                             {nhomHangNXT?.map((item, index) => {
                               return (
                                 <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomHang}>
-                                  {item.Ma} - {item.Ten}
+                                  {item.ThongTinNhomHang}
                                 </Select.Option>
                               )
                             })}
@@ -753,9 +758,7 @@ const DoanhSoBanHangQuay = () => {
                             {nhomHangNXT?.map((item) => {
                               return (
                                 <Select.Option key={item.Ma} value={item.Ma} title={item.ThongTinNhomHang}>
-                                  <p>
-                                    {item.Ma} - {item.Ten}
-                                  </p>
+                                  {item.ThongTinNhomHang} <br />
                                 </Select.Option>
                               )
                             })}
@@ -852,9 +855,7 @@ const DoanhSoBanHangQuay = () => {
                             {hangHoaNXT?.map((item, index) => {
                               return (
                                 <Select.Option key={index} value={item.MaHang} title={item.TenHang}>
-                                  <p>
-                                    {item.MaHang}-{item.TenHang}
-                                  </p>
+                                  {item.MaHang} - {item.TenHang} <br />
                                 </Select.Option>
                               )
                             })}

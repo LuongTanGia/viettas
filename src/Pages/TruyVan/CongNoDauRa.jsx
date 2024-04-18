@@ -72,6 +72,10 @@ const CongNoDauRa = () => {
   }, [dataCRUD])
 
   useEffect(() => {
+    selectedNhomFrom == null ? setSelectedNhomTo(null) : ''
+  }, [selectedNhomFrom])
+
+  useEffect(() => {
     const ListNhomDoiTuongCNDR = async () => {
       try {
         const response = await categoryAPI.ListNhomDoiTuong_CNDR(TokenAccess)
@@ -949,11 +953,10 @@ const CongNoDauRa = () => {
                           value={selectedNhomFrom}
                           onChange={(value) => {
                             setSelectedNhomFrom(value)
-                            selectedNhomTo == null || selectedNhomTo == undefined ? setSelectedNhomTo(value) : ''
+                            selectedNhomTo == null ? setSelectedNhomTo(value) : ''
                             if (
-                              selectedNhomTo !== null ||
-                              (selectedNhomTo !== undefined &&
-                                nhomDoiTuongCNDR.findIndex((item) => item.Ma === value) > nhomDoiTuongCNDR.findIndex((item) => item.Ma === selectedNhomTo))
+                              selectedNhomTo !== null &&
+                              nhomDoiTuongCNDR.findIndex((item) => item.Ma === value) > nhomDoiTuongCNDR.findIndex((item) => item.Ma === selectedNhomTo)
                             ) {
                               setSelectedNhomTo(value)
                             }
@@ -985,12 +988,11 @@ const CongNoDauRa = () => {
                           value={selectedNhomTo}
                           onChange={(value) => {
                             setSelectedNhomTo(value)
-                            selectedNhomFrom == null || selectedNhomFrom == undefined ? setSelectedNhomFrom(value) : ''
+                            selectedNhomFrom == null ? setSelectedNhomFrom(value) : ''
 
                             if (
-                              selectedNhomFrom !== null ||
-                              (selectedNhomFrom !== undefined &&
-                                nhomDoiTuongCNDR.findIndex((item) => item.Ma === value) < nhomDoiTuongCNDR.findIndex((item) => item.Ma === selectedNhomFrom))
+                              selectedNhomFrom !== null &&
+                              nhomDoiTuongCNDR.findIndex((item) => item.Ma === value) < nhomDoiTuongCNDR.findIndex((item) => item.Ma === selectedNhomFrom)
                             ) {
                               setSelectedNhomFrom(value)
                             }

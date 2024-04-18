@@ -40,7 +40,7 @@ const HMCEdit = ({ close, loadingData, setTargetRow, dataHMC }) => {
         toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
         setTargetRow(dataHMC?.Ma)
       } else {
-        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
+        toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
       }
     } catch (error) {
       console.log(error)

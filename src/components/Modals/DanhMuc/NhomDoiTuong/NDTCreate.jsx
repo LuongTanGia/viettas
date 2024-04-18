@@ -42,7 +42,7 @@ const NDTCreate = ({ close, loadingData, setTargetRow }) => {
         toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
         setTargetRow(NDTForm?.Ma)
       } else {
-        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
+        toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
       }
     } catch (error) {
       console.log(error)

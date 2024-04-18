@@ -10,13 +10,14 @@ import logo from '../../../../assets/VTS-iSale.ico'
 import { RETOKEN } from '../../../../action/Actions'
 import ActionButton from '../../../util/Button/ActionButton'
 import SimpleBackdrop from '../../../util/Loading/LoadingPage'
-const PCCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
+const PCCreate = ({ close, loadingData, setTargetRow }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const [dataUser, setDataUser] = useState(null)
   const [dataQuay, setDataQuay] = useState(null)
   const [dataCa, setDataCa] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const [DateFrom, setDateFrom] = useState(dayjs(new Date()))
+
   const innitProduct = {
     SoQuay: null,
     MaNguoiDung: '',
@@ -56,6 +57,15 @@ const PCCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
       getListHelper()
     }
   }, [isLoading])
+
+  // useEffect(() => {
+  //   const filteredUsers = dataUser?.filter((item) => {
+  //     return maNguoiDung.some((user) => user.MaNguoiDung === item.Ma)
+  //   })
+  //   const filteredMaUsers1 = maNguoiDung?.filter((item) => item?.HieuLucTu).map((item) => item.HieuLucTu)
+  //   const isMatched = filteredMaUsers1.includes(PCForm?.HieuLucTu == null ? dayjs(DateFrom).format('YYYY-MM-DDTHH:mm:ss') : PCForm?.HieuLucTu)
+  //   console.log(isMatched)
+  // }, [maNguoiDung, PCForm, DateFrom])
 
   useEffect(() => {
     const getListHelperQuay = async () => {
@@ -97,7 +107,14 @@ const PCCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
         MaNguoiDung: PCForm?.MaNguoiDung?.trim() ? null : 'Người dùng không được trống',
       })
       return
+    }
+    let shouldSetError = false
+    if (!PCForm?.SoQuay && !PCForm?.MaCa) {
+      shouldSetError = false
     } else if (!PCForm?.SoQuay || !PCForm?.MaCa) {
+      shouldSetError = true
+    }
+    if (shouldSetError) {
       setErrors({
         SoQuay: !PCForm?.MaCa ? null : PCForm?.SoQuay ? null : 'Quầy không được trống',
         MaCa: !PCForm?.SoQuay ? null : PCForm?.MaCa ? null : 'Ca không được trống',
@@ -105,7 +122,6 @@ const PCCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
       return
     }
     try {
-      console.log({ ...PCForm, HieuLucTu: dayjs(DateFrom).format('YYYY-MM-DD') })
       const response = await categoryAPI.ThemPhanCa({ ...PCForm, HieuLucTu: dayjs(DateFrom).format('YYYY-MM-DD') }, TokenAccess)
       if (response.data.DataError == 0) {
         isSave ? setPCForm([]) : close()
@@ -113,7 +129,7 @@ const PCCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
         toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
         setTargetRow(PCForm?.MaNguoiDung)
       } else {
-        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
+        toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
       }
     } catch (error) {
       console.log(error)
@@ -157,14 +173,11 @@ const PCCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
                       popupMatchSelectWidth={false}
                     >
                       {dataUser &&
-                        dataUser.map(
-                          (item, index) =>
-                            !maNguoiDung.includes(item.Ma) && (
-                              <Select.Option key={index} value={item.Ma}>
-                                {item.Ma} - {item.Ten}
-                              </Select.Option>
-                            ),
-                        )}
+                        dataUser.map((item, index) => (
+                          <Select.Option key={index} value={item.Ma}>
+                            {item.Ma} - {item.Ten}
+                          </Select.Option>
+                        ))}
                     </Select>
                   </div>
                   <div className="flex items-center ml-[15px]">
@@ -198,7 +211,7 @@ const PCCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
                         size="small"
                         status={errors.SoQuay ? 'error' : ''}
                         placeholder={errors?.SoQuay ? errors?.SoQuay : ''}
-                        value={PCForm?.SoQuay || undefined}
+                        value={PCForm?.SoQuay}
                         onChange={(value) => {
                           setPCForm({
                             ...PCForm,
@@ -224,7 +237,7 @@ const PCCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
                         className="truncate xl:max-w-[7rem] md:max-w-[6rem]"
                         status={errors.MaCa ? 'error' : ''}
                         placeholder={errors?.MaCa ? errors?.MaCa : ''}
-                        value={PCForm?.MaCa || undefined}
+                        value={PCForm?.MaCa}
                         onChange={(value) => {
                           setPCForm({
                             ...PCForm,

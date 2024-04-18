@@ -99,7 +99,7 @@ const QTTEdit = ({ close, loadingData, setTargetRow, dataQTT }) => {
         toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
         setTargetRow(dataQTT?.Quay)
       } else {
-        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
+        toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
       }
     } catch (error) {
       console.log(error)

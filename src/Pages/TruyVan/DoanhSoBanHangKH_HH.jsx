@@ -191,6 +191,11 @@ const DoanhSoBanHangKH_HH = () => {
   }, [searchHangHoa, isLoading])
 
   useEffect(() => {
+    selectedDTFrom == null ? setSelectedDTTo(null) : ''
+    selectedHHFrom == null ? setSelectedHHTo(null) : ''
+  }, [selectedDTFrom, selectedHHFrom])
+
+  useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
     setCheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
     const key = Object.keys(dataDSBH[0] || []).filter((key) => key != 'ThongTinHangHoa' && key != 'DiaChiDoiTuong')
@@ -673,7 +678,7 @@ const DoanhSoBanHangKH_HH = () => {
                             {nhomHang?.map((item, index) => {
                               return (
                                 <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomHang}>
-                                  {item.Ma} - {item.Ten}
+                                  {item.ThongTinNhomHang}
                                 </Select.Option>
                               )
                             })}
@@ -705,7 +710,7 @@ const DoanhSoBanHangKH_HH = () => {
                             {nhomHang?.map((item, index) => {
                               return (
                                 <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomHang}>
-                                  {item.Ma} - {item.Ten}
+                                  {item.ThongTinNhomHang}
                                 </Select.Option>
                               )
                             })}
@@ -733,7 +738,7 @@ const DoanhSoBanHangKH_HH = () => {
                             {nhomHang?.map((item) => {
                               return (
                                 <Select.Option key={item.Ma} value={item.Ma} title={item.ThongTinNhomHang}>
-                                  <p>{item.ThongTinNhomHang}</p>
+                                  {item.ThongTinNhomHang} <br />
                                 </Select.Option>
                               )
                             })}
@@ -767,7 +772,7 @@ const DoanhSoBanHangKH_HH = () => {
                             {nhomDoiTuong?.map((item, index) => {
                               return (
                                 <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomDoiTuong}>
-                                  {item.Ma} - {item.Ten}
+                                  {item.ThongTinNhomDoiTuong}
                                 </Select.Option>
                               )
                             })}
@@ -799,7 +804,7 @@ const DoanhSoBanHangKH_HH = () => {
                             {nhomDoiTuong?.map((item, index) => {
                               return (
                                 <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomDoiTuong}>
-                                  {item.Ma} - {item.Ten}
+                                  {item.ThongTinNhomDoiTuong}
                                 </Select.Option>
                               )
                             })}
@@ -827,7 +832,7 @@ const DoanhSoBanHangKH_HH = () => {
                             {nhomDoiTuong?.map((item, index) => {
                               return (
                                 <Select.Option key={index} value={item.Ma}>
-                                  <p>{item.ThongTinNhomDoiTuong}</p>
+                                  {item.ThongTinNhomDoiTuong} <br />
                                 </Select.Option>
                               )
                             })}

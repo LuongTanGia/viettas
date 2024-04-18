@@ -72,6 +72,10 @@ const CongNoDauVao = () => {
   }, [dataCRUD])
 
   useEffect(() => {
+    selectedNhomFrom == null ? setSelectedNhomTo(null) : ''
+  }, [selectedNhomFrom])
+
+  useEffect(() => {
     const ListNhomDoiTuongCNDV = async () => {
       try {
         const response = await categoryAPI.ListNhomDoiTuong_CNDV(TokenAccess)
@@ -949,9 +953,9 @@ const CongNoDauVao = () => {
                           value={selectedNhomFrom}
                           onChange={(value) => {
                             setSelectedNhomFrom(value)
-                            selectedNhomTo == null || selectedNhomTo == undefined ? setSelectedNhomTo(value) : ''
+                            selectedNhomTo == null ? setSelectedNhomTo(value) : ''
                             if (
-                              (selectedNhomTo !== null || selectedNhomTo !== undefined) &&
+                              selectedNhomTo !== null &&
                               nhomDoiTuongCNDV.findIndex((item) => item.Ma === value) > nhomDoiTuongCNDV.findIndex((item) => item.Ma === selectedNhomTo)
                             ) {
                               setSelectedNhomTo(value)
@@ -968,7 +972,7 @@ const CongNoDauVao = () => {
                           {nhomDoiTuongCNDV?.map((item, index) => {
                             return (
                               <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomDoiTuong}>
-                                {item.Ma} - {item.Ten}
+                                {item.ThongTinNhomDoiTuong}
                               </Select.Option>
                             )
                           })}
@@ -984,7 +988,7 @@ const CongNoDauVao = () => {
                           value={selectedNhomTo}
                           onChange={(value) => {
                             setSelectedNhomTo(value)
-                            selectedNhomFrom == null || selectedNhomFrom == undefined ? setSelectedNhomFrom(value) : ''
+                            selectedNhomFrom == null ? setSelectedNhomFrom(value) : ''
 
                             if (
                               selectedNhomFrom !== null &&
@@ -1004,7 +1008,7 @@ const CongNoDauVao = () => {
                           {nhomDoiTuongCNDV?.map((item, index) => {
                             return (
                               <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomDoiTuong}>
-                                {item.Ma} - {item.Ten}
+                                {item.ThongTinNhomDoiTuong}
                               </Select.Option>
                             )
                           })}

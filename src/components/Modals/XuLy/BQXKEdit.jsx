@@ -24,7 +24,7 @@ const BQXKEdit = ({ close, dataBQXK, loadingData, setTargetRow, setDataBinhQuan 
         close()
         setTargetRow(dataBQXK?.Thang)
       } else {
-        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
+        toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
         console.log(response.data)
         setDataBinhQuan([])
         loadingData()

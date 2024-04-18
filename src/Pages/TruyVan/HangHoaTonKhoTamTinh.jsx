@@ -258,7 +258,7 @@ const HangHoaTKTT = () => {
       ),
     },
     {
-      title: 'DVT',
+      title: 'ĐVT',
       dataIndex: 'DVT',
       key: 'DVT',
       width: 100,
