@@ -3,7 +3,6 @@ import { useState } from 'react'
 import moment from 'moment'
 import dayjs from 'dayjs'
 import { formatPrice, formatQuantity } from '../../../action/Actions'
-import { DateField } from '@mui/x-date-pickers/DateField'
 import logo from '../../../assets/VTS-iSale.ico'
 import { Table, Tooltip, Spin } from 'antd'
 import ModalOnlyPrintWareHouse from '../../ModalOnlyPrintWareHouse'
@@ -169,20 +168,11 @@ const ViewDuLieu = ({ actionType, typePage, namePage, data, dataThongTin, dataTh
                     {/* DatePicker */}
                     <div className="flex md:px-1 lg:px-4 items-center">
                       <label className=" px-3  text-center ">Ngày</label>
-                      <DateField
-                        className="DatePicker_PMH  max-w-[115px] bg-[#fafafa]"
-                        format="DD/MM/YYYY"
-                        value={dayjs(dataThongTin?.NgayCTu)}
+                      <input
+                        type="text"
                         disabled
-                        sx={{
-                          '& .MuiButtonBase-root': {
-                            padding: '4px',
-                          },
-                          '& .MuiSvgIcon-root': {
-                            width: '18px',
-                            height: '18px',
-                          },
-                        }}
+                        value={dayjs(dataThongTin?.NgayCTu).format('DD/MM/YYYY')}
+                        className="h-[24px] px-2 rounded-[4px] w-[115px] resize-none border-[1px] border-gray-300 outline-none text-center  "
                       />
                     </div>
                   </div>

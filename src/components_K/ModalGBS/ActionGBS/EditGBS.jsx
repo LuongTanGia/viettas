@@ -16,12 +16,13 @@ import moment from 'moment'
 
 const { IoMdAddCircle } = icons
 
-const EditGBS = ({ typePage, namePage, dataThongTin, dataHangHoa, dataThongSo, setHightLight, isLoadingModal, loading, close }) => {
+const EditGBS = ({ typePage, namePage, dataThongTin, dataHangHoa, dataThongSo, setHightLight, loading, close }) => {
   const [isShowModalHH, setIsShowModalHH] = useState(false)
   const [isShowSelectHH, setIsShowSelectHH] = useState(false)
   const [isShowImport, setIsShowImport] = useState(false)
   const [selectedRowData, setSelectedRowData] = useState([])
   const [isLoading, setIsLoading] = useState(true)
+  const [isLoadingModal, setIsLoadingModal] = useState(true)
   const [errors, setErrors] = useState({
     NhomGia: '',
     TenNhomGia: '',
@@ -68,6 +69,7 @@ const EditGBS = ({ typePage, namePage, dataThongTin, dataHangHoa, dataThongSo, s
           key: index + 1 + selectedRowData.length + dataHangHoa.length,
         })),
       )
+      setIsLoadingModal(false)
     }
   }, [dataThongTin?.NhomGia_CTs])
 

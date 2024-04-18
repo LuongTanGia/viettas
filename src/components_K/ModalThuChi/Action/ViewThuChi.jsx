@@ -35,20 +35,11 @@ const ViewThuChi = ({ actionType, typePage, namePage, data, dataRecord, dataThon
                     </div>
                     <div className="flex items-center gap-1 whitespace-nowrap">
                       <label className="required  min-w-[90px] text-sm flex justify-end">Ngày</label>
-                      <DateField
-                        className="DatePicker_PMH  max-w-[115px] bg-[#fafafa]"
-                        format="DD/MM/YYYY"
-                        value={dayjs(dataRecord?.NgayCTu)}
+                      <input
+                        type="text"
                         disabled
-                        sx={{
-                          '& .MuiButtonBase-root': {
-                            padding: '4px',
-                          },
-                          '& .MuiSvgIcon-root': {
-                            width: '18px',
-                            height: '18px',
-                          },
-                        }}
+                        value={dayjs(dataRecord?.NgayCTu).format('DD/MM/YYYY')}
+                        className="h-[24px] px-2 rounded-[4px] w-[115px] resize-none border-[1px] border-gray-300 outline-none text-center  "
                       />
                     </div>
                     <div className="flex items-center gap-1 whitespace-nowrap">

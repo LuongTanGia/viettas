@@ -216,7 +216,7 @@ const ViewGBS = ({ namePage, data, dataThongTin, dataThongSo, isLoadingModal, lo
                         return (
                           <Table.Summary fixed="bottom">
                             <Table.Summary.Row>
-                              <Table.Summary.Cell index={0} key="summary-cell-0">
+                              <Table.Summary.Cell index={0} key="summary-cell-0" className="text-center font-semibold  bg-[#f1f1f1]">
                                 {dataThongTin?.NhomGia_CTs?.length}
                               </Table.Summary.Cell>
                               {columns

@@ -405,7 +405,6 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                           value={NDCForm?.MaKho || undefined}
                           placeholder={errors.MaKho ? errors.MaKho : ''}
                           status={errors.MaKho ? 'error' : ''}
-                          optionFilterProp="children"
                           onChange={(value) => {
                             setNDCForm({
                               ...NDCForm,

@@ -299,36 +299,53 @@ const ModalHeThong = ({ close }) => {
                       <div className="md:w-[30px] lg:w-[140px] text-end">Từ</div>
                       <div className="w-full flex gap-2">
                         <div className="flex gap-3">
-                          <DateField
-                            className="DatePicker_PMH max-w-[115px]"
-                            format="DD/MM/YYYY"
-                            value={dayjs(formHT?.DATERANGEMIN)}
-                            maxDate={formHT?.DATERANGEMAX}
-                            onChange={(newDate) => {
-                              setFormHT({
-                                ...formHT,
-                                DATERANGEMIN: dayjs(newDate).format('YYYY-MM-DD'),
-                              })
-                            }}
-                            sx={formHT?.DATERANGELIMIT === 'M' ? styleDate : styleDate2}
-                            disabled={formHT?.DATERANGELIMIT !== 'M'}
-                          />
-                          <div className="flex gap-2 ">
-                            <div className=" text-end">Đến</div>
+                          {formHT?.DATERANGELIMIT === 'M' ? (
                             <DateField
                               className="DatePicker_PMH max-w-[115px]"
                               format="DD/MM/YYYY"
-                              value={dayjs(formHT?.DATERANGEMAX)}
-                              minDate={formHT?.DATERANGEMIN}
+                              value={dayjs(formHT?.DATERANGEMIN)}
+                              maxDate={formHT?.DATERANGEMAX}
                               onChange={(newDate) => {
                                 setFormHT({
                                   ...formHT,
-                                  DATERANGEMAX: dayjs(newDate).format('YYYY-MM-DD'),
+                                  DATERANGEMIN: dayjs(newDate).format('YYYY-MM-DD'),
                                 })
                               }}
-                              sx={formHT?.DATERANGELIMIT === 'M' ? styleDate : styleDate2}
-                              disabled={formHT?.DATERANGELIMIT !== 'M'}
+                              sx={styleDate}
                             />
+                          ) : (
+                            <input
+                              type="text"
+                              disabled
+                              value={dayjs(formHT?.DATERANGEMIN).format('DD/MM/YYYY')}
+                              className="text-base h-[24px] px-2 rounded-[4px] w-[115px] resize-none border-[1px] border-gray-300 outline-none text-center  "
+                            />
+                          )}
+
+                          <div className="flex gap-2 ">
+                            <div className=" text-end">Đến</div>
+                            {formHT?.DATERANGELIMIT === 'M' ? (
+                              <DateField
+                                className="DatePicker_PMH max-w-[115px]"
+                                format="DD/MM/YYYY"
+                                value={dayjs(formHT?.DATERANGEMAX)}
+                                minDate={formHT?.DATERANGEMIN}
+                                onChange={(newDate) => {
+                                  setFormHT({
+                                    ...formHT,
+                                    DATERANGEMAX: dayjs(newDate).format('YYYY-MM-DD'),
+                                  })
+                                }}
+                                sx={styleDate}
+                              />
+                            ) : (
+                              <input
+                                type="text"
+                                disabled
+                                value={dayjs(formHT?.DATERANGEMAX).format('DD/MM/YYYY')}
+                                className="text-base h-[24px] px-2 rounded-[4px] w-[115px] resize-none border-[1px] border-gray-300 outline-none text-center  "
+                              />
+                            )}
                           </div>
                         </div>
                       </div>
