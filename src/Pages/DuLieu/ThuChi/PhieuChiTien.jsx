@@ -206,17 +206,10 @@ const PhieuChiTien = () => {
 
         if (response.data && response.data.DataError === 0) {
           setDataQuyenHan(response.data)
-        }
-        // else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        //   toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        // }
-        else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
           getChucNangQuyenHan()
         }
-        // else {
-        //   toast.error(response.data.DataErrorDescription)
-        // }
       } catch (error) {
         console.error('Kiểm tra token thất bại', error)
       }
@@ -365,7 +358,11 @@ const PhieuChiTien = () => {
       align: 'center',
       render: (text) => (
         <div className="truncate text-start">
-          <HighlightedCell text={text} search={searchPCT} />
+          <Tooltip title={text} color="blue">
+            <span>
+              <HighlightedCell text={text} search={searchPCT} />
+            </span>
+          </Tooltip>
         </div>
       ),
     },
@@ -647,7 +644,7 @@ const PhieuChiTien = () => {
           ) : (
             <div className="w-auto">
               <div className="relative text-lg flex justify-between items-center mb-1">
-                <div className="flex items-center gap-x-4 font-bold">
+                <div className="flex items-baseline gap-x-4 font-bold">
                   <h1 className="text-xl uppercase">Phiếu chi tiền </h1>
                   <div>
                     <BsSearch size={18} className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
@@ -655,7 +652,7 @@ const PhieuChiTien = () => {
                 </div>
                 <div className="flex  ">
                   {isShowSearch && (
-                    <div className={`flex absolute left-[12rem] -top-[2px] transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
+                    <div className={`flex absolute left-[12rem] -top-[3px] transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
                       <Input
                         allowClear={{
                           clearIcon: <CloseSquareFilled />,

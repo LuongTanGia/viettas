@@ -15,12 +15,14 @@ import ModalHHGBS from '../../ModalHHGBS'
 
 const { IoMdAddCircle } = icons
 
-const CreateGBS = ({ actionType, typePage, namePage, dataThongTin, dataHangHoa, dataThongSo, setHightLight, isLoadingModal, loading, close }) => {
+const CreateGBS = ({ actionType, typePage, namePage, dataThongTin, dataHangHoa, dataThongSo, setHightLight, loading, close }) => {
   const [isShowModalHH, setIsShowModalHH] = useState(false)
   const [isShowSelectHH, setIsShowSelectHH] = useState(false)
   const [isShowImport, setIsShowImport] = useState(false)
   const [selectedRowData, setSelectedRowData] = useState([])
   const [isLoading, setIsLoading] = useState(true)
+  const [isLoadingModal, setIsLoadingModal] = useState(true)
+
   const [errors, setErrors] = useState({
     NhomGia: '',
     TenNhomGia: '',
@@ -66,6 +68,7 @@ const CreateGBS = ({ actionType, typePage, namePage, dataThongTin, dataHangHoa, 
           key: index + 1 + selectedRowData.length + dataHangHoa.length,
         })),
       )
+      setIsLoadingModal(false)
     }
   }, [dataThongTin?.NhomGia_CTs])
 
@@ -210,7 +213,7 @@ const CreateGBS = ({ actionType, typePage, namePage, dataThongTin, dataHangHoa, 
             <label className="text-blue-700 font-semibold uppercase pb-1">Thêm - {namePage ? namePage : 'Phiếu ?'}</label>
           </div>
 
-          <Spin spinning={isLoadingModal}>
+          <Spin spinning={actionType === 'clone' ? isLoadingModal : false}>
             <div className="border w-full h-[89%] rounded-sm text-sm">
               <div className="flex md:gap-0 lg:gap-1 pl-1 ">
                 {/* thong tin phieu */}

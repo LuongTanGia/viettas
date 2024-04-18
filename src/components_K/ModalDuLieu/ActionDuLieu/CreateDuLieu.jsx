@@ -401,8 +401,8 @@ const CreateDuLieu = ({ actionType, typePage, namePage, data, dataThongSo, dataD
     }
 
     if (selectedRowData.map((item) => item.MaHang).includes('Chọn mã hàng')) {
-      errors.MaHang = 'Mã hàng không được để trống, vui lòng chọn mã hàng!'
-      toast.warning('Mã hàng không được để trống, vui lòng chọn mã hàng!')
+      errors.MaHang = 'Mã hàng không được để trống !'
+      toast.warning('Mã hàng không được để trống !')
       return errors
     }
 

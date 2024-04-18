@@ -7,7 +7,6 @@ import { RETOKEN, formatPrice } from '../../../action/Actions'
 import { Segmented, Spin, Table, Typography } from 'antd'
 import { toast } from 'react-toastify'
 import dayjs from 'dayjs'
-import { DateField } from '@mui/x-date-pickers'
 
 const { Text } = Typography
 
@@ -324,21 +323,11 @@ const ViewTongHopPBL = ({ typePage, namePage, dataRecord, dataThongSo, loading, 
               </div>
               <div className="flex items-center  gap-2 ">
                 <label className="text-sm ">Ngày</label>
-                <DateField
-                  className="max-w-[135px] bg-[#fafafa]"
-                  format="DD/MM/YYYY"
-                  value={dayjs(dataThongTin?.NgayCTu)}
+                <input
+                  type="text"
                   disabled
-                  sx={{
-                    '& .MuiButtonBase-root': {
-                      padding: '4px',
-                    },
-
-                    '& .MuiSvgIcon-root': {
-                      width: '18px',
-                      height: '18px',
-                    },
-                  }}
+                  value={dayjs(dataThongTin?.NgayCTu).format('DD/MM/YYYY')}
+                  className="h-[24px] px-2 rounded-[4px] w-[90px] resize-none border-[1px] border-gray-300 outline-none  "
                 />
               </div>
               <div className="flex items-center gap-1 ">
@@ -358,7 +347,7 @@ const ViewTongHopPBL = ({ typePage, namePage, dataRecord, dataThongSo, loading, 
                 <input
                   value={dataThongTin?.NhanVien}
                   type="text"
-                  className="text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate"
+                  className="text-end h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300 outline-none  truncate "
                   disabled
                 />
               </div>
@@ -388,7 +377,8 @@ const ViewTongHopPBL = ({ typePage, namePage, dataRecord, dataThongSo, loading, 
                 />
               </div>
               <div className="flex items-center gap-1 ">
-                <label className="min-w-[90px] text-sm flex justify-end whitespace-nowrap">Tổng tiền bán</label>
+                <label className="min-w-[90px] text-sm flex justify-end whitespace-nowrap md:hidden lg:flex">Tổng tiền bán</label>
+                <label className="min-w-[25px] text-sm flex justify-end whitespace-nowrap md:flex lg:hidden">Tổng</label>
                 <input
                   value={formatPrice(dataRecord.TongThanhTien, dataThongSo.SOLESOTIEN)}
                   type="text"
@@ -398,7 +388,8 @@ const ViewTongHopPBL = ({ typePage, namePage, dataRecord, dataThongSo, loading, 
                 />
               </div>
               <div className="flex items-center gap-1 ">
-                <label className="text-sm flex justify-end whitespace-nowrap">Thu khác tại quầy</label>
+                <label className="text-sm flex justify-end whitespace-nowrap md:hidden lg:flex">Thu khác tại quầy</label>
+                <label className="min-w-[25px] text-sm flex justify-end whitespace-nowrap md:flex lg:hidden">Thu</label>
                 <input
                   value={formatPrice(dataRecord.TongThu, dataThongSo.SOLESOTIEN)}
                   type="text"
@@ -408,7 +399,8 @@ const ViewTongHopPBL = ({ typePage, namePage, dataRecord, dataThongSo, loading, 
                 />
               </div>
               <div className="flex items-center gap-1 ">
-                <label className=" text-sm flex justify-end whitespace-nowrap">Chi khác tại quầy</label>
+                <label className=" text-sm flex justify-end whitespace-nowrap md:hidden lg:flex">Chi khác tại quầy</label>
+                <label className="min-w-[25px] text-sm flex justify-end whitespace-nowrap md:flex lg:hidden">Chi</label>
                 <input
                   value={formatPrice(dataRecord.TongChi, dataThongSo.SOLESOTIEN)}
                   type="text"
@@ -418,7 +410,9 @@ const ViewTongHopPBL = ({ typePage, namePage, dataRecord, dataThongSo, loading, 
                 />
               </div>
               <div className="flex items-center gap-1 ">
-                <label className="   text-sm flex justify-end whitespace-nowrap">Số tiền phải nộp</label>
+                <label className="   text-sm flex justify-end whitespace-nowrap md:hidden lg:flex">Số tiền phải nộp</label>
+                <label className="min-w-[25px] text-sm flex justify-end whitespace-nowrap md:flex lg:hidden">Nộp</label>
+
                 <input
                   value={formatPrice(dataRecord.TienPhaiNop, dataThongSo.SOLESOTIEN)}
                   type="text"

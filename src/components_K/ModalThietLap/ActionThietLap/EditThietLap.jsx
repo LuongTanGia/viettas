@@ -4,7 +4,6 @@ import dayjs from 'dayjs'
 import logo from '../../../assets/VTS-iSale.ico'
 import * as apis from '../../../apis'
 import { RETOKEN } from '../../../action/Actions'
-import { DateField } from '@mui/x-date-pickers'
 import ActionButton from '../../../components/util/Button/ActionButton'
 import { toast } from 'react-toastify'
 import { Checkbox, InputNumber, Select, Tooltip } from 'antd'
@@ -108,20 +107,11 @@ const EditThietLap = ({ typePage, namePage, dataRecord, dataThongSo, dataNhomGia
                     <div className="grid grid-cols-2  gap-2 items-center">
                       <div className="flex items-center gap-1 whitespace-nowrap">
                         <label className="required  min-w-[90px] text-sm flex justify-end">Kể từ ngày</label>
-                        <DateField
-                          className="DatePicker_PMH max-w-[115px]"
-                          format="DD/MM/YYYY"
-                          value={dayjs(formEdit?.HieuLuc)}
-                          sx={{
-                            '& .MuiButtonBase-root': {
-                              padding: '4px',
-                            },
-                            '& .MuiSvgIcon-root': {
-                              width: '18px',
-                              height: '18px',
-                            },
-                          }}
-                          readOnly
+                        <input
+                          type="text"
+                          disabled
+                          value={dayjs(formEdit?.HieuLuc).format('DD/MM/YYYY')}
+                          className="h-[24px] px-2 rounded-[4px] w-[90px] resize-none border-[1px] border-gray-300 outline-none "
                         />
                       </div>
                       <div className="flex items-center gap-1 whitespace-nowrap">
@@ -193,20 +183,11 @@ const EditThietLap = ({ typePage, namePage, dataRecord, dataThongSo, dataNhomGia
                     </div>
                     <div className="flex items-center gap-1 whitespace-nowrap">
                       <label className="required  min-w-[90px] text-sm flex justify-end">Hiệu lực từ</label>
-                      <DateField
-                        className="DatePicker_PMH  max-w-[115px] bg-[#fafafa] "
-                        format="DD/MM/YYYY"
-                        value={dayjs(formEdit?.HieuLuc)}
-                        sx={{
-                          '& .MuiButtonBase-root': {
-                            padding: '4px',
-                          },
-                          '& .MuiSvgIcon-root': {
-                            width: '18px',
-                            height: '18px',
-                          },
-                        }}
+                      <input
+                        type="text"
                         disabled
+                        value={dayjs(formEdit?.HieuLuc).format('DD/MM/YYYY')}
+                        className="h-[24px] px-2 rounded-[4px] w-[90px] resize-none border-[1px] border-gray-300 outline-none "
                       />
                     </div>
                     <div className="flex items-center gap-1">

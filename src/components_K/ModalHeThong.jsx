@@ -10,6 +10,7 @@ import { TimeField } from '@mui/x-date-pickers/TimeField'
 import { RETOKEN } from '../action/Actions'
 import { toast } from 'react-toastify'
 import ActionCheckBox from '../components/util/CheckBox/ActionCheckBox'
+import { useMediaQuery } from '@mui/material'
 
 const { Option } = Select
 
@@ -45,6 +46,8 @@ const ModalHeThong = ({ close }) => {
   const [isLoading, setIsLoading] = useState(true)
 
   const [formHT, setFormHT] = useState()
+
+  const isTablet = useMediaQuery('(min-width: 768px) and (max-width: 1024px)')
 
   useEffect(() => {
     if (data) {
@@ -296,36 +299,53 @@ const ModalHeThong = ({ close }) => {
                       <div className="md:w-[30px] lg:w-[140px] text-end">Từ</div>
                       <div className="w-full flex gap-2">
                         <div className="flex gap-3">
-                          <DateField
-                            className="DatePicker_PMH max-w-[115px]"
-                            format="DD/MM/YYYY"
-                            value={dayjs(formHT?.DATERANGEMIN)}
-                            maxDate={formHT?.DATERANGEMAX}
-                            onChange={(newDate) => {
-                              setFormHT({
-                                ...formHT,
-                                DATERANGEMIN: dayjs(newDate).format('YYYY-MM-DD'),
-                              })
-                            }}
-                            sx={formHT?.DATERANGELIMIT === 'M' ? styleDate : styleDate2}
-                            disabled={formHT?.DATERANGELIMIT !== 'M'}
-                          />
-                          <div className="flex gap-2 ">
-                            <div className=" text-end">Đến</div>
+                          {formHT?.DATERANGELIMIT === 'M' ? (
                             <DateField
                               className="DatePicker_PMH max-w-[115px]"
                               format="DD/MM/YYYY"
-                              value={dayjs(formHT?.DATERANGEMAX)}
-                              minDate={formHT?.DATERANGEMIN}
+                              value={dayjs(formHT?.DATERANGEMIN)}
+                              maxDate={formHT?.DATERANGEMAX}
                               onChange={(newDate) => {
                                 setFormHT({
                                   ...formHT,
-                                  DATERANGEMAX: dayjs(newDate).format('YYYY-MM-DD'),
+                                  DATERANGEMIN: dayjs(newDate).format('YYYY-MM-DD'),
                                 })
                               }}
-                              sx={formHT?.DATERANGELIMIT === 'M' ? styleDate : styleDate2}
-                              disabled={formHT?.DATERANGELIMIT !== 'M'}
+                              sx={styleDate}
                             />
+                          ) : (
+                            <input
+                              type="text"
+                              disabled
+                              value={dayjs(formHT?.DATERANGEMIN).format('DD/MM/YYYY')}
+                              className="text-base h-[24px] px-2 rounded-[4px] w-[115px] resize-none border-[1px] border-gray-300 outline-none text-center  "
+                            />
+                          )}
+
+                          <div className="flex gap-2 ">
+                            <div className=" text-end">Đến</div>
+                            {formHT?.DATERANGELIMIT === 'M' ? (
+                              <DateField
+                                className="DatePicker_PMH max-w-[115px]"
+                                format="DD/MM/YYYY"
+                                value={dayjs(formHT?.DATERANGEMAX)}
+                                minDate={formHT?.DATERANGEMIN}
+                                onChange={(newDate) => {
+                                  setFormHT({
+                                    ...formHT,
+                                    DATERANGEMAX: dayjs(newDate).format('YYYY-MM-DD'),
+                                  })
+                                }}
+                                sx={styleDate}
+                              />
+                            ) : (
+                              <input
+                                type="text"
+                                disabled
+                                value={dayjs(formHT?.DATERANGEMAX).format('DD/MM/YYYY')}
+                                className="text-base h-[24px] px-2 rounded-[4px] w-[115px] resize-none border-[1px] border-gray-300 outline-none text-center  "
+                              />
+                            )}
                           </div>
                         </div>
                       </div>
@@ -510,7 +530,7 @@ const ModalHeThong = ({ close }) => {
                             disabled={!formHT?.SUDUNG_BANLE || !formHT?.Ca1}
                           />
                         </div>
-                        <Tooltip title="Hôm sau" color="blue">
+                        <Tooltip title={isTablet ? 'Hôm sau' : ''} color="blue">
                           <Checkbox
                             disabled={!formHT?.SUDUNG_BANLE || !formHT?.Ca1}
                             checked={formHT?.Ca1_KetThuc >= 1440 ? true : false}
@@ -579,7 +599,7 @@ const ModalHeThong = ({ close }) => {
                             disabled={!formHT?.SUDUNG_BANLE || !formHT?.Ca2}
                           />
                         </div>
-                        <Tooltip title="Hôm sau" color="blue">
+                        <Tooltip title={isTablet ? 'Hôm sau' : ''} color="blue">
                           <Checkbox
                             checked={formHT?.Ca2_KetThuc >= 1440 ? true : false}
                             onChange={(e) => {
@@ -647,7 +667,7 @@ const ModalHeThong = ({ close }) => {
                             disabled={!formHT?.SUDUNG_BANLE || !formHT?.Ca3}
                           />
                         </div>
-                        <Tooltip title="Hôm sau" color="blue">
+                        <Tooltip title={isTablet ? 'Hôm sau' : ''} color="blue">
                           <Checkbox
                             checked={formHT?.Ca3_KetThuc >= 1440 ? true : false}
                             onChange={(e) => {

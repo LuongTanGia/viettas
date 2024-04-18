@@ -50,7 +50,6 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
             dataHangHoa={dataHangHoa}
             dataThongSo={dataThongSo}
             setHightLight={setHightLight}
-            isLoadingModal={isLoadingModal}
             loading={loading}
             close={close}
           />
@@ -65,7 +64,6 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
             dataHangHoa={dataHangHoa}
             dataThongSo={dataThongSo}
             setHightLight={setHightLight}
-            isLoadingModal={isLoadingModal}
             loading={loading}
             close={close}
           />

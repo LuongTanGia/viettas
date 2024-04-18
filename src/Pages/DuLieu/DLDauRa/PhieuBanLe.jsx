@@ -344,7 +344,11 @@ const PhieuBanLe = () => {
       align: 'center',
       render: (text) => (
         <div className="truncate text-start">
-          <HighlightedCell text={text} search={searchPBL} />
+          <Tooltip title={text} color="blue">
+            <span>
+              <HighlightedCell text={text} search={searchPBL} />
+            </span>
+          </Tooltip>
         </div>
       ),
     },
@@ -698,7 +702,7 @@ const PhieuBanLe = () => {
           ) : (
             <div className="w-auto">
               <div className="relative text-lg flex justify-between items-center mb-1">
-                <div className="flex items-center gap-x-4 font-bold">
+                <div className="flex items-baseline gap-x-4 font-bold">
                   <h1 className="text-xl uppercase">Phiếu bán hàng (lẻ) </h1>
                   <div>
                     <BsSearch size={18} className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
@@ -706,7 +710,7 @@ const PhieuBanLe = () => {
                 </div>
                 <div className="flex  ">
                   {isShowSearch && (
-                    <div className={`flex absolute left-[16.4rem] -top-[2px] transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
+                    <div className={`flex absolute left-[16.4rem] -top-[3px] transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
                       <Input
                         allowClear={{
                           clearIcon: <CloseSquareFilled />,

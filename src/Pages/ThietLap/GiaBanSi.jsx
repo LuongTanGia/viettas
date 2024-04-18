@@ -88,43 +88,33 @@ const GBS = () => {
           const response = await apis.ListHelperHHGBS(tokenLogin)
           if (response.data && response.data.DataError === 0) {
             setDataHangHoa(response.data.DataResults)
-            setIsLoadingModal(false)
           } else if (response.data.DataError === -1 || response.data.DataError === -2 || response.data.DataError === -3) {
             toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-            setIsLoadingModal(false)
           } else if (response.data.DataError === -107 || response.data.DataError === -108) {
             await RETOKEN()
             fetchData()
           } else {
             toast.error(response.data.DataErrorDescription)
-            setIsLoadingModal(false)
           }
         }
         if (actionType === 'view' || actionType === 'edit' || actionType === 'clone') {
-          console.log('get helper tt')
           const responseTT = await apis.ThongTinGBS(tokenLogin, dataRecord.NhomGia)
           if (responseTT.data && responseTT.data.DataError === 0) {
             setDataThongTin(responseTT.data.DataResult)
-            setIsLoadingModal(false)
           } else if (responseTT.data.DataError === -1 || responseTT.data.DataError === -2 || responseTT.data.DataError === -3) {
             toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseTT.data.DataErrorDescription}</div>)
-            setIsLoadingModal(false)
           } else if (responseTT.data.DataError === -107 || responseTT.data.DataError === -108) {
             await RETOKEN()
             fetchData()
           } else {
             toast.error(responseTT.data.DataErrorDescription)
-            setIsLoadingModal(false)
           }
         }
       } catch (error) {
         console.error('Lấy data thất bại', error)
-        setIsLoadingModal(false)
-        // setIsShowModal(false)
         setIsLoadingEdit(false)
-
-        // toast.error('Lấy data thất bại. Vui lòng thử lại sau.')
       }
+      setIsLoadingModal(false)
     }
 
     if (isShowModal) {
@@ -136,23 +126,15 @@ const GBS = () => {
   useEffect(() => {
     const getChucNangQuyenHan = async () => {
       try {
-        console.log('đi')
         const tokenLogin = localStorage.getItem('TKN')
         const response = await apis.ChucNangQuyenHan(tokenLogin, 'ThietLap_GiaSi')
 
         if (response.data && response.data.DataError === 0) {
           setDataQuyenHan(response.data)
-        }
-        // else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        //   toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        // }
-        else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
           getChucNangQuyenHan()
         }
-        // else {
-        //   toast.error(response.data.DataErrorDescription)
-        // }
       } catch (error) {
         console.error('Kiểm tra token thất bại', error)
       }

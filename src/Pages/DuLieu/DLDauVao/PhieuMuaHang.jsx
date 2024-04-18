@@ -335,7 +335,11 @@ const PhieuMuaHang = () => {
       align: 'center',
       render: (text) => (
         <div className="truncate text-start">
-          <HighlightedCell text={text} search={searchPMH} />
+          <Tooltip title={text} color="blue">
+            <span>
+              <HighlightedCell text={text} search={searchPMH} />
+            </span>
+          </Tooltip>
         </div>
       ),
     },
@@ -759,15 +763,15 @@ const PhieuMuaHang = () => {
           ) : (
             <div className="w-auto">
               <div className="relative text-lg flex justify-between items-center mb-1">
-                <div className="flex items-center gap-x-4 font-bold">
-                  <h1 className="text-xl uppercase">Phiếu mua hàng </h1>
+                <div className="flex items-baseline gap-x-4 font-bold">
+                  <h1 className="text-xl  uppercase">Phiếu mua hàng</h1>
                   <div>
                     <BsSearch size={18} className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
                   </div>
                 </div>
                 <div className="flex  ">
                   {isShowSearch && (
-                    <div className={`flex absolute left-[14rem] top-[2px] transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
+                    <div className={`flex absolute left-[14rem] -top-[3px] transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
                       <Input
                         allowClear={{
                           clearIcon: <CloseSquareFilled />,

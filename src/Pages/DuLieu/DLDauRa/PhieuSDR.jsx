@@ -302,7 +302,11 @@ const PhieuSDR = () => {
       align: 'center',
       render: (text) => (
         <div className="truncate text-start">
-          <HighlightedCell text={text} search={searchSDR} />
+          <Tooltip title={text} color="blue">
+            <span>
+              <HighlightedCell text={text} search={searchSDR} />
+            </span>
+          </Tooltip>
         </div>
       ),
     },
@@ -579,7 +583,7 @@ const PhieuSDR = () => {
           ) : (
             <div className="w-auto">
               <div className="relative text-lg flex justify-between items-center mb-1">
-                <div className="flex items-center gap-x-4 font-bold">
+                <div className="flex items-baseline gap-x-4 font-bold">
                   <h1 className="text-xl uppercase">Phiếu điều chỉnh công nợ khách hàng </h1>
                   <div>
                     <BsSearch size={18} className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
@@ -588,7 +592,7 @@ const PhieuSDR = () => {
                 <div className="flex  ">
                   {isShowSearch && (
                     <div
-                      className={`flex absolute left-[30.6rem] -top-[2px] transition-all linear duration-700 ${isShowSearch ? 'md:w-[12rem] lg:w-[20rem]' : 'w-0'} overflow-hidden`}
+                      className={`flex absolute left-[30.6rem] -top-[3px] transition-all linear duration-700 ${isShowSearch ? 'md:w-[12rem] lg:w-[20rem]' : 'w-0'} overflow-hidden`}
                     >
                       <Input
                         allowClear={{

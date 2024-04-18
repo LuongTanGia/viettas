@@ -2,9 +2,7 @@
 import { Checkbox, Tooltip } from 'antd'
 import dayjs from 'dayjs'
 import logo from '../../../assets/VTS-iSale.ico'
-
 import { formatPrice } from '../../../action/Actions'
-import { DateField } from '@mui/x-date-pickers'
 import ActionButton from '../../../components/util/Button/ActionButton'
 
 const ViewThietLap = ({ typePage, namePage, dataRecord, dataThongSo, close }) => {
@@ -26,27 +24,18 @@ const ViewThietLap = ({ typePage, namePage, dataRecord, dataThongSo, close }) =>
                       <input
                         type="text"
                         value={`${dataRecord?.MaHang}-${dataRecord?.TenHang} (${dataRecord?.DVT}) `}
-                        className="h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none "
+                        className="h-[24px] px-2 rounded-[4px] w-full resize-none border-[1px] border-gray-300 outline-none  "
                         disabled
                       />
                     </div>
                     <div className="grid grid-cols-2  gap-2 items-center">
                       <div className="flex items-center gap-1 whitespace-nowrap">
                         <label className="required  min-w-[90px] text-sm flex justify-end">Kể từ ngày</label>
-                        <DateField
-                          className="DatePicker_PMH  max-w-[115px] bg-[#fafafa]"
-                          format="DD/MM/YYYY"
-                          value={dayjs(dataRecord?.HieuLucTu)}
+                        <input
+                          type="text"
                           disabled
-                          sx={{
-                            '& .MuiButtonBase-root': {
-                              padding: '4px',
-                            },
-                            '& .MuiSvgIcon-root': {
-                              width: '18px',
-                              height: '18px',
-                            },
-                          }}
+                          value={dayjs(dataRecord?.HieuLucTu).format('DD/MM/YYYY')}
+                          className="h-[24px] px-2 rounded-[4px] w-[90px] resize-none border-[1px] border-gray-300 outline-none  "
                         />
                       </div>
                       <div className="flex items-center gap-1 whitespace-nowrap">
@@ -88,20 +77,11 @@ const ViewThietLap = ({ typePage, namePage, dataRecord, dataThongSo, close }) =>
                     </div>
                     <div className="flex items-center gap-1 whitespace-nowrap">
                       <label className="required  min-w-[90px] text-sm flex justify-end">Hiệu lực từ</label>
-                      <DateField
-                        className="DatePicker_PMH  max-w-[115px] bg-[#fafafa] "
-                        format="DD/MM/YYYY"
-                        value={dayjs(dataRecord?.HieuLucTu)}
+                      <input
+                        type="text"
                         disabled
-                        sx={{
-                          '& .MuiButtonBase-root': {
-                            padding: '4px',
-                          },
-                          '& .MuiSvgIcon-root': {
-                            width: '18px',
-                            height: '18px',
-                          },
-                        }}
+                        value={dayjs(dataRecord?.HieuLucTu).format('DD/MM/YYYY')}
+                        className="h-[24px] px-2 rounded-[4px] w-[90px] resize-none border-[1px] border-gray-300 outline-none  "
                       />
                     </div>
                     <div className="flex items-center gap-1">

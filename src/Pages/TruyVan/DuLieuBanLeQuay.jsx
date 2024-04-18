@@ -730,6 +730,7 @@ const DuLieuBLQ = () => {
     setLastSearchTime(currentTime)
     setTableLoadChild(true)
     getDSBLQ(record)
+    setFirtQuayCa(`${record.NgayCTu}/${record.NhanVien}`)
   }
 
   const getDSBLQ = async (record, formDF) => {
@@ -782,6 +783,7 @@ const DuLieuBLQ = () => {
     setLastSearchTime(currentTime)
     setTableLoadTT(true)
     getThongTin(record)
+    setFirtBLQ(record.SoChungTu)
   }
 
   const getThongTin = async (record, sct) => {
@@ -1050,7 +1052,6 @@ const DuLieuBLQ = () => {
                     rowKey={(record) => `${record.NgayCTu}/${record.NhanVien}`}
                     onRow={(record) => ({
                       onDoubleClick: () => handleView(record),
-                      onClick: () => setFirtQuayCa(`${record.NgayCTu}/${record.NhanVien}`),
                     })}
                     summary={() => {
                       return (

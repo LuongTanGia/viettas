@@ -310,7 +310,7 @@ const PhieuThuTien = () => {
       title: 'Tên hạng mục',
       dataIndex: 'TenHangMuc',
       key: 'TenHangMuc',
-      width: 150,
+      width: 180,
       sorter: (a, b) => a.TenHangMuc.localeCompare(b.TenHangMuc),
       showSorterTooltip: false,
       align: 'center',
@@ -364,7 +364,11 @@ const PhieuThuTien = () => {
       align: 'center',
       render: (text) => (
         <div className="truncate text-start">
-          <HighlightedCell text={text} search={searchPTT} />
+          <Tooltip title={text} color="blue">
+            <span>
+              <HighlightedCell text={text} search={searchPTT} />
+            </span>
+          </Tooltip>
         </div>
       ),
     },
@@ -646,7 +650,7 @@ const PhieuThuTien = () => {
           ) : (
             <div className="w-auto">
               <div className="relative text-lg flex justify-between items-center mb-1">
-                <div className="flex items-center gap-x-4 font-bold">
+                <div className="flex items-baseline gap-x-4 font-bold">
                   <h1 className="text-xl uppercase">Phiếu Thu Tiền </h1>
                   <div>
                     <BsSearch size={18} className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
@@ -654,7 +658,7 @@ const PhieuThuTien = () => {
                 </div>
                 <div className="flex  ">
                   {isShowSearch && (
-                    <div className={`flex absolute left-[13rem] -top-[1px] transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
+                    <div className={`flex absolute left-[13rem] -top-[3px] transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
                       <Input
                         allowClear={{
                           clearIcon: <CloseSquareFilled />,

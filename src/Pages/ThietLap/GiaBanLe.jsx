@@ -610,7 +610,7 @@ const GBL = () => {
   }
   const handleAdjustPrice = () => {
     if (!selectedRowKeys.length > 0) {
-      toast.warning('Hãy chọn mã khách hàng để điều chỉnh giá !', {
+      toast.warning('Hãy chọn mã hàng để điều chỉnh giá !', {
         autoClose: 1500,
       })
       return
