@@ -434,7 +434,8 @@ const CreateDuLieu = ({ actionType, typePage, namePage, data, dataThongSo, dataD
                     <div className="flex md:px-1 lg:px-4 items-center text-center">
                       <label className="pr-1 lg:pr-[30px] lg:pl-[8px]">Ngày</label>
                       <DateField
-                        className="DatePicker_PMH max-w-[132px] min-w-[132px]"
+                        className=" max-w-[132px] min-w-[132px]
+"
                         format="DD/MM/YYYY"
                         value={dayjs(formCreate?.NgayCTu)}
                         onChange={(newDate) => {
