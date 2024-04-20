@@ -16,10 +16,12 @@ const QLEdit = ({ close, loadingData, setTargetRow, dataQL, maNguoiDung }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const [dataUser, setDataUser] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [dateChange, setDateChange] = useState(false)
+
   const innitProduct = {
     MaQuanLy: '',
     MaNguoiDung: '',
-    TuNgay: null,
+    TuNgay: dayjs(new Date()),
     DenNgay: null,
     KhongKetThuc: true,
     NA: false,
@@ -64,17 +66,31 @@ const QLEdit = ({ close, loadingData, setTargetRow, dataQL, maNguoiDung }) => {
       return
     }
     try {
-      const response = await categoryAPI.SuaQuanLy(
-        { Ma: dataQL?.MaQuanLy, Data: { ...QLForm, TuNgay: dayjs(QLForm?.TuNgay).format('YYYY-MM-DD'), DenNgay: dayjs(QLForm?.DenNgay).format('YYYY-MM-DD') } },
-        TokenAccess,
-      )
-      if (response.data.DataError == 0) {
-        isPrint ? handlePrint() : toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
-        loadingData()
-        close()
-        setTargetRow(QLForm?.MaQuanLy)
+      if (!QLForm.KhongKetThuc && !QLForm.DenNgay) {
+        toast.warning('Vui lòng nhập ngày hết hạn', { autoClose: 2000 })
+      } else if (QLForm.KhongKetThuc) {
+        const response = await categoryAPI.SuaQuanLy({ Ma: dataQL?.MaQuanLy, Data: { ...QLForm } }, TokenAccess)
+        if (response.data.DataError == 0) {
+          close()
+          toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
+          loadingData()
+          setTargetRow(QLForm?.MaQuanLy)
+        } else {
+          toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
+        }
       } else {
-        toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
+        const response = await categoryAPI.SuaQuanLy(
+          { Ma: dataQL?.MaQuanLy, Data: { ...QLForm, TuNgay: dayjs(QLForm?.TuNgay).format('YYYY-MM-DD'), DenNgay: dayjs(QLForm?.DenNgay).format('YYYY-MM-DD') } },
+          TokenAccess,
+        )
+        if (response.data.DataError == 0) {
+          isPrint ? handlePrint() : toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
+          loadingData()
+          close()
+          setTargetRow(QLForm?.MaQuanLy)
+        } else {
+          toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
+        }
       }
     } catch (error) {
       console.log(error)
@@ -96,6 +112,35 @@ const QLEdit = ({ close, loadingData, setTargetRow, dataQL, maNguoiDung }) => {
       close()
     }
   }
+  const handleDateChange = () => {
+    let timerId
+    clearTimeout(timerId)
+    timerId = setTimeout(() => {
+      if (!QLForm.KhongKetThuc) {
+        if (
+          !dateChange &&
+          dayjs(QLForm.TuNgay) &&
+          dayjs(QLForm.DenNgay) &&
+          typeof QLForm.TuNgay.isAfter === 'function' &&
+          typeof QLForm.DenNgay.isAfter === 'function' &&
+          dayjs(QLForm.TuNgay).isAfter(QLForm.DenNgay)
+        ) {
+          setQLForm({ ...QLForm, TuNgay: dayjs(QLForm.TuNgay), DenNgay: dayjs(QLForm.TuNgay) })
+          return
+        } else if (dateChange && dayjs(QLForm.TuNgay) && dayjs(QLForm.DenNgay) && dayjs(QLForm.TuNgay).isAfter(QLForm.DenNgay)) {
+          setQLForm({ ...QLForm, TuNgay: dayjs(QLForm.DenNgay), DenNgay: dayjs(QLForm.DenNgay) })
+        } else {
+          setQLForm({ ...QLForm, TuNgay: dayjs(QLForm.TuNgay), DenNgay: dayjs(QLForm.DenNgay) })
+        }
+      }
+    }, 300)
+  }
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      handleDateChange()
+    }
+  }
+  console.log()
   return (
     <>
       {!isLoading ? (
@@ -176,8 +221,11 @@ const QLEdit = ({ close, loadingData, setTargetRow, dataQL, maNguoiDung }) => {
                         className="max-w-[115px]"
                         format="DD/MM/YYYY"
                         value={dayjs(QLForm?.TuNgay)}
+                        onBlur={handleDateChange}
+                        onKeyDown={handleKeyDown}
                         onChange={(values) => {
-                          setQLForm({ ...QLForm, TuNgay: dayjs(values).format('YYYY-MM-DD') })
+                          setQLForm({ ...QLForm, TuNgay: dayjs(values) })
+                          setDateChange(false)
                         }}
                         sx={{
                           '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
@@ -196,20 +244,48 @@ const QLEdit = ({ close, loadingData, setTargetRow, dataQL, maNguoiDung }) => {
                       <DateField
                         className="max-w-[130px]"
                         format="DD/MM/YYYY"
-                        value={QLForm?.DenNgay ? dayjs(QLForm?.DenNgay) : null}
+                        value={dayjs(QLForm?.DenNgay)}
+                        disabled={QLForm.KhongKetThuc ? true : false}
+                        onBlur={handleDateChange}
+                        onKeyDown={handleKeyDown}
                         onChange={(values) => {
-                          setQLForm({ ...QLForm, DenNgay: dayjs(values).format('YYYY-MM-DD') })
+                          setQLForm({ ...QLForm, DenNgay: dayjs(values) })
+                          setDateChange(true)
                         }}
-                        sx={{
-                          '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                          '& .MuiButtonBase-root': {
-                            padding: '4px',
-                          },
-                          '& .MuiSvgIcon-root': {
-                            width: '18px',
-                            height: '18px',
-                          },
-                        }}
+                        sx={
+                          QLForm.KhongKetThuc
+                            ? {
+                                '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #0000003b' },
+                                '& .MuiButtonBase-root': {
+                                  padding: '4px',
+                                },
+                                '& .MuiSvgIcon-root': {
+                                  width: '18px',
+                                  height: '18px',
+                                },
+                              }
+                            : !QLForm.KhongKetThuc && !QLForm.DenNgay
+                              ? {
+                                  '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': { border: '1px solid red' },
+                                  '& .MuiButtonBase-root': {
+                                    padding: '4px',
+                                  },
+                                  '& .MuiSvgIcon-root': {
+                                    width: '18px',
+                                    height: '18px',
+                                  },
+                                }
+                              : {
+                                  '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                                  '& .MuiButtonBase-root': {
+                                    padding: '4px',
+                                  },
+                                  '& .MuiSvgIcon-root': {
+                                    width: '18px',
+                                    height: '18px',
+                                  },
+                                }
+                        }
                       />
                     </div>
                     <div className="flex items-center">
@@ -220,6 +296,7 @@ const QLEdit = ({ close, loadingData, setTargetRow, dataQL, maNguoiDung }) => {
                           setQLForm({
                             ...QLForm,
                             KhongKetThuc: e.target.checked,
+                            DenNgay: QLForm.KhongKetThuc ? null : null,
                           })
                         }
                       >

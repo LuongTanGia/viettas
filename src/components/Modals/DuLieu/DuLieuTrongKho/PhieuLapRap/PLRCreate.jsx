@@ -139,22 +139,26 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
         }
       })
       if (newData?.length > 0) {
-        const response = await categoryAPI.PLRCreate({ ...PLRForm, DataDetails: newData, NgayCTu: dayjs(valueDate).format('YYYY-MM-DD') }, TokenAccess)
-        if (response.data.DataError == 0) {
-          actionType == 'print'
-            ? (handlePrint(), setPLRForm({ MaKho: dataKhoHang[0]?.MaKho }), setSelectedRowData([]))
-            : actionType == 'printImport'
-              ? (handlePrintImport(), setPLRForm({ MaKho: dataKhoHang[0]?.MaKho }), setSelectedRowData([]))
-              : actionType == 'printExport'
-                ? (handlePrintExport(), setPLRForm({ MaKho: dataKhoHang[0]?.MaKho }), setSelectedRowData([]))
-                : isSave
-                  ? (toast.success(response.data.DataErrorDescription, { autoClose: 1000 }), setPLRForm({ MaKho: dataKhoHang[0]?.MaKho }), setSelectedRowData([]))
-                  : (close(), toast.success(response.data.DataErrorDescription))
-          loadingData()
-          setSoCTu(response.data.DataResults[0].SoChungTu)
-          setTargetRow(response.data.DataResults[0].SoChungTu)
+        if (isAdd) {
+          toast.warning('Vui lòng chọn mã hàng', { autoClose: 2000 })
         } else {
-          toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
+          const response = await categoryAPI.PLRCreate({ ...PLRForm, DataDetails: newData, NgayCTu: dayjs(valueDate).format('YYYY-MM-DD') }, TokenAccess)
+          if (response.data.DataError == 0) {
+            actionType == 'print'
+              ? (handlePrint(), setPLRForm({ MaKho: dataKhoHang[0]?.MaKho }), setSelectedRowData([]))
+              : actionType == 'printImport'
+                ? (handlePrintImport(), setPLRForm({ MaKho: dataKhoHang[0]?.MaKho }), setSelectedRowData([]))
+                : actionType == 'printExport'
+                  ? (handlePrintExport(), setPLRForm({ MaKho: dataKhoHang[0]?.MaKho }), setSelectedRowData([]))
+                  : isSave
+                    ? (toast.success(response.data.DataErrorDescription, { autoClose: 1000 }), setPLRForm({ MaKho: dataKhoHang[0]?.MaKho }), setSelectedRowData([]))
+                    : (close(), toast.success(response.data.DataErrorDescription))
+            loadingData()
+            setSoCTu(response.data.DataResults[0].SoChungTu)
+            setTargetRow(response.data.DataResults[0].SoChungTu)
+          } else {
+            toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
+          }
         }
       } else {
         toast.warning('Chi tiết hàng không được để trống', { autoClose: 1000 })

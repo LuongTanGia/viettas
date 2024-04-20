@@ -125,7 +125,8 @@ function ModelPrint({ isShowModel, handleClose, handleCloseAction, modelType, se
     setSoChungTuFrom(value)
     if (soChungTuTo !== null && dataSoChungTu?.findIndex((item) => item.SoChungTu === value) > dataSoChungTu?.findIndex((item) => item.SoChungTu === soChungTuTo)) {
       setSoChungTuTo(value)
-    } else {
+    }
+    if (soChungTuTo == null) {
       setSoChungTuTo(value)
     }
   }
@@ -133,8 +134,9 @@ function ModelPrint({ isShowModel, handleClose, handleCloseAction, modelType, se
     setSoChungTuTo(value)
     if (soChungTuFrom !== null && dataSoChungTu?.findIndex((item) => item.SoChungTu === value) < dataSoChungTu?.findIndex((item) => item.SoChungTu === soChungTuFrom)) {
       setSoChungTuFrom(value)
-    } else {
-      setSoChungTuTo(value)
+    }
+    if (soChungTuTo == null) {
+      setSoChungTuFrom(value)
     }
   }
   const handleInPhieu = async () => {

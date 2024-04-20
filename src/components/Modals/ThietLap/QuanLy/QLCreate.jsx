@@ -11,22 +11,19 @@ import logo from '../../../../assets/VTS-iSale.ico'
 import { RETOKEN, base64ToPDF } from '../../../../action/Actions'
 import ActionButton from '../../../util/Button/ActionButton'
 import SimpleBackdrop from '../../../util/Loading/LoadingPage'
-import { TextField } from '@mui/material'
-import { validateDate } from '@mui/x-date-pickers/internals'
-import { isDate } from 'date-fns'
 const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
   const [dataUser, setDataUser] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [DateFrom, setDateFrom] = useState(dayjs(new Date()))
-  const [DateTo, setDateTo] = useState(null)
+  // const [DateFrom, setDateFrom] = useState(dayjs(new Date()))
+  // const [DateTo, setDateTo] = useState(null)
   const [dateChange, setDateChange] = useState(false)
   const innitProduct = {
     MaQuanLy: '',
     MaNguoiDung: '',
-    TuNgay: null,
+    TuNgay: dayjs(new Date()),
     DenNgay: null,
     KhongKetThuc: true,
     NA: false,
@@ -39,7 +36,6 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
   const [errors, setErrors] = useState({
     MaQuanLy: '',
     MaNguoiDung: '',
-    DenNgay: null,
   })
 
   useEffect(() => {
@@ -70,13 +66,22 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
     let timerId
     clearTimeout(timerId)
     timerId = setTimeout(() => {
-      if (!dateChange && DateTo !== null && DateFrom && DateTo && typeof DateFrom.isAfter === 'function' && typeof DateTo.isAfter === 'function' && DateFrom.isAfter(DateTo)) {
-        setQLForm({ ...QLForm, TuNgay: dayjs(DateFrom).format('YYYY-MM-DD'), DenNgay: dayjs(DateFrom).format('YYYY-MM-DD') })
-        return
-      } else if (dateChange && DateTo !== null && DateFrom && DateTo && DateFrom.isAfter(DateTo)) {
-        setQLForm({ ...QLForm, TuNgay: dayjs(DateTo).format('YYYY-MM-DD'), DenNgay: dayjs(DateTo).format('YYYY-MM-DD') })
-      } else {
-        setQLForm({ ...QLForm, TuNgay: dayjs(DateFrom).format('YYYY-MM-DD'), DenNgay: dayjs(DateTo).format('YYYY-MM-DD') })
+      if (!QLForm.KhongKetThuc) {
+        if (
+          !dateChange &&
+          QLForm.TuNgay &&
+          QLForm.DenNgay &&
+          typeof QLForm.TuNgay.isAfter === 'function' &&
+          typeof QLForm.DenNgay.isAfter === 'function' &&
+          QLForm.TuNgay.isAfter(QLForm.DenNgay)
+        ) {
+          setQLForm({ ...QLForm, TuNgay: dayjs(QLForm.TuNgay), DenNgay: dayjs(QLForm.TuNgay) })
+          return
+        } else if (dateChange && QLForm.TuNgay && QLForm.DenNgay && QLForm.TuNgay.isAfter(QLForm.DenNgay)) {
+          setQLForm({ ...QLForm, TuNgay: dayjs(QLForm.DenNgay), DenNgay: dayjs(QLForm.DenNgay) })
+        } else {
+          setQLForm({ ...QLForm, TuNgay: dayjs(QLForm.TuNgay), DenNgay: dayjs(QLForm.DenNgay) })
+        }
       }
     }, 300)
   }
@@ -85,30 +90,47 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
       handleDateChange()
     }
   }
+
   const handleCreate = async (isSave = true, isPrint = true) => {
-    console.log(QLForm)
     if ((dataThongSo?.ALLOW_MAQUANLYTUDONG ? null : !QLForm?.MaQuanLy?.trim()) || !QLForm?.MaNguoiDung?.trim()) {
       setErrors({
         MaQuanLy: dataThongSo.ALLOW_MAQUANLYTUDONG ? null : QLForm?.MaQuanLy?.trim() ? null : 'Mã không được trống',
         MaNguoiDung: QLForm?.MaNguoiDung?.trim() ? null : 'Người dùng không được trống',
-        DenNgay: errors.DenNgay,
       })
       return
     }
-
-    console.log({ ...QLForm, TuNgay: dayjs(DateFrom).format('YYYY-MM-DD') })
     try {
-      const response = await categoryAPI.ThemQuanLy({ ...QLForm, TuNgay: dayjs(DateFrom).format('YYYY-MM-DD') }, TokenAccess)
-      if (response.data.DataError == 0) {
-        isPrint
-          ? (dataThongSo.ALLOW_MAQUANLYTUDONG ? handlePrint(response.data.DataResults[0].Ma) : handlePrint(), setQLForm({ KhongKetThuc: true }))
-          : isSave
-            ? (setQLForm({ KhongKetThuc: true }), toast.success(response.data.DataErrorDescription, { autoClose: 1000 }))
-            : (close(), toast.success(response.data.DataErrorDescription, { autoClose: 1000 }))
-        loadingData()
-        dataThongSo.ALLOW_MAQUANLYTUDONG ? setTargetRow(response.data.DataResults[0].Ma) : setTargetRow(QLForm?.MaQuanLy)
+      if (!QLForm.KhongKetThuc && !QLForm.DenNgay) {
+        toast.warning('Vui lòng nhập ngày hết hạn', { autoClose: 2000 })
+      } else if (QLForm.KhongKetThuc) {
+        const response = await categoryAPI.ThemQuanLy({ ...QLForm, TuNgay: dayjs(QLForm.TuNgay).format('YYYY-MM-DD') }, TokenAccess)
+        if (response.data.DataError == 0) {
+          isPrint
+            ? (dataThongSo.ALLOW_MAQUANLYTUDONG ? handlePrint(response.data.DataResults[0].Ma) : handlePrint(), setQLForm({ KhongKetThuc: true }))
+            : isSave
+              ? (setQLForm({ KhongKetThuc: true }), toast.success(response.data.DataErrorDescription, { autoClose: 1000 }))
+              : (close(), toast.success(response.data.DataErrorDescription, { autoClose: 1000 }))
+          loadingData()
+          dataThongSo.ALLOW_MAQUANLYTUDONG ? setTargetRow(response.data.DataResults[0].Ma) : setTargetRow(QLForm?.MaQuanLy)
+        } else {
+          toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
+        }
       } else {
-        toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
+        const response = await categoryAPI.ThemQuanLy(
+          { ...QLForm, TuNgay: dayjs(QLForm.TuNgay).format('YYYY-MM-DD'), DenNgay: dayjs(QLForm.DenNgay).format('YYYY-MM-DD') },
+          TokenAccess,
+        )
+        if (response.data.DataError == 0) {
+          isPrint
+            ? (dataThongSo.ALLOW_MAQUANLYTUDONG ? handlePrint(response.data.DataResults[0].Ma) : handlePrint(), setQLForm({ KhongKetThuc: true }))
+            : isSave
+              ? (setQLForm({ KhongKetThuc: true }), toast.success(response.data.DataErrorDescription, { autoClose: 1000 }))
+              : (close(), toast.success(response.data.DataErrorDescription, { autoClose: 1000 }))
+          loadingData()
+          dataThongSo.ALLOW_MAQUANLYTUDONG ? setTargetRow(response.data.DataResults[0].Ma) : setTargetRow(QLForm?.MaQuanLy)
+        } else {
+          toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
+        }
       }
     } catch (error) {
       console.log(error)
@@ -124,7 +146,6 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
         toast.error(response.data.DataErrorDescription)
       }
     } catch (error) {
-      console.log(error)
       toast.error('Lỗi Server vui lòng thử lại', { autoClose: 1000 })
       close()
     }
@@ -216,11 +237,14 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
                         // className="DatePicker_NXTKho max-w-[130px]"
                         className="max-w-[115px]"
                         format="DD/MM/YYYY"
-                        value={DateFrom}
+                        value={QLForm.TuNgay}
                         onBlur={handleDateChange}
                         onKeyDown={handleKeyDown}
                         onChange={(values) => {
-                          setDateFrom(values)
+                          setQLForm({
+                            ...QLForm,
+                            TuNgay: values,
+                          })
                           setDateChange(false)
                         }}
                         // color="info"
@@ -244,24 +268,18 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
                         value={QLForm.DenNgay}
                         onBlur={handleDateChange}
                         onKeyDown={handleKeyDown}
-                        // renderInput={(params) => (
-                        //   <TextField
-                        //     {...params}
-                        //     error={!!errors.DenNgay} // Set error prop based on whether there's an error
-                        //     helperText={errors.DenNgay || ''} // Display error message if there's an error
-                        //   />
-                        // )}
+                        disabled={QLForm.KhongKetThuc ? true : false}
                         onChange={(value) => {
-                          setDateTo(value)
+                          setQLForm({
+                            ...QLForm,
+                            DenNgay: value,
+                          })
                           setDateChange(true)
-                          const isValid = validateDate(value) // Implement your own validation logic
-
-                          setErrors({ DenNgay: isValid ? null : 'Invalid date' })
                         }}
                         sx={
                           QLForm.KhongKetThuc
                             ? {
-                                '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                                '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #0000003b' },
                                 '& .MuiButtonBase-root': {
                                   padding: '4px',
                                 },
@@ -270,7 +288,7 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
                                   height: '18px',
                                 },
                               }
-                            : !QLForm.KhongKetThuc && isDate(errors.DenNgay)
+                            : !QLForm.KhongKetThuc && !QLForm.DenNgay
                               ? {
                                   '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': { border: '1px solid red' },
                                   '& .MuiButtonBase-root': {
@@ -302,6 +320,7 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
                           setQLForm({
                             ...QLForm,
                             KhongKetThuc: e.target.checked,
+                            DenNgay: QLForm.KhongKetThuc ? null : null,
                           })
                         }
                       >

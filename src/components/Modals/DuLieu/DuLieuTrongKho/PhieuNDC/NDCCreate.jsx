@@ -191,7 +191,7 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
           }
         }
       } else {
-        toast.warning('Chi tiết hàng không được để trống', { autoClose: 1000 })
+        toast.warning('Chi tiết hàng không được để trống', { autoClose: 2000 })
       }
     } catch (error) {
       console.log(error)
