@@ -35,7 +35,6 @@ const CreateDuLieu = ({ actionType, typePage, namePage, data, dataThongSo, dataD
     Ten: '',
     DiaChi: '',
   })
-  const [typePrint, setTypePrint] = useState('print')
 
   const ngayChungTu = dayjs().format('YYYY-MM-DD')
 
@@ -305,7 +304,7 @@ const CreateDuLieu = ({ actionType, typePage, namePage, data, dataThongSo, dataD
     }
   }
 
-  const handlePrintInCreate = async () => {
+  const handlePrintInCreate = async (typePrint) => {
     const errors = handleValidation()
 
     if (Object.keys(errors).length > 0) {
@@ -344,9 +343,11 @@ const CreateDuLieu = ({ actionType, typePage, namePage, data, dataThongSo, dataD
           setDoiTuongInfo({ Ten: '', DiaChi: '' })
           setSelectedKhoHang(dataKhoHang[0].MaKho)
           setSelectedRowData([])
-
-          if (typePrint === 'print') setIsShowModalOnlyPrint(true)
-          if (typePrint === 'printwarehouse') setIsShowModalOnlyPrintWareHouse(true)
+          if (typePrint === 'print') {
+            setIsShowModalOnlyPrint(true)
+          } else if (typePrint === 'print2') {
+            setIsShowModalOnlyPrintWareHouse(true)
+          }
         } else if (DataError === -1 || DataError === -2 || DataError === -3) {
           toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
         } else if (DataError === -107 || DataError === -108) {
@@ -663,9 +664,7 @@ const CreateDuLieu = ({ actionType, typePage, namePage, data, dataThongSo, dataD
                 background={'purple-500'}
                 bg_hover={'white'}
                 color_hover={'purple-500'}
-                handleAction={() => {
-                  handlePrintInCreate(), setTypePrint('print')
-                }}
+                handleAction={() => handlePrintInCreate('print')}
                 isModal={true}
               />
               {dataThongSo?.ALLOW_INPHIEUKHO_DAUVAODAURA === true && (
@@ -675,9 +674,7 @@ const CreateDuLieu = ({ actionType, typePage, namePage, data, dataThongSo, dataD
                   background={'purple-500'}
                   bg_hover={'white'}
                   color_hover={'purple-500'}
-                  handleAction={() => {
-                    handlePrintInCreate(), setTypePrint('printwarehouse')
-                  }}
+                  handleAction={() => handlePrintInCreate('print2')}
                   isModal={true}
                 />
               )}
@@ -731,7 +728,6 @@ const CreateDuLieu = ({ actionType, typePage, namePage, data, dataThongSo, dataD
           close={() => setIsShowModalOnlyPrintWareHouse(false)}
           dataThongTin={formCreateTT}
           data={data}
-          controlDate={controlDate}
           actionType={actionType}
           close2={close}
           SctCreate={SctCreate}

@@ -22,24 +22,6 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
   const startDate = dayjs(dataThongTin?.NgayCTu).format('YYYY-MM-DD')
   const endDate = dayjs(dataThongTin?.NgayCTu).format('YYYY-MM-DD')
 
-  // const dataByDate = useMemo(() => {
-  //   return data.filter((item) => {
-  //     const itemDate = new Date(item.NgayCTu)
-  //     const ngaybt = new Date(startDate)
-  //     const ngaykt = new Date(endDate)
-
-  //     return itemDate >= ngaybt && itemDate <= ngaykt
-  //   })
-  // }, [data, startDate, endDate])
-
-  // useEffect(() => {
-  //   if (actionType === 'view' && !!newData?.length) {
-  //     setNewData(dataByDate)
-  //   } else {
-  //     setNewData('Chọn mã hàng')
-  //   }
-  // }, [dataByDate])
-
   const [formPrint, setFormPrint] = useState()
 
   const [checkboxValues, setCheckboxValues] = useState({

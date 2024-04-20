@@ -1,19 +1,19 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from 'react'
-import logo from '../assets/VTS-iSale.ico'
+import logo from '../../../assets/VTS-iSale.ico'
 import { InputNumber, Select } from 'antd'
 import { toast } from 'react-toastify'
-import * as apis from '../apis'
-import { RETOKEN } from '../action/Actions'
-import ActionButton from '../components/util/Button/ActionButton'
+import * as apis from '../../../apis'
+import { RETOKEN } from '../../../action/Actions'
+import ActionButton from '../../../components/util/Button/ActionButton'
 const { Option } = Select
 // const { BsSearch } = icons
-const ModalDieuChinh = ({ close, namePage, dataThongSo, typePage, dataRecord, setHightLight }) => {
+const DieuChinhGBS = ({ close, namePage, dataThongSo, typePage, dataRecord, setHightLight }) => {
   const [formAdjustPrice, setFormAdjustPrice] = useState({
     GiaTriTinh: 'OLDVALUE',
     ToanTu: '+',
     LoaiGiaTri: 'TYLE',
-    GiaTri: 1,
+    GiaTri: 0,
     NhomGia: dataRecord?.NhomGia,
   })
   // default value
@@ -24,14 +24,6 @@ const ModalDieuChinh = ({ close, namePage, dataThongSo, typePage, dataRecord, se
       setFormAdjustPrice({ ...formAdjustPrice, ToanTu: null })
     }
   }, [formAdjustPrice.GiaTriTinh])
-
-  useEffect(() => {
-    if (formAdjustPrice?.LoaiGiaTri === 'TYLE') {
-      setFormAdjustPrice({ ...formAdjustPrice, GiaTri: 1 })
-    } else {
-      setFormAdjustPrice({ ...formAdjustPrice, GiaTri: 0 })
-    }
-  }, [formAdjustPrice.LoaiGiaTri])
 
   ///////////////////////////////////
   const handleAdjustPrice = async () => {
@@ -212,4 +204,4 @@ const ModalDieuChinh = ({ close, namePage, dataThongSo, typePage, dataRecord, se
   )
 }
 
-export default ModalDieuChinh
+export default DieuChinhGBS

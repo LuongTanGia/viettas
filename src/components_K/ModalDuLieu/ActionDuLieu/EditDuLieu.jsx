@@ -22,16 +22,15 @@ const { Option } = Select
 const { IoMdAddCircle } = icons
 
 const EditDuLieu = ({ actionType, typePage, namePage, data, dataRecord, dataThongTinSua, dataThongSo, dataDoiTuong, dataKhoHang, controlDate, loading, setHightLight, close }) => {
-  const [isShowModalHH, setIsShowModalHH] = useState(false)
-  const [isShowModalOnlyPrint, setIsShowModalOnlyPrint] = useState(false)
-  const [isShowModalOnlyPrintWareHouse, setIsShowModalOnlyPrintWareHouse] = useState(false)
   const [dataHangHoa, setDataHangHoa] = useState([])
   const [selectedKhoHang, setSelectedKhoHang] = useState()
   const [selectedRowData, setSelectedRowData] = useState([])
   const [selectedDoiTuong, setSelectedDoiTuong] = useState()
   const [doiTuongInfo, setDoiTuongInfo] = useState({ Ten: '', DiaChi: '' })
   const [isLoading, setIsLoading] = useState(true)
-  const [typePrint, setTypePrint] = useState('print')
+  const [isShowModalHH, setIsShowModalHH] = useState(false)
+  const [isShowModalOnlyPrintWareHouse, setIsShowModalOnlyPrintWareHouse] = useState(false)
+  const [isShowModalOnlyPrint, setIsShowModalOnlyPrint] = useState(false)
 
   const [errors, setErrors] = useState({
     DoiTuong: null,
@@ -259,7 +258,8 @@ const EditDuLieu = ({ actionType, typePage, namePage, data, dataRecord, dataThon
       console.error('Error while saving data:', error)
     }
   }
-  const handlePrintInEdit = async (dataRecord) => {
+
+  const handlePrintInEdit = async (dataRecord, typePrint) => {
     const errors = handleValidation()
 
     if (Object.keys(errors).length > 0) {
@@ -288,8 +288,9 @@ const EditDuLieu = ({ actionType, typePage, namePage, data, dataRecord, dataThon
           loading()
           setHightLight(dataRecord.SoChungTu)
           setSelectedRowData([])
-          if (typePrint === 'print') setIsShowModalOnlyPrint(true)
-          else if (typePrint === 'printwarehouse') {
+          if (typePrint === 'print') {
+            setIsShowModalOnlyPrint(true)
+          } else if (typePrint === 'print2') {
             setIsShowModalOnlyPrintWareHouse(true)
           }
         } else if (DataError === -1 || DataError === -2 || DataError === -3) {
@@ -602,9 +603,7 @@ const EditDuLieu = ({ actionType, typePage, namePage, data, dataRecord, dataThon
                 background={'purple-500'}
                 bg_hover={'white'}
                 color_hover={'purple-500'}
-                handleAction={() => {
-                  handlePrintInEdit(dataRecord), setTypePrint('print')
-                }}
+                handleAction={() => handlePrintInEdit(dataRecord, 'print')}
                 isModal={true}
               />
               {dataThongSo?.ALLOW_INPHIEUKHO_DAUVAODAURA === true && (
@@ -614,9 +613,7 @@ const EditDuLieu = ({ actionType, typePage, namePage, data, dataRecord, dataThon
                   background={'purple-500'}
                   bg_hover={'white'}
                   color_hover={'purple-500'}
-                  handleAction={() => {
-                    handlePrintInEdit(dataRecord), setTypePrint('printwarehouses')
-                  }}
+                  handleAction={() => handlePrintInEdit(dataRecord, 'print2')}
                   isModal={true}
                 />
               )}
