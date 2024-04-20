@@ -124,7 +124,8 @@ const EditSDV = ({ namePage, dataRecord, dataThongTinSua, dataDoiTuong, dataThon
                   <div className="flex items-center gap-1 whitespace-nowrap">
                     <label className="required  min-w-[50px] text-sm flex justify-end">Ngày</label>
                     <DateField
-                      className="DatePicker_PMH max-w-[132px] min-w-[132px]"
+                      className=" max-w-[132px] min-w-[132px]
+"
                       format="DD/MM/YYYY"
                       value={dayjs(formEdit?.NgayCTu)}
                       onChange={(newDate) => {
