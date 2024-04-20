@@ -162,23 +162,27 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
         }
       })
       if (newData?.length > 0) {
-        const response = await categoryAPI.PLREdit(
-          { SoChungTu: dataPLR?.SoChungTu, Data: { ...PLRForm, NgayCTu: dayjs(PLRForm?.NgayCTu).format('YYYY-MM-DD'), DataDetails: newData } },
-          TokenAccess,
-        )
-        if (response.data.DataError == 0) {
-          actionType == 'print'
-            ? handlePrint()
-            : actionType == 'printImport'
-              ? handlePrintImport()
-              : actionType == 'printExport'
-                ? handlePrintExport()
-                : (close(), toast.success(response.data.DataErrorDescription, { autoClose: 1000 }))
-          loadingData()
-          setTargetRow(dataPLR?.SoChungTu)
+        if (isAdd) {
+          toast.warning('Vui lòng chọn mã hàng', { autoClose: 2000 })
         } else {
-          console.log('sai', PLRForm)
-          toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
+          const response = await categoryAPI.PLREdit(
+            { SoChungTu: dataPLR?.SoChungTu, Data: { ...PLRForm, NgayCTu: dayjs(PLRForm?.NgayCTu).format('YYYY-MM-DD'), DataDetails: newData } },
+            TokenAccess,
+          )
+          if (response.data.DataError == 0) {
+            actionType == 'print'
+              ? handlePrint()
+              : actionType == 'printImport'
+                ? handlePrintImport()
+                : actionType == 'printExport'
+                  ? handlePrintExport()
+                  : (close(), toast.success(response.data.DataErrorDescription, { autoClose: 1000 }))
+            loadingData()
+            setTargetRow(dataPLR?.SoChungTu)
+          } else {
+            console.log('sai', PLRForm)
+            toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
+          }
         }
       } else {
         toast.warning('Chi tiết hàng không được để trống', { autoClose: 1000 })
