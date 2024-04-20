@@ -131,18 +131,18 @@ const CreateThietLap = ({ typePage, namePage, dataThongSo, dataHangHoa, dataNhom
     let errors = {}
 
     if (typePage === 'GBL') {
-      if (formCreate?.DonGia === null || formCreate?.DonGia === 0 || !formCreate?.MaHang?.trim()) {
+      if (formCreate?.DonGia === null || formCreate?.DonGia === 0 || !formCreate?.MaHang?.trim() || formCreate?.HieuLucTu === 'Invalid Date') {
         errors.MaHang = formCreate?.MaHang?.trim() ? '' : 'Mã hàng không được để trống'
         errors.DonGia = formCreate?.DonGia === null ? null : formCreate?.DonGia === 0 && 0
-
+        errors.HieuLucTu = 'Ngày không được để trống'
         return errors
       }
     }
     if (typePage === 'GKH') {
-      if (!formCreate?.MaDoiTuong?.trim() || !formCreate?.NhomGia?.trim()) {
+      if (!formCreate?.MaDoiTuong?.trim() || !formCreate?.NhomGia?.trim() || formCreate?.HieuLucTu === 'Invalid Date') {
         errors.MaDoiTuong = formCreate?.MaDoiTuong?.trim() ? '' : 'Mã khách hàng không được để trống'
         errors.NhomGia = formCreate?.NhomGia?.trim() ? '' : 'Mã nhóm giá không được để trống'
-
+        errors.HieuLucTu = 'Ngày không được để trống'
         return errors
       }
     }
@@ -193,9 +193,9 @@ const CreateThietLap = ({ typePage, namePage, dataThongSo, dataHangHoa, dataNhom
                         <div className="flex items-center gap-1 whitespace-nowrap">
                           <label className="required  min-w-[90px] text-sm flex justify-end">Kể từ ngày</label>
                           <DateField
-                            className="DatePicker_PMH  max-w-[115px]"
+                            className="DatePicker_PMH  max-w-[132px] min-w-[132px]"
                             format="DD/MM/YYYY"
-                            defaultValue={dayjs()}
+                            value={dayjs(formCreate?.HieuLucTu)}
                             onChange={(newDate) => {
                               setFormCreate({
                                 ...formCreate,
@@ -210,6 +210,10 @@ const CreateThietLap = ({ typePage, namePage, dataThongSo, dataHangHoa, dataNhom
                               '& .MuiSvgIcon-root': {
                                 width: '18px',
                                 height: '18px',
+                              },
+                              '& .MuiInputBase-input': {
+                                // fontSize: '14px',
+                                textAlign: 'center',
                               },
                             }}
                           />
@@ -302,7 +306,7 @@ const CreateThietLap = ({ typePage, namePage, dataThongSo, dataHangHoa, dataNhom
                         <DateField
                           className="DatePicker_PMH  max-w-[115px]"
                           format="DD/MM/YYYY"
-                          value={dayjs(formCreate.HieuLucTu)}
+                          value={dayjs(formCreate?.HieuLucTu)}
                           onChange={(newDate) => {
                             setFormCreate({
                               ...formCreate,

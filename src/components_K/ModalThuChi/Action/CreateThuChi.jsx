@@ -211,10 +211,18 @@ const CreateThuChi = ({ actionType, data, typePage, namePage, dataHangMuc, dataD
   const handleValidation = () => {
     let errors = {}
 
-    if (!formCreate?.HangMuc?.trim() || !formCreate?.MaDoiTuong?.trim() || !formCreate?.GhiChu?.trim() || formCreate?.SoTien === null || formCreate?.SoTien === 0) {
+    if (
+      !formCreate?.HangMuc?.trim() ||
+      !formCreate?.MaDoiTuong?.trim() ||
+      !formCreate?.GhiChu?.trim() ||
+      formCreate?.SoTien === null ||
+      formCreate?.SoTien === 0 ||
+      formCreate?.NgayCTu === 'Invalid Date'
+    ) {
       errors.HangMuc = formCreate?.HangMuc?.trim() ? null : 'Hạng mục không được để trống'
       errors.MaDoiTuong = formCreate?.MaDoiTuong?.trim() ? null : 'Đối tượng không được để trống'
       errors.GhiChu = formCreate?.GhiChu?.trim() ? '' : 'Ghi chú không được để trống'
+      errors.NgayCTu = 'Ngày không được để trống'
       errors.SoTien = formCreate?.SoTien === null ? null : formCreate?.SoTien === 0 && 0
 
       if (formCreate.MaDoiTuong === 'NCVL' || formCreate.MaDoiTuong === 'KHVL') {
@@ -255,9 +263,9 @@ const CreateThuChi = ({ actionType, data, typePage, namePage, dataHangMuc, dataD
                       <div className="flex items-center gap-1 whitespace-nowrap">
                         <label className="required  min-w-[60px] text-sm flex justify-end">Ngày</label>
                         <DateField
-                          className="DatePicker_PMH  max-w-[115px]"
+                          className="DatePicker_PMH  max-w-[132px]"
                           format="DD/MM/YYYY"
-                          defaultValue={dayjs()}
+                          value={dayjs(formCreate?.NgayCTu)}
                           onChange={(newDate) => {
                             setFormCreate({
                               ...formCreate,
@@ -276,6 +284,10 @@ const CreateThuChi = ({ actionType, data, typePage, namePage, dataHangMuc, dataD
                             '& .MuiSvgIcon-root': {
                               width: '18px',
                               height: '18px',
+                            },
+                            '& .MuiInputBase-input': {
+                              // fontSize: '14px',
+                              textAlign: 'center',
                             },
                           }}
                         />

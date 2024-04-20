@@ -4,8 +4,6 @@ import moment from 'moment'
 import icons from '../../untils/icons'
 import { toast } from 'react-toastify'
 import * as apis from '../../apis'
-import dayjs from 'dayjs'
-// import ActionButton from '../../components/util/Button/ActionButton'
 import { RETOKEN, formatCurrency, formatPrice } from '../../action/Actions'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
 import { exportToExcel } from '../../action/Actions'
@@ -13,8 +11,7 @@ import { CloseSquareFilled } from '@ant-design/icons'
 import { useSearch } from '../../components_K/myComponents/useSearch'
 import { ModalTongHopPBL, PermissionView } from '../../components_K'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
-// import ActionButton from '../../components/util/Button/ActionButton'
-import { DateField } from '@mui/x-date-pickers'
+import ActionDateField from '../../components/util/DateField/ActionDateField'
 
 const { Text } = Typography
 const { BsSearch, TfiMoreAlt, FaEyeSlash, RiFileExcel2Fill, FaClockRotateLeft } = icons
@@ -41,7 +38,6 @@ const GoChotCa = () => {
   const [formKhoanNgay, setFormKhoanNgay] = useState({})
   const [isLoading, setIsLoading] = useState(true)
   const [prevdateValue, setPrevDateValue] = useState({})
-  const [lastSearchTime, setLastSearchTime] = useState(0)
 
   // bỏ focus option thì hidden
   useEffect(() => {
@@ -413,48 +409,8 @@ const GoChotCa = () => {
   }
 
   const handleFilterDS = () => {
-    const currentTime = new Date().getTime()
-    if (currentTime - lastSearchTime >= 1000 && formKhoanNgay !== prevdateValue) {
+    if (formKhoanNgay !== prevdateValue) {
       setTableLoad(true)
-      setLastSearchTime(currentTime)
-    }
-  }
-
-  const handleStartDateChange = (newDate) => {
-    const startDate = newDate
-    const endDate = formKhoanNgay.NgayKetThuc
-
-    if (dayjs(startDate).isAfter(dayjs(endDate))) {
-      // Nếu ngày bắt đầu lớn hơn ngày kết thúc, cập nhật ngày kết thúc
-      setFormKhoanNgay({
-        ...formKhoanNgay,
-        NgayBatDau: startDate,
-        NgayKetThuc: startDate,
-      })
-    } else {
-      setFormKhoanNgay({
-        ...formKhoanNgay,
-        NgayBatDau: startDate,
-      })
-    }
-  }
-
-  const handleEndDateChange = (newDate) => {
-    const startDate = formKhoanNgay.NgayBatDau
-    const endDate = dayjs(newDate).format('YYYY-MM-DD')
-
-    if (dayjs(startDate).isAfter(dayjs(endDate))) {
-      // Nếu ngày kết thúc nhỏ hơn ngày bắt đầu, cập nhật ngày bắt đầu
-      setFormKhoanNgay({
-        ...formKhoanNgay,
-        NgayBatDau: endDate,
-        NgayKetThuc: endDate,
-      })
-    } else {
-      setFormKhoanNgay({
-        ...formKhoanNgay,
-        NgayKetThuc: endDate,
-      })
     }
   }
 
@@ -573,81 +529,7 @@ const GoChotCa = () => {
               <div className="flex  items-center px-3 ">
                 <div className="flex gap-3">
                   {/* DatePicker */}
-                  <div className="flex gap-x-2 items-center">
-                    <label htmlFor="">Ngày</label>
-                    <DateField
-                      className="DatePicker_PMH max-w-[115px]"
-                      format="DD/MM/YYYY"
-                      value={dayjs(formKhoanNgay.NgayBatDau)}
-                      // maxDate={dayjs(formKhoanNgay.NgayKetThuc)}
-                      onChange={(newDate) => {
-                        setFormKhoanNgay({
-                          ...formKhoanNgay,
-                          NgayBatDau: dayjs(newDate).format('YYYY-MM-DD'),
-                        })
-                      }}
-                      onBlur={() => {
-                        handleStartDateChange(formKhoanNgay.NgayBatDau)
-                        handleFilterDS()
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          handleStartDateChange(formKhoanNgay.NgayBatDau)
-
-                          setPrevDateValue(formKhoanNgay)
-                          handleFilterDS()
-                        }
-                      }}
-                      onFocus={() => setPrevDateValue(formKhoanNgay)}
-                      sx={{
-                        '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                        '& .MuiButtonBase-root': {
-                          padding: '4px',
-                        },
-                        '& .MuiSvgIcon-root': {
-                          width: '18px',
-                          height: '18px',
-                        },
-                      }}
-                    />
-                  </div>
-                  <div className="flex  gap-x-2 items-center">
-                    <label htmlFor="">Đến</label>
-                    <DateField
-                      className="DatePicker_PMH max-w-[115px]"
-                      format="DD/MM/YYYY"
-                      // minDate={dayjs(formKhoanNgay.NgayBatDau)}
-                      value={dayjs(formKhoanNgay.NgayKetThuc)}
-                      onChange={(newDate) => {
-                        setFormKhoanNgay({
-                          ...formKhoanNgay,
-                          NgayKetThuc: dayjs(newDate).format('YYYY-MM-DD'),
-                        })
-                      }}
-                      onBlur={() => {
-                        handleEndDateChange(formKhoanNgay.NgayKetThuc)
-                        handleFilterDS()
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          handleEndDateChange(formKhoanNgay.NgayKetThuc)
-                          setPrevDateValue(formKhoanNgay)
-                          handleFilterDS()
-                        }
-                      }}
-                      onFocus={() => setPrevDateValue(formKhoanNgay)}
-                      sx={{
-                        '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                        '& .MuiButtonBase-root': {
-                          padding: '4px',
-                        },
-                        '& .MuiSvgIcon-root': {
-                          width: '18px',
-                          height: '18px',
-                        },
-                      }}
-                    />
-                  </div>
+                  <ActionDateField formKhoanNgay={formKhoanNgay} setFormKhoanNgay={setFormKhoanNgay} setPrevDateValue={setPrevDateValue} handleFilterDS={handleFilterDS} />
                 </div>
               </div>
 

@@ -90,6 +90,9 @@ const CreateSDV = ({ namePage, isLoadingModal, dataDoiTuong, dataThongSo, typePa
       return
     }
 
+    if (formCreate?.NgayCTu) {
+      return
+    }
     try {
       const tokenLogin = localStorage.getItem('TKN')
 
@@ -131,14 +134,21 @@ const CreateSDV = ({ namePage, isLoadingModal, dataDoiTuong, dataThongSo, typePa
   const handleValidation = () => {
     let errors = {}
 
+    if (formCreate?.NgayCTu === 'Invalid Date') {
+      errors.NgayCTu = 'Ngày không được để trống'
+      return errors
+    }
+
     if (!formCreate?.MaDoiTuong?.trim() || !formCreate?.GhiChu?.trim() || formCreate?.SoTien === null || formCreate?.SoTien === 0) {
       errors.DoiTuong = formCreate?.MaDoiTuong?.trim() ? null : 'Đối tượng không được để trống'
       errors.GhiChu = formCreate?.GhiChu?.trim() ? '' : 'Ghi chú không được để trống'
       errors.SoTien = formCreate?.SoTien === null ? null : formCreate?.SoTien === 0 && 0
       return errors
     }
+
     return errors
   }
+
   return (
     <div className="p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
       <div className="w-[700px] h-[370px]">
@@ -157,11 +167,11 @@ const CreateSDV = ({ namePage, isLoadingModal, dataDoiTuong, dataThongSo, typePa
                       <input type="text" className="h-[24px] px-2 w-full rounded-[4px] resize-none border-[1px] border-gray-300  outline-none  truncate" disabled />
                     </div>
                     <div className="flex items-center gap-1 whitespace-nowrap">
-                      <label className="required  min-w-[90px] text-sm flex justify-end">Ngày</label>
+                      <label className="required  min-w-[50px] text-sm flex justify-end">Ngày</label>
                       <DateField
-                        className="DatePicker_PMH max-w-[115px]"
+                        className="DatePicker_PMH max-w-[132px] min-w-[132px]"
                         format="DD/MM/YYYY"
-                        defaultValue={dayjs()}
+                        value={dayjs(formCreate?.NgayCTu)}
                         onChange={(newDate) => {
                           setFormCreate({
                             ...formCreate,
@@ -176,6 +186,10 @@ const CreateSDV = ({ namePage, isLoadingModal, dataDoiTuong, dataThongSo, typePa
                           '& .MuiSvgIcon-root': {
                             width: '18px',
                             height: '18px',
+                          },
+                          '& .MuiInputBase-input': {
+                            // fontSize: '14px',
+                            textAlign: 'center',
                           },
                         }}
                       />

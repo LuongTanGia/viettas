@@ -70,7 +70,7 @@ const ModalImport = ({ close, dataHangHoa, typePage, loading, onRowCreate }) => 
 
   const handleFileSubmit = (e) => {
     if (fileName === '') {
-      toast.error('Vui lòng chọn file!')
+      toast.warning('Vui lòng chọn file!')
       return
     }
     e.preventDefault()
@@ -125,6 +125,15 @@ const ModalImport = ({ close, dataHangHoa, typePage, loading, onRowCreate }) => 
   }
 
   const controlImport = () => {
+    if (fileName === '') {
+      toast.warning('Vui lòng chọn file!')
+      return
+    }
+    if (!excelData.length) {
+      toast.warning('Bảng chi tiết không được để trống')
+      return
+    }
+
     if (typePage === 'GBS') {
       handleImportClipboard()
     } else {
@@ -133,6 +142,9 @@ const ModalImport = ({ close, dataHangHoa, typePage, loading, onRowCreate }) => 
   }
 
   const handleImport = async () => {
+    if (formImport?.HieuLucTu === 'Invalid Date') {
+      return
+    }
     try {
       const tokenLogin = localStorage.getItem('TKN')
       let response
@@ -213,9 +225,9 @@ const ModalImport = ({ close, dataHangHoa, typePage, loading, onRowCreate }) => 
 
                   <div className="flex justify-between items-center p-1 gap-2">
                     <div>
-                      <label className="required w-[120px] text-end">Áp dụng từ ngày</label>
+                      <label className="required w-[120px] text-end pr-2">Áp dụng từ ngày</label>
                       <DateField
-                        className="DatePicker_PMH max-w-[115px]"
+                        className="DatePicker_PMH max-w-[132px] min-w-[132px]"
                         format="DD/MM/YYYY"
                         value={dayjs(formImport?.HieuLucTu)}
                         onChange={(newDate) => {
@@ -225,7 +237,6 @@ const ModalImport = ({ close, dataHangHoa, typePage, loading, onRowCreate }) => 
                           })
                         }}
                         sx={{
-                          width: '120px',
                           '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
                           '& .MuiButtonBase-root': {
                             padding: '4px',
@@ -233,6 +244,10 @@ const ModalImport = ({ close, dataHangHoa, typePage, loading, onRowCreate }) => 
                           '& .MuiSvgIcon-root': {
                             width: '18px',
                             height: '18px',
+                          },
+                          '& .MuiInputBase-input': {
+                            // fontSize: '14px',
+                            textAlign: 'center',
                           },
                         }}
                       />

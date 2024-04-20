@@ -172,7 +172,7 @@ const ViewDuLieu = ({ actionType, typePage, namePage, data, dataThongTin, dataTh
                         type="text"
                         disabled
                         value={dayjs(dataThongTin?.NgayCTu).format('DD/MM/YYYY')}
-                        className="h-[24px] px-2 rounded-[4px] w-[115px] resize-none border-[1px] border-gray-300 outline-none text-center  "
+                        className="h-[24px] px-2 rounded-[4px] w-[132px] resize-none border-[1px] border-gray-300 outline-none text-center  "
                       />
                     </div>
                   </div>

@@ -35,7 +35,6 @@ const CreateDuLieu = ({ actionType, typePage, namePage, data, dataThongSo, dataD
     Ten: '',
     DiaChi: '',
   })
-  const [typePrint, setTypePrint] = useState('print')
 
   const ngayChungTu = dayjs().format('YYYY-MM-DD')
 
@@ -298,7 +297,7 @@ const CreateDuLieu = ({ actionType, typePage, namePage, data, dataThongSo, dataD
     }
   }
 
-  const handlePrintInCreate = async () => {
+  const handlePrintInCreate = async (typePrint) => {
     const errors = handleValidation()
 
     if (Object.keys(errors).length > 0) {
@@ -337,9 +336,11 @@ const CreateDuLieu = ({ actionType, typePage, namePage, data, dataThongSo, dataD
           setDoiTuongInfo({ Ten: '', DiaChi: '' })
           setSelectedKhoHang(dataKhoHang[0].MaKho)
           setSelectedRowData([])
-
-          if (typePrint === 'print') setIsShowModalOnlyPrint(true)
-          if (typePrint === 'printwarehouse') setIsShowModalOnlyPrintWareHouse(true)
+          if (typePrint === 'print') {
+            setIsShowModalOnlyPrint(true)
+          } else if (typePrint === 'print2') {
+            setIsShowModalOnlyPrintWareHouse(true)
+          }
         } else if (DataError === -1 || DataError === -2 || DataError === -3) {
           toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
         } else if (DataError === -107 || DataError === -108) {
@@ -374,8 +375,9 @@ const CreateDuLieu = ({ actionType, typePage, namePage, data, dataThongSo, dataD
   const handleValidation = () => {
     let errors = {}
 
-    if (!selectedDoiTuong?.trim()) {
+    if (!selectedDoiTuong?.trim() || formCreate?.NgayCTu === 'Invalid Date') {
       errors.DoiTuong = selectedDoiTuong?.trim() ? null : 'Đối tượng không được để trống'
+      errors.NgayCTu = 'Ngày không được để trống'
       return errors
     }
 
@@ -425,7 +427,7 @@ const CreateDuLieu = ({ actionType, typePage, namePage, data, dataThongSo, dataD
                     <div className="flex md:px-1 lg:px-4 items-center text-center">
                       <label className="pr-1 lg:pr-[30px] lg:pl-[8px]">Ngày</label>
                       <DateField
-                        className="DatePicker_PMH max-w-[115px]  "
+                        className="DatePicker_PMH max-w-[132px] min-w-[132px]"
                         format="DD/MM/YYYY"
                         value={dayjs(formCreate?.NgayCTu)}
                         onChange={(newDate) => {
@@ -446,6 +448,12 @@ const CreateDuLieu = ({ actionType, typePage, namePage, data, dataThongSo, dataD
                           '& .MuiSvgIcon-root': {
                             width: '18px',
                             height: '18px',
+                          },
+                          '& .MuiInputBase-input': {
+                            // fontSize: '15px',
+                            display: 'flex',
+                            alignItems: 'end',
+                            textAlign: 'center',
                           },
                         }}
                       />
@@ -648,9 +656,7 @@ const CreateDuLieu = ({ actionType, typePage, namePage, data, dataThongSo, dataD
                 background={'purple-500'}
                 bg_hover={'white'}
                 color_hover={'purple-500'}
-                handleAction={() => {
-                  handlePrintInCreate(), setTypePrint('print')
-                }}
+                handleAction={() => handlePrintInCreate('print')}
                 isModal={true}
               />
               {dataThongSo?.ALLOW_INPHIEUKHO_DAUVAODAURA === true && (
@@ -660,9 +666,7 @@ const CreateDuLieu = ({ actionType, typePage, namePage, data, dataThongSo, dataD
                   background={'purple-500'}
                   bg_hover={'white'}
                   color_hover={'purple-500'}
-                  handleAction={() => {
-                    handlePrintInCreate(), setTypePrint('printwarehouse')
-                  }}
+                  handleAction={() => handlePrintInCreate('print2')}
                   isModal={true}
                 />
               )}
@@ -716,7 +720,6 @@ const CreateDuLieu = ({ actionType, typePage, namePage, data, dataThongSo, dataD
           close={() => setIsShowModalOnlyPrintWareHouse(false)}
           dataThongTin={formCreateTT}
           data={data}
-          controlDate={controlDate}
           actionType={actionType}
           close2={close}
           SctCreate={SctCreate}

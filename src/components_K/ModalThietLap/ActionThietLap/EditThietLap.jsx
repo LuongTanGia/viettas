@@ -38,10 +38,10 @@ const EditThietLap = ({ typePage, namePage, dataRecord, dataThongSo, dataNhomGia
 
   const handleEdit = async () => {
     if (typePage === 'GBL') {
-      if (formEdit?.DonGia === null || formEdit?.DonGia === 0) {
+      if (formEdit?.Data?.DonGia === null || formEdit?.Data?.DonGia === 0) {
         setErrors({
           ...errors,
-          DonGia: formEdit?.DonGia === null ? null : formEdit?.DonGia === 0 && 0,
+          DonGia: formEdit?.Data?.DonGia === null ? null : formEdit?.Data?.DonGia === 0 && 0,
         })
         return
       }
@@ -82,6 +82,8 @@ const EditThietLap = ({ typePage, namePage, dataRecord, dataThongSo, dataNhomGia
     }
   }
 
+  console.log(formEdit?.Data?.DonGia)
+
   return (
     <div className="p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
       <div className={`w-[700px] ${typePage === 'GBL' ? 'h-[260px]' : 'h-[300px]'}`}>
@@ -111,7 +113,7 @@ const EditThietLap = ({ typePage, namePage, dataRecord, dataThongSo, dataNhomGia
                           type="text"
                           disabled
                           value={dayjs(formEdit?.HieuLuc).format('DD/MM/YYYY')}
-                          className="h-[24px] px-2 rounded-[4px] w-[90px] resize-none border-[1px] border-gray-300 outline-none "
+                          className="h-[24px] px-2 rounded-[4px] w-[132px] resize-none border-[1px] border-gray-300 outline-none text-center"
                         />
                       </div>
                       <div className="flex items-center gap-1 whitespace-nowrap">

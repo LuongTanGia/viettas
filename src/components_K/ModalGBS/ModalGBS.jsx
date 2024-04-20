@@ -1,14 +1,12 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from 'react'
 import dayjs from 'dayjs'
-
-import ModalDieuChinh from '../ModalDieuChinh'
-
 import DeleteGBS from './ActionGBS/DeleteGBS'
 import PrintGBS from './ActionGBS/PrintGBS'
 import ViewGBS from './ActionGBS/ViewGBS'
 import CreateGBS from './ActionGBS/CreateGBS'
 import EditGBS from './ActionGBS/EditGBS'
+import DieuChinhGBS from './ActionGBS/DieuChinhGBS'
 
 const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dataThongSo, dataThongTin, dataHangHoa, loading, isLoadingModal, setHightLight }) => {
   const ngayHieuLuc = dayjs().format('YYYY-MM-DD')
@@ -70,7 +68,7 @@ const ModalGBS = ({ data, actionType, typePage, namePage, close, dataRecord, dat
         )}
 
         {actionType === 'adjustPrice' && (
-          <ModalDieuChinh dataThongSo={dataThongSo} namePage={namePage} typePage={typePage} dataRecord={dataRecord} setHightLight={setHightLight} close={close} />
+          <DieuChinhGBS dataThongSo={dataThongSo} namePage={namePage} typePage={typePage} dataRecord={dataRecord} setHightLight={setHightLight} close={close} />
         )}
       </div>
     </>

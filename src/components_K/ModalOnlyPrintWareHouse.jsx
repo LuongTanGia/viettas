@@ -15,10 +15,9 @@ const { Option } = Select
 import * as apis from '../apis'
 
 const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2, SctCreate, typePage, namePage }) => {
-  const [selectedSctBD, setSelectedSctBD] = useState()
-  const [selectedSctKT, setSelectedSctKT] = useState()
+  const [selectedSctBD, setSelectedSctBD] = useState('')
+  const [selectedSctKT, setSelectedSctKT] = useState('')
   const [newData, setNewData] = useState()
-
   const startDate = dayjs(dataThongTin?.NgayCTu).format('YYYY-MM-DD')
   const endDate = dayjs(dataThongTin?.NgayCTu).format('YYYY-MM-DD')
 

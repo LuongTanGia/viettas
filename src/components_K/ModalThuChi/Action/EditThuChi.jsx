@@ -147,10 +147,18 @@ const EditThuChi = ({ actionType, typePage, namePage, data, dataRecord, dataThon
   const handleValidation = () => {
     let errors = {}
 
-    if (!formEdit?.HangMuc?.trim() || !formEdit?.MaDoiTuong?.trim() || !formEdit?.GhiChu?.trim() || formEdit?.SoTien === null || formEdit?.SoTien === 0) {
+    if (
+      !formEdit?.HangMuc?.trim() ||
+      !formEdit?.MaDoiTuong?.trim() ||
+      !formEdit?.GhiChu?.trim() ||
+      formEdit?.SoTien === null ||
+      formEdit?.SoTien === 0 ||
+      formEdit?.NgayCTu === 'Invalid Date'
+    ) {
       errors.HangMuc = formEdit?.HangMuc?.trim() ? null : 'Hạng mục không được để trống'
       errors.MaDoiTuong = formEdit?.MaDoiTuong?.trim() ? null : 'Đối tượng không được để trống'
       errors.GhiChu = formEdit?.GhiChu?.trim() ? '' : 'Ghi chú không được để trống'
+      errors.NgayCTu = 'Ghi chú không được để trống'
       errors.SoTien = formEdit?.SoTien === null ? null : formEdit?.SoTien === 0 && 0
 
       if (formEdit.MaDoiTuong === 'NCVL' || formEdit.MaDoiTuong === 'KHVL') {
@@ -190,11 +198,11 @@ const EditThuChi = ({ actionType, typePage, namePage, data, dataRecord, dataThon
                       />
                     </div>
                     <div className="flex items-center gap-1 whitespace-nowrap">
-                      <label className="required  min-w-[90px] text-sm flex justify-end">Ngày</label>
+                      <label className="required  min-w-[70px] text-sm flex justify-end">Ngày</label>
                       <DateField
-                        className="DatePicker_PMH max-w-[115px]"
+                        className="DatePicker_PMH max-w-[132px] "
                         format="DD/MM/YYYY"
-                        defaultValue={dayjs(dataThongTinSua?.NgayCTu)}
+                        value={dayjs(formEdit?.NgayCTu)}
                         onChange={(newDate) => {
                           setFormEdit({
                             ...formEdit,
@@ -209,6 +217,10 @@ const EditThuChi = ({ actionType, typePage, namePage, data, dataRecord, dataThon
                           '& .MuiSvgIcon-root': {
                             width: '18px',
                             height: '18px',
+                          },
+                          '& .MuiInputBase-input': {
+                            // fontSize: '14px',
+                            textAlign: 'center',
                           },
                         }}
                       />

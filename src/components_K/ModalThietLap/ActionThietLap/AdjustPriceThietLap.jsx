@@ -16,9 +16,9 @@ const AdjustPriceThietLap = ({ namePage, dataMaHang, dataThongSo, loading, close
 
   const [formAdjustPrice, setFormAdjustPrice] = useState({
     GiaTriTinh: 'OLDVALUE',
-    ToanTu: '',
+    ToanTu: '+',
     LoaiGiaTri: 'TYLE',
-    GiaTri: 0,
+    GiaTri: 1,
     HieuLucTu: ngayHieuLuc,
     DanhSachMa: dataMaHang,
   })
@@ -32,7 +32,19 @@ const AdjustPriceThietLap = ({ namePage, dataMaHang, dataThongSo, loading, close
     }
   }, [formAdjustPrice.GiaTriTinh])
 
+  useEffect(() => {
+    if (formAdjustPrice?.LoaiGiaTri === 'TYLE') {
+      setFormAdjustPrice({ ...formAdjustPrice, GiaTri: 1 })
+    } else {
+      setFormAdjustPrice({ ...formAdjustPrice, GiaTri: 0 })
+    }
+  }, [formAdjustPrice?.LoaiGiaTri])
+
   const handleAdjustPrice = async () => {
+    if (formAdjustPrice?.HieuLucTu === 'Invalid Date') {
+      return
+    }
+
     try {
       const tokenLogin = localStorage.getItem('TKN')
       const response = await apis.DieuChinhGBL(tokenLogin, formAdjustPrice)
@@ -57,6 +69,8 @@ const AdjustPriceThietLap = ({ namePage, dataMaHang, dataThongSo, loading, close
       console.error('Error while saving data:', error)
     }
   }
+
+  console.log(formAdjustPrice)
 
   return (
     <div className="p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">

@@ -35,7 +35,7 @@ const ViewThietLap = ({ typePage, namePage, dataRecord, dataThongSo, close }) =>
                           type="text"
                           disabled
                           value={dayjs(dataRecord?.HieuLucTu).format('DD/MM/YYYY')}
-                          className="h-[24px] px-2 rounded-[4px] w-[90px] resize-none border-[1px] border-gray-300 outline-none  "
+                          className="h-[24px] px-2 rounded-[4px] w-[132px] resize-none border-[1px] border-gray-300 outline-none text-center "
                         />
                       </div>
                       <div className="flex items-center gap-1 whitespace-nowrap">
@@ -81,7 +81,7 @@ const ViewThietLap = ({ typePage, namePage, dataRecord, dataThongSo, close }) =>
                         type="text"
                         disabled
                         value={dayjs(dataRecord?.HieuLucTu).format('DD/MM/YYYY')}
-                        className="h-[24px] px-2 rounded-[4px] w-[90px] resize-none border-[1px] border-gray-300 outline-none  "
+                        className="h-[24px] px-2 rounded-[4px] w-[132px] resize-none border-[1px] border-gray-300 outline-none  text-center"
                       />
                     </div>
                     <div className="flex items-center gap-1">
