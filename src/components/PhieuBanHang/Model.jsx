@@ -22,7 +22,7 @@ function Model({ isShow, handleClose, record, ActionDelete, typeModel, ActionPay
                   </Tooltip>
                   <p className="text-blue-700 whitespace-nowrap">không ?</p>
                 </div>
-                {typeModel === 'Delete' ? <p className="text-base">Thao tác không thể hoàn tác !</p> : null}
+                <p className="text-base">Thao tác không thể hoàn tác !</p>
               </div>
 
               <div className="flex gap-2 justify-end mt-1">
