@@ -113,7 +113,6 @@ const GBL = () => {
       try {
         const tokenLogin = localStorage.getItem('TKN')
         if (actionType === 'create' || actionType === 'print' || actionType === 'import') {
-          console.log('get helper  KH,DT')
           const responseKH = await apis.ListHelperHHGBL(tokenLogin)
           if (responseKH.data && responseKH.data.DataError === 0) {
             setDataHangHoa(responseKH.data.DataResults)

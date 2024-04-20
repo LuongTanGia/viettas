@@ -13,7 +13,7 @@ const ModalDieuChinh = ({ close, namePage, dataThongSo, typePage, dataRecord, se
     GiaTriTinh: 'OLDVALUE',
     ToanTu: '+',
     LoaiGiaTri: 'TYLE',
-    GiaTri: 0,
+    GiaTri: 1,
     NhomGia: dataRecord?.NhomGia,
   })
   // default value
@@ -24,6 +24,14 @@ const ModalDieuChinh = ({ close, namePage, dataThongSo, typePage, dataRecord, se
       setFormAdjustPrice({ ...formAdjustPrice, ToanTu: null })
     }
   }, [formAdjustPrice.GiaTriTinh])
+
+  useEffect(() => {
+    if (formAdjustPrice?.LoaiGiaTri === 'TYLE') {
+      setFormAdjustPrice({ ...formAdjustPrice, GiaTri: 1 })
+    } else {
+      setFormAdjustPrice({ ...formAdjustPrice, GiaTri: 0 })
+    }
+  }, [formAdjustPrice.LoaiGiaTri])
 
   ///////////////////////////////////
   const handleAdjustPrice = async () => {

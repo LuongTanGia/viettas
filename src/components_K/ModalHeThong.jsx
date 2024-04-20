@@ -11,20 +11,12 @@ import { RETOKEN } from '../action/Actions'
 import { toast } from 'react-toastify'
 import ActionCheckBox from '../components/util/CheckBox/ActionCheckBox'
 import { useMediaQuery } from '@mui/material'
+import moment from 'moment'
 
 const { Option } = Select
 
 const styleDate = {
   '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-  '& .MuiButtonBase-root': {
-    padding: '4px',
-  },
-  '& .MuiSvgIcon-root': {
-    width: '18px',
-    height: '18px',
-  },
-}
-const styleDate2 = {
   '& .MuiButtonBase-root': {
     padding: '4px',
   },
@@ -49,6 +41,7 @@ const ModalHeThong = ({ close }) => {
 
   const isTablet = useMediaQuery('(min-width: 768px) and (max-width: 1024px)')
 
+  // kiểm tra nếu ca = 0 thì trả về null
   useEffect(() => {
     if (data) {
       setFormHT({

@@ -533,7 +533,6 @@ const BangGiaKH = () => {
     setSelectedRowKeys(newSelectedRowKeys)
   }
 
-  console.log(selectedRowKeys)
   return (
     <>
       {dataQuyenHan?.VIEW === false ? (

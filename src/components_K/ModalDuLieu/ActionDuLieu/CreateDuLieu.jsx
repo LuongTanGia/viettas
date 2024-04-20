@@ -381,8 +381,9 @@ const CreateDuLieu = ({ actionType, typePage, namePage, data, dataThongSo, dataD
   const handleValidation = () => {
     let errors = {}
 
-    if (!selectedDoiTuong?.trim()) {
+    if (!selectedDoiTuong?.trim() || formCreate?.NgayCTu === 'Invalid Date') {
       errors.DoiTuong = selectedDoiTuong?.trim() ? null : 'Đối tượng không được để trống'
+      errors.NgayCTu = 'Ngày không được để trống'
       return errors
     }
 
@@ -432,7 +433,7 @@ const CreateDuLieu = ({ actionType, typePage, namePage, data, dataThongSo, dataD
                     <div className="flex md:px-1 lg:px-4 items-center text-center">
                       <label className="pr-1 lg:pr-[30px] lg:pl-[8px]">Ngày</label>
                       <DateField
-                        className="DatePicker_PMH max-w-[115px]  "
+                        className="DatePicker_PMH max-w-[132px] min-w-[132px]"
                         format="DD/MM/YYYY"
                         value={dayjs(formCreate?.NgayCTu)}
                         onChange={(newDate) => {
@@ -453,6 +454,12 @@ const CreateDuLieu = ({ actionType, typePage, namePage, data, dataThongSo, dataD
                           '& .MuiSvgIcon-root': {
                             width: '18px',
                             height: '18px',
+                          },
+                          '& .MuiInputBase-input': {
+                            // fontSize: '15px',
+                            display: 'flex',
+                            alignItems: 'end',
+                            textAlign: 'center',
                           },
                         }}
                       />

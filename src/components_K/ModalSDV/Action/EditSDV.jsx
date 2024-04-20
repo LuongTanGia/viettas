@@ -85,6 +85,11 @@ const EditSDV = ({ namePage, dataRecord, dataThongTinSua, dataDoiTuong, dataThon
   const handleValidation = () => {
     let errors = {}
 
+    if (formEdit?.NgayCTu === 'Invalid Date') {
+      errors.NgayCTu = 'Ngày không được để trống'
+      return errors
+    }
+
     if (!formEdit?.MaDoiTuong?.trim() || !formEdit?.GhiChu?.trim() || formEdit?.SoTien === null || formEdit?.SoTien === 0) {
       errors.DoiTuong = formEdit?.MaDoiTuong?.trim() ? null : 'Đối tượng không được để trống'
       errors.GhiChu = formEdit?.GhiChu?.trim() ? '' : 'Ghi chú không được để trống'
@@ -117,11 +122,11 @@ const EditSDV = ({ namePage, dataRecord, dataThongTinSua, dataDoiTuong, dataThon
                     />
                   </div>
                   <div className="flex items-center gap-1 whitespace-nowrap">
-                    <label className="required  min-w-[90px] text-sm flex justify-end">Ngày</label>
+                    <label className="required  min-w-[50px] text-sm flex justify-end">Ngày</label>
                     <DateField
-                      className="DatePicker_PMH max-w-[115px]"
+                      className="DatePicker_PMH max-w-[132px] min-w-[132px]"
                       format="DD/MM/YYYY"
-                      defaultValue={dayjs(dataThongTinSua?.NgayCTu)}
+                      value={dayjs(formEdit?.NgayCTu)}
                       onChange={(newDate) => {
                         setFormEdit({
                           ...formEdit,
@@ -136,6 +141,10 @@ const EditSDV = ({ namePage, dataRecord, dataThongTinSua, dataDoiTuong, dataThon
                         '& .MuiSvgIcon-root': {
                           width: '18px',
                           height: '18px',
+                        },
+                        '& .MuiInputBase-input': {
+                          // fontSize: '14px',
+                          textAlign: 'center',
                         },
                       }}
                     />
