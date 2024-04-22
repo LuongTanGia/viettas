@@ -938,14 +938,14 @@ const PhieuBanLe = () => {
                                   {isNumericColumn ? (
                                     column.dataIndex === 'TongTienHang' || column.dataIndex === 'TongTienThue' || column.dataIndex === 'TongThanhTien' ? (
                                       <Text strong>
-                                        {Number(filteredPBL.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                        {Number(filteredPBL?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                           minimumFractionDigits: dataThongSo?.SOLESOTIEN,
                                           maximumFractionDigits: dataThongSo?.SOLESOTIEN,
                                         })}
                                       </Text>
                                     ) : column.dataIndex === 'TongSoLuong' ? (
                                       <Text strong>
-                                        {Number(filteredPBL.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                        {Number(filteredPBL?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                           minimumFractionDigits: dataThongSo?.SOLESOLUONG,
                                           maximumFractionDigits: dataThongSo?.SOLESOLUONG,
                                         })}
