@@ -764,12 +764,17 @@ const SoQuy = () => {
                                     className="text-end font-bold  bg-[#f1f1f1]"
                                   >
                                     {isNumericColumn ? (
-                                      <Text strong>
-                                        {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                          minimumFractionDigits: dataThongSo.SOLESOTIEN,
-                                          maximumFractionDigits: dataThongSo.SOLESOTIEN,
-                                        })}
-                                      </Text>
+                                      (() => {
+                                        const total = Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0))
+                                        return (
+                                          <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : ''}>
+                                            {total.toLocaleString('en-US', {
+                                              minimumFractionDigits: dataThongSo.SOLESOTIEN,
+                                              maximumFractionDigits: dataThongSo.SOLESOTIEN,
+                                            })}
+                                          </Text>
+                                        )
+                                      })()
                                     ) : column.dataIndex == 'STT' ? (
                                       <Text className="text-center flex justify-center" strong>
                                         {dataSoQuy?.length}

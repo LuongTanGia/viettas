@@ -497,52 +497,55 @@ function Tables({ hidden, loadingSearch, param, columName, height, handleView, h
                                 className="text-end font-bold bg-[#f1f1f1]"
                               >
                                 {isNumericColumn ? (
-                                  column.dataIndex === 'TongSoLuong' ? (
-                                    <Text strong>
-                                      {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                        minimumFractionDigits: ThongSo.SOLESOLUONG,
-                                        maximumFractionDigits: ThongSo.SOLESOLUONG,
-                                      })}
-                                    </Text>
-                                  ) : [
-                                      'TongTienHang',
-                                      'TongTienThue',
-                                      'TongThanhTien',
-                                      'TongTienCKTT',
-                                      'TongTongCong',
-                                      'SoLuong',
-                                      'TienHang',
-                                      'TienThue',
-                                      'TienCKTT',
-                                      'TongCong_TM',
-                                      'TongCong_CN',
-                                      'TongCong',
-                                    ].includes(column.dataIndex) ? (
-                                    <Text strong>
-                                      {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                        minimumFractionDigits: ThongSo.SOLESOTIEN,
-                                        maximumFractionDigits: ThongSo.SOLESOTIEN,
-                                      })}
-                                    </Text>
-                                  ) : ['TyLeCKTT'].includes(column.dataIndex) ? (
-                                    <Text strong>
-                                      {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                        minimumFractionDigits: ThongSo.SOLETYLE,
-                                        maximumFractionDigits: ThongSo.SOLETYLE,
-                                      })}
-                                    </Text>
-                                  ) : column.dataIndex === 'key' ? (
-                                    <Text strong className="flex justify-center">
-                                      {data.length}
-                                    </Text>
-                                  ) : (
-                                    <Text strong>
-                                      {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                        minimumFractionDigits: 0,
-                                        maximumFractionDigits: 0,
-                                      })}
-                                    </Text>
-                                  )
+                                  (() => {
+                                    const total = Number(data?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0))
+                                    return column.dataIndex === 'TongSoLuong' ? (
+                                      <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : ''}>
+                                        {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                          minimumFractionDigits: ThongSo.SOLESOLUONG,
+                                          maximumFractionDigits: ThongSo.SOLESOLUONG,
+                                        })}
+                                      </Text>
+                                    ) : [
+                                        'TongTienHang',
+                                        'TongTienThue',
+                                        'TongThanhTien',
+                                        'TongTienCKTT',
+                                        'TongTongCong',
+                                        'SoLuong',
+                                        'TienHang',
+                                        'TienThue',
+                                        'TienCKTT',
+                                        'TongCong_TM',
+                                        'TongCong_CN',
+                                        'TongCong',
+                                      ].includes(column.dataIndex) ? (
+                                      <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : ''}>
+                                        {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                          minimumFractionDigits: ThongSo.SOLESOTIEN,
+                                          maximumFractionDigits: ThongSo.SOLESOTIEN,
+                                        })}
+                                      </Text>
+                                    ) : ['TyLeCKTT'].includes(column.dataIndex) ? (
+                                      <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : ''}>
+                                        {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                          minimumFractionDigits: ThongSo.SOLETYLE,
+                                          maximumFractionDigits: ThongSo.SOLETYLE,
+                                        })}
+                                      </Text>
+                                    ) : column.dataIndex === 'key' ? (
+                                      <Text strong className="flex justify-center">
+                                        {data.length}
+                                      </Text>
+                                    ) : (
+                                      <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : ''}>
+                                        {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                          minimumFractionDigits: 0,
+                                          maximumFractionDigits: 0,
+                                        })}
+                                      </Text>
+                                    )
+                                  })()
                                 ) : column.dataIndex === 'TTTienMat' ? (
                                   <Text strong>{Object.values(data).filter((value) => value.TTTienMat).length}</Text>
                                 ) : null}

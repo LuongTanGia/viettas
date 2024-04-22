@@ -817,21 +817,24 @@ const HangHoa = () => {
                                     className="text-end font-bold  bg-[#f1f1f1]"
                                   >
                                     {isNumericColumn ? (
-                                      column.dataIndex === 'GiaBanLe' || column.dataIndex === 'BangGiaSi_Min' || column.dataIndex === 'BangGiaSi_Max' ? (
-                                        <Text strong>
-                                          {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                            minimumFractionDigits: dataThongSo.SOLEDONGIA,
-                                            maximumFractionDigits: dataThongSo.SOLEDONGIA,
-                                          })}
-                                        </Text>
-                                      ) : (
-                                        <Text strong>
-                                          {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                            minimumFractionDigits: 0,
-                                            maximumFractionDigits: 0,
-                                          })}
-                                        </Text>
-                                      )
+                                      (() => {
+                                        const total = Number(filteredHangHoa?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0))
+                                        return column.dataIndex === 'GiaBanLe' || column.dataIndex === 'BangGiaSi_Min' || column.dataIndex === 'BangGiaSi_Max' ? (
+                                          <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : ''}>
+                                            {total.toLocaleString('en-US', {
+                                              minimumFractionDigits: dataThongSo.SOLEDONGIA,
+                                              maximumFractionDigits: dataThongSo.SOLEDONGIA,
+                                            })}
+                                          </Text>
+                                        ) : (
+                                          <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : ''}>
+                                            {total.toLocaleString('en-US', {
+                                              minimumFractionDigits: 0,
+                                              maximumFractionDigits: 0,
+                                            })}
+                                          </Text>
+                                        )
+                                      })()
                                     ) : column.dataIndex == 'STT' ? (
                                       <Text className="text-center flex justify-center" strong>
                                         {dataHangHoa?.length}
