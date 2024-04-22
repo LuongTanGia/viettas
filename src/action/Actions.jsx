@@ -1,7 +1,6 @@
 import axios from 'axios'
 import loginSlice from '../components/Auth/loginSlice'
 import MainSlice from '../components/MainPage/MainSlice'
-import DuLieuSlice from '../components/DULIEU/DuLieuSlice'
 import PBSSlice from '../components/PhieuBanHang/PBSSlice'
 import { toast } from 'react-toastify'
 import * as XLSX from 'xlsx'
@@ -217,23 +216,23 @@ export const DATATONGHOP = async (API, token, KhoanNgay, dispatch) => {
     console.error('Error adding user:', error)
   }
 }
-export const DATADULIEU = async (API, token, dispatch) => {
-  try {
-    const response = await axios.post(
-      API,
-      {},
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      },
-    )
-    dispatch(DuLieuSlice.actions.getDataDL(response.data))
-  } catch (error) {
-    console.error('Error adding user:', error)
-  }
-}
+// export const DATADULIEU = async (API, token, dispatch) => {
+//   try {
+//     const response = await axios.post(
+//       API,
+//       {},
+//       {
+//         headers: {
+//           'Content-Type': 'application/json',
+//           Authorization: `Bearer ${token}`,
+//         },
+//       },
+//     )
+//     dispatch(DuLieuSlice.actions.getDataDL(response.data))
+//   } catch (error) {
+//     console.error('Error adding user:', error)
+//   }
+// }
 export const THAYDOIRMATKHAU = async (API, data, token) => {
   try {
     const response = await axios.post(API, data, {

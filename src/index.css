@@ -314,6 +314,19 @@ input.ant-input.ant-input-sm {
   height: 24px;
   width: 100%;
 }
+
+/* .MuiInputBase-input .MuiOutlinedInput-input .css-1x5jdmq {
+  padding: 0px 14px;
+} */
+
+.MuiInputBase-input.MuiOutlinedInput-input.css-1x5jdmq {
+  padding: 0px 14px;
+}
+
+.MuiInputBase-input.MuiOutlinedInput-input.MuiInputBase-inputAdornedEnd.css-nxo287-MuiInputBase-input-MuiOutlinedInput-input {
+  padding: 0px 14px;
+}
+
 /* end */
 
 #main {
