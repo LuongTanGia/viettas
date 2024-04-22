@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
 import { Table, Tooltip, Input, Typography, Segmented, Radio } from 'antd'
-import icons from '../../untils/icons'
 import { toast } from 'react-toastify'
 import * as apis from '../../apis'
 
@@ -1105,6 +1104,8 @@ const DuLieuBLQ = () => {
                                     .filter((column) => column.render)
                                     .map((column, index) => {
                                       const isNumericColumn = typeof filteredDuLieuBLQ[0]?.[column.dataIndex] === 'number'
+                                      const total = Number(filteredDuLieuBLQ?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0))
+
                                       return (
                                         <Table.Summary.Cell
                                           index={index}
@@ -1113,7 +1114,7 @@ const DuLieuBLQ = () => {
                                           className="text-end font-bold  bg-[#f1f1f1]"
                                         >
                                           {column.dataIndex === 'TyLeCKTT' ? (
-                                            <Text strong>
+                                            <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : ''}>
                                               {Number(filteredDuLieuBLQ.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                                 minimumFractionDigits: dataThongSo?.SOLETYLE,
                                                 maximumFractionDigits: dataThongSo?.SOLETYLE,
@@ -1126,7 +1127,7 @@ const DuLieuBLQ = () => {
                                             column.dataIndex === 'TongTongCong' ||
                                             column.dataIndex === 'KhachTra' ||
                                             column.dataIndex === 'HoanLai' ? (
-                                            <Text strong>
+                                            <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : ''}>
                                               {Number(filteredDuLieuBLQ.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                                 minimumFractionDigits: dataThongSo?.SOLESOTIEN,
                                                 maximumFractionDigits: dataThongSo?.SOLESOTIEN,
@@ -1165,6 +1166,8 @@ const DuLieuBLQ = () => {
                                     .filter((column) => column.render)
                                     .map((column, index) => {
                                       const isNumericColumn = typeof filteredDuLieuTT[0]?.[column.dataIndex] === 'number'
+                                      const total = Number(filteredDuLieuTT?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0))
+
                                       return (
                                         <Table.Summary.Cell
                                           index={index}
@@ -1173,14 +1176,14 @@ const DuLieuBLQ = () => {
                                           className="text-end font-bold  bg-[#f1f1f1]"
                                         >
                                           {column.dataIndex === 'TyLeThue' ? (
-                                            <Text strong>
+                                            <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : ''}>
                                               {Number(filteredDuLieuTT.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                                 minimumFractionDigits: dataThongSo?.SOLETYLE,
                                                 maximumFractionDigits: dataThongSo?.SOLETYLE,
                                               })}
                                             </Text>
                                           ) : column.dataIndex === 'SoLuong' ? (
-                                            <Text strong>
+                                            <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : ''}>
                                               {Number(filteredDuLieuTT.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                                 minimumFractionDigits: dataThongSo?.SOLESOLUONG,
                                                 maximumFractionDigits: dataThongSo?.SOLESOLUONG,
@@ -1190,7 +1193,7 @@ const DuLieuBLQ = () => {
                                             column.dataIndex === 'TienHang' ||
                                             column.dataIndex === 'TienThue' ||
                                             column.dataIndex === 'ThanhTien' ? (
-                                            <Text strong>
+                                            <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : ''}>
                                               {Number(filteredDuLieuTT.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                                 minimumFractionDigits: dataThongSo?.SOLESOTIEN,
                                                 maximumFractionDigits: dataThongSo?.SOLESOTIEN,

@@ -630,9 +630,7 @@ const DoanhSoBanHangKH = () => {
                           {NhomDoiTuong?.map((item) => {
                             return (
                               <Select.Option key={item.Ma} value={item.Ma} title={item.ThongTinNhomHang}>
-                                <p>
-                                  {item.Ma} - {item.Ten}
-                                </p>
+                                {item.Ma} - {item.Ten} <br />
                               </Select.Option>
                             )
                           })}
@@ -676,6 +674,7 @@ const DoanhSoBanHangKH = () => {
                             .filter((column) => column.render)
                             .map((column, index) => {
                               const isNumericColumn = typeof filteredHangHoa[0]?.[column.dataIndex] == 'number' && column.dataIndex !== 'SoLuong'
+                              const total = Number(filteredHangHoa?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0))
                               return (
                                 <Table.Summary.Cell
                                   index={index}
@@ -684,7 +683,7 @@ const DoanhSoBanHangKH = () => {
                                   className="text-end font-bold  bg-[#f1f1f1]"
                                 >
                                   {isNumericColumn ? (
-                                    <Text strong>
+                                    <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : ''}>
                                       {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                         minimumFractionDigits: dataThongSo.SOLESOTIEN,
                                         maximumFractionDigits: dataThongSo.SOLESOTIEN,

@@ -541,9 +541,7 @@ const HangHoaTKTT = () => {
                     >
                       {dataNhomHang?.map((item) => (
                         <Option key={item.Ma} value={item.Ma}>
-                          <p>
-                            {item.Ma} - {item.Ten}
-                          </p>
+                          {item.Ma} - {item.Ten} <br />
                         </Option>
                       ))}
                     </Select>
@@ -621,9 +619,7 @@ const HangHoaTKTT = () => {
                     >
                       {dataHangHoa?.map((item) => (
                         <Option key={item.MaHang} value={item.MaHang} title={item.TenHang}>
-                          <p>
-                            {item.MaHang} - {item.TenHang}
-                          </p>
+                          {item.MaHang} - {item.TenHang} <br />
                         </Option>
                       ))}
                     </Select>
@@ -676,10 +672,11 @@ const HangHoaTKTT = () => {
                           .filter((column) => column.render)
                           .map((column) => {
                             const isNumericColumn = typeof filteredHangHoaTKTT[0]?.[column.dataIndex] === 'number'
+                            const total = Number(filteredHangHoaTKTT?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0))
                             return (
                               <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
                                 {isNumericColumn ? (
-                                  <Text strong>
+                                  <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : ''}>
                                     {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                       minimumFractionDigits: dataThongSo.SOLESOLUONG,
                                       maximumFractionDigits: dataThongSo.SOLESOLUONG,

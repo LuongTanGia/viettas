@@ -637,7 +637,7 @@ const GBS = () => {
                           .filter((column) => column.render)
                           .map((column, index) => {
                             const isNumericColumn = typeof filteredGBS[0]?.[column.dataIndex] === 'number'
-
+                            const total = Number(filteredGBS?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0))
                             return (
                               <Table.Summary.Cell
                                 index={index}
@@ -650,7 +650,7 @@ const GBS = () => {
                                     {data.length}
                                   </Text>
                                 ) : column.dataIndex === 'TongMatHang' || column.dataIndex === 'TongDoiTuong' ? (
-                                  <Text strong>
+                                  <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : ''}>
                                     {Number(filteredGBS.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                       minimumFractionDigits: 0,
                                       maximumFractionDigits: 0,
