@@ -100,8 +100,8 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
   }, [type, getMaHang, hangHoaForm.Barcodes])
 
   useEffect(() => {
-    const getListHelper = async () => {
-      if (type === 'create' || type === 'edit' || type === 'print' || type === 'status' || type === 'group') {
+    const getListHelperNH = async () => {
+      if (type == 'create' || type === 'edit' || type === 'print' || type === 'status' || type === 'group') {
         try {
           const dataNH = await categoryAPI.ListNhomHang(TokenAccess)
           if (dataNH.data.DataError == 0) {
@@ -114,7 +114,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
       }
     }
     if (!isLoading) {
-      getListHelper()
+      getListHelperNH()
     }
   }, [isLoading])
 

@@ -243,7 +243,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                 : toast.success(res.DataErrorDescription, { autoClose: 1000 })
             setMaHang(data?.SoChungTu)
           } else {
-            toast.error(res.DataErrorDescription, { autoClose: 2000 })
+            toast.warning(res.DataErrorDescription, { autoClose: 2000 })
           }
         }
       } else {
@@ -285,7 +285,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
             toast.success(res.DataErrorDescription, { autoClose: 1000 })
             handleClose()
           } else {
-            toast.error(res.DataErrorDescription, { autoClose: 2000 })
+            toast.warning(res.DataErrorDescription, { autoClose: 2000 })
           }
         }
       } else {
@@ -405,6 +405,13 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                             }}
                             sx={{
                               '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                              '& .MuiButtonBase-root': {
+                                padding: '4px',
+                              },
+                              '& .MuiSvgIcon-root': {
+                                width: '18px',
+                                height: '18px',
+                              },
                             }}
                           />
                         )}
