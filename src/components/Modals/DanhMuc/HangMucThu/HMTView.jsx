@@ -47,7 +47,7 @@ const HMTView = ({ close, dataHMT }) => {
                   <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
                   <p className="text-blue-700 font-semibold uppercase">Thông tin - Hạng Mục Thu Tiền</p>
                 </div>
-                <div className="flex flex-col gap-2 border-2 px-3 py-2.5">
+                <div className="flex flex-col gap-2.5 border-2 px-3 py-2.5">
                   <div className="flex items-center gap-1">
                     <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Mã</label>
                     <input type="text" value={dataHMTView?.Ma || ''} className="px-2 w-[30%] resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
@@ -62,7 +62,7 @@ const HMTView = ({ close, dataHMT }) => {
                   </div>
                   <div className="grid grid-cols-1 mt-1 gap-2 px-2 py-2.5 rounded border-black-200 ml-[95px] relative border-[0.125rem]">
                     <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
-                    <div className="flex gap-1">
+                    <div className="flex gap-2 justify-center">
                       <div className="flex items-center gap-1.5 whitespace-nowrap">
                         <label className=" text-sm">Người tạo</label>
                         <Tooltip title={dataHMTView?.NguoiTao} color="blue">
@@ -85,7 +85,7 @@ const HMTView = ({ close, dataHMT }) => {
                         </Tooltip>
                       </div>
                     </div>
-                    <div className="flex gap-1">
+                    <div className="flex gap-2 justify-center">
                       <div className="flex items-center gap-1 whitespace-nowrap">
                         <label className=" text-sm">Người sửa</label>
                         <Tooltip title={dataHMTView?.NguoiSuaCuoi} color="blue">

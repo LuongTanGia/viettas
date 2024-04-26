@@ -393,7 +393,7 @@ const XCKEdit = ({ close, dataXCK, loadingData, setTargetRow }) => {
                             size="small"
                             disabled
                             value={XCKForm?.SoChungTu || ''}
-                            className="h-[24px] w-full  px-2 rounded-[4px] resize-none border-[1px] border-gray-300 outline-none truncate"
+                            className="h-[24px] w-full  px-2 rounded-[4px] resize-none border-[1px] border-gray-300 outline-none truncate text-sm"
                           />
                         </div>
                         <div className="flex items-center gap-1">
@@ -472,7 +472,7 @@ const XCKEdit = ({ close, dataXCK, loadingData, setTargetRow }) => {
                     </div>
                     <div className="grid grid-cols-1 gap-2 px-2 border-2 py-3 border-black-200 rounded relative">
                       <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
-                      <div className="flex gap-1">
+                      <div className="flex gap-2 justify-center">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người tạo</label>
                           <Tooltip title={dataXCKView?.NguoiTao} color="blue">
@@ -494,7 +494,7 @@ const XCKEdit = ({ close, dataXCK, loadingData, setTargetRow }) => {
                           </Tooltip>
                         </div>
                       </div>
-                      <div className="flex gap-1">
+                      <div className="flex gap-2 justify-center">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người sửa</label>
                           <Tooltip title={dataXCKView?.NguoiSuaCuoi} color="blue">

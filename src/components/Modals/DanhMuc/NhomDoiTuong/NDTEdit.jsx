@@ -97,7 +97,7 @@ const NDTEdit = ({ close, loadingData, setTargetRow, dataNDT }) => {
               </div>
               <div className="grid grid-cols-1 mt-1 gap-2 px-2 py-2.5 rounded border-black-200 ml-[95px] relative border-[0.125rem]">
                 <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
-                <div className="flex gap-1">
+                <div className="flex gap-2 justify-center">
                   <div className="flex items-center gap-1.5 whitespace-nowrap">
                     <label className=" text-sm">Người tạo</label>
                     <Tooltip title={dataNDT?.NguoiTao} color="blue">
@@ -120,7 +120,7 @@ const NDTEdit = ({ close, loadingData, setTargetRow, dataNDT }) => {
                     </Tooltip>
                   </div>
                 </div>
-                <div className="flex gap-1">
+                <div className="flex gap-2 justify-center">
                   <div className="flex items-center gap-1 whitespace-nowrap">
                     <label className=" text-sm">Người sửa</label>
                     <Tooltip title={dataNDT?.NguoiSuaCuoi} color="blue">

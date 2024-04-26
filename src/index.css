@@ -204,7 +204,14 @@ a.nav-link span {
   height: 25px;
   width: 170px;
 }
+.highlight-bottom-border > td {
+  border-bottom: solid 1px black !important;
+}
 
+.highlight-top-border > td {
+  border-top: solid 2px black !important;
+  border-bottom: solid 2px #6d9eff !important;
+}
 input[type='radio'] {
   width: 20px;
 }
@@ -270,14 +277,17 @@ input.ant-input.ant-input-sm {
 .highlighted-row .ant-table-cell-fix-left {
   background-color: #d7f4fd;
 }
-
-/* custom input antd */
-
-/* .ant-table-cell-fix-left-last {
-  background-color: #f1f1f1;
-} */
-/* .Spin_modal .ant-spin-container {
-  padding: 16px !important;
+/* Tan Border .highlight-border > td {
+  border: solid 0.1px rgb(112, 112, 112) !important;
+}
+.ant-table-body .ant-table-tbody .ant-table-row:nth-child(2n + 1) {
+  background-color: rgb(233, 233, 233);
+}
+.ant-table-thead th {
+  border: solid 0.1px rgb(112, 112, 112) !important;
+}
+.ant-table-header .ant-table-thead .ant-table-cell {
+  background-color: rgb(233, 233, 233);
 } */
 
 .ant-table-fixed-right {

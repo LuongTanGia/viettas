@@ -176,7 +176,7 @@ const XCKXem = ({ close, dataXCK }) => {
                     </div>
                     <div className="grid grid-cols-1 gap-2 border-2 px-2 py-3 border-black-200 rounded relative">
                       <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
-                      <div className="flex gap-1">
+                      <div className="flex gap-2 justify-center">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người tạo</label>
                           <Tooltip title={dataXCKView?.NguoiTao} color="blue">
@@ -198,7 +198,7 @@ const XCKXem = ({ close, dataXCK }) => {
                           </Tooltip>
                         </div>
                       </div>
-                      <div className="flex gap-1">
+                      <div className="flex gap-2 justify-center">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người sửa</label>
                           <Tooltip title={dataXCKView?.NguoiSuaCuoi} color="blue">

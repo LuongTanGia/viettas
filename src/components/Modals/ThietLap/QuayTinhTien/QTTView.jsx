@@ -139,7 +139,7 @@ const QTTView = ({ close, dataQTT }) => {
                   </div>
                   <div className="grid grid-cols-1 mt-1 gap-2 px-2 py-2.5 rounded border-black-200 ml-[95px] relative border-[0.125rem]">
                     <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
-                    <div className="flex gap-1">
+                    <div className="flex gap-2 justify-center">
                       <div className="flex items-center gap-1.5 whitespace-nowrap">
                         <label className=" text-sm">Người tạo</label>
                         <Tooltip title={dataQTTView?.NguoiTao} color="blue">
@@ -156,13 +156,13 @@ const QTTView = ({ close, dataQTT }) => {
                           <input
                             type="text"
                             value={moment(dataQTTView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
-                            className="px-2 rounded-[3px] w-full resize-none border outline-none text-sm truncate"
+                            className="px-2 rounded-[3px] w-full resize-none text-center border outline-none text-sm truncate"
                             disabled
                           />
                         </Tooltip>
                       </div>
                     </div>
-                    <div className="flex gap-1">
+                    <div className="flex gap-2 justify-center">
                       <div className="flex items-center gap-1 whitespace-nowrap">
                         <label className=" text-sm">Người sửa</label>
                         <Tooltip title={dataQTTView?.NguoiSuaCuoi} color="blue">
@@ -178,7 +178,7 @@ const QTTView = ({ close, dataQTT }) => {
                         <Tooltip title={dataQTTView?.NgaySuaCuoi ? moment(dataQTTView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : ''} color="blue">
                           <input
                             value={dataQTTView?.NgaySuaCuoi ? moment(dataQTTView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                            className="px-2 rounded-[3px] w-full resize-none border outline-none text-sm truncate"
+                            className="px-2 rounded-[3px] w-full resize-none text-center border outline-none text-sm truncate"
                             disabled
                           />
                         </Tooltip>

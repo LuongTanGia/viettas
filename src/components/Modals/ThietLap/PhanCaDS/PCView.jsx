@@ -83,7 +83,7 @@ const PCView = ({ close, dataPC }) => {
                   </div>
                   <div className="grid grid-cols-1 mt-1 gap-2 px-2 py-2.5 rounded border-black-200 ml-[95px] relative border-[0.125rem]">
                     <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
-                    <div className="flex gap-1">
+                    <div className="flex gap-2 justify-center">
                       <div className="flex items-center gap-1.5 whitespace-nowrap">
                         <label className=" text-sm">Người tạo</label>
                         <Tooltip title={dataPCView?.NguoiTao} color="blue">
@@ -100,19 +100,19 @@ const PCView = ({ close, dataPC }) => {
                           <input
                             type="text"
                             value={moment(dataPCView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
-                            className="px-2 rounded-[3px] w-full resize-none border outline-none text-sm truncate"
+                            className="px-2 rounded-[3px] w-full resize-none border text-center outline-none text-sm truncate"
                             disabled
                           />
                         </Tooltip>
                       </div>
                     </div>
-                    <div className="flex gap-1">
+                    <div className="flex gap-2 justify-center">
                       <div className="flex items-center gap-1 whitespace-nowrap">
                         <label className=" text-sm">Người sửa</label>
                         <Tooltip title={dataPCView?.NguoiSuaCuoi} color="blue">
                           <input
                             value={dataPCView?.NguoiSuaCuoi || ''}
-                            className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded-[3px]  resize-none border outline-none text-sm truncate"
+                            className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded-[3px] resize-none border outline-none text-sm truncate"
                             disabled
                           />
                         </Tooltip>
@@ -122,7 +122,7 @@ const PCView = ({ close, dataPC }) => {
                         <Tooltip title={dataPCView?.NgaySuaCuoi ? moment(dataPCView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : ''} color="blue">
                           <input
                             value={dataPCView?.NgaySuaCuoi ? moment(dataPCView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                            className="px-2 rounded-[3px] w-full resize-none border outline-none text-sm truncate"
+                            className="px-2 rounded-[3px] w-full resize-none border text-center outline-none text-sm truncate"
                             disabled
                           />
                         </Tooltip>

@@ -168,14 +168,14 @@ const NCKView = ({ close, dataNCK }) => {
                         <input type="text" value={dataNCKView?.SoThamChieu || ''} className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm" readOnly />
                       </div>
                     </div>
-                    <div className="grid grid-cols-1 gap-2 border-2 px-2 py-3 border-black-200 rounded relative">
+                    <div className="grid grid-cols-1 gap-2.5 border-2 px-2 py-3 border-black-200 rounded relative">
                       <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
-                      <div className="flex gap-1">
+                      <div className="flex gap-2 justify-center">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người tạo</label>
                           <Tooltip title={dataNCKView?.NguoiTao} color="blue">
                             <input
-                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm overflow-ellipsis truncate"
+                              className="px-2 2xl:w-[18rem] xl:w-[16rem] lg:w-[11rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm overflow-ellipsis truncate"
                               value={dataNCKView?.NguoiTao || ''}
                               disabled
                             />
@@ -192,12 +192,12 @@ const NCKView = ({ close, dataNCK }) => {
                           </Tooltip>
                         </div>
                       </div>
-                      <div className="flex gap-1">
+                      <div className="flex gap-2 justify-center">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người sửa</label>
                           <Tooltip title={dataNCKView?.NguoiSuaCuoi} color="blue">
                             <input
-                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm overflow-ellipsis truncate"
+                              className="px-2 2xl:w-[18rem] xl:w-[16rem] lg:w-[11rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm overflow-ellipsis truncate"
                               value={dataNCKView?.NguoiSuaCuoi || ''}
                               disabled
                             />

@@ -66,66 +66,61 @@ const DTView = ({ close, dataDT }) => {
                     <input
                       type="text"
                       value={`${(dataDTView?.Nhom || '') !== '' || (dataDTView?.TenNhom || '') !== '' ? `${dataDTView?.Nhom || ''} - ${dataDTView?.TenNhom || ''}` : ''}`}
-                      className="px-2 w-full resize-none rounded border outline-none text-sm truncate"
+                      className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate"
                       disabled
                     />
                   </div>
                   <div className="flex items-center gap-1">
                     <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Mã</label>
-                    <input type="text" value={dataDTView?.Ma || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" disabled />
+                    <input type="text" value={dataDTView?.Ma || ''} className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
                   </div>
                   <div className="flex items-center gap-1">
                     <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Tên</label>
-                    <input
-                      type="text"
-                      value={dataDTView?.Ten || ''}
-                      className="h-[24px] w-[270px]  px-2 rounded-[4px] resize-none border-[1px] border-gray-300 outline-none truncate"
-                      disabled
-                    />
+                    <input type="text" value={dataDTView?.Ten || ''} className="px-2 w-full rounded-[3px] text-sm resize-none border outline-none truncate" disabled />
                   </div>
                   <div className="flex items-center gap-1">
                     <label className=" whitespace-nowrap min-w-[90px] text-sm flex justify-end">Địa chỉ</label>
-                    <input type="text" value={dataDTView?.DiaChi || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" disabled />
+                    <input type="text" value={dataDTView?.DiaChi || ''} className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
                   </div>
                   <div className="flex items-center gap-1">
                     <label className=" whitespace-nowrap min-w-[90px] text-sm flex justify-end">Quận huyện</label>
-                    <input type="text" value={dataDTView?.QuanHuyen || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" disabled />
+                    <input type="text" value={dataDTView?.QuanHuyen || ''} className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
                   </div>
                   <div className="flex items-center gap-1">
                     <label className=" whitespace-nowrap min-w-[90px] text-sm flex justify-end">Tỉnh thành</label>
-                    <input type="text" value={dataDTView?.TinhThanh || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" disabled />
+                    <input type="text" value={dataDTView?.TinhThanh || ''} className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
                   </div>
                   <div className="flex items-center gap-1">
                     <label className=" whitespace-nowrap min-w-[90px] text-sm flex justify-end">Mã số thuế</label>
-                    <input type="text" value={dataDTView?.MST || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" disabled />
+                    <input type="text" value={dataDTView?.MST || ''} className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
                   </div>
                   <div className="flex gap-2">
                     <div className="flex items-center gap-1">
                       <label className=" whitespace-nowrap min-w-[90px] text-sm flex justify-end">Điện thoại</label>
-                      <input type="text" value={dataDTView?.DienThoai || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" disabled />
+                      <input type="text" value={dataDTView?.DienThoai || ''} className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
                     </div>
                     <div className="flex items-center gap-1">
                       <label className=" whitespace-nowrap text-sm flex justify-end">Fax</label>
-                      <input type="text" value={dataDTView?.Fax || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" disabled />
+                      <input type="text" value={dataDTView?.Fax || ''} className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
                     <label className=" whitespace-nowrap  min-w-[90px] text-sm flex justify-end">Người liên hệ</label>
-                    <input type="text" value={dataDTView?.NguoiLienHe || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" disabled />
+                    <input type="text" value={dataDTView?.NguoiLienHe || ''} className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
                   </div>
                   <div className="flex items-center gap-1">
                     <label className=" whitespace-nowrap  min-w-[90px] text-sm flex justify-end">Ghi chú</label>
-                    <input type="text" value={dataDTView?.GhiChu || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" disabled />
+                    <input type="text" value={dataDTView?.GhiChu || ''} className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
                   </div>
                   <div className="grid grid-cols-1 mt-1 gap-2 px-2 py-2.5 rounded border-black-200 ml-[95px] relative border-[0.125rem]">
                     <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
-                    <div className="flex gap-1">
+                    <div className="flex gap-1 justify-center">
                       <div className="flex items-center gap-1.5 whitespace-nowrap">
                         <label className=" text-sm">Người tạo</label>
                         <Tooltip title={dataDTView?.NguoiTao} color="blue">
                           <input
                             value={dataDTView?.NguoiTao || ''}
-                            className="2xl:w-[17vw] xl:w-[21vw] lg:w-[22vw] md:w-[24vw] px-2 rounded resize-none border outline-none text-sm truncate"
+                            className="2xl:w-[17vw] xl:w-[21vw] lg:w-[22vw] md:w-[24vw] px-2 rounded-[3px] resize-none border outline-none text-sm truncate"
                             disabled
                           />
                         </Tooltip>
@@ -136,29 +131,29 @@ const DTView = ({ close, dataDT }) => {
                           <input
                             type="text"
                             value={moment(dataDTView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
-                            className="px-2 rounded w-full resize-none border outline-none text-sm truncate"
+                            className="px-2 rounded-[3px] text-center w-full resize-none border outline-none text-sm truncate"
                             disabled
                           />
                         </Tooltip>
                       </div>
                     </div>
-                    <div className="flex gap-1">
+                    <div className="flex gap-1 justify-center">
                       <div className="flex items-center gap-1 whitespace-nowrap">
-                        <label className=" text-sm">Người sửa</label>
+                        <label className="text-sm">Người sửa</label>
                         <Tooltip title={dataDTView?.NguoiSuaCuoi} color="blue">
                           <input
                             value={dataDTView?.NguoiSuaCuoi || ''}
-                            className="2xl:w-[17vw] xl:w-[21vw] lg:w-[22vw] md:w-[24vw] px-2 rounded  resize-none border outline-none text-sm truncate"
+                            className="2xl:w-[17vw] xl:w-[21vw] lg:w-[22vw] md:w-[24vw] px-2 rounded-[3px] resize-none border outline-none text-sm truncate"
                             disabled
                           />
                         </Tooltip>
                       </div>
                       <div className="flex items-center gap-1 whitespace-nowrap">
-                        <label className=" text-sm">Lúc</label>
+                        <label className="text-sm">Lúc</label>
                         <Tooltip title={dataDTView?.NgaySuaCuoi ? moment(dataDTView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : ''} color="blue">
                           <input
                             value={dataDTView?.NgaySuaCuoi ? moment(dataDTView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                            className="px-2 rounded w-full resize-none border outline-none text-sm truncate"
+                            className="px-2 rounded-[3px] text-center w-full resize-none border outline-none text-sm truncate"
                             disabled
                           />
                         </Tooltip>

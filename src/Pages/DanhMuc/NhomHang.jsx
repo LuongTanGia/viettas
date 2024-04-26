@@ -500,7 +500,7 @@ const NhomHang = () => {
                   </div>
                 </div>
                 <div className="flex justify-end ">
-                  <div className="flex gap-2">
+                  <div className="flex gap-2  ">
                     <ActionButton
                       handleAction={() => (dataCRUD?.ADD == false ? '' : handleCreate())}
                       title={'Thêm'}
@@ -517,14 +517,16 @@ const NhomHang = () => {
                 <div id="my-table">
                   <Table
                     loading={tableLoad}
-                    bordered
                     onRow={(record) => ({
                       onDoubleClick: () => {
                         handleView(record)
                       },
                     })}
-                    rowClassName={(record) => (record.MaNhom == targetRow ? 'highlighted-row' : '')}
-                    className="setHeight"
+                    onHeaderRow={() => ({
+                      className: 'text-red-600',
+                    })}
+                    rowClassName={(record) => `${record.MaNhom == targetRow ? 'highlighted-row' : ''} highlight-border`}
+                    className="setHeight  "
                     columns={newTitles}
                     dataSource={filteredNhomHang.map((item, index) => ({
                       ...item,

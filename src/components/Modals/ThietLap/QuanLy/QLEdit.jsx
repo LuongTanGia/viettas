@@ -320,7 +320,7 @@ const QLEdit = ({ close, loadingData, setTargetRow, dataQL, maNguoiDung }) => {
                   </div>
                   <div className="grid grid-cols-1 mt-1 gap-2 px-2 py-2.5 rounded border-black-200 ml-[95px] relative border-[0.125rem]">
                     <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
-                    <div className="flex gap-1">
+                    <div className="flex gap-2 justify-center">
                       <div className="flex items-center gap-1.5 whitespace-nowrap">
                         <label className=" text-sm">Người tạo</label>
                         <Tooltip title={dataQL?.NguoiTao} color="blue">
@@ -332,24 +332,24 @@ const QLEdit = ({ close, loadingData, setTargetRow, dataQL, maNguoiDung }) => {
                         </Tooltip>
                       </div>
                       <div className="flex items-center gap-1 whitespace-nowrap">
-                        <label className=" text-sm">Lúc</label>
+                        <label className="text-sm">Lúc</label>
                         <Tooltip title={moment(dataQL?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss')} color="blue">
                           <input
                             value={moment(dataQL?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
                             type="text"
-                            className="px-2 rounded-[3px] w-full resize-none border outline-none text-sm truncate"
+                            className="px-2 rounded-[3px] w-full resize-none border text-center outline-none text-sm truncate"
                             disabled
                           />
                         </Tooltip>
                       </div>
                     </div>
-                    <div className="flex gap-1">
+                    <div className="flex gap-2 justify-center">
                       <div className="flex items-center gap-1 whitespace-nowrap">
                         <label className=" text-sm">Người sửa</label>
                         <Tooltip title={dataQL?.NguoiSuaCuoi} color="blue">
                           <input
                             value={dataQL?.NguoiSuaCuoi || ''}
-                            className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded-[3px]  resize-none border outline-none text-sm truncate"
+                            className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded-[3px] resize-none border outline-none text-sm truncate"
                             disabled
                           />
                         </Tooltip>
@@ -359,7 +359,7 @@ const QLEdit = ({ close, loadingData, setTargetRow, dataQL, maNguoiDung }) => {
                         <Tooltip title={dataQL?.NgaySuaCuoi ? moment(dataQL?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : ''} color="blue">
                           <input
                             value={dataQL?.NgaySuaCuoi ? moment(dataQL?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                            className="px-2 rounded-[3px] w-full resize-none border outline-none text-sm truncate"
+                            className="px-2 rounded-[3px] w-full resize-none border text-center outline-none text-sm truncate"
                             disabled
                           />
                         </Tooltip>
