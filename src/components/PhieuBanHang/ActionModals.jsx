@@ -380,7 +380,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                           readOnly
                           type="text"
                           value={form?.SoChungTu}
-                          className={`${typeAction == 'create' ? 'md:w-[100px]' : 'md:w-[120px]'} lg:w-full  border border-gray-300 outline-none px-2 rounded-[3px] resize-none`}
+                          className={`${typeAction == 'create' ? 'md:w-[100px]' : 'md:w-[120px]'} lg:w-full border border-gray-300 outline-none px-2 rounded-[3px] resize-none`}
                         />
                       </div>
                       <div className="flex items-center gap-1 text-sm">

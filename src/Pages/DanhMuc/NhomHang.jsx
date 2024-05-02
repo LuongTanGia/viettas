@@ -500,7 +500,7 @@ const NhomHang = () => {
                   </div>
                 </div>
                 <div className="flex justify-end ">
-                  <div className="flex gap-2  ">
+                  <div className="flex gap-2">
                     <ActionButton
                       handleAction={() => (dataCRUD?.ADD == false ? '' : handleCreate())}
                       title={'Thêm'}
@@ -517,6 +517,7 @@ const NhomHang = () => {
                 <div id="my-table">
                   <Table
                     loading={tableLoad}
+                    bordered
                     onRow={(record) => ({
                       onDoubleClick: () => {
                         handleView(record)

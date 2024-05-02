@@ -195,6 +195,8 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
       if (newData?.length > 0) {
         if (isAdd) {
           toast.warning('Vui lòng chọn mã hàng', { autoClose: 2000 })
+        } else if (NDCForm.NgayCTu === 'Invalid Date') {
+          toast.warning('Vui lòng chọn ngày', { autoClose: 2000 })
         } else {
           const response = await categoryAPI.NDCEdit(
             { SoChungTu: dataNDC?.SoChungTu, Data: { ...NDCForm, NgayCTu: dayjs(NDCForm?.NgayCTu).format('YYYY-MM-DD'), DataDetails: newData } },
@@ -397,7 +399,7 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
                         <div className="flex items-center gap-1">
                           <label className="required whitespace-nowrap text-sm"> Ngày</label>
                           <DateField
-                            className="DatePicker_NDCKho max-w-[115px]"
+                            className="max-w-[130px] min-w-[130px]"
                             format="DD/MM/YYYY"
                             value={dayjs(NDCForm?.NgayCTu) || ''}
                             onChange={(values) => {

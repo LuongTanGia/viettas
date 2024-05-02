@@ -277,7 +277,8 @@ input.ant-input.ant-input-sm {
 .highlighted-row .ant-table-cell-fix-left {
   background-color: #d7f4fd;
 }
-/* Tan Border .highlight-border > td {
+/* Tan Border */
+/* .highlight-border > td {
   border: solid 0.1px rgb(112, 112, 112) !important;
 }
 .ant-table-body .ant-table-tbody .ant-table-row:nth-child(2n + 1) {
@@ -289,11 +290,11 @@ input.ant-input.ant-input-sm {
 .ant-table-header .ant-table-thead .ant-table-cell {
   background-color: rgb(233, 233, 233);
 } */
+/*  */
 
 .ant-table-fixed-right {
   background-color: #f1f1f1;
 }
-
 /* custom DatePicker MUI*/
 
 .css-o9k5xi-MuiInputBase-root-MuiOutlinedInput-root {
