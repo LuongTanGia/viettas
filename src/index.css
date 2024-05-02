@@ -265,24 +265,11 @@ input.ant-input.ant-input-sm {
   display: none;
 }
 
-.highlighted-row,
-.highlighted-row .ant-table-cell-fix-right,
-.highlighted-row .ant-table-cell-fix-left {
-  background-color: #d7f4fd;
-}
-
 /* custom input antd */
 
-/* .ant-table-cell-fix-left-last {
+/* .ant-table-fixed-right {
   background-color: #f1f1f1;
 } */
-/* .Spin_modal .ant-spin-container {
-  padding: 16px !important;
-} */
-
-.ant-table-fixed-right {
-  background-color: #f1f1f1;
-}
 
 /* custom DatePicker MUI*/
 
@@ -315,15 +302,7 @@ input.ant-input.ant-input-sm {
   width: 100%;
 }
 
-/* .MuiInputBase-input .MuiOutlinedInput-input .css-1x5jdmq {
-  padding: 0px 14px;
-} */
-
 .MuiInputBase-input.MuiOutlinedInput-input.css-1x5jdmq {
-  padding: 0px 14px;
-}
-
-.MuiInputBase-input.MuiOutlinedInput-input.MuiInputBase-inputAdornedEnd.css-nxo287-MuiInputBase-input-MuiOutlinedInput-input {
   padding: 0px 14px;
 }
 
@@ -363,9 +342,4 @@ input.ant-input.ant-input-sm {
 }
 .ant-input-number-handler-wrap {
   display: none !important;
-}
-.highlighted-row,
-.highlighted-row .ant-table-cell-fix-right,
-.highlighted-row .ant-table-cell-fix-left {
-  background-color: #d7f4fd;
 }

@@ -279,7 +279,7 @@ const PhieuMuaHang = () => {
       hight: 10,
       fixed: 'left',
       align: 'center',
-      render: (text, record, index) => <div style={{ textAlign: 'center' }}>{index + 1}</div>,
+      render: (text, record, index) => <div>{index + 1}</div>,
     },
     {
       title: 'Số chứng từ',
@@ -712,6 +712,10 @@ const PhieuMuaHang = () => {
     }
   }
 
+  const addRowClass = (record, index) => {
+    return index % 2 === 0 ? '' : 'odd-row'
+  }
+
   return (
     <>
       {dataQuyenHan?.VIEW === false ? (
@@ -857,7 +861,7 @@ const PhieuMuaHang = () => {
               <div id="my-table" className="relative px-2 py-1 ">
                 <Table
                   loading={tableLoad}
-                  className="table_pmh setHeight"
+                  className="setHeight  table-style "
                   // rowSelection={rowSelection}
                   columns={newColumnsHide}
                   dataSource={filteredPMH}
@@ -866,7 +870,7 @@ const PhieuMuaHang = () => {
                     x: 1500,
                     y: 410,
                   }}
-                  bordered
+                  // bordered={true}
                   pagination={{
                     defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
                     showSizeChanger: true,
@@ -881,7 +885,7 @@ const PhieuMuaHang = () => {
                       handleView(record)
                     },
                   })}
-                  rowClassName={(record) => (record.SoChungTu === donePMH ? 'highlighted-row' : '')}
+                  rowClassName={(record, index) => (record.SoChungTu === donePMH ? 'highlighted-row' : addRowClass(record, index))}
                   // Bảng Tổng
                   summary={() => {
                     return (
@@ -893,12 +897,7 @@ const PhieuMuaHang = () => {
                               const isNumericColumn = typeof filteredPMH[0]?.[column.dataIndex] === 'number'
 
                               return (
-                                <Table.Summary.Cell
-                                  index={index}
-                                  key={`summary-cell-${index + 1}`}
-                                  align={isNumericColumn ? 'right' : 'left'}
-                                  className="text-end font-bold  bg-[#f1f1f1]"
-                                >
+                                <Table.Summary.Cell index={index} key={`summary-cell-${index + 1}`} align={isNumericColumn ? 'right' : 'left'}>
                                   {isNumericColumn ? (
                                     column.dataIndex === 'TongTienHang' || column.dataIndex === 'TongTienThue' || column.dataIndex === 'TongThanhTien' ? (
                                       <Text strong>

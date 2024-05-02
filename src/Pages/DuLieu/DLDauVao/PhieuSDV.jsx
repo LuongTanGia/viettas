@@ -661,7 +661,7 @@ const PhieuSDV = () => {
               <div id="my-table" className="relative px-2 py-1 ">
                 <Table
                   loading={tableLoad}
-                  className="table_pmh setHeight"
+                  className="table_pmh setHeight table-style"
                   // rowSelection={rowSelection}
                   columns={newColumnsHide}
                   dataSource={filteredSDV}
@@ -670,7 +670,6 @@ const PhieuSDV = () => {
                     x: 1500,
                     y: 410,
                   }}
-                  bordered
                   pagination={{
                     defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
                     showSizeChanger: true,

@@ -18,7 +18,7 @@ const EditSDV = ({ namePage, dataRecord, dataThongTinSua, dataDoiTuong, dataThon
     SoTien: '',
   })
 
-  const [formEdit, setFormEdit] = useState({ ...dataThongTinSua })
+  const [formEdit, setFormEdit] = useState({ ...dataThongTinSua, NgayCTu: dayjs(dataThongTinSua?.NgayCTu).format('YYYY-MM-DD') })
 
   //  set value default
 
@@ -160,7 +160,7 @@ const EditSDV = ({ namePage, dataRecord, dataThongTinSua, dataDoiTuong, dataThon
                     optionFilterProp="children"
                     onChange={(value) => handleDoiTuongFocus(value)}
                     style={{ width: '100%' }}
-                    value={formEdit.MaDoiTuong}
+                    value={formEdit?.MaDoiTuong}
                     // listHeight={280}
                   >
                     {dataDoiTuong?.map((item) => (
@@ -186,7 +186,7 @@ const EditSDV = ({ namePage, dataRecord, dataThongTinSua, dataDoiTuong, dataThon
                     size="small"
                     min={0}
                     max={999999999999}
-                    value={formEdit.SoTien}
+                    value={formEdit?.SoTien}
                     formatter={(value) => ` ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                     parser={(value) => {
                       const parsedValue = parseFloat(value.replace(/\$\s?|(,*)/g, ''))
@@ -206,7 +206,7 @@ const EditSDV = ({ namePage, dataRecord, dataThongTinSua, dataDoiTuong, dataThon
                   <textarea
                     placeholder={errors.GhiChu}
                     type="text"
-                    value={formEdit.GhiChu}
+                    value={formEdit?.GhiChu}
                     onChange={(e) => {
                       setFormEdit({
                         ...formEdit,

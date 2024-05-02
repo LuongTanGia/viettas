@@ -580,10 +580,11 @@ const EditTable = ({
   return (
     <div>
       <Table
-        className={tableName === 'GBS' ? 'h340' : tableName === 'Import' ? 'h396' : 'h290'}
+        className={` table-style  border-t-[1px]   border-gray-700 rounded-lg 
+        ${tableName === 'GBS' ? 'h340' : tableName === 'Import' ? 'h396' : 'h290'}`}
         components={components}
         rowClassName={() => 'editable-row'}
-        bordered
+        // bordered
         dataSource={dataSource}
         columns={columns}
         scroll={{

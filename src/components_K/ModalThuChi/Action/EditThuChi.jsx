@@ -23,7 +23,7 @@ const EditThuChi = ({ actionType, typePage, namePage, data, dataRecord, dataThon
     HangMuc: null,
     MaDoiTuong: null,
   })
-  const [formEdit, setFormEdit] = useState({ ...dataThongTinSua })
+  const [formEdit, setFormEdit] = useState({ ...dataThongTinSua, NgayCTu: dayjs(dataThongTinSua?.NgayCTu).format('YYYY-MM-DD') })
 
   //  set value default
   useEffect(() => {
