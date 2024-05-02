@@ -65,6 +65,10 @@ const QLEdit = ({ close, loadingData, setTargetRow, dataQL, maNguoiDung }) => {
       })
       return
     }
+    if (dayjs(QLForm.TuNgay).format('YYYY-MM-DD') === 'Invalid Date' || dayjs(QLForm.DenNgay).format('YYYY-MM-DD') === 'Invalid Date') {
+      toast.warning('Vui lòng chọn ngày Hiệu lực/ Hết hạn', { autoClose: 2000 })
+      return
+    }
     try {
       if (!QLForm.KhongKetThuc && !QLForm.DenNgay) {
         toast.warning('Vui lòng nhập ngày hết hạn', { autoClose: 2000 })

@@ -172,6 +172,10 @@ const XCKCreate = ({ close, loadingData, setTargetRow }) => {
       })
       return
     }
+    if (dayjs(valueDate).format('YYYY-MM-DD') === 'Invalid Date') {
+      toast.warning('Vui lòng chọn ngày', { autoClose: 2000 })
+      return
+    }
     try {
       const newData = selectedRowData.map((item, index) => {
         return {
@@ -391,7 +395,7 @@ const XCKCreate = ({ close, loadingData, setTargetRow }) => {
                         <div className="flex items-center gap-1">
                           <label className="required whitespace-nowrap text-sm"> Ngày</label>
                           <DateField
-                            className="DatePicker_XCKKho max-w-[115px]"
+                            className="max-w-[130px] min-w-[130px]"
                             format="DD/MM/YYYY"
                             value={valueDate}
                             onChange={(values) => {

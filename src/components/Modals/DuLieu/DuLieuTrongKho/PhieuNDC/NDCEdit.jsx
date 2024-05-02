@@ -185,6 +185,10 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
     setActionType('print')
   }
   const handleEdit = async (isPrint = true) => {
+    if (NDCForm.NgayCTu === 'Invalid Date') {
+      toast.warning('Vui lòng chọn ngày', { autoClose: 2000 })
+      return
+    }
     try {
       const newData = selectedRowData.map((item, index) => {
         return {
@@ -195,8 +199,6 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
       if (newData?.length > 0) {
         if (isAdd) {
           toast.warning('Vui lòng chọn mã hàng', { autoClose: 2000 })
-        } else if (NDCForm.NgayCTu === 'Invalid Date') {
-          toast.warning('Vui lòng chọn ngày', { autoClose: 2000 })
         } else {
           const response = await categoryAPI.NDCEdit(
             { SoChungTu: dataNDC?.SoChungTu, Data: { ...NDCForm, NgayCTu: dayjs(NDCForm?.NgayCTu).format('YYYY-MM-DD'), DataDetails: newData } },

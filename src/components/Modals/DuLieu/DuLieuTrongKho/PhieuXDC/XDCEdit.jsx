@@ -187,6 +187,10 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
     setActionType('print')
   }
   const handleEdit = async (isPrint = true) => {
+    if (XDCForm.NgayCTu === 'Invalid Date') {
+      toast.warning('Vui lòng chọn ngày', { autoClose: 2000 })
+      return
+    }
     try {
       const newData = selectedRowData.map((item, index) => {
         return {
@@ -400,7 +404,7 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
                         <div className="flex items-center gap-1">
                           <label className="required whitespace-nowrap text-sm"> Ngày</label>
                           <DateField
-                            className="DatePicker_XDCKho max-w-[115px]"
+                            className="max-w-[130px] min-w-[130px]"
                             format="DD/MM/YYYY"
                             value={dayjs(XDCForm?.NgayCTu) || ''}
                             onChange={(values) => {

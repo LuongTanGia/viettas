@@ -108,6 +108,10 @@ const PCCreate = ({ close, loadingData, setTargetRow }) => {
       })
       return
     }
+    if (dayjs(DateFrom).format('YYYY-MM-DD') === 'Invalid Date') {
+      toast.warning('Vui lòng chọn ngày', { autoClose: 2000 })
+      return
+    }
     let shouldSetError = false
     if (!PCForm?.SoQuay && !PCForm?.MaCa) {
       shouldSetError = false

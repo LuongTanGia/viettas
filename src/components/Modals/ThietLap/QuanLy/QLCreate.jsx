@@ -99,9 +99,13 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
       })
       return
     }
+    if (dayjs(QLForm.TuNgay).format('YYYY-MM-DD') === 'Invalid Date' || dayjs(QLForm.DenNgay).format('YYYY-MM-DD') === 'Invalid Date') {
+      toast.warning('Vui lòng chọn ngày Từ/ Đến', { autoClose: 2000 })
+      return
+    }
     try {
       if (!QLForm.KhongKetThuc && !QLForm.DenNgay) {
-        toast.warning('Vui lòng nhập ngày hết hạn', { autoClose: 2000 })
+        toast.warning('Vui lòng chọn ngày Hiệu lực/ Hết hạn', { autoClose: 2000 })
       } else if (QLForm.KhongKetThuc) {
         const response = await categoryAPI.ThemQuanLy({ ...QLForm, TuNgay: dayjs(QLForm.TuNgay).format('YYYY-MM-DD') }, TokenAccess)
         if (response.data.DataError == 0) {
@@ -235,7 +239,7 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
                       <label className="required whitespace-nowrap text-sm">Hiệu lực từ</label>
                       <DateField
                         // className="DatePicker_NXTKho max-w-[130px]"
-                        className="max-w-[115px]"
+                        className="max-w-[130px]"
                         format="DD/MM/YYYY"
                         value={QLForm.TuNgay}
                         onBlur={handleDateChange}

@@ -67,6 +67,10 @@ const PCEdit = ({ close, loadingData, setTargetRow, dataPC }) => {
   }, [isLoading])
 
   const handleEdit = async () => {
+    if (PCForm.HieuLucTu === 'Invalid Date') {
+      toast.warning('Vui lòng chọn ngày', { autoClose: 2000 })
+      return
+    }
     try {
       const response = await categoryAPI.SuaPhanCa({ Ma: dataPC?.MaNguoiDung, HieuLuc: dataPC?.HieuLucTu, Data: { ...PCForm } }, TokenAccess)
       if (response.data.DataError == 0) {
