@@ -228,7 +228,17 @@ const EditTable = ({
           initialValue={record[dataIndex]}
         >
           {isSelect ? (
-            <Select ref={inputRef} onPressEnter={save} onBlur={save} style={{ width: '100%' }} showSearch popupMatchSelectWidth={false} listHeight={310}>
+            <Select
+              ref={inputRef}
+              showSearch
+              optionFilterProp="children"
+              optionLabelProp="value"
+              onPressEnter={save}
+              onBlur={save}
+              style={{ width: '100%' }}
+              popupMatchSelectWidth={false}
+              listHeight={310}
+            >
               {dataIndex === 'MaHang'
                 ? newOptions?.map((option, index) => (
                     <Option key={index} value={option.MaHang}>

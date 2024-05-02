@@ -350,13 +350,13 @@ const EditDuLieu = ({ actionType, typePage, namePage, data, dataRecord, dataThon
   return (
     <>
       <div className="p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
-        <div className=" w-[90vw] h-[600px] ">
+        <div className=" w-[90vw] h-[610px] ">
           <div className="flex gap-2">
             <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
             <label className="text-blue-700 font-semibold uppercase pb-1">sửa - {namePage}</label>
           </div>
 
-          <div className=" border w-full h-[89%] rounded-sm text-sm">
+          <div className="  border-[1px] border-gray-700 w-full h-[89%] rounded-sm text-sm">
             <div className="flex  md:gap-0 lg:gap-1 pl-1 ">
               {/* thong tin phieu */}
               <div className="w-[62%] ">

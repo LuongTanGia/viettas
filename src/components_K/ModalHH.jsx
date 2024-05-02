@@ -201,7 +201,7 @@ const ModalHH = ({ close, data, onRowCreate, dataThongSo, onChangLoading }) => {
 
           <Table
             // loading={isLoading}
-            className="table_HH"
+            className="table-style table_HH  "
             columns={columns}
             // dataSource={pageSize === 'All' ? data : data.slice(0, pageSize)}
             dataSource={dataTable}
