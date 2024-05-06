@@ -6,7 +6,7 @@ import { toast } from 'react-toastify'
 import * as apis from '../../../apis'
 import { Modals, PermissionView } from '../../../components_K'
 import ActionButton from '../../../components/util/Button/ActionButton'
-import { RETOKEN, formatCurrency, formatPrice, formatQuantity } from '../../../action/Actions'
+import { RETOKEN, addRowClass, formatCurrency, formatPrice, formatQuantity } from '../../../action/Actions'
 import SimpleBackdrop from '../../../components/util/Loading/LoadingPage'
 import { useSearch } from '../../../components_K/myComponents/useSearch'
 import HighlightedCell from '../../../components/hooks/HighlightedCell'
@@ -334,12 +334,12 @@ const PhieuMuaHang = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
-          <Tooltip title={text} color="blue">
-            <span>
-              <HighlightedCell text={text} search={searchPMH} />
-            </span>
-          </Tooltip>
+        <div className=" text-start">
+          {/* <Tooltip title={text} color="blue"> */}
+          <span>
+            <HighlightedCell text={text} search={searchPMH} />
+          </span>
+          {/* </Tooltip> */}
         </div>
       ),
     },
@@ -357,12 +357,12 @@ const PhieuMuaHang = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
-          <Tooltip title={text} color="blue">
-            <span>
-              <HighlightedCell text={text} search={searchPMH} />
-            </span>
-          </Tooltip>
+        <div className=" text-start">
+          {/* <Tooltip title={text} color="blue"> */}
+          <span>
+            <HighlightedCell text={text} search={searchPMH} />
+          </span>
+          {/* </Tooltip> */}
         </div>
       ),
     },
@@ -712,10 +712,6 @@ const PhieuMuaHang = () => {
     }
   }
 
-  const addRowClass = (record, index) => {
-    return index % 2 === 0 ? '' : 'odd-row'
-  }
-
   return (
     <>
       {dataQuyenHan?.VIEW === false ? (
@@ -838,7 +834,7 @@ const PhieuMuaHang = () => {
                   )}
                 </div>
               </div>
-              <div className="flex justify-between items-center px-4 ">
+              <div className="flex justify-between items-center px-2 ">
                 <div className="flex gap-3">
                   {/* DatePicker */}
                   <ActionDateField formKhoanNgay={formKhoanNgay} setFormKhoanNgay={setFormKhoanNgay} setPrevDateValue={setPrevDateValue} handleFilterDS={handleFilterDS} />

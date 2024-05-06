@@ -5,7 +5,7 @@ import icons from '../../../untils/icons'
 import { toast } from 'react-toastify'
 import * as apis from '../../../apis'
 import { Modals, PermissionView } from '../../../components_K'
-import { RETOKEN, formatPrice, formatQuantity } from '../../../action/Actions'
+import { RETOKEN, addRowClass, formatPrice, formatQuantity } from '../../../action/Actions'
 import SimpleBackdrop from '../../../components/util/Loading/LoadingPage'
 import { useSearch } from '../../../components_K/myComponents/useSearch'
 import HighlightedCell from '../../../components/hooks/HighlightedCell'
@@ -334,17 +334,17 @@ const PhieuBanLe = () => {
       title: 'Tên đối tượng',
       dataIndex: 'TenDoiTuong',
       key: 'TenDoiTuong',
-      width: 200,
+      width: 250,
       sorter: (a, b) => a.TenDoiTuong.localeCompare(b.TenDoiTuong),
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
-          <Tooltip title={text} color="blue">
-            <span>
-              <HighlightedCell text={text} search={searchPBL} />
-            </span>
-          </Tooltip>
+        <div className=" text-start">
+          {/* <Tooltip title={text} color="blue"> */}
+          <span>
+            <HighlightedCell text={text} search={searchPBL} />
+          </span>
+          {/* </Tooltip> */}
         </div>
       ),
     },
@@ -362,12 +362,12 @@ const PhieuBanLe = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
-          <Tooltip title={text} color="blue">
-            <span>
-              <HighlightedCell text={text} search={searchPBL} />
-            </span>
-          </Tooltip>
+        <div className=" text-start">
+          {/* <Tooltip title={text} color="blue"> */}
+          <span>
+            <HighlightedCell text={text} search={searchPBL} />
+          </span>
+          {/* </Tooltip> */}
         </div>
       ),
     },
@@ -417,7 +417,7 @@ const PhieuBanLe = () => {
       title: 'Ghi chú ',
       dataIndex: 'GhiChu',
       key: 'GhiChu',
-      width: 200,
+      width: 250,
       sorter: (a, b) => {
         const GhiChuA = a.GhiChu || ''
         const GhiChuB = b.GhiChu || ''
@@ -426,7 +426,7 @@ const PhieuBanLe = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
+        <div className=" text-start">
           <HighlightedCell text={text} search={searchPBL} />
         </div>
       ),
@@ -788,7 +788,6 @@ const PhieuBanLe = () => {
                     x: 1500,
                     y: 410,
                   }}
-                  bordered
                   pagination={{
                     defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
                     showSizeChanger: true,
@@ -803,7 +802,7 @@ const PhieuBanLe = () => {
                       handleView(record)
                     },
                   })}
-                  rowClassName={(record) => (record.SoChungTu === donePBL ? 'highlighted-row' : '')}
+                  rowClassName={(record, index) => (record.SoChungTu === donePBL ? 'highlighted-row' : addRowClass(record, index))}
                   // Bảng Tổng
                   summary={() => {
                     return (

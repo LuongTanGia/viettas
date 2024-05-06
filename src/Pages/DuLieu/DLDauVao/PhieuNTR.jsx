@@ -6,7 +6,7 @@ import { toast } from 'react-toastify'
 import * as apis from '../../../apis'
 import { Modals, PermissionView } from '../../../components_K'
 import ActionButton from '../../../components/util/Button/ActionButton'
-import { RETOKEN, formatCurrency, formatPrice, formatQuantity } from '../../../action/Actions'
+import { RETOKEN, addRowClass, formatCurrency, formatPrice, formatQuantity } from '../../../action/Actions'
 import SimpleBackdrop from '../../../components/util/Loading/LoadingPage'
 import { useSearch } from '../../../components_K/myComponents/useSearch'
 import HighlightedCell from '../../../components/hooks/HighlightedCell'
@@ -44,7 +44,6 @@ const PhieuNTR = () => {
   const [newColumns, setNewColumns] = useState([])
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
-  const [lastSearchTime, setLastSearchTime] = useState(0)
   const [isShowNotify, setIsShowNotify] = useState(false)
 
   // bỏ focus option thì hidden
@@ -333,12 +332,12 @@ const PhieuNTR = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
-          <Tooltip title={text} color="blue">
-            <span>
-              <HighlightedCell text={text} search={searchPNTR} />
-            </span>
-          </Tooltip>
+        <div className=" text-start">
+          {/* <Tooltip title={text} color="blue"> */}
+          <span>
+            <HighlightedCell text={text} search={searchPNTR} />
+          </span>
+          {/* </Tooltip> */}
         </div>
       ),
     },
@@ -356,12 +355,12 @@ const PhieuNTR = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
-          <Tooltip title={text} color="blue">
-            <span>
-              <HighlightedCell text={text} search={searchPNTR} />
-            </span>
-          </Tooltip>
+        <div className=" text-start">
+          {/* <Tooltip title={text} color="blue"> */}
+          <span>
+            <HighlightedCell text={text} search={searchPNTR} />
+          </span>
+          {/* </Tooltip> */}
         </div>
       ),
     },
@@ -868,7 +867,6 @@ const PhieuNTR = () => {
                     x: 1500,
                     y: 410,
                   }}
-                  bordered
                   pagination={{
                     defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
                     showSizeChanger: true,
@@ -883,7 +881,7 @@ const PhieuNTR = () => {
                       handleView(record)
                     },
                   })}
-                  rowClassName={(record) => (record.SoChungTu === doneNTR ? 'highlighted-row' : '')}
+                  rowClassName={(record, index) => (record.SoChungTu === doneNTR ? 'highlighted-row' : addRowClass(record, index))}
                   // Bảng Tổng
                   summary={() => {
                     return (

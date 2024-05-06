@@ -261,9 +261,12 @@ input.ant-input.ant-input-sm {
   max-height: 450px;
 }
 
-.table_HH .ant-table,
-.table_view .ant-table {
+.table_HH .ant-table {
   border: 1px solid rgb(112, 112, 112);
+}
+
+.table_view .ant-table {
+  border-top: 1px solid rgb(112, 112, 112);
 }
 
 .ant-table-title:hover {

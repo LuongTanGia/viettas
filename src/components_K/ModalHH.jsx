@@ -210,7 +210,6 @@ const ModalHH = ({ close, data, onRowCreate, dataThongSo, onChangLoading }) => {
               x: 1390,
               y: 410,
             }}
-            bordered
             pagination={{
               defaultPageSize: 50,
               showSizeChanger: true,

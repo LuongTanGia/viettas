@@ -4,7 +4,7 @@ import icons from '../../untils/icons'
 import { toast } from 'react-toastify'
 import * as apis from '../../apis'
 import ActionButton from '../../components/util/Button/ActionButton'
-import { RETOKEN, formatPrice } from '../../action/Actions'
+import { RETOKEN, addRowClass, formatPrice } from '../../action/Actions'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
 import { exportToExcel } from '../../action/Actions'
 import { CloseSquareFilled } from '@ant-design/icons'
@@ -243,17 +243,17 @@ const HangHoaTKTT = () => {
       title: 'Tên hàng',
       dataIndex: 'TenHang',
       key: 'TenHang',
-      width: 200,
+      width: 250,
       align: 'center',
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       showSorterTooltip: false,
       render: (text) => (
-        <div className="truncate text-start">
-          <Tooltip title={text} color="blue" placement="top">
-            <span>
-              <HighlightedCell text={text} search={searchHangHoaTKTT} />
-            </span>
-          </Tooltip>
+        <div className=" text-start">
+          {/* <Tooltip title={text} color="blue" placement="top"> */}
+          <span>
+            <HighlightedCell text={text} search={searchHangHoaTKTT} />
+          </span>
+          {/* </Tooltip> */}
         </div>
       ),
     },
@@ -275,15 +275,15 @@ const HangHoaTKTT = () => {
       title: 'Nhóm hàng',
       dataIndex: 'NhomHang',
       key: 'NhomHang',
-      width: 200,
+      width: 250,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
-          <Tooltip title={text} color="blue" placement="top">
-            <span>
-              <HighlightedCell text={text} search={searchHangHoaTKTT} />
-            </span>
-          </Tooltip>
+        <div className=" text-start">
+          {/* <Tooltip title={text} color="blue" placement="top"> */}
+          <span>
+            <HighlightedCell text={text} search={searchHangHoaTKTT} />
+          </span>
+          {/* </Tooltip> */}
         </div>
       ),
       sorter: (a, b) => {
@@ -658,7 +658,8 @@ const HangHoaTKTT = () => {
                   x: 1500,
                   y: 300,
                 }}
-                bordered
+                rowKey={(record) => record.MaHang}
+                rowClassName={(record, index) => addRowClass(record, index)}
                 pagination={{
                   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
                   showSizeChanger: true,

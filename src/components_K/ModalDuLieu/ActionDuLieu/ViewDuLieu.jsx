@@ -289,7 +289,6 @@ const ViewDuLieu = ({ actionType, typePage, namePage, data, dataThongTin, dataTh
                     x: 1000,
                     y: 220,
                   }}
-                  bordered
                   pagination={false}
                   summary={(pageData) => {
                     let totalThanhTien = 0
