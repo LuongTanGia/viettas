@@ -60,7 +60,6 @@ const ModalSelectHH = ({ close, data, onRowCreate, onChangLoading }) => {
       align: 'center',
       render: (text) => (
         <div style={{ textAlign: 'start' }}>
-          {' '}
           <HighlightedCell text={text} search={searchHH} />
         </div>
       ),
@@ -170,7 +169,6 @@ const ModalSelectHH = ({ close, data, onRowCreate, onChangLoading }) => {
               y: 410,
             }}
             pagination={false}
-            bordered
             rowKey={(record) => record.MaHang}
             onRow={(record) => ({
               // onDoubleClick: () => {

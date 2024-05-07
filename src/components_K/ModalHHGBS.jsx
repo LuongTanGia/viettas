@@ -8,6 +8,7 @@ import ActionButton from '../components/util/Button/ActionButton'
 import HighlightedCell from '../components/hooks/HighlightedCell'
 import { toast } from 'react-toastify'
 import { CloseSquareFilled } from '@ant-design/icons'
+import { addRowClass } from '../action/Actions'
 
 const { BsSearch } = icons
 const ModalHHGBS = ({ close, data, onRowCreate, onChangLoading }) => {
@@ -168,10 +169,8 @@ const ModalHHGBS = ({ close, data, onRowCreate, onChangLoading }) => {
           {/* table */}
 
           <Table
-            // loading={isLoading}
             className="table_HH"
             columns={columns}
-            // dataSource={pageSize === 'All' ? data : data.slice(0, pageSize)}
             dataSource={dataTable}
             size="small"
             scroll={{
@@ -182,17 +181,13 @@ const ModalHHGBS = ({ close, data, onRowCreate, onChangLoading }) => {
               defaultPageSize: 50,
               showSizeChanger: true,
               pageSizeOptions: ['50', '100', '1000'],
-              // onShowSizeChange: (current, size) => {
-              //   console.log(size, '???')
-              //   // setPageSize(parseInt(size, 10))
-              //   // setPageSize(size === 'All' ? -1 : parseInt(size, 10))
-              // },
-              // // pageSize,
+
               onShowSizeChange: (current, size) => {
                 console.log(size, ':', current, ':')
               },
             }}
             rowKey={(record) => record.MaHang}
+            rowClassName={(record, index) => addRowClass(record, index)}
             onRow={(record) => ({
               onDoubleClick: () => {
                 handleChoose(record)

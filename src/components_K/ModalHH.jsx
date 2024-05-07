@@ -3,7 +3,7 @@ import { useState } from 'react'
 import logo from '../assets/VTS-iSale.ico'
 import icons from '../untils/icons'
 import { Table, Checkbox, Input } from 'antd'
-import { formatQuantity } from '../action/Actions'
+import { addRowClass, formatQuantity } from '../action/Actions'
 import { useSearchHH } from './myComponents/useSearchHH'
 import ActionButton from '../components/util/Button/ActionButton'
 import HighlightedCell from '../components/hooks/HighlightedCell'
@@ -225,6 +225,7 @@ const ModalHH = ({ close, data, onRowCreate, dataThongSo, onChangLoading }) => {
               },
             }}
             rowKey={(record) => record.MaHang}
+            rowClassName={(record, index) => addRowClass(record, index)}
             onRow={(record) => ({
               onDoubleClick: () => {
                 handleChoose(record)
