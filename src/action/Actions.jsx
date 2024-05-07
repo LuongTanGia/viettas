@@ -815,3 +815,8 @@ export const exportSampleExcel = (sheet1Data, sheet2Data) => {
   // Xuất file Excel
   XLSX.writeFile(wb, 'fileSampleExcel.xlsx')
 }
+
+// background row chẳn lẻ
+export const addRowClass = (record, index) => {
+  return index % 2 === 0 ? '' : 'odd-row'
+}

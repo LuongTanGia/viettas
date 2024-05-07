@@ -134,6 +134,7 @@ const PhanQuyen = () => {
     {
       title: 'STT',
       dataIndex: 'STT',
+      fixed: 'left',
       width: 40,
       align: 'center',
       render: (text, record, index) => index + 1,

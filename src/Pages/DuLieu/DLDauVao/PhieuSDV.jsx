@@ -5,7 +5,7 @@ import icons from '../../../untils/icons'
 import { toast } from 'react-toastify'
 import * as apis from '../../../apis'
 import ActionButton from '../../../components/util/Button/ActionButton'
-import { RETOKEN, formatPrice } from '../../../action/Actions'
+import { RETOKEN, addRowClass, formatPrice } from '../../../action/Actions'
 import SimpleBackdrop from '../../../components/util/Loading/LoadingPage'
 import { useSearch } from '../../../components_K/myComponents/useSearch'
 import HighlightedCell from '../../../components/hooks/HighlightedCell'
@@ -303,12 +303,12 @@ const PhieuSDV = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
-          <Tooltip title={text} color="blue">
-            <span>
-              <HighlightedCell text={text} search={searchSDV} />
-            </span>
-          </Tooltip>
+        <div className=" text-start">
+          {/* <Tooltip title={text} color="blue"> */}
+          <span>
+            <HighlightedCell text={text} search={searchSDV} />
+          </span>
+          {/* </Tooltip> */}
         </div>
       ),
     },
@@ -326,12 +326,12 @@ const PhieuSDV = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
-          <Tooltip title={text} color="blue">
-            <span>
-              <HighlightedCell text={text} search={searchSDV} />
-            </span>
-          </Tooltip>
+        <div className=" text-start">
+          {/* <Tooltip title={text} color="blue"> */}
+          <span>
+            <HighlightedCell text={text} search={searchSDV} />
+          </span>
+          {/* </Tooltip> */}
         </div>
       ),
     },
@@ -661,7 +661,7 @@ const PhieuSDV = () => {
               <div id="my-table" className="relative px-2 py-1 ">
                 <Table
                   loading={tableLoad}
-                  className="table_pmh setHeight"
+                  className="table_pmh setHeight table-style"
                   // rowSelection={rowSelection}
                   columns={newColumnsHide}
                   dataSource={filteredSDV}
@@ -670,7 +670,6 @@ const PhieuSDV = () => {
                     x: 1500,
                     y: 410,
                   }}
-                  bordered
                   pagination={{
                     defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
                     showSizeChanger: true,
@@ -685,7 +684,7 @@ const PhieuSDV = () => {
                       handleView(record)
                     },
                   })}
-                  rowClassName={(record) => (record.SoChungTu === doneNTR ? 'highlighted-row' : '')}
+                  rowClassName={(record, index) => (record.SoChungTu === doneNTR ? 'highlighted-row' : addRowClass(record, index))}
                   // Bảng Tổng
                   summary={() => {
                     return (

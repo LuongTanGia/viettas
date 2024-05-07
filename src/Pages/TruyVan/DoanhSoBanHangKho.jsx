@@ -367,7 +367,6 @@ const DoanhSoBanHangKho = () => {
                 ),
                 sorter: (a, b) => a[colKey] - b[colKey],
                 showSorterTooltip: false,
-                ellipsis: true,
               })),
             ...tienColKey
               .filter((key) => siColKey.includes(key))
@@ -377,9 +376,6 @@ const DoanhSoBanHangKho = () => {
                 key: colKey,
                 width: 150,
                 align: 'center',
-                ellipsis: {
-                  showTitle: false,
-                },
                 render: (text) => (
                   <div className={`text-end ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
                     <HighlightedCell text={formatThapPhan(text, dataThongSo?.SOLESOTIEN)} search={searchHangHoa} />
@@ -424,6 +420,7 @@ const DoanhSoBanHangKho = () => {
           const tenKhoMatch = tenKho[maKho.indexOf(ma)]
           columns.push({
             title: `${tenKhoMatch}`,
+            ellipsis: true,
             children: [
               ...tienColKey
                 .filter((key) => leColKey.includes(key))
@@ -440,7 +437,6 @@ const DoanhSoBanHangKho = () => {
                   ),
                   sorter: (a, b) => a[colKey] - b[colKey],
                   showSorterTooltip: false,
-                  ellipsis: true,
                 })),
               ...tienColKey
                 .filter((key) => siColKey.includes(key))
@@ -450,9 +446,6 @@ const DoanhSoBanHangKho = () => {
                   key: colKey,
                   width: 150,
                   align: 'center',
-                  ellipsis: {
-                    showTitle: false,
-                  },
                   render: (text) => (
                     <div className={`text-end ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
                       <HighlightedCell text={formatThapPhan(text, dataThongSo?.SOLESOTIEN)} search={searchHangHoa} />
@@ -468,7 +461,6 @@ const DoanhSoBanHangKho = () => {
                   dataIndex: colKey,
                   key: colKey,
                   width: 150,
-                  ellipsis: true,
                   align: 'center',
                   render: (text) => (
                     <div className={`text-end ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>

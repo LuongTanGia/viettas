@@ -5,7 +5,7 @@ import icons from '../../../untils/icons'
 import { toast } from 'react-toastify'
 import * as apis from '../../../apis'
 import ActionButton from '../../../components/util/Button/ActionButton'
-import { RETOKEN, formatPrice } from '../../../action/Actions'
+import { RETOKEN, addRowClass, formatPrice } from '../../../action/Actions'
 import SimpleBackdrop from '../../../components/util/Loading/LoadingPage'
 import { useSearch } from '../../../components_K/myComponents/useSearch'
 import HighlightedCell from '../../../components/hooks/HighlightedCell'
@@ -294,17 +294,17 @@ const PhieuSDR = () => {
       title: 'Tên Kh.Hàng',
       dataIndex: 'TenDoiTuong',
       key: 'TenDoiTuong',
-      width: 200,
+      width: 250,
       sorter: (a, b) => a.TenDoiTuong.localeCompare(b.TenDoiTuong),
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
-          <Tooltip title={text} color="blue">
-            <span>
-              <HighlightedCell text={text} search={searchSDR} />
-            </span>
-          </Tooltip>
+        <div className=" text-start">
+          {/* <Tooltip title={text} color="blue"> */}
+          <span>
+            <HighlightedCell text={text} search={searchSDR} />
+          </span>
+          {/* </Tooltip> */}
         </div>
       ),
     },
@@ -322,12 +322,12 @@ const PhieuSDR = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
-          <Tooltip title={text} color="blue">
-            <span>
-              <HighlightedCell text={text} search={searchSDR} />
-            </span>
-          </Tooltip>
+        <div className=" text-start">
+          {/* <Tooltip title={text} color="blue"> */}
+          <span>
+            <HighlightedCell text={text} search={searchSDR} />
+          </span>
+          {/* </Tooltip> */}
         </div>
       ),
     },
@@ -665,7 +665,6 @@ const PhieuSDR = () => {
                     x: 1500,
                     y: 410,
                   }}
-                  bordered
                   pagination={{
                     defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
                     showSizeChanger: true,
@@ -680,7 +679,7 @@ const PhieuSDR = () => {
                       handleView(record)
                     },
                   })}
-                  rowClassName={(record) => (record.SoChungTu === doneNTR ? 'highlighted-row' : '')}
+                  rowClassName={(record, index) => (record.SoChungTu === doneNTR ? 'highlighted-row' : addRowClass(record, index))}
                   // Bảng Tổng
                   summary={() => {
                     return (

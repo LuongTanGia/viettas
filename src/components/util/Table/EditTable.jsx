@@ -3,6 +3,7 @@
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { Button, Form, Input, Table, Select, InputNumber, Tooltip, Typography, Checkbox } from 'antd'
 import BtnAction from './BtnAction'
+import { addRowClass } from '../../../action/Actions'
 
 const { Option } = Select
 const { Text } = Typography
@@ -228,7 +229,17 @@ const EditTable = ({
           initialValue={record[dataIndex]}
         >
           {isSelect ? (
-            <Select ref={inputRef} onPressEnter={save} onBlur={save} style={{ width: '100%' }} showSearch popupMatchSelectWidth={false} listHeight={310}>
+            <Select
+              ref={inputRef}
+              showSearch
+              optionFilterProp="children"
+              optionLabelProp="value"
+              onPressEnter={save}
+              onBlur={save}
+              style={{ width: '100%' }}
+              popupMatchSelectWidth={false}
+              listHeight={310}
+            >
               {dataIndex === 'MaHang'
                 ? newOptions?.map((option, index) => (
                     <Option key={index} value={option.MaHang}>
@@ -580,10 +591,11 @@ const EditTable = ({
   return (
     <div>
       <Table
-        className={tableName === 'GBS' ? 'h340' : tableName === 'Import' ? 'h396' : 'h290'}
+        className={` border-t-[1px]   border-gray-700 rounded-lg 
+        ${tableName === 'GBS' ? 'h340' : tableName === 'Import' ? 'h396' : 'h290'}`}
         components={components}
         rowClassName={() => 'editable-row'}
-        bordered
+        // rowClassName={(record, index) => addRowClass(record, index)}
         dataSource={dataSource}
         columns={columns}
         scroll={{

@@ -931,7 +931,6 @@ const GBL = () => {
                   x: 1500,
                   y: 300,
                 }}
-                bordered
                 pagination={{
                   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
                   showSizeChanger: true,

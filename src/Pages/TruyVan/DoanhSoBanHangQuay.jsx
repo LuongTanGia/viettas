@@ -356,7 +356,6 @@ const DoanhSoBanHangQuay = () => {
               dataIndex: colKey,
               key: colKey,
               width: 180,
-              ellipsis: true,
               align: 'center',
               render: (text) => (
                 <div className={`text-end ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>

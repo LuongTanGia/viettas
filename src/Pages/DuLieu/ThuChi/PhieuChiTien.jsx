@@ -5,7 +5,7 @@ import icons from '../../../untils/icons'
 import { toast } from 'react-toastify'
 import * as apis from '../../../apis'
 import ActionButton from '../../../components/util/Button/ActionButton'
-import { RETOKEN, formatPrice } from '../../../action/Actions'
+import { RETOKEN, addRowClass, formatPrice } from '../../../action/Actions'
 import SimpleBackdrop from '../../../components/util/Loading/LoadingPage'
 import { useSearch } from '../../../components_K/myComponents/useSearch'
 import HighlightedCell from '../../../components/hooks/HighlightedCell'
@@ -348,17 +348,17 @@ const PhieuChiTien = () => {
       title: 'Tên đối tượng',
       dataIndex: 'TenDoiTuong',
       key: 'TenDoiTuong',
-      width: 200,
+      width: 250,
       sorter: (a, b) => a.TenDoiTuong.localeCompare(b.TenDoiTuong),
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
-          <Tooltip title={text} color="blue">
-            <span>
-              <HighlightedCell text={text} search={searchPCT} />
-            </span>
-          </Tooltip>
+        <div className=" text-start">
+          {/* <Tooltip title={text} color="blue"> */}
+          <span>
+            <HighlightedCell text={text} search={searchPCT} />
+          </span>
+          {/* </Tooltip> */}
         </div>
       ),
     },
@@ -366,7 +366,7 @@ const PhieuChiTien = () => {
       title: 'Địa chỉ ',
       dataIndex: 'DiaChi',
       key: 'DiaChi',
-      width: 300,
+      width: 250,
       sorter: (a, b) => {
         const diaChiA = a.DiaChi || ''
         const diaChiB = b.DiaChi || ''
@@ -376,12 +376,12 @@ const PhieuChiTien = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
-          <Tooltip title={text} color="blue">
-            <span>
-              <HighlightedCell text={text} search={searchPCT} />
-            </span>
-          </Tooltip>
+        <div className=" text-start">
+          {/* <Tooltip title={text} color="blue"> */}
+          <span>
+            <HighlightedCell text={text} search={searchPCT} />
+          </span>
+          {/* </Tooltip>   */}
         </div>
       ),
     },
@@ -405,7 +405,7 @@ const PhieuChiTien = () => {
       title: 'Ghi chú ',
       dataIndex: 'GhiChu',
       key: 'GhiChu',
-      width: 300,
+      width: 250,
       sorter: (a, b) => {
         const GhiChuA = a.GhiChu || ''
         const GhiChuB = b.GhiChu || ''
@@ -414,7 +414,7 @@ const PhieuChiTien = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
+        <div className=" text-start">
           <Tooltip title={text} color="blue">
             <span>
               <HighlightedCell text={text} search={searchPCT} />
@@ -746,7 +746,7 @@ const PhieuChiTien = () => {
                       handleView(record)
                     },
                   })}
-                  rowClassName={(record) => (record.SoChungTu === doneNTR ? 'highlighted-row' : '')}
+                  rowClassName={(record, index) => (record.SoChungTu === doneNTR ? 'highlighted-row' : addRowClass(record, index))}
                   // Bảng Tổng
                   summary={() => {
                     return (

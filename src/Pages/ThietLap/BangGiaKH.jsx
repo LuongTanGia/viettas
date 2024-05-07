@@ -289,12 +289,12 @@ const BangGiaKH = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
-          <Tooltip title={text} color="blue" placement="top">
-            <span>
-              <HighlightedCell text={text} search={searchGKH} />
-            </span>
-          </Tooltip>
+        <div className=" text-start">
+          {/* <Tooltip title={text} color="blue" placement="top"> */}
+          <span>
+            <HighlightedCell text={text} search={searchGKH} />
+          </span>
+          {/* </Tooltip> */}
         </div>
       ),
     },
@@ -303,7 +303,6 @@ const BangGiaKH = () => {
       dataIndex: 'TenDoiTuong',
       key: 'TenDoiTuong',
       width: 250,
-
       sorter: (a, b) => a.TenDoiTuong.localeCompare(b.TenDoiTuong),
       showSorterTooltip: false,
       align: 'center',
@@ -339,12 +338,12 @@ const BangGiaKH = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
-          <Tooltip title={text} color="blue" placement="top">
-            <span>
-              <HighlightedCell text={text} search={searchGKH} />
-            </span>
-          </Tooltip>
+        <div className=" text-start">
+          {/* <Tooltip title={text} color="blue" placement="top"> */}
+          <span>
+            <HighlightedCell text={text} search={searchGKH} />
+          </span>
+          {/* </Tooltip> */}
         </div>
       ),
     },
@@ -361,7 +360,7 @@ const BangGiaKH = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
+        <div className=" text-start">
           <HighlightedCell text={text} search={searchGKH} />
         </div>
       ),
@@ -691,7 +690,6 @@ const BangGiaKH = () => {
                   x: 1500,
                   y: 410,
                 }}
-                bordered
                 pagination={{
                   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
                   showSizeChanger: true,

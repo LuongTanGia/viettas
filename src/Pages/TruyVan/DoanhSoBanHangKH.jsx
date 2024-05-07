@@ -43,7 +43,6 @@ const DoanhSoBanHangKH = () => {
   const [dataCRUD, setDataCRUD] = useState()
   const [dateData, setDateData] = useState({})
   const [dateChange, setDateChange] = useState(false)
-  console.log(dataDSBH)
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -281,18 +280,18 @@ const DoanhSoBanHangKH = () => {
       align: 'center',
     },
     {
-      title: 'Mã khách hàng',
+      title: 'Mã Kh.hàng',
       dataIndex: 'MaDoiTuong',
       key: 'MaDoiTuong',
       fixed: 'left',
-      width: 100,
+      width: 120,
       align: 'center',
       sorter: (a, b) => (a.MaDoiTuong || '').localeCompare(b.MaDoiTuong || ''),
       showSorterTooltip: false,
       render: (text) => <HighlightedCell text={text} search={searchHangHoa} />,
     },
     {
-      title: 'Tên khách hàng',
+      title: 'Tên Kh.hàng',
       dataIndex: 'TenDoiTuong',
       key: 'TenDoiTuong',
       align: 'center',

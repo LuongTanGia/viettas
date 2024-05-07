@@ -6,7 +6,7 @@ import { toast } from 'react-toastify'
 import * as apis from '../../../apis'
 import { Modals, PermissionView } from '../../../components_K'
 import ActionButton from '../../../components/util/Button/ActionButton'
-import { RETOKEN, formatCurrency, formatPrice, formatQuantity } from '../../../action/Actions'
+import { RETOKEN, addRowClass, formatCurrency, formatPrice, formatQuantity } from '../../../action/Actions'
 import SimpleBackdrop from '../../../components/util/Loading/LoadingPage'
 import { useSearch } from '../../../components_K/myComponents/useSearch'
 import HighlightedCell from '../../../components/hooks/HighlightedCell'
@@ -279,7 +279,7 @@ const PhieuMuaHang = () => {
       hight: 10,
       fixed: 'left',
       align: 'center',
-      render: (text, record, index) => <div style={{ textAlign: 'center' }}>{index + 1}</div>,
+      render: (text, record, index) => <div>{index + 1}</div>,
     },
     {
       title: 'Số chứng từ',
@@ -334,12 +334,12 @@ const PhieuMuaHang = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
-          <Tooltip title={text} color="blue">
-            <span>
-              <HighlightedCell text={text} search={searchPMH} />
-            </span>
-          </Tooltip>
+        <div className=" text-start">
+          {/* <Tooltip title={text} color="blue"> */}
+          <span>
+            <HighlightedCell text={text} search={searchPMH} />
+          </span>
+          {/* </Tooltip> */}
         </div>
       ),
     },
@@ -357,12 +357,12 @@ const PhieuMuaHang = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
-          <Tooltip title={text} color="blue">
-            <span>
-              <HighlightedCell text={text} search={searchPMH} />
-            </span>
-          </Tooltip>
+        <div className=" text-start">
+          {/* <Tooltip title={text} color="blue"> */}
+          <span>
+            <HighlightedCell text={text} search={searchPMH} />
+          </span>
+          {/* </Tooltip> */}
         </div>
       ),
     },
@@ -834,7 +834,7 @@ const PhieuMuaHang = () => {
                   )}
                 </div>
               </div>
-              <div className="flex justify-between items-center px-4 ">
+              <div className="flex justify-between items-center px-2 ">
                 <div className="flex gap-3">
                   {/* DatePicker */}
                   <ActionDateField formKhoanNgay={formKhoanNgay} setFormKhoanNgay={setFormKhoanNgay} setPrevDateValue={setPrevDateValue} handleFilterDS={handleFilterDS} />
@@ -857,7 +857,7 @@ const PhieuMuaHang = () => {
               <div id="my-table" className="relative px-2 py-1 ">
                 <Table
                   loading={tableLoad}
-                  className="table_pmh setHeight"
+                  className="setHeight  table-style "
                   // rowSelection={rowSelection}
                   columns={newColumnsHide}
                   dataSource={filteredPMH}
@@ -866,7 +866,7 @@ const PhieuMuaHang = () => {
                     x: 1500,
                     y: 410,
                   }}
-                  bordered
+                  // bordered={true}
                   pagination={{
                     defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
                     showSizeChanger: true,
@@ -881,7 +881,7 @@ const PhieuMuaHang = () => {
                       handleView(record)
                     },
                   })}
-                  rowClassName={(record) => (record.SoChungTu === donePMH ? 'highlighted-row' : '')}
+                  rowClassName={(record, index) => (record.SoChungTu === donePMH ? 'highlighted-row' : addRowClass(record, index))}
                   // Bảng Tổng
                   summary={() => {
                     return (
@@ -893,12 +893,7 @@ const PhieuMuaHang = () => {
                               const isNumericColumn = typeof filteredPMH[0]?.[column.dataIndex] === 'number'
 
                               return (
-                                <Table.Summary.Cell
-                                  index={index}
-                                  key={`summary-cell-${index + 1}`}
-                                  align={isNumericColumn ? 'right' : 'left'}
-                                  className="text-end font-bold  bg-[#f1f1f1]"
-                                >
+                                <Table.Summary.Cell index={index} key={`summary-cell-${index + 1}`} align={isNumericColumn ? 'right' : 'left'}>
                                   {isNumericColumn ? (
                                     (() => {
                                       const total = Number(filteredPMH?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0))

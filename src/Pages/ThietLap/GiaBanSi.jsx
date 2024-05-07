@@ -6,7 +6,7 @@ import { toast } from 'react-toastify'
 import * as apis from '../../apis'
 import { ModalGBS, PermissionView } from '../../components_K'
 import ActionButton from '../../components/util/Button/ActionButton'
-import { RETOKEN, formatCurrency } from '../../action/Actions'
+import { RETOKEN, addRowClass, formatCurrency } from '../../action/Actions'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
 import { exportToExcel } from '../../action/Actions'
 import { CloseSquareFilled } from '@ant-design/icons'
@@ -202,12 +202,12 @@ const GBS = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
-          <Tooltip title={text} color="blue" placement="top">
-            <span>
-              <HighlightedCell text={text} search={searchGBS} />
-            </span>
-          </Tooltip>
+        <div className=" text-start">
+          {/* <Tooltip title={text} color="blue" placement="top"> */}
+          <span>
+            <HighlightedCell text={text} search={searchGBS} />
+          </span>
+          {/* </Tooltip> */}
         </div>
       ),
     },
@@ -268,7 +268,7 @@ const GBS = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
+        <div className=" text-start">
           <HighlightedCell text={text} search={searchGBS} />
         </div>
       ),
@@ -594,7 +594,6 @@ const GBS = () => {
                   x: 1500,
                   y: 410,
                 }}
-                bordered
                 pagination={{
                   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
                   showSizeChanger: true,
@@ -603,7 +602,7 @@ const GBS = () => {
                     localStorage.setItem('pageSize', size)
                   },
                 }}
-                rowClassName={(record) => (record.NhomGia === doneGKH ? 'highlighted-row' : '')}
+                rowClassName={(record, index) => (record.NhomGia === doneGKH ? 'highlighted-row' : addRowClass(record, index))}
                 rowKey={(record) => record.NhomGia}
                 onRow={(record) => ({
                   onDoubleClick: () => {

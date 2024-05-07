@@ -208,6 +208,7 @@ const BinhQuanXuatKho = () => {
     {
       title: 'STT',
       dataIndex: 'STT',
+      fixed: 'left',
       with: 10,
       width: 50,
       align: 'center',
@@ -329,6 +330,7 @@ const BinhQuanXuatKho = () => {
     {
       title: 'STT',
       dataIndex: 'STT',
+      fixed: 'left',
       render: (text, record, index) => index + 1,
       with: 10,
       width: 50,
