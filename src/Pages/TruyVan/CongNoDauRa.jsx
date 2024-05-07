@@ -725,7 +725,6 @@ const CongNoDauRa = () => {
       }
     })
     .filter((item) => item !== null)
-  console.log('1', selectedNhomFrom, '2', selectedNhomTo)
   return (
     <>
       {dataCRUD?.VIEW == false ? (

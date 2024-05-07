@@ -322,7 +322,7 @@ const DoanhSoBanHangKH_HH = () => {
       render: (text) => <HighlightedCell text={text} search={searchHangHoa} />,
     },
     {
-      title: 'Tên khách hàng',
+      title: 'Tên Kh.hàng',
       dataIndex: 'TenDoiTuong',
       key: 'TenDoiTuong',
       align: 'center',

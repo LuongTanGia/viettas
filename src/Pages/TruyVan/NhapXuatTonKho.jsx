@@ -770,6 +770,7 @@ const NhapXuatTonKho = () => {
     {
       title: 'Nhập',
       align: 'center',
+      ellipsis: true,
       children: [
         {
           title: 'Mua hàng',
@@ -846,6 +847,7 @@ const NhapXuatTonKho = () => {
     {
       title: 'Xuất',
       align: 'center',
+      ellipsis: true,
       children: [
         {
           title: 'Bán sỉ',
