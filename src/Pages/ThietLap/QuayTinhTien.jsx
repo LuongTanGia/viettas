@@ -501,7 +501,6 @@ const QuayTinhTien = () => {
       key: 'NguoiSuaCuoi',
       align: 'center',
       width: 250,
-      ellipsis: 'true',
       showSorterTooltip: false,
       sorter: (a, b) => (a.NguoiSuaCuoi?.toString() || '').localeCompare(b.NguoiSuaCuoi?.toString() || ''),
       render: (text) => (

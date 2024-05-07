@@ -58,9 +58,6 @@ function Tables({ hidden, loadingSearch, param, columName, height, handleView, h
         key: index,
         showSorterTooltip: false,
         align: 'center',
-        ellipsis: {
-          showTitle: false,
-        },
         render: (text, record, index) => (
           <Tooltip placement="topLeft" title={index} className="truncate" color="blue">
             {renderHighlightedCell(index + 1)}
@@ -77,9 +74,6 @@ function Tables({ hidden, loadingSearch, param, columName, height, handleView, h
         sorter: (a, b) => (a.DiaChi || '').localeCompare(b.DiaChi || ''),
         showSorterTooltip: false,
         align: 'center',
-        ellipsis: {
-          showTitle: false,
-        },
         render: (address) => (
           <Tooltip placement="topLeft" title={address} color="blue">
             <div className="truncate text-start">{renderHighlightedCell(address)}</div>
@@ -97,9 +91,6 @@ function Tables({ hidden, loadingSearch, param, columName, height, handleView, h
         sorter: (a, b) => a.SoChungTu.localeCompare(b.SoChungTu),
         showSorterTooltip: false,
         align: 'center',
-        ellipsis: {
-          showTitle: false,
-        },
         render: (address) => (
           <Tooltip placement="topLeft" title={address} className=" truncate" color="blue">
             <div className="truncate text-start">{renderHighlightedCell(address)}</div>
@@ -116,9 +107,6 @@ function Tables({ hidden, loadingSearch, param, columName, height, handleView, h
         sorter: (a, b) => a.NhomHang.localeCompare(b.NhomHang),
         showSorterTooltip: false,
         align: 'center',
-        ellipsis: {
-          showTitle: false,
-        },
         render: (address) => (
           <Tooltip placement="topLeft" title={address} className=" truncate" color="blue">
             <div
@@ -144,9 +132,6 @@ function Tables({ hidden, loadingSearch, param, columName, height, handleView, h
         sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
         showSorterTooltip: false,
         align: 'center',
-        ellipsis: {
-          showTitle: false,
-        },
         render: (address) => (
           <Tooltip placement="topLeft" title={address} className=" truncate" color="blue">
             <div className="truncate text-start">{address}</div>
@@ -162,9 +147,6 @@ function Tables({ hidden, loadingSearch, param, columName, height, handleView, h
         key: index,
         showSorterTooltip: false,
         align: 'center',
-        ellipsis: {
-          showTitle: false,
-        },
         sorter: (a, b) => a.TongMatHang - b.TongMatHang,
         render: (text) => (
           <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base' : text === 0 || text === null ? 'text-gray-300' : ''}`}>
@@ -182,9 +164,6 @@ function Tables({ hidden, loadingSearch, param, columName, height, handleView, h
         align: 'center',
         sorter: (a, b) => dayjs(a[item]).unix() - dayjs(b[item]).unix(),
         showSorterTooltip: false,
-        ellipsis: {
-          showTitle: false,
-        },
         render: (text) => <div style={{ textAlign: 'center' }}>{renderHighlightedCell(text ? dayjs(text).format('DD/MM/YYYY') : '')}</div>,
       }
     }
@@ -209,9 +188,6 @@ function Tables({ hidden, loadingSearch, param, columName, height, handleView, h
           }
         },
         showSorterTooltip: false,
-        ellipsis: {
-          showTitle: false,
-        },
         render: (value) => (
           <>
             <Tooltip placement="topLeft" title={value ? dayjs(value).format('DD/MM/YYYY HH:mm:ss') : ''} className=" truncate" color="blue">
@@ -230,9 +206,6 @@ function Tables({ hidden, loadingSearch, param, columName, height, handleView, h
         sorter: (a, b) => a[item]?.toString().localeCompare(b[item]?.toString()),
         showSorterTooltip: false,
         align: 'center',
-        ellipsis: {
-          showTitle: false,
-        },
         render: (address) => (
           <Tooltip placement="Center" title={address} className=" truncate" color="blue">
             {renderHighlightedCell(address)}
@@ -248,9 +221,6 @@ function Tables({ hidden, loadingSearch, param, columName, height, handleView, h
         key: index,
         showSorterTooltip: false,
         align: 'center',
-        ellipsis: {
-          showTitle: false,
-        },
         render: (text) => {
           return (
             <div

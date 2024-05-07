@@ -49,7 +49,6 @@ const PhanQuyen = () => {
   const [PQForm, setPQForm] = useState(() => {
     return dataSource && dataSource?.length > 0 ? { ...dataSource[0] } : innitProduct
   })
-  const [isChildChecked, setIsChildChecked] = useState()
 
   useEffect(() => {
     const getDataNguoiDung = async () => {
@@ -142,6 +141,7 @@ const PhanQuyen = () => {
     {
       title: 'STT',
       dataIndex: 'STT',
+      fixed: 'left',
       width: 40,
       align: 'center',
       render: (text, record, index) => index + 1,
