@@ -14,7 +14,7 @@ import { FaSearch, FaEyeSlash } from 'react-icons/fa'
 import { CloseSquareFilled } from '@ant-design/icons'
 import { MdEdit, MdDelete } from 'react-icons/md'
 import { useSearch } from '../../components/hooks/Search'
-import { RETOKEN, base64ToPDF, exportToExcel } from '../../action/Actions'
+import { RETOKEN, addRowClass, base64ToPDF, exportToExcel } from '../../action/Actions'
 import categoryAPI from '../../API/linkAPI'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
 import ActionButton from '../../components/util/Button/ActionButton'
@@ -182,12 +182,12 @@ const QuanLy = () => {
       dataIndex: 'MaQuanLy',
       key: 'MaQuanLy',
       fixed: 'left',
-      width: 150,
+      width: 120,
       align: 'center',
       sorter: (a, b) => a.MaQuanLy.localeCompare(b.MaQuanLy),
       showSorterTooltip: false,
       render: (text) => (
-        <div>
+        <div className="text-start">
           <HighlightedCell text={text} search={searchQuanLy} />
         </div>
       ),
@@ -202,7 +202,7 @@ const QuanLy = () => {
       sorter: (a, b) => a.MaNguoiDung.localeCompare(b.MaNguoiDung),
       showSorterTooltip: false,
       render: (text) => (
-        <div>
+        <div className="text-start">
           <HighlightedCell text={text} search={searchQuanLy} />
         </div>
       ),
@@ -211,23 +211,14 @@ const QuanLy = () => {
       title: 'Tên người dùng',
       dataIndex: 'TenNguoiDung',
       key: 'TenNguoiDung',
-      width: 280,
+      width: 220,
       align: 'center',
       sorter: (a, b) => (a.TenNguoiDung?.toString() || '').localeCompare(b.TenNguoiDung?.toString() || ''),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchQuanLy} />
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchQuanLy} />
+        </div>
       ),
     },
     {
@@ -274,7 +265,7 @@ const QuanLy = () => {
       title: 'Không kết thúc',
       dataIndex: 'KhongKetThuc',
       key: 'KhongKetThuc',
-      width: 150,
+      width: 140,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => {
@@ -288,52 +279,35 @@ const QuanLy = () => {
       title: 'Ghi chú',
       dataIndex: 'GhiChu',
       key: 'GhiChu',
+      width: 220,
       showSorterTooltip: false,
       align: 'center',
       sorter: (a, b) => (a.GhiChu?.toString() || '').localeCompare(b.GhiChu?.toString() || ''),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              display: 'flex',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              justifyContent: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchQuanLy} />
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchQuanLy} />
+        </div>
       ),
     },
     {
       title: 'Người tạo',
       dataIndex: 'NguoiTao',
       key: 'NguoiTao',
-      width: 250,
+      width: 180,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => a.NguoiTao.localeCompare(b.NguoiTao),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <HighlightedCell text={text} search={searchQuanLy} />
-          </div>
-        </Tooltip>
+        <div className="truncate">
+          <HighlightedCell text={text} search={searchQuanLy} />
+        </div>
       ),
     },
     {
       title: 'Ngày tạo',
       dataIndex: 'NgayTao',
       key: 'NgayTao',
-      width: 200,
+      width: 150,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => {
@@ -348,22 +322,13 @@ const QuanLy = () => {
       dataIndex: 'NguoiSuaCuoi',
       key: 'NguoiSuaCuoi',
       align: 'center',
-      width: 250,
-
+      width: 180,
       showSorterTooltip: false,
       sorter: (a, b) => (a.NguoiSuaCuoi?.toString() || '').localeCompare(b.NguoiSuaCuoi?.toString() || ''),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <HighlightedCell text={text} search={searchQuanLy} />
-          </div>
-        </Tooltip>
+        <div className="truncate">
+          <HighlightedCell text={text} search={searchQuanLy} />
+        </div>
       ),
     },
     {
@@ -371,7 +336,7 @@ const QuanLy = () => {
       dataIndex: 'NgaySuaCuoi',
       key: 'NgaySuaCuoi',
       align: 'center',
-      width: 200,
+      width: 150,
       showSorterTooltip: false,
       sorter: (a, b) => {
         const dateA = new Date(a.NgaySuaCuoi)
@@ -404,7 +369,7 @@ const QuanLy = () => {
       title: 'Chức năng',
       key: 'operation',
       fixed: 'right',
-      width: 120,
+      width: 100,
       align: 'center',
       render: (record) => {
         return (
@@ -609,13 +574,12 @@ const QuanLy = () => {
                 <div id="my-table">
                   <Table
                     loading={tableLoad}
-                    bordered
                     onRow={(record) => ({
                       onDoubleClick: () => {
                         handleView(record)
                       },
                     })}
-                    rowClassName={(record) => (record.MaQuanLy == targetRow ? 'highlighted-row' : '')}
+                    rowClassName={(record, index) => addRowClass(record, index)}
                     className="setHeight"
                     columns={newTitles}
                     dataSource={filteredQuanLy.map((item, index) => ({
@@ -624,7 +588,7 @@ const QuanLy = () => {
                     }))}
                     size="small"
                     scroll={{
-                      x: 2800,
+                      x: 'max-content',
                       y: 400,
                     }}
                     pagination={{

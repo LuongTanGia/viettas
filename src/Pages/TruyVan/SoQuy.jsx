@@ -734,6 +734,10 @@ const SoQuy = () => {
                       x: 'max-content',
                       y: 400,
                     }}
+                    style={{
+                      whiteSpace: 'nowrap',
+                      fontSize: '24px',
+                    }}
                     summary={() => {
                       return (
                         <Table.Summary fixed="bottom">

@@ -48,7 +48,7 @@ const PCView = ({ close, dataPC }) => {
                   <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
                   <p className="text-blue-700 font-semibold uppercase">Thông tin - Phân Ca</p>
                 </div>
-                <div className="flex flex-col gap-2 border-2 px-3 py-2.5">
+                <div className="flex flex-col gap-2 border-1 border-gray-400 px-2 py-2.5">
                   <div className="flex items-center gap-1">
                     <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Người dùng</label>
                     <input type="text" value={dataPCView?.MaNguoiDung || ''} className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />

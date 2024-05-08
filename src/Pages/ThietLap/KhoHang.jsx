@@ -549,6 +549,10 @@ const KhoHang = () => {
                         localStorage.setItem('pageSize', size)
                       },
                     }}
+                    style={{
+                      whiteSpace: 'nowrap',
+                      fontSize: '24px',
+                    }}
                     summary={() => {
                       return (
                         <Table.Summary fixed="bottom">

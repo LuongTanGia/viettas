@@ -13,7 +13,7 @@ import { FaSearch, FaEyeSlash } from 'react-icons/fa'
 import { CloseSquareFilled } from '@ant-design/icons'
 import { MdEdit, MdDelete } from 'react-icons/md'
 import { useSearch } from '../../components/hooks/Search'
-import { RETOKEN, exportToExcel } from '../../action/Actions'
+import { RETOKEN, addRowClass, exportToExcel } from '../../action/Actions'
 import categoryAPI from '../../API/linkAPI'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
 import ActionButton from '../../components/util/Button/ActionButton'
@@ -208,19 +208,9 @@ const PhanCaDS = () => {
       align: 'center',
       sorter: (a, b) => (a.MaNguoiDung?.toString() || '').localeCompare(b.MaNguoiDung?.toString() || ''),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              display: 'flex',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              justifyContent: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchPhanCa} />
-          </div>
-        </Tooltip>
+        <div className="text-start truncate">
+          <HighlightedCell text={text} search={searchPhanCa} />
+        </div>
       ),
     },
     {
@@ -232,26 +222,16 @@ const PhanCaDS = () => {
       align: 'center',
       sorter: (a, b) => (a.TenNguoiDung?.toString() || '').localeCompare(b.TenNguoiDung?.toString() || ''),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              display: 'flex',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              justifyContent: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchPhanCa} />
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchPhanCa} />
+        </div>
       ),
     },
     {
       title: 'Kể từ ngày',
       dataIndex: 'HieuLucTu',
       key: 'HieuLucTu',
-      width: 200,
+      width: 150,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => {
@@ -269,11 +249,7 @@ const PhanCaDS = () => {
       align: 'center',
       sorter: (a, b) => a.SoQuay - b.SoQuay,
       showSorterTooltip: false,
-      render: (text) => (
-        <div>
-          <HighlightedCell text={Number(text).toLocaleString('en-US')} search={searchPhanCa} />
-        </div>
-      ),
+      render: (text) => <HighlightedCell text={Number(text).toLocaleString('en-US')} search={searchPhanCa} />,
     },
     {
       title: 'Ca',
@@ -283,63 +259,41 @@ const PhanCaDS = () => {
       align: 'center',
       sorter: (a, b) => a.MaCa - b.MaCa,
       showSorterTooltip: false,
-      render: (text) => (
-        <div>
-          <HighlightedCell text={Number(text).toLocaleString('en-US')} search={searchPhanCa} />
-        </div>
-      ),
+      render: (text) => <HighlightedCell text={Number(text).toLocaleString('en-US')} search={searchPhanCa} />,
     },
-
     {
       title: 'Ghi chú',
       dataIndex: 'GhiChu',
       key: 'GhiChu',
       showSorterTooltip: false,
+      width: 250,
       align: 'center',
       sorter: (a, b) => (a.GhiChu?.toString() || '').localeCompare(b.GhiChu?.toString() || ''),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              display: 'flex',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              justifyContent: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchPhanCa} />
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchPhanCa} />
+        </div>
       ),
     },
     {
       title: 'Người tạo',
       dataIndex: 'NguoiTao',
       key: 'NguoiTao',
-      width: 250,
+      width: 180,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => a.NguoiTao.localeCompare(b.NguoiTao),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <HighlightedCell text={text} search={searchPhanCa} />
-          </div>
-        </Tooltip>
+        <div className="truncate">
+          <HighlightedCell text={text} search={searchPhanCa} />
+        </div>
       ),
     },
     {
       title: 'Ngày tạo',
       dataIndex: 'NgayTao',
       key: 'NgayTao',
-      width: 200,
+      width: 150,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => {
@@ -354,22 +308,13 @@ const PhanCaDS = () => {
       dataIndex: 'NguoiSuaCuoi',
       key: 'NguoiSuaCuoi',
       align: 'center',
-      width: 250,
-
+      width: 180,
       showSorterTooltip: false,
       sorter: (a, b) => (a.NguoiSuaCuoi?.toString() || '').localeCompare(b.NguoiSuaCuoi?.toString() || ''),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <HighlightedCell text={text} search={searchPhanCa} />
-          </div>
-        </Tooltip>
+        <div className="truncate">
+          <HighlightedCell text={text} search={searchPhanCa} />
+        </div>
       ),
     },
     {
@@ -377,7 +322,7 @@ const PhanCaDS = () => {
       dataIndex: 'NgaySuaCuoi',
       key: 'NgaySuaCuoi',
       align: 'center',
-      width: 200,
+      width: 150,
       showSorterTooltip: false,
       sorter: (a, b) => {
         const dateA = new Date(a.NgaySuaCuoi)
@@ -392,7 +337,6 @@ const PhanCaDS = () => {
         }
       },
     },
-
     {
       title: 'Chức năng',
       key: 'operation',
@@ -633,13 +577,12 @@ const PhanCaDS = () => {
                 <div id="my-table">
                   <Table
                     loading={tableLoad}
-                    bordered
                     onRow={(record) => ({
                       onDoubleClick: () => {
                         handleView(record)
                       },
                     })}
-                    rowClassName={(record) => (record?.MaNguoiDung == targetRow ? 'highlighted-row' : '')}
+                    rowClassName={(record, index) => (record?.MaNguoiDung == targetRow ? 'highlighted-row' : addRowClass(record, index))}
                     className="setHeight"
                     columns={newTitles}
                     dataSource={filteredPhanCa.map((item, index) => ({
@@ -648,7 +591,7 @@ const PhanCaDS = () => {
                     }))}
                     size="small"
                     scroll={{
-                      x: 2200,
+                      x: 'max-content',
                       y: 400,
                     }}
                     pagination={{

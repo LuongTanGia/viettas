@@ -12,7 +12,7 @@ import { FaSearch, FaEyeSlash } from 'react-icons/fa'
 import { CloseSquareFilled } from '@ant-design/icons'
 import { MdEdit, MdDelete } from 'react-icons/md'
 import { useSearch } from '../../components/hooks/Search'
-import { RETOKEN, exportToExcel } from '../../action/Actions'
+import { RETOKEN, addRowClass, exportToExcel } from '../../action/Actions'
 import categoryAPI from '../../API/linkAPI'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
 import ActionButton from '../../components/util/Button/ActionButton'
@@ -188,14 +188,7 @@ const QuayTinhTien = () => {
       showSorterTooltip: false,
       render: (text) => (
         <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              textAlign: 'start',
-            }}
-          >
+          <div className="text-start">
             <HighlightedCell text={text} search={searchQuayTinhTien} />
           </div>
         </Tooltip>
@@ -205,19 +198,12 @@ const QuayTinhTien = () => {
       title: 'Trạm SQL',
       dataIndex: 'SQLServer',
       key: 'SQLServer',
-      width: 200,
+      width: 180,
       align: 'center',
       sorter: (a, b) => a.SQLServer.localeCompare(b.SQLServer),
       showSorterTooltip: false,
       render: (text) => (
-        <div
-          style={{
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            textAlign: 'start',
-          }}
-        >
+        <div className="text-start">
           <HighlightedCell text={text} search={searchQuayTinhTien} />
         </div>
       ),
@@ -226,19 +212,12 @@ const QuayTinhTien = () => {
       title: 'Dữ liệu',
       dataIndex: 'SQLDatabase',
       key: 'SQLDatabase',
-      width: 200,
+      width: 150,
       align: 'center',
       sorter: (a, b) => (a.SQLDatabase?.toString() || '').localeCompare(b.SQLDatabase?.toString() || ''),
       showSorterTooltip: false,
       render: (text) => (
-        <div
-          style={{
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            textAlign: 'start',
-          }}
-        >
+        <div className="text-start">
           <HighlightedCell text={text} search={searchQuayTinhTien} />
         </div>
       ),
@@ -252,18 +231,9 @@ const QuayTinhTien = () => {
       sorter: (a, b) => (a.MaKho?.toString() || '').localeCompare(b.MaKho?.toString() || ''),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchQuayTinhTien} />
-          </div>
-        </Tooltip>
+        <div className="text-start">
+          <HighlightedCell text={text} search={searchQuayTinhTien} />
+        </div>
       ),
     },
     {
@@ -275,14 +245,7 @@ const QuayTinhTien = () => {
       sorter: (a, b) => (a.NhomGia?.toString() || '').localeCompare(b.NhomGia?.toString() || ''),
       showSorterTooltip: false,
       render: (text) => (
-        <div
-          style={{
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            textAlign: 'start',
-          }}
-        >
+        <div className="text-start truncate">
           <HighlightedCell text={text} search={searchQuayTinhTien} />
         </div>
       ),
@@ -319,19 +282,12 @@ const QuayTinhTien = () => {
       title: 'Loại',
       dataIndex: 'DienGiaiLoai',
       key: 'DienGiaiLoai',
-      width: 200,
+      width: 150,
       align: 'center',
       sorter: (a, b) => (a.DienGiaiLoai?.toString() || '').localeCompare(b.DienGiaiLoai?.toString() || ''),
       showSorterTooltip: false,
       render: (text) => (
-        <div
-          style={{
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            textAlign: 'start',
-          }}
-        >
+        <div className="text-start">
           <HighlightedCell text={text} search={searchQuayTinhTien} />
         </div>
       ),
@@ -356,44 +312,26 @@ const QuayTinhTien = () => {
       key: 'GhiChu',
       showSorterTooltip: false,
       align: 'center',
+      width: 250,
       sorter: (a, b) => (a.GhiChu?.toString() || '').localeCompare(b.GhiChu?.toString() || ''),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              display: 'flex',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              justifyContent: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchQuayTinhTien} />
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchQuayTinhTien} />
+        </div>
       ),
     },
     {
       title: 'Người C.Nhật H.Thống',
       dataIndex: 'NguoiCNHTCuoi',
       key: 'NguoiCNHTCuoi',
-      width: 200,
+      width: 180,
       align: 'center',
       sorter: (a, b) => (a.NguoiCNHTCuoi?.toString() || '').localeCompare(b.NguoiCNHTCuoi?.toString() || ''),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchQuayTinhTien} />
-          </div>
-        </Tooltip>
+        <div className="truncate">
+          <HighlightedCell text={text} search={searchQuayTinhTien} />
+        </div>
       ),
     },
     {
@@ -401,7 +339,7 @@ const QuayTinhTien = () => {
       dataIndex: 'NgayCNHTCuoi',
       key: 'NgayCNHTCuoi',
       align: 'center',
-      width: 200,
+      width: 150,
       showSorterTooltip: false,
       sorter: (a, b) => {
         const dateA = new Date(a.NgayCNHTCuoi)
@@ -420,23 +358,14 @@ const QuayTinhTien = () => {
       title: 'Người C.Nhật T.Lập',
       dataIndex: 'NguoiCNTLCuoi',
       key: 'NguoiCNTLCuoi',
-      width: 200,
+      width: 180,
       align: 'center',
       sorter: (a, b) => (a.NguoiCNTLCuoi?.toString() || '').localeCompare(b.NguoiCNTLCuoi?.toString() || ''),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchQuayTinhTien} />
-          </div>
-        </Tooltip>
+        <div className="truncate">
+          <HighlightedCell text={text} search={searchQuayTinhTien} />
+        </div>
       ),
     },
     {
@@ -444,7 +373,7 @@ const QuayTinhTien = () => {
       dataIndex: 'NgayCNTLCuoi',
       key: 'NgayCNTLCuoi',
       align: 'center',
-      width: 200,
+      width: 150,
       showSorterTooltip: false,
       sorter: (a, b) => {
         const dateA = new Date(a.NgayCNTLCuoi)
@@ -463,29 +392,21 @@ const QuayTinhTien = () => {
       title: 'Người tạo',
       dataIndex: 'NguoiTao',
       key: 'NguoiTao',
-      width: 250,
+      width: 180,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => a.NguoiTao.localeCompare(b.NguoiTao),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <HighlightedCell text={text} search={searchQuayTinhTien} />
-          </div>
-        </Tooltip>
+        <div className="truncate">
+          <HighlightedCell text={text} search={searchQuayTinhTien} />
+        </div>
       ),
     },
     {
       title: 'Ngày tạo',
       dataIndex: 'NgayTao',
       key: 'NgayTao',
-      width: 200,
+      width: 150,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => {
@@ -500,21 +421,13 @@ const QuayTinhTien = () => {
       dataIndex: 'NguoiSuaCuoi',
       key: 'NguoiSuaCuoi',
       align: 'center',
-      width: 250,
+      width: 180,
       showSorterTooltip: false,
       sorter: (a, b) => (a.NguoiSuaCuoi?.toString() || '').localeCompare(b.NguoiSuaCuoi?.toString() || ''),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <HighlightedCell text={text} search={searchQuayTinhTien} />
-          </div>
-        </Tooltip>
+        <div className="truncate">
+          <HighlightedCell text={text} search={searchQuayTinhTien} />
+        </div>
       ),
     },
     {
@@ -522,7 +435,7 @@ const QuayTinhTien = () => {
       dataIndex: 'NgaySuaCuoi',
       key: 'NgaySuaCuoi',
       align: 'center',
-      width: 200,
+      width: 150,
       showSorterTooltip: false,
       sorter: (a, b) => {
         const dateA = new Date(a.NgaySuaCuoi)
@@ -555,7 +468,7 @@ const QuayTinhTien = () => {
       title: 'Chức năng',
       key: 'operation',
       fixed: 'right',
-      width: 80,
+      width: 100,
       align: 'center',
       render: (record) => {
         return (
@@ -752,13 +665,12 @@ const QuayTinhTien = () => {
                 <div id="my-table">
                   <Table
                     loading={tableLoad}
-                    bordered
                     onRow={(record) => ({
                       onDoubleClick: () => {
                         handleView(record)
                       },
                     })}
-                    rowClassName={(record) => (record?.Quay == targetRow ? 'highlighted-row' : '')}
+                    rowClassName={(record, index) => addRowClass(record, index)}
                     className="setHeight"
                     columns={newTitles}
                     dataSource={filteredQuayTinhTien.map((item, index) => ({
@@ -767,8 +679,12 @@ const QuayTinhTien = () => {
                     }))}
                     size="small"
                     scroll={{
-                      x: 4000,
+                      x: 'max-content',
                       y: 400,
+                    }}
+                    style={{
+                      whiteSpace: 'nowrap',
+                      fontSize: '24px',
                     }}
                     pagination={{
                       defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
@@ -777,10 +693,6 @@ const QuayTinhTien = () => {
                       onShowSizeChange: (current, size) => {
                         localStorage.setItem('pageSize', size)
                       },
-                    }}
-                    style={{
-                      whiteSpace: 'nowrap',
-                      fontSize: '24px',
                     }}
                     summary={() => {
                       return (

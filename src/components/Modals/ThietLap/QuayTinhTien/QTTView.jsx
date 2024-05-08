@@ -36,7 +36,6 @@ const QTTView = ({ close, dataQTT }) => {
     }
   }, [isLoading])
 
-  console.log(dataQTTView)
   return (
     <>
       {!isLoading ? (
@@ -51,7 +50,7 @@ const QTTView = ({ close, dataQTT }) => {
                   <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
                   <p className="text-blue-700 font-semibold uppercase">Thông tin - Quầy tính tiền</p>
                 </div>
-                <div className="flex flex-col gap-2 border-2 px-3 py-2.5">
+                <div className="flex flex-col gap-2 border-1 border-gray-400 px-2 py-2.5">
                   <div className="flex items-center gap-2">
                     <div className="flex items-center gap-1">
                       <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Quầy</label>

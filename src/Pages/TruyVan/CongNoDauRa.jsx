@@ -1028,7 +1028,6 @@ const CongNoDauRa = () => {
                   style={{
                     whiteSpace: 'nowrap',
                     fontSize: '24px',
-                    borderRadius: '10px',
                   }}
                   summary={() => {
                     return (

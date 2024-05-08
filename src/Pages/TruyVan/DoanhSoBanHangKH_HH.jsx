@@ -854,6 +854,10 @@ const DoanhSoBanHangKH_HH = () => {
                       localStorage.setItem('pageSize', size)
                     },
                   }}
+                  style={{
+                    whiteSpace: 'nowrap',
+                    fontSize: '24px',
+                  }}
                   scrollToFirstRowOnChange
                   rowClassName={(record, index) => addRowClass(record, index)}
                   summary={() => {

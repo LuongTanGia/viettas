@@ -886,6 +886,10 @@ const PhanQuyen = () => {
                         x: 'max-content',
                         y: 300,
                       }}
+                      style={{
+                        whiteSpace: 'nowrap',
+                        fontSize: '24px',
+                      }}
                       pagination={{
                         defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
                         showSizeChanger: true,
