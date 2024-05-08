@@ -11,10 +11,10 @@ import { IoMdAddCircleOutline } from 'react-icons/io'
 import { FaSearch, FaEyeSlash } from 'react-icons/fa'
 import { CloseSquareFilled } from '@ant-design/icons'
 import { MdEdit, MdDelete } from 'react-icons/md'
+import categoryAPI from '../../API/linkAPI'
 import { useSearch } from '../../components/hooks/Search'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
-import { RETOKEN, exportToExcel } from '../../action/Actions'
-import categoryAPI from '../../API/linkAPI'
+import { RETOKEN, addRowClass, exportToExcel } from '../../action/Actions'
 import { nameColumsNhomHang } from '../../components/util/Table/ColumnName'
 import ActionButton from '../../components/util/Button/ActionButton'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
@@ -167,7 +167,7 @@ const NhomHang = () => {
       title: 'Mã',
       dataIndex: 'MaNhom',
       key: 'MaNhom',
-      width: 220,
+      width: 100,
       fixed: 'left',
       align: 'center',
       sorter: (a, b) => a.MaNhom.localeCompare(b.MaNhom),
@@ -182,75 +182,53 @@ const NhomHang = () => {
       title: 'Tên',
       dataIndex: 'TenNhom',
       key: 'TenNhom',
-      width: 220,
+      width: 200,
       align: 'center',
       sorter: (a, b) => a.TenNhom.localeCompare(b.TenNhom),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              textAlign: 'start',
-            }}
-          >
+        <div className="text-start whitespace-pre-wrap">
+          <span>
             <HighlightedCell text={text} search={searchNhomHang} />
-          </div>
-        </Tooltip>
+          </span>
+        </div>
       ),
     },
     {
       title: 'Ghi chú',
       dataIndex: 'GhiChu',
       key: 'GhiChu',
+      width: 200,
       showSorterTooltip: false,
       align: 'center',
       sorter: (a, b) => (a.GhiChu?.toString() || '').localeCompare(b.GhiChu?.toString() || ''),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              display: 'flex',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              justifyContent: 'start',
-            }}
-          >
+        <div className="text-start whitespace-pre-wrap">
+          <span>
             <HighlightedCell text={text} search={searchNhomHang} />
-          </div>
-        </Tooltip>
+          </span>
+        </div>
       ),
     },
     {
       title: 'Người tạo',
       dataIndex: 'NguoiTao',
       key: 'NguoiTao',
-      width: 250,
+      width: 180,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => a.NguoiTao.localeCompare(b.NguoiTao),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <HighlightedCell text={text} search={searchNhomHang} />
-          </div>
-        </Tooltip>
+        <div className="truncate">
+          <HighlightedCell text={text} search={searchNhomHang} />
+        </div>
       ),
     },
     {
       title: 'Ngày tạo',
       dataIndex: 'NgayTao',
       key: 'NgayTao',
-      width: 200,
+      width: 150,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => {
@@ -265,22 +243,13 @@ const NhomHang = () => {
       dataIndex: 'NguoiSuaCuoi',
       key: 'NguoiSuaCuoi',
       align: 'center',
-      width: 250,
-
+      width: 180,
       showSorterTooltip: false,
       sorter: (a, b) => (a.NguoiSuaCuoi?.toString() || '').localeCompare(b.NguoiSuaCuoi?.toString() || ''),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <HighlightedCell text={text} search={searchNhomHang} />
-          </div>
-        </Tooltip>
+        <div className="truncate">
+          <HighlightedCell text={text} search={searchNhomHang} />
+        </div>
       ),
     },
     {
@@ -288,7 +257,7 @@ const NhomHang = () => {
       dataIndex: 'NgaySuaCuoi',
       key: 'NgaySuaCuoi',
       align: 'center',
-      width: 200,
+      width: 150,
       showSorterTooltip: false,
       sorter: (a, b) => {
         const dateA = new Date(a.NgaySuaCuoi)
@@ -517,7 +486,6 @@ const NhomHang = () => {
                 <div id="my-table">
                   <Table
                     loading={tableLoad}
-                    bordered
                     onRow={(record) => ({
                       onDoubleClick: () => {
                         handleView(record)
@@ -526,8 +494,8 @@ const NhomHang = () => {
                     onHeaderRow={() => ({
                       className: 'text-red-600',
                     })}
-                    rowClassName={(record) => `${record.MaNhom == targetRow ? 'highlighted-row' : ''} highlight-border`}
-                    className="setHeight  "
+                    rowClassName={(record, index) => (record.MaNhom == targetRow ? 'highlighted-row' : addRowClass(record, index))}
+                    className="setHeight"
                     columns={newTitles}
                     dataSource={filteredNhomHang.map((item, index) => ({
                       ...item,
@@ -535,7 +503,7 @@ const NhomHang = () => {
                     }))}
                     size="small"
                     scroll={{
-                      x: 2000,
+                      x: 'max-content',
                       y: 400,
                     }}
                     pagination={{

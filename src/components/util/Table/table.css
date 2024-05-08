@@ -271,7 +271,9 @@ tbody tr {
   background-color: #4061bc !important;
   color: white !important;
 }
-
+/* .ant-table-row td.ant-table-cell:last-child {
+  border-right: none !important;
+} */
 .ant-table-cell.ant-table-column-has-sorters::before,
 .ant-table-cell.ant-table-cell-fix-left::before,
 .ant-table-cell.ant-table-cell-fix-right::before {

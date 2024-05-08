@@ -15,7 +15,7 @@ import { CloseSquareFilled } from '@ant-design/icons'
 import { MdEdit, MdDelete, MdPrint } from 'react-icons/md'
 import categoryAPI from '../../../../API/linkAPI'
 import { useSearch } from '../../../../components/hooks/Search'
-import { RETOKEN, exportToExcel } from '../../../../action/Actions'
+import { RETOKEN, addRowClass, exportToExcel } from '../../../../action/Actions'
 import ActionButton from '../../../../components/util/Button/ActionButton'
 import HighlightedCell from '../../../../components/hooks/HighlightedCell'
 import SimpleBackdrop from '../../../../components/util/Loading/LoadingPage'
@@ -276,7 +276,7 @@ const PhieuXuatSuDung = () => {
       title: 'Số chứng từ',
       dataIndex: 'SoChungTu',
       key: 'SoChungTu',
-      width: 150,
+      width: 120,
       align: 'center',
       fixed: 'left',
       showSorterTooltip: false,
@@ -291,7 +291,7 @@ const PhieuXuatSuDung = () => {
       title: 'Ngày chứng từ',
       dataIndex: 'NgayCTu',
       key: 'NgayCTu',
-      width: 150,
+      width: 130,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => {
@@ -309,24 +309,14 @@ const PhieuXuatSuDung = () => {
       title: 'Thông tin kho',
       dataIndex: 'ThongTinKho',
       key: 'ThongTinKho',
-      width: 150,
+      width: 180,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => a.ThongTinKho.localeCompare(b.ThongTinKho),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchHangHoa} />
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -380,22 +370,13 @@ const PhieuXuatSuDung = () => {
       dataIndex: 'GhiChu',
       key: 'GhiChu',
       showSorterTooltip: false,
+      width: 280,
       align: 'center',
       sorter: (a, b) => (a.GhiChu?.toString() || '').localeCompare(b.GhiChu?.toString() || ''),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-              justifyContent: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchHangHoa} />
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -403,21 +384,13 @@ const PhieuXuatSuDung = () => {
       dataIndex: 'NguoiTao',
       key: 'NguoiTao',
       align: 'center',
+      width: 180,
       showSorterTooltip: false,
       sorter: (a, b) => a.NguoiTao.localeCompare(b.NguoiTao),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-            }}
-          >
-            <HighlightedCell text={text} search={searchHangHoa} />
-          </div>
-        </Tooltip>
+        <div className="truncate">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -425,6 +398,7 @@ const PhieuXuatSuDung = () => {
       dataIndex: 'NgayTao',
       key: 'NgayTao',
       align: 'center',
+      width: 150,
       showSorterTooltip: false,
       sorter: (a, b) => {
         const dateA = new Date(a.NgayTao)
@@ -442,21 +416,13 @@ const PhieuXuatSuDung = () => {
       dataIndex: 'NguoiSuaCuoi',
       key: 'NguoiSuaCuoi',
       align: 'center',
+      width: 180,
       showSorterTooltip: false,
       sorter: (a, b) => (a.NguoiSuaCuoi?.toString() || '').localeCompare(b.NguoiSuaCuoi?.toString() || ''),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-            }}
-          >
-            <HighlightedCell text={text} search={searchHangHoa} />
-          </div>
-        </Tooltip>
+        <div className="truncate">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -464,6 +430,7 @@ const PhieuXuatSuDung = () => {
       dataIndex: 'NgaySuaCuoi',
       key: 'NgaySuaCuoi',
       align: 'center',
+      width: 150,
       showSorterTooltip: false,
       sorter: (a, b) => {
         const dateA = new Date(a.NgaySuaCuoi)
@@ -674,7 +641,7 @@ const PhieuXuatSuDung = () => {
                           onBlur={handleDateChange}
                           onKeyDown={handleKeyDown}
                           // className="DatePicker_NXTKho max-w-[120px]"
-                          className=" max-w-[115px]"
+                          className="max-w-[130px] min-w-[130px]"
                           format="DD/MM/YYYY"
                           value={khoanNgayFrom}
                           sx={{
@@ -698,7 +665,7 @@ const PhieuXuatSuDung = () => {
                         <DateField
                           onBlur={handleDateChange}
                           onKeyDown={handleKeyDown}
-                          className=" max-w-[115px]"
+                          className="max-w-[130px] min-w-[130px]"
                           format="DD/MM/YYYY"
                           value={khoanNgayTo}
                           sx={{
@@ -736,7 +703,6 @@ const PhieuXuatSuDung = () => {
                 <div id="my-table">
                   <Table
                     loading={tableLoad}
-                    bordered
                     className="table_DMHangHoa setHeight"
                     columns={newTitles}
                     dataSource={filteredHangHoa.map((record, index) => ({ ...record, key: index }))}
@@ -753,10 +719,10 @@ const PhieuXuatSuDung = () => {
                         handleView(record)
                       },
                     })}
-                    rowClassName={(record) => (record.SoChungTu === targetRow ? 'highlighted-row' : '')}
+                    rowClassName={(record, index) => (record.SoChungTu === targetRow ? 'highlighted-row' : addRowClass(record, index))}
                     size="small"
                     scroll={{
-                      x: 2000,
+                      x: 'max-content',
                       y: 400,
                     }}
                     style={{

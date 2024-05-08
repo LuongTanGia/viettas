@@ -42,12 +42,12 @@ const KHOView = ({ close, dataKHO }) => {
           <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10">
             <div className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"></div>
             <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col bg-white p-2 rounded shadow-custom overflow-hidden">
-              <div className="flex flex-col gap-2 py-1 px-2 md:w-[80vw] lg:w-[60vw] xl:w-[50vw] 2xl:w-[45vw]">
+              <div className="flex flex-col gap-2 py-1 px-2 md:w-[80vw] lg:w-[60vw] xl:w-[45vw]">
                 <div className="flex gap-2">
                   <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
                   <p className="text-blue-700 font-semibold uppercase">Thông tin - Kho Hàng</p>
                 </div>
-                <div className="flex flex-col gap-2.5 border-2 px-3 py-2.5">
+                <div className="flex flex-col gap-2.5 border-1 border-gray-400 px-2 py-2.5">
                   <div className="flex items-center gap-1">
                     <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Mã</label>
                     <input type="text" value={dataKHOView?.MaKho || ''} className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
@@ -86,7 +86,7 @@ const KHOView = ({ close, dataKHO }) => {
                         <Tooltip title={dataKHOView?.NguoiTao} color="blue">
                           <input
                             value={dataKHOView?.NguoiTao || ''}
-                            className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded-[3px] resize-none border outline-none text-sm truncate"
+                            className="2xl:w-[14vw] xl:w-[15vw] lg:w-[20vw] md:w-[24vw] px-2 rounded-[3px] resize-none border outline-none text-sm truncate"
                             disabled
                           />
                         </Tooltip>
@@ -109,7 +109,7 @@ const KHOView = ({ close, dataKHO }) => {
                         <Tooltip title={dataKHOView?.NguoiSuaCuoi} color="blue">
                           <input
                             value={dataKHOView?.NguoiSuaCuoi || ''}
-                            className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded-[3px]  resize-none border outline-none text-sm truncate"
+                            className="2xl:w-[14vw] xl:w-[15vw] lg:w-[20vw] md:w-[24vw] px-2 rounded-[3px]  resize-none border outline-none text-sm truncate"
                             disabled
                           />
                         </Tooltip>

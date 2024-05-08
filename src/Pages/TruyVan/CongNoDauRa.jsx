@@ -12,7 +12,7 @@ import { TbEye } from 'react-icons/tb'
 import { FaSearch, FaEyeSlash } from 'react-icons/fa'
 import categoryAPI from '../../API/linkAPI'
 import { useSearch } from '../../components/hooks/Search'
-import { RETOKEN, exportToExcel } from '../../action/Actions'
+import { RETOKEN, addRowClass, exportToExcel } from '../../action/Actions'
 import ActionButton from '../../components/util/Button/ActionButton'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
@@ -282,7 +282,7 @@ const CongNoDauRa = () => {
       dataIndex: 'MaDoiTuong',
       key: 'MaDoiTuong',
       fixed: 'left',
-      width: 140,
+      width: 120,
       align: 'center',
       sorter: (a, b) => a.MaDoiTuong.localeCompare(b.MaDoiTuong),
       showSorterTooltip: false,
@@ -302,13 +302,9 @@ const CongNoDauRa = () => {
       sorter: (a, b) => a.TenDoiTuong.localeCompare(b.TenDoiTuong),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div className="flex justify-start">
-            <div className="truncate">
-              <HighlightedCell text={text} search={searchHangHoa} />
-            </div>
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -320,25 +316,9 @@ const CongNoDauRa = () => {
       sorter: (a, b) => a.DiaChiDoiTuong.localeCompare(b.DiaChiDoiTuong),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'start',
-            }}
-          >
-            <div
-              style={{
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                cursor: 'pointer',
-              }}
-            >
-              <HighlightedCell text={text} search={searchHangHoa} />
-            </div>
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -494,18 +474,18 @@ const CongNoDauRa = () => {
       align: 'center',
     },
     {
-      title: 'Mã Nhà C.Cấp',
+      title: 'Mã NCC',
       dataIndex: 'MaDoiTuong',
       key: 'MaDoiTuong',
       fixed: 'left',
-      width: 140,
+      width: 100,
       align: 'center',
       sorter: (a, b) => a.MaDoiTuong.localeCompare(b.MaDoiTuong),
       showSorterTooltip: false,
       render: (text) => (
-        <span className=" flex item-start">
+        <div className=" flex item-start">
           <HighlightedCell text={text} search={searchHangHoa} />
-        </span>
+        </div>
       ),
     },
     {
@@ -514,17 +494,13 @@ const CongNoDauRa = () => {
       key: 'TenDoiTuong',
       fixed: 'left',
       align: 'center',
-      width: 180,
+      width: 220,
       sorter: (a, b) => a.TenDoiTuong.localeCompare(b.TenDoiTuong),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div className="flex justify-start">
-            <div className="truncate">
-              <HighlightedCell text={text} search={searchHangHoa} />
-            </div>
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -532,29 +508,13 @@ const CongNoDauRa = () => {
       dataIndex: 'DiaChiDoiTuong',
       key: 'DiaChiDoiTuong',
       align: 'center',
-      width: 120,
+      width: 250,
       sorter: (a, b) => a.DiaChiDoiTuong.localeCompare(b.DiaChiDoiTuong),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'start',
-            }}
-          >
-            <div
-              style={{
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                cursor: 'pointer',
-              }}
-            >
-              <HighlightedCell text={text} search={searchHangHoa} />
-            </div>
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -879,7 +839,7 @@ const CongNoDauRa = () => {
                           <label>Từ</label>
                           <DateField
                             // className="DatePicker_NXTKho  max-w-[120px]"
-                            className=" max-w-[115px]"
+                            className="max-w-[130px] min-w-[130px]"
                             onBlur={handleDateChange}
                             onKeyDown={handleKeyDown}
                             format="DD/MM/YYYY"
@@ -903,7 +863,7 @@ const CongNoDauRa = () => {
                         <div className=" flex items-center gap-1 ">
                           <label>Đến</label>
                           <DateField
-                            className=" max-w-[115px]"
+                            className="max-w-[130px] min-w-[130px]"
                             onBlur={handleDateChange}
                             onKeyDown={handleKeyDown}
                             format="DD/MM/YYYY"
@@ -1064,7 +1024,7 @@ const CongNoDauRa = () => {
                       localStorage.setItem('pageSize', size)
                     },
                   }}
-                  bordered
+                  rowClassName={(record, index) => addRowClass(record, index)}
                   style={{
                     whiteSpace: 'nowrap',
                     fontSize: '24px',

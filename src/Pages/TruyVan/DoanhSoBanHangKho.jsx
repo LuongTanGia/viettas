@@ -11,7 +11,7 @@ import { CloseSquareFilled } from '@ant-design/icons'
 import { FaSearch, FaEyeSlash } from 'react-icons/fa'
 import categoryAPI from '../../API/linkAPI'
 import { useSearch } from '../../components/hooks/Search'
-import { RETOKEN, exportToExcel } from '../../action/Actions'
+import { RETOKEN, addRowClass, exportToExcel } from '../../action/Actions'
 import ActionButton from '../../components/util/Button/ActionButton'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
 import { nameColumsDSBHKHO } from '../../components/util/Table/ColumnName'
@@ -358,7 +358,7 @@ const DoanhSoBanHangKho = () => {
                 title: `Lẻ`,
                 dataIndex: colKey,
                 key: colKey,
-                width: 150,
+                width: 100,
                 align: 'center',
                 render: (text) => (
                   <div className={`text-end ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
@@ -374,7 +374,7 @@ const DoanhSoBanHangKho = () => {
                 title: `Sỉ`,
                 dataIndex: colKey,
                 key: colKey,
-                width: 150,
+                width: 100,
                 align: 'center',
                 render: (text) => (
                   <div className={`text-end ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
@@ -390,7 +390,7 @@ const DoanhSoBanHangKho = () => {
                 title: `${check}`,
                 dataIndex: colKey,
                 key: colKey,
-                width: 150,
+                width: 100,
                 ellipsis: true,
                 align: 'center',
                 render: (text) => (
@@ -428,7 +428,7 @@ const DoanhSoBanHangKho = () => {
                   title: `Lẻ`,
                   dataIndex: colKey,
                   key: colKey,
-                  width: 150,
+                  width: 120,
                   align: 'center',
                   render: (text) => (
                     <div className={`text-end ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
@@ -444,7 +444,7 @@ const DoanhSoBanHangKho = () => {
                   title: `Sỉ`,
                   dataIndex: colKey,
                   key: colKey,
-                  width: 150,
+                  width: 120,
                   align: 'center',
                   render: (text) => (
                     <div className={`text-end ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
@@ -460,7 +460,7 @@ const DoanhSoBanHangKho = () => {
                   title: `${check}`,
                   dataIndex: colKey,
                   key: colKey,
-                  width: 150,
+                  width: 120,
                   align: 'center',
                   render: (text) => (
                     <div className={`text-end ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
@@ -523,29 +523,13 @@ const DoanhSoBanHangKho = () => {
       dataIndex: 'TenHang',
       key: 'TenHang',
       align: 'center',
-      width: 150,
+      width: 220,
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'start',
-            }}
-          >
-            <div
-              style={{
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                cursor: 'pointer',
-              }}
-            >
-              <HighlightedCell text={text} search={searchHangHoa} />
-            </div>
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -553,36 +537,20 @@ const DoanhSoBanHangKho = () => {
       dataIndex: 'NhomHang',
       key: 'NhomHang',
       align: 'center',
-      width: 150,
+      width: 200,
       sorter: (a, b) => a.NhomHang.localeCompare(b.NhomHang),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'start',
-            }}
-          >
-            <div
-              style={{
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                cursor: 'pointer',
-              }}
-            >
-              <HighlightedCell text={text} search={searchHangHoa} />
-            </div>
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
       title: 'ĐVT',
       dataIndex: 'DVT',
       key: 'DVT',
-      width: 80,
+      width: 100,
       align: 'center',
       sorter: (a, b) => a.DVT.localeCompare(b.DVT),
       showSorterTooltip: false,
@@ -617,29 +585,13 @@ const DoanhSoBanHangKho = () => {
       dataIndex: 'TenHang',
       key: 'TenHang',
       align: 'center',
-      width: 150,
+      width: 220,
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'start',
-            }}
-          >
-            <div
-              style={{
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                cursor: 'pointer',
-              }}
-            >
-              <HighlightedCell text={text} search={searchHangHoa} />
-            </div>
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -647,36 +599,20 @@ const DoanhSoBanHangKho = () => {
       dataIndex: 'NhomHang',
       key: 'NhomHang',
       align: 'center',
-      width: 150,
+      width: 200,
       sorter: (a, b) => a.NhomHang.localeCompare(b.NhomHang),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'start',
-            }}
-          >
-            <div
-              style={{
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                cursor: 'pointer',
-              }}
-            >
-              <HighlightedCell text={text} search={searchHangHoa} />
-            </div>
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
       title: 'ĐVT',
       dataIndex: 'DVT',
       key: 'DVT',
-      width: 80,
+      width: 100,
       align: 'center',
       sorter: (a, b) => a.DVT.localeCompare(b.DVT),
       showSorterTooltip: false,
@@ -1086,7 +1022,7 @@ const DoanhSoBanHangKho = () => {
                     },
                   }}
                   scrollToFirstRowOnChange
-                  bordered
+                  rowClassName={(record, index) => addRowClass(record, index)}
                   style={{
                     whiteSpace: 'nowrap',
                     fontSize: '24px',

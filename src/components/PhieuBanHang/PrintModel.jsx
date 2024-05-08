@@ -202,7 +202,7 @@ function ModelPrint({ isShowModel, handleClose, handleCloseAction, modelType, se
                   <img src={Logo} alt="logo" className="w-[20px]" />
                   {modelType !== 'PhieuKho' ? 'In - Phiếu Bán Hàng' : 'In - Phiếu Bán Hàng (Kho)'}
                 </div>
-                <div className="flex flex-col items-center gap-4 border-2 py-3">
+                <div className="flex flex-col items-center gap-4 border-1 border-gray-400 py-3">
                   <div className="flex justify-center gap-2">
                     <div className="DatePicker_NDCKho flex items-center gap-2">
                       <label className="ml-[20px]">Từ</label>

@@ -19,7 +19,7 @@ import { useSearch } from '../../components/hooks/Search'
 import ActionButton from '../../components/util/Button/ActionButton'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
-import { RETOKEN, exportToExcel } from '../../action/Actions'
+import { RETOKEN, addRowClass, exportToExcel } from '../../action/Actions'
 import { nameColumsDoiTuong } from '../../components/util/Table/ColumnName'
 import DTCreate from '../../components/Modals/DanhMuc/DoiTuong/DTCreate'
 import DTView from '../../components/Modals/DanhMuc/DoiTuong/DTView'
@@ -194,7 +194,7 @@ const DoiTuong = () => {
       dataIndex: 'Ma',
       key: 'Ma',
       fixed: 'left',
-      width: 120,
+      width: 80,
       align: 'center',
       sorter: (a, b) => a.Ma.localeCompare(b.Ma),
       showSorterTooltip: false,
@@ -208,24 +208,14 @@ const DoiTuong = () => {
       title: 'Tên loại',
       dataIndex: 'TenLoai',
       key: 'TenLoai',
-      width: 200,
+      width: 180,
       align: 'center',
       sorter: (a, b) => a.TenLoai.localeCompare(b.TenLoai),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchDoiTuong} />
-          </div>
-        </Tooltip>
+        <div className="text-start">
+          <HighlightedCell text={text} search={searchDoiTuong} />
+        </div>
       ),
     },
     {
@@ -237,41 +227,23 @@ const DoiTuong = () => {
       sorter: (a, b) => (a.TenNhom?.toString() || '').localeCompare(b.TenNhom?.toString() || ''),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchDoiTuong} />
-          </div>
-        </Tooltip>
+        <div className="whitespace-pre-wrap text-start">
+          <HighlightedCell text={text} search={searchDoiTuong} />
+        </div>
       ),
     },
     {
       title: 'Tên',
       dataIndex: 'Ten',
       key: 'Ten',
-      width: 180,
+      width: 220,
       align: 'center',
       sorter: (a, b) => a.Ten.localeCompare(b.Ten),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchDoiTuong} />
-          </div>
-        </Tooltip>
+        <div className="whitespace-pre-wrap text-start">
+          <HighlightedCell text={text} search={searchDoiTuong} />
+        </div>
       ),
     },
     {
@@ -283,19 +255,9 @@ const DoiTuong = () => {
       sorter: (a, b) => (a.DiaChi?.toString() || '').localeCompare(b.DiaChi?.toString() || ''),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchDoiTuong} />
-          </div>
-        </Tooltip>
+        <div className="whitespace-pre-wrap text-start">
+          <HighlightedCell text={text} search={searchDoiTuong} />
+        </div>
       ),
     },
     {
@@ -327,19 +289,9 @@ const DoiTuong = () => {
       sorter: (a, b) => (a.Email?.toString() || '').localeCompare(b.Email?.toString() || ''),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchDoiTuong} />
-          </div>
-        </Tooltip>
+        <div className="truncate text-start">
+          <HighlightedCell text={text} search={searchDoiTuong} />
+        </div>
       ),
     },
     {
@@ -361,38 +313,22 @@ const DoiTuong = () => {
       sorter: (a, b) => (a.ThongTinNhomGia?.toString() || '').localeCompare(b.ThongTinNhomGia?.toString() || ''),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchDoiTuong} />
-          </div>
-        </Tooltip>
+        <div className="truncate">
+          <HighlightedCell text={text} search={searchDoiTuong} />
+        </div>
       ),
     },
     {
       title: 'Ghi chú',
       dataIndex: 'GhiChu',
       key: 'GhiChu',
+      width: 250,
       showSorterTooltip: false,
       align: 'center',
       sorter: (a, b) => (a.GhiChu?.toString() || '').localeCompare(b.GhiChu?.toString() || ''),
       render: (text) => (
         <Tooltip title={text} color="blue">
-          <div
-            style={{
-              display: 'flex',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              justifyContent: 'start',
-            }}
-          >
+          <div className="text-start whitespace-pre-wrap">
             <HighlightedCell text={text} search={searchDoiTuong} />
           </div>
         </Tooltip>
@@ -402,29 +338,21 @@ const DoiTuong = () => {
       title: 'Người tạo',
       dataIndex: 'NguoiTao',
       key: 'NguoiTao',
-      width: 250,
+      width: 180,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => a.NguoiTao.localeCompare(b.NguoiTao),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <HighlightedCell text={text} search={searchDoiTuong} />
-          </div>
-        </Tooltip>
+        <div className="truncate">
+          <HighlightedCell text={text} search={searchDoiTuong} />
+        </div>
       ),
     },
     {
       title: 'Ngày tạo',
       dataIndex: 'NgayTao',
       key: 'NgayTao',
-      width: 200,
+      width: 150,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => {
@@ -439,21 +367,13 @@ const DoiTuong = () => {
       dataIndex: 'NguoiSuaCuoi',
       key: 'NguoiSuaCuoi',
       align: 'center',
-      width: 250,
+      width: 180,
       showSorterTooltip: false,
       sorter: (a, b) => (a.NguoiSuaCuoi?.toString() || '').localeCompare(b.NguoiSuaCuoi?.toString() || ''),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <HighlightedCell text={text} search={searchDoiTuong} />
-          </div>
-        </Tooltip>
+        <div className="truncate">
+          <HighlightedCell text={text} search={searchDoiTuong} />
+        </div>
       ),
     },
     {
@@ -461,7 +381,7 @@ const DoiTuong = () => {
       dataIndex: 'NgaySuaCuoi',
       key: 'NgaySuaCuoi',
       align: 'center',
-      width: 200,
+      width: 150,
       showSorterTooltip: false,
       sorter: (a, b) => {
         const dateA = new Date(a.NgaySuaCuoi)
@@ -696,7 +616,6 @@ const DoiTuong = () => {
                 <div id="my-table">
                   <Table
                     loading={tableLoad}
-                    bordered
                     rowSelection={{
                       selectedRowKeys,
                       showSizeChanger: true,
@@ -717,7 +636,7 @@ const DoiTuong = () => {
                       },
                       onDoubleClick: () => handleView(record),
                     })}
-                    rowClassName={(record) => (record.Ma == targetRow ? 'highlighted-row' : '')}
+                    rowClassName={(record, index) => (record.Ma == targetRow ? 'highlighted-row' : addRowClass(record, index))}
                     className="setHeight"
                     columns={newTitles}
                     dataSource={filteredDoiTuong.map((item, index) => ({
@@ -726,7 +645,7 @@ const DoiTuong = () => {
                     }))}
                     size="small"
                     scroll={{
-                      x: 3300,
+                      x: 'max-content',
                       y: 400,
                     }}
                     pagination={{

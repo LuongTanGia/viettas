@@ -11,7 +11,7 @@ import { CloseSquareFilled } from '@ant-design/icons'
 import { FaSearch, FaEyeSlash } from 'react-icons/fa'
 import categoryAPI from '../../API/linkAPI'
 import { useSearch } from '../../components/hooks/Search'
-import { RETOKEN, exportToExcel } from '../../action/Actions'
+import { RETOKEN, addRowClass, exportToExcel } from '../../action/Actions'
 import ActionButton from '../../components/util/Button/ActionButton'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
 import { nameColumsDSBHHH } from '../../components/util/Table/ColumnName'
@@ -285,7 +285,7 @@ const DoanhSoBanHangHH = () => {
       dataIndex: 'MaHang',
       key: 'MaHang',
       fixed: 'left',
-      width: 100,
+      width: 130,
       align: 'center',
       sorter: (a, b) => a.MaHang.localeCompare(b.MaHang),
       showSorterTooltip: false,
@@ -296,36 +296,20 @@ const DoanhSoBanHangHH = () => {
       dataIndex: 'TenHang',
       key: 'TenHang',
       align: 'center',
-      width: 150,
+      width: 220,
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'start',
-            }}
-          >
-            <div
-              style={{
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                cursor: 'pointer',
-              }}
-            >
-              <HighlightedCell text={text} search={searchHangHoa} />
-            </div>
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
       title: 'ĐVT',
       dataIndex: 'DVT',
       key: 'DVT',
-      width: 80,
+      width: 100,
       align: 'center',
       sorter: (a, b) => a.DVT.localeCompare(b.DVT),
       showSorterTooltip: false,
@@ -543,7 +527,7 @@ const DoanhSoBanHangHH = () => {
                           <label>Từ</label>
                           <DateField
                             // className="DatePicker_DSBHKho  max-w-[120px]"
-                            className=" max-w-[115px]"
+                            className="max-w-[130px] min-w-[130px]"
                             onBlur={handleDateChange}
                             onKeyDown={handleKeyDown}
                             format="DD/MM/YYYY"
@@ -567,7 +551,7 @@ const DoanhSoBanHangHH = () => {
                         <div className=" flex items-center gap-1 ">
                           <label>Đến</label>
                           <DateField
-                            className=" max-w-[115px]"
+                            className="max-w-[130px] min-w-[130px]"
                             onBlur={handleDateChange}
                             onKeyDown={handleKeyDown}
                             format="DD/MM/YYYY"
@@ -720,12 +704,7 @@ const DoanhSoBanHangHH = () => {
                     },
                   }}
                   scrollToFirstRowOnChange
-                  bordered
-                  style={{
-                    whiteSpace: 'nowrap',
-                    fontSize: '24px',
-                    borderRadius: '10px',
-                  }}
+                  rowClassName={(record, index) => addRowClass(record, index)}
                   summary={() => {
                     return (
                       <Table.Summary fixed>

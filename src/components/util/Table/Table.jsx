@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react'
 import dayjs from 'dayjs'
 import moment from 'moment'
 import HighlightedCell from '../../hooks/HighlightedCell'
+import { addRowClass } from '../../../action/Actions'
 const { Text } = Typography
 function Tables({ hidden, loadingSearch, param, columName, height, handleView, handleEdit, typeTable, handleAddData, handleDelete, handleChangePhieuThu, selectMH, textSearch }) {
   const [soLuong, setSoLuong] = useState(1)
@@ -58,69 +59,44 @@ function Tables({ hidden, loadingSearch, param, columName, height, handleView, h
         key: index,
         showSorterTooltip: false,
         align: 'center',
-        render: (text, record, index) => (
-          <Tooltip placement="topLeft" title={index} className="truncate" color="blue">
-            {renderHighlightedCell(index + 1)}
-          </Tooltip>
-        ),
+        render: (text, record, index) => renderHighlightedCell(index + 1),
       }
     }
     if (item === 'DiaChi') {
       return {
         title: columName[item] || item,
-        width: 200,
+        width: 250,
         dataIndex: item,
         key: index,
         sorter: (a, b) => (a.DiaChi || '').localeCompare(b.DiaChi || ''),
         showSorterTooltip: false,
         align: 'center',
-        render: (address) => (
-          <Tooltip placement="topLeft" title={address} color="blue">
-            <div className="truncate text-start">{renderHighlightedCell(address)}</div>
-          </Tooltip>
-        ),
+        render: (address) => <div className="text-start whitespace-pre-wrap">{renderHighlightedCell(address)}</div>,
       }
     }
     if (item === 'SoChungTu') {
       return {
         title: columName[item] || item,
-        width: 150,
+        width: 120,
         dataIndex: item,
         key: index,
         fixed: 'left',
         sorter: (a, b) => a.SoChungTu.localeCompare(b.SoChungTu),
         showSorterTooltip: false,
         align: 'center',
-        render: (address) => (
-          <Tooltip placement="topLeft" title={address} className=" truncate" color="blue">
-            <div className="truncate text-start">{renderHighlightedCell(address)}</div>
-          </Tooltip>
-        ),
+        render: (address) => <div className="truncate text-start">{renderHighlightedCell(address)}</div>,
       }
     }
-    if (item === 'NhomHang') {
+    if (item === 'GhiChu') {
       return {
         title: columName[item] || item,
-        width: 250,
+        width: 280,
         dataIndex: item,
         key: index,
-        sorter: (a, b) => a.NhomHang.localeCompare(b.NhomHang),
+        sorter: (a, b) => a.GhiChu.localeCompare(b.GhiChu),
         showSorterTooltip: false,
         align: 'center',
-        render: (address) => (
-          <Tooltip placement="topLeft" title={address} className=" truncate" color="blue">
-            <div
-              style={{
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                textAlign: 'start',
-              }}
-            >
-              {renderHighlightedCell(address)}
-            </div>
-          </Tooltip>
-        ),
+        render: (address) => <div className="text-start whitespace-pre-wrap">{renderHighlightedCell(address)}</div>,
       }
     }
     if (item === 'TenHang' || item === 'ThongTinHangHoa' || item === 'DiaChiDoiTuong') {
@@ -188,35 +164,25 @@ function Tables({ hidden, loadingSearch, param, columName, height, handleView, h
           }
         },
         showSorterTooltip: false,
-        render: (value) => (
-          <>
-            <Tooltip placement="topLeft" title={value ? dayjs(value).format('DD/MM/YYYY HH:mm:ss') : ''} className=" truncate" color="blue">
-              {renderHighlightedCell(value ? dayjs(value).format('DD/MM/YYYY HH:mm:ss') : '')}
-            </Tooltip>
-          </>
-        ),
+        render: (value) => <>{renderHighlightedCell(value ? dayjs(value).format('DD/MM/YYYY HH:mm:ss') : '')}</>,
       }
     }
     if (item === 'NguoiSuaCuoi' || item === 'NguoiTao') {
       return {
         title: columName[item] || item,
-        width: 150,
+        width: 180,
         dataIndex: item,
         key: index,
         sorter: (a, b) => a[item]?.toString().localeCompare(b[item]?.toString()),
         showSorterTooltip: false,
         align: 'center',
-        render: (address) => (
-          <Tooltip placement="Center" title={address} className=" truncate" color="blue">
-            {renderHighlightedCell(address)}
-          </Tooltip>
-        ),
+        render: (address) => renderHighlightedCell(address),
       }
     }
     if (item === 'TongCong_TM' || item === 'TongCong_CN' || item === 'TongCong') {
       return {
         title: columName[item] || item,
-        width: 282,
+        width: 220,
         dataIndex: item,
         key: index,
         showSorterTooltip: false,
@@ -320,7 +286,7 @@ function Tables({ hidden, loadingSearch, param, columName, height, handleView, h
   const columns = [
     ...newColumns,
     typeTable === 'listHelper' || typeTable === 'DSBH'
-      ? {}
+      ? null
       : {
           title: 'Chức năng',
           key: 'operation',
@@ -329,7 +295,8 @@ function Tables({ hidden, loadingSearch, param, columName, height, handleView, h
           width: 100,
           render: (record) => <BtnAction handleView={handleView} record={record} handleEdit={handleEdit} handleDelete={handleDelete} handleChangePhieuThu={handleChangePhieuThu} />,
         },
-  ]
+  ].filter((column) => column !== null)
+
   const mergedColumns = columns.map((col) => {
     if (!col.editable) {
       return col
@@ -433,13 +400,12 @@ function Tables({ hidden, loadingSearch, param, columName, height, handleView, h
             className={height}
             columns={mergedColumns}
             dataSource={data}
-            rowClassName={(record) => {
+            rowClassName={(record, index) => {
               if (record.SoChungTu === selectedRecord && typeTable !== 'DSBH') {
                 return 'highlight-row'
               }
-              return ''
+              return addRowClass(record, index)
             }}
-            bordered
             onRow={(record) => ({
               ...onRowClick(record),
               onClick: () => handleRowClick(record),

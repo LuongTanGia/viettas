@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import axios from 'axios'
 import loginSlice from '../components/Auth/loginSlice'
 import MainSlice from '../components/MainPage/MainSlice'

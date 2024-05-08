@@ -448,7 +448,7 @@ function PhieuBanHang() {
                     <DateField
                       onBlur={handleDateChange}
                       onKeyDown={handleKeyDown}
-                      className="DatePicker_PMH max-w-[115px]"
+                      className="max-w-[130px] min-w-[130px]"
                       format="DD/MM/YYYY"
                       value={dataDate?.NgayBatDau}
                       onChange={(newDate) => {
@@ -475,7 +475,7 @@ function PhieuBanHang() {
                     <DateField
                       onBlur={handleDateChange}
                       onKeyDown={handleKeyDown}
-                      className="max-w-[115px]"
+                      className="max-w-[130px] min-w-[130px]"
                       format="DD/MM/YYYY"
                       value={dataDate?.NgayKetThuc}
                       onChange={(newDate) => {

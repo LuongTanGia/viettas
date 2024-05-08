@@ -12,7 +12,7 @@ import { CloseSquareFilled } from '@ant-design/icons'
 import { FaSearch, FaEyeSlash } from 'react-icons/fa'
 import categoryAPI from '../../API/linkAPI'
 import { useSearch } from '../../components/hooks/Search'
-import { RETOKEN, exportToExcel } from '../../action/Actions'
+import { RETOKEN, addRowClass, exportToExcel } from '../../action/Actions'
 import ActionButton from '../../components/util/Button/ActionButton'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
@@ -383,21 +383,14 @@ const NhapXuatTonKho = () => {
       dataIndex: 'TenHang',
       key: 'TenHang',
       fixed: 'left',
+      width: 150,
+      align: 'center',
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-            }}
-          >
-            <HighlightedCell text={text} search={searchHangHoa} />
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -405,6 +398,7 @@ const NhapXuatTonKho = () => {
       dataIndex: 'TenNhomHang',
       key: 'TenNhomHang',
       width: 150,
+      align: 'center',
       sorter: (a, b) => a.TenNhomHang.localeCompare(b.TenNhomHang),
       showSorterTooltip: false,
       render: (text) => (
@@ -427,6 +421,7 @@ const NhapXuatTonKho = () => {
       dataIndex: 'TenKho',
       key: 'TenKho',
       width: 150,
+      align: 'center',
       sorter: (a, b) => a.TenKho.localeCompare(b.TenKho),
       showSorterTooltip: false,
       render: (text) => <HighlightedCell text={text} search={searchHangHoa} />,
@@ -683,7 +678,7 @@ const NhapXuatTonKho = () => {
       dataIndex: 'MaHang',
       key: 'MaHang',
       fixed: 'left',
-      width: 150,
+      width: 120,
       align: 'center',
       sorter: (a, b) => a.MaHang.localeCompare(b.MaHang),
       showSorterTooltip: false,
@@ -693,61 +688,50 @@ const NhapXuatTonKho = () => {
       title: 'Tên hàng',
       dataIndex: 'TenHang',
       key: 'TenHang',
-      width: 150,
+      width: 220,
       fixed: 'left',
+      align: 'center',
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-            }}
-          >
-            <HighlightedCell text={text} search={searchHangHoa} />
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
       title: 'Nhóm',
       dataIndex: 'TenNhomHang',
       key: 'TenNhomHang',
-      width: 150,
+      width: 200,
+      align: 'center',
       sorter: (a, b) => a.TenNhomHang.localeCompare(b.TenNhomHang),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-            }}
-          >
-            <HighlightedCell text={text} search={searchHangHoa} />
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
       title: 'Tên Kho',
       dataIndex: 'TenKho',
       key: 'TenKho',
-      width: 150,
+      width: 130,
+      align: 'center',
       sorter: (a, b) => a.TenKho.localeCompare(b.TenKho),
       showSorterTooltip: false,
-      render: (text) => <HighlightedCell text={text} search={searchHangHoa} />,
+      render: (text) => (
+        <div className="text-start">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
+      ),
     },
     {
       title: 'ĐVT',
       dataIndex: 'DVT',
       key: 'DVT',
-      width: 150,
+      width: 100,
       align: 'center',
       sorter: (a, b) => a.DVT.localeCompare(b.DVT),
       showSorterTooltip: false,
@@ -757,7 +741,7 @@ const NhapXuatTonKho = () => {
       title: 'Tồn đầu',
       dataIndex: 'SoLuongTonDK',
       key: 'SoLuongTonDK',
-      width: 150,
+      width: 120,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongTonDK - b.SoLuongTonDK,
@@ -776,7 +760,7 @@ const NhapXuatTonKho = () => {
           title: 'Mua hàng',
           dataIndex: 'SoLuongNhap_PMH',
           key: 'SoLuongNhap_PMH',
-          width: 150,
+          width: 120,
           align: 'center',
           showSorterTooltip: false,
           sorter: (a, b) => a.SoLuongNhap_PMH - b.SoLuongNhap_PMH,
@@ -790,7 +774,7 @@ const NhapXuatTonKho = () => {
           title: 'Trả hàng',
           dataIndex: 'SoLuongNhap_NTR',
           key: 'SoLuongNhap_NTR',
-          width: 150,
+          width: 120,
           align: 'center',
           showSorterTooltip: false,
           sorter: (a, b) => a.SoLuongNhap_NTR - b.SoLuongNhap_NTR,
@@ -804,7 +788,7 @@ const NhapXuatTonKho = () => {
           title: 'Chuyển kho',
           dataIndex: 'SoLuongNhap_NCK',
           key: 'SoLuongNhap_NCK',
-          width: 150,
+          width: 120,
           align: 'center',
           showSorterTooltip: false,
           sorter: (a, b) => a.SoLuongNhap_NCK - b.SoLuongNhap_NCK,
@@ -818,7 +802,7 @@ const NhapXuatTonKho = () => {
           title: 'Điều chỉnh',
           dataIndex: 'SoLuongNhap_NDC',
           key: 'SoLuongNhap_NDC',
-          width: 150,
+          width: 120,
           align: 'center',
           showSorterTooltip: false,
           sorter: (a, b) => a.SoLuongNhap_NDC - b.SoLuongNhap_NDC,
@@ -832,7 +816,7 @@ const NhapXuatTonKho = () => {
           title: 'Tổng nhập',
           dataIndex: 'SoLuongNhap',
           key: 'SoLuongNhap',
-          width: 150,
+          width: 120,
           align: 'center',
           showSorterTooltip: false,
           sorter: (a, b) => a.SoLuongNhap - b.SoLuongNhap,
@@ -853,7 +837,7 @@ const NhapXuatTonKho = () => {
           title: 'Bán sỉ',
           dataIndex: 'SoLuongXuat_PBS',
           key: 'SoLuongXuat_PBS',
-          width: 150,
+          width: 120,
           align: 'center',
           showSorterTooltip: false,
           sorter: (a, b) => a.SoLuongXuat_PBS - b.SoLuongXuat_PBS,
@@ -867,7 +851,7 @@ const NhapXuatTonKho = () => {
           title: 'Bán lẻ',
           dataIndex: 'SoLuongXuat_PBL',
           key: 'SoLuongXuat_PBL',
-          width: 150,
+          width: 120,
           align: 'center',
           showSorterTooltip: false,
           sorter: (a, b) => a.SoLuongXuat_PBL - b.SoLuongXuat_PBL,
@@ -881,7 +865,7 @@ const NhapXuatTonKho = () => {
           title: 'Bán lẻ (Quầy)',
           dataIndex: 'SoLuongXuat_PBQ',
           key: 'SoLuongXuat_PBQ',
-          width: 150,
+          width: 120,
           align: 'center',
           showSorterTooltip: false,
           sorter: (a, b) => a.SoLuongXuat_PBQ - b.SoLuongXuat_PBQ,
@@ -895,7 +879,7 @@ const NhapXuatTonKho = () => {
           title: 'Trả hàng',
           dataIndex: 'SoLuongXuat_XTR',
           key: 'SoLuongXuat_XTR',
-          width: 150,
+          width: 120,
           align: 'center',
           showSorterTooltip: false,
           sorter: (a, b) => a.SoLuongXuat_XTR - b.SoLuongXuat_XTR,
@@ -909,7 +893,7 @@ const NhapXuatTonKho = () => {
           title: 'Sử dụng',
           dataIndex: 'SoLuongXuat_XSD',
           key: 'SoLuongXuat_XSD',
-          width: 150,
+          width: 120,
           align: 'center',
           showSorterTooltip: false,
           sorter: (a, b) => a.SoLuongXuat_XSD - b.SoLuongXuat_XSD,
@@ -923,7 +907,7 @@ const NhapXuatTonKho = () => {
           title: 'Hủy',
           dataIndex: 'SoLuongXuat_HUY',
           key: 'SoLuongXuat_HUY',
-          width: 150,
+          width: 120,
           align: 'center',
           showSorterTooltip: false,
           sorter: (a, b) => a.SoLuongXuat_HUY - b.SoLuongXuat_HUY,
@@ -937,7 +921,7 @@ const NhapXuatTonKho = () => {
           title: 'Điều chỉnh',
           dataIndex: 'SoLuongXuat_XDC',
           key: 'SoLuongXuat_XDC',
-          width: 150,
+          width: 120,
           align: 'center',
           showSorterTooltip: false,
           sorter: (a, b) => a.SoLuongXuat_XDC - b.SoLuongXuat_XDC,
@@ -951,7 +935,7 @@ const NhapXuatTonKho = () => {
           title: 'Chuyển kho',
           dataIndex: 'SoLuongXuat_XCK',
           key: 'SoLuongXuat_XCK',
-          width: 150,
+          width: 120,
           align: 'center',
           showSorterTooltip: false,
           sorter: (a, b) => a.SoLuongXuat_XCK - b.SoLuongXuat_XCK,
@@ -965,7 +949,7 @@ const NhapXuatTonKho = () => {
           title: 'Tổng xuất',
           dataIndex: 'SoLuongXuat',
           key: 'SoLuongXuat',
-          width: 150,
+          width: 120,
           align: 'center',
           showSorterTooltip: false,
           sorter: (a, b) => a.SoLuongXuat - b.SoLuongXuat,
@@ -983,7 +967,7 @@ const NhapXuatTonKho = () => {
       dataIndex: 'SoLuongTonCK',
       fixed: 'right',
       key: 'SoLuongTonCK',
-      width: 150,
+      width: 120,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongTonCK - b.SoLuongTonCK,
@@ -1162,7 +1146,7 @@ const NhapXuatTonKho = () => {
                           <label>Từ</label>
                           <DateField
                             // className="DatePicker_NXTKho  max-w-[120px]"
-                            className=" max-w-[115px]"
+                            className="max-w-[130px] min-w-[130px]"
                             onBlur={handleDateChange}
                             onKeyDown={handleKeyDown}
                             format="DD/MM/YYYY"
@@ -1186,7 +1170,7 @@ const NhapXuatTonKho = () => {
                         <div className=" flex items-center gap-1 ">
                           <label>Đến</label>
                           <DateField
-                            className=" max-w-[115px]"
+                            className="max-w-[130px] min-w-[130px]"
                             onBlur={handleDateChange}
                             onKeyDown={handleKeyDown}
                             format="DD/MM/YYYY"
@@ -1475,7 +1459,7 @@ const NhapXuatTonKho = () => {
                       localStorage.setItem('pageSize', size)
                     },
                   }}
-                  bordered
+                  rowClassName={(record, index) => addRowClass(record, index)}
                   style={{
                     whiteSpace: 'nowrap',
                     fontSize: '24px',

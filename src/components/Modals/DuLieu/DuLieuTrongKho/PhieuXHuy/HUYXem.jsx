@@ -171,7 +171,7 @@ const HUYXem = ({ close, dataHUY }) => {
                           <label className="whitespace-nowrap text-sm">Người tạo</label>
                           <Tooltip title={dataHUYView?.NguoiTao} color="blue">
                             <input
-                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm overflow-ellipsis truncate"
+                              className="px-2 2xl:w-[18rem] xl:w-[15rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm overflow-ellipsis truncate"
                               value={dataHUYView?.NguoiTao || ''}
                               disabled
                             />
@@ -193,7 +193,7 @@ const HUYXem = ({ close, dataHUY }) => {
                           <label className="whitespace-nowrap text-sm">Người sửa</label>
                           <Tooltip title={dataHUYView?.NguoiSuaCuoi} color="blue">
                             <input
-                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border  outline-none text-sm overflow-ellipsis truncate"
+                              className="px-2 2xl:w-[18rem] xl:w-[15rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border  outline-none text-sm overflow-ellipsis truncate"
                               value={dataHUYView?.NguoiSuaCuoi || ''}
                               disabled
                             />

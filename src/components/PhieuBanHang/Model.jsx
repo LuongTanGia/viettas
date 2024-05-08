@@ -14,7 +14,7 @@ function Model({ isShow, handleClose, record, ActionDelete, typeModel, ActionPay
                 <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
                 <p className="text-blue-700 font-semibold uppercase"> {typeModel === 'Delete' ? 'Xóa dữ liệu' : 'Lập phiếu thu tiền'}</p>
               </div>
-              <div className="flex flex-col gap-2 border-2 p-4  text-lg">
+              <div className="flex flex-col gap-2 border-1 border-gray-400 p-4 text-lg">
                 <div className="flex gap-1">
                   <p className="text-blue-700 whitespace-nowrap"> {typeModel === 'Delete' ? ' Bạn có chắc muốn xóa phiếu' : 'Bạn có muốn lập phiếu thu tiền'}</p>
                   <Tooltip title={record.SoChungTu} color="blue">

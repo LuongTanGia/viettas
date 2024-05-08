@@ -53,24 +53,24 @@ const HMCEdit = ({ close, loadingData, setTargetRow, dataHMC }) => {
       <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10">
         <div className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"></div>
         <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col bg-white p-2 rounded shadow-custom overflow-hidden">
-          <div className="flex flex-col gap-2 py-1 px-2 md:w-[80vw] lg:w-[65vw] xl:w-[55vw] 2xl:w-[45vw]">
+          <div className="flex flex-col gap-2 py-1 px-2 md:w-[80vw] lg:w-[60vw] xl:w-[45vw]">
             <div className="flex gap-2">
               <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
               <p className="text-blue-700 font-semibold uppercase">Sửa - Hạng Mục Chi Tiền</p>
             </div>
-            <div className="flex flex-col gap-2 border-2 px-3 py-2.5">
+            <div className="flex flex-col gap-2 border-gray-400 border-1 px-3 py-2.5">
               <div className="flex items-center gap-1">
-                <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Mã</label>
+                <label className=" whitespace-nowrap required min-w-[50px] text-sm flex justify-end">Mã</label>
                 <input
                   disabled
                   required
                   size="small"
-                  className="h-[24px] w-[30%]  px-2 rounded-[3px] resize-none border-[1px] border-gray-300 outline-none truncate"
+                  className="h-[24px] w-[30%] px-2 rounded-[3px] resize-none border-[1px] border-gray-300 outline-none truncate"
                   value={HMCForm?.Ma}
                 />
               </div>
               <div className="flex items-center gap-1">
-                <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Tên</label>
+                <label className=" whitespace-nowrap required min-w-[50px] text-sm flex justify-end">Tên</label>
                 <Input
                   required
                   size="small"
@@ -87,7 +87,7 @@ const HMCEdit = ({ close, loadingData, setTargetRow, dataHMC }) => {
                 />
               </div>
               <div className="flex items-center gap-1">
-                <label className=" whitespace-nowrap  min-w-[90px] text-sm flex justify-end">Ghi chú</label>
+                <label className=" whitespace-nowrap  min-w-[50px] text-sm flex justify-end">Ghi chú</label>
                 <Input
                   required
                   size="small"
@@ -101,7 +101,7 @@ const HMCEdit = ({ close, loadingData, setTargetRow, dataHMC }) => {
                   }}
                 />
               </div>
-              <div className="grid grid-cols-1 mt-1 gap-2 px-2 py-2.5 rounded border-black-200 ml-[95px] relative border-[0.125rem]">
+              <div className="grid grid-cols-1 mt-1 gap-2 px-2 py-2.5 rounded border-black-200 ml-[55px] relative border-[0.125rem]">
                 <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
                 <div className="flex gap-2 justify-center">
                   <div className="flex items-center gap-1.5 whitespace-nowrap">
@@ -109,7 +109,7 @@ const HMCEdit = ({ close, loadingData, setTargetRow, dataHMC }) => {
                     <Tooltip title={dataHMC?.NguoiTao} color="blue">
                       <input
                         value={dataHMC?.NguoiTao || ''}
-                        className="2xl:w-[17vw] xl:w-[20vw] lg:w-[22vw] md:w-[24vw] px-2 rounded-[3px] resize-none border outline-none text-sm truncate"
+                        className="2xl:w-[20vw] xl:w-[15vw] lg:w-[20vw] md:w-[24vw] px-2 rounded-[3px] resize-none border outline-none text-sm truncate"
                         disabled
                       />
                     </Tooltip>
@@ -132,7 +132,7 @@ const HMCEdit = ({ close, loadingData, setTargetRow, dataHMC }) => {
                     <Tooltip title={dataHMC?.NguoiSuaCuoi} color="blue">
                       <input
                         value={dataHMC?.NguoiSuaCuoi || ''}
-                        className="2xl:w-[17vw] xl:w-[20vw] lg:w-[22vw] md:w-[24vw] px-2 rounded-[3px] resize-none border outline-none text-sm truncate"
+                        className="2xl:w-[20vw] xl:w-[15vw] lg:w-[20vw] md:w-[24vw] px-2 rounded-[3px] resize-none border outline-none text-sm truncate"
                         disabled
                       />
                     </Tooltip>

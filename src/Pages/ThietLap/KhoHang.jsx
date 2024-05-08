@@ -12,7 +12,7 @@ import { FaSearch, FaEyeSlash } from 'react-icons/fa'
 import { CloseSquareFilled } from '@ant-design/icons'
 import { MdEdit, MdDelete } from 'react-icons/md'
 import { useSearch } from '../../components/hooks/Search'
-import { RETOKEN, exportToExcel } from '../../action/Actions'
+import { RETOKEN, addRowClass, exportToExcel } from '../../action/Actions'
 import categoryAPI from '../../API/linkAPI'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
 import ActionButton from '../../components/util/Button/ActionButton'
@@ -167,12 +167,12 @@ const KhoHang = () => {
       dataIndex: 'MaKho',
       key: 'MaKho',
       fixed: 'left',
-      width: 120,
+      width: 100,
       align: 'center',
       sorter: (a, b) => a.MaKho.localeCompare(b.MaKho),
       showSorterTooltip: false,
       render: (text) => (
-        <div>
+        <div className="text-start">
           <HighlightedCell text={text} search={searchKhoHang} />
         </div>
       ),
@@ -186,64 +186,37 @@ const KhoHang = () => {
       sorter: (a, b) => a.TenKho.localeCompare(b.TenKho),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchKhoHang} />
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchKhoHang} />
+        </div>
       ),
     },
     {
       title: 'Tên cửa hàng',
       dataIndex: 'TenDayDu',
       key: 'TenDayDu',
-      width: 320,
+      width: 350,
       align: 'center',
       sorter: (a, b) => (a.TenDayDu?.toString() || '').localeCompare(b.TenDayDu?.toString() || ''),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchKhoHang} />
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchKhoHang} />
+        </div>
       ),
     },
     {
       title: 'Địa chỉ',
       dataIndex: 'DiaChi',
       key: 'DiaChi',
-      width: 300,
+      width: 280,
       align: 'center',
       sorter: (a, b) => (a.DiaChi?.toString() || '').localeCompare(b.DiaChi?.toString() || ''),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchKhoHang} />
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchKhoHang} />
+        </div>
       ),
     },
     {
@@ -255,40 +228,23 @@ const KhoHang = () => {
       sorter: (a, b) => (a.NguoiLienHe?.toString() || '').localeCompare(b.NguoiLienHe?.toString() || ''),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchKhoHang} />
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchKhoHang} />
+        </div>
       ),
     },
     {
       title: 'Điện thoại',
       dataIndex: 'DienThoai',
       key: 'DienThoai',
-      width: 220,
+      width: 150,
       align: 'center',
       sorter: (a, b) => (a.DienThoai?.toString() || '').localeCompare(b.DienThoai?.toString() || ''),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <HighlightedCell text={text} search={searchKhoHang} />
-          </div>
-        </Tooltip>
+        <div className="text-start">
+          <HighlightedCell text={text} search={searchKhoHang} />
+        </div>
       ),
     },
     {
@@ -297,50 +253,33 @@ const KhoHang = () => {
       key: 'GhiChu',
       showSorterTooltip: false,
       align: 'center',
+      width: 250,
       sorter: (a, b) => (a.GhiChu?.toString() || '').localeCompare(b.GhiChu?.toString() || ''),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              display: 'flex',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              justifyContent: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchKhoHang} />
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchKhoHang} />
+        </div>
       ),
     },
     {
       title: 'Người tạo',
       dataIndex: 'NguoiTao',
       key: 'NguoiTao',
-      width: 250,
+      width: 180,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => a.NguoiTao.localeCompare(b.NguoiTao),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <HighlightedCell text={text} search={searchKhoHang} />
-          </div>
-        </Tooltip>
+        <div className="truncate">
+          <HighlightedCell text={text} search={searchKhoHang} />
+        </div>
       ),
     },
     {
       title: 'Ngày tạo',
       dataIndex: 'NgayTao',
       key: 'NgayTao',
-      width: 200,
+      width: 150,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => {
@@ -355,22 +294,13 @@ const KhoHang = () => {
       dataIndex: 'NguoiSuaCuoi',
       key: 'NguoiSuaCuoi',
       align: 'center',
-      width: 250,
-
+      width: 180,
       showSorterTooltip: false,
       sorter: (a, b) => (a.NguoiSuaCuoi?.toString() || '').localeCompare(b.NguoiSuaCuoi?.toString() || ''),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <HighlightedCell text={text} search={searchKhoHang} />
-          </div>
-        </Tooltip>
+        <div className="truncate">
+          <HighlightedCell text={text} search={searchKhoHang} />
+        </div>
       ),
     },
     {
@@ -378,7 +308,7 @@ const KhoHang = () => {
       dataIndex: 'NgaySuaCuoi',
       key: 'NgaySuaCuoi',
       align: 'center',
-      width: 200,
+      width: 150,
       showSorterTooltip: false,
       sorter: (a, b) => {
         const dateA = new Date(a.NgaySuaCuoi)
@@ -594,13 +524,12 @@ const KhoHang = () => {
                 <div id="my-table">
                   <Table
                     loading={tableLoad}
-                    bordered
                     onRow={(record) => ({
                       onDoubleClick: () => {
                         handleView(record)
                       },
                     })}
-                    rowClassName={(record) => (record.MaKho == targetRow ? 'highlighted-row' : '')}
+                    rowClassName={(record, index) => (record.MaKho == targetRow ? 'highlighted-row' : addRowClass(record, index))}
                     className="setHeight"
                     columns={newTitles}
                     dataSource={filteredKhoHang.map((item, index) => ({
@@ -619,10 +548,6 @@ const KhoHang = () => {
                       onShowSizeChange: (current, size) => {
                         localStorage.setItem('pageSize', size)
                       },
-                    }}
-                    style={{
-                      whiteSpace: 'nowrap',
-                      fontSize: '24px',
                     }}
                     summary={() => {
                       return (

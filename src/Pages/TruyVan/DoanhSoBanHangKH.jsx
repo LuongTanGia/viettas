@@ -11,7 +11,7 @@ import { CloseSquareFilled } from '@ant-design/icons'
 import { FaSearch, FaEyeSlash } from 'react-icons/fa'
 import categoryAPI from '../../API/linkAPI'
 import { useSearch } from '../../components/hooks/Search'
-import { RETOKEN, exportToExcel } from '../../action/Actions'
+import { RETOKEN, addRowClass, exportToExcel } from '../../action/Actions'
 import ActionButton from '../../components/util/Button/ActionButton'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
 import { nameColumsDSBHHH } from '../../components/util/Table/ColumnName'
@@ -284,7 +284,7 @@ const DoanhSoBanHangKH = () => {
       dataIndex: 'MaDoiTuong',
       key: 'MaDoiTuong',
       fixed: 'left',
-      width: 120,
+      width: 100,
       align: 'center',
       sorter: (a, b) => (a.MaDoiTuong || '').localeCompare(b.MaDoiTuong || ''),
       showSorterTooltip: false,
@@ -295,17 +295,13 @@ const DoanhSoBanHangKH = () => {
       dataIndex: 'TenDoiTuong',
       key: 'TenDoiTuong',
       align: 'center',
-      width: 150,
+      width: 220,
       sorter: (a, b) => (a.TenDoiTuong || '').localeCompare(b.TenDoiTuong || ''),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div className="flex justify-start">
-            <div className="truncate">
-              <HighlightedCell text={text} search={searchHangHoa} />
-            </div>
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -313,17 +309,13 @@ const DoanhSoBanHangKH = () => {
       dataIndex: 'DiaChiDoiTuong',
       key: 'DiaChiDoiTuong',
       align: 'center',
-      width: 150,
+      width: 250,
       sorter: (a, b) => (a.DiaChiDoiTuong || '').localeCompare(b.DiaChiDoiTuong || ''),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div className="flex justify-start">
-            <div className="truncate">
-              <HighlightedCell text={text} search={searchHangHoa} />
-            </div>
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -482,7 +474,7 @@ const DoanhSoBanHangKH = () => {
                           <label>Từ</label>
                           <DateField
                             // className="DatePicker_DSBHKho  max-w-[120px]"
-                            className=" max-w-[115px]"
+                            className="max-w-[130px] min-w-[130px]"
                             onBlur={handleDateChange}
                             onKeyDown={handleKeyDown}
                             format="DD/MM/YYYY"
@@ -506,7 +498,7 @@ const DoanhSoBanHangKH = () => {
                         <div className=" flex items-center gap-1 ">
                           <label>Đến</label>
                           <DateField
-                            className=" max-w-[115px]"
+                            className="max-w-[130px] min-w-[130px]"
                             onBlur={handleDateChange}
                             onKeyDown={handleKeyDown}
                             format="DD/MM/YYYY"
@@ -659,7 +651,7 @@ const DoanhSoBanHangKH = () => {
                     },
                   }}
                   scrollToFirstRowOnChange
-                  bordered
+                  rowClassName={(record, index) => addRowClass(record, index)}
                   style={{
                     whiteSpace: 'nowrap',
                     fontSize: '24px',

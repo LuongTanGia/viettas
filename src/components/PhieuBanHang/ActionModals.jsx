@@ -370,8 +370,8 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                 <img src={Logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
                 <p className="text-blue-700 uppercase font-semibold">{`${typeAction === 'view' ? 'Thông Tin' : typeAction === 'edit' ? 'Sửa' : 'Thêm'} - Phiếu Bán Hàng`}</p>
               </div>
-              <div className="w-full h-[90%] flex flex-col border-2 px-1 gap-2 py-2.5 text-sm">
-                <div className={`grid lg:grid-cols-5 md:grid-cols-7 gap-1 box_thongtin ${typeAction == 'create' ? 'create' : typeAction == 'edit' ? 'edit' : ''}`}>
+              <div className="w-full h-[90%] flex flex-col border-1 border-gray-400 gap-2 py-2.5 text-sm">
+                <div className={`grid lg:grid-cols-5 px-1 md:grid-cols-7 gap-1 box_thongtin ${typeAction == 'create' ? 'create' : typeAction == 'edit' ? 'edit' : ''}`}>
                   <div className="flex flex-col lg:col-span-3 md:col-span-4 gap-2">
                     <div className="flex items-center gap-1">
                       <div className="flex items-center gap-1">
@@ -533,7 +533,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1 px-1">
                   <label className="text-sm whitespace-nowrap min-w-[70px] flex justify-end">Địa chỉ</label>
                   {typeAction === 'view' ? (
                     <input type="text" className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm" value={form?.DiaChi} name="DiaChi" readOnly disabled />
@@ -558,7 +558,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                     />
                   )}
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 px-1">
                   <div className="flex items-center gap-1 ">
                     <label form="khohang" className="whitespace-nowrap required min-w-[70px] flex justify-end">
                       Kho hàng

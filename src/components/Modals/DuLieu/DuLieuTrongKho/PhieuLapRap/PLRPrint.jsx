@@ -216,7 +216,7 @@ const PLRPrint = ({ close, dataPrint, type }) => {
                 <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
                 <p className="text-blue-700 font-semibold uppercase">{type == 'print' ? 'In' : type == 'printImport' ? 'In Nhập' : ' In Xuất'} - Phiếu Nhập Điều Chỉnh</p>
               </div>
-              <div className="flex flex-col items-center gap-4 border-2 p-3">
+              <div className="flex flex-col items-center gap-4 border-gray-400 border-1 p-3">
                 <div className="flex justify-center">
                   <div className="DatePicker_NDCKho flex justify-center gap-2">
                     <div className="DatePicker_NDCKho flex items-center gap-2">

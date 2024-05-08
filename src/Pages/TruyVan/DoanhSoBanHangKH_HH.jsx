@@ -11,7 +11,7 @@ import { CloseSquareFilled } from '@ant-design/icons'
 import { FaSearch, FaEyeSlash } from 'react-icons/fa'
 import categoryAPI from '../../API/linkAPI'
 import { useSearch } from '../../components/hooks/Search'
-import { RETOKEN, exportToExcel } from '../../action/Actions'
+import { RETOKEN, addRowClass, exportToExcel } from '../../action/Actions'
 import ActionButton from '../../components/util/Button/ActionButton'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
 import { nameColumsDSBHHH } from '../../components/util/Table/ColumnName'
@@ -326,17 +326,13 @@ const DoanhSoBanHangKH_HH = () => {
       dataIndex: 'TenDoiTuong',
       key: 'TenDoiTuong',
       align: 'center',
-      width: 150,
+      width: 200,
       sorter: (a, b) => a.TenDoiTuong.localeCompare(b.TenDoiTuong),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div className="flex justify-start">
-            <div className="truncate">
-              <HighlightedCell text={text} search={searchHangHoa} />
-            </div>
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -354,17 +350,13 @@ const DoanhSoBanHangKH_HH = () => {
       dataIndex: 'TenHang',
       key: 'TenHang',
       align: 'center',
-      width: 150,
+      width: 250,
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div className="flex justify-start">
-            <div className="truncate">
-              <HighlightedCell text={text} search={searchHangHoa} />
-            </div>
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -590,7 +582,7 @@ const DoanhSoBanHangKH_HH = () => {
                           <label>Từ</label>
                           <DateField
                             // className="DatePicker_NXTKho  max-w-[120px]"
-                            className=" max-w-[115px]"
+                            className="max-w-[130px] min-w-[130px]"
                             onBlur={handleDateChange}
                             onKeyDown={handleKeyDown}
                             format="DD/MM/YYYY"
@@ -614,7 +606,7 @@ const DoanhSoBanHangKH_HH = () => {
                         <div className=" flex items-center gap-1 ">
                           <label>Đến</label>
                           <DateField
-                            className=" max-w-[115px]"
+                            className="max-w-[130px] min-w-[130px]"
                             onBlur={handleDateChange}
                             onKeyDown={handleKeyDown}
                             format="DD/MM/YYYY"
@@ -863,12 +855,7 @@ const DoanhSoBanHangKH_HH = () => {
                     },
                   }}
                   scrollToFirstRowOnChange
-                  bordered
-                  style={{
-                    whiteSpace: 'nowrap',
-                    fontSize: '24px',
-                    borderRadius: '10px',
-                  }}
+                  rowClassName={(record, index) => addRowClass(record, index)}
                   summary={() => {
                     return (
                       <Table.Summary fixed>

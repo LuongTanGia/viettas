@@ -92,12 +92,12 @@ const DTEdit = ({ close, loadingData, setTargetRow, dataDT }) => {
           <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10">
             <div className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"></div>
             <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col bg-white p-2 rounded shadow-custom overflow-hidden">
-              <div className="flex flex-col gap-2 py-1 px-2 md:w-[80vw] lg:w-[65vw] xl:w-[55vw] 2xl:w-[50vw]">
+              <div className="flex flex-col gap-2 py-1 px-2 md:w-[80vw] lg:w-[60vw] xl:w-[50vw] 2xl:w-[45vw]">
                 <div className="flex gap-2">
                   <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
                   <p className="text-blue-700 font-semibold uppercase">Sửa - Đối Tượng</p>
                 </div>
-                <div className="flex flex-col gap-2 border-2 px-3 py-2.5">
+                <div className="flex flex-col gap-2 border-1 border-gray-400 px-3 py-2.5">
                   <div className="flex gap-8 justify-around">
                     <div className="flex items-center">
                       <Checkbox
@@ -309,7 +309,7 @@ const DTEdit = ({ close, loadingData, setTargetRow, dataDT }) => {
                         <Tooltip title={dataDT?.NguoiTao} color="blue">
                           <input
                             value={dataDT?.NguoiTao || ''}
-                            className="2xl:w-[17vw] xl:w-[21vw] lg:w-[22vw] md:w-[24vw] px-2 border resize-none rounded-[3px] outline-none text-sm truncate"
+                            className="2xl:w-[17vw] xl:w-[18vw] lg:w-[20vw] md:w-[24vw] px-2 border resize-none rounded-[3px] outline-none text-sm truncate"
                             disabled
                           />
                         </Tooltip>
@@ -332,7 +332,7 @@ const DTEdit = ({ close, loadingData, setTargetRow, dataDT }) => {
                         <Tooltip title={dataDT?.NguoiSuaCuoi} color="blue">
                           <input
                             value={dataDT?.NguoiSuaCuoi || ''}
-                            className="2xl:w-[17vw] xl:w-[21vw] lg:w-[22vw] md:w-[24vw] px-2 rounded-[3px] resize-none border outline-none text-sm truncate"
+                            className="2xl:w-[17vw] xl:w-[18vw] lg:w-[20vw] md:w-[24vw] px-2 rounded-[3px] resize-none border outline-none text-sm truncate"
                             disabled
                           />
                         </Tooltip>

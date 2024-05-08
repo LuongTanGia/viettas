@@ -636,24 +636,16 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
       title: 'Tên hàng',
       dataIndex: 'TenHang',
       key: 'TenHang',
-      width: 250,
+      width: 150,
       showSorterTooltip: false,
       align: 'center',
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-              textAlign: 'start',
-            }}
-          >
+        <div className="text-start whitespace-pre-wrap">
+          <span>
             <HighlightedCell text={text} search={searchHangHoa} />
-          </div>
-        </Tooltip>
+          </span>
+        </div>
       ),
     },
     {
@@ -778,7 +770,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                       <p className="text-blue-700 uppercase font-semibold">Thông Tin - Hàng Hóa</p>
                     </div>
                   </div>
-                  <div className={`border-2 py-2 px-2 gap-2 ${dataView?.HangHoa_CTs?.length > 0 ? 'grid grid-cols-2' : 'grid grid-cols-1'}`}>
+                  <div className={`border-1 border-gray-400 py-2 px-2 gap-2 ${dataView?.HangHoa_CTs?.length > 0 ? 'grid grid-cols-2' : 'grid grid-cols-1'}`}>
                     <div className="flex flex-col gap-2">
                       <div className="grid grid-cols-1 xl:grid-cols-2 gap-2 items-center">
                         <div className="flex items-center gap-1 whitespace-nowrap">
@@ -836,22 +828,20 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                           <input type="text" value={dataView?.MaVach || ''} className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
                         </div>
                       </div>
-                      <div className="border ml-[95px] rounded flex flex-col items-end gap-2">
-                        <div className="w-full ml-[95px]">
-                          <Table
-                            loading={tableLoad}
-                            className="table_viewHH"
-                            columns={titleBarCodeView}
-                            dataSource={dataView?.Barcodes?.map((item, index) => ({ ...item, key: index }))}
-                            size="small"
-                            scroll={{
-                              x: 500,
-                              y: 100,
-                            }}
-                            bordered
-                            pagination={false}
-                          />
-                        </div>
+                      <div className="ml-[95px] rounded-[6px] border-[1px] border-gray-400">
+                        <Table
+                          loading={tableLoad}
+                          className="table_viewHH"
+                          columns={titleBarCodeView}
+                          dataSource={dataView?.Barcodes?.map((item, index) => ({ ...item, key: index }))}
+                          size="small"
+                          scroll={{
+                            x: 500,
+                            y: 100,
+                          }}
+                          bordered
+                          pagination={false}
+                        />
                       </div>
                       <div className="flex items-center gap-1">
                         <label className="whitespace-nowrap min-w-[90px] text-sm flex justify-end">Diễn giải hàng</label>
@@ -927,14 +917,14 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                       </div>
                     </div>
                     {dataView?.LapRap == true && (
-                      <div className="w-full border rounded">
+                      <div className="w-full border-[1px] rounded border-gray-400">
                         <Table
                           loading={tableLoad}
                           columns={titleHangHoa_CTsView}
                           dataSource={dataView?.HangHoa_CTs?.map((item, index) => ({ ...item, key: index }))}
                           size="small"
                           scroll={{
-                            x: 500,
+                            x: 'max-content',
                             y: 500,
                           }}
                           bordered
@@ -959,7 +949,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                     </div>
                   </div>
                   <div className="flex flex-col gap-2 p-1">
-                    <div className="border-2 py-2 px-1 gap-1 grid grid-cols-2  min-h-[35rem]">
+                    <div className="border-1 border-gray-400 py-2 px-1 gap-1 grid grid-cols-2  min-h-[35rem]">
                       <div className="flex flex-col gap-2 p-1 ">
                         <div className="grid grid-cols-1 xl:grid-cols-2 items-center gap-3">
                           <div className="flex items-center gap-1 relative">
@@ -1214,7 +1204,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                         </div>
                         <div className="border-[0.125rem] ml-[95px] p-2 min-h-[8.5rem] rounded flex gap-2 items-start relative ">
                           <div className="w-full lg:max-h-[125px] md:max-h-[155px] overflow-y-auto">
-                            <table className="barcodeList  ">
+                            <table className="barcodeList">
                               <thead>
                                 <tr>
                                   <th className="whitespace-nowrap">Mã vạch</th>
@@ -1459,7 +1449,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                     <p className="text-blue-700 font-semibold uppercase">Sửa - Hàng hóa</p>
                   </div>
                   <div className="flex flex-col gap-2 p-1">
-                    <div className="border-2 py-2 px-2 gap-2 grid grid-cols-2">
+                    <div className="border-1 border-gray-400 py-2 px-2 gap-2 grid grid-cols-2">
                       <div className="flex flex-col gap-2">
                         <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 items-center justify-center">
                           <div className="flex items-center gap-1">
@@ -1952,7 +1942,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                       <p className="text-blue-700 font-semibold uppercase">Xóa dữ liệu</p>
                     </div>
                   </div>
-                  <div className="flex flex-col gap-2 border-2 p-4 text-lg">
+                  <div className="flex flex-col gap-2 border-1 border-gray-400 p-4 text-lg">
                     <div className="flex gap-1">
                       <p className="text-blue-700 whitespace-nowrap">Bạn có chắc muốn xóa</p>
                       <p className="text-red-500 block truncate">{getMaHang?.TenHang}</p>
@@ -1983,7 +1973,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                     </div>
                   </div>
                   <div className="flex flex-col gap-2">
-                    <div className="flex items-center justify-center border-2 p-4 gap-2">
+                    <div className="flex items-center justify-center border-1 border-gray-400 p-4 gap-2">
                       <div className="required whitespace-nowrap">Trạng thái</div>
                       <Space wrap>
                         <Select
@@ -2039,7 +2029,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                     </div>
                   </div>
                   <div className="flex flex-col gap-2 ">
-                    <div className="flex gap-2 items-center border-2 p-4">
+                    <div className="flex gap-2 items-center border-1 border-gray-400 p-4">
                       <div className="required whitespace-nowrap">Chọn nhóm</div>
                       <Select
                         placeholder={errors?.GiaTriMoi ? errors?.GiaTriMoi : 'Chọn nhóm'}
@@ -2087,7 +2077,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                       <p className="text-blue-700 font-semibold uppercase">In Mã vạch - Hàng Hóa</p>
                     </div>
                   </div>
-                  <div className="flex flex-col gap-4 justify-center items-center border-2 p-4">
+                  <div className="flex flex-col gap-4 justify-center items-center border-1 border-gray-400 p-4">
                     <div className="grid grid-cols-2 gap-4 px-4 border-2 py-4 border-black-200 rounded-lg relative">
                       <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Theo Nhóm</p>
                       <div className="flex gap-1 items-center">

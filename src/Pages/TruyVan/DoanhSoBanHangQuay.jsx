@@ -11,7 +11,7 @@ import { CloseSquareFilled } from '@ant-design/icons'
 import { FaSearch, FaEyeSlash } from 'react-icons/fa'
 import categoryAPI from '../../API/linkAPI'
 import { useSearch } from '../../components/hooks/Search'
-import { RETOKEN, exportToExcel } from '../../action/Actions'
+import { RETOKEN, addRowClass, exportToExcel } from '../../action/Actions'
 import ActionButton from '../../components/util/Button/ActionButton'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
 import { nameColumsDSBHQUAY } from '../../components/util/Table/ColumnName'
@@ -355,7 +355,7 @@ const DoanhSoBanHangQuay = () => {
               title: ` Quầy ${tenQuayMatch} `,
               dataIndex: colKey,
               key: colKey,
-              width: 180,
+              width: 120,
               align: 'center',
               render: (text) => (
                 <div className={`text-end ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
@@ -417,29 +417,13 @@ const DoanhSoBanHangQuay = () => {
       dataIndex: 'TenHang',
       key: 'TenHang',
       align: 'center',
-      width: 180,
+      width: 220,
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'start',
-            }}
-          >
-            <div
-              style={{
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                cursor: 'pointer',
-              }}
-            >
-              <HighlightedCell text={text} search={searchHangHoa} />
-            </div>
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -447,36 +431,20 @@ const DoanhSoBanHangQuay = () => {
       dataIndex: 'NhomHang',
       key: 'NhomHang',
       align: 'center',
-      width: 150,
+      width: 200,
       sorter: (a, b) => a.NhomHang.localeCompare(b.NhomHang),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'start',
-            }}
-          >
-            <div
-              style={{
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                cursor: 'pointer',
-              }}
-            >
-              <HighlightedCell text={text} search={searchHangHoa} />
-            </div>
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
       title: 'ĐVT',
       dataIndex: 'DVT',
       key: 'DVT',
-      width: 80,
+      width: 100,
       align: 'center',
       sorter: (a, b) => a.DVT.localeCompare(b.DVT),
       showSorterTooltip: false,
@@ -598,7 +566,7 @@ const DoanhSoBanHangQuay = () => {
                           <label>Từ</label>
                           <DateField
                             // className="DatePicker_NXTKho  max-w-[120px]"
-                            className=" max-w-[115px]"
+                            className="max-w-[130px] min-w-[130px]"
                             onBlur={handleDateChange}
                             onKeyDown={handleKeyDown}
                             format="DD/MM/YYYY"
@@ -622,7 +590,7 @@ const DoanhSoBanHangQuay = () => {
                         <div className=" flex items-center gap-1 ">
                           <label>Đến</label>
                           <DateField
-                            className=" max-w-[115px]"
+                            className="max-w-[130px] min-w-[130px]"
                             onBlur={handleDateChange}
                             onKeyDown={handleKeyDown}
                             format="DD/MM/YYYY"
@@ -885,12 +853,7 @@ const DoanhSoBanHangQuay = () => {
                     },
                   }}
                   scrollToFirstRowOnChange
-                  bordered
-                  style={{
-                    whiteSpace: 'nowrap',
-                    fontSize: '24px',
-                    borderRadius: '10px',
-                  }}
+                  rowClassName={(record, index) => addRowClass(record, index)}
                   summary={() => {
                     return (
                       <Table.Summary fixed>

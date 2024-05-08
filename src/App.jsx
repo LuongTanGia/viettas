@@ -58,11 +58,8 @@ function App() {
         textOverflow="ellipsis"
         overflow="hidden"
         style={{
-          width: 'fit-content',
-          maxWidth: '35rem',
-          whiteSpace: 'nowrap',
-          textOverflow: 'ellipsis',
-          overflow: 'hidden',
+          width: 'max-content',
+          whiteSpace: 'pre-line',
         }}
       />
     </Router>

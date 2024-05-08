@@ -81,7 +81,7 @@ function ListHelper_HangHoa({ data, close, handleAddData, form }) {
               )}
             </div>
           </div>
-          <div className=" mx-auto bg-white  rounded-md overflow-y-auto text-sm">
+          <div className="mx-auto roundedoverflow-y-auto text-sm">
             <Tables
               param={dataList}
               columName={nameColumsHangHoa}

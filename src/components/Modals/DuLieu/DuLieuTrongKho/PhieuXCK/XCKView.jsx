@@ -137,12 +137,12 @@ const XCKXem = ({ close, dataXCK }) => {
                   <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
                   <p className="text-blue-700 font-semibold uppercase">Thông tin - Phiếu Xuất Chuyển Kho</p>
                 </div>
-                <div className="flex flex-col gap-2 border-2 px-1 py-2.5">
-                  <div className="grid grid-cols-2 items-center gap-2">
+                <div className="flex flex-col gap-2 border-1 border-gray-400 py-2.5">
+                  <div className="grid grid-cols-2 items-center gap-2 px-1">
                     <div className="flex flex-col gap-2">
                       <div className="flex gap-2">
                         <div className="flex items-center gap-1">
-                          <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Số chứng từ</label>
+                          <label className="required whitespace-nowrap min-w-[90px] flex justify-end text-sm">Số chứng từ</label>
                           <input type="text" value={dataXCKView?.SoChungTu || ''} className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
                         </div>
                         <div className="flex items-center gap-1">
@@ -156,7 +156,7 @@ const XCKXem = ({ close, dataXCK }) => {
                         </div>
                       </div>
                       <div className="flex items-center gap-1">
-                        <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Kho</label>
+                        <label className="required whitespace-nowrap min-w-[90px] flex justify-end text-sm">Kho</label>
                         <input
                           type="text"
                           value={`${dataXCKView?.MaKho} - ${dataXCKView?.TenKho}` || ''}
@@ -165,7 +165,7 @@ const XCKXem = ({ close, dataXCK }) => {
                         />
                       </div>
                       <div className="flex items-center gap-1">
-                        <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Kho nhận</label>
+                        <label className="required whitespace-nowrap min-w-[90px] flex justify-end text-sm">Kho nhận</label>
                         <input
                           type="text"
                           value={`${dataXCKView?.MaKho_Nhan} - ${dataXCKView?.TenKho_Nhan}` || ''}
@@ -181,7 +181,7 @@ const XCKXem = ({ close, dataXCK }) => {
                           <label className="whitespace-nowrap text-sm">Người tạo</label>
                           <Tooltip title={dataXCKView?.NguoiTao} color="blue">
                             <input
-                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm overflow-ellipsis truncate"
+                              className="px-2 2xl:w-[18rem] xl:w-[15rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm overflow-ellipsis truncate"
                               value={dataXCKView?.NguoiTao || ''}
                               disabled
                             />
@@ -203,7 +203,7 @@ const XCKXem = ({ close, dataXCK }) => {
                           <label className="whitespace-nowrap text-sm">Người sửa</label>
                           <Tooltip title={dataXCKView?.NguoiSuaCuoi} color="blue">
                             <input
-                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border  outline-none text-sm overflow-ellipsis truncate"
+                              className="px-2 2xl:w-[18rem] xl:w-[15rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border  outline-none text-sm overflow-ellipsis truncate"
                               value={dataXCKView?.NguoiSuaCuoi || ''}
                               disabled
                             />
@@ -222,64 +222,61 @@ const XCKXem = ({ close, dataXCK }) => {
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <label className="whitespace-nowrap min-w-[100px] flex justify-end text-sm">Ghi chú</label>
+                  <div className="flex items-center gap-1 px-1">
+                    <label className="whitespace-nowrap min-w-[90px] flex justify-end text-sm">Ghi chú</label>
                     <input type="text" value={dataXCKView?.GhiChu || ''} className="px-2 w-[70rem] rounded-[3px] resize-none border outline-none text-sm" disabled />
                   </div>
-                  <div className="border rounded">
-                    <Table
-                      className="table_view"
-                      columns={title}
-                      dataSource={dataXCKView?.DataDetails?.map((item, index) => ({ ...item, key: index }))}
-                      size="small"
-                      scroll={{
-                        x: 1000,
-                        y: 300,
-                      }}
-                      bordered
-                      pagination={false}
-                      summary={() => {
-                        return (
-                          <Table.Summary fixed="bottom">
-                            <Table.Summary.Row>
-                              {title
-                                .filter((column) => column.render)
-                                .map((column, index) => {
-                                  const isNumericColumn = typeof dataXCKView?.DataDetails[0]?.[column.dataIndex] === 'number'
+                  <Table
+                    className="table_view"
+                    columns={title}
+                    dataSource={dataXCKView?.DataDetails?.map((item, index) => ({ ...item, key: index }))}
+                    size="small"
+                    scroll={{
+                      x: 'max-content',
+                      y: 300,
+                    }}
+                    pagination={false}
+                    summary={() => {
+                      return (
+                        <Table.Summary fixed="bottom">
+                          <Table.Summary.Row>
+                            {title
+                              .filter((column) => column.render)
+                              .map((column, index) => {
+                                const isNumericColumn = typeof dataXCKView?.DataDetails[0]?.[column.dataIndex] === 'number'
 
-                                  return (
-                                    <Table.Summary.Cell
-                                      index={index}
-                                      key={`summary-cell-${index + 1}`}
-                                      align={isNumericColumn ? 'right' : 'left'}
-                                      className="text-end font-bold  bg-[#f1f1f1]"
-                                    >
-                                      {isNumericColumn ? (
-                                        column.dataIndex === 'SoLuong' ? (
-                                          <Text strong>
-                                            {Number(dataXCKView?.DataDetails?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                              minimumFractionDigits: dataThongSo?.SOLESOLUONG,
-                                              maximumFractionDigits: dataThongSo?.SOLESOLUONG,
-                                            })}
-                                          </Text>
-                                        ) : (
-                                          <Text strong>
-                                            {Number(dataXCKView?.DataDetails?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                              minimumFractionDigits: 0,
-                                              maximumFractionDigits: 0,
-                                            })}
-                                          </Text>
-                                        )
-                                      ) : null}
-                                    </Table.Summary.Cell>
-                                  )
-                                })}
-                            </Table.Summary.Row>
-                          </Table.Summary>
-                        )
-                      }}
-                    ></Table>
-                  </div>
+                                return (
+                                  <Table.Summary.Cell
+                                    index={index}
+                                    key={`summary-cell-${index + 1}`}
+                                    align={isNumericColumn ? 'right' : 'left'}
+                                    className="text-end font-bold  bg-[#f1f1f1]"
+                                  >
+                                    {isNumericColumn ? (
+                                      column.dataIndex === 'SoLuong' ? (
+                                        <Text strong>
+                                          {Number(dataXCKView?.DataDetails?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                            minimumFractionDigits: dataThongSo?.SOLESOLUONG,
+                                            maximumFractionDigits: dataThongSo?.SOLESOLUONG,
+                                          })}
+                                        </Text>
+                                      ) : (
+                                        <Text strong>
+                                          {Number(dataXCKView?.DataDetails?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                            minimumFractionDigits: 0,
+                                            maximumFractionDigits: 0,
+                                          })}
+                                        </Text>
+                                      )
+                                    ) : null}
+                                  </Table.Summary.Cell>
+                                )
+                              })}
+                          </Table.Summary.Row>
+                        </Table.Summary>
+                      )
+                    }}
+                  ></Table>
                 </div>
                 <div className="flex justify-between">
                   <div>

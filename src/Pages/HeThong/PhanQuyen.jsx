@@ -9,7 +9,7 @@ import { CgCloseO } from 'react-icons/cg'
 import { FaSearch } from 'react-icons/fa'
 import { CloseSquareFilled } from '@ant-design/icons'
 import { useSearch } from '../../components/hooks/Search'
-import { RETOKEN } from '../../action/Actions'
+import { RETOKEN, addRowClass } from '../../action/Actions'
 import categoryAPI from '../../API/linkAPI'
 import ActionButton from '../../components/util/Button/ActionButton'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
@@ -22,11 +22,9 @@ const PhanQuyen = () => {
   const TokenAccess = localStorage.getItem('TKN')
   const [dataChucNang, setDataChucNang] = useState()
   const [dataUser, setDataUser] = useState()
-  const [setSearchChucNang, filteredChucNang, searchChucNang] = useSearch(dataChucNang)
   const [setSearchUser, filteredUser, searchUser] = useSearch(dataUser)
   const [isShowNotify, setIsShowNotify] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [isHandle, setIsHandle] = useState(false)
   const [tableLoadLeft, setTableLoadLeft] = useState(true)
   const [tableLoadRight, setTableLoadRight] = useState(true)
   const [isShowSearch, setIsShowSearch] = useState(false)
@@ -97,7 +95,7 @@ const PhanQuyen = () => {
     }
 
     getDataChucNang()
-  }, [searchChucNang, selectedRowKeys])
+  }, [selectedRowKeys])
 
   const indexValue = dataSource.reduce((acc, item, index) => {
     acc[item.TenChucNang] = index
@@ -126,7 +124,6 @@ const PhanQuyen = () => {
     let timerId
     clearTimeout(timerId)
     timerId = setTimeout(() => {
-      setSearchChucNang(event.target.value)
       setSearchUser(event.target.value)
     }, 300)
   }
@@ -135,7 +132,7 @@ const PhanQuyen = () => {
       title: 'STT',
       dataIndex: 'STT',
       fixed: 'left',
-      width: 40,
+      width: 45,
       align: 'center',
       render: (text, record, index) => index + 1,
     },
@@ -144,23 +141,13 @@ const PhanQuyen = () => {
       dataIndex: 'Ma',
       key: 'Ma',
       showSorterTooltip: false,
-      width: 120,
+      width: 160,
       align: 'center',
       sorter: (a, b) => (a.Ma?.toString() || '').localeCompare(b.Ma?.toString() || ''),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchUser} />
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchUser} />
+        </div>
       ),
     },
     {
@@ -168,23 +155,13 @@ const PhanQuyen = () => {
       dataIndex: 'Ten',
       key: 'Ten',
       showSorterTooltip: false,
-      width: 120,
+      width: 180,
       align: 'center',
       sorter: (a, b) => (a.Ten?.toString() || '').localeCompare(b.Ten?.toString() || ''),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchUser} />
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchUser} />
+        </div>
       ),
     },
   ]
@@ -457,19 +434,8 @@ const PhanQuyen = () => {
       dataIndex: 'TenChucNang',
       fixed: 'left',
       align: 'center',
-      render: (text, record) => (
-        <div
-          style={{
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            cursor: 'pointer',
-            textAlign: 'start',
-          }}
-        >
-          <HighlightedCell text={text} search={searchChucNang} />
-        </div>
-      ),
+      width: 200,
+      render: (text, record) => <div className="text-start truncate">{text}</div>,
     },
     {
       title: 'Hiển thị',
@@ -482,7 +448,6 @@ const PhanQuyen = () => {
         const filteredChildrenVISIBLE = dataSource[record.key]?.children.filter((child) => child.VISIBLE === true)
         const filteredSubChildren = dataSource[record.key]?.children?.flatMap((child) => child.children) || []
         const filteredData = filteredSubChildren?.filter((obj) => obj !== undefined && obj !== null && obj.VISIBLE === true)
-        console.log(filteredChildrenVISIBLE)
         return (
           <Checkbox
             className="justify-center"
@@ -726,8 +691,8 @@ const PhanQuyen = () => {
   ]
 
   useEffect(() => {
-    const data = filteredChucNang
-      ? filteredChucNang
+    const data = dataChucNang
+      ? dataChucNang
           .filter((item) => item.NhomChucNang === '10')
           .map((item, index) => ({
             key: index,
@@ -748,7 +713,7 @@ const PhanQuyen = () => {
             ALLOW_RUN: item.ALLOW_RUN,
             ALLOW_EXCEL: item.ALLOW_EXCEL,
             ALLOW_TOOLBAR: item.ALLOW_TOOLBAR,
-            children: filteredChucNang
+            children: dataChucNang
               .filter((chir_data) => chir_data.NhomChucNang === item.MaChucNang)
               .map((chir_data) => ({
                 key: chir_data.MaChucNang,
@@ -770,8 +735,8 @@ const PhanQuyen = () => {
                 ALLOW_EXCEL: chir_data.ALLOW_EXCEL,
                 ALLOW_TOOLBAR: chir_data.ALLOW_TOOLBAR,
                 children:
-                  filteredChucNang.filter((chir_data_2) => chir_data_2.NhomChucNang === chir_data.MaChucNang).length > 0
-                    ? filteredChucNang
+                  dataChucNang.filter((chir_data_2) => chir_data_2.NhomChucNang === chir_data.MaChucNang).length > 0
+                    ? dataChucNang
                         .filter((chir_data_2) => chir_data_2.NhomChucNang === chir_data.MaChucNang)
                         .map((chir_data_2) => ({
                           key: chir_data_2.MaChucNang,
@@ -799,7 +764,7 @@ const PhanQuyen = () => {
       : []
 
     setDataSource(data)
-  }, [isHandle, tableLoadRight])
+  }, [tableLoadRight])
 
   return (
     <>
@@ -930,12 +895,7 @@ const PhanQuyen = () => {
                         },
                       }}
                       scrollToFirstRowOnChange
-                      bordered
-                      style={{
-                        whiteSpace: 'nowrap',
-                        fontSize: '24px',
-                        borderRadius: '10px',
-                      }}
+                      rowClassName={(record, index) => addRowClass(record, index)}
                       summary={() => {
                         return (
                           <Table.Summary fixed>
@@ -974,7 +934,7 @@ const PhanQuyen = () => {
                       }}
                       pagination={false}
                       scrollToFirstRowOnChange
-                      bordered
+                      rowClassName={(record, index) => addRowClass(record, index)}
                       style={{
                         whiteSpace: 'nowrap',
                         fontSize: '24px',
