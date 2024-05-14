@@ -16,7 +16,7 @@ import logo from '../../../../assets/VTS-iSale.ico'
 import HighlightedCell from '../../../hooks/HighlightedCell'
 import ActionButton from '../../../util/Button/ActionButton'
 import SimpleBackdrop from '../../../util/Loading/LoadingPage'
-import { RETOKEN, base64ToPDF } from '../../../../action/Actions'
+import { RETOKEN, addRowClass, base64ToPDF } from '../../../../action/Actions'
 import TextArea from 'antd/es/input/TextArea'
 
 const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, setTargetRow }) => {
@@ -2313,11 +2313,10 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                       )}
                     </div>
                   </div>
-                  <div className="p-2 rounded m-1 flex flex-col gap-2 border-2">
+                  <div className="p-2 rounded m-1 flex flex-col gap-2">
                     <Table
                       loading={tableLoad}
                       className="table_HH"
-                      bordered
                       dataSource={filteredHangHoa}
                       columns={title}
                       onRow={(record) => ({
@@ -2325,6 +2324,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                           handleChoose(record)
                         },
                       })}
+                      rowClassName={(record, index) => addRowClass(record, index)}
                       pagination={{
                         defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
                         showSizeChanger: true,
@@ -2333,6 +2333,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                           localStorage.setItem('pageSize', size)
                         },
                       }}
+                      // pagination={false}
                       size="small"
                       scroll={{
                         x: 1100,

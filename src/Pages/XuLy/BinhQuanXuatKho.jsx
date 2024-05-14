@@ -556,14 +556,15 @@ const BinhQuanXuatKho = () => {
                         x: 'max-content',
                         y: 300,
                       }}
-                      pagination={{
-                        defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                        showSizeChanger: true,
-                        pageSizeOptions: ['50', '100', '1000'],
-                        onShowSizeChange: (current, size) => {
-                          localStorage.setItem('pageSize', size)
-                        },
-                      }}
+                      // pagination={{
+                      //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                      //   showSizeChanger: true,
+                      //   pageSizeOptions: ['50', '100', '1000'],
+                      //   onShowSizeChange: (current, size) => {
+                      //     localStorage.setItem('pageSize', size)
+                      //   },
+                      // }}
+                      pagination={false}
                       rowClassName={(record, index) => addRowClass(record, index)}
                       onRow={(record) => ({
                         onDoubleClick: () => handleDoubleClick(record),
@@ -580,7 +581,7 @@ const BinhQuanXuatKho = () => {
                                   return (
                                     <Table.Summary.Cell index={index} key={index} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
                                       {column.dataIndex == 'STT' ? (
-                                        <Text className="text-center flex justify-center" strong>
+                                        <Text className="text-center flex justify-center text-white" strong>
                                           {dataGiaXuatKho?.length}
                                         </Text>
                                       ) : null}
@@ -605,14 +606,15 @@ const BinhQuanXuatKho = () => {
                         x: 'max-content',
                       }}
                       rowClassName={(record, index) => addRowClass(record, index)}
-                      pagination={{
-                        defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                        showSizeChanger: true,
-                        pageSizeOptions: ['50', '100', '1000'],
-                        onShowSizeChange: (current, size) => {
-                          localStorage.setItem('pageSize', size)
-                        },
-                      }}
+                      // pagination={{
+                      //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                      //   showSizeChanger: true,
+                      //   pageSizeOptions: ['50', '100', '1000'],
+                      //   onShowSizeChange: (current, size) => {
+                      //     localStorage.setItem('pageSize', size)
+                      //   },
+                      // }}
+                      pagination={false}
                       scrollToFirstRowOnChange
                       summary={() => {
                         return (
@@ -630,7 +632,7 @@ const BinhQuanXuatKho = () => {
                                       className="text-end font-bold  bg-[#f1f1f1]"
                                     >
                                       {column.dataIndex == 'STT' ? (
-                                        <Text className="text-center flex justify-center" strong>
+                                        <Text className="text-center flex justify-center text-white" strong>
                                           {dataBinhQuan?.length}
                                         </Text>
                                       ) : null}

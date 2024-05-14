@@ -818,7 +818,7 @@ const PhanQuyen = () => {
             <SimpleBackdrop />
           ) : (
             <>
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-0.5">
                 <div className="flex justify-between gap-2 relative">
                   <div className="flex gap-2 items-center">
                     <div className="flex items-center gap-2 mt-1">
@@ -890,14 +890,15 @@ const PhanQuyen = () => {
                         whiteSpace: 'nowrap',
                         fontSize: '24px',
                       }}
-                      pagination={{
-                        defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                        showSizeChanger: true,
-                        pageSizeOptions: ['50', '100', '1000'],
-                        onShowSizeChange: (current, size) => {
-                          localStorage.setItem('pageSize', size)
-                        },
-                      }}
+                      // pagination={{
+                      //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                      //   showSizeChanger: true,
+                      //   pageSizeOptions: ['50', '100', '1000'],
+                      //   onShowSizeChange: (current, size) => {
+                      //     localStorage.setItem('pageSize', size)
+                      //   },
+                      // }}
+                      pagination={false}
                       scrollToFirstRowOnChange
                       rowClassName={(record, index) => addRowClass(record, index)}
                       summary={() => {
@@ -912,7 +913,7 @@ const PhanQuyen = () => {
                                   return (
                                     <Table.Summary.Cell index={index} key={index} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
                                       {column.dataIndex == 'STT' ? (
-                                        <Text className="text-center flex justify-center" strong>
+                                        <Text className="text-center flex justify-center text-white" strong>
                                           {dataUser?.length}
                                         </Text>
                                       ) : null}

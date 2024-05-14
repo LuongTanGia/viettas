@@ -721,14 +721,15 @@ const SoQuy = () => {
                     className="setHeight"
                     columns={newTitlesChildren}
                     dataSource={filteredHangHoa?.map((record, index) => ({ ...record, key: index }))}
-                    pagination={{
-                      defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                      showSizeChanger: true,
-                      pageSizeOptions: ['50', '100', '1000'],
-                      onShowSizeChange: (current, size) => {
-                        localStorage.setItem('pageSize', size)
-                      },
-                    }}
+                    // pagination={{
+                    //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                    //   showSizeChanger: true,
+                    //   pageSizeOptions: ['50', '100', '1000'],
+                    //   onShowSizeChange: (current, size) => {
+                    //     localStorage.setItem('pageSize', size)
+                    //   },
+                    // }}
+                    pagination={false}
                     size="small"
                     scroll={{
                       x: 'max-content',
@@ -758,7 +759,7 @@ const SoQuy = () => {
                                       (() => {
                                         const total = Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0))
                                         return (
-                                          <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : ''}>
+                                          <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
                                             {total.toLocaleString('en-US', {
                                               minimumFractionDigits: dataThongSo.SOLESOTIEN,
                                               maximumFractionDigits: dataThongSo.SOLESOTIEN,
@@ -767,7 +768,7 @@ const SoQuy = () => {
                                         )
                                       })()
                                     ) : column.dataIndex == 'STT' ? (
-                                      <Text className="text-center flex justify-center" strong>
+                                      <Text className="text-center flex justify-center text-white" strong>
                                         {dataSoQuy?.length}
                                       </Text>
                                     ) : null}

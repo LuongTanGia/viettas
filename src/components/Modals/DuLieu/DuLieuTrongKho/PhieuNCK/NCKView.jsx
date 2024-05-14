@@ -235,14 +235,14 @@ const NCKView = ({ close, dataNCK }) => {
                                   >
                                     {isNumericColumn ? (
                                       column.dataIndex === 'SoLuong' ? (
-                                        <Text strong>
+                                        <Text strong className="text-white">
                                           {Number(dataNCKView?.DataDetails?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                             minimumFractionDigits: dataThongSo?.SOLESOLUONG,
                                             maximumFractionDigits: dataThongSo?.SOLESOLUONG,
                                           })}
                                         </Text>
                                       ) : (
-                                        <Text strong>
+                                        <Text strong className="text-white">
                                           {Number(dataNCKView?.DataDetails?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                             minimumFractionDigits: 0,
                                             maximumFractionDigits: 0,

@@ -683,14 +683,15 @@ const PhieuNhapChuyenKho = ({ isTableLoad, isTargetRow }) => {
                     className="table_DMHangHoa setHeight"
                     columns={newTitles}
                     dataSource={filteredHangHoa.map((record, index) => ({ ...record, key: index }))}
-                    pagination={{
-                      defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                      showSizeChanger: true,
-                      pageSizeOptions: ['50', '100', '1000'],
-                      onShowSizeChange: (current, size) => {
-                        localStorage.setItem('pageSize', size)
-                      },
-                    }}
+                    // pagination={{
+                    //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                    //   showSizeChanger: true,
+                    //   pageSizeOptions: ['50', '100', '1000'],
+                    //   onShowSizeChange: (current, size) => {
+                    //     localStorage.setItem('pageSize', size)
+                    //   },
+                    // }}
+                    pagination={false}
                     onRow={(record) => ({
                       onDoubleClick: () => {
                         handleView(record)
@@ -725,21 +726,21 @@ const PhieuNhapChuyenKho = ({ isTableLoad, isTargetRow }) => {
                                       (() => {
                                         const total = Number(filteredHangHoa?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0))
                                         return column.dataIndex === 'SoMatHang' ? (
-                                          <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : ''}>
+                                          <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
                                             {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                               minimumFractionDigits: 0,
                                               maximumFractionDigits: 0,
                                             })}
                                           </Text>
                                         ) : column.dataIndex === 'TongTriGiaKho' ? (
-                                          <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : ''}>
+                                          <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
                                             {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                               minimumFractionDigits: dataThongSo.SOLESOTIEN,
                                               maximumFractionDigits: dataThongSo.SOLESOTIEN,
                                             })}
                                           </Text>
                                         ) : (
-                                          <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : ''}>
+                                          <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
                                             {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                               minimumFractionDigits: dataThongSo.SOLESOLUONG,
                                               maximumFractionDigits: dataThongSo.SOLESOLUONG,
@@ -748,7 +749,7 @@ const PhieuNhapChuyenKho = ({ isTableLoad, isTargetRow }) => {
                                         )
                                       })()
                                     ) : column.dataIndex == 'STT' ? (
-                                      <Text className="text-center flex justify-center" strong>
+                                      <Text className="text-center flex justify-center text-white" strong>
                                         {dataNCK?.length}
                                       </Text>
                                     ) : null}
