@@ -70,7 +70,7 @@ const DieuChinhGBS = ({ close, namePage, dataThongSo, typePage, dataRecord, setH
             <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
             <label className="text-blue-700 font-semibold uppercase pb-1">Điều chỉnh giá - {namePage}</label>
           </div>
-          <div className="border w-full h-[60%] rounded-[4px]-sm text-sm">
+          <div className="border-1 border-gray-400 w-full h-[60%] rounded-[4px]-sm text-sm">
             <div className="flex flex-col gap-3 ">
               <div className="flex  gap-2 items-center my-[40px]">
                 <div className="flex items-center gap-1">

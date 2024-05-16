@@ -158,14 +158,14 @@ const CreateThietLap = ({ typePage, namePage, dataThongSo, dataHangHoa, dataNhom
           <label className="text-blue-700 font-semibold uppercase pb-1">Thêm - {namePage}</label>
         </div>
         <Spin spinning={isLoadingModal}>
-          <div className="border w-full h-[78%] rounded-[4px]-sm text-sm">
-            <div className="flex flex-col px-2 ">
-              <div className=" py-2 px-2 gap-2  grid grid-cols-1">
+          <div className="border-1 border-gray-400 w-full h-[78%] rounded-[4px]-sm text-sm">
+            <div className="flex flex-col px-2">
+              <div className=" py-2 px-2 gap-2 grid grid-cols-1">
                 <div className="flex flex-col gap-2">
                   {typePage === 'GBL' && (
                     <>
                       <div className="flex items-center gap-1">
-                        <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Hàng hóa</label>
+                        <label className="whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Hàng hóa</label>
                         <Select
                           className="w-full truncate"
                           status={errors.MaHang ? 'error' : ''}

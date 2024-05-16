@@ -89,7 +89,7 @@ const DeleteDuLieu = ({ actionType, typePage, dataRecord, setHightLight, loading
           <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
           <p className="text-blue-700 font-semibold uppercase">{`${actionType === 'delete' ? 'Xóa dữ liệu' : typePage === 'XTR' ? 'Lập phiếu thu' : 'Lập phiếu chi'}`}</p>
         </div>
-        <div className="flex flex-col gap-2 border-2 p-4  text-lg">
+        <div className="flex flex-col gap-2 border-1 border-gray-400 p-4  text-lg">
           <div className="flex gap-1">
             <p className="text-blue-700 ">Bạn có chắc muốn {`${actionType === 'delete' ? 'xóa' : typePage === 'XTR' ? 'lập phiếu thu' : 'lập phiếu chi'}`} </p>
             <Tooltip title={dataRecord?.SoChungTu} color="blue">

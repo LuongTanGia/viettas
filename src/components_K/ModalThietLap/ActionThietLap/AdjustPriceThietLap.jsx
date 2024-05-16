@@ -52,8 +52,6 @@ const AdjustPriceThietLap = ({ namePage, dataMaHang, dataThongSo, loading, close
         const { DataError, DataErrorDescription } = response.data
         if (DataError === 0) {
           toast.success(DataErrorDescription)
-          // const soChungTu = response.data.DataResults.map((obj) => `${obj.Ma}/${obj.HieuLuc}`)
-          // setHightLight(soChungTu)
           loading()
         } else if (DataError === -1 || DataError === -2 || DataError === -3) {
           toast.warning(DataErrorDescription)
@@ -70,8 +68,6 @@ const AdjustPriceThietLap = ({ namePage, dataMaHang, dataThongSo, loading, close
     }
   }
 
-  console.log(formAdjustPrice)
-
   return (
     <div className="p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
       <div className="w-[700px] h-[160px]">
@@ -79,7 +75,7 @@ const AdjustPriceThietLap = ({ namePage, dataMaHang, dataThongSo, loading, close
           <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
           <label className="text-blue-700 font-semibold uppercase pb-1">Điều chỉnh giá - {namePage}</label>
         </div>
-        <div className="border w-full h-[60%] rounded-[4px]-sm text-sm">
+        <div className="border-1 border-gray-400 w-full h-[60%] rounded-[4px]-sm text-sm">
           <div className="flex flex-col px-2 ">
             <div className=" py-3 px-2 gap-2  grid grid-cols-1">
               <div className="flex flex-col gap-3">

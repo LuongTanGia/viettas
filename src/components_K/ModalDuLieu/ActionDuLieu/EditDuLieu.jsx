@@ -6,7 +6,7 @@ import icons from '../../../untils/icons'
 import { RETOKEN } from '../../../action/Actions'
 import { DateField } from '@mui/x-date-pickers/DateField'
 import logo from '../../../assets/VTS-iSale.ico'
-import { Tooltip, Select, FloatButton, Spin } from 'antd'
+import { Tooltip, Select, FloatButton } from 'antd'
 import { toast } from 'react-toastify'
 import ActionButton from '../../../components/util/Button/ActionButton'
 import ModalHH from '../../ModalHH'
@@ -103,7 +103,6 @@ const EditDuLieu = ({ actionType, typePage, namePage, data, dataRecord, dataThon
         default:
           break
       }
-
       if (response) {
         const { DataError, DataErrorDescription, DataResults } = response.data
         if (DataError === 0) {
@@ -356,7 +355,7 @@ const EditDuLieu = ({ actionType, typePage, namePage, data, dataRecord, dataThon
             <label className="text-blue-700 font-semibold uppercase pb-1">sửa - {namePage}</label>
           </div>
 
-          <div className="  border-[1px] border-gray-700 w-full h-[89%] rounded-sm text-sm">
+          <div className="border-1 border-gray-400 w-full h-[89%] rounded-sm text-sm">
             <div className="flex  md:gap-0 lg:gap-1 pl-1 ">
               {/* thong tin phieu */}
               <div className="w-[62%] ">

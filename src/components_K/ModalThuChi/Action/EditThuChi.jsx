@@ -183,9 +183,9 @@ const EditThuChi = ({ actionType, typePage, namePage, data, dataRecord, dataThon
             <label className="text-blue-700 font-semibold uppercase pb-1"> Sửa - {namePage} </label>
           </div>
 
-          <div className="border w-full h-[86%] rounded-[4px]-sm text-sm">
+          <div className="border-1 border-gray-400 w-full h-[86%] rounded-[4px]-sm text-sm">
             <div className="flex flex-col px-2 ">
-              <div className=" py-2 px-2 gap-2  grid grid-cols-1">
+              <div className="py-2 px-2 gap-2 grid grid-cols-1">
                 <div className="flex flex-col gap-2 text-sm">
                   <div className="grid grid-cols-3  gap-2 items-center">
                     <div className="flex items-center gap-1 whitespace-nowrap">

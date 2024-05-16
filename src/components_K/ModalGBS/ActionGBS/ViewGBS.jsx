@@ -112,7 +112,7 @@ const ViewGBS = ({ namePage, data, dataThongTin, dataThongSo, isLoadingModal, lo
           <label className="text-blue-700 font-semibold uppercase pb-1">thông tin - {namePage}</label>
         </div>
         <Spin spinning={isLoadingModal}>
-          <div className="border-[1px] border-gray-700 w-full h-[90%] rounded-sm text-sm">
+          <div className="border-1 border-gray-400 w-full h-[90%] rounded-sm text-sm">
             <div className="flex  md:gap-0 lg:gap-1 pl-1">
               {/* thong tin phieu */}
               <div className="w-[62%]  pt-3">

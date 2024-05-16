@@ -92,7 +92,7 @@ const PrintThietLap = ({ namePage, dataNhomGia, dataHangHoa, close }) => {
           <label className="text-blue-700 font-semibold uppercase pb-1">In - {namePage} </label>
         </div>
 
-        <div className="border-2 my-1 ">
+        <div className="border-1 border-gray-400 my-1 ">
           <div className="p-4 flex flex-col gap-3 ">
             {/* DatePicker */}
             <div className=" flex  items-center gap-2 ">

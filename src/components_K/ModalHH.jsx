@@ -174,7 +174,7 @@ const ModalHH = ({ close, data, onRowCreate, dataThongSo, onChangLoading }) => {
         <div className=" w-[90vw] h-[600px] ">
           <div className="flex gap-2 items-center ">
             <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
-            <label className="text-blue-700 font-semibold uppercase pb-1">danh sách hàng hóa</label>
+            <label className="text-blue-700 font-semibold uppercase pb-1">Danh sách hàng hóa</label>
             <div>
               <BsSearch size={16} className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
             </div>

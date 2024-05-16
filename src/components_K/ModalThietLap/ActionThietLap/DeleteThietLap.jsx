@@ -48,7 +48,7 @@ const DeleteThietLap = ({ typePage, dataRecord, close, loading }) => {
           <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
           <p className="text-blue-700 font-semibold uppercase">Xóa dữ liệu</p>
         </div>
-        <div className="flex flex-col gap-2 border-2 p-4  text-lg">
+        <div className="flex flex-col gap-2 border-1 border-gray-400 p-4  text-lg">
           <div className="flex gap-1">
             <p className="text-blue-700 ">Bạn có chắc muốn xóa </p>
             <Tooltip title={typePage === 'GBL' ? dataRecord.MaHang : dataRecord.MaDoiTuong} color="blue">

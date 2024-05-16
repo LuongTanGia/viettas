@@ -6,7 +6,7 @@ import { toast } from 'react-toastify'
 import * as apis from '../../apis'
 import { ModalTL, PermissionView } from '../../components_K'
 import ActionButton from '../../components/util/Button/ActionButton'
-import { RETOKEN } from '../../action/Actions'
+import { RETOKEN, addRowClass } from '../../action/Actions'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
 import { exportToExcel } from '../../action/Actions'
 import { CloseSquareFilled } from '@ant-design/icons'
@@ -699,7 +699,7 @@ const BangGiaKH = () => {
                 //   },
                 // }}
                 pagination={false}
-                rowClassName={(record) => (`${record.MaDoiTuong}/${record.HieuLucTu}` === doneGKH ? 'highlighted-row' : '')}
+                rowClassName={(record, index) => (`${record.MaDoiTuong}/${record.HieuLucTu}` === doneGKH ? 'highlighted-row' : addRowClass(record, index))}
                 rowKey={(record) => `${record.MaDoiTuong}/${record.HieuLucTu}`}
                 onRow={(record) => ({
                   onClick: () => {

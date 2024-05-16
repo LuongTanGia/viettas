@@ -3,7 +3,6 @@
 import dayjs from 'dayjs'
 import ActionButton from '../../../components/util/Button/ActionButton'
 import logo from '../../../assets/VTS-iSale.ico'
-import { DateField } from '@mui/x-date-pickers'
 import { formatPrice } from '../../../action/Actions'
 import { Tooltip } from 'antd'
 
@@ -15,7 +14,7 @@ const ViewSDV = ({ namePage, dataRecord, dataThongSo, typePage, close }) => {
           <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
           <label className="text-blue-700 font-semibold uppercase pb-1">thông tin - {namePage}</label>
         </div>
-        <div className="border w-full h-[86%] rounded-[4px]-sm text-sm">
+        <div className="border-1 border-gray-400 w-full h-[86%] rounded-[4px]-sm text-sm">
           <div className="flex flex-col px-2 ">
             <div className=" py-2 px-2 gap-2  grid grid-cols-1">
               <div className="flex flex-col gap-2">

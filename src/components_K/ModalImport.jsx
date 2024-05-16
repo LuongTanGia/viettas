@@ -200,7 +200,7 @@ const ModalImport = ({ close, dataHangHoa, typePage, loading, onRowCreate }) => 
           </div>
 
           {/* <Spin spinning={isLoadingModal}> */}
-          <div className="border w-full h-[89%] rounded-sm text-sm">
+          <div className="border-1 border-gray-400 w-full h-[89%] rounded-sm text-sm">
             <div className="flex md:gap-0 lg:gap-1 pl-1 ">
               {/* thong tin phieu */}
               <div className="w-full">
