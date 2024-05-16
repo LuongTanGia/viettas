@@ -513,7 +513,7 @@ const NhomDoiTuong = () => {
                                     className="text-end font-bold  bg-[#f1f1f1]"
                                   >
                                     {column.dataIndex == 'STT' ? (
-                                      <Text className="text-center flex justify-center" strong>
+                                      <Text className="text-center flex justify-center text-white" strong>
                                         {dataNhomDoiTuong?.length}
                                       </Text>
                                     ) : null}

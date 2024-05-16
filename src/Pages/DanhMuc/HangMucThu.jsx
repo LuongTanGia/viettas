@@ -485,14 +485,15 @@ const HangMucThu = () => {
                       x: 'max-content',
                       y: 400,
                     }}
-                    pagination={{
-                      defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                      showSizeChanger: true,
-                      pageSizeOptions: ['50', '100', '1000'],
-                      onShowSizeChange: (current, size) => {
-                        localStorage.setItem('pageSize', size)
-                      },
-                    }}
+                    // pagination={{
+                    //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                    //   showSizeChanger: true,
+                    //   pageSizeOptions: ['50', '100', '1000'],
+                    //   onShowSizeChange: (current, size) => {
+                    //     localStorage.setItem('pageSize', size)
+                    //   },
+                    //     }}
+                    pagination={false}
                     style={{
                       whiteSpace: 'nowrap',
                       fontSize: '24px',
@@ -513,7 +514,7 @@ const HangMucThu = () => {
                                     className="text-end font-bold  bg-[#f1f1f1]"
                                   >
                                     {column.dataIndex == 'STT' ? (
-                                      <Text className="text-center flex justify-center" strong>
+                                      <Text className="text-center flex justify-center text-white" strong>
                                         {dataHangMucThu?.length}
                                       </Text>
                                     ) : null}

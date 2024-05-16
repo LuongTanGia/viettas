@@ -1451,14 +1451,15 @@ const NhapXuatTonKho = () => {
                     x: 'max-content',
                     y: 300,
                   }}
-                  pagination={{
-                    defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                    showSizeChanger: true,
-                    pageSizeOptions: ['50', '100', '1000'],
-                    onShowSizeChange: (current, size) => {
-                      localStorage.setItem('pageSize', size)
-                    },
-                  }}
+                  // pagination={{
+                  //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                  //   showSizeChanger: true,
+                  //   pageSizeOptions: ['50', '100', '1000'],
+                  //   onShowSizeChange: (current, size) => {
+                  //     localStorage.setItem('pageSize', size)
+                  //   },
+                  // }}
+                  pagination={false}
                   rowClassName={(record, index) => addRowClass(record, index)}
                   style={{
                     whiteSpace: 'nowrap',
@@ -1482,14 +1483,14 @@ const NhapXuatTonKho = () => {
                                   className="text-end font-bold  bg-[#f1f1f1]"
                                 >
                                   {isNumericColumn ? (
-                                    <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : ''}>
+                                    <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
                                       {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                         minimumFractionDigits: dataThongSo.SOLESOLUONG,
                                         maximumFractionDigits: dataThongSo.SOLESOLUONG,
                                       })}
                                     </Text>
                                   ) : column.dataIndex == 'STT' ? (
-                                    <Text className="text-center flex justify-center" strong>
+                                    <Text className="text-center flex justify-center text-white" strong>
                                       {dataNXT?.length}
                                     </Text>
                                   ) : null}

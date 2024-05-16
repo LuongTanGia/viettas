@@ -98,7 +98,6 @@ const QTTCreate = ({ close, loadingData, setTargetRow, dataQTT }) => {
       })
       return
     }
-    console.log(QTTForm)
     try {
       const response = await categoryAPI.ThemQuayTinhTien({ ...QTTForm, MaKho: QTTForm.MaKho }, TokenAccess)
       if (response.data.DataError == 0) {

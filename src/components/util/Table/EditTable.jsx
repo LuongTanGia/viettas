@@ -609,7 +609,7 @@ const EditTable = ({
           return pageData.length !== 0 && tableName !== 'Import' ? (
             <Table.Summary fixed="bottom">
               <Table.Summary.Row>
-                <Table.Summary.Cell index={0} key={`summary-cell-${0}`} className="text-center font-bold ">
+                <Table.Summary.Cell index={0} key={`summary-cell-${0}`} className="text-center font-bold text-white">
                   {dataSource?.length}
                 </Table.Summary.Cell>
 
@@ -632,35 +632,35 @@ const EditTable = ({
                           //   })}
                           // </Text>
                           column.dataIndex === 'DonGia' ? (
-                            <Text strong className="mr-6">
+                            <Text strong className="mr-6 text-white">
                               {Number(pageData.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                 minimumFractionDigits: ThongSo.SOLEDONGIA,
                                 maximumFractionDigits: ThongSo.SOLEDONGIA,
                               })}
                             </Text>
                           ) : ['TongCong', 'TienCKTT', 'ThanhTien', 'TienThue', 'TienHang'].includes(column.dataIndex) ? (
-                            <Text strong>
+                            <Text strong className="text-white">
                               {Number(pageData.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                 minimumFractionDigits: ThongSo.SOLESOTIEN,
                                 maximumFractionDigits: ThongSo.SOLESOTIEN,
                               })}
                             </Text>
                           ) : ['TyLeCKTT', 'TyLeThue'].includes(column.dataIndex) ? (
-                            <Text strong className="mr-6">
+                            <Text strong className="mr-6 text-white">
                               {Number(pageData.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                 minimumFractionDigits: ThongSo.SOLETYLE,
                                 maximumFractionDigits: ThongSo.SOLETYLE,
                               })}
                             </Text>
                           ) : ['SoLuong'].includes(column.dataIndex) ? (
-                            <Text strong className="mr-6">
+                            <Text strong className="mr-6 text-white">
                               {Number(pageData.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                 minimumFractionDigits: ThongSo.SOLESOLUONG,
                                 maximumFractionDigits: ThongSo.SOLESOLUONG,
                               })}
                             </Text>
                           ) : (
-                            <Text strong>
+                            <Text strong className="text-white">
                               {Number(pageData.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                 minimumFractionDigits: 0,
                                 maximumFractionDigits: 0,
@@ -684,7 +684,7 @@ const EditTable = ({
                   .filter((column) => column.render)
                   .map((column, index) => {
                     return (
-                      <Table.Summary.Cell key={`summary-cell-${index}`} className="text-end font-bold  bg-[#f1f1f1] ">
+                      <Table.Summary.Cell key={`summary-cell-${index}`} className="text-end font-bold bg-[#f1f1f1] text-white">
                         <p className="opacity-0">0</p>
                       </Table.Summary.Cell>
                     )

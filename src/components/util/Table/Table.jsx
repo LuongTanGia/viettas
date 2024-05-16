@@ -436,7 +436,7 @@ function Tables({ hidden, loadingSearch, param, columName, height, handleView, h
                                   (() => {
                                     const total = Number(data?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0))
                                     return column.dataIndex === 'TongSoLuong' ? (
-                                      <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : ''}>
+                                      <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
                                         {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                           minimumFractionDigits: ThongSo.SOLESOLUONG,
                                           maximumFractionDigits: ThongSo.SOLESOLUONG,
@@ -456,25 +456,25 @@ function Tables({ hidden, loadingSearch, param, columName, height, handleView, h
                                         'TongCong_CN',
                                         'TongCong',
                                       ].includes(column.dataIndex) ? (
-                                      <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : ''}>
+                                      <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
                                         {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                           minimumFractionDigits: ThongSo.SOLESOTIEN,
                                           maximumFractionDigits: ThongSo.SOLESOTIEN,
                                         })}
                                       </Text>
                                     ) : ['TyLeCKTT'].includes(column.dataIndex) ? (
-                                      <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : ''}>
+                                      <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
                                         {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                           minimumFractionDigits: ThongSo.SOLETYLE,
                                           maximumFractionDigits: ThongSo.SOLETYLE,
                                         })}
                                       </Text>
                                     ) : column.dataIndex === 'key' ? (
-                                      <Text strong className="flex justify-center">
+                                      <Text strong className="flex justify-center text-white">
                                         {data.length}
                                       </Text>
                                     ) : (
-                                      <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : ''}>
+                                      <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
                                         {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                           minimumFractionDigits: 0,
                                           maximumFractionDigits: 0,
@@ -483,7 +483,9 @@ function Tables({ hidden, loadingSearch, param, columName, height, handleView, h
                                     )
                                   })()
                                 ) : column.dataIndex === 'TTTienMat' ? (
-                                  <Text strong>{Object.values(data).filter((value) => value.TTTienMat).length}</Text>
+                                  <Text strong className="text-white">
+                                    {Object.values(data).filter((value) => value.TTTienMat).length}
+                                  </Text>
                                 ) : null}
                               </Table.Summary.Cell>
                             )
@@ -548,14 +550,15 @@ function Tables({ hidden, loadingSearch, param, columName, height, handleView, h
                   }
                 : null
             }
-            pagination={{
-              defaultPageSize: 50,
-              showSizeChanger: true,
-              pageSizeOptions: ['50', '100', '1000'],
-              onShowSizeChange: (current, size) => {
-                console.log(size, current, '???')
-              },
-            }}
+            // pagination={{
+            //   defaultPageSize: 50,
+            //   showSizeChanger: true,
+            //   pageSizeOptions: ['50', '100', '1000'],
+            //   onShowSizeChange: (current, size) => {
+            //     console.log(size, current, '???')
+            //   },
+            // }}
+            pagination={false}
           />
         )}
       </Form>

@@ -664,7 +664,7 @@ const DoiTuong = () => {
                       return (
                         <Table.Summary fixed="bottom">
                           <Table.Summary.Row>
-                            <Table.Summary.Cell className="bg-gray-100" index="0"></Table.Summary.Cell>
+                            <Table.Summary.Cell className="bg-gray-100 " index="0"></Table.Summary.Cell>
                             {newTitles
                               .filter((column) => column.render)
                               .map((column, index) => {
@@ -674,10 +674,10 @@ const DoiTuong = () => {
                                     index={index + 1}
                                     key={`summary-cell-${index + 1}`}
                                     align={isNumericColumn ? 'right' : 'left'}
-                                    className="text-end font-bold  bg-[#f1f1f1]"
+                                    className="text-end font-bold bg-[#f1f1f1]"
                                   >
                                     {column.dataIndex == 'STT' ? (
-                                      <Text className="text-center flex justify-center" strong>
+                                      <Text className="text-center flex justify-center text-white " strong>
                                         {dataDoiTuong?.length}
                                       </Text>
                                     ) : null}
