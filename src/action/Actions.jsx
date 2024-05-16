@@ -80,35 +80,38 @@ export const RETOKEN = async () => {
     console.error('Error adding user:', error)
   }
 }
-export const DANHSACHDULIEU = async (API, data) => {
+export const DANHSACHDULIEU = async (API, data, dispatch) => {
   try {
     const response = await axiosInstance.post(API, data)
     window.localStorage.setItem('tokenDuLieu', response.data.TKN)
     if (response.data.DataError === 0) {
+      dispatch(loginSlice.actions.getRemoteDB(response.data.DataResults))
+      window.localStorage.setItem('dataRemote', JSON.stringify(response.data.DataResults))
       return response.data
     } else {
       console.log('Error')
       // handleAPIError(response)
+      toast.error('Mật khẩu hoặc tài khoản không đúng')
     }
     return response.data
   } catch (error) {
     console.error('Error adding user:', error)
   }
 }
-export const LOGIN = async (API1, API2, TKN, RemoteDB, data, dispatch) => {
+export const LOGIN = async (API1, API2, TKN, RemoteDB, Makho, data) => {
   try {
     const response = await axiosInstance.post(API1, {
       TokenID: TKN,
       RemoteDB: RemoteDB,
+      MaKho: Makho,
     })
     if (response.data.DataError === 0) {
       window.localStorage.setItem('TKN', response.data.TKN)
       window.localStorage.setItem('RTKN', response.data.RTKN)
       window.localStorage.setItem('User', response.data.MappingUser)
-      dispatch(loginSlice.actions.login(response.data))
+
       return 1
     } else {
-      dispatch(loginSlice.actions.login([]))
       console.log('Error')
     }
     if (response.data.DataError !== 0) {

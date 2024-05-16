@@ -6,6 +6,7 @@ import Login from './components/Auth/Login'
 import Home from './components/Home/Home'
 import Test from './components/util/testComponents/Test'
 import { useState } from 'react'
+import RemoteDB from './components/Auth/RemoteDB'
 
 function App() {
   const [isSidebarVisible, setIsSidebarVisible] = useState(true)
@@ -42,6 +43,7 @@ function App() {
         <Route path="*" element={isLogged === 'true' ? <Home handleToggleSidebar={handleToggleSidebar} isSidebarVisible={isSidebarVisible} /> : <Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />
         <Route path="/test" element={<Test />} />
+        <Route path="/remotedb" element={<RemoteDB />} />
       </Routes>
       <ToastContainer
         position="top-right"
