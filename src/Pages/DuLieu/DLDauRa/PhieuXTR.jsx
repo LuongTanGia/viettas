@@ -906,21 +906,21 @@ const PhieuXTR = () => {
                                 >
                                   {isNumericColumn ? (
                                     column.dataIndex === 'TongTienHang' || column.dataIndex === 'TongTienThue' || column.dataIndex === 'TongThanhTien' ? (
-                                      <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : ''}>
+                                      <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
                                         {Number(filteredPXTR.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                           minimumFractionDigits: dataThongSo?.SOLESOTIEN,
                                           maximumFractionDigits: dataThongSo?.SOLESOTIEN,
                                         })}
                                       </Text>
                                     ) : column.dataIndex === 'TongSoLuong' ? (
-                                      <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : ''}>
+                                      <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
                                         {Number(filteredPXTR.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                           minimumFractionDigits: dataThongSo?.SOLESOLUONG,
                                           maximumFractionDigits: dataThongSo?.SOLESOLUONG,
                                         })}
                                       </Text>
                                     ) : (
-                                      <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : ''}>
+                                      <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
                                         {Number(filteredPXTR.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                           minimumFractionDigits: 0,
                                           maximumFractionDigits: 0,
@@ -928,11 +928,11 @@ const PhieuXTR = () => {
                                       </Text>
                                     )
                                   ) : column.dataIndex === 'TTTienMat' ? (
-                                    <Text className="text-center flex justify-center" strong>
+                                    <Text className="text-center flex justify-center text-white" strong>
                                       {Object.values(data).filter((value) => value.TTTienMat).length}
                                     </Text>
                                   ) : column.dataIndex === 'STT' ? (
-                                    <Text className="text-center flex justify-center" strong>
+                                    <Text className="text-center flex justify-center text-white" strong>
                                       {data.length}
                                     </Text>
                                   ) : null}

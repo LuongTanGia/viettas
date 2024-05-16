@@ -701,14 +701,14 @@ const PhieuSDR = () => {
                                     (() => {
                                       const total = Number(filteredSDR?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0))
                                       return column.dataIndex === 'SoTien' ? (
-                                        <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : ''}>
+                                        <Text strong className={total < 0 ? 'text-red-600 text-sm ' : total === 0 ? 'text-gray-300' : 'text-white'}>
                                           {Number(filteredSDR.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                             minimumFractionDigits: dataThongSo?.SOLESOTIEN,
                                             maximumFractionDigits: dataThongSo?.SOLESOTIEN,
                                           })}
                                         </Text>
                                       ) : (
-                                        <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : ''}>
+                                        <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
                                           {Number(filteredSDR.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                             minimumFractionDigits: 0,
                                             maximumFractionDigits: 0,
@@ -717,7 +717,7 @@ const PhieuSDR = () => {
                                       )
                                     })()
                                   ) : column.dataIndex === 'STT' ? (
-                                    <Text className="text-center flex justify-center" strong>
+                                    <Text className="text-center flex justify-center text-white" strong>
                                       {data.length}
                                     </Text>
                                   ) : null}
