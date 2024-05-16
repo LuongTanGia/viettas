@@ -3,7 +3,7 @@ import { Table, Tooltip, Input, Typography, Segmented, Radio } from 'antd'
 import { toast } from 'react-toastify'
 import * as apis from '../../apis'
 
-import { RETOKEN, formatCurrency, formatPrice } from '../../action/Actions'
+import { RETOKEN, addRowClass, formatCurrency, formatPrice } from '../../action/Actions'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
 import dayjs from 'dayjs'
 import { CloseSquareFilled } from '@ant-design/icons'
@@ -21,7 +21,7 @@ const DuLieuBLQ = () => {
   const [tableLoadChild, setTableLoadChild] = useState(false)
   const [tableLoadTT, setTableLoadTT] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
-  const [isShowSearch, setIsShowSearch] = useState(false)
+  const [isShowSearch] = useState(false)
   const [isShowOption, setIsShowOption] = useState(false)
   const [dataQuayCa, setDataQuayCa] = useState([])
   const [dataBLQ, setDataBLQ] = useState([])
@@ -1045,9 +1045,8 @@ const DuLieuBLQ = () => {
                       x: 'max-content',
                       y: 300,
                     }}
-                    bordered
                     pagination={false}
-                    rowClassName={(record) => (`${record.NgayCTu}/${record.NhanVien}` === firtQuayCa ? 'highlighted-row' : '')}
+                    rowClassName={(record, index) => (`${record.NgayCTu}/${record.NhanVien}` === firtQuayCa ? 'highlighted-row' : addRowClass(record, index))}
                     rowKey={(record) => `${record.NgayCTu}/${record.NhanVien}`}
                     onRow={(record) => ({
                       onDoubleClick: () => handleView(record),
@@ -1090,8 +1089,7 @@ const DuLieuBLQ = () => {
                             x: 'max-content',
                             y: 200,
                           }}
-                          bordered
-                          rowClassName={(record) => (record.SoChungTu === firtBLQ ? 'highlighted-row' : '')}
+                          rowClassName={(record, index) => (record.SoChungTu === firtBLQ ? 'highlighted-row' : addRowClass(record, index))}
                           rowKey={(record) => record.SoChungTu}
                           onRow={(record) => ({
                             onDoubleClick: () => handleViewThongTin(record),
@@ -1155,11 +1153,11 @@ const DuLieuBLQ = () => {
                           columns={columnChild2}
                           dataSource={filteredDuLieuTT}
                           size="small"
+                          rowClassName={(record, index) => addRowClass(record, index)}
                           scroll={{
                             x: 'max-content',
                             y: 200,
                           }}
-                          bordered
                           pagination={false}
                           summary={() => {
                             return !transformedDataSource.Details ? null : (

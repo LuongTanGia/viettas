@@ -53,11 +53,9 @@ const GBL = () => {
     CodeValue1To: null,
   })
 
-  // bỏ focus option thì hidden
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (optionContainerRef.current && !optionContainerRef.current.contains(event.target)) {
-        // Click ngoài phần tử chứa isShowOption, ẩn isShowOption
         setIsShowOption(false)
       }
     }
@@ -846,7 +844,7 @@ const GBL = () => {
                     </Tooltip>
                   </div>
                 </div>
-                <div className="flex flex gap-1 ">
+                <div className="flex gap-1 ">
                   <div className="w-[42px] text-end">Chọn</div>
                   <Select
                     mode="multiple"

@@ -813,7 +813,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                           <input
                             type="text"
                             value={formatThapPhan(Number(dataView?.TyLeQuyDoi), dataThongSo?.SOLETYLE) || ''}
-                            className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate"
+                            className="px-2 w-full resize-none rounded-[3px] border outline-none text-end text-sm truncate"
                             disabled
                           />
                         </div>
@@ -839,7 +839,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                             x: 500,
                             y: 100,
                           }}
-                          bordered
+                          rowClassName={(record, index) => addRowClass(record, index)}
                           pagination={false}
                         />
                       </div>
@@ -927,8 +927,8 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                             x: 'max-content',
                             y: 500,
                           }}
-                          bordered
                           pagination={false}
+                          rowClassName={(record, index) => addRowClass(record, index)}
                         />
                       </div>
                     )}

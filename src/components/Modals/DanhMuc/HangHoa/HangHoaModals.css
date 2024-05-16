@@ -21,7 +21,9 @@
 .barcodeList tr:hover {
   background-color: #77c2f8;
 }
-
+.barcodeList tr:nth-child(2n) {
+  background-color: #f0f8ff;
+}
 .barcodeList td {
   text-align: center;
   border: 1px solid #707070;
