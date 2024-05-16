@@ -49,23 +49,23 @@
   }
   .HH_HHCT {
     right: 20px;
-    top: 10px;
+    top: 5px;
   }
 }
 @media (width: 820px) {
   .HH_Barcode {
-    right: 30px;
-    top: 10px;
+    right: 25px;
+    top: 5px;
   }
   .HH_Barcode--LapRap {
-    right: 30px;
-    top: 10px;
+    right: 25px;
+    top: 5px;
   }
   .HH_HHCT {
-    right: 37px;
-    top: 10px;
+    right: 30px;
+    top: 5px;
   }
   .HH_HHCT_small {
-    right: 25px;
+    right: 20px;
   }
 }

@@ -8,7 +8,8 @@ import { MdDelete } from 'react-icons/md'
 import { IoMdAddCircle } from 'react-icons/io'
 import { CloseSquareFilled } from '@ant-design/icons'
 import { Checkbox, Select, Space, InputNumber, FloatButton, Input, Tooltip, Table } from 'antd'
-import moment from 'moment'
+// import moment from 'moment'
+import dayjs from 'dayjs'
 import './HangHoaModals.css'
 import { useSearch } from '../../../hooks/Search'
 import categoryAPI from '../../../../API/linkAPI'
@@ -880,10 +881,10 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                           </div>
                           <div className="flex items-center gap-1 whitespace-nowrap">
                             <label className=" text-sm">Lúc</label>
-                            <Tooltip title={moment(dataView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss')} color="blue">
+                            <Tooltip title={dayjs(dataView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss')} color="blue">
                               <input
                                 type="text"
-                                value={moment(dataView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
+                                value={dayjs(dataView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
                                 className="px-2 rounded-[3px] w-full resize-none border outline-none text-sm truncate text-center"
                                 disabled
                               />
@@ -905,9 +906,9 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                           </div>
                           <div className="flex items-center gap-1 whitespace-nowrap">
                             <label className=" text-sm">Lúc</label>
-                            <Tooltip title={dataView?.NgaySuaCuoi ? moment(dataView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : ''} color="blue">
+                            <Tooltip title={dataView?.NgaySuaCuoi ? dayjs(dataView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : ''} color="blue">
                               <input
-                                value={dataView?.NgaySuaCuoi ? moment(dataView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
+                                value={dataView?.NgaySuaCuoi ? dayjs(dataView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
                                 className="px-2 rounded-[3px] w-full resize-none border outline-none text-sm truncate text-center"
                                 disabled
                               />
@@ -1202,7 +1203,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                             />
                           </div>
                         </div>
-                        <div className="border-[0.125rem] ml-[95px] p-2 min-h-[8.5rem] rounded flex gap-2 items-start relative ">
+                        <div className="border-1 ml-[95px] min-h-[8.5rem] rounded flex gap-2 items-start relative">
                           <div className="w-full lg:max-h-[125px] md:max-h-[155px] overflow-y-auto">
                             <table className="barcodeList">
                               <thead>
@@ -1259,8 +1260,8 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                               type={isAddBarCode ? 'default' : 'primary'}
                               className={`${
                                 hangHoaForm?.Barcodes?.length > 2
-                                  ? 'HH_Barcode right-[35px] top-[10px]'
-                                  : 'HH_Barcode--LapRap md:right-[20px] md:top-[10px] lg:right-[30px] lg:top-[10px]'
+                                  ? 'HH_Barcode right-[30px] top-[5px]'
+                                  : 'HH_Barcode--LapRap md:right-[20px] md:top-[5px] lg:right-[25px] lg:top-[5px]'
                               } absolute bg-transparent w-[30px] h-[30px]`}
                               icon={<IoMdAddCircle />}
                               onClick={addBarcodeRow}
@@ -1329,7 +1330,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                         </div>
                       </div>
                       <div className="flex flex-col gap-2">
-                        <div className="border-[0.125rem] min-h-[33.5rem] p-2 rounded flex flex-col gap-2 relative">
+                        <div className="border-1 min-h-[33.5rem] rounded flex flex-col gap-2 relative">
                           <div className="w-full max-h-[515px] overflow-y-auto">
                             <table className="barcodeList">
                               <thead>
@@ -1408,8 +1409,8 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                               type={isAddHHCT || hangHoaForm.LapRap == false ? 'default' : 'primary'}
                               className={`${
                                 hangHoaForm?.HangHoa_CTs?.length > 11
-                                  ? 'HH_Barcode lg:right-[35px] lg:top-[10px] md:right-[35px] md:top-[10px]'
-                                  : 'HH_Barcode--LapRap md:right-[20px] md:top-[10px] lg:right-[35px] lg:top-[10px]'
+                                  ? 'HH_HHCT lg:right-[30px] lg:top-[5px] md:right-[40px] md:top-[5px]'
+                                  : 'HH_Barcode--LapRap md:right-[20px] md:top-[5px] lg:right-[30px] lg:top-[5px]'
                               } absolute bg-transparent w-[30px] h-[30px]`}
                               icon={<IoMdAddCircle />}
                               onClick={hangHoaForm.LapRap == true ? addHangHoaCT : null}
@@ -1680,8 +1681,8 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                             />
                           </div>
                         </div>
-                        <div className="border-[0.125rem] ml-[95px] p-2 min-h-[8.5rem] rounded flex gap-2 items-start relative">
-                          <div className="w-full lg:max-h-[125px] md:max-h-[155px] overflow-y-auto">
+                        <div className="border-1 ml-[95px] min-h-[8.5rem] rounded flex gap-2 items-start relative">
+                          <div className="w-full lg:max-h-[125px] md:max-h-[155px] overflow-y-auto ">
                             <table className="barcodeList">
                               <thead>
                                 <tr>
@@ -1737,10 +1738,15 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                           >
                             <FloatButton
                               type={isAddBarCodeEdit ? 'default' : 'primary'}
+                              // className={`${
+                              //   hangHoaForm?.Barcodes?.length > 2
+                              //     ? 'HH_Barcode right-[38px] top-[10px]'
+                              //     : 'HH_Barcode--LapRap md:right-[20px] md:top-[10px] lg:right-[35px] lg:top-[10px]'
+                              //     } absolute bg-transparent w-[30px] h-[30px]`}
                               className={`${
                                 hangHoaForm?.Barcodes?.length > 2
-                                  ? 'HH_Barcode right-[38px] top-[10px]'
-                                  : 'HH_Barcode--LapRap md:right-[20px] md:top-[10px] lg:right-[35px] lg:top-[10px]'
+                                  ? 'HH_Barcode right-[30px] top-[5px]'
+                                  : 'HH_Barcode--LapRap md:right-[20px] md:top-[5px] lg:right-[25px] lg:top-[5px]'
                               } absolute bg-transparent w-[30px] h-[30px]`}
                               icon={<IoMdAddCircle />}
                               onClick={addBarcodeRow}
@@ -1792,11 +1798,11 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                             </div>
                             <div className="flex items-center gap-1 whitespace-nowrap">
                               <label className=" text-sm">Lúc</label>
-                              <Tooltip title={moment(dataView?.NgayTao).format('DD/MM/YYYY HH:mm:ss ')} color="blue">
+                              <Tooltip title={dayjs(dataView?.NgayTao).format('DD/MM/YYYY HH:mm:ss ')} color="blue">
                                 <input
                                   type="text"
                                   className="px-2 w-full resize-none border rounded-[3px] outline-none text-sm truncate text-center"
-                                  value={moment(dataView?.NgayTao).format('DD/MM/YYYY HH:mm:ss ') || ''}
+                                  value={dayjs(dataView?.NgayTao).format('DD/MM/YYYY HH:mm:ss ') || ''}
                                   disabled
                                 />
                               </Tooltip>
@@ -1829,7 +1835,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                         </div>
                       </div>
                       <div className="flex flex-col gap-2">
-                        <div className="border-[0.125rem] min-h-[33.5rem] p-2 rounded flex flex-col gap-2 relative">
+                        <div className="border-1 min-h-[33.5rem] rounded flex flex-col gap-2 relative">
                           <div className="w-full max-h-[515px] overflow-y-auto ">
                             <table className="barcodeList">
                               <thead>
@@ -1907,10 +1913,15 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                           >
                             <FloatButton
                               type={isAddHHCT || hangHoaForm.LapRap == false ? 'default' : 'primary'}
+                              // className={`${
+                              //   hangHoaForm?.HangHoa_CTs?.length > 11
+                              //     ? 'HH_Barcode lg:right-[35px] lg:top-[10px] md:right-[35px] md:top-[10px]'
+                              //     : 'HH_Barcode--LapRap md:right-[20px] md:top-[10px] lg:right-[35px] lg:top-[10px]'
+                              //     } absolute bg-transparent w-[30px] h-[30px]`}
                               className={`${
                                 hangHoaForm?.HangHoa_CTs?.length > 11
-                                  ? 'HH_Barcode lg:right-[35px] lg:top-[10px] md:right-[35px] md:top-[10px]'
-                                  : 'HH_Barcode--LapRap md:right-[20px] md:top-[10px] lg:right-[35px] lg:top-[10px]'
+                                  ? 'HH_HHCT lg:right-[30px] lg:top-[5px] md:right-[40px] md:top-[5px]'
+                                  : 'HH_Barcode--LapRap md:right-[20px] md:top-[5px] lg:right-[30px] lg:top-[5px]'
                               } absolute bg-transparent w-[30px] h-[30px]`}
                               icon={<IoMdAddCircle />}
                               onClick={hangHoaForm.LapRap == true ? addHangHoaCT : null}
