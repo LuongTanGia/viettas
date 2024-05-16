@@ -690,14 +690,15 @@ const BangGiaKH = () => {
                   x: 1500,
                   y: 410,
                 }}
-                pagination={{
-                  defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                  showSizeChanger: true,
-                  pageSizeOptions: ['50', '100', '1000'],
-                  onShowSizeChange: (current, size) => {
-                    localStorage.setItem('pageSize', size)
-                  },
-                }}
+                // pagination={{
+                //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                //   showSizeChanger: true,
+                //   pageSizeOptions: ['50', '100', '1000'],
+                //   onShowSizeChange: (current, size) => {
+                //     localStorage.setItem('pageSize', size)
+                //   },
+                // }}
+                pagination={false}
                 rowClassName={(record) => (`${record.MaDoiTuong}/${record.HieuLucTu}` === doneGKH ? 'highlighted-row' : '')}
                 rowKey={(record) => `${record.MaDoiTuong}/${record.HieuLucTu}`}
                 onRow={(record) => ({
@@ -728,7 +729,7 @@ const BangGiaKH = () => {
                                 className="text-end font-bold  bg-[#f1f1f1]"
                               >
                                 {column.dataIndex === 'STT' ? (
-                                  <Text className="text-center flex justify-center bg-[#f1f1f1]" strong>
+                                  <Text className="text-center flex justify-center text-white" strong>
                                     {showFull === 'Hiện hành' ? data.length : dataFull.length}
                                   </Text>
                                 ) : null}

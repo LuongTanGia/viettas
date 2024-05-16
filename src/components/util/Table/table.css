@@ -190,7 +190,7 @@
 
 .BLQ_child2 .ant-table-container .ant-table-body {
   max-height: unset !important;
-  height: calc(100vh - 450px);
+  height: calc(100vh - 420px);
 }
 
 .TongHopPBL .ant-table {
@@ -201,7 +201,7 @@
 
 .TongHopPBL .ant-table-container .ant-table-body {
   max-height: unset !important;
-  height: calc(100vh - 310px);
+  height: calc(100vh - 275px);
 }
 
 .TongHopPBL_view .ant-table-container .ant-table-body {

@@ -624,7 +624,7 @@ const GBS = () => {
                                 index={index}
                                 key={`summary-cell-${index + 1}`}
                                 align={isNumericColumn ? 'right' : 'left'}
-                                className="text-end font-bold  bg-[#f1f1f1]"
+                                className="text-end font-bold bg-[#f1f1f1]"
                               >
                                 {column.dataIndex === 'STT' ? (
                                   <Text className="text-center flex justify-center text-white" strong>
