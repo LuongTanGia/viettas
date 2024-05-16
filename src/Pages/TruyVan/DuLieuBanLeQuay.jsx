@@ -1128,14 +1128,16 @@ const DuLieuBLQ = () => {
                                             column.dataIndex === 'TongTongCong' ||
                                             column.dataIndex === 'KhachTra' ||
                                             column.dataIndex === 'HoanLai' ? (
-                                            <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : ''}>
+                                            <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
                                               {Number(filteredDuLieuBLQ.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                                 minimumFractionDigits: dataThongSo?.SOLESOTIEN,
                                                 maximumFractionDigits: dataThongSo?.SOLESOTIEN,
                                               })}
                                             </Text>
                                           ) : column.dataIndex === 'SoChungTu' ? (
-                                            <Text strong>{Object.values(dataBLQ).filter((value) => value.SoChungTu).length}</Text>
+                                            <Text strong className="text-white">
+                                              {Object.values(dataBLQ).filter((value) => value.SoChungTu).length}
+                                            </Text>
                                           ) : null}
                                         </Table.Summary.Cell>
                                       )
@@ -1177,14 +1179,14 @@ const DuLieuBLQ = () => {
                                           className="text-end font-bold  bg-[#f1f1f1]"
                                         >
                                           {column.dataIndex === 'TyLeThue' ? (
-                                            <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : ''}>
+                                            <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
                                               {Number(filteredDuLieuTT.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                                 minimumFractionDigits: dataThongSo?.SOLETYLE,
                                                 maximumFractionDigits: dataThongSo?.SOLETYLE,
                                               })}
                                             </Text>
                                           ) : column.dataIndex === 'SoLuong' ? (
-                                            <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : ''}>
+                                            <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
                                               {Number(filteredDuLieuTT.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                                 minimumFractionDigits: dataThongSo?.SOLESOLUONG,
                                                 maximumFractionDigits: dataThongSo?.SOLESOLUONG,
@@ -1194,14 +1196,16 @@ const DuLieuBLQ = () => {
                                             column.dataIndex === 'TienHang' ||
                                             column.dataIndex === 'TienThue' ||
                                             column.dataIndex === 'ThanhTien' ? (
-                                            <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : ''}>
+                                            <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
                                               {Number(filteredDuLieuTT.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                                 minimumFractionDigits: dataThongSo?.SOLESOTIEN,
                                                 maximumFractionDigits: dataThongSo?.SOLESOTIEN,
                                               })}
                                             </Text>
                                           ) : column.dataIndex === 'MaHang' ? (
-                                            <Text strong>{Object.values(transformedDataSource?.Details).filter((value) => value.MaHang).length}</Text>
+                                            <Text strong className="text-white">
+                                              {Object.values(transformedDataSource?.Details).filter((value) => value.MaHang).length}
+                                            </Text>
                                           ) : null}
                                         </Table.Summary.Cell>
                                       )
@@ -1243,14 +1247,16 @@ const DuLieuBLQ = () => {
                                     return (
                                       <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
                                         {column.dataIndex === 'SoTien' ? (
-                                          <Text strong>
+                                          <Text strong className="text-white">
                                             {Number(filteredDuLieuBLQ.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                               minimumFractionDigits: dataThongSo?.SOLESOTIEN,
                                               maximumFractionDigits: dataThongSo?.SOLESOTIEN,
                                             })}
                                           </Text>
                                         ) : column.dataIndex === 'SoChungTu' ? (
-                                          <Text strong>{Object.values(dataBLQ).filter((value) => value.SoChungTu).length}</Text>
+                                          <Text strong className="text-white">
+                                            {Object.values(dataBLQ).filter((value) => value.SoChungTu).length}
+                                          </Text>
                                         ) : null}
                                       </Table.Summary.Cell>
                                     )

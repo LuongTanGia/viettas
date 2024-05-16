@@ -84,7 +84,6 @@ const GBS = () => {
       try {
         const tokenLogin = localStorage.getItem('TKN')
         if (actionType === 'create' || actionType === 'edit' || actionType === 'clone') {
-          console.log('get helper  KH,DT')
           const response = await apis.ListHelperHHGBS(tokenLogin)
           if (response.data && response.data.DataError === 0) {
             setDataHangHoa(response.data.DataResults)
@@ -594,14 +593,15 @@ const GBS = () => {
                   x: 1500,
                   y: 410,
                 }}
-                pagination={{
-                  defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                  showSizeChanger: true,
-                  pageSizeOptions: ['50', '100', '1000'],
-                  onShowSizeChange: (current, size) => {
-                    localStorage.setItem('pageSize', size)
-                  },
-                }}
+                // pagination={{
+                //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                //   showSizeChanger: true,
+                //   pageSizeOptions: ['50', '100', '1000'],
+                //   onShowSizeChange: (current, size) => {
+                //     localStorage.setItem('pageSize', size)
+                //   },
+                // }}
+                pagination={false}
                 rowClassName={(record, index) => (record.NhomGia === doneGKH ? 'highlighted-row' : addRowClass(record, index))}
                 rowKey={(record) => record.NhomGia}
                 onRow={(record) => ({
@@ -627,11 +627,11 @@ const GBS = () => {
                                 className="text-end font-bold  bg-[#f1f1f1]"
                               >
                                 {column.dataIndex === 'STT' ? (
-                                  <Text className="text-center flex justify-center" strong>
+                                  <Text className="text-center flex justify-center text-white" strong>
                                     {data.length}
                                   </Text>
                                 ) : column.dataIndex === 'TongMatHang' || column.dataIndex === 'TongDoiTuong' ? (
-                                  <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : ''}>
+                                  <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
                                     {Number(filteredGBS.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                       minimumFractionDigits: 0,
                                       maximumFractionDigits: 0,
