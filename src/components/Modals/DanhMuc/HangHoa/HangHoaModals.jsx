@@ -1822,11 +1822,11 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                             </div>
                             <div className="flex items-center gap-1 whitespace-nowrap">
                               <label className=" text-sm">Lúc</label>
-                              <Tooltip title={dataView?.NgaySuaCuoi ? moment(dataView?.NgaySuaCuoi).format('DD/MM/YYYY HH:mm:ss ') : ''} color="blue">
+                              <Tooltip title={dataView?.NgaySuaCuoi ? dayjs(dataView?.NgaySuaCuoi).format('DD/MM/YYYY HH:mm:ss ') : ''} color="blue">
                                 <input
                                   type="text"
                                   className="px-2 w-full resize-none border rounded-[3px] outline-none text-sm truncate text-center"
-                                  value={dataView?.NgaySuaCuoi ? moment(dataView?.NgaySuaCuoi).format('DD/MM/YYYY HH:mm:ss') : '' || ''}
+                                  value={dataView?.NgaySuaCuoi ? dayjs(dataView?.NgaySuaCuoi).format('DD/MM/YYYY HH:mm:ss') : '' || ''}
                                   disabled
                                 />
                               </Tooltip>
