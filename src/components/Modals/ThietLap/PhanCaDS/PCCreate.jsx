@@ -108,6 +108,10 @@ const PCCreate = ({ close, loadingData, setTargetRow }) => {
       })
       return
     }
+    if (dayjs(DateFrom).format('YYYY-MM-DD') === 'Invalid Date') {
+      toast.warning('Vui lòng chọn ngày', { autoClose: 2000 })
+      return
+    }
     let shouldSetError = false
     if (!PCForm?.SoQuay && !PCForm?.MaCa) {
       shouldSetError = false
@@ -151,7 +155,7 @@ const PCCreate = ({ close, loadingData, setTargetRow }) => {
                   <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
                   <p className="text-blue-700 font-semibold uppercase">Thêm - Phân Ca</p>
                 </div>
-                <div className="flex flex-col gap-2 border-2 px-3 py-2.5">
+                <div className="flex flex-col gap-2 border-1 border-gray-400 px-2 py-2.5">
                   <div className="flex items-center gap-1">
                     <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Người dùng</label>
                     <Select
@@ -273,7 +277,7 @@ const PCCreate = ({ close, loadingData, setTargetRow }) => {
                   </div>
                   <div className="grid grid-cols-1 mt-1 gap-2 px-2 py-2.5 rounded border-black-200 ml-[95px] relative border-[0.125rem]">
                     <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
-                    <div className="flex gap-1">
+                    <div className="flex gap-2 justify-center">
                       <div className="flex items-center gap-1.5 whitespace-nowrap">
                         <label className=" text-sm">Người tạo</label>
                         <input className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded-[3px] resize-none border outline-none text-sm truncate" disabled />
@@ -283,7 +287,7 @@ const PCCreate = ({ close, loadingData, setTargetRow }) => {
                         <input type="text" className="px-2 rounded-[3px] w-full resize-none border outline-none text-sm truncate" disabled />
                       </div>
                     </div>
-                    <div className="flex gap-1">
+                    <div className="flex gap-2 justify-center">
                       <div className="flex items-center gap-1 whitespace-nowrap">
                         <label className=" text-sm">Người sửa</label>
                         <input className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded-[3px]  resize-none border outline-none text-sm truncate" disabled />

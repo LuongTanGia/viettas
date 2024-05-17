@@ -544,25 +544,25 @@ const GoChotCa = () => {
                     x: 1500,
                     y: 410,
                   }}
-                  bordered
-                  pagination={{
-                    defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                    showSizeChanger: true,
-                    pageSizeOptions: ['50', '100', '1000'],
-                    onShowSizeChange: (current, size) => {
-                      localStorage.setItem('pageSize', size)
-                    },
-                  }}
+                  // pagination={{
+                  //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                  //   showSizeChanger: true,
+                  //   pageSizeOptions: ['50', '100', '1000'],
+                  //   onShowSizeChange: (current, size) => {
+                  //     localStorage.setItem('pageSize', size)
+                  //   },
+                  // }}
+                  pagination={false}
                   // Bảng Tổng
                   summary={() => {
                     return (
                       <Table.Summary fixed="bottom">
                         <Table.Summary.Row>
-                          {/* <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell> */}
                           {newColumnsHide
                             .filter((column) => column.render)
                             .map((column, index) => {
                               const isNumericColumn = typeof filteredGoChotCa[0]?.[column.dataIndex] === 'number'
+                              const total = Number(filteredGoChotCa?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0))
 
                               return (
                                 <Table.Summary.Cell
@@ -572,7 +572,7 @@ const GoChotCa = () => {
                                   className="text-end font-bold  bg-[#f1f1f1]"
                                 >
                                   {column.dataIndex === 'TyLeCKTT' ? (
-                                    <Text strong>
+                                    <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
                                       {Number(filteredGoChotCa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                         minimumFractionDigits: dataThongSo?.SOLETYLE,
                                         maximumFractionDigits: dataThongSo?.SOLETYLE,
@@ -586,14 +586,14 @@ const GoChotCa = () => {
                                     column.dataIndex === 'TongThu' ||
                                     column.dataIndex === 'TienPhaiNop' ||
                                     column.dataIndex === 'TongChi' ? (
-                                    <Text strong>
+                                    <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
                                       {Number(filteredGoChotCa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                         minimumFractionDigits: dataThongSo?.SOLESOTIEN,
                                         maximumFractionDigits: dataThongSo?.SOLESOTIEN,
                                       })}
                                     </Text>
                                   ) : column.dataIndex === 'STT' ? (
-                                    <Text className="text-center flex justify-center" strong>
+                                    <Text className="text-center flex justify-center text-white" strong>
                                       {data.length}
                                     </Text>
                                   ) : null}

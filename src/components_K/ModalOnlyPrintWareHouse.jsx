@@ -184,7 +184,7 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
             <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
             <label className="text-blue-700 font-semibold uppercase pb-1">In - {namePage} (Kho)</label>
           </div>
-          <div className="border-2 my-1">
+          <div className="border-1 border-gray-400 my-1">
             <div className="p-4">
               <div className="grid grid-cols-2 gap-3 ">
                 {/* DatePicker */}

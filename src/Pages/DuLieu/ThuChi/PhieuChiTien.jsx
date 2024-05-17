@@ -732,14 +732,15 @@ const PhieuChiTien = () => {
                     y: 410,
                   }}
                   bordered
-                  pagination={{
-                    defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                    showSizeChanger: true,
-                    pageSizeOptions: ['50', '100', '1000'],
-                    onShowSizeChange: (current, size) => {
-                      localStorage.setItem('pageSize', size)
-                    },
-                  }}
+                  // pagination={{
+                  //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                  //   showSizeChanger: true,
+                  //   pageSizeOptions: ['50', '100', '1000'],
+                  //   onShowSizeChange: (current, size) => {
+                  //     localStorage.setItem('pageSize', size)
+                  //   },
+                  // }}
+                  pagination={false}
                   rowKey={(record) => record.SoChungTu}
                   onRow={(record) => ({
                     onDoubleClick: () => {
@@ -765,23 +766,26 @@ const PhieuChiTien = () => {
                                   className="text-end font-bold  bg-[#f1f1f1]"
                                 >
                                   {isNumericColumn ? (
-                                    column.dataIndex === 'SoTien' ? (
-                                      <Text strong>
-                                        {Number(filteredPCT.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                          minimumFractionDigits: dataThongSo?.SOLESOTIEN,
-                                          maximumFractionDigits: dataThongSo?.SOLESOTIEN,
-                                        })}
-                                      </Text>
-                                    ) : (
-                                      <Text strong>
-                                        {Number(filteredPCT.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                          minimumFractionDigits: 0,
-                                          maximumFractionDigits: 0,
-                                        })}
-                                      </Text>
-                                    )
+                                    (() => {
+                                      const total = Number(filteredPCT?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0))
+                                      return column.dataIndex === 'SoTien' ? (
+                                        <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
+                                          {Number(filteredPCT.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                            minimumFractionDigits: dataThongSo?.SOLESOTIEN,
+                                            maximumFractionDigits: dataThongSo?.SOLESOTIEN,
+                                          })}
+                                        </Text>
+                                      ) : (
+                                        <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
+                                          {Number(filteredPCT.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                            minimumFractionDigits: 0,
+                                            maximumFractionDigits: 0,
+                                          })}
+                                        </Text>
+                                      )
+                                    })()
                                   ) : column.dataIndex === 'STT' ? (
-                                    <Text className="text-center flex justify-center" strong>
+                                    <Text className="text-center flex justify-center text-white" strong>
                                       {data.length}
                                     </Text>
                                   ) : null}

@@ -15,7 +15,7 @@ import { CloseSquareFilled } from '@ant-design/icons'
 import { MdEdit, MdDelete, MdPrint } from 'react-icons/md'
 import categoryAPI from '../../../../API/linkAPI'
 import { useSearch } from '../../../../components/hooks/Search'
-import { RETOKEN, exportToExcel } from '../../../../action/Actions'
+import { RETOKEN, addRowClass, exportToExcel } from '../../../../action/Actions'
 import HighlightedCell from '../../../../components/hooks/HighlightedCell'
 import ActionButton from '../../../../components/util/Button/ActionButton'
 import SimpleBackdrop from '../../../../components/util/Loading/LoadingPage'
@@ -287,7 +287,7 @@ const PhieuLapRap = () => {
       title: 'Số chứng từ',
       dataIndex: 'SoChungTu',
       key: 'SoChungTu',
-      width: 150,
+      width: 120,
       align: 'center',
       fixed: 'left',
       showSorterTooltip: false,
@@ -302,7 +302,7 @@ const PhieuLapRap = () => {
       title: 'Ngày chứng từ',
       dataIndex: 'NgayCTu',
       key: 'NgayCTu',
-      width: 150,
+      width: 130,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => {
@@ -320,24 +320,14 @@ const PhieuLapRap = () => {
       title: 'Thông tin kho',
       dataIndex: 'ThongTinKho',
       key: 'ThongTinKho',
-      width: 150,
+      width: 180,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => a.ThongTinKho.localeCompare(b.ThongTinKho),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchHangHoa} />
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -374,49 +364,33 @@ const PhieuLapRap = () => {
       key: 'GhiChu',
       showSorterTooltip: false,
       align: 'center',
+      width: 280,
       sorter: (a, b) => (a.GhiChu?.toString() || '').localeCompare(b.GhiChu?.toString() || ''),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-              justifyContent: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchHangHoa} />
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
       title: 'Người tạo',
       dataIndex: 'NguoiTao',
       key: 'NguoiTao',
+      width: 180,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => a.NguoiTao.localeCompare(b.NguoiTao),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-            }}
-          >
-            <HighlightedCell text={text} search={searchHangHoa} />
-          </div>
-        </Tooltip>
+        <div className="truncate">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
       title: 'Ngày tạo',
       dataIndex: 'NgayTao',
       key: 'NgayTao',
+      width: 150,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => {
@@ -434,29 +408,21 @@ const PhieuLapRap = () => {
       title: 'Người sửa',
       dataIndex: 'NguoiSuaCuoi',
       key: 'NguoiSuaCuoi',
+      width: 180,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => (a.NguoiSuaCuoi?.toString() || '').localeCompare(b.NguoiSuaCuoi?.toString() || ''),
-
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-            }}
-          >
-            <HighlightedCell text={text} search={searchHangHoa} />
-          </div>
-        </Tooltip>
+        <div className="truncate">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
       title: 'Sửa lúc',
       dataIndex: 'NgaySuaCuoi',
       key: 'NgaySuaCuoi',
+      width: 150,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => {
@@ -559,7 +525,7 @@ const PhieuLapRap = () => {
             <SimpleBackdrop />
           ) : (
             <>
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-0.5">
                 <div className="flex justify-between gap-2 relative">
                   <div className="flex gap-1">
                     <div className="flex items-center gap-2 py-0.5">
@@ -685,7 +651,7 @@ const PhieuLapRap = () => {
                         <DateField
                           onBlur={handleDateChange}
                           onKeyDown={handleKeyDown}
-                          className="max-w-[120px]"
+                          className="max-w-[130px] min-w-[130px]"
                           format="DD/MM/YYYY"
                           value={khoanNgayFrom}
                           sx={{
@@ -709,7 +675,7 @@ const PhieuLapRap = () => {
                         <DateField
                           onBlur={handleDateChange}
                           onKeyDown={handleKeyDown}
-                          className="max-w-[120px]"
+                          className="max-w-[130px] min-w-[130px]"
                           format="DD/MM/YYYY"
                           value={khoanNgayTo}
                           sx={{
@@ -747,27 +713,27 @@ const PhieuLapRap = () => {
                 <div id="my-table">
                   <Table
                     loading={tableLoad}
-                    bordered
                     className="setHeight"
                     columns={newTitles}
                     dataSource={filteredHangHoa.map((record, index) => ({ ...record, key: index }))}
-                    pagination={{
-                      defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                      showSizeChanger: true,
-                      pageSizeOptions: ['50', '100', '1000'],
-                      onShowSizeChange: (current, size) => {
-                        localStorage.setItem('pageSize', size)
-                      },
-                    }}
+                    // pagination={{
+                    //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                    //   showSizeChanger: true,
+                    //   pageSizeOptions: ['50', '100', '1000'],
+                    //   onShowSizeChange: (current, size) => {
+                    //     localStorage.setItem('pageSize', size)
+                    //   },
+                    // }}
+                    pagination={false}
                     onRow={(record) => ({
                       onDoubleClick: () => {
                         handleView(record)
                       },
                     })}
-                    rowClassName={(record) => (record.SoChungTu === targetRow ? 'highlighted-row' : '')}
+                    rowClassName={(record, index) => (record.SoChungTu === targetRow ? 'highlighted-row' : addRowClass(record, index))}
                     size="small"
                     scroll={{
-                      x: 2000,
+                      x: 'max-content',
                       y: 400,
                     }}
                     style={{
@@ -790,30 +756,33 @@ const PhieuLapRap = () => {
                                     className="text-end font-bold  bg-[#f1f1f1]"
                                   >
                                     {isNumericColumn ? (
-                                      column.dataIndex === 'SoMatHang' ? (
-                                        <Text strong>
-                                          {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                            minimumFractionDigits: 0,
-                                            maximumFractionDigits: 0,
-                                          })}
-                                        </Text>
-                                      ) : column.dataIndex === 'TongTriGiaKho' ? (
-                                        <Text strong>
-                                          {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                            minimumFractionDigits: dataThongSo.SOLESOTIEN,
-                                            maximumFractionDigits: dataThongSo.SOLESOTIEN,
-                                          })}
-                                        </Text>
-                                      ) : (
-                                        <Text strong>
-                                          {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                            minimumFractionDigits: dataThongSo.SOLESOLUONG,
-                                            maximumFractionDigits: dataThongSo.SOLESOLUONG,
-                                          })}
-                                        </Text>
-                                      )
+                                      (() => {
+                                        const total = Number(filteredHangHoa?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0))
+                                        return column.dataIndex === 'SoMatHang' ? (
+                                          <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
+                                            {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                              minimumFractionDigits: 0,
+                                              maximumFractionDigits: 0,
+                                            })}
+                                          </Text>
+                                        ) : column.dataIndex === 'TongTriGiaKho' ? (
+                                          <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
+                                            {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                              minimumFractionDigits: dataThongSo.SOLESOTIEN,
+                                              maximumFractionDigits: dataThongSo.SOLESOTIEN,
+                                            })}
+                                          </Text>
+                                        ) : (
+                                          <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
+                                            {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                              minimumFractionDigits: dataThongSo.SOLESOLUONG,
+                                              maximumFractionDigits: dataThongSo.SOLESOLUONG,
+                                            })}
+                                          </Text>
+                                        )
+                                      })()
                                     ) : column.dataIndex == 'STT' ? (
-                                      <Text className="text-center flex justify-center" strong>
+                                      <Text className="text-center flex justify-center text-white" strong>
                                         {dataPLR?.length}
                                       </Text>
                                     ) : null}

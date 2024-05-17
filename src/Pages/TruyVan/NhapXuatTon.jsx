@@ -12,7 +12,7 @@ import { TbEyeDollar, TbEye } from 'react-icons/tb'
 import { FaSearch, FaEyeSlash } from 'react-icons/fa'
 import categoryAPI from '../../API/linkAPI'
 import { useSearch } from '../../components/hooks/Search'
-import { RETOKEN, exportToExcel } from '../../action/Actions'
+import { RETOKEN, addRowClass, exportToExcel } from '../../action/Actions'
 import ActionButton from '../../components/util/Button/ActionButton'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
@@ -360,25 +360,9 @@ const NhapXuatTon = () => {
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'start',
-            }}
-          >
-            <div
-              style={{
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                cursor: 'pointer',
-              }}
-            >
-              <HighlightedCell text={text} search={searchHangHoa} />
-            </div>
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -823,7 +807,7 @@ const NhapXuatTon = () => {
       dataIndex: 'MaHang',
       key: 'MaHang',
       fixed: 'left',
-      width: 150,
+      width: 120,
       align: 'center',
       sorter: (a, b) => a.MaHang.localeCompare(b.MaHang),
       showSorterTooltip: false,
@@ -839,25 +823,9 @@ const NhapXuatTon = () => {
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'start',
-            }}
-          >
-            <div
-              style={{
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                cursor: 'pointer',
-              }}
-            >
-              <HighlightedCell text={text} search={searchHangHoa} />
-            </div>
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -865,36 +833,20 @@ const NhapXuatTon = () => {
       dataIndex: 'TenNhomHang',
       key: 'TenNhomHang',
       align: 'center',
-      width: 120,
+      width: 200,
       sorter: (a, b) => a.TenNhomHang.localeCompare(b.TenNhomHang),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'start',
-            }}
-          >
-            <div
-              style={{
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                cursor: 'pointer',
-              }}
-            >
-              <HighlightedCell text={text} search={searchHangHoa} />
-            </div>
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
       title: 'ĐVT',
       dataIndex: 'DVT',
       key: 'DVT',
-      width: 120,
+      width: 100,
       align: 'center',
       sorter: (a, b) => a.DVT.localeCompare(b.DVT),
       showSorterTooltip: false,
@@ -1563,7 +1515,7 @@ const NhapXuatTon = () => {
                           <label>Từ</label>
                           <DateField
                             // className="DatePicker_NXTKho  max-w-[120px]"
-                            className=" max-w-[115px]"
+                            className="max-w-[130px] min-w-[130px]"
                             onBlur={handleDateChange}
                             onKeyDown={handleKeyDown}
                             format="DD/MM/YYYY"
@@ -1587,7 +1539,7 @@ const NhapXuatTon = () => {
                         <div className=" flex items-center gap-1 ">
                           <label>Đến</label>
                           <DateField
-                            className=" max-w-[115px]"
+                            className="max-w-[130px] min-w-[130px]"
                             onBlur={handleDateChange}
                             onKeyDown={handleKeyDown}
                             format="DD/MM/YYYY"
@@ -1845,15 +1797,16 @@ const NhapXuatTon = () => {
                     x: 'max-content',
                     y: 300,
                   }}
-                  pagination={{
-                    defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                    showSizeChanger: true,
-                    pageSizeOptions: ['50', '100', '1000'],
-                    onShowSizeChange: (current, size) => {
-                      localStorage.setItem('pageSize', size)
-                    },
-                  }}
-                  bordered
+                  // pagination={{
+                  //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                  //   showSizeChanger: true,
+                  //   pageSizeOptions: ['50', '100', '1000'],
+                  //   onShowSizeChange: (current, size) => {
+                  //     localStorage.setItem('pageSize', size)
+                  //   },
+                  // }}
+                  pagination={false}
+                  rowClassName={(record, index) => addRowClass(record, index)}
                   style={{
                     whiteSpace: 'nowrap',
                     fontSize: '24px',
@@ -1867,6 +1820,7 @@ const NhapXuatTon = () => {
                             .filter((column) => column.render)
                             .map((column, index) => {
                               const isNumericColumn = typeof filteredHangHoa[0]?.[column.dataIndex] === 'number'
+                              const total = Number(filteredHangHoa?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0))
                               return (
                                 <Table.Summary.Cell
                                   index={index}
@@ -1875,14 +1829,14 @@ const NhapXuatTon = () => {
                                   className="text-end font-bold  bg-[#f1f1f1]"
                                 >
                                   {isNumericColumn ? (
-                                    <Text strong>
+                                    <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
                                       {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                         minimumFractionDigits: dataThongSo.SOLESOLUONG,
                                         maximumFractionDigits: dataThongSo.SOLESOLUONG,
                                       })}
                                     </Text>
                                   ) : column.dataIndex == 'STT' ? (
-                                    <Text className="text-center flex justify-center" strong>
+                                    <Text className="text-center flex justify-center text-white" strong>
                                       {dataNXT?.length}
                                     </Text>
                                   ) : null}

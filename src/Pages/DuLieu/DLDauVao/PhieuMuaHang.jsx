@@ -867,14 +867,15 @@ const PhieuMuaHang = () => {
                     y: 410,
                   }}
                   // bordered={true}
-                  pagination={{
-                    defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                    showSizeChanger: true,
-                    pageSizeOptions: ['50', '100', '1000'],
-                    onShowSizeChange: (current, size) => {
-                      localStorage.setItem('pageSize', size)
-                    },
-                  }}
+                  // pagination={{
+                  //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                  //   showSizeChanger: true,
+                  //   pageSizeOptions: ['50', '100', '1000'],
+                  //   onShowSizeChange: (current, size) => {
+                  //     localStorage.setItem('pageSize', size)
+                  //   },
+                  // }}
+                  pagination={false}
                   rowKey={(record) => record.SoChungTu}
                   onRow={(record) => ({
                     onDoubleClick: () => {
@@ -895,34 +896,37 @@ const PhieuMuaHang = () => {
                               return (
                                 <Table.Summary.Cell index={index} key={`summary-cell-${index + 1}`} align={isNumericColumn ? 'right' : 'left'}>
                                   {isNumericColumn ? (
-                                    column.dataIndex === 'TongTienHang' || column.dataIndex === 'TongTienThue' || column.dataIndex === 'TongThanhTien' ? (
-                                      <Text strong>
-                                        {Number(filteredPMH.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                          minimumFractionDigits: dataThongSo?.SOLESOTIEN,
-                                          maximumFractionDigits: dataThongSo?.SOLESOTIEN,
-                                        })}
-                                      </Text>
-                                    ) : column.dataIndex === 'TongSoLuong' ? (
-                                      <Text strong>
-                                        {Number(filteredPMH.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                          minimumFractionDigits: dataThongSo?.SOLESOLUONG,
-                                          maximumFractionDigits: dataThongSo?.SOLESOLUONG,
-                                        })}
-                                      </Text>
-                                    ) : (
-                                      <Text strong>
-                                        {Number(filteredPMH.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                          minimumFractionDigits: 0,
-                                          maximumFractionDigits: 0,
-                                        })}
-                                      </Text>
-                                    )
+                                    (() => {
+                                      const total = Number(filteredPMH?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0))
+                                      return column.dataIndex === 'TongTienHang' || column.dataIndex === 'TongTienThue' || column.dataIndex === 'TongThanhTien' ? (
+                                        <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : ''}>
+                                          {Number(filteredPMH.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                            minimumFractionDigits: dataThongSo?.SOLESOTIEN,
+                                            maximumFractionDigits: dataThongSo?.SOLESOTIEN,
+                                          })}
+                                        </Text>
+                                      ) : column.dataIndex === 'TongSoLuong' ? (
+                                        <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
+                                          {Number(filteredPMH.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                            minimumFractionDigits: dataThongSo?.SOLESOLUONG,
+                                            maximumFractionDigits: dataThongSo?.SOLESOLUONG,
+                                          })}
+                                        </Text>
+                                      ) : (
+                                        <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
+                                          {Number(filteredPMH.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                            minimumFractionDigits: 0,
+                                            maximumFractionDigits: 0,
+                                          })}
+                                        </Text>
+                                      )
+                                    })()
                                   ) : column.dataIndex === 'TTTienMat' ? (
-                                    <Text className="text-center flex justify-center" strong>
+                                    <Text className="text-center flex justify-center text-white" strong>
                                       {Object.values(data).filter((value) => value.TTTienMat).length}
                                     </Text>
                                   ) : column.dataIndex === 'STT' ? (
-                                    <Text className="text-center flex justify-center" strong>
+                                    <Text className="text-center flex justify-center text-white" strong>
                                       {data.length}
                                     </Text>
                                   ) : null}

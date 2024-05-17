@@ -27,12 +27,12 @@ const NCKDel = ({ close, dataNCK, loadingData, setTargetRow }) => {
   return (
     <div className=" fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
       <div className="px-3 py-[12px] absolute shadow-lg bg-white rounded-md flex flex-col  max-w-[700px]">
-        <div className="flex flex-col  gap-2">
+        <div className="flex flex-col gap-2">
           <div className="flex gap-2">
             <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
             <p className="text-blue-700 font-semibold uppercase">Xóa dữ liệu</p>
           </div>
-          <div className="flex flex-col gap-2 border-2 p-4  text-lg">
+          <div className="flex flex-col gap-2 border-gray-400 border-1 p-4 text-lg">
             <div className="flex gap-1">
               <p className="text-blue-700 whitespace-nowrap">Bạn có chắc muốn xóa </p>
               <Tooltip title={dataNCK?.SoChungTu} color="blue">

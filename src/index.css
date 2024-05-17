@@ -204,7 +204,14 @@ a.nav-link span {
   height: 25px;
   width: 170px;
 }
+.highlight-bottom-border > td {
+  border-bottom: solid 1px black !important;
+}
 
+.highlight-top-border > td {
+  border-top: solid 2px black !important;
+  border-bottom: solid 2px #6d9eff !important;
+}
 input[type='radio'] {
   width: 20px;
 }
@@ -273,11 +280,24 @@ input.ant-input.ant-input-sm {
   display: none;
 }
 
+.highlighted-row,
+.highlighted-row .ant-table-cell-fix-right,
+.highlighted-row .ant-table-cell-fix-left {
+  background-color: #d7f4fd;
+}
+
 /* custom input antd */
 
-/* .ant-table-fixed-right {
+/* .ant-table-cell-fix-left-last {
   background-color: #f1f1f1;
 } */
+/* .Spin_modal .ant-spin-container {
+  padding: 16px !important;
+} */
+
+.ant-table-fixed-right {
+  background-color: #f1f1f1;
+}
 
 /* custom DatePicker MUI*/
 

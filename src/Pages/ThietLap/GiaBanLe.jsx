@@ -6,7 +6,7 @@ import { toast } from 'react-toastify'
 import * as apis from '../../apis'
 import { ModalTL, PermissionView } from '../../components_K'
 import ActionButton from '../../components/util/Button/ActionButton'
-import { RETOKEN, formatCurrency } from '../../action/Actions'
+import { RETOKEN, addRowClass, formatCurrency } from '../../action/Actions'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
 import { exportToExcel } from '../../action/Actions'
 import { CloseSquareFilled } from '@ant-design/icons'
@@ -53,11 +53,9 @@ const GBL = () => {
     CodeValue1To: null,
   })
 
-  // bỏ focus option thì hidden
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (optionContainerRef.current && !optionContainerRef.current.contains(event.target)) {
-        // Click ngoài phần tử chứa isShowOption, ẩn isShowOption
         setIsShowOption(false)
       }
     }
@@ -846,7 +844,7 @@ const GBL = () => {
                     </Tooltip>
                   </div>
                 </div>
-                <div className="flex flex gap-1 ">
+                <div className="flex gap-1 ">
                   <div className="w-[42px] text-end">Chọn</div>
                   <Select
                     mode="multiple"
@@ -931,15 +929,16 @@ const GBL = () => {
                   x: 1500,
                   y: 300,
                 }}
-                pagination={{
-                  defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                  showSizeChanger: true,
-                  pageSizeOptions: ['50', '100', '1000'],
-                  onShowSizeChange: (current, size) => {
-                    localStorage.setItem('pageSize', size)
-                  },
-                }}
-                rowClassName={(record) => (`${record.MaHang}/${record.HieuLucTu}` === doneGBL ? 'highlighted-row' : '')}
+                // pagination={{
+                //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                //   showSizeChanger: true,
+                //   pageSizeOptions: ['50', '100', '1000'],
+                //   onShowSizeChange: (current, size) => {
+                //     localStorage.setItem('pageSize', size)
+                //   },
+                // }}
+                pagination={false}
+                rowClassName={(record, index) => (`${record.MaHang}/${record.HieuLucTu}` === doneGBL ? 'highlighted-row' : addRowClass(record, index))}
                 rowKey={(record) => `${record.MaHang}/${record.HieuLucTu}`}
                 onRow={(record) => ({
                   onClick: () => {
@@ -967,7 +966,7 @@ const GBL = () => {
                                 className="text-end font-bold  bg-[#f1f1f1] "
                               >
                                 {column.dataIndex === 'STT' ? (
-                                  <Text className="text-center flex justify-center " strong>
+                                  <Text className="text-center flex justify-center text-white" strong>
                                     {showFull === 'Hiện hành' ? data.length : dataFull.length}
                                   </Text>
                                 ) : null}

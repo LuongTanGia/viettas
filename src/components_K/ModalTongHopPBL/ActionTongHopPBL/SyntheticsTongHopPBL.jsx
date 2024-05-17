@@ -55,13 +55,13 @@ const SyntheticsTongHopPBL = ({ formSynthetics, loading, close }) => {
   return (
     <div className="px-4 pt-4 pb-2 absolute shadow-lg bg-white rounded-md flex flex-col ">
       <Spin spinning={isLoading} className="p-4">
-        <div className="h-[186px]  items-center  ">
+        <div className="h-[186px]  items-center">
           <label className="text-blue-700 font-semibold uppercase pb-1">Kiểm tra dữ liệu</label>
-          <div className="flex items-center  border p-3 gap-3">
+          <div className="flex items-center border-1 border-gray-400 p-3 gap-3">
             <div className="text-bg-main">
               <GoQuestion size={40}></GoQuestion>
             </div>
-            <div className="flex flex-col gap-1 ">
+            <div className="flex flex-col gap-1">
               <label>
                 Bạn đang tổng hợp nhanh <span className="font-bold">{formSynthetics.DanhSach.length}</span> dòng dữ liệu bán lẻ theo quầy :
               </label>

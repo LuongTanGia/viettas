@@ -13,7 +13,7 @@ import HUYPrint from './HUYPrint'
 import categoryAPI from '../../../../../API/linkAPI'
 import { useSearch } from '../../../../hooks/Search'
 import logo from '../../../../../assets/VTS-iSale.ico'
-import { RETOKEN } from '../../../../../action/Actions'
+import { RETOKEN, addRowClass } from '../../../../../action/Actions'
 import EditTable from '../../../../util/Table/EditTable'
 import ActionButton from '../../../../util/Button/ActionButton'
 import HighlightedCell from '../../../../hooks/HighlightedCell'
@@ -162,6 +162,10 @@ const HUYCreate = ({ close, loadingData, setTargetRow }) => {
     }
   }
   const handleCreate = async (isSave = true, isPrint = true) => {
+    if (dayjs(valueDate).format('YYYY-MM-DD') === 'Invalid Date') {
+      toast.warning('Vui lòng chọn ngày', { autoClose: 2000 })
+      return
+    }
     try {
       const newData = selectedRowData.map((item, index) => {
         return {
@@ -236,7 +240,7 @@ const HUYCreate = ({ close, loadingData, setTargetRow }) => {
       title: 'Mã hàng',
       dataIndex: 'MaHang',
       key: 'MaHang',
-      width: 150,
+      width: 120,
       showSorterTooltip: false,
       align: 'center',
       sorter: (a, b) => a.MaHang.localeCompare(b.MaHang),
@@ -256,14 +260,7 @@ const HUYCreate = ({ close, loadingData, setTargetRow }) => {
       sorter: (a, b) => a.NhomHang.localeCompare(b.NhomHang),
       render: (text) => (
         <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              textAlign: 'start',
-            }}
-          >
+          <div className="text-start whitespace-pre-wrap">
             <HighlightedCell text={text} search={searchHangHoa} />
           </div>
         </Tooltip>
@@ -279,15 +276,7 @@ const HUYCreate = ({ close, loadingData, setTargetRow }) => {
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       render: (text) => (
         <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-              textAlign: 'start',
-            }}
-          >
+          <div className="text-start whitespace-pre-wrap">
             <HighlightedCell text={text} search={searchHangHoa} />
           </div>
         </Tooltip>
@@ -299,7 +288,7 @@ const HUYCreate = ({ close, loadingData, setTargetRow }) => {
       key: 'DVT',
       showSorterTooltip: false,
       align: 'center',
-      width: 120,
+      width: 100,
       sorter: (a, b) => a.DVT.localeCompare(b.DVT),
       render: (text) => (
         <span className="flex justify-center">
@@ -312,7 +301,7 @@ const HUYCreate = ({ close, loadingData, setTargetRow }) => {
       dataIndex: 'LapRap',
       key: 'LapRap',
       align: 'center',
-      width: 120,
+      width: 100,
       showSorterTooltip: false,
       sorter: (a, b) => {
         const valueA = a.LapRap ? 1 : 0
@@ -326,7 +315,7 @@ const HUYCreate = ({ close, loadingData, setTargetRow }) => {
       dataIndex: 'TonKho',
       key: 'TonKho',
       align: 'center',
-      width: 120,
+      width: 100,
       showSorterTooltip: false,
       sorter: (a, b) => {
         const valueA = a.TonKho ? 1 : 0
@@ -365,12 +354,12 @@ const HUYCreate = ({ close, loadingData, setTargetRow }) => {
                   <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
                   <p className="text-blue-700 font-semibold uppercase">Thêm - Phiếu Xuất Kho Hủy</p>
                 </div>
-                <div className="flex flex-col gap-2 border-2 px-1 py-2.5">
-                  <div className="grid grid-cols-2 items-center gap-2">
+                <div className="flex flex-col gap-2 border-1 border-gray-400 py-2.5">
+                  <div className="grid grid-cols-2 items-center gap-2 px-1">
                     <div className="flex flex-col gap-3">
                       <div className="flex gap-2">
                         <div className="flex items-center gap-1">
-                          <label className="text-sm  required whitespace-nowrap min-w-[100px] flex justify-end">Số chứng từ</label>
+                          <label className="text-sm  required whitespace-nowrap min-w-[90px] flex justify-end">Số chứng từ</label>
                           <input
                             size="small"
                             disabled
@@ -381,7 +370,7 @@ const HUYCreate = ({ close, loadingData, setTargetRow }) => {
                         <div className="flex items-center gap-1">
                           <label className="required whitespace-nowrap text-sm"> Ngày</label>
                           <DateField
-                            className="DatePicker_HUYKho max-w-[115px]"
+                            className="max-w-[130px] min-w-[130px]"
                             format="DD/MM/YYYY"
                             value={valueDate}
                             onChange={(values) => {
@@ -401,7 +390,7 @@ const HUYCreate = ({ close, loadingData, setTargetRow }) => {
                         </div>
                       </div>
                       <div className="flex items-center gap-1">
-                        <label className="text-sm required whitespace-nowrap min-w-[100px] flex justify-end">Kho hàng</label>
+                        <label className="text-sm required whitespace-nowrap min-w-[90px] flex justify-end">Kho hàng</label>
                         <Select
                           style={{ width: '100%' }}
                           showSearch
@@ -427,20 +416,20 @@ const HUYCreate = ({ close, loadingData, setTargetRow }) => {
                     </div>
                     <div className="grid grid-cols-1 gap-2 px-2 border-2 py-2.5 border-black-200 rounded relative">
                       <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
-                      <div className="flex gap-1">
+                      <div className="flex gap-2 justify-center">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người tạo</label>
-                          <input className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm" disabled />
+                          <input className="px-2 2xl:w-[18rem] xl:w-[15rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm" disabled />
                         </div>
                         <div className="flex gap-1 items-center">
                           <label className="text-sm">Lúc</label>
                           <input className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm text-center" disabled />
                         </div>
                       </div>
-                      <div className="flex gap-1">
+                      <div className="flex gap-2 justify-center">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người sửa</label>
-                          <input className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm" disabled />
+                          <input className="px-2 2xl:w-[18rem] xl:w-[15rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm" disabled />
                         </div>
                         <div className="flex gap-1 items-center">
                           <label className="text-sm">Lúc</label>
@@ -449,8 +438,8 @@ const HUYCreate = ({ close, loadingData, setTargetRow }) => {
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <label className="whitespace-nowrap min-w-[100px] text-sm flex justify-end">Ghi chú</label>
+                  <div className="flex items-center gap-1 px-1">
+                    <label className="whitespace-nowrap min-w-[90px] text-sm flex justify-end">Ghi chú</label>
                     <Input
                       size="small"
                       value={HUYForm?.GhiChu || ''}
@@ -462,7 +451,7 @@ const HUYCreate = ({ close, loadingData, setTargetRow }) => {
                       }
                     />
                   </div>
-                  <div className="border-2 rounded relative">
+                  <div className="relative">
                     <EditTable
                       typeTable="create"
                       typeAction="create"
@@ -554,14 +543,13 @@ const HUYCreate = ({ close, loadingData, setTargetRow }) => {
                             value={searchHangHoa}
                             placeholder="Nhập ký tự bạn cần tìm"
                             onChange={handleSearch}
-                            className="px-2 py-0.5 w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[1px] hover:border-blue-500 outline-none text-sm  "
+                            className="px-2 py-0.5 w-[20rem] border-slate-200  resize-none rounded border-[1px] hover:border-blue-500 outline-none text-sm  "
                           />
                         )}
                       </div>
                     </div>
-                    <div className="border-2 p-2 rounded m-1 flex flex-col gap-2 max-h-[35rem]">
+                    <div className="p-2 rounded m-1 flex flex-col gap-2">
                       <Table
-                        bordered
                         className="table_HH"
                         columns={title}
                         dataSource={filteredHangHoa.map((record, index) => ({ ...record, key: index }))}
@@ -570,6 +558,7 @@ const HUYCreate = ({ close, loadingData, setTargetRow }) => {
                             handleChoose(record)
                           },
                         })}
+                        rowClassName={(record, index) => addRowClass(record, index)}
                         pagination={{
                           defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
                           showSizeChanger: true,
@@ -580,7 +569,7 @@ const HUYCreate = ({ close, loadingData, setTargetRow }) => {
                         }}
                         size="small"
                         scroll={{
-                          x: 1100,
+                          x: 'max-content',
                           y: 420,
                         }}
                         style={{

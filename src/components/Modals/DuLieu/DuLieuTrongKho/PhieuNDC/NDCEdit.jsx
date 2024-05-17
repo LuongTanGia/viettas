@@ -14,7 +14,7 @@ import NDCPrint from './NDCPrint'
 import { useSearch } from '../../../../hooks/Search'
 import categoryAPI from '../../../../../API/linkAPI'
 import logo from '../../../../../assets/VTS-iSale.ico'
-import { RETOKEN } from '../../../../../action/Actions'
+import { RETOKEN, addRowClass } from '../../../../../action/Actions'
 import ActionButton from '../../../../util/Button/ActionButton'
 import HighlightedCell from '../../../../hooks/HighlightedCell'
 import SimpleBackdrop from '../../../../util/Loading/LoadingPage'
@@ -185,6 +185,10 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
     setActionType('print')
   }
   const handleEdit = async (isPrint = true) => {
+    if (NDCForm.NgayCTu === 'Invalid Date') {
+      toast.warning('Vui lòng chọn ngày', { autoClose: 2000 })
+      return
+    }
     try {
       const newData = selectedRowData.map((item, index) => {
         return {
@@ -381,14 +385,14 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
                   <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
                   <p className="text-blue-700 font-semibold uppercase">Sửa - Phiếu Nhập Điều Chỉnh</p>
                 </div>
-                <div className="flex flex-col gap-2 border-2 px-1 py-2.5">
-                  <div className="grid grid-cols-2 items-center gap-2">
+                <div className="flex flex-col gap-2 border-gray-400 border-1 py-2.5">
+                  <div className="grid grid-cols-2 items-center gap-2 px-1">
                     <div className="flex flex-col gap-3">
                       <div className="flex gap-2">
                         <div className="flex items-center gap-1">
-                          <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Số chứng từ</label>
+                          <label className="required whitespace-nowrap min-w-[90px] flex justify-end text-sm">Số chứng từ</label>
                           <input
-                            className=" h-[24px] w-full  px-2 rounded-[3px] resize-none border-[1px] border-gray-300 outline-none truncate"
+                            className=" h-[24px] w-full  px-2 rounded-[3px] resize-none border-[1px] border-gray-300 outline-none truncate text-sm"
                             disabled
                             size="small"
                             value={NDCForm?.SoChungTu || ''}
@@ -397,7 +401,7 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
                         <div className="flex items-center gap-1">
                           <label className="required whitespace-nowrap text-sm"> Ngày</label>
                           <DateField
-                            className="DatePicker_NDCKho max-w-[115px]"
+                            className="max-w-[130px] min-w-[130px]"
                             format="DD/MM/YYYY"
                             value={dayjs(NDCForm?.NgayCTu) || ''}
                             onChange={(values) => {
@@ -418,7 +422,7 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
                         </div>
                       </div>
                       <div className="flex items-center gap-1">
-                        <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Kho hàng</label>
+                        <label className="required whitespace-nowrap min-w-[90px] flex justify-end text-sm">Kho hàng</label>
                         <Select
                           style={{ width: '100%' }}
                           type="text"
@@ -445,12 +449,12 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
                     </div>
                     <div className="grid grid-cols-1 gap-2 px-2 border-2 py-2.5 border-black-200 rounded relative">
                       <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
-                      <div className="flex gap-1">
+                      <div className="flex gap-2 justify-center">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người tạo</label>
                           <Tooltip title={dataNDCView?.NguoiTao} color="blue">
                             <input
-                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm overflow-ellipsis truncate"
+                              className="px-2 2xl:w-[18rem] xl:w-[15rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm overflow-ellipsis truncate"
                               value={dataNDCView?.NguoiTao || ''}
                               disabled
                             />
@@ -467,12 +471,12 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
                           </Tooltip>
                         </div>
                       </div>
-                      <div className="flex gap-1">
+                      <div className="flex gap-2 justify-center">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người sửa</label>
                           <Tooltip title={dataNDCView?.NguoiSuaCuoi} color="blue">
                             <input
-                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border  outline-none text-sm overflow-ellipsis truncate"
+                              className="px-2 2xl:w-[18rem] xl:w-[15rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border  outline-none text-sm overflow-ellipsis truncate"
                               value={dataNDCView?.NguoiSuaCuoi || ''}
                               disabled
                             />
@@ -491,8 +495,8 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <label className="whitespace-nowrap min-w-[100px] flex justify-end text-sm">Ghi chú</label>
+                  <div className="flex items-center gap-1 px-1">
+                    <label className="whitespace-nowrap min-w-[90px] flex justify-end text-sm">Ghi chú</label>
                     <Input
                       size="small"
                       className="w-full overflow-hidden whitespace-nowrap overflow-ellipsis"
@@ -505,7 +509,7 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
                       }
                     />
                   </div>
-                  <div className="border-2 rounded relative">
+                  <div className="relative">
                     <EditTable
                       tableName="PhieuNhapDieuChinh"
                       param={selectedRowData}
@@ -587,14 +591,13 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
                             value={searchHangHoa}
                             placeholder="Nhập ký tự bạn cần tìm"
                             onChange={handleSearch}
-                            className="px-2 py-0.5 w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[1px] hover:border-blue-500 outline-none text-sm  "
+                            className="px-2 py-0.5 w-[20rem] border-slate-200  resize-none rounded border-[1px] hover:border-blue-500 outline-none text-sm  "
                           />
                         )}
                       </div>
                     </div>
-                    <div className="border-2 p-2 rounded m-1 flex flex-col gap-2 max-h-[35rem]">
+                    <div className="p-2 rounded m-1 flex flex-col gap-2">
                       <Table
-                        bordered
                         className="table_HH"
                         columns={title}
                         dataSource={filteredHangHoa.map((record, index) => ({ ...record, key: index }))}
@@ -603,6 +606,7 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
                             handleChoose(record)
                           },
                         })}
+                        rowClassName={(record, index) => addRowClass(record, index)}
                         pagination={{
                           defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
                           showSizeChanger: true,

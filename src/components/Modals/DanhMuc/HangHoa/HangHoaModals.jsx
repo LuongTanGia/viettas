@@ -8,7 +8,8 @@ import { MdDelete } from 'react-icons/md'
 import { IoMdAddCircle } from 'react-icons/io'
 import { CloseSquareFilled } from '@ant-design/icons'
 import { Checkbox, Select, Space, InputNumber, FloatButton, Input, Tooltip, Table } from 'antd'
-import moment from 'moment'
+// import moment from 'moment'
+import dayjs from 'dayjs'
 import './HangHoaModals.css'
 import { useSearch } from '../../../hooks/Search'
 import categoryAPI from '../../../../API/linkAPI'
@@ -16,14 +17,14 @@ import logo from '../../../../assets/VTS-iSale.ico'
 import HighlightedCell from '../../../hooks/HighlightedCell'
 import ActionButton from '../../../util/Button/ActionButton'
 import SimpleBackdrop from '../../../util/Loading/LoadingPage'
-import { RETOKEN, base64ToPDF } from '../../../../action/Actions'
+import { RETOKEN, addRowClass, base64ToPDF } from '../../../../action/Actions'
 import TextArea from 'antd/es/input/TextArea'
 
 const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, setTargetRow }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
-  const [dataView, setDataView] = useState({})
+  const [dataView, setDataView] = useState()
   const [nhomHang, setNhomHang] = useState([])
   const [dVTKho, setDVTKho] = useState()
   const [dVTQuyDoi, setDVTQuyDoi] = useState()
@@ -100,8 +101,8 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
   }, [type, getMaHang, hangHoaForm.Barcodes])
 
   useEffect(() => {
-    const getListHelper = async () => {
-      if (type === 'create' || type === 'edit' || type === 'print' || type === 'status' || type === 'group') {
+    const getListHelperNH = async () => {
+      if (type == 'create' || type === 'edit' || type === 'print' || type === 'status' || type === 'group') {
         try {
           const dataNH = await categoryAPI.ListNhomHang(TokenAccess)
           if (dataNH.data.DataError == 0) {
@@ -114,7 +115,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
       }
     }
     if (!isLoading) {
-      getListHelper()
+      getListHelperNH()
     }
   }, [isLoading])
 
@@ -140,21 +141,21 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
 
   useEffect(() => {
     const getListHHCT = async () => {
-      try {
-        setTableLoad(true)
-        const dataHHCT = await categoryAPI.ListHangHoaCT(TokenAccess)
-        if (dataHHCT.data.DataError == 0) {
-          setHangHoaCT(dataHHCT.data.DataResults)
+      if (type === 'create' || type === 'edit') {
+        try {
+          setTableLoad(true)
+          const dataHHCT = await categoryAPI.ListHangHoaCT(TokenAccess)
+          if (dataHHCT.data.DataError == 0) {
+            setHangHoaCT(dataHHCT.data.DataResults)
+            setTableLoad(false)
+          }
+        } catch (error) {
+          console.log(error)
           setTableLoad(false)
         }
-      } catch (error) {
-        console.log(error)
-        setTableLoad(false)
       }
     }
-    if (type === 'create' || type === 'edit') {
-      getListHHCT()
-    }
+    getListHHCT()
   }, [searchHangHoa])
 
   useEffect(() => {
@@ -169,7 +170,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
         ...prev,
         HangHoa_CTs: selectedRowData,
       }))
-    } else if (type === 'edit' && JSON.stringify(dataView.HangHoa_CTs) !== JSON.stringify(selectedRowData)) {
+    } else if (type === 'edit' && JSON.stringify(dataView?.HangHoa_CTs) !== JSON.stringify(selectedRowData)) {
       setDataView((prev) => ({
         ...prev,
         HangHoa_CTs: selectedRowData,
@@ -221,8 +222,8 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
     }, 300)
   }
   // Table Barcode
-  const isAddBarCode = useMemo(() => hangHoaForm.Barcodes?.map((item) => item.MaVach).includes(''), [hangHoaForm.Barcodes])
-  const isAddBarCodeEdit = useMemo(() => dataView.Barcodes?.map((item) => item.MaVach).includes(''), [dataView.Barcodes])
+  const isAddBarCode = useMemo(() => hangHoaForm?.Barcodes?.map((item) => item.MaVach).includes(''), [hangHoaForm?.Barcodes])
+  const isAddBarCodeEdit = useMemo(() => dataView?.Barcodes?.map((item) => item.MaVach).includes(''), [dataView?.Barcodes])
   const handleBarcodeChange = (index, key, value) => {
     if (type == 'create') {
       const updatedBarcodes = [...hangHoaForm.Barcodes]
@@ -261,7 +262,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
         Barcodes: [...addBarcode, { MaVach: '', LastNum: 0, NA: false }],
       })
     } else {
-      if (dataView.Barcodes?.map((item) => item.MaVach).includes('')) return
+      if (dataView?.Barcodes?.map((item) => item.MaVach).includes('')) return
       setDataView({
         ...dataView,
         Barcodes: [...dataView.Barcodes, { MaVach: '', NA: false }],
@@ -314,11 +315,9 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
       }
     } else {
       const newDataList = [...dataView.HangHoa_CTs]
-      console.log(newDataList)
-      console.log(newValue)
+
       if (property == 'MaHangChiTiet') {
         const selectedHangHoa = HangHoaCT?.find((item) => item.MaHang === newValue)
-
         newDataList[index]['TenHangChiTiet'] = selectedHangHoa?.TenHang
         newDataList[index]['DVTChiTiet'] = selectedHangHoa?.DVT
       }
@@ -341,7 +340,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
       const addHHCT = Array.isArray(hangHoaForm.HangHoa_CTs) ? [...hangHoaForm.HangHoa_CTs] : []
       setSelectedRowData([...addHHCT, { MaHangChiTiet: '', TenHang: '', SoLuong: 1, DVT: '' }])
     } else {
-      const addHHCTEdit = Array.isArray(dataView.HangHoa_CTs) ? [...dataView.HangHoa_CTs] : []
+      const addHHCTEdit = Array.isArray(dataView?.HangHoa_CTs) ? [...dataView.HangHoa_CTs] : []
       setSelectedRowData([...addHHCTEdit, { MaHangChiTiet: '', TenHangChiTiet: '', SoLuong: 1, DVTChiTiet: '' }])
     }
   }
@@ -409,7 +408,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
       hangHoaForm?.DVTQuyDoi == '' ||
       !hangHoaForm?.MaVach?.trim() ||
       hangHoaForm?.MaVach?.length < 12 ||
-      (dataThongSo.SUDUNG_MAHANGHOATUDONG ? null : !hangHoaForm?.MaHang?.trim())
+      (dataThongSo?.SUDUNG_MAHANGHOATUDONG ? null : !hangHoaForm?.MaHang?.trim())
     ) {
       setErrors({
         Nhom: hangHoaForm?.Nhom?.trim() ? '' : 'Nhóm không được trống',
@@ -418,7 +417,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
         DVTQuyDoi: hangHoaForm?.DVTQuyDoi?.trim() ? '' : 'ĐVT Quy đổi không được trống',
         MaVach: hangHoaForm?.MaVach?.trim() ? '' : 'Mã vạch không được trống',
         ...(hangHoaForm?.MaVach?.length >= 12 ? '' : { MaVach: 'Mã vạch chưa phù hợp' }),
-        MaHang: dataThongSo.SUDUNG_MAHANGHOATUDONG ? null : hangHoaForm?.MaHang?.trim() ? '' : 'Mã hàng không được trống',
+        MaHang: dataThongSo?.SUDUNG_MAHANGHOATUDONG ? null : hangHoaForm?.MaHang?.trim() ? '' : 'Mã hàng không được trống',
       })
       return
     }
@@ -461,8 +460,8 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
           Ma: hangHoaForm.MaHang,
           Data: {
             ...hangHoaForm,
-            Barcodes: dataView.Barcodes,
-            HangHoa_CTs: dataView.HangHoa_CTs,
+            Barcodes: dataView?.Barcodes,
+            HangHoa_CTs: dataView?.HangHoa_CTs,
             MaVach: `${hangHoaForm.MaVach}${lastNumber13Main}`,
           },
         },
@@ -638,24 +637,16 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
       title: 'Tên hàng',
       dataIndex: 'TenHang',
       key: 'TenHang',
-      width: 250,
+      width: 150,
       showSorterTooltip: false,
       align: 'center',
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-              textAlign: 'start',
-            }}
-          >
+        <div className="text-start whitespace-pre-wrap">
+          <span>
             <HighlightedCell text={text} search={searchHangHoa} />
-          </div>
-        </Tooltip>
+          </span>
+        </div>
       ),
     },
     {
@@ -763,10 +754,9 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
       ),
     },
   ]
-  console.log(dataView)
   return (
     <>
-      {!isLoading ? (
+      {!isLoading && type !== 'delete' ? (
         <SimpleBackdrop />
       ) : (
         <>
@@ -781,7 +771,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                       <p className="text-blue-700 uppercase font-semibold">Thông Tin - Hàng Hóa</p>
                     </div>
                   </div>
-                  <div className={`border-2 py-2 px-2 gap-2 ${dataView?.HangHoa_CTs?.length > 0 ? 'grid grid-cols-2' : 'grid grid-cols-1'}`}>
+                  <div className={`border-1 border-gray-400 py-2 px-2 gap-2 ${dataView?.HangHoa_CTs?.length > 0 ? 'grid grid-cols-2' : 'grid grid-cols-1'}`}>
                     <div className="flex flex-col gap-2">
                       <div className="grid grid-cols-1 xl:grid-cols-2 gap-2 items-center">
                         <div className="flex items-center gap-1 whitespace-nowrap">
@@ -824,7 +814,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                           <input
                             type="text"
                             value={formatThapPhan(Number(dataView?.TyLeQuyDoi), dataThongSo?.SOLETYLE) || ''}
-                            className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate"
+                            className="px-2 w-full resize-none rounded-[3px] border outline-none text-end text-sm truncate"
                             disabled
                           />
                         </div>
@@ -839,22 +829,20 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                           <input type="text" value={dataView?.MaVach || ''} className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
                         </div>
                       </div>
-                      <div className="border ml-[95px] rounded flex flex-col items-end gap-2">
-                        <div className="w-full ml-[95px]">
-                          <Table
-                            loading={tableLoad}
-                            className="table_viewHH"
-                            columns={titleBarCodeView}
-                            dataSource={dataView?.Barcodes?.map((item, index) => ({ ...item, key: index }))}
-                            size="small"
-                            scroll={{
-                              x: 500,
-                              y: 100,
-                            }}
-                            bordered
-                            pagination={false}
-                          />
-                        </div>
+                      <div className="ml-[95px] rounded-[6px] border-[1px] border-gray-400">
+                        <Table
+                          loading={tableLoad}
+                          className="table_viewHH"
+                          columns={titleBarCodeView}
+                          dataSource={dataView?.Barcodes?.map((item, index) => ({ ...item, key: index }))}
+                          size="small"
+                          scroll={{
+                            x: 500,
+                            y: 100,
+                          }}
+                          rowClassName={(record, index) => addRowClass(record, index)}
+                          pagination={false}
+                        />
                       </div>
                       <div className="flex items-center gap-1">
                         <label className="whitespace-nowrap min-w-[90px] text-sm flex justify-end">Diễn giải hàng</label>
@@ -878,7 +866,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                       </div>
                       <div className="grid grid-cols-1 mt-1 gap-2 px-2 py-2.5 rounded-[3px] border-black-200 ml-[95px] relative border-[0.125rem]">
                         <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
-                        <div className="flex gap-1">
+                        <div className="flex gap-1 justify-center">
                           <div className="flex items-center gap-1.5 whitespace-nowrap">
                             <label className=" text-sm">Người tạo</label>
                             <Tooltip title={dataView?.NguoiTao} color="blue">
@@ -893,17 +881,17 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                           </div>
                           <div className="flex items-center gap-1 whitespace-nowrap">
                             <label className=" text-sm">Lúc</label>
-                            <Tooltip title={moment(dataView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss')} color="blue">
+                            <Tooltip title={dayjs(dataView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss')} color="blue">
                               <input
                                 type="text"
-                                value={moment(dataView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
+                                value={dayjs(dataView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
                                 className="px-2 rounded-[3px] w-full resize-none border outline-none text-sm truncate text-center"
                                 disabled
                               />
                             </Tooltip>
                           </div>
                         </div>
-                        <div className="flex gap-1">
+                        <div className="flex gap-1 justify-center">
                           <div className="flex items-center gap-1 whitespace-nowrap">
                             <label className=" text-sm">Người sửa</label>
                             <Tooltip title={dataView?.NguoiSuaCuoi} color="blue">
@@ -918,9 +906,9 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                           </div>
                           <div className="flex items-center gap-1 whitespace-nowrap">
                             <label className=" text-sm">Lúc</label>
-                            <Tooltip title={dataView?.NgaySuaCuoi ? moment(dataView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : ''} color="blue">
+                            <Tooltip title={dataView?.NgaySuaCuoi ? dayjs(dataView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : ''} color="blue">
                               <input
-                                value={dataView?.NgaySuaCuoi ? moment(dataView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
+                                value={dataView?.NgaySuaCuoi ? dayjs(dataView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
                                 className="px-2 rounded-[3px] w-full resize-none border outline-none text-sm truncate text-center"
                                 disabled
                               />
@@ -930,18 +918,18 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                       </div>
                     </div>
                     {dataView?.LapRap == true && (
-                      <div className="w-full border rounded">
+                      <div className="w-full border-[1px] rounded border-gray-400">
                         <Table
                           loading={tableLoad}
                           columns={titleHangHoa_CTsView}
                           dataSource={dataView?.HangHoa_CTs?.map((item, index) => ({ ...item, key: index }))}
                           size="small"
                           scroll={{
-                            x: 500,
+                            x: 'max-content',
                             y: 500,
                           }}
-                          bordered
                           pagination={false}
+                          rowClassName={(record, index) => addRowClass(record, index)}
                         />
                       </div>
                     )}
@@ -962,7 +950,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                     </div>
                   </div>
                   <div className="flex flex-col gap-2 p-1">
-                    <div className="border-2 py-2 px-1 gap-1 grid grid-cols-2  min-h-[35rem]">
+                    <div className="border-1 border-gray-400 py-2 px-1 gap-1 grid grid-cols-2  min-h-[35rem]">
                       <div className="flex flex-col gap-2 p-1 ">
                         <div className="grid grid-cols-1 xl:grid-cols-2 items-center gap-3">
                           <div className="flex items-center gap-1 relative">
@@ -1215,9 +1203,9 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                             />
                           </div>
                         </div>
-                        <div className="border-[0.125rem] ml-[95px] p-2 min-h-[8.5rem] rounded flex gap-2 items-start relative ">
+                        <div className="border-1 ml-[95px] min-h-[8.5rem] rounded flex gap-2 items-start relative">
                           <div className="w-full lg:max-h-[125px] md:max-h-[155px] overflow-y-auto">
-                            <table className="barcodeList  ">
+                            <table className="barcodeList">
                               <thead>
                                 <tr>
                                   <th className="whitespace-nowrap">Mã vạch</th>
@@ -1272,8 +1260,8 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                               type={isAddBarCode ? 'default' : 'primary'}
                               className={`${
                                 hangHoaForm?.Barcodes?.length > 2
-                                  ? 'HH_Barcode right-[35px] top-[10px]'
-                                  : 'HH_Barcode--LapRap md:right-[20px] md:top-[10px] lg:right-[30px] lg:top-[10px]'
+                                  ? 'HH_Barcode right-[30px] top-[5px]'
+                                  : 'HH_Barcode--LapRap md:right-[20px] md:top-[5px] lg:right-[25px] lg:top-[5px]'
                               } absolute bg-transparent w-[30px] h-[30px]`}
                               icon={<IoMdAddCircle />}
                               onClick={addBarcodeRow}
@@ -1311,7 +1299,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                         </div>
                         <div className="grid grid-cols-1 gap-2 mt-1 px-2 py-3 border-black-200 ml-[95px] relative rounded border-[0.125rem]">
                           <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
-                          <div className="flex gap-2">
+                          <div className="flex gap-2 justify-center">
                             <div className="flex items-center gap-1.5 whitespace-nowrap">
                               <label className=" text-sm">Người tạo</label>
                               <input
@@ -1325,7 +1313,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                               <input type="text" className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm" disabled />
                             </div>
                           </div>
-                          <div className="flex gap-2">
+                          <div className="flex gap-2 justify-center">
                             <div className="flex items-center gap-1.5 whitespace-nowrap">
                               <label className=" text-sm">Người sửa</label>
                               <input
@@ -1342,7 +1330,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                         </div>
                       </div>
                       <div className="flex flex-col gap-2">
-                        <div className="border-[0.125rem] min-h-[33.5rem] p-2 rounded flex flex-col gap-2 relative">
+                        <div className="border-1 min-h-[33.5rem] rounded flex flex-col gap-2 relative">
                           <div className="w-full max-h-[515px] overflow-y-auto">
                             <table className="barcodeList">
                               <thead>
@@ -1421,8 +1409,8 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                               type={isAddHHCT || hangHoaForm.LapRap == false ? 'default' : 'primary'}
                               className={`${
                                 hangHoaForm?.HangHoa_CTs?.length > 11
-                                  ? 'HH_Barcode lg:right-[35px] lg:top-[10px] md:right-[35px] md:top-[10px]'
-                                  : 'HH_Barcode--LapRap md:right-[20px] md:top-[10px] lg:right-[35px] lg:top-[10px]'
+                                  ? 'HH_HHCT lg:right-[30px] lg:top-[5px] md:right-[40px] md:top-[5px]'
+                                  : 'HH_Barcode--LapRap md:right-[20px] md:top-[5px] lg:right-[30px] lg:top-[5px]'
                               } absolute bg-transparent w-[30px] h-[30px]`}
                               icon={<IoMdAddCircle />}
                               onClick={hangHoaForm.LapRap == true ? addHangHoaCT : null}
@@ -1462,7 +1450,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                     <p className="text-blue-700 font-semibold uppercase">Sửa - Hàng hóa</p>
                   </div>
                   <div className="flex flex-col gap-2 p-1">
-                    <div className="border-2 py-2 px-2 gap-2 grid grid-cols-2">
+                    <div className="border-1 border-gray-400 py-2 px-2 gap-2 grid grid-cols-2">
                       <div className="flex flex-col gap-2">
                         <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 items-center justify-center">
                           <div className="flex items-center gap-1">
@@ -1474,7 +1462,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                               <Checkbox
                                 id="TonKho"
                                 checked={hangHoaForm.TonKho}
-                                disabled={(dataThongSo && dataThongSo.SUDUNG_TONKHOHANGLAPRAP === false) || dataView.DangSuDung === true}
+                                disabled={(dataThongSo && dataThongSo.SUDUNG_TONKHOHANGLAPRAP === false) || dataView?.DangSuDung === true}
                                 onChange={(e) =>
                                   setHangHoaForm({
                                     ...hangHoaForm,
@@ -1489,7 +1477,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                               <Checkbox
                                 id="LapRap"
                                 checked={hangHoaForm.LapRap}
-                                disabled={(dataThongSo && dataThongSo.SUDUNG_HANGLAPRAP === false) || dataView.DangSuDung === true}
+                                disabled={(dataThongSo && dataThongSo.SUDUNG_HANGLAPRAP === false) || dataView?.DangSuDung === true}
                                 onChange={(e) =>
                                   setHangHoaForm({
                                     ...hangHoaForm,
@@ -1604,7 +1592,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                               max={999999999999}
                               size="small"
                               style={{ width: '100%' }}
-                              disabled={(dataThongSo && dataThongSo.SUDUNG_QUYDOIDVT === false) || dataView.DangSuDung === true || hangHoaForm.LapRap == true}
+                              disabled={(dataThongSo && dataThongSo.SUDUNG_QUYDOIDVT === false) || dataView?.DangSuDung === true || hangHoaForm.LapRap == true}
                               formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                               parser={(value) => {
                                 const parsedValue = parseFloat(value.replace(/\$\s?|(,*)/g, ''))
@@ -1693,8 +1681,8 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                             />
                           </div>
                         </div>
-                        <div className="border-[0.125rem] ml-[95px] p-2 min-h-[8.5rem] rounded flex gap-2 items-start relative">
-                          <div className="w-full lg:max-h-[125px] md:max-h-[155px] overflow-y-auto">
+                        <div className="border-1 ml-[95px] min-h-[8.5rem] rounded flex gap-2 items-start relative">
+                          <div className="w-full lg:max-h-[125px] md:max-h-[155px] overflow-y-auto ">
                             <table className="barcodeList">
                               <thead>
                                 <tr>
@@ -1750,10 +1738,15 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                           >
                             <FloatButton
                               type={isAddBarCodeEdit ? 'default' : 'primary'}
+                              // className={`${
+                              //   hangHoaForm?.Barcodes?.length > 2
+                              //     ? 'HH_Barcode right-[38px] top-[10px]'
+                              //     : 'HH_Barcode--LapRap md:right-[20px] md:top-[10px] lg:right-[35px] lg:top-[10px]'
+                              //     } absolute bg-transparent w-[30px] h-[30px]`}
                               className={`${
                                 hangHoaForm?.Barcodes?.length > 2
-                                  ? 'HH_Barcode right-[38px] top-[10px]'
-                                  : 'HH_Barcode--LapRap md:right-[20px] md:top-[10px] lg:right-[35px] lg:top-[10px]'
+                                  ? 'HH_Barcode right-[30px] top-[5px]'
+                                  : 'HH_Barcode--LapRap md:right-[20px] md:top-[5px] lg:right-[25px] lg:top-[5px]'
                               } absolute bg-transparent w-[30px] h-[30px]`}
                               icon={<IoMdAddCircle />}
                               onClick={addBarcodeRow}
@@ -1791,7 +1784,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                         </div>
                         <div className="grid grid-cols-1 gap-2 px-2 py-3 border-black-200 ml-[95px] mt-1 relative rounded border-[0.125rem]">
                           <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
-                          <div className="flex gap-2">
+                          <div className="flex gap-2 justify-center">
                             <div className="flex items-center gap-1 whitespace-nowrap">
                               <label className=" text-sm">Người tạo</label>
                               <Tooltip title={dataView?.NguoiTao} color="blue">
@@ -1805,17 +1798,17 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                             </div>
                             <div className="flex items-center gap-1 whitespace-nowrap">
                               <label className=" text-sm">Lúc</label>
-                              <Tooltip title={moment(dataView?.NgayTao).format('DD/MM/YYYY HH:mm:ss ')} color="blue">
+                              <Tooltip title={dayjs(dataView?.NgayTao).format('DD/MM/YYYY HH:mm:ss ')} color="blue">
                                 <input
                                   type="text"
                                   className="px-2 w-full resize-none border rounded-[3px] outline-none text-sm truncate text-center"
-                                  value={moment(dataView?.NgayTao).format('DD/MM/YYYY HH:mm:ss ') || ''}
+                                  value={dayjs(dataView?.NgayTao).format('DD/MM/YYYY HH:mm:ss ') || ''}
                                   disabled
                                 />
                               </Tooltip>
                             </div>
                           </div>
-                          <div className="flex gap-2">
+                          <div className="flex gap-2 justify-center">
                             <div className="flex items-center gap-1 whitespace-nowrap" title={dataView.NguoiSuaCuoi}>
                               <label className=" text-sm">Người sửa</label>
                               <Tooltip title={dataView?.NguoiSuaCuoi} color="blue">
@@ -1829,11 +1822,11 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                             </div>
                             <div className="flex items-center gap-1 whitespace-nowrap">
                               <label className=" text-sm">Lúc</label>
-                              <Tooltip title={dataView?.NgaySuaCuoi ? moment(dataView?.NgaySuaCuoi).format('DD/MM/YYYY HH:mm:ss ') : ''} color="blue">
+                              <Tooltip title={dataView?.NgaySuaCuoi ? dayjs(dataView?.NgaySuaCuoi).format('DD/MM/YYYY HH:mm:ss ') : ''} color="blue">
                                 <input
                                   type="text"
                                   className="px-2 w-full resize-none border rounded-[3px] outline-none text-sm truncate text-center"
-                                  value={dataView?.NgaySuaCuoi ? moment(dataView?.NgaySuaCuoi).format('DD/MM/YYYY HH:mm:ss') : '' || ''}
+                                  value={dataView?.NgaySuaCuoi ? dayjs(dataView?.NgaySuaCuoi).format('DD/MM/YYYY HH:mm:ss') : '' || ''}
                                   disabled
                                 />
                               </Tooltip>
@@ -1842,7 +1835,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                         </div>
                       </div>
                       <div className="flex flex-col gap-2">
-                        <div className="border-[0.125rem] min-h-[33.5rem] p-2 rounded flex flex-col gap-2 relative">
+                        <div className="border-1 min-h-[33.5rem] rounded flex flex-col gap-2 relative">
                           <div className="w-full max-h-[515px] overflow-y-auto ">
                             <table className="barcodeList">
                               <thead>
@@ -1920,10 +1913,15 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                           >
                             <FloatButton
                               type={isAddHHCT || hangHoaForm.LapRap == false ? 'default' : 'primary'}
+                              // className={`${
+                              //   hangHoaForm?.HangHoa_CTs?.length > 11
+                              //     ? 'HH_Barcode lg:right-[35px] lg:top-[10px] md:right-[35px] md:top-[10px]'
+                              //     : 'HH_Barcode--LapRap md:right-[20px] md:top-[10px] lg:right-[35px] lg:top-[10px]'
+                              //     } absolute bg-transparent w-[30px] h-[30px]`}
                               className={`${
                                 hangHoaForm?.HangHoa_CTs?.length > 11
-                                  ? 'HH_Barcode lg:right-[35px] lg:top-[10px] md:right-[35px] md:top-[10px]'
-                                  : 'HH_Barcode--LapRap md:right-[20px] md:top-[10px] lg:right-[35px] lg:top-[10px]'
+                                  ? 'HH_HHCT lg:right-[30px] lg:top-[5px] md:right-[40px] md:top-[5px]'
+                                  : 'HH_Barcode--LapRap md:right-[20px] md:top-[5px] lg:right-[30px] lg:top-[5px]'
                               } absolute bg-transparent w-[30px] h-[30px]`}
                               icon={<IoMdAddCircle />}
                               onClick={hangHoaForm.LapRap == true ? addHangHoaCT : null}
@@ -1947,7 +1945,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                   </div>
                 </div>
               )}
-              {type == 'delete' && (
+              {type === 'delete' && (
                 <div className="flex flex-col gap-2 p-2">
                   <div className="flex items-center justify-between">
                     <div className="flex gap-2">
@@ -1955,9 +1953,9 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                       <p className="text-blue-700 font-semibold uppercase">Xóa dữ liệu</p>
                     </div>
                   </div>
-                  <div className="flex flex-col gap-2 border-2 p-4 text-lg">
+                  <div className="flex flex-col gap-2 border-1 border-gray-400 p-4 text-lg">
                     <div className="flex gap-1">
-                      <p className="text-blue-700 ">Bạn có chắc muốn xóa</p>
+                      <p className="text-blue-700 whitespace-nowrap">Bạn có chắc muốn xóa</p>
                       <p className="text-red-500 block truncate">{getMaHang?.TenHang}</p>
                       <p className="text-blue-700 ">?</p>
                     </div>
@@ -1986,7 +1984,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                     </div>
                   </div>
                   <div className="flex flex-col gap-2">
-                    <div className="flex items-center justify-center border-2 p-4 gap-2">
+                    <div className="flex items-center justify-center border-1 border-gray-400 p-4 gap-2">
                       <div className="required whitespace-nowrap">Trạng thái</div>
                       <Space wrap>
                         <Select
@@ -2042,7 +2040,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                     </div>
                   </div>
                   <div className="flex flex-col gap-2 ">
-                    <div className="flex gap-2 items-center border-2 p-4">
+                    <div className="flex gap-2 items-center border-1 border-gray-400 p-4">
                       <div className="required whitespace-nowrap">Chọn nhóm</div>
                       <Select
                         placeholder={errors?.GiaTriMoi ? errors?.GiaTriMoi : 'Chọn nhóm'}
@@ -2090,7 +2088,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                       <p className="text-blue-700 font-semibold uppercase">In Mã vạch - Hàng Hóa</p>
                     </div>
                   </div>
-                  <div className="flex flex-col gap-4 justify-center items-center border-2 p-4">
+                  <div className="flex flex-col gap-4 justify-center items-center border-1 border-gray-400 p-4">
                     <div className="grid grid-cols-2 gap-4 px-4 border-2 py-4 border-black-200 rounded-lg relative">
                       <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Theo Nhóm</p>
                       <div className="flex gap-1 items-center">
@@ -2121,7 +2119,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                         </Select>
                       </div>
                       <div className="flex gap-1 items-center">
-                        <div> Tới</div>
+                        <div>Tới</div>
                         <Select
                           allowClear
                           filterOption
@@ -2170,7 +2168,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                           {nhomHang?.map((item) => {
                             return (
                               <Select.Option key={item.Ma} value={item.Ma}>
-                                <p className="truncate">{item.ThongTinNhomHang}</p>
+                                {item.ThongTinNhomHang} <br />
                               </Select.Option>
                             )
                           })}
@@ -2203,7 +2201,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                           {getDataHangHoa?.map((item, index) => {
                             return (
                               <Select.Option key={index} value={item.MaHang} title={item.TenHang}>
-                                <p className="truncate">{item.MaHang}</p>
+                                {item.MaHang} <br />
                               </Select.Option>
                             )
                           })}
@@ -2262,9 +2260,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                           {getDataHangHoa?.map((item, index) => {
                             return (
                               <Select.Option key={index} value={item.MaHang}>
-                                <p className="truncate">
-                                  {item.MaHang}-{item.TenHang}
-                                </p>
+                                {item.MaHang}-{item.TenHang} <br />
                               </Select.Option>
                             )
                           })}
@@ -2328,11 +2324,10 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                       )}
                     </div>
                   </div>
-                  <div className="p-2 rounded m-1 flex flex-col gap-2 border-2">
+                  <div className="p-2 rounded m-1 flex flex-col gap-2">
                     <Table
                       loading={tableLoad}
                       className="table_HH"
-                      bordered
                       dataSource={filteredHangHoa}
                       columns={title}
                       onRow={(record) => ({
@@ -2340,6 +2335,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                           handleChoose(record)
                         },
                       })}
+                      rowClassName={(record, index) => addRowClass(record, index)}
                       pagination={{
                         defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
                         showSizeChanger: true,
@@ -2348,6 +2344,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                           localStorage.setItem('pageSize', size)
                         },
                       }}
+                      // pagination={false}
                       size="small"
                       scroll={{
                         x: 1100,
@@ -2372,9 +2369,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                   </div>
                 </div>
               </div>
-            ) : (
-              ''
-            )}
+            ) : null}
           </div>
         </>
       )}

@@ -136,12 +136,12 @@ const XSDXem = ({ close, dataXSD }) => {
                   <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
                   <p className="text-blue-700 font-semibold uppercase">Thông tin - Phiếu Xuất Kho Sử Dụng</p>
                 </div>
-                <div className="flex flex-col gap-2 border-2 px-1 py-2.5">
-                  <div className="grid grid-cols-2 items-center gap-2">
+                <div className="flex flex-col gap-2 border-1 border-gray-400 py-2.5">
+                  <div className="grid grid-cols-2 items-center gap-2 px-1">
                     <div className="flex flex-col gap-3">
                       <div className="flex gap-2">
                         <div className="flex items-center gap-1">
-                          <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Số chứng từ</label>
+                          <label className="required whitespace-nowrap min-w-[90px] flex justify-end text-sm">Số chứng từ</label>
                           <input type="text" value={dataXSDView?.SoChungTu || ''} className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
                         </div>
                         <div className="flex items-center gap-1">
@@ -155,7 +155,7 @@ const XSDXem = ({ close, dataXSD }) => {
                         </div>
                       </div>
                       <div className="flex items-center gap-1">
-                        <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Kho hàng</label>
+                        <label className="required whitespace-nowrap min-w-[90px] flex justify-end text-sm">Kho hàng</label>
                         <input
                           type="text"
                           value={`${dataXSDView?.MaKho} - ${dataXSDView?.TenKho}` || ''}
@@ -166,12 +166,12 @@ const XSDXem = ({ close, dataXSD }) => {
                     </div>
                     <div className="grid grid-cols-1 gap-2 border-2 px-2 py-2.5 border-black-200 rounded relative">
                       <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
-                      <div className="flex gap-1">
+                      <div className="flex gap-2 justify-center">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người tạo</label>
                           <Tooltip title={dataXSDView?.NguoiTao} color="blue">
                             <input
-                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm overflow-ellipsis truncate"
+                              className="px-2 2xl:w-[18rem] xl:w-[15rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm overflow-ellipsis truncate"
                               value={dataXSDView?.NguoiTao || ''}
                               disabled
                             />
@@ -188,12 +188,12 @@ const XSDXem = ({ close, dataXSD }) => {
                           </Tooltip>
                         </div>
                       </div>
-                      <div className="flex gap-1">
+                      <div className="flex gap-2 justify-center">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người sửa</label>
                           <Tooltip title={dataXSDView?.NguoiSuaCuoi} color="blue">
                             <input
-                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border  outline-none text-sm overflow-ellipsis truncate"
+                              className="px-2 2xl:w-[18rem] xl:w-[15rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border  outline-none text-sm overflow-ellipsis truncate"
                               value={dataXSDView?.NguoiSuaCuoi || ''}
                               disabled
                             />
@@ -212,64 +212,61 @@ const XSDXem = ({ close, dataXSD }) => {
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <label className="whitespace-nowrap min-w-[100px] flex justify-end text-sm">Ghi chú</label>
+                  <div className="flex items-center gap-1 px-1">
+                    <label className="whitespace-nowrap min-w-[90px] flex justify-end text-sm">Ghi chú</label>
                     <input type="text" value={dataXSDView?.GhiChu || ''} className="px-2 w-[70rem] rounded-[3px] resize-none border outline-none text-sm" disabled />
                   </div>
-                  <div className="border rounded">
-                    <Table
-                      className="table_view"
-                      columns={title}
-                      dataSource={dataXSDView?.DataDetails?.map((item, index) => ({ ...item, key: index }))}
-                      size="small"
-                      scroll={{
-                        x: 1000,
-                        y: 300,
-                      }}
-                      bordered
-                      pagination={false}
-                      summary={() => {
-                        return (
-                          <Table.Summary fixed="bottom">
-                            <Table.Summary.Row>
-                              {title
-                                .filter((column) => column.render)
-                                .map((column, index) => {
-                                  const isNumericColumn = typeof dataXSDView?.DataDetails[0]?.[column.dataIndex] === 'number'
+                  <Table
+                    className="table_view"
+                    columns={title}
+                    dataSource={dataXSDView?.DataDetails?.map((item, index) => ({ ...item, key: index }))}
+                    size="small"
+                    scroll={{
+                      x: 'max-content',
+                      y: 300,
+                    }}
+                    pagination={false}
+                    summary={() => {
+                      return (
+                        <Table.Summary fixed="bottom">
+                          <Table.Summary.Row>
+                            {title
+                              .filter((column) => column.render)
+                              .map((column, index) => {
+                                const isNumericColumn = typeof dataXSDView?.DataDetails[0]?.[column.dataIndex] === 'number'
 
-                                  return (
-                                    <Table.Summary.Cell
-                                      index={index}
-                                      key={`summary-cell-${index + 1}`}
-                                      align={isNumericColumn ? 'right' : 'left'}
-                                      className="text-end font-bold  bg-[#f1f1f1]"
-                                    >
-                                      {isNumericColumn ? (
-                                        column.dataIndex === 'SoLuong' ? (
-                                          <Text strong>
-                                            {Number(dataXSDView?.DataDetails?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                              minimumFractionDigits: dataThongSo?.SOLESOLUONG,
-                                              maximumFractionDigits: dataThongSo?.SOLESOLUONG,
-                                            })}
-                                          </Text>
-                                        ) : (
-                                          <Text strong>
-                                            {Number(dataXSDView?.DataDetails?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                              minimumFractionDigits: 0,
-                                              maximumFractionDigits: 0,
-                                            })}
-                                          </Text>
-                                        )
-                                      ) : null}
-                                    </Table.Summary.Cell>
-                                  )
-                                })}
-                            </Table.Summary.Row>
-                          </Table.Summary>
-                        )
-                      }}
-                    ></Table>
-                  </div>
+                                return (
+                                  <Table.Summary.Cell
+                                    index={index}
+                                    key={`summary-cell-${index + 1}`}
+                                    align={isNumericColumn ? 'right' : 'left'}
+                                    className="text-end font-bold  bg-[#f1f1f1]"
+                                  >
+                                    {isNumericColumn ? (
+                                      column.dataIndex === 'SoLuong' ? (
+                                        <Text strong>
+                                          {Number(dataXSDView?.DataDetails?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                            minimumFractionDigits: dataThongSo?.SOLESOLUONG,
+                                            maximumFractionDigits: dataThongSo?.SOLESOLUONG,
+                                          })}
+                                        </Text>
+                                      ) : (
+                                        <Text strong>
+                                          {Number(dataXSDView?.DataDetails?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                            minimumFractionDigits: 0,
+                                            maximumFractionDigits: 0,
+                                          })}
+                                        </Text>
+                                      )
+                                    ) : null}
+                                  </Table.Summary.Cell>
+                                )
+                              })}
+                          </Table.Summary.Row>
+                        </Table.Summary>
+                      )
+                    }}
+                  ></Table>
                 </div>
                 <div className="flex justify-between">
                   <ActionButton

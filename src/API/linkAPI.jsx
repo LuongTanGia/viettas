@@ -1208,7 +1208,7 @@ const categoryAPI = {
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     }
-    return axiosClient.post(url, { body }, { headers })
+    return axiosClient.post(url, body, { headers })
   },
   ListHelperPhanQuyen_NguoiDung(accessToken) {
     const url = '/settings/PhanQuyen/ListHelper_NguoiDung'

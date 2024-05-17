@@ -8,7 +8,7 @@ import { CgCloseO } from 'react-icons/cg'
 import { FaSearch } from 'react-icons/fa'
 import { CloseSquareFilled } from '@ant-design/icons'
 import { useSearch } from '../../components/hooks/Search'
-import { RETOKEN } from '../../action/Actions'
+import { RETOKEN, addRowClass } from '../../action/Actions'
 import categoryAPI from '../../API/linkAPI'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
@@ -22,7 +22,6 @@ const ThongKeQuyenHan = () => {
   const [isShowNotify, setIsShowNotify] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [tableLoadRight, setTableLoadRight] = useState(true)
-  const [isShowSearch, setIsShowSearch] = useState(false)
   const [dataCRUD, setDataCRUD] = useState()
 
   useEffect(() => {
@@ -66,13 +65,6 @@ const ThongKeQuyenHan = () => {
     getDataChucNang()
   }, [searchChucNang])
 
-  const handleSearch = (event) => {
-    let timerId
-    clearTimeout(timerId)
-    timerId = setTimeout(() => {
-      setSearchChucNang(event.target.value)
-    }, 300)
-  }
   const titlesChucNang = [
     {
       title: 'Tên chức năng',
@@ -308,27 +300,7 @@ const ThongKeQuyenHan = () => {
             <>
               <div className="flex flex-col gap-1">
                 <div className="flex justify-between gap-2 relative">
-                  <div className="flex gap-2 items-center">
-                    <div className="flex items-center gap-2 mt-1">
-                      <h1 className="text-xl font-black uppercase">Thống Kê Quyền Hạn</h1>
-                      <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
-                    </div>
-                    <div className="flex">
-                      {isShowSearch && (
-                        <div className={`flex transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
-                          <Input
-                            allowClear={{
-                              clearIcon: <CloseSquareFilled />,
-                            }}
-                            placeholder="Nhập ký tự bạn cần tìm"
-                            onBlur={handleSearch}
-                            onPressEnter={handleSearch}
-                            className="w-full"
-                          />
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                  <h1 className="text-xl font-black uppercase">Thống Kê Quyền Hạn</h1>
                 </div>
                 <div className="flex gap-2" id="my-table">
                   <div className="PhanQuyen">
@@ -342,9 +314,9 @@ const ThongKeQuyenHan = () => {
                         x: 'auto',
                         y: 500,
                       }}
+                      rowClassName={(record, index) => addRowClass(record, index)}
                       pagination={false}
                       scrollToFirstRowOnChange
-                      bordered
                       style={{
                         whiteSpace: 'nowrap',
                         fontSize: '24px',

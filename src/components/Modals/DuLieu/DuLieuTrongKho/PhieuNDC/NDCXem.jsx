@@ -67,7 +67,7 @@ const NDCXem = ({ close, dataNDC }) => {
       title: 'Mã hàng',
       dataIndex: 'MaHang',
       key: 'MaHang',
-      width: 150,
+      width: 120,
       showSorterTooltip: false,
       align: 'center',
       sorter: (a, b) => a.MaHang.localeCompare(b.MaHang),
@@ -83,17 +83,7 @@ const NDCXem = ({ close, dataNDC }) => {
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       render: (text) => (
         <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-              textAlign: 'start',
-            }}
-          >
-            {text}
-          </div>
+          <div className="text-start whitespace-pre-wrap">{text}</div>
         </Tooltip>
       ),
     },
@@ -103,7 +93,7 @@ const NDCXem = ({ close, dataNDC }) => {
       key: 'DVT',
       showSorterTooltip: false,
       align: 'center',
-      width: 120,
+      width: 100,
       sorter: (a, b) => a.DVT.localeCompare(b.DVT),
       render: (text) => <span className="flex justify-center"> {text}</span>,
     },
@@ -136,12 +126,12 @@ const NDCXem = ({ close, dataNDC }) => {
                   <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
                   <p className="text-blue-700 font-semibold uppercase">Thông tin - Phiếu Nhập Điều Chỉnh</p>
                 </div>
-                <div className="flex flex-col gap-2 border-2 px-1 py-2.5">
-                  <div className="grid grid-cols-2 items-center gap-2">
+                <div className="flex flex-col gap-2 border-gray-400 border-1 py-2.5">
+                  <div className="grid grid-cols-2 items-center gap-2 px-1">
                     <div className="flex flex-col gap-3">
                       <div className="flex gap-2">
-                        <div className="flex items-center gap-1">
-                          <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Số chứng từ</label>
+                        <div className="flex items-center gap-1 ">
+                          <label className="required whitespace-nowrap min-w-[85px] flex justify-end text-sm">Số chứng từ</label>
                           <input type="text" value={dataNDCView?.SoChungTu || ''} className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
                         </div>
                         <div className="flex items-center gap-1">
@@ -155,7 +145,7 @@ const NDCXem = ({ close, dataNDC }) => {
                         </div>
                       </div>
                       <div className="flex items-center gap-1">
-                        <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Kho hàng</label>
+                        <label className="required whitespace-nowrap min-w-[85px] flex justify-end text-sm">Kho hàng</label>
                         <input
                           type="text"
                           value={`${dataNDCView?.MaKho} - ${dataNDCView?.TenKho}` || ''}
@@ -166,12 +156,12 @@ const NDCXem = ({ close, dataNDC }) => {
                     </div>
                     <div className="grid grid-cols-1 gap-2 border-2 px-2 py-2.5 border-black-200 rounded relative">
                       <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
-                      <div className="flex gap-1">
+                      <div className="flex gap-2 justify-center">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người tạo</label>
                           <Tooltip title={dataNDCView?.NguoiTao} color="blue">
                             <input
-                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm overflow-ellipsis truncate"
+                              className="px-2 2xl:w-[18rem] xl:w-[15rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm overflow-ellipsis truncate"
                               value={dataNDCView?.NguoiTao || ''}
                               disabled
                             />
@@ -188,12 +178,12 @@ const NDCXem = ({ close, dataNDC }) => {
                           </Tooltip>
                         </div>
                       </div>
-                      <div className="flex gap-1">
+                      <div className="flex gap-2 justify-center">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người sửa</label>
                           <Tooltip title={dataNDCView?.NguoiSuaCuoi} color="blue">
                             <input
-                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border  outline-none text-sm overflow-ellipsis truncate"
+                              className="px-2 2xl:w-[18rem] xl:w-[15rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border  outline-none text-sm overflow-ellipsis truncate"
                               value={dataNDCView?.NguoiSuaCuoi || ''}
                               disabled
                             />
@@ -212,8 +202,8 @@ const NDCXem = ({ close, dataNDC }) => {
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <label className="whitespace-nowrap min-w-[100px] flex justify-end text-sm">Ghi chú</label>
+                  <div className="flex items-center gap-1 px-1">
+                    <label className="whitespace-nowrap min-w-[85px] flex justify-end text-sm">Ghi chú</label>
                     <input type="text" value={dataNDCView?.GhiChu || ''} className="px-2 w-[70rem] rounded-[3px] resize-none border outline-none text-sm" disabled />
                   </div>
                   <div className="border rounded">
@@ -223,10 +213,9 @@ const NDCXem = ({ close, dataNDC }) => {
                       dataSource={dataNDCView?.DataDetails?.map((item, index) => ({ ...item, key: index }))}
                       size="small"
                       scroll={{
-                        x: 1000,
+                        x: 'max-content',
                         y: 300,
                       }}
-                      bordered
                       pagination={false}
                       summary={() => {
                         return (
@@ -282,7 +271,6 @@ const NDCXem = ({ close, dataNDC }) => {
                     bg_hover={'white'}
                     isModal={true}
                   />
-
                   <ActionButton handleAction={close} title={'Đóng'} isModal={true} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
                 </div>
               </div>

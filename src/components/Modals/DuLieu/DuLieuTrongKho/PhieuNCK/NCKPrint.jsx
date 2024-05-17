@@ -173,7 +173,7 @@ const NCKPrint = ({ close, dataPrint }) => {
                 <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
                 <p className="text-blue-700 font-semibold uppercase">In - Phiếu Nhập Chuyển Kho</p>
               </div>
-              <div className="flex flex-col items-center gap-4 border-2 py-3">
+              <div className="flex flex-col items-center gap-4 border-gray-400 border-1 py-3">
                 <div className="flex justify-center">
                   <div className="DatePicker_NCKKho flex justify-center gap-2">
                     <div className="DatePicker_NCKKho flex items-center gap-2">

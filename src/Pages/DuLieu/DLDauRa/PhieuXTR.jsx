@@ -872,14 +872,15 @@ const PhieuXTR = () => {
                     x: 1500,
                     y: 410,
                   }}
-                  pagination={{
-                    defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                    showSizeChanger: true,
-                    pageSizeOptions: ['50', '100', '1000'],
-                    onShowSizeChange: (current, size) => {
-                      localStorage.setItem('pageSize', size)
-                    },
-                  }}
+                  // pagination={{
+                  //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                  //   showSizeChanger: true,
+                  //   pageSizeOptions: ['50', '100', '1000'],
+                  //   onShowSizeChange: (current, size) => {
+                  //     localStorage.setItem('pageSize', size)
+                  //   },
+                  // }}
+                  pagination={false}
                   rowKey={(record) => record.SoChungTu}
                   onRow={(record) => ({
                     onDoubleClick: () => {
@@ -896,7 +897,7 @@ const PhieuXTR = () => {
                             .filter((column) => column.render)
                             .map((column, index) => {
                               const isNumericColumn = typeof filteredPXTR[0]?.[column.dataIndex] === 'number'
-
+                              const total = Number(filteredPXTR?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0))
                               return (
                                 <Table.Summary.Cell
                                   index={index}
@@ -906,21 +907,21 @@ const PhieuXTR = () => {
                                 >
                                   {isNumericColumn ? (
                                     column.dataIndex === 'TongTienHang' || column.dataIndex === 'TongTienThue' || column.dataIndex === 'TongThanhTien' ? (
-                                      <Text strong>
+                                      <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
                                         {Number(filteredPXTR.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                           minimumFractionDigits: dataThongSo?.SOLESOTIEN,
                                           maximumFractionDigits: dataThongSo?.SOLESOTIEN,
                                         })}
                                       </Text>
                                     ) : column.dataIndex === 'TongSoLuong' ? (
-                                      <Text strong>
+                                      <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
                                         {Number(filteredPXTR.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                           minimumFractionDigits: dataThongSo?.SOLESOLUONG,
                                           maximumFractionDigits: dataThongSo?.SOLESOLUONG,
                                         })}
                                       </Text>
                                     ) : (
-                                      <Text strong>
+                                      <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
                                         {Number(filteredPXTR.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                           minimumFractionDigits: 0,
                                           maximumFractionDigits: 0,
@@ -928,11 +929,11 @@ const PhieuXTR = () => {
                                       </Text>
                                     )
                                   ) : column.dataIndex === 'TTTienMat' ? (
-                                    <Text className="text-center flex justify-center" strong>
+                                    <Text className="text-center flex justify-center text-white" strong>
                                       {Object.values(data).filter((value) => value.TTTienMat).length}
                                     </Text>
                                   ) : column.dataIndex === 'STT' ? (
-                                    <Text className="text-center flex justify-center" strong>
+                                    <Text className="text-center flex justify-center text-white" strong>
                                       {data.length}
                                     </Text>
                                   ) : null}

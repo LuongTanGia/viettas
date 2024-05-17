@@ -126,7 +126,7 @@ const DTGroup = ({ close, type, dataDT, loadingData, setTargetRow }) => {
                   </div>
                 </div>
                 <div className="flex flex-col gap-2">
-                  <div className="flex items-center justify-center border-2 p-4 gap-2">
+                  <div className="flex items-center justify-center border-1 border-gray-400 p-4 gap-2">
                     <div className="required whitespace-nowrap">Nhóm</div>
                     <Space wrap>
                       <Select

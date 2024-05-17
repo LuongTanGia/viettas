@@ -11,7 +11,6 @@ import { RETOKEN } from '../action/Actions'
 import { toast } from 'react-toastify'
 import ActionCheckBox from '../components/util/CheckBox/ActionCheckBox'
 import { useMediaQuery } from '@mui/material'
-import moment from 'moment'
 
 const { Option } = Select
 
@@ -223,7 +222,7 @@ const ModalHeThong = ({ close }) => {
                     <label className="font-medium pl-5 ">
                       Giới hạn cập nhật <hr />
                     </label>
-                    <div className=" flex  items-center p-1 gap-2 ">
+                    <div className="flex items-center p-1 gap-2 ">
                       <div className="required md:w-[190px] lg:w-[140px] text-end ">
                         <span className="md:hidden lg:inline">Giới hạn</span>
                         <span className="md:inline lg:hidden">G.hạn</span>

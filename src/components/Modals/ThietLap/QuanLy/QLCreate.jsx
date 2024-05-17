@@ -99,9 +99,13 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
       })
       return
     }
+    if (dayjs(QLForm.TuNgay).format('YYYY-MM-DD') === 'Invalid Date' || dayjs(QLForm.DenNgay).format('YYYY-MM-DD') === 'Invalid Date') {
+      toast.warning('Vui lòng chọn ngày Từ/ Đến', { autoClose: 2000 })
+      return
+    }
     try {
       if (!QLForm.KhongKetThuc && !QLForm.DenNgay) {
-        toast.warning('Vui lòng nhập ngày hết hạn', { autoClose: 2000 })
+        toast.warning('Vui lòng chọn ngày Hiệu lực/ Hết hạn', { autoClose: 2000 })
       } else if (QLForm.KhongKetThuc) {
         const response = await categoryAPI.ThemQuanLy({ ...QLForm, TuNgay: dayjs(QLForm.TuNgay).format('YYYY-MM-DD') }, TokenAccess)
         if (response.data.DataError == 0) {
@@ -164,7 +168,7 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
                   <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
                   <p className="text-blue-700 font-semibold uppercase">Thêm - Quản Lý</p>
                 </div>
-                <div className="flex flex-col gap-2 border-2 px-3 py-2.5">
+                <div className="flex flex-col gap-2 border-1 border-gray-400 px-2 py-2.5">
                   <div className="flex items-center gap-2">
                     <div className="flex items-center gap-1">
                       <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Mã quản lý</label>
@@ -235,7 +239,7 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
                       <label className="required whitespace-nowrap text-sm">Hiệu lực từ</label>
                       <DateField
                         // className="DatePicker_NXTKho max-w-[130px]"
-                        className="max-w-[115px]"
+                        className="max-w-[130px]"
                         format="DD/MM/YYYY"
                         value={QLForm.TuNgay}
                         onBlur={handleDateChange}
@@ -344,7 +348,7 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
                   </div>
                   <div className="grid grid-cols-1 mt-1 gap-2 px-2 py-2.5 rounded border-black-200 ml-[95px] relative border-[0.125rem]">
                     <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
-                    <div className="flex gap-1">
+                    <div className="flex gap-2 justify-center">
                       <div className="flex items-center gap-1.5 whitespace-nowrap">
                         <label className=" text-sm">Người tạo</label>
                         <input className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded-[3px] resize-none border outline-none text-sm truncate" disabled />
@@ -354,7 +358,7 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
                         <input type="text" className="px-2 rounded-[3px] w-full resize-none border outline-none text-sm truncate" disabled />
                       </div>
                     </div>
-                    <div className="flex gap-1">
+                    <div className="flex gap-2 justify-center">
                       <div className="flex items-center gap-1 whitespace-nowrap">
                         <label className=" text-sm">Người sửa</label>
                         <input className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded-[3px]  resize-none border outline-none text-sm truncate" disabled />

@@ -70,7 +70,7 @@ const DeleteTongHopPBL = ({ typePage, dataRecord, loading, close }) => {
           <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
           <p className="text-blue-700 font-semibold uppercase">Gỡ dữ liệu</p>
         </div>
-        <div className="flex flex-col gap-2 border-2 p-4  text-lg">
+        <div className="flex flex-col gap-2 border-1 border-gray-400 p-4  text-lg">
           {/* <p className="text-blue-700 ">Bạn đang gỡ dữ liệu của : </p>
 
           <p className="text-red-600">{dataRecord?.SoChungTu}</p>

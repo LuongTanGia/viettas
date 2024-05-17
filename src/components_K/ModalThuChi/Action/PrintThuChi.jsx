@@ -163,7 +163,7 @@ const PrintThuChi = ({ namePage, typePage, actionType, data, controlDate, close 
           <label className="text-blue-700 font-semibold uppercase pb-1">In - ${namePage} </label>
         </div>
 
-        <div className="border-2 my-1">
+        <div className="border-1 border-gray-400 my-1">
           <div className="p-4 ">
             <div className=" flex justify-center items-center  gap-3 pl-[52px]">
               {/* DatePicker */}

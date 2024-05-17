@@ -6,7 +6,7 @@ import { toast } from 'react-toastify'
 import * as apis from '../../apis'
 import { ModalTL, PermissionView } from '../../components_K'
 import ActionButton from '../../components/util/Button/ActionButton'
-import { RETOKEN } from '../../action/Actions'
+import { RETOKEN, addRowClass } from '../../action/Actions'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
 import { exportToExcel } from '../../action/Actions'
 import { CloseSquareFilled } from '@ant-design/icons'
@@ -690,15 +690,16 @@ const BangGiaKH = () => {
                   x: 1500,
                   y: 410,
                 }}
-                pagination={{
-                  defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                  showSizeChanger: true,
-                  pageSizeOptions: ['50', '100', '1000'],
-                  onShowSizeChange: (current, size) => {
-                    localStorage.setItem('pageSize', size)
-                  },
-                }}
-                rowClassName={(record) => (`${record.MaDoiTuong}/${record.HieuLucTu}` === doneGKH ? 'highlighted-row' : '')}
+                // pagination={{
+                //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                //   showSizeChanger: true,
+                //   pageSizeOptions: ['50', '100', '1000'],
+                //   onShowSizeChange: (current, size) => {
+                //     localStorage.setItem('pageSize', size)
+                //   },
+                // }}
+                pagination={false}
+                rowClassName={(record, index) => (`${record.MaDoiTuong}/${record.HieuLucTu}` === doneGKH ? 'highlighted-row' : addRowClass(record, index))}
                 rowKey={(record) => `${record.MaDoiTuong}/${record.HieuLucTu}`}
                 onRow={(record) => ({
                   onClick: () => {
@@ -728,7 +729,7 @@ const BangGiaKH = () => {
                                 className="text-end font-bold  bg-[#f1f1f1]"
                               >
                                 {column.dataIndex === 'STT' ? (
-                                  <Text className="text-center flex justify-center bg-[#f1f1f1]" strong>
+                                  <Text className="text-center flex justify-center text-white" strong>
                                     {showFull === 'Hiện hành' ? data.length : dataFull.length}
                                   </Text>
                                 ) : null}

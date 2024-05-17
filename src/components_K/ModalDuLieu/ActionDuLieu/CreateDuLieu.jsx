@@ -414,7 +414,7 @@ const CreateDuLieu = ({ actionType, typePage, namePage, data, dataThongSo, dataD
           </div>
 
           <Spin spinning={isLoadingModal}>
-            <div className=" border-[1px] border-gray-400 w-full h-[89%] rounded-sm text-sm">
+            <div className="border-1 border-gray-400 w-full h-[89%] rounded-sm text-sm">
               <div className="flex  md:gap-0 lg:gap-1 pl-1 ">
                 {/* thong tin phieu */}
                 <div className="w-[62%]">
@@ -427,8 +427,7 @@ const CreateDuLieu = ({ actionType, typePage, namePage, data, dataThongSo, dataD
                     <div className="flex md:px-1 lg:px-4 items-center text-center">
                       <label className="pr-1 lg:pr-[30px] lg:pl-[8px]">Ngày</label>
                       <DateField
-                        className=" max-w-[132px] min-w-[132px]
-"
+                        className="max-w-[132px] min-w-[132px]"
                         format="DD/MM/YYYY"
                         value={dayjs(formCreate?.NgayCTu)}
                         onChange={(newDate) => {

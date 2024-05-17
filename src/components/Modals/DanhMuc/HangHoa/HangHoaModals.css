@@ -5,25 +5,28 @@
 .barcodeList thead th {
   font-weight: 500;
   font-size: 16px;
-  background-color: #fafafa;
-  border: 1px solid #dcdcdc;
+  color: white !important;
+  background-color: #4061bc;
+  border: 1px solid #707070;
   padding: 0.35rem;
   text-align: center;
 }
 .barcodeList thead {
-  border: 1px solid #dcdcdc;
+  border: 1px solid #707070;
   width: 100%;
   position: sticky;
   top: 0;
   z-index: 1;
 }
 .barcodeList tr:hover {
-  background-color: #fafafa;
+  background-color: #77c2f8;
 }
-
+.barcodeList tr:nth-child(2n) {
+  background-color: #f0f8ff;
+}
 .barcodeList td {
   text-align: center;
-  border: 1px solid #dcdcdc;
+  border: 1px solid #707070;
   padding: 0.5rem;
 }
 
@@ -46,23 +49,23 @@
   }
   .HH_HHCT {
     right: 20px;
-    top: 10px;
+    top: 5px;
   }
 }
 @media (width: 820px) {
   .HH_Barcode {
-    right: 30px;
-    top: 10px;
+    right: 25px;
+    top: 5px;
   }
   .HH_Barcode--LapRap {
-    right: 30px;
-    top: 10px;
+    right: 25px;
+    top: 5px;
   }
   .HH_HHCT {
-    right: 37px;
-    top: 10px;
+    right: 30px;
+    top: 5px;
   }
   .HH_HHCT_small {
-    right: 25px;
+    right: 20px;
   }
 }

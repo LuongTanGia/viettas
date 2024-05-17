@@ -11,7 +11,7 @@ import { FaSearch, FaEyeSlash } from 'react-icons/fa'
 import { CloseSquareFilled } from '@ant-design/icons'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
 import categoryAPI from '../../API/linkAPI'
-import { RETOKEN } from '../../action/Actions'
+import { RETOKEN, addRowClass } from '../../action/Actions'
 import { useSearch } from '../../components/hooks/Search'
 import ActionButton from '../../components/util/Button/ActionButton'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
@@ -261,23 +261,13 @@ const BinhQuanXuatKho = () => {
       dataIndex: 'NguoiThucHien',
       key: 'NguoiThucHien',
       showSorterTooltip: false,
-      width: 120,
+      width: 180,
       align: 'center',
       sorter: (a, b) => (a.NguoiThucHien?.toString() || '').localeCompare(b.NguoiThucHien?.toString() || ''),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchGiaXuatKho} />
-          </div>
-        </Tooltip>
+        <div className="text-start truncate">
+          <HighlightedCell text={text} search={searchGiaXuatKho} />
+        </div>
       ),
     },
     {
@@ -381,41 +371,23 @@ const BinhQuanXuatKho = () => {
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchHangHoa} />
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
       title: 'Nhóm hàng',
       dataIndex: 'NhomHang',
       key: 'NhomHang',
-      width: 200,
+      width: 280,
       align: 'center',
       sorter: (a, b) => a.NhomHang.localeCompare(b.NhomHang),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchHangHoa} />
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -436,29 +408,21 @@ const BinhQuanXuatKho = () => {
       title: 'Người tạo',
       dataIndex: 'NguoiTao',
       key: 'NguoiTao',
-      width: 250,
+      width: 180,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => a.NguoiTao.localeCompare(b.NguoiTao),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <HighlightedCell text={text} search={searchHangHoa} />
-          </div>
-        </Tooltip>
+        <div className="truncate">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
       title: 'Ngày tạo',
       dataIndex: 'NgayTao',
       key: 'NgayTao',
-      width: 180,
+      width: 150,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => {
@@ -592,25 +556,20 @@ const BinhQuanXuatKho = () => {
                         x: 'max-content',
                         y: 300,
                       }}
-                      pagination={{
-                        defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                        showSizeChanger: true,
-                        pageSizeOptions: ['50', '100', '1000'],
-                        onShowSizeChange: (current, size) => {
-                          localStorage.setItem('pageSize', size)
-                        },
-                      }}
-                      rowClassName={(record) => (record.Thang == targetRow ? 'highlighted-row' : '')}
+                      // pagination={{
+                      //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                      //   showSizeChanger: true,
+                      //   pageSizeOptions: ['50', '100', '1000'],
+                      //   onShowSizeChange: (current, size) => {
+                      //     localStorage.setItem('pageSize', size)
+                      //   },
+                      // }}
+                      pagination={false}
+                      rowClassName={(record, index) => addRowClass(record, index)}
                       onRow={(record) => ({
                         onDoubleClick: () => handleDoubleClick(record),
                       })}
                       scrollToFirstRowOnChange
-                      bordered
-                      style={{
-                        whiteSpace: 'nowrap',
-                        fontSize: '24px',
-                        borderRadius: '10px',
-                      }}
                       summary={() => {
                         return (
                           <Table.Summary fixed>
@@ -622,7 +581,7 @@ const BinhQuanXuatKho = () => {
                                   return (
                                     <Table.Summary.Cell index={index} key={index} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
                                       {column.dataIndex == 'STT' ? (
-                                        <Text className="text-center flex justify-center" strong>
+                                        <Text className="text-center flex justify-center text-white" strong>
                                           {dataGiaXuatKho?.length}
                                         </Text>
                                       ) : null}
@@ -644,22 +603,19 @@ const BinhQuanXuatKho = () => {
                       size="small"
                       scroll={{
                         y: 300,
+                        x: 'max-content',
                       }}
-                      pagination={{
-                        defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                        showSizeChanger: true,
-                        pageSizeOptions: ['50', '100', '1000'],
-                        onShowSizeChange: (current, size) => {
-                          localStorage.setItem('pageSize', size)
-                        },
-                      }}
+                      rowClassName={(record, index) => addRowClass(record, index)}
+                      // pagination={{
+                      //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                      //   showSizeChanger: true,
+                      //   pageSizeOptions: ['50', '100', '1000'],
+                      //   onShowSizeChange: (current, size) => {
+                      //     localStorage.setItem('pageSize', size)
+                      //   },
+                      // }}
+                      pagination={false}
                       scrollToFirstRowOnChange
-                      bordered
-                      style={{
-                        whiteSpace: 'nowrap',
-                        fontSize: '24px',
-                        borderRadius: '10px',
-                      }}
                       summary={() => {
                         return (
                           <Table.Summary fixed>
@@ -676,7 +632,7 @@ const BinhQuanXuatKho = () => {
                                       className="text-end font-bold  bg-[#f1f1f1]"
                                     >
                                       {column.dataIndex == 'STT' ? (
-                                        <Text className="text-center flex justify-center" strong>
+                                        <Text className="text-center flex justify-center text-white" strong>
                                           {dataBinhQuan?.length}
                                         </Text>
                                       ) : null}

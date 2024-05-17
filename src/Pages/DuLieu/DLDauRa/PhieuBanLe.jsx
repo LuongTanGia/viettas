@@ -88,8 +88,6 @@ const PhieuBanLe = () => {
     setIsLoadingEdit(true)
     const fetchData = async () => {
       try {
-        console.log('get helper')
-
         const tokenLogin = localStorage.getItem('TKN')
         if (actionType === 'create' || actionType === 'edit') {
           console.log('get helper  KH,DT')
@@ -129,8 +127,6 @@ const PhieuBanLe = () => {
           }
         }
         if (actionType === 'view') {
-          console.log('get helper tt')
-
           const responseTT = await apis.ThongTinPBL(tokenLogin, dataRecord.SoChungTu)
           if (responseTT.data && responseTT.data.DataError === 0) {
             setDataThongTin(responseTT.data.DataResult)
@@ -148,7 +144,6 @@ const PhieuBanLe = () => {
         }
 
         if (actionType === 'edit') {
-          console.log('get helper tt sua')
           const responseTTS = await apis.ThongTinSuaPBL(tokenLogin, dataRecord.SoChungTu)
           if (responseTTS.data && responseTTS.data.DataError === 0) {
             setDataThongTinSua(responseTTS.data.DataResult)
@@ -231,9 +226,9 @@ const PhieuBanLe = () => {
         console.error('Kiểm tra token thất bại', error)
       }
     }
-
     getChucNangQuyenHan()
   }, [])
+
   useEffect(() => {
     if (dataQuyenHan?.VIEW == false) {
       setIsShowNotify(true)
@@ -249,7 +244,6 @@ const PhieuBanLe = () => {
   const getDSPBL = async () => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
-
       const response = await apis.DanhSachPBL(tokenLogin, formKhoanNgay)
       if (response) {
         const { DataError, DataErrorDescription, DataResults } = response.data
@@ -788,14 +782,15 @@ const PhieuBanLe = () => {
                     x: 1500,
                     y: 410,
                   }}
-                  pagination={{
-                    defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                    showSizeChanger: true,
-                    pageSizeOptions: ['50', '100', '1000'],
-                    onShowSizeChange: (current, size) => {
-                      localStorage.setItem('pageSize', size)
-                    },
-                  }}
+                  // pagination={{
+                  //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                  //   showSizeChanger: true,
+                  //   pageSizeOptions: ['50', '100', '1000'],
+                  //   onShowSizeChange: (current, size) => {
+                  //     localStorage.setItem('pageSize', size)
+                  //   },
+                  // }}
+                  pagination={false}
                   rowKey={(record) => record.SoChungTu}
                   onRow={(record) => ({
                     onDoubleClick: () => {
@@ -821,34 +816,37 @@ const PhieuBanLe = () => {
                                   className="text-end font-bold  bg-[#f1f1f1]"
                                 >
                                   {isNumericColumn ? (
-                                    column.dataIndex === 'TongTienHang' || column.dataIndex === 'TongTienThue' || column.dataIndex === 'TongThanhTien' ? (
-                                      <Text strong>
-                                        {Number(filteredPBL.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                          minimumFractionDigits: dataThongSo?.SOLESOTIEN,
-                                          maximumFractionDigits: dataThongSo?.SOLESOTIEN,
-                                        })}
-                                      </Text>
-                                    ) : column.dataIndex === 'TongSoLuong' ? (
-                                      <Text strong>
-                                        {Number(filteredPBL.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                          minimumFractionDigits: dataThongSo?.SOLESOLUONG,
-                                          maximumFractionDigits: dataThongSo?.SOLESOLUONG,
-                                        })}
-                                      </Text>
-                                    ) : (
-                                      <Text strong>
-                                        {Number(filteredPBL.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                          minimumFractionDigits: 0,
-                                          maximumFractionDigits: 0,
-                                        })}
-                                      </Text>
-                                    )
+                                    (() => {
+                                      const total = Number(filteredPBL?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0))
+                                      return column.dataIndex === 'TongTienHang' || column.dataIndex === 'TongTienThue' || column.dataIndex === 'TongThanhTien' ? (
+                                        <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
+                                          {Number(filteredPBL?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                            minimumFractionDigits: dataThongSo?.SOLESOTIEN,
+                                            maximumFractionDigits: dataThongSo?.SOLESOTIEN,
+                                          })}
+                                        </Text>
+                                      ) : column.dataIndex === 'TongSoLuong' ? (
+                                        <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
+                                          {Number(filteredPBL?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                            minimumFractionDigits: dataThongSo?.SOLESOLUONG,
+                                            maximumFractionDigits: dataThongSo?.SOLESOLUONG,
+                                          })}
+                                        </Text>
+                                      ) : (
+                                        <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
+                                          {Number(filteredPBL.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                            minimumFractionDigits: 0,
+                                            maximumFractionDigits: 0,
+                                          })}
+                                        </Text>
+                                      )
+                                    })()
                                   ) : column.dataIndex === 'TTTienMat' ? (
-                                    <Text className="text-center flex justify-center" strong>
+                                    <Text className="text-center flex justify-center text-white" strong>
                                       {Object.values(data).filter((value) => value.TTTienMat).length}
                                     </Text>
                                   ) : column.dataIndex === 'STT' ? (
-                                    <Text className="text-center flex justify-center" strong>
+                                    <Text className="text-center flex justify-center text-white" strong>
                                       {data.length}
                                     </Text>
                                   ) : null}

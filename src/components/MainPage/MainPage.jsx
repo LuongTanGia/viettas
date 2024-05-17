@@ -1,10 +1,12 @@
 /* eslint-disable react/prop-types */
+import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 import ErrorPage from '../util/Erorr/ErrorPage'
 import DashBoar from '../DashBoar/DashBoar'
 import FAQ from '../FAQ/FAQ'
 import DKSD from '../FAQ/DKSD'
-import HangHoa from '../../Pages/DanhMuc/HangHoa'
+// import HangHoa from '../../Pages/DanhMuc/HangHoa'
+const HangHoaLazy = React.lazy(() => import('../../Pages/DanhMuc/HangHoa'))
 import PhieuMuaHang from '../../Pages/DuLieu/DLDauVao/PhieuMuaHang'
 import PhieuBanLe from '../../Pages/DuLieu/DLDauRa/PhieuBanLe'
 import PhieuNTR from '../../Pages/DuLieu/DLDauVao/PhieuNTR'
@@ -61,8 +63,16 @@ function MainPage({ isSidebarVisible, isTableLoad, isTargetRow }) {
           <Route path="/" element={<DashBoar />} />
           <Route path="/FAQ" element={<FAQ />} />
           <Route path="/DKSD" element={<DKSD />} />
-          <Route path="/DanhMuc_HangHoa" element={<HangHoa />} />
+          <Route
+            path="/DanhMuc_HangHoa"
+            element={
+              <React.Suspense fallback="Loading">
+                <HangHoaLazy />
+              </React.Suspense>
+            }
+          />
           <Route path="/DanhMuc_NhomDoiTuong" element={<NhomDoiTuong />} />
+
           <Route path="/DanhMuc_NhomHang" element={<NhomHang />} />
           <Route path="/DanhMuc_DoiTuong" element={<DoiTuong />} />
           <Route path="/DanhMuc_HangMucThu" element={<HangMucThu />} />

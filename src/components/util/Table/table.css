@@ -3,14 +3,16 @@
 .setHeight .ant-table,
 .setHeight .ant-table-container .ant-table-body {
   /* max-height: unset !important; */
-  height: calc(100vh - 300px);
+  /* height: calc(100vh - 300px); */
+  height: calc(100vh - 260px);
 }
 .setHeight .ant-table-container .ant-table-body {
   max-height: unset !important;
   /* height: calc(100vh - 500px); */
 }
 .setHeight .ant-table {
-  height: calc(100vh - 225px);
+  /* height: calc(100vh - 225px); */
+  height: calc(100vh - 185px);
   /* background-color: #e9e9e9 !important; */
   /* border-right: 1px solid rgb(112, 112, 112); */
   border-left: 1px solid rgb(112, 112, 112);
@@ -33,14 +35,14 @@
 .TruyVan .setHeight .ant-table,
 .TruyVan .setHeight .ant-table-container .ant-table-body {
   /* max-height: unset !important; */
-  height: calc(100vh - 390px);
+  height: calc(100vh - 360px);
 }
 .TruyVan .setHeight .ant-table-container .ant-table-body {
   max-height: unset !important;
   /* height: calc(100vh - 500px); */
 }
 .TruyVan .setHeight .ant-table {
-  height: calc(100vh - 285px);
+  height: calc(100vh - 255px);
 }
 /* Công nợ */
 .CongNo .ant-table-wrapper.setHeight,
@@ -48,14 +50,14 @@
 .CongNo .setHeight .ant-table,
 .CongNo .setHeight .ant-table-container .ant-table-body {
   /* max-height: unset !important; */
-  height: calc(100vh - 370px);
+  height: calc(100vh - 335px);
 }
 .CongNo .setHeight .ant-table-container .ant-table-body {
   max-height: unset !important;
   /* height: calc(100vh - 500px); */
 }
 .CongNo .setHeight .ant-table {
-  height: calc(100vh - 260px);
+  height: calc(100vh - 220px);
 }
 /* XuLy */
 .XuLy_BinhQuan .ant-table-wrapper.setHeight,
@@ -63,14 +65,14 @@
 .XuLy_BinhQuan .setHeight .ant-table,
 .XuLy_BinhQuan .setHeight .ant-table-container .ant-table-body {
   /* max-height: unset !important; */
-  height: calc(100vh - 270px);
+  height: calc(100vh - 235px);
 }
 .XuLy_BinhQuan .setHeight .ant-table-container .ant-table-body {
   max-height: unset !important;
   /* height: calc(100vh - 500px); */
 }
 .XuLy_BinhQuan .setHeight .ant-table {
-  height: calc(100vh - 200px);
+  height: calc(100vh - 159px);
 }
 /* PhanQuyen */
 .PhanQuyen .ant-table-wrapper.setHeight,
@@ -93,13 +95,13 @@
 .TruyVan_Child .setHeight .ant-table,
 .TruyVan_Child .setHeight .ant-table-container .ant-table-body {
   /* max-height: unset !important; */
-  height: calc(100vh - 400px);
+  height: calc(100vh - 365px);
 }
 .TruyVan_Child .setHeight .ant-table-container .ant-table-body {
   max-height: unset !important;
 }
 .TruyVan_Child .setHeight .ant-table {
-  height: calc(100vh - 290px);
+  height: calc(100vh - 250px);
 }
 /* DoanhSoQuay--KH_HH */
 .DSBH_KH_HH .ant-table-wrapper.setHeight,
@@ -107,13 +109,13 @@
 .DSBH_KH_HH .setHeight .ant-table,
 .DSBH_KH_HH .setHeight .ant-table-container .ant-table-body {
   /* max-height: unset !important; */
-  height: calc(100vh - 370px);
+  height: calc(100vh - 330px);
 }
 .DSBH_KH_HH .setHeight .ant-table-container .ant-table-body {
   max-height: unset !important;
 }
 .DSBH_KH_HH .setHeight .ant-table {
-  height: calc(100vh - 290px);
+  height: calc(100vh - 255px);
 }
 
 .DSHangHoa .ant-table-wrapper.setHeight,
@@ -121,13 +123,13 @@
 .DSHangHoa .setHeight .ant-table,
 .DSHangHoa .setHeight .ant-table-container .ant-table-body {
   /* max-height: unset !important; */
-  height: calc(100vh - 330px);
+  height: calc(100vh - 300px);
 }
 .DSHangHoa .setHeight .ant-table-container .ant-table-body {
   max-height: unset !important;
 }
 .DSHangHoa .setHeight .ant-table {
-  height: calc(100vh - 260px);
+  height: calc(100vh - 225px);
 }
 /* SoQuy */
 .TruyVanSoQuy_Child .ant-table-wrapper.setHeight,
@@ -135,13 +137,13 @@
 .TruyVanSoQuy_Child .setHeight .ant-table,
 .TruyVanSoQuy_Child .setHeight .ant-table-container .ant-table-body {
   /* max-height: unset !important; */
-  height: calc(100vh - 330px);
+  height: calc(100vh - 300px);
 }
 .TruyVanSoQuy_Child .setHeight .ant-table-container .ant-table-body {
   max-height: unset !important;
 }
 .TruyVanSoQuy_Child .setHeight .ant-table {
-  height: calc(100vh - 220px);
+  height: calc(100vh - 185px);
 }
 /*  GBL */
 .GBL .ant-table-wrapper,
@@ -149,14 +151,14 @@
 .GBL .ant-table,
 .GBL .ant-table-container .ant-table-body {
   /* max-height: unset !important; */
-  height: calc(100vh - 320px);
+  height: calc(100vh - 290px);
 }
 .GBL .ant-table-container .ant-table-body {
   max-height: unset !important;
   /* height: calc(100vh - 500px); */
 }
 .GBL .ant-table {
-  height: calc(100vh - 250px);
+  height: calc(100vh - 211px);
   border-left: 1px solid rgb(112, 112, 112);
   border-top: 1px solid rgb(112, 112, 112);
   border-bottom: 1px solid rgb(112, 112, 112) !important;
@@ -188,7 +190,7 @@
 
 .BLQ_child2 .ant-table-container .ant-table-body {
   max-height: unset !important;
-  height: calc(100vh - 450px);
+  height: calc(100vh - 420px);
 }
 
 .TongHopPBL .ant-table {
@@ -199,7 +201,7 @@
 
 .TongHopPBL .ant-table-container .ant-table-body {
   max-height: unset !important;
-  height: calc(100vh - 310px);
+  height: calc(100vh - 275px);
 }
 
 .TongHopPBL_view .ant-table-container .ant-table-body {
@@ -228,12 +230,14 @@ tbody tr {
 
 /* addRowClass */
 .odd-row {
-  background-color: #d7f4fd;
+  /* background-color: #d7f4fd; */
+  background-color: #f0f8ff;
 }
 
 .odd-row .ant-table-cell-fix-right,
 .odd-row .ant-table-cell-fix-left {
-  background-color: #d7f4fd;
+  background-color: #f0f8ff;
+  /* background-color: #d7f4fd; */
 }
 
 .ant-table-cell-row-hover {
@@ -271,7 +275,14 @@ tbody tr {
   background-color: #4061bc !important;
   color: white !important;
 }
+.ant-table-summary tfoot .ant-table-cell {
+  background-color: #4061bc !important;
+  color: white !important;
+}
 
+/* .ant-table-row td.ant-table-cell:last-child {
+  border-right: none !important;
+} */
 .ant-table-cell.ant-table-column-has-sorters::before,
 .ant-table-cell.ant-table-cell-fix-left::before,
 .ant-table-cell.ant-table-cell-fix-right::before {

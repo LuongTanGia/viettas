@@ -172,7 +172,7 @@ const XCKPrint = ({ close, dataPrint }) => {
                 <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
                 <p className="text-blue-700 font-semibold uppercase">In - Phiếu Xuất Chuyển Kho</p>
               </div>
-              <div className="flex flex-col items-center gap-4 border-2 py-3">
+              <div className="flex flex-col items-center gap-4 border-1 border-gray-400 py-3">
                 <div className="flex justify-center">
                   <div className="DatePicker_NDCKho flex justify-center gap-2">
                     <div className="DatePicker_NDCKho flex items-center gap-2">

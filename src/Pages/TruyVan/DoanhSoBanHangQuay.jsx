@@ -11,7 +11,7 @@ import { CloseSquareFilled } from '@ant-design/icons'
 import { FaSearch, FaEyeSlash } from 'react-icons/fa'
 import categoryAPI from '../../API/linkAPI'
 import { useSearch } from '../../components/hooks/Search'
-import { RETOKEN, exportToExcel } from '../../action/Actions'
+import { RETOKEN, addRowClass, exportToExcel } from '../../action/Actions'
 import ActionButton from '../../components/util/Button/ActionButton'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
 import { nameColumsDSBHQUAY } from '../../components/util/Table/ColumnName'
@@ -355,7 +355,7 @@ const DoanhSoBanHangQuay = () => {
               title: ` Quầy ${tenQuayMatch} `,
               dataIndex: colKey,
               key: colKey,
-              width: 180,
+              width: 120,
               align: 'center',
               render: (text) => (
                 <div className={`text-end ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
@@ -417,29 +417,13 @@ const DoanhSoBanHangQuay = () => {
       dataIndex: 'TenHang',
       key: 'TenHang',
       align: 'center',
-      width: 180,
+      width: 220,
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'start',
-            }}
-          >
-            <div
-              style={{
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                cursor: 'pointer',
-              }}
-            >
-              <HighlightedCell text={text} search={searchHangHoa} />
-            </div>
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -447,36 +431,20 @@ const DoanhSoBanHangQuay = () => {
       dataIndex: 'NhomHang',
       key: 'NhomHang',
       align: 'center',
-      width: 150,
+      width: 200,
       sorter: (a, b) => a.NhomHang.localeCompare(b.NhomHang),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'start',
-            }}
-          >
-            <div
-              style={{
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                cursor: 'pointer',
-              }}
-            >
-              <HighlightedCell text={text} search={searchHangHoa} />
-            </div>
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
       title: 'ĐVT',
       dataIndex: 'DVT',
       key: 'DVT',
-      width: 80,
+      width: 100,
       align: 'center',
       sorter: (a, b) => a.DVT.localeCompare(b.DVT),
       showSorterTooltip: false,
@@ -598,7 +566,7 @@ const DoanhSoBanHangQuay = () => {
                           <label>Từ</label>
                           <DateField
                             // className="DatePicker_NXTKho  max-w-[120px]"
-                            className=" max-w-[115px]"
+                            className="max-w-[130px] min-w-[130px]"
                             onBlur={handleDateChange}
                             onKeyDown={handleKeyDown}
                             format="DD/MM/YYYY"
@@ -622,7 +590,7 @@ const DoanhSoBanHangQuay = () => {
                         <div className=" flex items-center gap-1 ">
                           <label>Đến</label>
                           <DateField
-                            className=" max-w-[115px]"
+                            className="max-w-[130px] min-w-[130px]"
                             onBlur={handleDateChange}
                             onKeyDown={handleKeyDown}
                             format="DD/MM/YYYY"
@@ -876,21 +844,21 @@ const DoanhSoBanHangQuay = () => {
                     x: 'max-content',
                     y: 300,
                   }}
-                  pagination={{
-                    defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                    showSizeChanger: true,
-                    pageSizeOptions: ['50', '100', '1000'],
-                    onShowSizeChange: (current, size) => {
-                      localStorage.setItem('pageSize', size)
-                    },
-                  }}
-                  scrollToFirstRowOnChange
-                  bordered
+                  // pagination={{
+                  //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                  //   showSizeChanger: true,
+                  //   pageSizeOptions: ['50', '100', '1000'],
+                  //   onShowSizeChange: (current, size) => {
+                  //     localStorage.setItem('pageSize', size)
+                  //   },
+                  // }}
+                  pagination={false}
                   style={{
                     whiteSpace: 'nowrap',
                     fontSize: '24px',
-                    borderRadius: '10px',
                   }}
+                  scrollToFirstRowOnChange
+                  rowClassName={(record, index) => addRowClass(record, index)}
                   summary={() => {
                     return (
                       <Table.Summary fixed>
@@ -899,6 +867,8 @@ const DoanhSoBanHangQuay = () => {
                             .filter((column) => column.render)
                             .map((column, index) => {
                               const isNumericColumn = typeof filteredHangHoa[0]?.[column.dataIndex] == 'number'
+                              const total = Number(filteredHangHoa?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0))
+
                               return (
                                 <Table.Summary.Cell
                                   index={index}
@@ -907,14 +877,14 @@ const DoanhSoBanHangQuay = () => {
                                   className="text-end font-bold  bg-[#f1f1f1]"
                                 >
                                   {isNumericColumn ? (
-                                    <Text strong>
+                                    <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
                                       {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                         minimumFractionDigits: dataThongSo.SOLESOTIEN,
                                         maximumFractionDigits: dataThongSo.SOLESOTIEN,
                                       })}
                                     </Text>
                                   ) : column.dataIndex == 'STT' ? (
-                                    <Text className="text-center flex justify-center" strong>
+                                    <Text className="text-center flex justify-center text-white" strong>
                                       {dataNXT?.length}
                                     </Text>
                                   ) : null}

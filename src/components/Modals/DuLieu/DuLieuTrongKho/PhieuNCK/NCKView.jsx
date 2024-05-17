@@ -67,7 +67,7 @@ const NCKView = ({ close, dataNCK }) => {
       title: 'Mã hàng',
       dataIndex: 'MaHang',
       key: 'MaHang',
-      width: 150,
+      width: 100,
       showSorterTooltip: false,
       align: 'center',
       sorter: (a, b) => a.MaHang.localeCompare(b.MaHang),
@@ -81,21 +81,7 @@ const NCKView = ({ close, dataNCK }) => {
       showSorterTooltip: false,
       align: 'center',
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
-      render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-              textAlign: 'start',
-            }}
-          >
-            {text}
-          </div>
-        </Tooltip>
-      ),
+      render: (text) => <div className="text-start whitespace-pre-wrap">{text}</div>,
     },
     {
       title: 'ĐVT',
@@ -103,7 +89,7 @@ const NCKView = ({ close, dataNCK }) => {
       key: 'DVT',
       showSorterTooltip: false,
       align: 'center',
-      width: 120,
+      width: 100,
       sorter: (a, b) => a.DVT.localeCompare(b.DVT),
       render: (text) => <span className="flex justify-center"> {text}</span>,
     },
@@ -136,8 +122,8 @@ const NCKView = ({ close, dataNCK }) => {
                   <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
                   <p className="text-blue-700 font-semibold uppercase">Thông tin - Phiếu Nhập Chuyển Kho</p>
                 </div>
-                <div className="flex flex-col gap-2 border-2 px-1 py-2.5">
-                  <div className="grid grid-cols-2 items-center gap-2">
+                <div className="flex flex-col gap-2 border-gray-400 border-1 py-2.5">
+                  <div className="grid grid-cols-2 items-center gap-2 px-1">
                     <div className="flex flex-col gap-2">
                       <div className="flex gap-2">
                         <div className="flex items-center gap-1">
@@ -168,14 +154,14 @@ const NCKView = ({ close, dataNCK }) => {
                         <input type="text" value={dataNCKView?.SoThamChieu || ''} className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm" readOnly />
                       </div>
                     </div>
-                    <div className="grid grid-cols-1 gap-2 border-2 px-2 py-3 border-black-200 rounded relative">
+                    <div className="grid grid-cols-1 gap-2.5 border-2 px-2 py-3 border-black-200 rounded relative">
                       <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
-                      <div className="flex gap-1">
+                      <div className="flex gap-2 justify-center">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người tạo</label>
                           <Tooltip title={dataNCKView?.NguoiTao} color="blue">
                             <input
-                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm overflow-ellipsis truncate"
+                              className="px-2 2xl:w-[18rem] xl:w-[16rem] lg:w-[11rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm overflow-ellipsis truncate"
                               value={dataNCKView?.NguoiTao || ''}
                               disabled
                             />
@@ -192,12 +178,12 @@ const NCKView = ({ close, dataNCK }) => {
                           </Tooltip>
                         </div>
                       </div>
-                      <div className="flex gap-1">
+                      <div className="flex gap-2 justify-center">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người sửa</label>
                           <Tooltip title={dataNCKView?.NguoiSuaCuoi} color="blue">
                             <input
-                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm overflow-ellipsis truncate"
+                              className="px-2 2xl:w-[18rem] xl:w-[16rem] lg:w-[11rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm overflow-ellipsis truncate"
                               value={dataNCKView?.NguoiSuaCuoi || ''}
                               disabled
                             />
@@ -216,64 +202,62 @@ const NCKView = ({ close, dataNCK }) => {
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1 px-1">
                     <label className="whitespace-nowrap min-w-[100px] flex justify-end text-sm">Ghi chú</label>
                     <input type="text" value={dataNCKView?.GhiChu || ''} className="px-2 w-[70rem] rounded-[3px] resize-none border outline-none text-sm" readOnly />
                   </div>
-                  <div className="border rounded">
-                    <Table
-                      className="table_view"
-                      columns={title}
-                      dataSource={dataNCKView?.DataDetails?.map((item, index) => ({ ...item, key: index }))}
-                      size="small"
-                      scroll={{
-                        x: 1000,
-                        y: 300,
-                      }}
-                      bordered
-                      pagination={false}
-                      summary={() => {
-                        return (
-                          <Table.Summary fixed="bottom">
-                            <Table.Summary.Row>
-                              {title
-                                .filter((column) => column.render)
-                                .map((column, index) => {
-                                  const isNumericColumn = typeof dataNCKView?.DataDetails[0]?.[column.dataIndex] === 'number'
 
-                                  return (
-                                    <Table.Summary.Cell
-                                      index={index}
-                                      key={`summary-cell-${index + 1}`}
-                                      align={isNumericColumn ? 'right' : 'left'}
-                                      className="text-end font-bold  bg-[#f1f1f1]"
-                                    >
-                                      {isNumericColumn ? (
-                                        column.dataIndex === 'SoLuong' ? (
-                                          <Text strong>
-                                            {Number(dataNCKView?.DataDetails?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                              minimumFractionDigits: dataThongSo?.SOLESOLUONG,
-                                              maximumFractionDigits: dataThongSo?.SOLESOLUONG,
-                                            })}
-                                          </Text>
-                                        ) : (
-                                          <Text strong>
-                                            {Number(dataNCKView?.DataDetails?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                              minimumFractionDigits: 0,
-                                              maximumFractionDigits: 0,
-                                            })}
-                                          </Text>
-                                        )
-                                      ) : null}
-                                    </Table.Summary.Cell>
-                                  )
-                                })}
-                            </Table.Summary.Row>
-                          </Table.Summary>
-                        )
-                      }}
-                    ></Table>
-                  </div>
+                  <Table
+                    className="table_view"
+                    columns={title}
+                    dataSource={dataNCKView?.DataDetails?.map((item, index) => ({ ...item, key: index }))}
+                    size="small"
+                    scroll={{
+                      x: 1000,
+                      y: 300,
+                    }}
+                    pagination={false}
+                    summary={() => {
+                      return (
+                        <Table.Summary fixed="bottom">
+                          <Table.Summary.Row>
+                            {title
+                              .filter((column) => column.render)
+                              .map((column, index) => {
+                                const isNumericColumn = typeof dataNCKView?.DataDetails[0]?.[column.dataIndex] === 'number'
+
+                                return (
+                                  <Table.Summary.Cell
+                                    index={index}
+                                    key={`summary-cell-${index + 1}`}
+                                    align={isNumericColumn ? 'right' : 'left'}
+                                    className="text-end font-bold  bg-[#f1f1f1]"
+                                  >
+                                    {isNumericColumn ? (
+                                      column.dataIndex === 'SoLuong' ? (
+                                        <Text strong className="text-white">
+                                          {Number(dataNCKView?.DataDetails?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                            minimumFractionDigits: dataThongSo?.SOLESOLUONG,
+                                            maximumFractionDigits: dataThongSo?.SOLESOLUONG,
+                                          })}
+                                        </Text>
+                                      ) : (
+                                        <Text strong className="text-white">
+                                          {Number(dataNCKView?.DataDetails?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                            minimumFractionDigits: 0,
+                                            maximumFractionDigits: 0,
+                                          })}
+                                        </Text>
+                                      )
+                                    ) : null}
+                                  </Table.Summary.Cell>
+                                )
+                              })}
+                          </Table.Summary.Row>
+                        </Table.Summary>
+                      )
+                    }}
+                  ></Table>
                 </div>
                 <div className="flex justify-between">
                   <div>

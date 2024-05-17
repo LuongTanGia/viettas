@@ -657,14 +657,15 @@ const SoSanhBG = () => {
                 }}
                 rowKey={(record) => record.SoChungTu}
                 rowClassName={(record, index) => addRowClass(record, index)}
-                pagination={{
-                  defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                  showSizeChanger: true,
-                  pageSizeOptions: ['50', '100', '1000'],
-                  onShowSizeChange: (current, size) => {
-                    localStorage.setItem('pageSize', size)
-                  },
-                }}
+                // pagination={{
+                //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                //   showSizeChanger: true,
+                //   pageSizeOptions: ['50', '100', '1000'],
+                //   onShowSizeChange: (current, size) => {
+                //     localStorage.setItem('pageSize', size)
+                //   },
+                // }}
+                pagination={false}
                 // Bảng Tổng
                 summary={() => {
                   return (
@@ -682,7 +683,7 @@ const SoSanhBG = () => {
                                 className="text-end font-bold  bg-[#f1f1f1]"
                               >
                                 {column.dataIndex === 'STT' ? (
-                                  <Text className="text-center flex justify-center" strong>
+                                  <Text className="text-center flex justify-center text-white" strong>
                                     {data.length}
                                   </Text>
                                 ) : null}
