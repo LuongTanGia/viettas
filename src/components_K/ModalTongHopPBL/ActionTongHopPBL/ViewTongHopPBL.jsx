@@ -310,7 +310,7 @@ const ViewTongHopPBL = ({ typePage, namePage, dataRecord, dataThongSo, loading, 
           <label className="text-blue-700 font-semibold uppercase pb-1">{namePage}</label>
         </div>
         <Spin spinning={tableLoad}>
-          <div className="border w-full  rounded-[4px]-sm text-sm ">
+          <div className="border-[1px] border-gray-400 w-full  rounded-[4px]-sm text-sm ">
             <div className="grid grid-cols-4  gap-2 m-2 pb-[2px]">
               <div className="flex  items-center gap-1 ">
                 <label className="min-w-[90px] text-sm flex justify-end">Quầy</label>

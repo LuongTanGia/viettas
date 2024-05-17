@@ -594,8 +594,8 @@ const EditTable = ({
         className={` border-t-[1px]   border-gray-700 rounded-lg 
         ${tableName === 'GBS' ? 'h340' : tableName === 'Import' ? 'h396' : 'h290'}`}
         components={components}
-        rowClassName={() => 'editable-row'}
-        // rowClassName={(record, index) => addRowClass(record, index)}
+        // rowClassName={() => 'editable-row'}
+        rowClassName={(record, index) => addRowClass(record, index)}
         dataSource={dataSource}
         columns={columns}
         scroll={{

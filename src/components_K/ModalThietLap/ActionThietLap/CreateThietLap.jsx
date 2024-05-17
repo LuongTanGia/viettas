@@ -158,7 +158,7 @@ const CreateThietLap = ({ typePage, namePage, dataThongSo, dataHangHoa, dataNhom
           <label className="text-blue-700 font-semibold uppercase pb-1">Thêm - {namePage}</label>
         </div>
         <Spin spinning={isLoadingModal}>
-          <div className="border w-full h-[78%] rounded-[4px]-sm text-sm">
+          <div className="border-[1px] border-gray-400 w-full h-[78%] rounded-[4px]-sm text-sm">
             <div className="flex flex-col px-2 ">
               <div className=" py-2 px-2 gap-2  grid grid-cols-1">
                 <div className="flex flex-col gap-2">

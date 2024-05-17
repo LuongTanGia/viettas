@@ -251,7 +251,7 @@ const CreateThuChi = ({ actionType, data, typePage, namePage, dataHangMuc, dataD
           </div>
 
           <Spin spinning={isLoadingModal}>
-            <div className="border w-full h-[86%] rounded-[4px]-sm text-sm">
+            <div className="border-[1px] border-gray-400 w-full h-[86%] rounded-[4px]-sm text-sm">
               <div className="flex flex-col px-2 ">
                 <div className=" py-2 px-2 gap-2  grid grid-cols-1">
                   <div className="flex flex-col gap-2 text-sm">
