@@ -88,6 +88,10 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
           getDataKhoHangNDC()
+        } else {
+          setDataKhoHang([])
+          setNDCForm({ ...NDCForm, MaKho: response?.data?.DataResults[0]?.MaKho })
+          setIsLoading(true)
         }
       } catch (error) {
         console.log(error)
