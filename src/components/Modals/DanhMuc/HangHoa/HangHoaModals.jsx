@@ -1106,7 +1106,6 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                               value={hangHoaForm?.TyLeQuyDoi || 1}
                               min={1}
                               max={999999999999}
-                              className=""
                               size="small"
                               style={{ width: '100%' }}
                               disabled={(dataThongSo && dataThongSo.SUDUNG_QUYDOIDVT === false) || hangHoaForm.LapRap == true}
@@ -1548,7 +1547,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                           >
                             {nhomHang?.map((item) => (
                               <Select.Option key={item.Ma} value={item.Ma}>
-                                {item.Ma} -{item.Ten}
+                                {item.Ma} - {item.Ten}
                               </Select.Option>
                             ))}
                           </Select>

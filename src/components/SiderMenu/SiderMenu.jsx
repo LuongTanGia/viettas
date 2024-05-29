@@ -50,7 +50,7 @@ const SiderMenu = ({ handleToggleSidebar, isTargetRow, isTableLoad, isSidebarVis
                 : navigate(`/${string.includes(Ma) ? '' : Ma}`)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
-        getQuyenHan()
+        getQuyenHan(Ma)
       }
     } catch (error) {
       console.log(error)
@@ -63,7 +63,7 @@ const SiderMenu = ({ handleToggleSidebar, isTargetRow, isTableLoad, isSidebarVis
         response.data.VIEW == false ? setIsShowNotify(true) : navigate(`/${Ma1}/${Ma2}`)
       } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
         await RETOKEN()
-        getQuyenHanChild()
+        getQuyenHanChild(Ma1, Ma2)
       }
     } catch (error) {
       console.log(error)

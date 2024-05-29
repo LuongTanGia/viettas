@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import { toast } from 'react-toastify'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 import { Input, Tooltip } from 'antd'
 import categoryAPI from '../../../../API/linkAPI'
@@ -24,7 +24,7 @@ const HMCEdit = ({ close, loadingData, setTargetRow, dataHMC }) => {
   useEffect(() => {
     setTargetRow([])
   }, [])
-  console.log(dataHMC.Ma)
+
   const handleEdit = async () => {
     if (!HMCForm?.Ten?.trim()) {
       setErrors({
@@ -116,9 +116,9 @@ const HMCEdit = ({ close, loadingData, setTargetRow, dataHMC }) => {
                   </div>
                   <div className="flex items-center gap-1 whitespace-nowrap">
                     <label className=" text-sm">Lúc</label>
-                    <Tooltip title={moment(dataHMC?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss')} color="blue">
+                    <Tooltip title={dayjs(dataHMC?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss')} color="blue">
                       <input
-                        value={moment(dataHMC?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
+                        value={dayjs(dataHMC?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
                         type="text"
                         className="px-2 rounded-[3px] w-full resize-none border outline-none text-sm truncate"
                         disabled
@@ -139,9 +139,9 @@ const HMCEdit = ({ close, loadingData, setTargetRow, dataHMC }) => {
                   </div>
                   <div className="flex items-center gap-1 whitespace-nowrap">
                     <label className=" text-sm">Lúc</label>
-                    <Tooltip title={dataHMC?.NgaySuaCuoi ? moment(dataHMC?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : ''} color="blue">
+                    <Tooltip title={dataHMC?.NgaySuaCuoi ? dayjs(dataHMC?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : ''} color="blue">
                       <input
-                        value={dataHMC?.NgaySuaCuoi ? moment(dataHMC?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
+                        value={dataHMC?.NgaySuaCuoi ? dayjs(dataHMC?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
                         className="px-2 rounded-[3px] d w-full resize-none border outline-none text-sm truncate"
                         disabled
                       />

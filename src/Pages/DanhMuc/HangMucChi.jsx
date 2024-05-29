@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
 import { Button, Checkbox, Col, Empty, Input, Row, Spin, Table, Tooltip, Typography } from 'antd'
 const { Text } = Typography
-import moment from 'moment'
+import dayjs from 'dayjs'
 import { CgCloseO } from 'react-icons/cg'
 import { TfiMoreAlt } from 'react-icons/tfi'
 import { RiFileExcel2Fill } from 'react-icons/ri'
@@ -234,7 +234,7 @@ const HangMucChi = () => {
         const dateB = new Date(b.NgayTao)
         return dateA - dateB
       },
-      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss')} search={searchHangMucChi} />,
+      render: (text) => <HighlightedCell text={dayjs(text).format('DD/MM/YYYY HH:mm:ss')} search={searchHangMucChi} />,
     },
     {
       title: 'Người sửa',
@@ -264,7 +264,7 @@ const HangMucChi = () => {
       },
       render: (text) => {
         if (text) {
-          return <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss')} search={searchHangMucChi} />
+          return <HighlightedCell text={dayjs(text).format('DD/MM/YYYY HH:mm:ss')} search={searchHangMucChi} />
         } else {
           return ''
         }
