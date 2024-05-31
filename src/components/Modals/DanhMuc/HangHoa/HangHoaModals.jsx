@@ -1115,13 +1115,12 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                                 return isNaN(parsedValue) ? null : parsedValue.toFixed(dataThongSo.SOLETYLE)
                               }}
                               onChange={(value) => {
-                                const tyLeQuyDoiValue = value
-                                if (!isNaN(tyLeQuyDoiValue)) {
+                                if (!isNaN(value)) {
                                   setHangHoaForm({
                                     ...hangHoaForm,
-                                    TyLeQuyDoi: tyLeQuyDoiValue,
+                                    TyLeQuyDoi: value,
                                   })
-                                  if (tyLeQuyDoiValue == 1) {
+                                  if (value == 1) {
                                     setHangHoaForm((prev) => ({
                                       ...prev,
                                       DVTQuyDoi: prev.DVTKho,
@@ -1598,14 +1597,12 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                                 return isNaN(parsedValue) ? null : parsedValue.toFixed(dataThongSo.SOLETYLE)
                               }}
                               onChange={(value) => {
-                                const tyLeQuyDoiValue = value
-                                if (!isNaN(tyLeQuyDoiValue)) {
+                                if (!isNaN(value)) {
                                   setHangHoaForm({
                                     ...hangHoaForm,
-                                    TyLeQuyDoi: tyLeQuyDoiValue,
+                                    TyLeQuyDoi: value,
                                   })
-
-                                  if (tyLeQuyDoiValue == 1) {
+                                  if (value == 1) {
                                     setHangHoaForm((prev) => ({
                                       ...prev,
                                       DVTQuyDoi: prev.DVTKho,
