@@ -22,7 +22,7 @@ const HMCEdit = ({ close, loadingData, setTargetRow, dataHMC }) => {
   })
 
   useEffect(() => {
-    setTargetRow([])
+    setTargetRow()
   }, [])
   console.log(dataHMC.Ma)
   const handleEdit = async () => {

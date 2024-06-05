@@ -11,7 +11,7 @@ const BQXKEdit = ({ close, dataBQXK, loadingData, setTargetRow, setDataBinhQuan 
   const TokenAccess = localStorage.getItem('TKN')
 
   useEffect(() => {
-    setTargetRow([])
+    setTargetRow()
   }, [])
 
   const handleSetting = async () => {

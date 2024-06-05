@@ -71,7 +71,7 @@ const HUYEdit = ({ close, dataHUY, loadingData, setTargetRow }) => {
   }, [isShowModal])
 
   useEffect(() => {
-    setTargetRow([])
+    setTargetRow()
   }, [])
 
   useEffect(() => {
