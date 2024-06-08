@@ -14,7 +14,7 @@ const NCKDel = ({ close, dataNCK, loadingData, setTargetRow }) => {
         loadingData()
         close()
         toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
-        setTargetRow([])
+        setTargetRow()
       } else {
         toast.error(response.data.DataErrorDescription)
       }

@@ -26,7 +26,7 @@ const PCEdit = ({ close, loadingData, setTargetRow, dataPC }) => {
   })
 
   useEffect(() => {
-    setTargetRow([])
+    setTargetRow()
   }, [])
 
   useEffect(() => {

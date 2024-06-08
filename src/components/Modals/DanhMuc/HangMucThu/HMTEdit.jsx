@@ -22,7 +22,7 @@ const HMTEdit = ({ close, loadingData, setTargetRow, dataHMT }) => {
   })
 
   useEffect(() => {
-    setTargetRow([])
+    setTargetRow()
   }, [])
   const handleEdit = async () => {
     if (!HMTForm?.Ten?.trim()) {

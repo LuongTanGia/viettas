@@ -59,7 +59,7 @@ const HUYCreate = ({ close, loadingData, setTargetRow }) => {
   })
 
   useEffect(() => {
-    setTargetRow([])
+    setTargetRow()
   }, [])
 
   useEffect(() => {

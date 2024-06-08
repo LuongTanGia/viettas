@@ -39,7 +39,7 @@ const DTCreate = ({ close, loadingData, setTargetRow }) => {
   })
 
   useEffect(() => {
-    setTargetRow([])
+    setTargetRow()
   }, [])
 
   useEffect(() => {

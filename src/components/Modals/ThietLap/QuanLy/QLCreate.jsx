@@ -39,7 +39,7 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
   })
 
   useEffect(() => {
-    setTargetRow([])
+    setTargetRow()
   }, [])
 
   useEffect(() => {

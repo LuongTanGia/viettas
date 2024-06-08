@@ -77,7 +77,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
   })
 
   useEffect(() => {
-    setTargetRow([])
+    setTargetRow()
   }, [])
 
   useEffect(() => {
@@ -488,7 +488,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
         toast.success('Xóa sản phẩm thành công', { autoClose: 1000 })
         loadingData()
         close()
-        setTargetRow([])
+        setTargetRow()
       } else if ((dataDel.data && dataDel.data.DataError === -107) || (dataDel.data && dataDel.data.DataError === -108)) {
         await RETOKEN()
         handleDelete()

@@ -56,7 +56,7 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
   }, [isShowModal])
 
   useEffect(() => {
-    setTargetRow([])
+    setTargetRow()
   }, [])
 
   const [PLRForm, setPLRForm] = useState(() => {
