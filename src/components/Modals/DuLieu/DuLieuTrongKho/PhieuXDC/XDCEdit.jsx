@@ -71,7 +71,7 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
   }, [isShowModal])
 
   useEffect(() => {
-    setTargetRow()
+    setTargetRow([])
   }, [])
 
   useEffect(() => {

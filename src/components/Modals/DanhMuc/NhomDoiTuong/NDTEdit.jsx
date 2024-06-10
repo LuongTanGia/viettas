@@ -22,7 +22,7 @@ const NDTEdit = ({ close, loadingData, setTargetRow, dataNDT }) => {
   })
 
   useEffect(() => {
-    setTargetRow()
+    setTargetRow([])
   }, [])
 
   const handleEdit = async () => {

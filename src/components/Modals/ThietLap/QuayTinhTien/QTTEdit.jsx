@@ -41,7 +41,7 @@ const QTTEdit = ({ close, loadingData, setTargetRow, dataQTT }) => {
     MaKho: '',
   })
   useEffect(() => {
-    setTargetRow()
+    setTargetRow([])
   }, [])
 
   useEffect(() => {

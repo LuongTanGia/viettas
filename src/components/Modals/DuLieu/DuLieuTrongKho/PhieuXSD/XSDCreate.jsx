@@ -59,7 +59,7 @@ const XSDCreate = ({ close, loadingData, setTargetRow }) => {
   })
 
   useEffect(() => {
-    setTargetRow()
+    setTargetRow([])
   }, [])
 
   useEffect(() => {

@@ -35,7 +35,7 @@ const DTEdit = ({ close, loadingData, setTargetRow, dataDT }) => {
     Ten: '',
   })
   useEffect(() => {
-    setTargetRow()
+    setTargetRow([])
   }, [])
 
   useEffect(() => {

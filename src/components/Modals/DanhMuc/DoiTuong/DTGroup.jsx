@@ -21,7 +21,7 @@ const DTGroup = ({ close, type, dataDT, loadingData, setTargetRow }) => {
   })
 
   useEffect(() => {
-    setTargetRow()
+    setTargetRow([])
   }, [])
 
   useEffect(() => {

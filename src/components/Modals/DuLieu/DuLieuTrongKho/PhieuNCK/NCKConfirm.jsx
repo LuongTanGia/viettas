@@ -53,7 +53,7 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
   }, [searchHangHoa, targetRowXL])
 
   useEffect(() => {
-    setTargetRow()
+    setTargetRow([])
   }, [])
 
   const formatThapPhan = (number, decimalPlaces) => {

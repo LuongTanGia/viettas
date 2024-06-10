@@ -71,7 +71,7 @@ const XSDEdit = ({ close, dataXSD, loadingData, setTargetRow }) => {
   }, [isShowModal])
 
   useEffect(() => {
-    setTargetRow()
+    setTargetRow([])
   }, [])
 
   useEffect(() => {

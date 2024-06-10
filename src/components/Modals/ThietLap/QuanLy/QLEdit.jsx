@@ -35,7 +35,7 @@ const QLEdit = ({ close, loadingData, setTargetRow, dataQL, maNguoiDung }) => {
   })
 
   useEffect(() => {
-    setTargetRow()
+    setTargetRow([])
   }, [])
 
   useEffect(() => {

@@ -22,7 +22,7 @@ const HMCCreate = ({ close, loadingData, setTargetRow }) => {
   })
 
   useEffect(() => {
-    setTargetRow()
+    setTargetRow([])
   }, [])
 
   const handleCreate = async (isSave = true) => {

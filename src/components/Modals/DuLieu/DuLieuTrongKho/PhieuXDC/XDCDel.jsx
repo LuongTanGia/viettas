@@ -14,7 +14,7 @@ const XDCDel = ({ close, dataXDC, loadingData, setTargetRow }) => {
         loadingData()
         close()
         toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
-        setTargetRow()
+        setTargetRow([])
       } else {
         toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
       }

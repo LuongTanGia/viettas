@@ -69,7 +69,7 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
   }, [isShowModal])
 
   useEffect(() => {
-    setTargetRow()
+    setTargetRow([])
   }, [])
 
   useEffect(() => {

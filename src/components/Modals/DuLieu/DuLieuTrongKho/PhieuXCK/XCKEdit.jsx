@@ -70,7 +70,7 @@ const XCKEdit = ({ close, dataXCK, loadingData, setTargetRow }) => {
   }, [isShowModal])
 
   useEffect(() => {
-    setTargetRow()
+    setTargetRow([])
   }, [])
 
   useEffect(() => {

@@ -23,7 +23,7 @@ const NHEdit = ({ close, loadingData, setTargetRow, dataNH }) => {
   })
 
   useEffect(() => {
-    setTargetRow()
+    setTargetRow([])
   }, [])
   const handleEdit = async () => {
     if (!NHForm?.TenNhom?.trim()) {

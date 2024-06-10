@@ -25,7 +25,7 @@ const KHOEdit = ({ close, loadingData, setTargetRow, dataKHO }) => {
     TenKho: '',
   })
   useEffect(() => {
-    setTargetRow()
+    setTargetRow([])
   }, [])
 
   const handleEdit = async () => {
