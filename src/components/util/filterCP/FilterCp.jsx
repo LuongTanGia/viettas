@@ -128,7 +128,7 @@ function FilterCp({ title1, title2, title3, option1, option2, option3, dataAPI, 
         onChange={handleChangeValue}
         maxTagCount="responsive"
         allowClear
-        placeholder={``}
+        placeholder={`${title3} nhiều`}
         optionFilterProp="children"
         filterOption={(input, option) => (option?.label ?? '').includes(input)}
         filterSort={(optionA, optionB) => (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())}

@@ -5,16 +5,13 @@ import icons from '../../../untils/icons'
 import { toast } from 'react-toastify'
 import * as apis from '../../../apis'
 import { Modals, PermissionView } from '../../../components_K'
-import ActionButton from '../../../components/util/Button/ActionButton'
-import dayjs from 'dayjs'
-import { RETOKEN, formatPrice, formatQuantity } from '../../../action/Actions'
+import { RETOKEN, addRowClass, formatPrice, formatQuantity } from '../../../action/Actions'
 import SimpleBackdrop from '../../../components/util/Loading/LoadingPage'
-// import { DatePicker } from '@mui/x-date-pickers/DatePicker'
-import { DateField } from '@mui/x-date-pickers/DateField'
 import { useSearch } from '../../../components_K/myComponents/useSearch'
 import HighlightedCell from '../../../components/hooks/HighlightedCell'
 import { exportToExcel } from '../../../action/Actions'
 import { CloseSquareFilled } from '@ant-design/icons'
+import ActionDateField from '../../../components/util/DateField/ActionDateField'
 
 const { Text } = Typography
 const { TiPrinter, BsSearch, TfiMoreAlt, FaEyeSlash, RiFileExcel2Fill } = icons
@@ -46,7 +43,6 @@ const PhieuBanLe = () => {
   const [newColumns, setNewColumns] = useState([])
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
-  const [lastSearchTime, setLastSearchTime] = useState(0)
   const [isShowNotify, setIsShowNotify] = useState(false)
 
   // bỏ focus option thì hidden
@@ -69,7 +65,7 @@ const PhieuBanLe = () => {
   useEffect(() => {
     setNewColumns(columns)
     // Lấy thông tin từ local storage sau khi đăng nhập
-    const storedHiddenColumns = localStorage.getItem('hidenColumnPBL')
+    const storedHiddenColumns = localStorage.getItem('hiddenColumnPBL')
     const parsedHiddenColumns = storedHiddenColumns ? JSON.parse(storedHiddenColumns) : null
 
     // Áp dụng thông tin đã lưu vào checkedList và setConfirmed để ẩn cột
@@ -81,8 +77,8 @@ const PhieuBanLe = () => {
 
   useEffect(() => {
     if (confirmed) {
-      setCheckedList(JSON.parse(localStorage.getItem('hidenColumnPBL')))
-      setNewColumns(JSON.parse(localStorage.getItem('hidenColumnPBL')))
+      setCheckedList(JSON.parse(localStorage.getItem('hiddenColumnPBL')))
+      setNewColumns(JSON.parse(localStorage.getItem('hiddenColumnPBL')))
     }
   }, [confirmed])
 
@@ -92,8 +88,6 @@ const PhieuBanLe = () => {
     setIsLoadingEdit(true)
     const fetchData = async () => {
       try {
-        console.log('get helper')
-
         const tokenLogin = localStorage.getItem('TKN')
         if (actionType === 'create' || actionType === 'edit') {
           console.log('get helper  KH,DT')
@@ -133,8 +127,6 @@ const PhieuBanLe = () => {
           }
         }
         if (actionType === 'view') {
-          console.log('get helper tt')
-
           const responseTT = await apis.ThongTinPBL(tokenLogin, dataRecord.SoChungTu)
           if (responseTT.data && responseTT.data.DataError === 0) {
             setDataThongTin(responseTT.data.DataResult)
@@ -152,7 +144,6 @@ const PhieuBanLe = () => {
         }
 
         if (actionType === 'edit') {
-          console.log('get helper tt sua')
           const responseTTS = await apis.ThongTinSuaPBL(tokenLogin, dataRecord.SoChungTu)
           if (responseTTS.data && responseTTS.data.DataError === 0) {
             setDataThongTinSua(responseTTS.data.DataResult)
@@ -193,7 +184,6 @@ const PhieuBanLe = () => {
   useEffect(() => {
     const getKhoanNgay = async () => {
       try {
-        console.log('get Khoảng ngày')
         const tokenLogin = localStorage.getItem('TKN')
         const response = await apis.KhoanNgay(tokenLogin)
 
@@ -223,30 +213,22 @@ const PhieuBanLe = () => {
   useEffect(() => {
     const getChucNangQuyenHan = async () => {
       try {
-        console.log('đi')
         const tokenLogin = localStorage.getItem('TKN')
         const response = await apis.ChucNangQuyenHan(tokenLogin, 'DuLieu_PBL')
 
         if (response.data && response.data.DataError === 0) {
           setDataQuyenHan(response.data)
-        }
-        // else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        //   toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        // }
-        else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
           getChucNangQuyenHan()
         }
-        // else {
-        //   toast.error(response.data.DataErrorDescription)
-        // }
       } catch (error) {
         console.error('Kiểm tra token thất bại', error)
       }
     }
-
     getChucNangQuyenHan()
   }, [])
+
   useEffect(() => {
     if (dataQuyenHan?.VIEW == false) {
       setIsShowNotify(true)
@@ -261,26 +243,25 @@ const PhieuBanLe = () => {
 
   const getDSPBL = async () => {
     try {
-      console.log('đi2')
-
       const tokenLogin = localStorage.getItem('TKN')
-
       const response = await apis.DanhSachPBL(tokenLogin, formKhoanNgay)
-
-      if (response.data && response.data.DataError === 0) {
-        setData(response.data.DataResults)
-        setTableLoad(false)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getDSPBL()
-        // setTableLoad(false)
-      } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        setTableLoad(false)
-      } else {
-        toast.error(response.data.DataErrorDescription)
-        setData([])
-        setTableLoad(false)
+      if (response) {
+        const { DataError, DataErrorDescription, DataResults } = response.data
+        if (DataError === 0) {
+          setData(DataResults)
+          setTableLoad(false)
+        } else if (DataError === -107 || DataError === -108) {
+          await RETOKEN()
+          getDSPBL()
+          // setTableLoad(false)
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+          setTableLoad(false)
+        } else {
+          toast.error(DataErrorDescription)
+          setData([])
+          setTableLoad(false)
+        }
       }
     } catch (error) {
       console.error('Kiểm tra token thất bại', error)
@@ -347,13 +328,17 @@ const PhieuBanLe = () => {
       title: 'Tên đối tượng',
       dataIndex: 'TenDoiTuong',
       key: 'TenDoiTuong',
-      width: 200,
+      width: 250,
       sorter: (a, b) => a.TenDoiTuong.localeCompare(b.TenDoiTuong),
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
-          <HighlightedCell text={text} search={searchPBL} />
+        <div className=" text-start">
+          {/* <Tooltip title={text} color="blue"> */}
+          <span>
+            <HighlightedCell text={text} search={searchPBL} />
+          </span>
+          {/* </Tooltip> */}
         </div>
       ),
     },
@@ -371,12 +356,12 @@ const PhieuBanLe = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
-          <Tooltip title={text} color="blue">
-            <span>
-              <HighlightedCell text={text} search={searchPBL} />
-            </span>
-          </Tooltip>
+        <div className=" text-start">
+          {/* <Tooltip title={text} color="blue"> */}
+          <span>
+            <HighlightedCell text={text} search={searchPBL} />
+          </span>
+          {/* </Tooltip> */}
         </div>
       ),
     },
@@ -426,7 +411,7 @@ const PhieuBanLe = () => {
       title: 'Ghi chú ',
       dataIndex: 'GhiChu',
       key: 'GhiChu',
-      width: 200,
+      width: 250,
       sorter: (a, b) => {
         const GhiChuA = a.GhiChu || ''
         const GhiChuB = b.GhiChu || ''
@@ -435,7 +420,7 @@ const PhieuBanLe = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
+        <div className=" text-start">
           <HighlightedCell text={text} search={searchPBL} />
         </div>
       ),
@@ -612,7 +597,13 @@ const PhieuBanLe = () => {
     value: key,
   }))
 
-  const newColumnsHide = columns.filter((item) => !newColumns.includes(item.dataIndex))
+  const newColumnsHide = columns.filter((item) => {
+    if (newColumns && newColumns.length > 0) {
+      return !newColumns.includes(item.dataIndex)
+    } else {
+      return true
+    }
+  })
 
   const handleHideColumns = () => {
     setNewColumns(checkedList)
@@ -638,48 +629,8 @@ const PhieuBanLe = () => {
   }
 
   const handleFilterDS = () => {
-    const currentTime = new Date().getTime()
-    if (currentTime - lastSearchTime >= 1000 && formKhoanNgay !== prevdateValue) {
+    if (formKhoanNgay !== prevdateValue) {
       setTableLoad(true)
-      setLastSearchTime(currentTime)
-    }
-  }
-
-  const handleStartDateChange = (newDate) => {
-    const startDate = newDate
-    const endDate = formKhoanNgay.NgayKetThuc
-
-    if (dayjs(startDate).isAfter(dayjs(endDate))) {
-      // Nếu ngày bắt đầu lớn hơn ngày kết thúc, cập nhật ngày kết thúc
-      setFormKhoanNgay({
-        ...formKhoanNgay,
-        NgayBatDau: startDate,
-        NgayKetThuc: startDate,
-      })
-    } else {
-      setFormKhoanNgay({
-        ...formKhoanNgay,
-        NgayBatDau: startDate,
-      })
-    }
-  }
-
-  const handleEndDateChange = (newDate) => {
-    const startDate = formKhoanNgay.NgayBatDau
-    const endDate = dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss')
-
-    if (dayjs(startDate).isAfter(dayjs(endDate))) {
-      // Nếu ngày kết thúc nhỏ hơn ngày bắt đầu, cập nhật ngày bắt đầu
-      setFormKhoanNgay({
-        ...formKhoanNgay,
-        NgayBatDau: endDate,
-        NgayKetThuc: endDate,
-      })
-    } else {
-      setFormKhoanNgay({
-        ...formKhoanNgay,
-        NgayKetThuc: endDate,
-      })
     }
   }
 
@@ -701,7 +652,7 @@ const PhieuBanLe = () => {
           ) : (
             <div className="w-auto">
               <div className="relative text-lg flex justify-between items-center mb-1">
-                <div className="flex items-center gap-x-4 font-bold">
+                <div className="flex items-baseline gap-x-4 font-bold">
                   <h1 className="text-xl uppercase">Phiếu bán hàng (lẻ) </h1>
                   <div>
                     <BsSearch size={18} className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
@@ -709,7 +660,7 @@ const PhieuBanLe = () => {
                 </div>
                 <div className="flex  ">
                   {isShowSearch && (
-                    <div className={`flex absolute left-[16.4rem] -top-[2px] transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
+                    <div className={`flex absolute left-[16.4rem] -top-[3px] transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
                       <Input
                         allowClear={{
                           clearIcon: <CloseSquareFilled />,
@@ -790,7 +741,7 @@ const PhieuBanLe = () => {
                               defaultValue={checkedList}
                               onChange={(value) => {
                                 setCheckedList(value)
-                                localStorage.setItem('hidenColumnPBL', JSON.stringify(value))
+                                localStorage.setItem('hiddenColumnPBL', JSON.stringify(value))
                               }}
                             >
                               <Row>
@@ -815,81 +766,7 @@ const PhieuBanLe = () => {
               <div className="flex justify-between items-center px-4 ">
                 <div className="flex gap-3">
                   {/* DatePicker */}
-                  <div className="flex gap-x-2 items-center">
-                    <label htmlFor="">Ngày</label>
-                    <DateField
-                      className="DatePicker_PBL max-w-[110px]"
-                      format="DD/MM/YYYY"
-                      value={dayjs(formKhoanNgay.NgayBatDau)}
-                      // maxDate={dayjs(formKhoanNgay.NgayKetThuc)}
-                      onChange={(newDate) => {
-                        setFormKhoanNgay({
-                          ...formKhoanNgay,
-                          NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
-                        })
-                      }}
-                      onBlur={() => {
-                        handleStartDateChange(formKhoanNgay.NgayBatDau)
-                        handleFilterDS()
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          handleStartDateChange(formKhoanNgay.NgayBatDau)
-
-                          setPrevDateValue(formKhoanNgay)
-                          handleFilterDS()
-                        }
-                      }}
-                      onFocus={() => setPrevDateValue(formKhoanNgay)}
-                      sx={{
-                        '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                        '& .MuiButtonBase-root': {
-                          padding: '4px',
-                        },
-                        '& .MuiSvgIcon-root': {
-                          width: '18px',
-                          height: '18px',
-                        },
-                      }}
-                    />
-                  </div>
-                  <div className="flex gap-x-2 items-center">
-                    <label htmlFor="">Đến</label>
-                    <DateField
-                      className="DatePicker_PBL max-w-[110px]"
-                      format="DD/MM/YYYY"
-                      // minDate={dayjs(formKhoanNgay.NgayBatDau)}
-                      value={dayjs(formKhoanNgay.NgayKetThuc)}
-                      onChange={(newDate) => {
-                        setFormKhoanNgay({
-                          ...formKhoanNgay,
-                          NgayKetThuc: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
-                        })
-                      }}
-                      onBlur={() => {
-                        handleEndDateChange(formKhoanNgay.NgayKetThuc)
-                        handleFilterDS()
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          handleEndDateChange(formKhoanNgay.NgayKetThuc)
-                          setPrevDateValue(formKhoanNgay)
-                          handleFilterDS()
-                        }
-                      }}
-                      onFocus={() => setPrevDateValue(formKhoanNgay)}
-                      sx={{
-                        '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                        '& .MuiButtonBase-root': {
-                          padding: '4px',
-                        },
-                        '& .MuiSvgIcon-root': {
-                          width: '18px',
-                          height: '18px',
-                        },
-                      }}
-                    />
-                  </div>
+                  <ActionDateField formKhoanNgay={formKhoanNgay} setFormKhoanNgay={setFormKhoanNgay} setPrevDateValue={setPrevDateValue} handleFilterDS={handleFilterDS} />
                 </div>
               </div>
 
@@ -905,22 +782,22 @@ const PhieuBanLe = () => {
                     x: 1500,
                     y: 410,
                   }}
-                  bordered
-                  pagination={{
-                    defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                    showSizeChanger: true,
-                    pageSizeOptions: ['50', '100', '1000'],
-                    onShowSizeChange: (current, size) => {
-                      localStorage.setItem('pageSize', size)
-                    },
-                  }}
+                  // pagination={{
+                  //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                  //   showSizeChanger: true,
+                  //   pageSizeOptions: ['50', '100', '1000'],
+                  //   onShowSizeChange: (current, size) => {
+                  //     localStorage.setItem('pageSize', size)
+                  //   },
+                  // }}
+                  pagination={false}
                   rowKey={(record) => record.SoChungTu}
                   onRow={(record) => ({
                     onDoubleClick: () => {
                       handleView(record)
                     },
                   })}
-                  rowClassName={(record) => (record.SoChungTu === donePBL ? 'highlighted-row' : '')}
+                  rowClassName={(record, index) => (record.SoChungTu === donePBL ? 'highlighted-row' : addRowClass(record, index))}
                   // Bảng Tổng
                   summary={() => {
                     return (
@@ -928,40 +805,48 @@ const PhieuBanLe = () => {
                         <Table.Summary.Row>
                           {newColumnsHide
                             .filter((column) => column.render)
-                            .map((column) => {
+                            .map((column, index) => {
                               const isNumericColumn = typeof filteredPBL[0]?.[column.dataIndex] === 'number'
 
                               return (
-                                <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                                <Table.Summary.Cell
+                                  index={index}
+                                  key={`summary-cell-${index + 1}`}
+                                  align={isNumericColumn ? 'right' : 'left'}
+                                  className="text-end font-bold  bg-[#f1f1f1]"
+                                >
                                   {isNumericColumn ? (
-                                    column.dataIndex === 'TongTienHang' || column.dataIndex === 'TongTienThue' || column.dataIndex === 'TongThanhTien' ? (
-                                      <Text strong>
-                                        {Number(filteredPBL.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                          minimumFractionDigits: dataThongSo?.SOLESOTIEN,
-                                          maximumFractionDigits: dataThongSo?.SOLESOTIEN,
-                                        })}
-                                      </Text>
-                                    ) : column.dataIndex === 'TongSoLuong' ? (
-                                      <Text strong>
-                                        {Number(filteredPBL.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                          minimumFractionDigits: dataThongSo?.SOLESOLUONG,
-                                          maximumFractionDigits: dataThongSo?.SOLESOLUONG,
-                                        })}
-                                      </Text>
-                                    ) : (
-                                      <Text strong>
-                                        {Number(filteredPBL.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                          minimumFractionDigits: 0,
-                                          maximumFractionDigits: 0,
-                                        })}
-                                      </Text>
-                                    )
+                                    (() => {
+                                      const total = Number(filteredPBL?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0))
+                                      return column.dataIndex === 'TongTienHang' || column.dataIndex === 'TongTienThue' || column.dataIndex === 'TongThanhTien' ? (
+                                        <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
+                                          {Number(filteredPBL?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                            minimumFractionDigits: dataThongSo?.SOLESOTIEN,
+                                            maximumFractionDigits: dataThongSo?.SOLESOTIEN,
+                                          })}
+                                        </Text>
+                                      ) : column.dataIndex === 'TongSoLuong' ? (
+                                        <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
+                                          {Number(filteredPBL?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                            minimumFractionDigits: dataThongSo?.SOLESOLUONG,
+                                            maximumFractionDigits: dataThongSo?.SOLESOLUONG,
+                                          })}
+                                        </Text>
+                                      ) : (
+                                        <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
+                                          {Number(filteredPBL.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                            minimumFractionDigits: 0,
+                                            maximumFractionDigits: 0,
+                                          })}
+                                        </Text>
+                                      )
+                                    })()
                                   ) : column.dataIndex === 'TTTienMat' ? (
-                                    <Text className="text-center flex justify-center" strong>
+                                    <Text className="text-center flex justify-center text-white" strong>
                                       {Object.values(data).filter((value) => value.TTTienMat).length}
                                     </Text>
                                   ) : column.dataIndex === 'STT' ? (
-                                    <Text className="text-center flex justify-center" strong>
+                                    <Text className="text-center flex justify-center text-white" strong>
                                       {data.length}
                                     </Text>
                                   ) : null}

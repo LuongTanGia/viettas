@@ -11,10 +11,10 @@ import { IoMdAddCircleOutline } from 'react-icons/io'
 import { FaSearch, FaEyeSlash } from 'react-icons/fa'
 import { CloseSquareFilled } from '@ant-design/icons'
 import { MdEdit, MdDelete } from 'react-icons/md'
+import categoryAPI from '../../API/linkAPI'
 import { useSearch } from '../../components/hooks/Search'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
-import { RETOKEN, exportToExcel } from '../../action/Actions'
-import categoryAPI from '../../API/linkAPI'
+import { RETOKEN, addRowClass, exportToExcel } from '../../action/Actions'
 import { nameColumsNhomHang } from '../../components/util/Table/ColumnName'
 import ActionButton from '../../components/util/Button/ActionButton'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
@@ -89,9 +89,6 @@ const NhomHang = () => {
         if (response.data.DataError === 0) {
           setDataCRUD(response.data)
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getDataQuyenHan()
         }
       } catch (error) {
         console.log(error)
@@ -170,7 +167,7 @@ const NhomHang = () => {
       title: 'Mã',
       dataIndex: 'MaNhom',
       key: 'MaNhom',
-      width: 220,
+      width: 100,
       fixed: 'left',
       align: 'center',
       sorter: (a, b) => a.MaNhom.localeCompare(b.MaNhom),
@@ -185,75 +182,53 @@ const NhomHang = () => {
       title: 'Tên',
       dataIndex: 'TenNhom',
       key: 'TenNhom',
-      width: 220,
+      width: 200,
       align: 'center',
       sorter: (a, b) => a.TenNhom.localeCompare(b.TenNhom),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              textAlign: 'start',
-            }}
-          >
+        <div className="text-start whitespace-pre-wrap">
+          <span>
             <HighlightedCell text={text} search={searchNhomHang} />
-          </div>
-        </Tooltip>
+          </span>
+        </div>
       ),
     },
     {
       title: 'Ghi chú',
       dataIndex: 'GhiChu',
       key: 'GhiChu',
+      width: 200,
       showSorterTooltip: false,
       align: 'center',
       sorter: (a, b) => (a.GhiChu?.toString() || '').localeCompare(b.GhiChu?.toString() || ''),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              display: 'flex',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              justifyContent: 'start',
-            }}
-          >
+        <div className="text-start whitespace-pre-wrap">
+          <span>
             <HighlightedCell text={text} search={searchNhomHang} />
-          </div>
-        </Tooltip>
+          </span>
+        </div>
       ),
     },
     {
       title: 'Người tạo',
       dataIndex: 'NguoiTao',
       key: 'NguoiTao',
-      width: 250,
+      width: 180,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => a.NguoiTao.localeCompare(b.NguoiTao),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <HighlightedCell text={text} search={searchNhomHang} />
-          </div>
-        </Tooltip>
+        <div className="truncate">
+          <HighlightedCell text={text} search={searchNhomHang} />
+        </div>
       ),
     },
     {
       title: 'Ngày tạo',
       dataIndex: 'NgayTao',
       key: 'NgayTao',
-      width: 200,
+      width: 150,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => {
@@ -268,22 +243,13 @@ const NhomHang = () => {
       dataIndex: 'NguoiSuaCuoi',
       key: 'NguoiSuaCuoi',
       align: 'center',
-      width: 250,
-      ellipsis: 'true',
+      width: 180,
       showSorterTooltip: false,
       sorter: (a, b) => (a.NguoiSuaCuoi?.toString() || '').localeCompare(b.NguoiSuaCuoi?.toString() || ''),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <HighlightedCell text={text} search={searchNhomHang} />
-          </div>
-        </Tooltip>
+        <div className="truncate">
+          <HighlightedCell text={text} search={searchNhomHang} />
+        </div>
       ),
     },
     {
@@ -291,7 +257,7 @@ const NhomHang = () => {
       dataIndex: 'NgaySuaCuoi',
       key: 'NgaySuaCuoi',
       align: 'center',
-      width: 200,
+      width: 150,
       showSorterTooltip: false,
       sorter: (a, b) => {
         const dateA = new Date(a.NgaySuaCuoi)
@@ -321,7 +287,7 @@ const NhomHang = () => {
       render: (text, record) => <Checkbox className="justify-center" id={`NA_${record.key}`} checked={text} />,
     },
     {
-      title: ' ',
+      title: 'Chức năng',
       key: 'operation',
       fixed: 'right',
       width: 80,
@@ -443,7 +409,7 @@ const NhomHang = () => {
                         <div className={`flex ${selectVisible ? '' : 'flex-col'} items-center gap-2`}>
                           <ActionButton
                             handleAction={() => (dataCRUD?.EXCEL == false ? '' : exportToExcel())}
-                            title={'Xuất Excel'}
+                            title={'Xuất excel'}
                             isPermission={dataCRUD?.EXCEL}
                             icon={<RiFileExcel2Fill className="w-5 h-5" />}
                             color={'slate-50'}
@@ -453,7 +419,7 @@ const NhomHang = () => {
                           />
                           <ActionButton
                             handleAction={() => handleHidden()}
-                            title={'Ẩn Cột'}
+                            title={'Ẩn cột'}
                             icon={<FaEyeSlash className="w-5 h-5" />}
                             color={'slate-50'}
                             background={'red-500'}
@@ -506,26 +472,29 @@ const NhomHang = () => {
                   <div className="flex gap-2">
                     <ActionButton
                       handleAction={() => (dataCRUD?.ADD == false ? '' : handleCreate())}
-                      title={'Thêm Nhóm Hàng'}
+                      title={'Thêm'}
                       icon={<IoMdAddCircleOutline className="w-6 h-6" />}
                       color={'slate-50'}
                       background={dataCRUD?.ADD == false ? 'gray-400' : 'blue-500'}
                       color_hover={dataCRUD?.ADD == false ? 'gray-500' : 'blue-500'}
                       bg_hover={'white'}
                       isPermission={dataCRUD?.ADD}
+                      isModal={true}
                     />
                   </div>
                 </div>
                 <div id="my-table">
                   <Table
                     loading={tableLoad}
-                    bordered
                     onRow={(record) => ({
                       onDoubleClick: () => {
                         handleView(record)
                       },
                     })}
-                    rowClassName={(record) => (record.MaNhom == targetRow ? 'highlighted-row' : '')}
+                    onHeaderRow={() => ({
+                      className: 'text-red-600',
+                    })}
+                    rowClassName={(record, index) => (record.MaNhom == targetRow ? 'highlighted-row' : addRowClass(record, index))}
                     className="setHeight"
                     columns={newTitles}
                     dataSource={filteredNhomHang.map((item, index) => ({
@@ -534,17 +503,18 @@ const NhomHang = () => {
                     }))}
                     size="small"
                     scroll={{
-                      x: 2000,
+                      x: 'max-content',
                       y: 400,
                     }}
-                    pagination={{
-                      defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                      showSizeChanger: true,
-                      pageSizeOptions: ['50', '100', '1000'],
-                      onShowSizeChange: (current, size) => {
-                        localStorage.setItem('pageSize', size)
-                      },
-                    }}
+                    // pagination={{
+                    //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                    //   showSizeChanger: true,
+                    //   pageSizeOptions: ['50', '100', '1000'],
+                    //   onShowSizeChange: (current, size) => {
+                    //     localStorage.setItem('pageSize', size)
+                    //   },
+                    // }}
+                    pagination={false}
                     style={{
                       whiteSpace: 'nowrap',
                       fontSize: '24px',
@@ -562,10 +532,10 @@ const NhomHang = () => {
                                     index={index}
                                     key={`summary-cell-${index + 1}`}
                                     align={isNumericColumn ? 'right' : 'left'}
-                                    className="text-end font-bold  bg-[#f1f1f1]"
+                                    className="text-end font-bold bg-[#f1f1f1]"
                                   >
                                     {column.dataIndex == 'STT' ? (
-                                      <Text className="text-center flex justify-center" strong>
+                                      <Text className="text-center flex justify-center text-white" strong>
                                         {dataNhomHang?.length}
                                       </Text>
                                     ) : null}

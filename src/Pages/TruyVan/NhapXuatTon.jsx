@@ -12,7 +12,7 @@ import { TbEyeDollar, TbEye } from 'react-icons/tb'
 import { FaSearch, FaEyeSlash } from 'react-icons/fa'
 import categoryAPI from '../../API/linkAPI'
 import { useSearch } from '../../components/hooks/Search'
-import { RETOKEN, exportToExcel } from '../../action/Actions'
+import { RETOKEN, addRowClass, exportToExcel } from '../../action/Actions'
 import ActionButton from '../../components/util/Button/ActionButton'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
@@ -90,15 +90,17 @@ const NhapXuatTon = () => {
   }, [])
 
   useEffect(() => {
+    selectedMaFrom == null ? setSelectedMaTo(null) : ''
+    selectedNhomFrom == null ? setSelectedNhomTo(null) : ''
+  }, [selectedMaFrom, selectedNhomFrom])
+
+  useEffect(() => {
     const getListNhomHangNXT = async () => {
       try {
         const response = await categoryAPI.ListNhomHangNXT(TokenAccess)
         if (response.data.DataError == 0) {
           setNhomHangNXT(response.data.DataResults)
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getListNhomHangNXT()
         } else {
           console.log(response.data)
           setIsLoading(true)
@@ -119,9 +121,6 @@ const NhapXuatTon = () => {
         if (response.data.DataError == 0) {
           setHangHoaNXT(response.data.DataResults)
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getListHangHoaNXT()
         } else {
           console.log(response.data)
           setIsLoading(true)
@@ -148,9 +147,6 @@ const NhapXuatTon = () => {
         if (response.data.DataError == 0) {
           setDateData(response.data)
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getTimeSetting()
         } else {
           console.log(response.data)
           setIsLoading(true)
@@ -179,19 +175,18 @@ const NhapXuatTon = () => {
         if (isLoading === true) {
           setTableLoad(true)
           const response = await categoryAPI.InfoNXTTongKho(
-            {
-              NgayBatDau: dayjs(khoanNgayFrom).format('YYYY-MM-DD'),
-              NgayKetThuc: dayjs(khoanNgayTo).format('YYYY-MM-DD'),
-            },
+            dateData == {}
+              ? {}
+              : {
+                  NgayBatDau: dateData.NgayBatDau,
+                  NgayKetThuc: dateData.NgayKetThuc,
+                },
             TokenAccess,
           )
           if (response.data.DataError == 0) {
             setDataNXT(response.data.DataResults)
             setIsLoading(true)
             setTableLoad(false)
-          } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-            await RETOKEN()
-            getDataNXTFirst()
           } else {
             setDataNXT([])
             console.log(response.data)
@@ -203,7 +198,7 @@ const NhapXuatTon = () => {
       }
     }
     getDataNXTFirst()
-  }, [searchHangHoa, isLoading, khoanNgayFrom, khoanNgayTo])
+  }, [searchHangHoa, isLoading])
 
   const getDataNXT = async () => {
     try {
@@ -223,9 +218,6 @@ const NhapXuatTon = () => {
       if (response.data.DataError == 0) {
         setDataNXT(response.data.DataResults)
         setTableLoad(false)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getDataNXT()
       } else if (response.data.DataError == -104) {
         setDataNXT([])
         setTableLoad(false)
@@ -258,9 +250,6 @@ const NhapXuatTon = () => {
       if (response.data.DataError == 0) {
         setDataNXT(response.data.DataResults)
         setTableLoad(false)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getDataNXT_DVTQD()
       } else {
         setDataNXT([])
         setTableLoad(false)
@@ -276,7 +265,6 @@ const NhapXuatTon = () => {
     }
   }
   let timerId
-
   const handleDateChange = () => {
     clearTimeout(timerId)
     timerId = setTimeout(() => {
@@ -372,25 +360,9 @@ const NhapXuatTon = () => {
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'start',
-            }}
-          >
-            <div
-              style={{
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                cursor: 'pointer',
-              }}
-            >
-              <HighlightedCell text={text} search={searchHangHoa} />
-            </div>
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -424,7 +396,7 @@ const NhapXuatTon = () => {
       ),
     },
     {
-      title: 'Đơn vị tính',
+      title: 'ĐVT',
       dataIndex: 'DVT',
       key: 'DVT',
       width: 120,
@@ -438,10 +410,11 @@ const NhapXuatTon = () => {
       dataIndex: 'SoLuongTonDK',
       key: 'SoLuongTonDK',
       align: 'center',
+      width: 150,
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongTonDK - b.SoLuongTonDK,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full px-2 ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full px-2 ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -451,10 +424,11 @@ const NhapXuatTon = () => {
       dataIndex: 'TriGiaTonDK',
       key: 'TriGiaTonDK',
       align: 'center',
+      width: 150,
       showSorterTooltip: false,
       sorter: (a, b) => a.TriGiaTonDK - b.TriGiaTonDK,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full px-2 ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full px-2 ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -464,10 +438,12 @@ const NhapXuatTon = () => {
       dataIndex: 'SoLuongNhap_PMH',
       key: 'SoLuongNhap_PMH',
       align: 'center',
+      width: 150,
+
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongNhap_PMH - b.SoLuongNhap_PMH,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -477,10 +453,12 @@ const NhapXuatTon = () => {
       dataIndex: 'TriGiaNhap_PMH',
       key: 'TriGiaNhap_PMH',
       align: 'center',
+      width: 150,
+
       showSorterTooltip: false,
       sorter: (a, b) => a.TriGiaNhap_PMH - b.TriGiaNhap_PMH,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -490,10 +468,11 @@ const NhapXuatTon = () => {
       dataIndex: 'SoLuongNhap_NTR',
       key: 'SoLuongNhap_NTR',
       align: 'center',
+      width: 150,
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongNhap_NTR - b.SoLuongNhap_NTR,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -503,10 +482,11 @@ const NhapXuatTon = () => {
       dataIndex: 'TriGiaNhap_NTR',
       key: 'TriGiaNhap_NTR',
       align: 'center',
+      width: 150,
       showSorterTooltip: false,
       sorter: (a, b) => a.TriGiaNhap_NTR - b.TriGiaNhap_NTR,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -516,10 +496,11 @@ const NhapXuatTon = () => {
       dataIndex: 'SoLuongNhap_NDC',
       key: 'SoLuongNhap_NDC',
       align: 'center',
+      width: 150,
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongNhap_NDC - b.SoLuongNhap_NDC,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -529,10 +510,11 @@ const NhapXuatTon = () => {
       dataIndex: 'TriGiaNhap_NDC',
       key: 'TriGiaNhap_NDC',
       align: 'center',
+      width: 150,
       showSorterTooltip: false,
       sorter: (a, b) => a.TriGiaNhap_NDC - b.TriGiaNhap_NDC,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -542,10 +524,11 @@ const NhapXuatTon = () => {
       dataIndex: 'SoLuongNhap',
       key: 'SoLuongNhap',
       align: 'center',
+      width: 150,
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongNhap - b.SoLuongNhap,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -555,10 +538,11 @@ const NhapXuatTon = () => {
       dataIndex: 'TriGiaNhap',
       key: 'TriGiaNhap',
       align: 'center',
+      width: 150,
       showSorterTooltip: false,
       sorter: (a, b) => a.TriGiaNhap - b.TriGiaNhap,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -568,10 +552,11 @@ const NhapXuatTon = () => {
       dataIndex: 'SoLuongXuat_PBS',
       key: 'SoLuongXuat_PBS',
       align: 'center',
+      width: 150,
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongXuat_PBS - b.SoLuongXuat_PBS,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -581,10 +566,11 @@ const NhapXuatTon = () => {
       dataIndex: 'TriGiaXuat_PBS',
       key: 'TriGiaXuat_PBS',
       align: 'center',
+      width: 150,
       showSorterTooltip: false,
       sorter: (a, b) => a.TriGiaXuat_PBS - b.TriGiaXuat_PBS,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -594,10 +580,11 @@ const NhapXuatTon = () => {
       dataIndex: 'SoLuongXuat_PBL',
       key: 'SoLuongXuat_PBL',
       align: 'center',
+      width: 150,
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongXuat_PBL - b.SoLuongXuat_PBL,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -607,10 +594,11 @@ const NhapXuatTon = () => {
       dataIndex: 'TriGiaXuat_PBL',
       key: 'TriGiaXuat_PBL',
       align: 'center',
+      width: 150,
       showSorterTooltip: false,
       sorter: (a, b) => a.TriGiaXuat_PBL - b.TriGiaXuat_PBL,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -620,10 +608,11 @@ const NhapXuatTon = () => {
       dataIndex: 'SoLuongXuat_PBQ',
       key: 'SoLuongXuat_PBQ',
       align: 'center',
+      width: 150,
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongXuat_PBQ - b.SoLuongXuat_PBQ,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -633,10 +622,11 @@ const NhapXuatTon = () => {
       dataIndex: 'TriGiaXuat_PBQ',
       key: 'TriGiaXuat_PBQ',
       align: 'center',
+      width: 150,
       showSorterTooltip: false,
       sorter: (a, b) => a.TriGiaXuat_PBQ - b.TriGiaXuat_PBQ,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -646,10 +636,11 @@ const NhapXuatTon = () => {
       dataIndex: 'SoLuongXuat_XTR',
       key: 'SoLuongXuat_XTR',
       align: 'center',
+      width: 150,
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongXuat_XTR - b.SoLuongXuat_XTR,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -659,10 +650,12 @@ const NhapXuatTon = () => {
       dataIndex: 'TriGiaXuat_XTR',
       key: 'TriGiaXuat_XTR',
       align: 'center',
+      width: 150,
+
       showSorterTooltip: false,
       sorter: (a, b) => a.TriGiaXuat_XTR - b.TriGiaXuat_XTR,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -675,7 +668,7 @@ const NhapXuatTon = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongXuat_XSD - b.SoLuongXuat_XSD,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -688,7 +681,7 @@ const NhapXuatTon = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.TriGiaXuat_XSD - b.TriGiaXuat_XSD,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -701,7 +694,7 @@ const NhapXuatTon = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongXuat_HUY - b.SoLuongXuat_HUY,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -714,7 +707,7 @@ const NhapXuatTon = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.TriGiaXuat_HUY - b.TriGiaXuat_HUY,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -727,7 +720,7 @@ const NhapXuatTon = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongXuat_XDC - b.SoLuongXuat_XDC,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -740,7 +733,7 @@ const NhapXuatTon = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.TriGiaXuat_XDC - b.TriGiaXuat_XDC,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -753,7 +746,7 @@ const NhapXuatTon = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongXuat - b.SoLuongXuat,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -766,7 +759,7 @@ const NhapXuatTon = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.TriGiaXuat - b.TriGiaXuat,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -779,7 +772,7 @@ const NhapXuatTon = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.SoLuongTonCK - b.SoLuongTonCK,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
@@ -792,13 +785,582 @@ const NhapXuatTon = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.TriGiaTonCK - b.TriGiaTonCK,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </div>
       ),
     },
   ]
   const newTitles = titles.filter((item) => !hiddenRow?.includes(item.dataIndex))
+  const titlesChildren = [
+    {
+      title: 'STT',
+      dataIndex: 'STT',
+      render: (text, record, index) => index + 1,
+      with: 10,
+      fixed: 'left',
+      width: 50,
+      align: 'center',
+    },
+    {
+      title: 'Mã hàng',
+      dataIndex: 'MaHang',
+      key: 'MaHang',
+      fixed: 'left',
+      width: 120,
+      align: 'center',
+      sorter: (a, b) => a.MaHang.localeCompare(b.MaHang),
+      showSorterTooltip: false,
+      render: (text) => <HighlightedCell text={text} search={searchHangHoa} />,
+    },
+    {
+      title: 'Tên hàng',
+      dataIndex: 'TenHang',
+      key: 'TenHang',
+      fixed: 'left',
+      align: 'center',
+      width: 220,
+      sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
+      showSorterTooltip: false,
+      render: (text) => (
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
+      ),
+    },
+    {
+      title: 'Nhóm',
+      dataIndex: 'TenNhomHang',
+      key: 'TenNhomHang',
+      align: 'center',
+      width: 200,
+      sorter: (a, b) => a.TenNhomHang.localeCompare(b.TenNhomHang),
+      showSorterTooltip: false,
+      render: (text) => (
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
+      ),
+    },
+    {
+      title: 'ĐVT',
+      dataIndex: 'DVT',
+      key: 'DVT',
+      width: 100,
+      align: 'center',
+      sorter: (a, b) => a.DVT.localeCompare(b.DVT),
+      showSorterTooltip: false,
+      render: (text) => <HighlightedCell text={text} search={searchHangHoa} />,
+    },
+    {
+      title: 'Tồn đầu kỳ',
+      align: 'center',
+      dataIndex: 'TonDK',
+      ellipsis: true,
+      children: [
+        {
+          title: 'Số lượng',
+          dataIndex: 'SoLuongTonDK',
+          key: 'SoLuongTonDK',
+          align: 'center',
+          width: 120,
+          showSorterTooltip: false,
+          sorter: (a, b) => a.SoLuongTonDK - b.SoLuongTonDK,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full px-2 ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+        {
+          title: 'Trị giá',
+          dataIndex: 'TriGiaTonDK',
+          key: 'TriGiaTonDK',
+          align: 'center',
+          width: 120,
+          showSorterTooltip: false,
+          sorter: (a, b) => a.TriGiaTonDK - b.TriGiaTonDK,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full px-2 ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+      ],
+    },
+    {
+      title: 'Nhập - Mua hàng',
+      align: 'center',
+      dataIndex: 'Nhap_PMH',
+      ellipsis: true,
+      children: [
+        {
+          title: 'Số lượng ',
+          dataIndex: 'SoLuongNhap_PMH',
+          key: 'SoLuongNhap_PMH',
+          align: 'center',
+          width: 120,
+          showSorterTooltip: false,
+          sorter: (a, b) => a.SoLuongNhap_PMH - b.SoLuongNhap_PMH,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+        {
+          title: 'Trị giá ',
+          dataIndex: 'TriGiaNhap_PMH',
+          key: 'TriGiaNhap_PMH',
+          align: 'center',
+          width: 120,
+          showSorterTooltip: false,
+          sorter: (a, b) => a.TriGiaNhap_PMH - b.TriGiaNhap_PMH,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+      ],
+    },
+    {
+      title: 'Nhập - Trả hàng',
+      align: 'center',
+      ellipsis: true,
+      dataIndex: 'Nhap_NTR',
+      children: [
+        {
+          title: 'Số lượng',
+          dataIndex: 'SoLuongNhap_NTR',
+          key: 'SoLuongNhap_NTR',
+          align: 'center',
+          width: 120,
+          showSorterTooltip: false,
+          sorter: (a, b) => a.SoLuongNhap_NTR - b.SoLuongNhap_NTR,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+        {
+          title: 'Trị giá',
+          dataIndex: 'TriGiaNhap_NTR',
+          key: 'TriGiaNhap_NTR',
+          align: 'center',
+          width: 120,
+          showSorterTooltip: false,
+          sorter: (a, b) => a.TriGiaNhap_NTR - b.TriGiaNhap_NTR,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+      ],
+    },
+    {
+      title: 'Nhập - Điều chỉnh',
+      align: 'center',
+      ellipsis: true,
+      dataIndex: 'Nhap_NDC',
+      children: [
+        {
+          title: 'Số lượng',
+          dataIndex: 'SoLuongNhap_NDC',
+          key: 'SoLuongNhap_NDC',
+          align: 'center',
+          width: 120,
+          showSorterTooltip: false,
+          sorter: (a, b) => a.SoLuongNhap_NDC - b.SoLuongNhap_NDC,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+        {
+          title: 'Trị giá',
+          dataIndex: 'TriGiaNhap_NDC',
+          key: 'TriGiaNhap_NDC',
+          align: 'center',
+          width: 120,
+          showSorterTooltip: false,
+          sorter: (a, b) => a.TriGiaNhap_NDC - b.TriGiaNhap_NDC,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+      ],
+    },
+    {
+      title: 'Nhập - Tổng',
+      align: 'center',
+      ellipsis: true,
+      children: [
+        {
+          title: 'Số lượng',
+          dataIndex: 'SoLuongNhap',
+          key: 'SoLuongNhap',
+          align: 'center',
+          width: 120,
+          showSorterTooltip: false,
+          sorter: (a, b) => a.SoLuongNhap - b.SoLuongNhap,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+        {
+          title: 'Trị giá',
+          dataIndex: 'TriGiaNhap',
+          key: 'TriGiaNhap',
+          align: 'center',
+          width: 120,
+          showSorterTooltip: false,
+          sorter: (a, b) => a.TriGiaNhap - b.TriGiaNhap,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+      ],
+    },
+    {
+      title: 'Xuất - Bán sỉ',
+      align: 'center',
+      ellipsis: true,
+      children: [
+        {
+          title: 'Số lượng',
+          dataIndex: 'SoLuongXuat_PBS',
+          key: 'SoLuongXuat_PBS',
+          align: 'center',
+          width: 120,
+          showSorterTooltip: false,
+          sorter: (a, b) => a.SoLuongXuat_PBS - b.SoLuongXuat_PBS,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+        {
+          title: 'Trị giá',
+          dataIndex: 'TriGiaXuat_PBS',
+          key: 'TriGiaXuat_PBS',
+          align: 'center',
+          width: 120,
+          showSorterTooltip: false,
+          sorter: (a, b) => a.TriGiaXuat_PBS - b.TriGiaXuat_PBS,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+      ],
+    },
+    {
+      title: 'Xuất - Bán lẻ',
+      align: 'center',
+      ellipsis: true,
+      children: [
+        {
+          title: 'Số lượng',
+          dataIndex: 'SoLuongXuat_PBL',
+          key: 'SoLuongXuat_PBL',
+          align: 'center',
+          width: 120,
+          showSorterTooltip: false,
+          sorter: (a, b) => a.SoLuongXuat_PBL - b.SoLuongXuat_PBL,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+        {
+          title: 'Trị giá',
+          dataIndex: 'TriGiaXuat_PBL',
+          key: 'TriGiaXuat_PBL',
+          align: 'center',
+          width: 120,
+          showSorterTooltip: false,
+          sorter: (a, b) => a.TriGiaXuat_PBL - b.TriGiaXuat_PBL,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+      ],
+    },
+    {
+      title: 'Xuất - Bán lẻ (Quầy)',
+      align: 'center',
+      ellipsis: true,
+      children: [
+        {
+          title: 'Số lượng',
+          dataIndex: 'SoLuongXuat_PBQ',
+          key: 'SoLuongXuat_PBQ',
+          align: 'center',
+          width: 120,
+          showSorterTooltip: false,
+          sorter: (a, b) => a.SoLuongXuat_PBQ - b.SoLuongXuat_PBQ,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+        {
+          title: 'Trị giá',
+          dataIndex: 'TriGiaXuat_PBQ',
+          key: 'TriGiaXuat_PBQ',
+          align: 'center',
+          width: 120,
+          showSorterTooltip: false,
+          sorter: (a, b) => a.TriGiaXuat_PBQ - b.TriGiaXuat_PBQ,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+      ],
+    },
+    {
+      title: 'Xuất - Trả hàng',
+      align: 'center',
+      ellipsis: true,
+      children: [
+        {
+          title: 'Số lượng',
+          dataIndex: 'SoLuongXuat_XTR',
+          key: 'SoLuongXuat_XTR',
+          align: 'center',
+          width: 120,
+          showSorterTooltip: false,
+          sorter: (a, b) => a.SoLuongXuat_XTR - b.SoLuongXuat_XTR,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+        {
+          title: 'Trị giá',
+          dataIndex: 'TriGiaXuat_XTR',
+          key: 'TriGiaXuat_XTR',
+          align: 'center',
+          width: 120,
+          showSorterTooltip: false,
+          sorter: (a, b) => a.TriGiaXuat_XTR - b.TriGiaXuat_XTR,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+      ],
+    },
+    {
+      title: 'Xuất - Sử dụng',
+      align: 'center',
+      ellipsis: true,
+      children: [
+        {
+          title: 'Số lượng',
+          dataIndex: 'SoLuongXuat_XSD',
+          key: 'SoLuongXuat_XSD',
+          width: 120,
+          align: 'center',
+          showSorterTooltip: false,
+          sorter: (a, b) => a.SoLuongXuat_XSD - b.SoLuongXuat_XSD,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+        {
+          title: 'Trị giá',
+          dataIndex: 'TriGiaXuat_XSD',
+          key: 'TriGiaXuat_XSD',
+          align: 'center',
+          width: 120,
+          showSorterTooltip: false,
+          sorter: (a, b) => a.TriGiaXuat_XSD - b.TriGiaXuat_XSD,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+      ],
+    },
+    {
+      title: 'Xuất - Hủy',
+      align: 'center',
+      ellipsis: true,
+      children: [
+        {
+          title: 'Số lượng',
+          dataIndex: 'SoLuongXuat_HUY',
+          key: 'SoLuongXuat_HUY',
+          align: 'center',
+          width: 120,
+          showSorterTooltip: false,
+          sorter: (a, b) => a.SoLuongXuat_HUY - b.SoLuongXuat_HUY,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+        {
+          title: 'Trị giá',
+          dataIndex: 'TriGiaXuat_HUY',
+          key: 'TriGiaXuat_HUY',
+          align: 'center',
+          width: 120,
+          showSorterTooltip: false,
+          sorter: (a, b) => a.TriGiaXuat_HUY - b.TriGiaXuat_HUY,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+      ],
+    },
+    {
+      title: 'Xuất - Điều chỉnh',
+      align: 'center',
+      ellipsis: true,
+      children: [
+        {
+          title: 'Số lượng',
+          dataIndex: 'SoLuongXuat_XDC',
+          key: 'SoLuongXuat_XDC',
+          align: 'center',
+          width: 120,
+          showSorterTooltip: false,
+          sorter: (a, b) => a.SoLuongXuat_XDC - b.SoLuongXuat_XDC,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+        {
+          title: 'Trị giá',
+          dataIndex: 'TriGiaXuat_XDC',
+          key: 'TriGiaXuat_XDC',
+          align: 'center',
+          width: 120,
+          showSorterTooltip: false,
+          sorter: (a, b) => a.TriGiaXuat_XDC - b.TriGiaXuat_XDC,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+      ],
+    },
+    {
+      title: 'Xuất - Tổng',
+      align: 'center',
+      ellipsis: true,
+      children: [
+        {
+          title: 'Số lượng',
+          dataIndex: 'SoLuongXuat',
+          key: 'SoLuongXuat',
+          align: 'center',
+          width: 120,
+          showSorterTooltip: false,
+          sorter: (a, b) => a.SoLuongXuat - b.SoLuongXuat,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+        {
+          title: 'Trị giá',
+          dataIndex: 'TriGiaXuat',
+          key: 'TriGiaXuat',
+          align: 'center',
+          width: 120,
+          showSorterTooltip: false,
+          sorter: (a, b) => a.TriGiaXuat - b.TriGiaXuat,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+      ],
+    },
+    {
+      title: 'Tồn Cuối',
+      align: 'center',
+      ellipsis: true,
+      children: [
+        {
+          title: 'Số lượng',
+          dataIndex: 'SoLuongTonCK',
+          key: 'SoLuongTonCK',
+          align: 'center',
+          width: 120,
+          showSorterTooltip: false,
+          sorter: (a, b) => a.SoLuongTonCK - b.SoLuongTonCK,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+        {
+          title: 'Trị giá',
+          dataIndex: 'TriGiaTonCK',
+          key: 'TriGiaTonCK',
+          align: 'center',
+          width: 120,
+          showSorterTooltip: false,
+          sorter: (a, b) => a.TriGiaTonCK - b.TriGiaTonCK,
+          render: (text) => (
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+            </div>
+          ),
+        },
+      ],
+    },
+  ]
+  function filterChildren(children) {
+    return children?.filter((item) => !hiddenRow?.includes(item.dataIndex))
+  }
+  const newTitlesChildren = titlesChildren
+    .map((item) => {
+      if (item.children && item.children.length > 0) {
+        item.children = filterChildren(item.children)
+        return item
+      } else {
+        return filterChildren([item])[0] || null
+      }
+    })
+    .filter((item) => item !== null)
+
   return (
     <>
       {dataCRUD?.VIEW == false ? (
@@ -885,7 +1447,7 @@ const NhapXuatTon = () => {
                         <div className={`flex ${selectVisible ? '' : 'flex-col'} items-center gap-2`}>
                           <ActionButton
                             handleAction={() => (dataCRUD?.EXCEL == false ? '' : exportToExcel())}
-                            title={'Xuất Excel'}
+                            title={'Xuất excel'}
                             isPermission={dataCRUD?.EXCEL}
                             icon={<RiFileExcel2Fill className="w-5 h-5" />}
                             color={'slate-50'}
@@ -895,7 +1457,7 @@ const NhapXuatTon = () => {
                           />
                           <ActionButton
                             handleAction={handleHidden}
-                            title={'Ẩn Cột'}
+                            title={'Ẩn cột'}
                             icon={<FaEyeSlash className="w-5 h-5" />}
                             color={'slate-50'}
                             background={'red-500'}
@@ -919,7 +1481,7 @@ const NhapXuatTon = () => {
                                 defaultValue={checkedList}
                                 onChange={onChange}
                               >
-                                <Row>
+                                <Row className="flex justify-around">
                                   {options && options.length > 0 ? (
                                     options?.map((item, index) => (
                                       <Col span={10} key={(item, index)}>
@@ -952,7 +1514,8 @@ const NhapXuatTon = () => {
                         <div className="flex items-center gap-1">
                           <label>Từ</label>
                           <DateField
-                            className="DatePicker_NXTKho  max-w-[120px]"
+                            // className="DatePicker_NXTKho  max-w-[120px]"
+                            className="max-w-[130px] min-w-[130px]"
                             onBlur={handleDateChange}
                             onKeyDown={handleKeyDown}
                             format="DD/MM/YYYY"
@@ -976,7 +1539,7 @@ const NhapXuatTon = () => {
                         <div className=" flex items-center gap-1 ">
                           <label>Đến</label>
                           <DateField
-                            className="DatePicker_NXTKho max-w-[120px]"
+                            className="max-w-[130px] min-w-[130px]"
                             onBlur={handleDateChange}
                             onKeyDown={handleKeyDown}
                             format="DD/MM/YYYY"
@@ -1048,11 +1611,14 @@ const NhapXuatTon = () => {
                               width: '12vw',
                               textOverflow: 'ellipsis',
                             }}
+                            optionFilterProp="children"
+                            popupMatchSelectWidth={false}
+                            optionLabelProp="value"
                           >
                             {nhomHangNXT?.map((item, index) => {
                               return (
                                 <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomHang}>
-                                  <p className="truncate">{item.ThongTinNhomHang}</p>
+                                  {item.ThongTinNhomHang}
                                 </Select.Option>
                               )
                             })}
@@ -1077,11 +1643,14 @@ const NhapXuatTon = () => {
                               width: '12vw',
                               textOverflow: 'ellipsis',
                             }}
+                            optionFilterProp="children"
+                            popupMatchSelectWidth={false}
+                            optionLabelProp="value"
                           >
                             {nhomHangNXT?.map((item, index) => {
                               return (
                                 <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomHang}>
-                                  <p className="truncate">{item.ThongTinNhomHang}</p>
+                                  {item.ThongTinNhomHang}
                                 </Select.Option>
                               )
                             })}
@@ -1109,7 +1678,7 @@ const NhapXuatTon = () => {
                             {nhomHangNXT?.map((item) => {
                               return (
                                 <Select.Option key={item.Ma} value={item.Ma} title={item.ThongTinNhomHang}>
-                                  <p className="truncate">{item.ThongTinNhomHang}</p>
+                                  {item.ThongTinNhomHang} <br />
                                 </Select.Option>
                               )
                             })}
@@ -1136,13 +1705,14 @@ const NhapXuatTon = () => {
                               width: '12vw',
                               textOverflow: 'ellipsis',
                             }}
+                            optionFilterProp="children"
+                            popupMatchSelectWidth={false}
+                            optionLabelProp="value"
                           >
                             {hangHoaNXT?.map((item, index) => {
                               return (
                                 <Select.Option key={index} value={item.MaHang} title={item.TenHang}>
-                                  <p className="truncate">
-                                    {item.MaHang} - {item.TenHang}
-                                  </p>
+                                  {item.MaHang} - {item.TenHang}
                                 </Select.Option>
                               )
                             })}
@@ -1170,13 +1740,14 @@ const NhapXuatTon = () => {
                               width: '12vw',
                               textOverflow: 'ellipsis',
                             }}
+                            optionFilterProp="children"
+                            popupMatchSelectWidth={false}
+                            optionLabelProp="value"
                           >
                             {hangHoaNXT?.map((item, index) => {
                               return (
                                 <Select.Option key={index} value={item.MaHang} title={item.TenHang}>
-                                  <p className="truncate">
-                                    {item.MaHang} - {item.TenHang}
-                                  </p>
+                                  {item.MaHang} - {item.TenHang}
                                 </Select.Option>
                               )
                             })}
@@ -1204,9 +1775,7 @@ const NhapXuatTon = () => {
                             {hangHoaNXT?.map((item, index) => {
                               return (
                                 <Select.Option key={index} value={item.MaHang} title={item.TenHang}>
-                                  <p className="truncate">
-                                    {item.MaHang}-{item.TenHang}
-                                  </p>
+                                  {item.MaHang}-{item.TenHang} <br />
                                 </Select.Option>
                               )
                             })}
@@ -1221,22 +1790,23 @@ const NhapXuatTon = () => {
                 <Table
                   loading={tableLoad}
                   className="setHeight"
-                  columns={newTitles}
+                  columns={newTitlesChildren}
                   dataSource={filteredHangHoa.map((item, index) => ({ ...item, key: index }))}
                   size="small"
                   scroll={{
-                    x: 6500,
+                    x: 'max-content',
                     y: 300,
                   }}
-                  pagination={{
-                    defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                    showSizeChanger: true,
-                    pageSizeOptions: ['50', '100', '1000'],
-                    onShowSizeChange: (current, size) => {
-                      localStorage.setItem('pageSize', size)
-                    },
-                  }}
-                  bordered
+                  // pagination={{
+                  //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                  //   showSizeChanger: true,
+                  //   pageSizeOptions: ['50', '100', '1000'],
+                  //   onShowSizeChange: (current, size) => {
+                  //     localStorage.setItem('pageSize', size)
+                  //   },
+                  // }}
+                  pagination={false}
+                  rowClassName={(record, index) => addRowClass(record, index)}
                   style={{
                     whiteSpace: 'nowrap',
                     fontSize: '24px',
@@ -1250,6 +1820,7 @@ const NhapXuatTon = () => {
                             .filter((column) => column.render)
                             .map((column, index) => {
                               const isNumericColumn = typeof filteredHangHoa[0]?.[column.dataIndex] === 'number'
+                              const total = Number(filteredHangHoa?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0))
                               return (
                                 <Table.Summary.Cell
                                   index={index}
@@ -1258,14 +1829,14 @@ const NhapXuatTon = () => {
                                   className="text-end font-bold  bg-[#f1f1f1]"
                                 >
                                   {isNumericColumn ? (
-                                    <Text strong>
+                                    <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
                                       {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                         minimumFractionDigits: dataThongSo.SOLESOLUONG,
                                         maximumFractionDigits: dataThongSo.SOLESOLUONG,
                                       })}
                                     </Text>
                                   ) : column.dataIndex == 'STT' ? (
-                                    <Text className="text-center flex justify-center" strong>
+                                    <Text className="text-center flex justify-center text-white" strong>
                                       {dataNXT?.length}
                                     </Text>
                                   ) : null}

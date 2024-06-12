@@ -34,6 +34,15 @@ export const useSearch = (data) => {
           Email,
           Fax,
           ThongTinNhomGia,
+          // DSBH
+          SoLuong,
+          TienHang,
+          TienThue,
+          ThanhTien,
+          TienCKTT,
+          TongCong_TM,
+          TongCong_CN,
+          TongCong,
           // KhoHang
           MaKho,
           TenDayDu,
@@ -97,6 +106,24 @@ export const useSearch = (data) => {
           TriGiaTonCK,
           SoLuongXuat,
           TriGiaXuat,
+          // CongNoDauVao_Ra
+          MaDoiTuong,
+          TenDoiTuong,
+          DiaChiDoiTuong,
+          SoDuDK,
+          PhatSinhNo_PMH,
+          PhatSinhNo_PBS,
+          PhatSinhNo_DC,
+          PhatSinhNo_Thu_XTR,
+          PhatSinhNo_Chi_NTR,
+          PhatSinhNo,
+          ThanhToan_Chi_PMH,
+          ThanhToan_Thu_PBS,
+          ThanhToan_DC,
+          ThanhToan_NTR,
+          ThanhToan_XTR,
+          ThanhToan,
+          SoDuCK,
           // SoQuy
           THUCONGNO,
           THUTRAHANG,
@@ -149,6 +176,15 @@ export const useSearch = (data) => {
           // KhoHang
           (MaKho || '').toLowerCase().includes(search.toLowerCase()) ||
           (TenDayDu || '').toLowerCase().includes(search.toLowerCase()) ||
+          // DSBH
+          (SoLuong?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (TienHang?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (TienThue?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (ThanhTien?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (TienCKTT?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (TongCong_TM?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (TongCong_CN?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (TongCong?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           // QuanLy
           (MaNguoiDung || '').toLowerCase().includes(search.toLowerCase()) ||
           (MaQuanLy || '').toLowerCase().includes(search.toLowerCase()) ||
@@ -209,6 +245,24 @@ export const useSearch = (data) => {
           (TriGiaTonCK?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (SoLuongXuat?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (TriGiaXuat?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          // CongNoDauVao_Ra
+          (MaDoiTuong || '').toLowerCase().includes(search.toLowerCase()) ||
+          (TenDoiTuong || '').toLowerCase().includes(search.toLowerCase()) ||
+          (DiaChiDoiTuong || '').toLowerCase().includes(search.toLowerCase()) ||
+          (SoDuDK?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (PhatSinhNo_PMH?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (PhatSinhNo_DC?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (PhatSinhNo_Thu_XTR?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (PhatSinhNo?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (ThanhToan_Chi_PMH?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (ThanhToan_DC?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (ThanhToan_XTR?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (SoDuCK?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (ThanhToan?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (PhatSinhNo_PBS?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (PhatSinhNo_Chi_NTR?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (ThanhToan_Thu_PBS?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
+          (ThanhToan_NTR?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           // SoQuy
           (THUCONGNO?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
           (THUTRAHANG?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||

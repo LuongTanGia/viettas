@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
-import { CNDRTONGHOP, CNDRTONGHOP_listHelper, exportToExcel } from '../../action/Actions'
+import { APIPHANQUYEN, CNDRTONGHOP, CNDRTONGHOP_listHelper, exportToExcel } from '../../action/Actions'
 import API from '../../API/API'
 import FilterCp from '../util/filterCP/FilterCp'
 import Date from '../util/DateCP/DateCP'
@@ -30,7 +30,20 @@ function DSBHKHH() {
   const [selectVisible, setSelectVisible] = useState(false)
   const [tableLoad, setTableLoad] = useState(true)
   const [options, setOptions] = useState()
+  const [DataQuyenHan, setDataQuyenHan] = useState([])
+
   useEffect(() => {
+    const getDate = async () => {
+      const quyenHan = await APIPHANQUYEN(token, {
+        Ma: 'TruyVan_DoanhSoBanHangKH',
+      })
+      setDataQuyenHan(quyenHan)
+    }
+    getDate()
+    console.log(DataQuyenHan)
+  }, [])
+  useEffect(() => {
+    setTableLoad(true)
     const getDate = async () => {
       const listTongHop = await CNDRTONGHOP(API.DSKhachHang, token, dataAPI)
       const listDoiTuong = await CNDRTONGHOP_listHelper(API.DSListHelper_DoiTuong, token)
@@ -38,6 +51,7 @@ function DSBHKHH() {
       setData(listTongHop.DataResults || [])
       setDataDoiTuong(listDoiTuong.DataResults)
       setDataNhomDoiTuong(listNhomDoiTuong.DataResults)
+      setTableLoad(false)
     }
     getDate()
   }, [dataAPI.NgayBatDau, dataAPI.NgayKetThuc, dataAPI.CodeValue1From, dataAPI.CodeValue1To, dataAPI.CodeValue1List])
@@ -95,7 +109,7 @@ function DSBHKHH() {
                 <div className={`flex ${selectVisible ? '' : 'flex-col'} items-center gap-2`}>
                   <ActionButton
                     handleAction={() => exportToExcel()}
-                    title={'Xuất Excel'}
+                    title={'Xuất excel'}
                     icon={<RiFileExcel2Fill className="w-5 h-5" />}
                     color={'slate-50'}
                     background={'green-500'}
@@ -104,7 +118,7 @@ function DSBHKHH() {
                   />
                   <ActionButton
                     handleAction={() => handleHidden()}
-                    title={'Ẩn Cột'}
+                    title={'Ẩn cột'}
                     icon={<FaEyeSlash className="w-5 h-5" />}
                     color={'slate-50'}
                     background={'red-500'}
@@ -168,7 +182,7 @@ function DSBHKHH() {
         </div>
 
         <div id="my-table">
-          <Tables param={data} columName={nameColumsDoanhSoBanHangKH} height={'setHeight'} selectMH={[1]} typeTable={'DSBH'} hiden={hiddenRow} />
+          <Tables param={data} loadingSearch={tableLoad} columName={nameColumsDoanhSoBanHangKH} height={'setHeight'} selectMH={[1]} typeTable={'DSBH'} hiden={hiddenRow} />
         </div>
       </>
     </>

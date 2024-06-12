@@ -19,7 +19,7 @@ import { useSearch } from '../../components/hooks/Search'
 import ActionButton from '../../components/util/Button/ActionButton'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
-import { RETOKEN, exportToExcel } from '../../action/Actions'
+import { RETOKEN, addRowClass, exportToExcel } from '../../action/Actions'
 import { nameColumsDoiTuong } from '../../components/util/Table/ColumnName'
 import DTCreate from '../../components/Modals/DanhMuc/DoiTuong/DTCreate'
 import DTView from '../../components/Modals/DanhMuc/DoiTuong/DTView'
@@ -92,9 +92,6 @@ const DoiTuong = () => {
         if (response.data.DataError === 0) {
           setDataCRUD(response.data)
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getDataQuyenHan()
         }
       } catch (error) {
         console.log(error)
@@ -197,7 +194,7 @@ const DoiTuong = () => {
       dataIndex: 'Ma',
       key: 'Ma',
       fixed: 'left',
-      width: 120,
+      width: 80,
       align: 'center',
       sorter: (a, b) => a.Ma.localeCompare(b.Ma),
       showSorterTooltip: false,
@@ -211,24 +208,14 @@ const DoiTuong = () => {
       title: 'Tên loại',
       dataIndex: 'TenLoai',
       key: 'TenLoai',
-      width: 200,
+      width: 180,
       align: 'center',
       sorter: (a, b) => a.TenLoai.localeCompare(b.TenLoai),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchDoiTuong} />
-          </div>
-        </Tooltip>
+        <div className="text-start">
+          <HighlightedCell text={text} search={searchDoiTuong} />
+        </div>
       ),
     },
     {
@@ -240,41 +227,23 @@ const DoiTuong = () => {
       sorter: (a, b) => (a.TenNhom?.toString() || '').localeCompare(b.TenNhom?.toString() || ''),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchDoiTuong} />
-          </div>
-        </Tooltip>
+        <div className="whitespace-pre-wrap text-start">
+          <HighlightedCell text={text} search={searchDoiTuong} />
+        </div>
       ),
     },
     {
       title: 'Tên',
       dataIndex: 'Ten',
       key: 'Ten',
-      width: 180,
+      width: 220,
       align: 'center',
       sorter: (a, b) => a.Ten.localeCompare(b.Ten),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchDoiTuong} />
-          </div>
-        </Tooltip>
+        <div className="whitespace-pre-wrap text-start">
+          <HighlightedCell text={text} search={searchDoiTuong} />
+        </div>
       ),
     },
     {
@@ -286,19 +255,9 @@ const DoiTuong = () => {
       sorter: (a, b) => (a.DiaChi?.toString() || '').localeCompare(b.DiaChi?.toString() || ''),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchDoiTuong} />
-          </div>
-        </Tooltip>
+        <div className="whitespace-pre-wrap text-start">
+          <HighlightedCell text={text} search={searchDoiTuong} />
+        </div>
       ),
     },
     {
@@ -330,19 +289,9 @@ const DoiTuong = () => {
       sorter: (a, b) => (a.Email?.toString() || '').localeCompare(b.Email?.toString() || ''),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchDoiTuong} />
-          </div>
-        </Tooltip>
+        <div className="truncate text-start">
+          <HighlightedCell text={text} search={searchDoiTuong} />
+        </div>
       ),
     },
     {
@@ -364,38 +313,22 @@ const DoiTuong = () => {
       sorter: (a, b) => (a.ThongTinNhomGia?.toString() || '').localeCompare(b.ThongTinNhomGia?.toString() || ''),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchDoiTuong} />
-          </div>
-        </Tooltip>
+        <div className="truncate">
+          <HighlightedCell text={text} search={searchDoiTuong} />
+        </div>
       ),
     },
     {
       title: 'Ghi chú',
       dataIndex: 'GhiChu',
       key: 'GhiChu',
+      width: 250,
       showSorterTooltip: false,
       align: 'center',
       sorter: (a, b) => (a.GhiChu?.toString() || '').localeCompare(b.GhiChu?.toString() || ''),
       render: (text) => (
         <Tooltip title={text} color="blue">
-          <div
-            style={{
-              display: 'flex',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              justifyContent: 'start',
-            }}
-          >
+          <div className="text-start whitespace-pre-wrap">
             <HighlightedCell text={text} search={searchDoiTuong} />
           </div>
         </Tooltip>
@@ -405,29 +338,21 @@ const DoiTuong = () => {
       title: 'Người tạo',
       dataIndex: 'NguoiTao',
       key: 'NguoiTao',
-      width: 250,
+      width: 180,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => a.NguoiTao.localeCompare(b.NguoiTao),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <HighlightedCell text={text} search={searchDoiTuong} />
-          </div>
-        </Tooltip>
+        <div className="truncate">
+          <HighlightedCell text={text} search={searchDoiTuong} />
+        </div>
       ),
     },
     {
       title: 'Ngày tạo',
       dataIndex: 'NgayTao',
       key: 'NgayTao',
-      width: 200,
+      width: 150,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => {
@@ -435,29 +360,20 @@ const DoiTuong = () => {
         const dateB = new Date(b.NgayTao)
         return dateA - dateB
       },
-      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss.SS')} search={searchDoiTuong} />,
+      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss')} search={searchDoiTuong} />,
     },
     {
       title: 'Người sửa',
       dataIndex: 'NguoiSuaCuoi',
       key: 'NguoiSuaCuoi',
       align: 'center',
-      width: 250,
-      ellipsis: 'true',
+      width: 180,
       showSorterTooltip: false,
       sorter: (a, b) => (a.NguoiSuaCuoi?.toString() || '').localeCompare(b.NguoiSuaCuoi?.toString() || ''),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <HighlightedCell text={text} search={searchDoiTuong} />
-          </div>
-        </Tooltip>
+        <div className="truncate">
+          <HighlightedCell text={text} search={searchDoiTuong} />
+        </div>
       ),
     },
     {
@@ -465,7 +381,7 @@ const DoiTuong = () => {
       dataIndex: 'NgaySuaCuoi',
       key: 'NgaySuaCuoi',
       align: 'center',
-      width: 200,
+      width: 150,
       showSorterTooltip: false,
       sorter: (a, b) => {
         const dateA = new Date(a.NgaySuaCuoi)
@@ -474,14 +390,14 @@ const DoiTuong = () => {
       },
       render: (text) => {
         if (text) {
-          return <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss.SS')} search={searchDoiTuong} />
+          return <HighlightedCell text={moment(text).format('DD/MM/YYYY HH:mm:ss')} search={searchDoiTuong} />
         } else {
           return ''
         }
       },
     },
     {
-      title: ' ',
+      title: 'Chức năng',
       key: 'operation',
       fixed: 'right',
       width: 80,
@@ -603,7 +519,7 @@ const DoiTuong = () => {
                         <div className={`flex ${selectVisible ? '' : 'flex-col'} items-center gap-2`}>
                           <ActionButton
                             handleAction={() => (dataCRUD?.EXCEL == false ? '' : exportToExcel())}
-                            title={'Xuất Excel'}
+                            title={'Xuất excel'}
                             isPermission={dataCRUD?.EXCEL}
                             icon={<RiFileExcel2Fill className="w-5 h-5" />}
                             color={'slate-50'}
@@ -613,7 +529,7 @@ const DoiTuong = () => {
                           />
                           <ActionButton
                             handleAction={() => handleHidden()}
-                            title={'Ẩn Cột'}
+                            title={'Ẩn cột'}
                             icon={<FaEyeSlash className="w-5 h-5" />}
                             color={'slate-50'}
                             background={'red-500'}
@@ -665,39 +581,41 @@ const DoiTuong = () => {
                 <div className="flex justify-end ">
                   <div className="flex gap-2">
                     <ActionButton
+                      handleAction={() => handlePrice()}
+                      title={'Đổi nhóm giá'}
+                      icon={<GrStatusUnknown className="w-6 h-6" />}
+                      color={'slate-50'}
+                      background={'blue-500'}
+                      color_hover={'blue-500'}
+                      bg_hover={'white'}
+                      isModal={true}
+                    />
+                    <ActionButton
+                      handleAction={() => handleGroup()}
+                      title={'Đổi nhóm'}
+                      icon={<MdOutlineGroupAdd className="w-6 h-6" />}
+                      color={'slate-50'}
+                      background={'blue-500'}
+                      color_hover={'blue-500'}
+                      bg_hover={'white'}
+                      isModal={true}
+                    />
+                    <ActionButton
                       handleAction={() => (dataCRUD?.ADD == false ? '' : handleCreate())}
-                      title={'Thêm Đối Tượng'}
+                      title={'Thêm'}
                       icon={<IoMdAddCircleOutline className="w-6 h-6" />}
                       color={'slate-50'}
                       background={dataCRUD?.ADD == false ? 'gray-400' : 'blue-500'}
                       color_hover={dataCRUD?.ADD == false ? 'gray-500' : 'blue-500'}
                       bg_hover={'white'}
                       isPermission={dataCRUD?.ADD}
-                    />
-                    <ActionButton
-                      handleAction={() => handlePrice()}
-                      title={'Đổi Nhóm Giá'}
-                      icon={<GrStatusUnknown className="w-6 h-6" />}
-                      color={'slate-50'}
-                      background={'blue-500'}
-                      color_hover={'blue-500'}
-                      bg_hover={'white'}
-                    />
-                    <ActionButton
-                      handleAction={() => handleGroup()}
-                      title={'Đổi Nhóm'}
-                      icon={<MdOutlineGroupAdd className="w-6 h-6" />}
-                      color={'slate-50'}
-                      background={'blue-500'}
-                      color_hover={'blue-500'}
-                      bg_hover={'white'}
+                      isModal={true}
                     />
                   </div>
                 </div>
                 <div id="my-table">
                   <Table
                     loading={tableLoad}
-                    bordered
                     rowSelection={{
                       selectedRowKeys,
                       showSizeChanger: true,
@@ -718,7 +636,7 @@ const DoiTuong = () => {
                       },
                       onDoubleClick: () => handleView(record),
                     })}
-                    rowClassName={(record) => (record.Ma == targetRow ? 'highlighted-row' : '')}
+                    rowClassName={(record, index) => (record.Ma == targetRow ? 'highlighted-row' : addRowClass(record, index))}
                     className="setHeight"
                     columns={newTitles}
                     dataSource={filteredDoiTuong.map((item, index) => ({
@@ -727,7 +645,7 @@ const DoiTuong = () => {
                     }))}
                     size="small"
                     scroll={{
-                      x: 3300,
+                      x: 'max-content',
                       y: 400,
                     }}
                     pagination={{
@@ -746,20 +664,20 @@ const DoiTuong = () => {
                       return (
                         <Table.Summary fixed="bottom">
                           <Table.Summary.Row>
-                            <Table.Summary.Cell className="bg-gray-100"></Table.Summary.Cell>
+                            <Table.Summary.Cell className="bg-gray-100 " index="0"></Table.Summary.Cell>
                             {newTitles
                               .filter((column) => column.render)
                               .map((column, index) => {
                                 const isNumericColumn = typeof filteredDoiTuong[0]?.[column.dataIndex] === 'number'
                                 return (
                                   <Table.Summary.Cell
-                                    index={index}
+                                    index={index + 1}
                                     key={`summary-cell-${index + 1}`}
                                     align={isNumericColumn ? 'right' : 'left'}
-                                    className="text-end font-bold  bg-[#f1f1f1]"
+                                    className="text-end font-bold bg-[#f1f1f1]"
                                   >
                                     {column.dataIndex == 'STT' ? (
-                                      <Text className="text-center flex justify-center" strong>
+                                      <Text className="text-center flex justify-center text-white " strong>
                                         {dataDoiTuong?.length}
                                       </Text>
                                     ) : null}

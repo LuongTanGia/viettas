@@ -4,25 +4,19 @@ import moment from 'moment'
 import icons from '../../../untils/icons'
 import { toast } from 'react-toastify'
 import * as apis from '../../../apis'
-
 import ActionButton from '../../../components/util/Button/ActionButton'
-import dayjs from 'dayjs'
-import { RETOKEN, formatPrice } from '../../../action/Actions'
+import { RETOKEN, addRowClass, formatPrice } from '../../../action/Actions'
 import SimpleBackdrop from '../../../components/util/Loading/LoadingPage'
-// import { DatePicker } from '@mui/x-date-pickers/DatePicker'
-import { DateField } from '@mui/x-date-pickers/DateField'
 import { useSearch } from '../../../components_K/myComponents/useSearch'
 import HighlightedCell from '../../../components/hooks/HighlightedCell'
 import { exportToExcel } from '../../../action/Actions'
 import { CloseSquareFilled } from '@ant-design/icons'
-import ModalThuChi from '../../../components_K/ModalThuChi'
-import { useNavigate } from 'react-router-dom'
-import { PermissionView } from '../../../components_K'
+import { ModalThuChi, PermissionView } from '../../../components_K'
+import ActionDateField from '../../../components/util/DateField/ActionDateField'
 
 const { Text } = Typography
-const { IoAddCircleOutline, TiPrinter, MdDelete, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill, CgCloseO } = icons
+const { IoAddCircleOutline, TiPrinter, MdDelete, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill } = icons
 const PhieuChiTien = () => {
-  const navigate = useNavigate()
   const optionContainerRef = useRef(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isLoadingEdit, setIsLoadingEdit] = useState(true)
@@ -49,7 +43,6 @@ const PhieuChiTien = () => {
   const [newColumns, setNewColumns] = useState([])
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
-  const [lastSearchTime, setLastSearchTime] = useState(0)
   const [isShowNotify, setIsShowNotify] = useState(false)
 
   // bỏ focus option thì hidden
@@ -72,7 +65,7 @@ const PhieuChiTien = () => {
   useEffect(() => {
     setNewColumns(columns)
     // Lấy thông tin từ local storage sau khi đăng nhập
-    const storedHiddenColumns = localStorage.getItem('hidenColumnPCT')
+    const storedHiddenColumns = localStorage.getItem('hiddenColumnPCT')
     const parsedHiddenColumns = storedHiddenColumns ? JSON.parse(storedHiddenColumns) : null
 
     // Áp dụng thông tin đã lưu vào checkedList và setConfirmed để ẩn cột
@@ -84,8 +77,8 @@ const PhieuChiTien = () => {
 
   useEffect(() => {
     if (confirmed) {
-      setCheckedList(JSON.parse(localStorage.getItem('hidenColumnPCT')))
-      setNewColumns(JSON.parse(localStorage.getItem('hidenColumnPCT')))
+      setCheckedList(JSON.parse(localStorage.getItem('hiddenColumnPCT')))
+      setNewColumns(JSON.parse(localStorage.getItem('hiddenColumnPCT')))
     }
   }, [confirmed])
 
@@ -204,23 +197,15 @@ const PhieuChiTien = () => {
   useEffect(() => {
     const getChucNangQuyenHan = async () => {
       try {
-        console.log('đi')
         const tokenLogin = localStorage.getItem('TKN')
         const response = await apis.ChucNangQuyenHan(tokenLogin, 'DuLieu_PCT')
 
         if (response.data && response.data.DataError === 0) {
           setDataQuyenHan(response.data)
-        }
-        // else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        //   toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        // }
-        else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
           getChucNangQuyenHan()
         }
-        // else {
-        //   toast.error(response.data.DataErrorDescription)
-        // }
       } catch (error) {
         console.error('Kiểm tra token thất bại', error)
       }
@@ -228,6 +213,7 @@ const PhieuChiTien = () => {
 
     getChucNangQuyenHan()
   }, [])
+
   useEffect(() => {
     if (dataQuyenHan?.VIEW == false) {
       setIsShowNotify(true)
@@ -243,23 +229,25 @@ const PhieuChiTien = () => {
 
   const getDSPCT = async () => {
     try {
-      console.log('get ds PMH')
       const tokenLogin = localStorage.getItem('TKN')
       const response = await apis.DanhSachPCT(tokenLogin, formKhoanNgay)
-      if (response.data && response.data.DataError === 0) {
-        setData(response.data.DataResults)
-        setTableLoad(false)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getDSPCT()
-        // setTableLoad(false)
-      } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        toast.warning(response.data.DataErrorDescription)
-        setTableLoad(false)
-      } else {
-        toast.error(response.data.DataErrorDescription)
-        setData([])
-        setTableLoad(false)
+
+      if (response) {
+        const { DataError, DataErrorDescription, DataResults } = response.data
+        if (DataError === 0) {
+          setData(DataResults)
+          setTableLoad(false)
+        } else if (DataError === -107 || DataError === -108) {
+          await RETOKEN()
+          getDSPCT()
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(DataErrorDescription)
+          setTableLoad(false)
+        } else {
+          toast.error(DataErrorDescription)
+          setData([])
+          setTableLoad(false)
+        }
       }
     } catch (error) {
       console.error('Kiểm tra token thất bại', error)
@@ -279,7 +267,7 @@ const PhieuChiTien = () => {
       render: (text, record, index) => <div style={{ textAlign: 'center' }}>{index + 1}</div>,
     },
     {
-      title: 'Số Phiếu Chi',
+      title: 'Số phiếu chi',
       dataIndex: 'SoChungTu',
       key: 'SoChungTu',
       width: 150,
@@ -294,7 +282,7 @@ const PhieuChiTien = () => {
       ),
     },
     {
-      title: 'Ngày Chứng Từ',
+      title: 'Ngày chứng từ',
       dataIndex: 'NgayCTu',
       key: 'NgayCTu',
       align: 'center',
@@ -309,7 +297,7 @@ const PhieuChiTien = () => {
     },
 
     {
-      title: 'Tên Hạng Mục',
+      title: 'Tên hạng mục',
       dataIndex: 'TenHangMuc',
       key: 'TenHangMuc',
       width: 150,
@@ -323,7 +311,7 @@ const PhieuChiTien = () => {
       ),
     },
     {
-      title: 'Chứng Từ Góc',
+      title: 'Chứng từ góc',
       dataIndex: 'SoThamChieu',
       key: 'SoThamChieu',
       width: 200,
@@ -342,7 +330,7 @@ const PhieuChiTien = () => {
     },
 
     {
-      title: 'Mã Đối Tượng',
+      title: 'Mã đối tượng',
       dataIndex: 'MaDoiTuong',
       key: 'MaDoiTuong',
       width: 200,
@@ -357,16 +345,20 @@ const PhieuChiTien = () => {
     },
 
     {
-      title: 'Tên Đối Tượng',
+      title: 'Tên đối tượng',
       dataIndex: 'TenDoiTuong',
       key: 'TenDoiTuong',
-      width: 200,
+      width: 250,
       sorter: (a, b) => a.TenDoiTuong.localeCompare(b.TenDoiTuong),
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
-          <HighlightedCell text={text} search={searchPCT} />
+        <div className=" text-start">
+          {/* <Tooltip title={text} color="blue"> */}
+          <span>
+            <HighlightedCell text={text} search={searchPCT} />
+          </span>
+          {/* </Tooltip> */}
         </div>
       ),
     },
@@ -374,7 +366,7 @@ const PhieuChiTien = () => {
       title: 'Địa chỉ ',
       dataIndex: 'DiaChi',
       key: 'DiaChi',
-      width: 300,
+      width: 250,
       sorter: (a, b) => {
         const diaChiA = a.DiaChi || ''
         const diaChiB = b.DiaChi || ''
@@ -384,18 +376,18 @@ const PhieuChiTien = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
-          <Tooltip title={text} color="blue">
-            <span>
-              <HighlightedCell text={text} search={searchPCT} />
-            </span>
-          </Tooltip>
+        <div className=" text-start">
+          {/* <Tooltip title={text} color="blue"> */}
+          <span>
+            <HighlightedCell text={text} search={searchPCT} />
+          </span>
+          {/* </Tooltip>   */}
         </div>
       ),
     },
 
     {
-      title: 'Số Tiền',
+      title: 'Số tiền',
       dataIndex: 'SoTien',
       key: 'SoTien',
       width: 200,
@@ -413,7 +405,7 @@ const PhieuChiTien = () => {
       title: 'Ghi chú ',
       dataIndex: 'GhiChu',
       key: 'GhiChu',
-      width: 300,
+      width: 250,
       sorter: (a, b) => {
         const GhiChuA = a.GhiChu || ''
         const GhiChuB = b.GhiChu || ''
@@ -422,7 +414,7 @@ const PhieuChiTien = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
+        <div className=" text-start">
           <Tooltip title={text} color="blue">
             <span>
               <HighlightedCell text={text} search={searchPCT} />
@@ -538,7 +530,13 @@ const PhieuChiTien = () => {
     value: key,
   }))
 
-  const newColumnsHide = columns.filter((item) => !newColumns.includes(item.dataIndex))
+  const newColumnsHide = columns.filter((item) => {
+    if (newColumns && newColumns.length > 0) {
+      return !newColumns.includes(item.dataIndex)
+    } else {
+      return true
+    }
+  })
 
   const handleHideColumns = () => {
     setNewColumns(checkedList)
@@ -577,57 +575,15 @@ const PhieuChiTien = () => {
   }
 
   const handleFilterDS = () => {
-    const currentTime = new Date().getTime()
-    if (currentTime - lastSearchTime >= 1000 && formKhoanNgay !== prevdateValue) {
+    if (formKhoanNgay !== prevdateValue) {
       setTableLoad(true)
-      setLastSearchTime(currentTime)
-    }
-  }
-
-  const handleStartDateChange = (newDate) => {
-    const startDate = newDate
-    const endDate = formKhoanNgay.NgayKetThuc
-
-    if (dayjs(startDate).isAfter(dayjs(endDate))) {
-      // Nếu ngày bắt đầu lớn hơn ngày kết thúc, cập nhật ngày kết thúc
-      setFormKhoanNgay({
-        ...formKhoanNgay,
-        NgayBatDau: startDate,
-        NgayKetThuc: startDate,
-      })
-    } else {
-      setFormKhoanNgay({
-        ...formKhoanNgay,
-        NgayBatDau: startDate,
-      })
-    }
-  }
-
-  const handleEndDateChange = (newDate) => {
-    const startDate = formKhoanNgay.NgayBatDau
-    const endDate = dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss')
-
-    if (dayjs(startDate).isAfter(dayjs(endDate))) {
-      // Nếu ngày kết thúc nhỏ hơn ngày bắt đầu, cập nhật ngày bắt đầu
-      setFormKhoanNgay({
-        ...formKhoanNgay,
-        NgayBatDau: endDate,
-        NgayKetThuc: endDate,
-      })
-    } else {
-      setFormKhoanNgay({
-        ...formKhoanNgay,
-        NgayKetThuc: endDate,
-      })
     }
   }
 
   const handleSearch = (newSearch) => {
-    const currentTime = new Date().getTime()
-    if (currentTime - lastSearchTime >= 1000 && newSearch !== prevSearchValue) {
+    if (newSearch !== prevSearchValue) {
       setTableLoad(true)
       setSearchPCT(newSearch)
-      setLastSearchTime(currentTime)
     }
   }
 
@@ -642,7 +598,7 @@ const PhieuChiTien = () => {
           ) : (
             <div className="w-auto">
               <div className="relative text-lg flex justify-between items-center mb-1">
-                <div className="flex items-center gap-x-4 font-bold">
+                <div className="flex items-baseline gap-x-4 font-bold">
                   <h1 className="text-xl uppercase">Phiếu chi tiền </h1>
                   <div>
                     <BsSearch size={18} className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
@@ -650,7 +606,7 @@ const PhieuChiTien = () => {
                 </div>
                 <div className="flex  ">
                   {isShowSearch && (
-                    <div className={`flex absolute left-[12rem] -top-[2px] transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
+                    <div className={`flex absolute left-[12rem] -top-[3px] transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
                       <Input
                         allowClear={{
                           clearIcon: <CloseSquareFilled />,
@@ -721,7 +677,7 @@ const PhieuChiTien = () => {
                               defaultValue={checkedList}
                               onChange={(value) => {
                                 setCheckedList(value)
-                                localStorage.setItem('hidenColumnPCT', JSON.stringify(value))
+                                localStorage.setItem('hiddenColumnPCT', JSON.stringify(value))
                               }}
                             >
                               <Row className="flex justify-center">
@@ -746,86 +702,12 @@ const PhieuChiTien = () => {
               <div className="flex justify-between items-center px-4 ">
                 <div className="flex gap-3">
                   {/* DatePicker */}
-                  <div className="flex gap-x-2 items-center">
-                    <label htmlFor="">Ngày</label>
-                    <DateField
-                      className="DatePicker_PMH max-w-[110px]"
-                      format="DD/MM/YYYY"
-                      value={dayjs(formKhoanNgay.NgayBatDau)}
-                      // maxDate={dayjs(formKhoanNgay.NgayKetThuc)}
-                      onChange={(newDate) => {
-                        setFormKhoanNgay({
-                          ...formKhoanNgay,
-                          NgayBatDau: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
-                        })
-                      }}
-                      onBlur={() => {
-                        handleStartDateChange(formKhoanNgay.NgayBatDau)
-                        handleFilterDS()
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          handleStartDateChange(formKhoanNgay.NgayBatDau)
-
-                          setPrevDateValue(formKhoanNgay)
-                          handleFilterDS()
-                        }
-                      }}
-                      onFocus={() => setPrevDateValue(formKhoanNgay)}
-                      sx={{
-                        '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                        '& .MuiButtonBase-root': {
-                          padding: '4px',
-                        },
-                        '& .MuiSvgIcon-root': {
-                          width: '18px',
-                          height: '18px',
-                        },
-                      }}
-                    />
-                  </div>
-                  <div className="flex gap-x-2 items-center">
-                    <label htmlFor="">Đến</label>
-                    <DateField
-                      className="DatePicker_PMH max-w-[110px]"
-                      format="DD/MM/YYYY"
-                      // minDate={dayjs(formKhoanNgay.NgayBatDau)}
-                      value={dayjs(formKhoanNgay.NgayKetThuc)}
-                      onChange={(newDate) => {
-                        setFormKhoanNgay({
-                          ...formKhoanNgay,
-                          NgayKetThuc: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
-                        })
-                      }}
-                      onBlur={() => {
-                        handleEndDateChange(formKhoanNgay.NgayKetThuc)
-                        handleFilterDS()
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          handleEndDateChange(formKhoanNgay.NgayKetThuc)
-                          setPrevDateValue(formKhoanNgay)
-                          handleFilterDS()
-                        }
-                      }}
-                      onFocus={() => setPrevDateValue(formKhoanNgay)}
-                      sx={{
-                        '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                        '& .MuiButtonBase-root': {
-                          padding: '4px',
-                        },
-                        '& .MuiSvgIcon-root': {
-                          width: '18px',
-                          height: '18px',
-                        },
-                      }}
-                    />
-                  </div>
+                  <ActionDateField formKhoanNgay={formKhoanNgay} setFormKhoanNgay={setFormKhoanNgay} setPrevDateValue={setPrevDateValue} handleFilterDS={handleFilterDS} />
                 </div>
                 <div className="flex items-center gap-2">
                   <ActionButton
                     color={'slate-50'}
-                    title={'Thêm phiếu'}
+                    title={'Thêm'}
                     icon={<IoAddCircleOutline size={20} />}
                     bg_hover={!dataQuyenHan?.ADD ? '' : 'white'}
                     background={!dataQuyenHan?.ADD ? 'gray-400' : 'bg-main'}
@@ -850,21 +732,22 @@ const PhieuChiTien = () => {
                     y: 410,
                   }}
                   bordered
-                  pagination={{
-                    defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                    showSizeChanger: true,
-                    pageSizeOptions: ['50', '100', '1000'],
-                    onShowSizeChange: (current, size) => {
-                      localStorage.setItem('pageSize', size)
-                    },
-                  }}
+                  // pagination={{
+                  //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                  //   showSizeChanger: true,
+                  //   pageSizeOptions: ['50', '100', '1000'],
+                  //   onShowSizeChange: (current, size) => {
+                  //     localStorage.setItem('pageSize', size)
+                  //   },
+                  // }}
+                  pagination={false}
                   rowKey={(record) => record.SoChungTu}
                   onRow={(record) => ({
                     onDoubleClick: () => {
                       handleView(record)
                     },
                   })}
-                  rowClassName={(record) => (record.SoChungTu === doneNTR ? 'highlighted-row' : '')}
+                  rowClassName={(record, index) => (record.SoChungTu === doneNTR ? 'highlighted-row' : addRowClass(record, index))}
                   // Bảng Tổng
                   summary={() => {
                     return (
@@ -883,23 +766,26 @@ const PhieuChiTien = () => {
                                   className="text-end font-bold  bg-[#f1f1f1]"
                                 >
                                   {isNumericColumn ? (
-                                    column.dataIndex === 'SoTien' ? (
-                                      <Text strong>
-                                        {Number(filteredPCT.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                          minimumFractionDigits: dataThongSo?.SOLESOTIEN,
-                                          maximumFractionDigits: dataThongSo?.SOLESOTIEN,
-                                        })}
-                                      </Text>
-                                    ) : (
-                                      <Text strong>
-                                        {Number(filteredPCT.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                          minimumFractionDigits: 0,
-                                          maximumFractionDigits: 0,
-                                        })}
-                                      </Text>
-                                    )
+                                    (() => {
+                                      const total = Number(filteredPCT?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0))
+                                      return column.dataIndex === 'SoTien' ? (
+                                        <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
+                                          {Number(filteredPCT.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                            minimumFractionDigits: dataThongSo?.SOLESOTIEN,
+                                            maximumFractionDigits: dataThongSo?.SOLESOTIEN,
+                                          })}
+                                        </Text>
+                                      ) : (
+                                        <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
+                                          {Number(filteredPCT.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                            minimumFractionDigits: 0,
+                                            maximumFractionDigits: 0,
+                                          })}
+                                        </Text>
+                                      )
+                                    })()
                                   ) : column.dataIndex === 'STT' ? (
-                                    <Text className="text-center flex justify-center" strong>
+                                    <Text className="text-center flex justify-center text-white" strong>
                                       {data.length}
                                     </Text>
                                   ) : null}

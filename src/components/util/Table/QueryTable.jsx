@@ -143,7 +143,6 @@ function Tables({
       },
     }
   })
-
   const columns = [...newColumns]
   const columns_2 = [
     {
@@ -522,7 +521,16 @@ function Tables({
       },
     }
   })
-  const mergedColumns2 = columns_2.filter((item) => !hiden?.includes(item.dataIndex))
+  // const mergedColumns2 = columns_2.filter((item) => !hiden?.includes(item.dataIndex))
+
+  function filterChildren(children) {
+    return children.filter((item) => !hiden?.includes(item.dataIndex))
+  }
+
+  columns_2[5].children = filterChildren(columns_2[5].children)
+  columns_2[6].children = filterChildren(columns_2[6].children)
+
+  const mergedColumns2 = columns_2?.filter((value) => !hiden?.includes(value.dataIndex))
 
   const originData = param?.map((record, index) => ({
     key: index,
@@ -539,10 +547,10 @@ function Tables({
   useEffect(() => {
     setData(originData)
     const setKey = originData?.filter((item) => initialSelectedRowKeys.includes(item.SoChungTu))
-
     setSelectedRowKeys(setKey?.map((item) => item.SoChungTu))
     setSelectedRecord(selectMH)
   }, [param, selectMH])
+
   const [editingKey, setEditingKey] = useState('')
   const isEditing = (record) => record.index === editingKey
 

@@ -18,9 +18,8 @@ function DashBoar() {
     }
     groupedData[key].push(item)
   })
-  const formatter = new Intl.NumberFormat('vi-VN', {
-    style: 'currency',
-    currency: 'VND',
+  const formatter = new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 0,
   })
   const resultArrays = Object.values(groupedData)
 

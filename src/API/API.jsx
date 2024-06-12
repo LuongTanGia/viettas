@@ -17,6 +17,7 @@ const API = {
 
   DANHSACHPBS: `${BASE_URL}/api/entries/DuLieuPBS/DanhSach`,
   CHITIETPBS: `${BASE_URL}/api/entries/DuLieuPBS/ThongTin`,
+  CHITIETEDITPBS: `${BASE_URL}/api/entries/DuLieuPBS/ThongTinSua`,
   DANHSACHDOITUONG_PBS: `${BASE_URL}/api/entries/DuLieuPBS/ListHelper_DoiTuong`,
   DANHSACHKHOHANG_PBS: `${BASE_URL}/api/entries/DuLieuPBS/ListHelper_KhoHang`,
   DANHSACHHANGHOA_PBS: `${BASE_URL}/api/entries/DuLieuPBS/ListHelper_HangHoa`,
@@ -29,6 +30,7 @@ const API = {
   INPHIEUKHO: `${BASE_URL}/api/entries/DuLieuPBS/InPhieuKho`,
   //Lấy danh sách giá trị hệ thống
   THONGSO: `${BASE_URL}/api/settings/GiaTriHeThong/ThongSo`,
+  QUYENHAN: `${BASE_URL}/api/settings/GiaTriHeThong/ChucNang_QuyenHan`,
 
   //CongNoDauRa-CongNoDauVao
   CNDRTONGHOP: `${BASE_URL}/api/inquiries/CongNoDauRa/TongHop`,

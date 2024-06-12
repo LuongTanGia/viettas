@@ -6,7 +6,7 @@ import { toast } from 'react-toastify'
 import * as apis from '../../apis'
 import { ModalGBS, PermissionView } from '../../components_K'
 import ActionButton from '../../components/util/Button/ActionButton'
-import { RETOKEN, formatCurrency } from '../../action/Actions'
+import { RETOKEN, addRowClass, formatCurrency } from '../../action/Actions'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
 import { exportToExcel } from '../../action/Actions'
 import { CloseSquareFilled } from '@ant-design/icons'
@@ -59,7 +59,7 @@ const GBS = () => {
   useEffect(() => {
     setNewColumns(columns)
     // Lấy thông tin từ local storage sau khi đăng nhập
-    const storedHiddenColumns = localStorage.getItem('hidenColumnGBS')
+    const storedHiddenColumns = localStorage.getItem('hiddenColumnGBS')
     const parsedHiddenColumns = storedHiddenColumns ? JSON.parse(storedHiddenColumns) : null
 
     // Áp dụng thông tin đã lưu vào checkedList và setConfirmed để ẩn cột
@@ -71,8 +71,8 @@ const GBS = () => {
 
   useEffect(() => {
     if (confirmed) {
-      setCheckedList(JSON.parse(localStorage.getItem('hidenColumnGBS')))
-      setNewColumns(JSON.parse(localStorage.getItem('hidenColumnGBS')))
+      setCheckedList(JSON.parse(localStorage.getItem('hiddenColumnGBS')))
+      setNewColumns(JSON.parse(localStorage.getItem('hiddenColumnGBS')))
     }
   }, [confirmed])
 
@@ -84,47 +84,36 @@ const GBS = () => {
       try {
         const tokenLogin = localStorage.getItem('TKN')
         if (actionType === 'create' || actionType === 'edit' || actionType === 'clone') {
-          console.log('get helper  KH,DT')
           const response = await apis.ListHelperHHGBS(tokenLogin)
           if (response.data && response.data.DataError === 0) {
             setDataHangHoa(response.data.DataResults)
-            setIsLoadingModal(false)
           } else if (response.data.DataError === -1 || response.data.DataError === -2 || response.data.DataError === -3) {
             toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-            setIsLoadingModal(false)
           } else if (response.data.DataError === -107 || response.data.DataError === -108) {
             await RETOKEN()
             fetchData()
           } else {
             toast.error(response.data.DataErrorDescription)
-            setIsLoadingModal(false)
           }
         }
         if (actionType === 'view' || actionType === 'edit' || actionType === 'clone') {
-          console.log('get helper tt')
           const responseTT = await apis.ThongTinGBS(tokenLogin, dataRecord.NhomGia)
           if (responseTT.data && responseTT.data.DataError === 0) {
             setDataThongTin(responseTT.data.DataResult)
-            setIsLoadingModal(false)
           } else if (responseTT.data.DataError === -1 || responseTT.data.DataError === -2 || responseTT.data.DataError === -3) {
             toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseTT.data.DataErrorDescription}</div>)
-            setIsLoadingModal(false)
           } else if (responseTT.data.DataError === -107 || responseTT.data.DataError === -108) {
             await RETOKEN()
             fetchData()
           } else {
             toast.error(responseTT.data.DataErrorDescription)
-            setIsLoadingModal(false)
           }
         }
       } catch (error) {
         console.error('Lấy data thất bại', error)
-        setIsLoadingModal(false)
-        // setIsShowModal(false)
         setIsLoadingEdit(false)
-
-        // toast.error('Lấy data thất bại. Vui lòng thử lại sau.')
       }
+      setIsLoadingModal(false)
     }
 
     if (isShowModal) {
@@ -136,23 +125,15 @@ const GBS = () => {
   useEffect(() => {
     const getChucNangQuyenHan = async () => {
       try {
-        console.log('đi')
         const tokenLogin = localStorage.getItem('TKN')
         const response = await apis.ChucNangQuyenHan(tokenLogin, 'ThietLap_GiaSi')
 
         if (response.data && response.data.DataError === 0) {
           setDataQuyenHan(response.data)
-        }
-        // else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        //   toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        // }
-        else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
           getChucNangQuyenHan()
         }
-        // else {
-        //   toast.error(response.data.DataErrorDescription)
-        // }
       } catch (error) {
         console.error('Kiểm tra token thất bại', error)
       }
@@ -220,12 +201,12 @@ const GBS = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
-          <Tooltip title={text} color="blue" placement="top">
-            <span>
-              <HighlightedCell text={text} search={searchGBS} />
-            </span>
-          </Tooltip>
+        <div className=" text-start">
+          {/* <Tooltip title={text} color="blue" placement="top"> */}
+          <span>
+            <HighlightedCell text={text} search={searchGBS} />
+          </span>
+          {/* </Tooltip> */}
         </div>
       ),
     },
@@ -286,7 +267,7 @@ const GBS = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
+        <div className=" text-start">
           <HighlightedCell text={text} search={searchGBS} />
         </div>
       ),
@@ -414,7 +395,13 @@ const GBS = () => {
     value: key,
   }))
 
-  const newColumnsHide = columns.filter((item) => !newColumns.includes(item.dataIndex))
+  const newColumnsHide = columns.filter((item) => {
+    if (newColumns && newColumns.length > 0) {
+      return !newColumns.includes(item.dataIndex)
+    } else {
+      return true
+    }
+  })
 
   const handleHideColumns = () => {
     setNewColumns(checkedList)
@@ -529,7 +516,7 @@ const GBS = () => {
                         <div className="pr-1">
                           <TiPrinter size={20} />
                         </div>
-                        <div>In phiếu</div>
+                        <div>In bảng giá</div>
                       </button>
 
                       <button
@@ -557,7 +544,7 @@ const GBS = () => {
                             defaultValue={checkedList}
                             onChange={(value) => {
                               setCheckedList(value)
-                              localStorage.setItem('hidenColumnGBS', JSON.stringify(value))
+                              localStorage.setItem('hiddenColumnGBS', JSON.stringify(value))
                             }}
                           >
                             <Row className="flex justify-center">
@@ -606,16 +593,16 @@ const GBS = () => {
                   x: 1500,
                   y: 410,
                 }}
-                bordered
-                pagination={{
-                  defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                  showSizeChanger: true,
-                  pageSizeOptions: ['50', '100', '1000'],
-                  onShowSizeChange: (current, size) => {
-                    localStorage.setItem('pageSize', size)
-                  },
-                }}
-                rowClassName={(record) => (record.NhomGia === doneGKH ? 'highlighted-row' : '')}
+                // pagination={{
+                //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                //   showSizeChanger: true,
+                //   pageSizeOptions: ['50', '100', '1000'],
+                //   onShowSizeChange: (current, size) => {
+                //     localStorage.setItem('pageSize', size)
+                //   },
+                // }}
+                pagination={false}
+                rowClassName={(record, index) => (record.NhomGia === doneGKH ? 'highlighted-row' : addRowClass(record, index))}
                 rowKey={(record) => record.NhomGia}
                 onRow={(record) => ({
                   onDoubleClick: () => {
@@ -629,17 +616,22 @@ const GBS = () => {
                       <Table.Summary.Row>
                         {newColumnsHide
                           .filter((column) => column.render)
-                          .map((column) => {
+                          .map((column, index) => {
                             const isNumericColumn = typeof filteredGBS[0]?.[column.dataIndex] === 'number'
-
+                            const total = Number(filteredGBS?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0))
                             return (
-                              <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                              <Table.Summary.Cell
+                                index={index}
+                                key={`summary-cell-${index + 1}`}
+                                align={isNumericColumn ? 'right' : 'left'}
+                                className="text-end font-bold bg-[#f1f1f1]"
+                              >
                                 {column.dataIndex === 'STT' ? (
-                                  <Text className="text-center flex justify-center" strong>
+                                  <Text className="text-center flex justify-center text-white" strong>
                                     {data.length}
                                   </Text>
                                 ) : column.dataIndex === 'TongMatHang' || column.dataIndex === 'TongDoiTuong' ? (
-                                  <Text strong>
+                                  <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
                                     {Number(filteredGBS.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                       minimumFractionDigits: 0,
                                       maximumFractionDigits: 0,

@@ -12,7 +12,7 @@ import { FaSearch, FaEyeSlash } from 'react-icons/fa'
 import { CloseSquareFilled } from '@ant-design/icons'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
 import categoryAPI from '../../API/linkAPI'
-import { RETOKEN, exportToExcel } from '../../action/Actions'
+import { RETOKEN, addRowClass, exportToExcel } from '../../action/Actions'
 import { useSearch } from '../../components/hooks/Search'
 import { nameColumsSoQuy } from '../../components/util/Table/ColumnName'
 import ActionButton from '../../components/util/Button/ActionButton'
@@ -53,8 +53,7 @@ const SoQuy = () => {
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
     setCheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
-    const ColKey = filteredHangHoa && filteredHangHoa[0] && Object.keys(filteredHangHoa[0]).filter((item) => item.includes('THU') || item.includes('CHI'))
-    const key = Object?.keys(dataSoQuy[0] || []).filter((key) => !ColKey.includes(key) && key != 'DauKy' && key != 'CuoiKy')
+    const key = Object?.keys(dataSoQuy[0] || []).filter((key) => key != 'DauKy' && key != 'CuoiKy' && key != 'ID' && key != 'Loai')
     setOptions(key)
   }, [selectVisible])
 
@@ -287,7 +286,7 @@ const SoQuy = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.THUCONGNO - b.THUCONGNO,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
         </div>
       ),
@@ -301,7 +300,7 @@ const SoQuy = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.THUTRAHANG - b.THUTRAHANG,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
         </div>
       ),
@@ -315,7 +314,7 @@ const SoQuy = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.THUKHAC - b.THUKHAC,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
         </div>
       ),
@@ -329,7 +328,7 @@ const SoQuy = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.CHICONGNO - b.CHICONGNO,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
         </div>
       ),
@@ -343,7 +342,7 @@ const SoQuy = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.CHITRAHANG - b.CHITRAHANG,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
         </div>
       ),
@@ -357,7 +356,7 @@ const SoQuy = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.CHIKHAC - b.CHIKHAC,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
         </div>
       ),
@@ -371,12 +370,13 @@ const SoQuy = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.ConLai - b.ConLai,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
         </div>
       ),
     },
   ]
+  const newTitles = titles?.filter((item) => !hiddenRow?.includes(item.dataIndex))
   const titlesChildren = [
     {
       title: 'STT',
@@ -391,7 +391,7 @@ const SoQuy = () => {
       title: 'Ngày chứng từ',
       dataIndex: 'NgayCTu',
       key: 'NgayCTu',
-      width: 150,
+      width: 120,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => {
@@ -400,9 +400,9 @@ const SoQuy = () => {
         return dateA - dateB
       },
       render: (text) => (
-        <span className="flex justify-center">
+        <div className="flex justify-center">
           <HighlightedCell text={text ? moment(text).format('DD/MM/YYYY') : ''} search={searchHangHoa} />
-        </span>
+        </div>
       ),
     },
     {
@@ -414,9 +414,9 @@ const SoQuy = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.SoChungTu.localeCompare(b.SoChungTu),
       render: (text) => (
-        <span className="flex ">
+        <div className="flex">
           <HighlightedCell text={text} search={searchHangHoa} />
-        </span>
+        </div>
       ),
     },
     {
@@ -425,36 +425,29 @@ const SoQuy = () => {
       key: 'GhiChu',
       showSorterTooltip: false,
       align: 'center',
+      width: 280,
       sorter: (a, b) => (a.GhiChu?.toString() || '').localeCompare(b.GhiChu?.toString() || ''),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchHangHoa} />
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
       title: 'Thu',
+      align: 'center',
+      ellipsis: true,
       children: [
         {
           title: 'Công nợ',
           dataIndex: 'THUCONGNO',
           key: 'THUCONGNO',
-          width: 150,
+          width: 120,
           align: 'center',
           showSorterTooltip: false,
           sorter: (a, b) => a.THUCONGNO - b.THUCONGNO,
           render: (text) => (
-            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
               <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
             </div>
           ),
@@ -463,12 +456,12 @@ const SoQuy = () => {
           title: 'Trả hàng  ',
           dataIndex: 'THUTRAHANG',
           key: 'THUTRAHANG',
-          width: 150,
+          width: 120,
           align: 'center',
           showSorterTooltip: false,
           sorter: (a, b) => a.THUTRAHANG - b.THUTRAHANG,
           render: (text) => (
-            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
               <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
             </div>
           ),
@@ -477,12 +470,12 @@ const SoQuy = () => {
           title: 'Khác ',
           dataIndex: 'THUKHAC',
           key: 'THUKHAC',
-          width: 150,
+          width: 120,
           align: 'center',
           showSorterTooltip: false,
           sorter: (a, b) => a.THUKHAC - b.THUKHAC,
           render: (text) => (
-            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
               <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
             </div>
           ),
@@ -491,17 +484,19 @@ const SoQuy = () => {
     },
     {
       title: 'Chi',
+      ellipsis: true,
+      align: 'center',
       children: [
         {
           title: 'Công nợ',
           dataIndex: 'CHICONGNO',
           key: 'CHICONGNO',
-          width: 150,
+          width: 120,
           align: 'center',
           showSorterTooltip: false,
           sorter: (a, b) => a.CHICONGNO - b.CHICONGNO,
           render: (text) => (
-            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
               <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
             </div>
           ),
@@ -510,12 +505,12 @@ const SoQuy = () => {
           title: 'Trả hàng',
           dataIndex: 'CHITRAHANG',
           key: 'CHITRAHANG',
-          width: 150,
+          width: 120,
           align: 'center',
           showSorterTooltip: false,
           sorter: (a, b) => a.CHITRAHANG - b.CHITRAHANG,
           render: (text) => (
-            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
               <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
             </div>
           ),
@@ -524,12 +519,12 @@ const SoQuy = () => {
           title: 'Khác',
           dataIndex: 'CHIKHAC',
           key: 'CHIKHAC',
-          width: 150,
+          width: 120,
           align: 'center',
           showSorterTooltip: false,
           sorter: (a, b) => a.CHIKHAC - b.CHIKHAC,
           render: (text) => (
-            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+            <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
               <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
             </div>
           ),
@@ -545,13 +540,26 @@ const SoQuy = () => {
       showSorterTooltip: false,
       sorter: (a, b) => a.ConLai - b.ConLai,
       render: (text) => (
-        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+        <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
           <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
         </div>
       ),
     },
   ]
-  const newTitles = titlesChildren.filter((item) => !hiddenRow?.includes(item.dataIndex))
+  function filterChildren(children) {
+    return children?.filter((item) => !hiddenRow?.includes(item.dataIndex))
+  }
+  const newTitlesChildren = titlesChildren
+    .map((item) => {
+      if (item.children && item.children.length > 0) {
+        item.children = filterChildren(item.children)
+        return item
+      } else {
+        return filterChildren([item])[0] || null
+      }
+    })
+    .filter((item) => item !== null)
+
   return (
     <>
       {dataCRUD?.VIEW == false ? (
@@ -594,7 +602,7 @@ const SoQuy = () => {
                         <div className={`flex ${selectVisible ? '' : 'flex-col'} items-center gap-2`}>
                           <ActionButton
                             handleAction={() => (dataCRUD?.EXCEL == false ? '' : exportToExcel())}
-                            title={'Xuất Excel'}
+                            title={'Xuất excel'}
                             isPermission={dataCRUD?.EXCEL}
                             icon={<RiFileExcel2Fill className="w-5 h-5" />}
                             color={'slate-50'}
@@ -604,7 +612,7 @@ const SoQuy = () => {
                           />
                           <ActionButton
                             handleAction={() => handleHidden()}
-                            title={'Ẩn Cột'}
+                            title={'Ẩn cột'}
                             icon={<FaEyeSlash className="w-5 h-5" />}
                             color={'slate-50'}
                             background={'red-500'}
@@ -660,7 +668,8 @@ const SoQuy = () => {
                       <DateField
                         onBlur={handleDateChange}
                         onKeyDown={handleKeyDown}
-                        className="DatePicker_NXTKho max-w-[120px]"
+                        // className="DatePicker_NXTKho max-w-[120px]"
+                        className="max-w-[130px] min-w-[130px]"
                         format="DD/MM/YYYY"
                         value={khoanNgayFrom}
                         sx={{
@@ -684,7 +693,7 @@ const SoQuy = () => {
                       <DateField
                         onBlur={handleDateChange}
                         onKeyDown={handleKeyDown}
-                        className="DatePicker_NXTKho max-w-[120px]"
+                        className="max-w-[130px] min-w-[130px]"
                         format="DD/MM/YYYY"
                         value={khoanNgayTo}
                         sx={{
@@ -708,18 +717,19 @@ const SoQuy = () => {
                 <div id="my-table" className="TruyVanSoQuy_Child">
                   <Table
                     loading={tableLoad}
-                    bordered
+                    rowClassName={(record, index) => addRowClass(record, index)}
                     className="setHeight"
-                    columns={newTitles}
+                    columns={newTitlesChildren}
                     dataSource={filteredHangHoa?.map((record, index) => ({ ...record, key: index }))}
-                    pagination={{
-                      defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                      showSizeChanger: true,
-                      pageSizeOptions: ['50', '100', '1000'],
-                      onShowSizeChange: (current, size) => {
-                        localStorage.setItem('pageSize', size)
-                      },
-                    }}
+                    // pagination={{
+                    //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                    //   showSizeChanger: true,
+                    //   pageSizeOptions: ['50', '100', '1000'],
+                    //   onShowSizeChange: (current, size) => {
+                    //     localStorage.setItem('pageSize', size)
+                    //   },
+                    // }}
+                    pagination={false}
                     size="small"
                     scroll={{
                       x: 'max-content',
@@ -733,7 +743,7 @@ const SoQuy = () => {
                       return (
                         <Table.Summary fixed="bottom">
                           <Table.Summary.Row>
-                            {titles
+                            {newTitles
                               .filter((column) => column.render)
                               .map((column, index) => {
                                 const data = filteredHangHoa?.map((record, index) => ({ ...record, key: index }))
@@ -746,14 +756,19 @@ const SoQuy = () => {
                                     className="text-end font-bold  bg-[#f1f1f1]"
                                   >
                                     {isNumericColumn ? (
-                                      <Text strong>
-                                        {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                          minimumFractionDigits: dataThongSo.SOLESOTIEN,
-                                          maximumFractionDigits: dataThongSo.SOLESOTIEN,
-                                        })}
-                                      </Text>
+                                      (() => {
+                                        const total = Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0))
+                                        return (
+                                          <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
+                                            {total.toLocaleString('en-US', {
+                                              minimumFractionDigits: dataThongSo.SOLESOTIEN,
+                                              maximumFractionDigits: dataThongSo.SOLESOTIEN,
+                                            })}
+                                          </Text>
+                                        )
+                                      })()
                                     ) : column.dataIndex == 'STT' ? (
-                                      <Text className="text-center flex justify-center" strong>
+                                      <Text className="text-center flex justify-center text-white" strong>
                                         {dataSoQuy?.length}
                                       </Text>
                                     ) : null}

@@ -1,17 +1,17 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import Logo from '../../assets/VTS-iSale.ico'
-import { FloatButton, Checkbox } from 'antd'
-import { useEffect, useState } from 'react'
+import { FloatButton, Checkbox, Tooltip, Input } from 'antd'
+import { useEffect, useState, useMemo } from 'react'
 // import icons from '../../untils/icons'
 import { chiTietPBS } from '../../redux/selector'
 import './phieubanhang.css'
 import dayjs from 'dayjs'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import TableEdit from '../util/Table/EditTable'
 // import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { DateField } from '@mui/x-date-pickers/DateField'
-
-import { DANHSACHDOITUONG, DANHSACHKHOHANG, THEMPHIEUBANHANG, SUAPHIEUBANHANG, DANHSACHHANGHOA_PBS, THONGTINPHIEU } from '../../action/Actions'
+import { DANHSACHDOITUONG, DANHSACHKHOHANG, THEMPHIEUBANHANG, SUAPHIEUBANHANG, DANHSACHHANGHOA_PBS } from '../../action/Actions'
 import API from '../../API/API'
 import ListHelper_HangHoa from './ListHelper_HangHoa'
 import { toast } from 'react-toastify'
@@ -19,13 +19,12 @@ import { Select } from 'antd'
 import ActionButton from '../util/Button/ActionButton'
 import { nameColumsPhieuBanHangChiTiet } from '../util/Table/ColumnName'
 import { IoMdAddCircle } from 'react-icons/io'
-import { MdPrint } from 'react-icons/md'
+// import { MdPrint } from 'react-icons/md'
 
 const { Option } = Select
 
 const initState = {
-  NgayCTu: '',
-  DaoHan: '',
+  NgayCTu: null,
   MaDoiTuong: '',
   TenDoiTuong: '',
   DiaChi: '',
@@ -36,45 +35,62 @@ const initState = {
   DataDetails: [],
   SoChungTu: '',
 }
-
 // eslint-disable-next-line react/prop-types
 function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, handleShowPrint_action, handleShowPrint_kho_action }) {
   // yourMaHangOptions, yourTenHangOptions
   // const [yourMaHangOptions, setYourMaHangOptions] = useState([])
   // const [yourTenHangOptions, setYourTenHangOptions] = useState([])
-  const dispatch = useDispatch()
-
+  // const [loadingTable, setloadingTable] = useState(false)
   const token = window.localStorage.getItem('TKN')
   const [isModalOpen, setIsModalOpen] = useState(isShow)
-  const [Dates, setDates] = useState({ NgayCTu: dayjs(new Date()), DaoHan: dayjs(new Date()) })
+  const [Dates, setDates] = useState({
+    NgayCTu: dayjs(new Date()),
+    DaoHan: dayjs(new Date()),
+  })
+  const [errors, setErrors] = useState({
+    MaDoiTuong: '',
+    TenDoiTuong: '',
+    DiaChi: '',
+  })
   const [form, setForm] = useState()
   const [listDoiTuong, setListDoiTuong] = useState([])
   const [listKhoHang, setListKhoHang] = useState([])
   const [showPopup, setShowPopup] = useState(false)
-  // const [loadingTable, setloadingTable] = useState(false)
-
   const [dataChitiet, setDataChitiet] = useState([])
   const [dataListHP, setDataListHP] = useState([])
-
   const data_chitiet = useSelector(chiTietPBS)
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        const result_listHp = isShow ? await DANHSACHHANGHOA_PBS(API.DANHSACHHANGHOA_PBS, token, form) : null
+        const result_listHp = isShow
+          ? await DANHSACHHANGHOA_PBS(API.DANHSACHHANGHOA_PBS, token, {
+              ...form,
+              NgayCTu: null,
+            })
+          : null
         const result_doituong = isShow ? await DANHSACHDOITUONG(API.DANHSACHDOITUONG_PBS, token) : null
         const result_khohang = isShow ? await DANHSACHKHOHANG(API.DANHSACHKHOHANG_PBS, token) : null
         setDataListHP(result_listHp)
-        // setSelectDataOption(result_listHp)
         setListDoiTuong(result_doituong)
         setListKhoHang(result_khohang)
+        typeAction === 'create' ? setForm({ ...initState, MaKho: result_khohang?.length > 0 ? result_khohang[0]?.MaKho : '' }) : ''
         setIsModalOpen(isShow)
       } catch (error) {
         console.error('Error fetching data:', error)
       }
     }
     loadData()
-  }, [isShow])
+  }, [isShow, typeAction])
+
+  useEffect(() => {
+    if (typeAction == 'create') {
+      const getKHVL = listDoiTuong?.find((item) => item.Ma === 'KHVL')
+      const defaultMa = getKHVL?.Ma || listDoiTuong[0]?.Ma
+      handleChangeInput(defaultMa)
+    }
+  }, [listDoiTuong])
+
   useEffect(() => {
     typeAction === 'edit' || typeAction === 'view' ? setForm(data_chitiet.DataResult) : setForm({ ...initState, ...Dates })
     setDataChitiet(form?.DataDetails)
@@ -88,218 +104,322 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
         } else {
           toast.info('Nhập đối tượng mua hàng !')
         }
-        console.log(form)
       }
     }
-
     document.addEventListener('keydown', handleKeyDown)
-
-    // Cleanup the event listener when the component unmounts
     return () => {
       document.removeEventListener('keydown', handleKeyDown)
     }
   }, [form])
 
-  // const setSelectDataOption = (data) => {
-  //   setYourMaHangOptions(data)
-  //   setYourTenHangOptions(data)
-  // }
   const handleClosePopup = () => {
     setShowPopup(false)
   }
-  // const handleShowPopup = () => {
-  //   setShowPopup(true)
-  // }
-  // Action Sửa
-  const handleChangeInput_other = (e) => {
-    const { name, value } = e.target
-    setForm({ ...form, [name]: value })
-  }
   const handleChangeInput = async (value) => {
-    const [MaDoiTuong, TenDoiTuong, DiaChi] = value.split(' - ')
-    setForm({ ...form, MaDoiTuong, TenDoiTuong, DiaChi })
-
-    const result_listHp = await DANHSACHHANGHOA_PBS(API.DANHSACHHANGHOA_PBS, token, { ...form, MaDoiTuong, TenDoiTuong, DiaChi })
-    setDataListHP(result_listHp)
-    // setSelectDataOption(result_listHp)
+    if (value === 'KHVL') {
+      const selectedDoiTuong = listDoiTuong?.find((item) => item.Ma === value)
+      setForm({ ...form, MaDoiTuong: selectedDoiTuong.Ma, TenDoiTuong: selectedDoiTuong.Ten, DiaChi: selectedDoiTuong.DiaChi })
+      const result_listHp = await DANHSACHHANGHOA_PBS(API.DANHSACHHANGHOA_PBS, token, {
+        ...form,
+        MaDoiTuong: selectedDoiTuong.Ma,
+        TenDoiTuong: selectedDoiTuong.Ten,
+        DiaChi: selectedDoiTuong.DiaChi,
+      })
+      setDataListHP(result_listHp)
+    } else {
+      const [MaDoiTuong, TenDoiTuong, DiaChi] = value.split(' - ')
+      setForm({ ...form, MaDoiTuong, TenDoiTuong, DiaChi })
+      setErrors({ ...errors, MaDoiTuong: '' })
+      const result_listHp = await DANHSACHHANGHOA_PBS(API.DANHSACHHANGHOA_PBS, token, { ...form, MaDoiTuong, TenDoiTuong, DiaChi })
+      setDataListHP(result_listHp)
+    }
   }
-
   const handleChangeInput_kho = async (value) => {
     setForm({ ...form, MaKho: value })
     const result_listHp = await DANHSACHHANGHOA_PBS(API.DANHSACHHANGHOA_PBS, token, form)
     setDataListHP(result_listHp)
-    // setSelectDataOption(result_listHp)
   }
-
   const handleAddData = (record) => {
-    const isMaHangExists = dataChitiet.some((item) => item.MaHang === record.MaHang)
-
+    const newRow = { ...record }
+    const isMaHangExists = dataChitiet.some((item) => item.MaHang === newRow.MaHang)
     if (isMaHangExists) {
-      toast.warn('Đã tồn tại mã hàng trong chi tiết !!')
+      toast.success('Thêm thành công!', {
+        autoClose: 1000,
+      })
+      const index = dataChitiet.findIndex((item) => item.MaHang === newRow.MaHang)
+      const oldQuantity = dataChitiet[index].SoLuong
+      dataChitiet[index].SoLuong = oldQuantity + newRow.SoLuong
+      setDataChitiet([...dataChitiet])
     } else {
-      setDataChitiet([...dataChitiet, record])
-      toast.success('Thêm thành công !')
+      setDataChitiet([...dataChitiet, newRow])
+      toast.success('Thêm thành công !', {
+        autoClose: 1000,
+      })
     }
   }
   const handleEditData = (data) => {
     setDataChitiet(data)
   }
-  const handleSubmit = async () => {
+  const handleSubmit = async (actionType) => {
     if (typeAction === 'create') {
-      const newData = dataChitiet.map((item, index) => {
+      if (!form?.MaDoiTuong?.trim()) {
+        setErrors({
+          MaDoiTuong: form?.MaDoiTuong?.trim() ? null : 'Đối tượng không được trống',
+        })
+        return
+      }
+      if (form?.MaDoiTuong == 'KHVL') {
+        if (!form?.TenDoiTuong?.trim() || !form?.DiaChi?.trim()) {
+          setErrors({
+            TenDoiTuong: form?.TenDoiTuong?.trim() ? null : 'Tên đối tượng không được để trống',
+            DiaChi: form?.DiaChi?.trim() ? null : 'Địa chỉ không được để trống',
+          })
+          return
+        }
+      }
+      const newData = dataChitiet?.map((item, index) => {
         return {
           ...item,
           STT: index + 1,
         }
       })
-      const data = { ...form, ...Dates, DataDetails: newData }
-      const res = await THEMPHIEUBANHANG(API.THEMPHIEUBANHANG, token, data)
-
-      setMaHang(res[0]?.SoChungTu)
-      if (res[0]?.SoChungTu) {
-        setForm(initState)
-        setDataChitiet([])
+      if (newData?.length > 0) {
+        if (isAdd) {
+          toast.warning('Vui lòng chọn mã hàng', { autoClose: 2000 })
+        } else {
+          const data = { ...form, ...Dates, NgayCTu: Dates.NgayCTu.format('YYYY-MM-DD'), DataDetails: newData }
+          const res = await THEMPHIEUBANHANG(API.THEMPHIEUBANHANG, token, data)
+          const dateCT = { ...form, ...Dates, NgayCTu: Dates.NgayCTu.format('YYYY-MM-DD') }
+          const selectedDoiTuong = listDoiTuong?.find((item) => item.Ma === 'KHVL')
+          if (res.DataError == 0) {
+            actionType === 'print'
+              ? handleShowPrint_action(dateCT.NgayCTu, res.DataResults[0]?.SoChungTu, 'create')
+              : actionType === 'printKho'
+                ? handleShowPrint_kho_action(dateCT.NgayCTu, res.DataResults[0]?.SoChungTu, 'create')
+                : toast.success(res.DataErrorDescription, { autoClose: 1000 })
+            setMaHang(res.DataResults[0]?.SoChungTu)
+            setForm({
+              ...initState,
+              MaKho: listKhoHang?.length > 0 ? listKhoHang[0]?.MaKho : '',
+              MaDoiTuong: selectedDoiTuong.Ma,
+              TenDoiTuong: selectedDoiTuong.Ten,
+              DiaChi: selectedDoiTuong.DiaChi,
+            })
+            setDataChitiet([])
+          } else {
+            toast.error(res.DataErrorDescription, { autoClose: 2000 })
+          }
+        }
+      } else {
+        toast.warning('Chi tiết hàng không được để trống', { autoClose: 1000 })
       }
     } else if (typeAction === 'edit') {
+      if (form?.MaDoiTuong == 'KHVL') {
+        if (!form?.TenDoiTuong?.trim() || !form?.DiaChi?.trim()) {
+          setErrors({
+            TenDoiTuong: form?.TenDoiTuong?.trim() ? null : 'Tên đối tượng không được để trống',
+            DiaChi: form?.DiaChi?.trim() ? null : 'Địa chỉ không được để trống',
+          })
+          return
+        }
+      }
       const newData = dataChitiet.map((item, index) => {
         return {
           ...item,
           STT: index + 1,
         }
       })
-      const data = { ...form, DataDetails: newData }
-      const res = await SUAPHIEUBANHANG(API.SUAPHIEUBANHANG, token, { SoChungTu: data.SoChungTu, Data: data })
-      setMaHang(data.SoChungTu)
-      if (res.DataError === 0) {
-        console.log('sua')
+      if (newData?.length > 0) {
+        if (isAdd) {
+          toast.warning('Vui lòng chọn mã hàng', { autoClose: 2000 })
+        } else {
+          const data = { ...form, DataDetails: newData }
+          const res = await SUAPHIEUBANHANG(API.SUAPHIEUBANHANG, token, { SoChungTu: data.SoChungTu, Data: data })
+          if (res.DataError == 0) {
+            actionType === 'print'
+              ? handleShowPrint_action(data?.NgayCTu, data?.SoChungTu, 'edit')
+              : actionType === 'printKho'
+                ? handleShowPrint_kho_action(data?.NgayCTu, data?.SoChungTu, 'edit')
+                : toast.success(res.DataErrorDescription, { autoClose: 1000 })
+            setMaHang(data?.SoChungTu)
+          } else {
+            toast.warning(res.DataErrorDescription, { autoClose: 2000 })
+          }
+        }
+      } else {
+        toast.warning('Chi tiết hàng không được để trống', { autoClose: 1000 })
       }
     }
   }
   const handleSubmitAndClose = async () => {
     if (typeAction === 'create') {
-      const newData = dataChitiet.map((item, index) => {
+      if (!form?.MaDoiTuong?.trim()) {
+        setErrors({
+          MaDoiTuong: form?.MaDoiTuong?.trim() ? null : 'Đối tượng không được trống',
+        })
+        return
+      }
+      if (form?.MaDoiTuong == 'KHVL') {
+        if (!form?.TenDoiTuong?.trim() || !form?.DiaChi?.trim()) {
+          setErrors({
+            TenDoiTuong: form?.TenDoiTuong?.trim() ? null : 'Tên đối tượng không được để trống',
+            DiaChi: form?.DiaChi?.trim() ? null : 'Địa chỉ không được để trống',
+          })
+          return
+        }
+      }
+      const newData = dataChitiet?.map((item, index) => {
         return {
           ...item,
           STT: index + 1,
         }
       })
-      const data = { ...form, ...Dates, DataDetails: newData }
-      const res = await THEMPHIEUBANHANG(API.THEMPHIEUBANHANG, token, data)
-      console.log(res)
-      setMaHang(res[0]?.SoChungTu)
-      if (res[0]?.SoChungTu) {
-        handleClose()
+      if (newData?.length > 0) {
+        if (isAdd) {
+          toast.warning('Vui lòng chọn mã hàng', { autoClose: 2000 })
+        } else {
+          const data = { ...form, ...Dates, NgayCTu: Dates.NgayCTu.format('YYYY-MM-DD'), DataDetails: newData }
+          const res = await THEMPHIEUBANHANG(API.THEMPHIEUBANHANG, token, data)
+          if (res.DataError == 0) {
+            setMaHang(res.DataResults[0]?.SoChungTu)
+            toast.success(res.DataErrorDescription, { autoClose: 1000 })
+            handleClose()
+          } else {
+            toast.warning(res.DataErrorDescription, { autoClose: 2000 })
+          }
+        }
+      } else {
+        toast.warning('Chi tiết hàng không được để trống', { autoClose: 1000 })
       }
     } else if (typeAction === 'edit') {
+      if (form?.MaDoiTuong == 'KHVL') {
+        if (!form?.TenDoiTuong?.trim() || !form?.DiaChi?.trim()) {
+          setErrors({
+            TenDoiTuong: form?.TenDoiTuong?.trim() ? null : 'Tên đối tượng không được để trống',
+            DiaChi: form?.DiaChi?.trim() ? null : 'Địa chỉ không được để trống',
+          })
+          return
+        }
+      }
       const newData = dataChitiet.map((item, index) => {
         return {
           ...item,
           STT: index + 1,
         }
       })
-      const data = { ...form, DataDetails: newData }
-      const res = await SUAPHIEUBANHANG(API.SUAPHIEUBANHANG, token, { SoChungTu: data.SoChungTu, Data: data })
-      console.log(data)
-      setMaHang(data.SoChungTu)
-      if (res.DataError === 0) {
-        handleClose()
+      if (newData?.length > 0) {
+        if (isAdd) {
+          toast.warning('Vui lòng chọn mã hàng', { autoClose: 2000 })
+        } else {
+          const data = { ...form, DataDetails: newData }
+          const res = await SUAPHIEUBANHANG(API.SUAPHIEUBANHANG, token, { SoChungTu: data.SoChungTu, Data: data })
+          if (res.DataError == 0) {
+            setMaHang(data?.SoChungTu)
+            toast.success(res.DataErrorDescription, { autoClose: 1000 })
+            handleClose()
+          } else {
+            toast.error(res.DataErrorDescription, { autoClose: 2000 })
+          }
+        }
+      } else {
+        toast.warning('Chi tiết hàng không được để trống', { autoClose: 1000 })
       }
     }
   }
   const Print = async () => {
-    if (typeAction === 'view') {
-      handleShowPrint_action(form?.NgayCTu, form?.SoChungTu)
-    } else {
-      handleSubmit()
-      handleShowPrint_action(form?.NgayCTu, form?.SoChungTu)
-
-      const x = await THONGTINPHIEU(API.CHITIETPBS, token, form?.SoChungTu, dispatch)
-      setForm(x.DataResult)
-    }
+    handleShowPrint_action(form?.NgayCTu, form?.SoChungTu)
   }
-
   const Print_kho = async () => {
-    if (typeAction === 'view') {
-      handleShowPrint_kho_action(form?.NgayCTu, form?.SoChungTu)
-    } else {
-      handleSubmit()
-
-      handleShowPrint_kho_action(form?.NgayCTu, form?.SoChungTu)
-
-      const x = await THONGTINPHIEU(API.CHITIETPBS, token, form?.SoChungTu, dispatch)
-      setForm(x.DataResult)
-    }
+    handleShowPrint_kho_action(form?.NgayCTu, form?.SoChungTu)
   }
+  const isAdd = useMemo(() => dataChitiet && dataChitiet?.map((item) => item.MaHang).includes('Chọn mã hàng'), [dataChitiet])
   const addRecord = () => {
+    if (!form?.MaDoiTuong?.trim()) {
+      setErrors({
+        MaDoiTuong: form?.MaDoiTuong?.trim() ? null : 'Đối tượng không được trống',
+      })
+      return
+    }
+    if (dataChitiet.map((item) => item.MaHang).includes('Chọn mã hàng')) return
     setDataChitiet([
       ...dataChitiet,
       {
         DonGia: 0,
         GiaBan: 0,
-
-        MaHang: 'Chọn mã',
-
+        MaHang: 'Chọn mã hàng',
         SoLuong: 1,
-
-        TenHang: 'Chọn tên',
+        TenHang: 'Chọn mã hàng',
         ThanhTien: 0,
         TienCKTT: 0,
         TienHang: 0,
         TienThue: 0,
-
         TongCong: 133000,
         TyLeCKTT: 0,
         TyLeThue: 0,
         key: dataListHP.length + dataChitiet.length,
       },
     ])
-    console.log(dataChitiet)
   }
-
   return (
     <>
       {isModalOpen ? (
         <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10 ">
-          <div className=" p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
-            <div className=" w-[90vw] h-[600px] ">
+          <div className="p-2 absolute shadow-lg bg-white rounded-md flex flex-col gap-2">
+            <div className="flex flex-col gap-2 p-1 xl:w-[80vw] lg:w-[90vw] md:w-[98vw]">
               <div className="flex gap-2">
                 <img src={Logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
                 <p className="text-blue-700 uppercase font-semibold">{`${typeAction === 'view' ? 'Thông Tin' : typeAction === 'edit' ? 'Sửa' : 'Thêm'} - Phiếu Bán Hàng`}</p>
               </div>
-              <div className=" w-full h-[90%] rounded-sm text-sm border border-gray-300">
-                <div className={`flex  md:gap-0 lg:gap-1 pl-1 box_thongtin ${typeAction == 'create' ? 'create' : typeAction == 'edit' ? 'edit' : ''}`}>
-                  {/* thong tin phieu */}
-                  <div className="w-[62%]">
-                    <div className="flex p-1">
-                      <div className=" flex items-center  ">
-                        <label className="md:w-[114px] lg:w-[110px]  pr-1">Số C.từ</label>
-                        <input readOnly type="text" value={form?.SoChungTu} className=" w-full border border-gray-300 outline-none  px-2   bg-[#fafafa] rounded-[4px] h-[24px]" />
-                      </div>
-                      <div className="flex justify-center items-center"></div>
-
-                      <div className="flex  md:px-1 lg:px-4 items-center ">
-                        <label htmlFor="" className="pr-1 lg:pr-[30px] lg:pl-[8px]">
-                          Ngày
-                        </label>
-                        <DateField
-                          className="DatePicker_PMH max-h-[100px]"
-                          format="DD/MM/YYYY"
-                          defaultValue={typeAction === 'create' ? Dates.NgayCTu : dayjs(form?.NgayCTu)}
-                          onChange={(newDate) => {
-                            setDates({
-                              ...Dates,
-                              NgayCTu: dayjs(newDate).format('YYYY-MM-DDTHH:mm:ss'),
-                            })
-                          }}
-                          sx={{
-                            '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                          }}
+              <div className="w-full h-[90%] flex flex-col border-1 border-gray-400 gap-2 py-2.5 text-sm">
+                <div className={`grid lg:grid-cols-5 px-1 md:grid-cols-7 gap-1 box_thongtin ${typeAction == 'create' ? 'create' : typeAction == 'edit' ? 'edit' : ''}`}>
+                  <div className="flex flex-col lg:col-span-3 md:col-span-4 gap-2">
+                    <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-1">
+                        <label className="text-sm required whitespace-nowrap min-w-[70px] flex justify-end">Số C.từ</label>
+                        <input
+                          readOnly
+                          type="text"
+                          value={form?.SoChungTu}
+                          className={`${typeAction == 'create' ? 'md:w-[100px]' : 'md:w-[120px]'} lg:w-full border border-gray-300 outline-none px-2 rounded-[3px] resize-none`}
                         />
                       </div>
+                      <div className="flex items-center gap-1 text-sm">
+                        <label className="min-w-[40px] flex justify-end">Ngày</label>
+                        {typeAction === 'view' ? (
+                          <input
+                            readOnly
+                            type="text"
+                            value={dayjs(form?.NgayCTu).format('DD/MM/YYYY')}
+                            className="px-2 resize-none rounded-[3px] border outline-none text-center text-sm w-[120px]"
+                          />
+                        ) : (
+                          <DateField
+                            className="max-w-[115px] text-sm"
+                            format="DD/MM/YYYY"
+                            value={typeAction === 'create' ? Dates.NgayCTu : dayjs(form?.NgayCTu)}
+                            onChange={(newDate) => {
+                              setDates({
+                                ...Dates,
+                                NgayCTu: dayjs(newDate),
+                              })
+                            }}
+                            sx={{
+                              '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
+                              '& .MuiButtonBase-root': {
+                                padding: '4px',
+                              },
+                              '& .MuiSvgIcon-root': {
+                                width: '18px',
+                                height: '18px',
+                              },
+                            }}
+                          />
+                        )}
+                      </div>
                       {typeAction === 'create' ? (
-                        <div className="flex items-center w-[200px]">
+                        <div className="flex items-center ">
                           <Checkbox
-                            className=" w-full"
+                            className="text-sm whitespace-nowrap lg:min-w-[120px] flex justify-end"
                             onChange={(e) =>
                               setForm({
                                 ...form,
@@ -312,135 +432,200 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                         </div>
                       ) : null}
                     </div>
-                    <div className="p-1 flex ">
-                      <label form="doituong" className="w-[86px]">
+                    <div className="flex items-center gap-1">
+                      <label form="doituong" className="text-sm whitespace-nowrap min-w-[70px] flex justify-end">
                         Đối tượng
                       </label>
+                      {typeAction === 'view' ? (
+                        <input
+                          type="text"
+                          className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm"
+                          value={`${form?.MaDoiTuong} - ${form?.TenDoiTuong}`}
+                          readOnly={true}
+                          disabled
+                        />
+                      ) : (
+                        <Select
+                          size="small"
+                          className="w-full outline-none truncate"
+                          placeholder={errors.MaDoiTuong ? errors.MaDoiTuong : ''}
+                          status={errors.MaDoiTuong ? 'error' : ''}
+                          value={
+                            form?.MaDoiTuong == null ? null : form?.MaDoiTuong === 'KHVL' ? `${form?.MaDoiTuong} - Khách vãng lai` : `${form?.MaDoiTuong} - ${form?.TenDoiTuong}`
+                          }
+                          onChange={handleChangeInput}
+                          showSearch
+                          optionFilterProp="children"
+                        >
+                          {listDoiTuong?.map((item) => (
+                            <Option value={`${item.Ma} - ${item.Ten} - ${item.DiaChi}`} key={item.Ma}>
+                              {item?.Ma} - {item?.Ten}
+                            </Option>
+                          ))}
+                        </Select>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <label className="text-sm whitespace-nowrap min-w-[70px] flex justify-end">Tên</label>
+                      {typeAction === 'view' ? (
+                        <input type="text" className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm" value={form?.TenDoiTuong} disabled />
+                      ) : (
+                        <Input
+                          size="small"
+                          className={`${errors.TenDoiTuong ? 'border-red-500' : ''} w-full overflow-hidden whitespace-nowrap overflow-ellipsis`}
+                          value={form?.TenDoiTuong}
+                          placeholder={errors.TenDoiTuong && errors.TenDoiTuong}
+                          onChange={(e) => {
+                            if (form?.DoiTuong !== 'KHVL') {
+                              setForm({
+                                ...form,
+                                TenDoiTuong: e.target.value,
+                              })
+                              setErrors({ ...errors, TenDoiTuong: '' })
+                            } else {
+                              handleChangeInput
+                            }
+                          }}
+                          disabled={form?.MaDoiTuong == 'KHVL' ? false : true}
+                        />
+                      )}
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 lg:col-span-2 md:col-span-3 px-2 border-2 py-2 border-black-200 rounded relative">
+                    <div className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</div>
+                    <div className="flex gap-1">
+                      <div className="flex items-center ">
+                        <label className="md:w-[134px] lg:w-[104px]">Người tạo</label>
+                        <Tooltip title={form?.NguoiTao} color="blue">
+                          <input type="text" className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm truncate" value={form?.NguoiTao} readOnly />
+                        </Tooltip>
+                      </div>
+                      <div className="flex items-center">
+                        <label className="w-[30px] pr-1">Lúc</label>
+                        <Tooltip title={form?.NgayTao ? dayjs(form?.NgayTao).format('DD/MM/YYYY HH:mm:ss') : ''} color="blue">
+                          <input
+                            readOnly
+                            type="text"
+                            className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm truncate"
+                            value={form?.NgayTao ? dayjs(form?.NgayTao).format('DD/MM/YYYY HH:mm:ss') : ''}
+                          />
+                        </Tooltip>
+                      </div>
+                    </div>
+                    <div className="flex gap-1">
+                      <div className="flex items-center">
+                        <label className="md:w-[134px] lg:w-[104px]">Người sửa</label>
+                        <Tooltip title={form?.NguoiSuaCuoi} color="blue">
+                          <input readOnly type="text" className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm truncate" value={form?.NguoiSuaCuoi} />
+                        </Tooltip>
+                      </div>
+                      <div className="flex items-center">
+                        <label className="w-[30px] pr-1">Lúc</label>
+                        <Tooltip title={form?.NgaySuaCuoi ? dayjs(form?.NgaySuaCuoi).format('DD/MM/YYYY HH:mm:ss') : ''} color="blue">
+                          <input
+                            readOnly
+                            type="text"
+                            className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm truncate"
+                            value={form?.NgaySuaCuoi ? dayjs(form?.NgaySuaCuoi).format('DD/MM/YYYY HH:mm:ss') : ''}
+                          />
+                        </Tooltip>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1 px-1">
+                  <label className="text-sm whitespace-nowrap min-w-[70px] flex justify-end">Địa chỉ</label>
+                  {typeAction === 'view' ? (
+                    <input type="text" className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm" value={form?.DiaChi} name="DiaChi" readOnly disabled />
+                  ) : (
+                    <Input
+                      size="small"
+                      value={form?.DiaChi}
+                      placeholder={errors.DiaChi && errors.DiaChi}
+                      className={`${errors.DiaChi ? 'border-red-500' : ''} w-full overflow-hidden whitespace-nowrap overflow-ellipsis`}
+                      onChange={(e) => {
+                        if (form?.DoiTuong !== 'KHVL') {
+                          setForm({
+                            ...form,
+                            DiaChi: e.target.value,
+                          })
+                          setErrors({ ...errors, DiaChi: '' })
+                        } else {
+                          handleChangeInput
+                        }
+                      }}
+                      disabled={form?.MaDoiTuong == 'KHVL' ? false : true}
+                    />
+                  )}
+                </div>
+                <div className="flex items-center gap-2 px-1">
+                  <div className="flex items-center gap-1 ">
+                    <label form="khohang" className="whitespace-nowrap required min-w-[70px] flex justify-end">
+                      Kho hàng
+                    </label>
+                    {typeAction === 'view' ? (
+                      <input
+                        type="text"
+                        className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm"
+                        value={`${form?.MaKho} - ${form?.TenKho}`}
+                        name="DiaChi"
+                        readOnly
+                        disabled
+                      />
+                    ) : (
                       <Select
-                        className="w-full outline-none"
-                        value={`${form?.MaDoiTuong} - ${form?.TenDoiTuong} - ${form?.DiaChi}`}
-                        disabled={typeAction === 'view'}
-                        onChange={handleChangeInput}
+                        className="min-w-[150px]"
+                        size="small"
+                        readOnly={typeAction === 'view' ? true : false}
+                        onChange={handleChangeInput_kho}
+                        value={form?.MaKho}
                         showSearch
+                        optionFilterProp="children"
+                        disabled={typeAction === 'view' ? true : false}
                       >
-                        {listDoiTuong?.map((item, index) => (
-                          <Option value={`${item.Ma} - ${item.Ten} - ${item.DiaChi}`} key={index}>
-                            {item?.Ma} {item?.Ten}
+                        {listKhoHang?.map((item, index) => (
+                          <Option value={item.MaKho} key={index}>
+                            {item?.MaKho} - {item?.TenKho}
                           </Option>
                         ))}
                       </Select>
-                    </div>
-                    <div className="flex items-center  p-1">
-                      <label className="w-[86px]">Tên</label>
-                      <input
-                        type="text"
-                        className="w-full   outline-none px-2 "
-                        value={form?.TenDoiTuong}
-                        name="TenDoiTuong"
-                        readOnly={typeAction === 'view' || typeAction === 'edit' ? true : false}
-                        onChange={handleChangeInput}
-                        disabled
-                      />
-                    </div>
-                    <div className="flex  items-center p-1">
-                      <label className="w-[86px]">Địa chỉ</label>
-                      <input
-                        type="text"
-                        className="w-full outline-none px-2"
-                        value={form?.DiaChi}
-                        name="DiaChi"
-                        readOnly={typeAction === 'view' || typeAction === 'edit' ? true : false}
-                        onChange={handleChangeInput}
-                        disabled
-                      />
-                    </div>
+                    )}
                   </div>
-                  {/* thong tin cap nhat */}
-                  <div className="w-[38%] py-1 box_content">
-                    <div className="text-center p-1 font-medium text_capnhat">Thông tin cập nhật</div>
-                    <div className="rounded-md w-[98%]  box_capnhat px-1 py-3 ">
-                      <div className="flex justify-between items-center">
-                        <div className="flex items-center p-1 ">
-                          <label className="md:w-[134px] lg:w-[104px] ">Người tạo</label>
-                          <input type="text" className="w-full   outline-none px-2 truncate" value={form?.NguoiTao} readOnly title={form?.NguoiTao} />
-                        </div>
-                        <div className="flex items-center p-1">
-                          <label className="w-[30px] pr-1">Lúc</label>
-                          <input
-                            readOnly
-                            type="text"
-                            className="w-full   outline-none px-2  text-center"
-                            value={form?.NgayTao ? dayjs(form?.NgayTao).format('DD/MM/YYYY hh:mm:ss') : ''}
-                          />
-                        </div>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <div className="flex items-center p-1 ">
-                          <label className="md:w-[134px] lg:w-[104px] ">Sửa cuối</label>
-                          <input readOnly type="text" className="w-full outline-none px-2 truncate" value={form?.NguoiSuaCuoi} title={form?.NguoiSuaCuoi} />
-                        </div>
-                        <div className="flex items-center p-1">
-                          <label className="w-[30px] pr-1">Lúc</label>
-                          <input
-                            readOnly
-                            type="text"
-                            className="w-full outline-none px-2 text-center"
-                            value={form?.NgaySuaCuo ? dayjs(form?.NgaySuaCuoi).format('DD/MM/YYYY hh:mm:ss') : ''}
-                          />
-                        </div>
-                      </div>
-                    </div>
+                  <div className="flex items-center gap-1 w-full">
+                    <label className="whitespace-nowrap flex justify-end text-sm">Ghi chú</label>
+                    {typeAction === 'view' ? (
+                      <input type="text" className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm" value={form?.GhiChu} readOnly disabled />
+                    ) : (
+                      <Input
+                        size="small"
+                        className="w-full overflow-hidden whitespace-nowrap overflow-ellipsis"
+                        value={form?.GhiChu}
+                        onChange={(e) => {
+                          setForm({ ...form, GhiChu: e.target.value })
+                        }}
+                      />
+                    )}
                   </div>
                 </div>
-                {/* kho and ghi chu */}
-                <div className="flex gap-3 pl-1 lg:pr-[6px] items-center  w-full">
-                  <div className="p-1 flex  items-center ">
-                    <label form="khohang" className="md:w-[106px] lg:w-[116px]">
-                      Kho hàng
-                    </label>
-
-                    <Select
-                      className={`  hover:-gray-500  ${typeAction === 'edit' ? 'bg-white' : ''} bg-white`}
-                      style={{ width: '100%' }}
-                      size="small"
-                      readOnly={typeAction === 'view' ? true : false}
-                      onChange={handleChangeInput_kho}
-                      value={form?.MaKho || 'Chọn kho hàng'}
-                      name="MaKho"
-                      showSearch
-                      disabled={typeAction === 'view' ? true : false}
+                <div className="pb-0 relative">
+                  {typeAction !== 'view' ? (
+                    <Tooltip
+                      title={isAdd ? 'Vui lòng chọn tên hàng.' : form?.MaDoiTuong == null ? 'Vui lòng chọn đối tượng' : 'Bấm vào đây để thêm hàng hoặc F9 để chọn từ danh sách.'}
+                      placement="topLeft"
+                      color={isAdd || form?.MaDoiTuong == null ? 'gray' : 'blue'}
                     >
-                      {listKhoHang?.map((item, index) => (
-                        <Option value={item.MaKho} key={index}>
-                          {item?.MaKho} {item?.TenKho}
-                        </Option>
-                      ))}
-                    </Select>
-                  </div>
-                  <div className="flex items-center p-1 w-full">
-                    <label className="w-[70px]">Ghi chú</label>
-                    <input
-                      type="text"
-                      name="GhiChu"
-                      className={`w-full border-[1px] border-gray-300 outline-none px-2 rounded-[4px] hover:border-[#4897e6] h-[24px] ${typeAction === 'edit' ? 'bg-white' : ''}`}
-                      value={form?.GhiChu}
-                      readOnly={typeAction === 'view' ? true : false}
-                      onChange={handleChangeInput_other}
-                    />
-                  </div>
-                </div>
-                <div className=" pb-0  relative">
-                  <FloatButton
-                    className="z-3 absolute w-[30px] h-[30px]"
-                    style={{
-                      right: 5,
-                      top: 4,
-                    }}
-                    type="primary"
-                    icon={<IoMdAddCircle />}
-                    onClick={addRecord}
-                    tooltip={<div>Bấm vào đây để thêm hàng hoặc F9 để chọn từ danh sách !</div>}
-                  />
+                      <FloatButton
+                        className="z-3 absolute w-[30px] h-[30px]"
+                        style={{
+                          right: dataChitiet?.length > 0 ? 10 : 5,
+                          top: 4,
+                        }}
+                        type={isAdd || form?.MaDoiTuong == null ? 'default' : 'primary'}
+                        icon={<IoMdAddCircle />}
+                        onClick={addRecord}
+                      />
+                    </Tooltip>
+                  ) : null}
                   {data_chitiet ? (
                     <TableEdit
                       listHP={dataListHP}
@@ -458,7 +643,6 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                 </div>
               </div>
             </div>
-
             <div>
               {form?.MaDoiTuong !== '' && form?.MaKho !== '' ? (
                 showPopup ? (
@@ -475,29 +659,37 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
             <div className=" w-full flex justify-between  gap-2 ">
               <div className="w-full flex justify-start  gap-2">
                 <ActionButton
-                  icon={<MdPrint className="w-6 h-6" />}
+                  // icon={<MdPrint className="w-6 h-6" />}
                   color={'slate-50'}
                   title={'In Phiếu'}
                   background={'purple-500'}
                   bg_hover={'white'}
                   color_hover={'purple-500'}
-                  handleAction={Print}
+                  handleAction={() => (typeAction == 'view' ? Print() : handleSubmit('print'))}
                   isModal={true}
                 />
                 <ActionButton
-                  icon={<MdPrint className="w-6 h-6" />}
+                  // icon={<MdPrint className="w-6 h-6" />}
                   color={'slate-50'}
                   title={'In Phiếu Kho'}
                   background={'purple-500'}
                   bg_hover={'white'}
                   color_hover={'purple-500'}
-                  handleAction={Print_kho}
+                  handleAction={() => (typeAction == 'view' ? Print_kho() : handleSubmit('printKho'))}
                   isModal={true}
                 />
               </div>
               <div className="w-full flex justify-end  gap-2">
                 {typeAction === 'edit' || typeAction === 'view' ? null : (
-                  <ActionButton color={'slate-50'} background={'blue-500'} bg_hover={'white'} color_hover={'blue-500'} title={'Lưu'} isModal={true} handleAction={handleSubmit} />
+                  <ActionButton
+                    color={'slate-50'}
+                    background={'blue-500'}
+                    bg_hover={'white'}
+                    color_hover={'blue-500'}
+                    title={'Lưu'}
+                    isModal={true}
+                    handleAction={() => handleSubmit(null)}
+                  />
                 )}
                 {typeAction === 'view' ? null : (
                   <ActionButton
@@ -505,7 +697,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                     background={'blue-500'}
                     bg_hover={'white'}
                     color_hover={'blue-500'}
-                    title={'Lưu & Đóng'}
+                    title={'Lưu & đóng'}
                     isModal={true}
                     handleAction={handleSubmitAndClose}
                   />
@@ -515,9 +707,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
             </div>
           </div>
         </div>
-      ) : (
-        <></>
-      )}
+      ) : null}
     </>
   )
 }

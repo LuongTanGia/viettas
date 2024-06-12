@@ -8,6 +8,7 @@ export default {
       },
       colors: {
         'bg-main': '#2984ff',
+        'hover-border-color': '#4897e6',
       },
       fontSize: {
         'text-main': '14px',

@@ -6,7 +6,7 @@ import { toast } from 'react-toastify'
 import * as apis from '../../apis'
 import { ModalTL, PermissionView } from '../../components_K'
 import ActionButton from '../../components/util/Button/ActionButton'
-import { RETOKEN, formatCurrency } from '../../action/Actions'
+import { RETOKEN, addRowClass, formatCurrency } from '../../action/Actions'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
 import { exportToExcel } from '../../action/Actions'
 import { CloseSquareFilled } from '@ant-design/icons'
@@ -18,7 +18,7 @@ const { IoAddCircleOutline, TiPrinter, MdDelete, BsSearch, TfiMoreAlt, MdEdit, F
 const GBL = () => {
   const optionContainerRef = useRef(null)
   const [tableLoad, setTableLoad] = useState(true)
-  const [isLoadingEdit, setIsLoadingEdit] = useState(true)
+
   const [isLoadingModal, setIsLoadingModal] = useState(true)
   const [isShowModal, setIsShowModal] = useState(false)
   const [showFull, setShowFull] = useState('Hiện hành')
@@ -46,18 +46,16 @@ const GBL = () => {
   const [valueList, setValueList] = useState([])
   const [selectedRowKeys, setSelectedRowKeys] = useState([])
   const [isChanging, setIsChanging] = useState(false)
-  // const [doneGBL, setDoneGBL] = useState([])
+  const [doneGBL, setDoneGBL] = useState([])
 
   const [formFilter, setFormFilter] = useState({
     CodeValue1From: null,
     CodeValue1To: null,
   })
 
-  // bỏ focus option thì hidden
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (optionContainerRef.current && !optionContainerRef.current.contains(event.target)) {
-        // Click ngoài phần tử chứa isShowOption, ẩn isShowOption
         setIsShowOption(false)
       }
     }
@@ -73,7 +71,7 @@ const GBL = () => {
   useEffect(() => {
     setNewColumns(columns)
     // Lấy thông tin từ local storage sau khi đăng nhập
-    const storedHiddenColumns = localStorage.getItem('hidenColumnGBL')
+    const storedHiddenColumns = localStorage.getItem('hiddenColumnGBL')
     const parsedHiddenColumns = storedHiddenColumns ? JSON.parse(storedHiddenColumns) : null
 
     // Áp dụng thông tin đã lưu vào checkedList và setConfirmed để ẩn cột
@@ -85,8 +83,8 @@ const GBL = () => {
 
   useEffect(() => {
     if (confirmed) {
-      setCheckedList(JSON.parse(localStorage.getItem('hidenColumnGBL')))
-      setNewColumns(JSON.parse(localStorage.getItem('hidenColumnGBL')))
+      setCheckedList(JSON.parse(localStorage.getItem('hiddenColumnGBL')))
+      setNewColumns(JSON.parse(localStorage.getItem('hiddenColumnGBL')))
     }
   }, [confirmed])
 
@@ -98,22 +96,21 @@ const GBL = () => {
     })
     setDataMaHang(selectedRowObjs)
   }, [selectedRowKeys])
+
   // default showFull
   useEffect(() => {
     if (formFilter.CodeValue1From === undefined || formFilter.CodeValue1To === undefined) {
       setFormFilter({ CodeValue1From: null, CodeValue1To: null })
     }
   }, [formFilter])
+
   // get helper
   useEffect(() => {
     setIsLoadingModal(true)
-    setIsLoadingEdit(true)
     const fetchData = async () => {
       try {
-        console.log('get helper')
         const tokenLogin = localStorage.getItem('TKN')
-        if (actionType === 'create' || actionType === 'edit' || actionType === 'print' || actionType === 'import') {
-          console.log('get helper  KH,DT')
+        if (actionType === 'create' || actionType === 'print' || actionType === 'import') {
           const responseKH = await apis.ListHelperHHGBL(tokenLogin)
           if (responseKH.data && responseKH.data.DataError === 0) {
             setDataHangHoa(responseKH.data.DataResults)
@@ -132,13 +129,8 @@ const GBL = () => {
       } catch (error) {
         console.error('Lấy data thất bại', error)
         setIsLoadingModal(false)
-        // setIsShowModal(false)
-        setIsLoadingEdit(false)
-
-        // toast.error('Lấy data thất bại. Vui lòng thử lại sau.')
       }
     }
-
     if (isShowModal) {
       fetchData()
     }
@@ -147,10 +139,7 @@ const GBL = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log('get helper')
-
         const tokenLogin = localStorage.getItem('TKN')
-
         console.log('get helper  KH,DT')
         const response = await apis.ListHelperNhomGiaGBL(tokenLogin)
         if (response.data && response.data.DataError === 0) {
@@ -169,11 +158,11 @@ const GBL = () => {
     }
     fetchData()
   }, [])
+
   // get Chức năng quyền hạn
   useEffect(() => {
     const getChucNangQuyenHan = async () => {
       try {
-        console.log('đi')
         const tokenLogin = localStorage.getItem('TKN')
         const response = await apis.ChucNangQuyenHan(tokenLogin, 'ThietLap_GiaLe')
 
@@ -202,6 +191,7 @@ const GBL = () => {
       setIsShowNotify(true)
     }
   }, [dataQuyenHan])
+
   //get DSGBL
   useEffect(() => {
     const callApis = () => {
@@ -231,7 +221,6 @@ const GBL = () => {
   const getDSGBL = async () => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
-
       const response = await apis.DanhSachGBL(tokenLogin, { ...formFilter, CodeValue1List: valueList.join(',') })
 
       if (response.data && response.data.DataError === 0) {
@@ -385,7 +374,7 @@ const GBL = () => {
       ),
     },
     {
-      title: 'DVT',
+      title: 'ĐVT',
       dataIndex: 'DVT',
       key: 'DVT',
       width: 100,
@@ -576,7 +565,13 @@ const GBL = () => {
     value: key,
   }))
 
-  const newColumnsHide = columns.filter((item) => !newColumns.includes(item.dataIndex))
+  const newColumnsHide = columns.filter((item) => {
+    if (newColumns && newColumns.length > 0) {
+      return !newColumns.includes(item.dataIndex)
+    } else {
+      return true
+    }
+  })
 
   const handleHideColumns = () => {
     setNewColumns(checkedList)
@@ -611,8 +606,15 @@ const GBL = () => {
     setIsShowModal(true)
   }
   const handleAdjustPrice = () => {
-    setActionType('adjustPrice')
-    setIsShowModal(true)
+    if (!selectedRowKeys.length > 0) {
+      toast.warning('Hãy chọn mã hàng để điều chỉnh giá !', {
+        autoClose: 1500,
+      })
+      return
+    } else {
+      setActionType('adjustPrice')
+      setIsShowModal(true)
+    }
   }
   const handleImport = () => {
     setActionType('import')
@@ -629,22 +631,26 @@ const GBL = () => {
     setTableLoad(true)
   }
   const handleFromChange = (value) => {
-    setFormFilter({ ...formFilter, CodeValue1From: value })
+    const valueCheck = dataNhomGia?.findIndex((item) => item.Ma === value) > dataNhomGia.findIndex((item) => item.Ma === formFilter?.CodeValue1To)
 
-    if (formFilter.CodeValue1To === null || value > formFilter.CodeValue1To) {
+    if (formFilter.CodeValue1To === null || valueCheck) {
       setFormFilter({ CodeValue1From: value, CodeValue1To: value })
+    } else {
+      setFormFilter({ ...formFilter, CodeValue1From: value })
     }
   }
   const handleToChange = (value) => {
-    setFormFilter({ ...formFilter, CodeValue1To: value })
+    const valueCheck = dataNhomGia?.findIndex((item) => item.Ma === value) < dataNhomGia.findIndex((item) => item.Ma === formFilter?.CodeValue1From)
 
-    if (formFilter.CodeValue1From === null || value < formFilter.CodeValue1From) {
+    if (formFilter.CodeValue1From === null || valueCheck) {
       setFormFilter({ CodeValue1From: value, CodeValue1To: value })
+    } else {
+      setFormFilter({ ...formFilter, CodeValue1To: value })
     }
   }
 
   const handleRowClick = (record) => {
-    // setDoneGBL([])
+    setDoneGBL([])
     const selectedKey = `${record.MaHang}/${record.HieuLucTu}`
     const isSelected = selectedRowKeys.includes(selectedKey)
     const newSelectedRowKeys = isSelected ? selectedRowKeys.filter((key) => key !== selectedKey) : [...selectedRowKeys, selectedKey]
@@ -748,7 +754,7 @@ const GBL = () => {
                             defaultValue={checkedList}
                             onChange={(value) => {
                               setCheckedList(value)
-                              localStorage.setItem('hidenColumnGBL', JSON.stringify(value))
+                              localStorage.setItem('hiddenColumnGBL', JSON.stringify(value))
                             }}
                           >
                             <Row>
@@ -770,13 +776,14 @@ const GBL = () => {
                 )}
               </div>
             </div>
-            <div className="flex justify-between items-center px-2 ">
+            <div className="flex justify-between items-center px-2 pb-1">
               <div className="flex flex-col gap-1 ">
-                <div className="flex  justify-between gap-1">
+                <div className="flex  gap-1">
                   <div className="flex gap-1 items-center">
                     <div className="w-[42px] text-end">Nhóm</div>
                     <Select
                       showSearch
+                      optionFilterProp="children"
                       size="small"
                       allowClear
                       placeholder="Chọn nhóm"
@@ -787,6 +794,7 @@ const GBL = () => {
                         textOverflow: 'ellipsis',
                       }}
                       popupMatchSelectWidth={false}
+                      optionLabelProp="value"
                     >
                       {dataNhomGia?.map((item) => (
                         <Option key={item.Ma} value={item.Ma} title={item.Ten}>
@@ -799,6 +807,7 @@ const GBL = () => {
                     <div className=" text-center">Đến</div>
                     <Select
                       showSearch
+                      optionFilterProp="children"
                       allowClear
                       size="small"
                       placeholder="Chọn nhóm"
@@ -809,6 +818,7 @@ const GBL = () => {
                         textOverflow: 'ellipsis',
                       }}
                       popupMatchSelectWidth={false}
+                      optionLabelProp="value"
                     >
                       {dataNhomGia?.map((item) => (
                         <Option key={item.Ma} value={item.Ma} title={item.Ten}>
@@ -838,17 +848,26 @@ const GBL = () => {
                   <div className="w-[42px] text-end">Chọn</div>
                   <Select
                     mode="multiple"
+                    showSearch
                     allowClear
-                    maxTagCount={1}
+                    maxTagCount="responsive"
+                    optionFilterProp="children"
                     size="small"
                     placeholder="Chọn nhóm"
                     value={valueList}
                     onChange={(value) => setValueList(value)}
-                    className="w-[30vw] truncate"
+                    className="md:w-[30vw] lg:w-[50vw] truncate"
+                    maxTagPlaceholder={(omittedValues) => (
+                      <Tooltip title={omittedValues?.map(({ label }) => label)} color="blue">
+                        <span>+{omittedValues?.length}...</span>
+                      </Tooltip>
+                    )}
                   >
                     {dataNhomGia?.map((item) => (
                       <Option key={item.Ma} value={item.Ma}>
-                        {item.Ma} - {item.Ten}
+                        <p className="truncate">
+                          {item.Ma} - {item.Ten}
+                        </p>
                       </Option>
                     ))}
                   </Select>
@@ -874,8 +893,8 @@ const GBL = () => {
                   title={'Điều chỉnh giá'}
                   icon={<BsWrenchAdjustableCircle size={20} />}
                   bg_hover={'white'}
-                  background={'orange-500'}
-                  color_hover={'orange-500'}
+                  background={'bg-main'}
+                  color_hover={'bg-main'}
                   handleAction={handleAdjustPrice}
                   isModal={true}
                 />
@@ -910,16 +929,16 @@ const GBL = () => {
                   x: 1500,
                   y: 300,
                 }}
-                bordered
-                pagination={{
-                  defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                  showSizeChanger: true,
-                  pageSizeOptions: ['50', '100', '1000'],
-                  onShowSizeChange: (current, size) => {
-                    localStorage.setItem('pageSize', size)
-                  },
-                }}
-                // rowClassName={(record) => (`${record.MaHang}/${record.HieuLucTu}` === doneGBL ? 'highlighted-row' : '')}
+                // pagination={{
+                //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                //   showSizeChanger: true,
+                //   pageSizeOptions: ['50', '100', '1000'],
+                //   onShowSizeChange: (current, size) => {
+                //     localStorage.setItem('pageSize', size)
+                //   },
+                // }}
+                pagination={false}
+                rowClassName={(record, index) => (`${record.MaHang}/${record.HieuLucTu}` === doneGBL ? 'highlighted-row' : addRowClass(record, index))}
                 rowKey={(record) => `${record.MaHang}/${record.HieuLucTu}`}
                 onRow={(record) => ({
                   onClick: () => {
@@ -934,15 +953,20 @@ const GBL = () => {
                   return (
                     <Table.Summary fixed="bottom">
                       <Table.Summary.Row>
-                        <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell>
+                        <Table.Summary.Cell index={0} key="summary-cell-0" className=""></Table.Summary.Cell>
                         {newColumnsHide
                           .filter((column) => column.render)
-                          .map((column) => {
+                          .map((column, index) => {
                             const isNumericColumn = typeof filteredGBL[0]?.[column.dataIndex] === 'number'
                             return (
-                              <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                              <Table.Summary.Cell
+                                index={index + 1}
+                                key={`summary-cell-${index}`}
+                                align={isNumericColumn ? 'right' : 'left'}
+                                className="text-end font-bold  bg-[#f1f1f1] "
+                              >
                                 {column.dataIndex === 'STT' ? (
-                                  <Text className="text-center flex justify-center" strong>
+                                  <Text className="text-center flex justify-center text-white" strong>
                                     {showFull === 'Hiện hành' ? data.length : dataFull.length}
                                   </Text>
                                 ) : null}
@@ -969,10 +993,9 @@ const GBL = () => {
                 data={dataFull}
                 dataNhomGia={dataNhomGia}
                 isLoadingModal={isLoadingModal}
-                isLoadingEdit={isLoadingEdit}
                 dataThongSo={dataThongSo}
                 loading={() => setTableLoad(true)}
-                // setHightLight={setDoneGBL}
+                setHightLight={setDoneGBL}
               />
             )}
           </div>

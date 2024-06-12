@@ -10,6 +10,7 @@ import { TimeField } from '@mui/x-date-pickers/TimeField'
 import { RETOKEN } from '../action/Actions'
 import { toast } from 'react-toastify'
 import ActionCheckBox from '../components/util/CheckBox/ActionCheckBox'
+import { useMediaQuery } from '@mui/material'
 
 const { Option } = Select
 
@@ -35,29 +36,40 @@ const ModalHeThong = ({ close }) => {
   // const [dataHMThu, setDataHMThu] = useState([])
   const [isLoading, setIsLoading] = useState(true)
 
-  const [formHT, setFormHT] = useState({})
+  const [formHT, setFormHT] = useState()
 
+  const isTablet = useMediaQuery('(min-width: 768px) and (max-width: 1024px)')
+
+  // kiểm tra nếu ca = 0 thì trả về null
   useEffect(() => {
     if (data) {
-      setFormHT(data)
+      setFormHT({
+        ...data,
+        Ca2_BatDau: data.Ca2 ? data.Ca2_BatDau : null,
+        Ca2_KetThuc: data.Ca2 ? data.Ca2_KetThuc : null,
+        Ca3_BatDau: data.Ca3 ? data.Ca3_BatDau : null,
+        Ca3_KetThuc: data.Ca3 ? data.Ca3_KetThuc : null,
+      })
     }
   }, [data])
-
   // get helper
   useEffect(() => {
     const fetchData = async (apiFunc, setDataFunc) => {
       try {
         const tokenLogin = localStorage.getItem('TKN')
         const response = await apiFunc(tokenLogin)
-        if (response.data && response.data.DataError === 0) {
-          setDataFunc(response.data.DataResults)
-        } else if (response.data.DataError === -1 || response.data.DataError === -2 || response.data.DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        } else if (response.data.DataError === -107 || response.data.DataError === -108) {
-          await RETOKEN()
-          fetchData(apiFunc, setDataFunc)
-        } else {
-          toast.error(response.data.DataErrorDescription)
+        if (response) {
+          const { DataError, DataErrorDescription, DataResults } = response.data
+          if (DataError === 0) {
+            setDataFunc(DataResults)
+          } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+          } else if (DataError === -107 || DataError === -108) {
+            await RETOKEN()
+            fetchData(apiFunc, setDataFunc)
+          } else {
+            toast.error(DataErrorDescription)
+          }
         }
       } catch (error) {
         console.error('Lấy data thất bại', error)
@@ -82,19 +94,23 @@ const ModalHeThong = ({ close }) => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
       const response = await apis.DSThongSo(tokenLogin)
-      if (response.data && response.data.DataError === 0) {
-        setData(response.data.DataResult)
-        setIsLoading(false)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getData()
-      } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        setIsLoading(false)
-      } else {
-        toast.error(response.data.DataErrorDescription)
-        setData([])
-        setIsLoading(false)
+
+      if (response) {
+        const { DataError, DataErrorDescription, DataResult } = response.data
+        if (DataError === 0) {
+          setData(DataResult)
+          setIsLoading(false)
+        } else if (DataError === -107 || DataError === -108) {
+          await RETOKEN()
+          getData()
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+          setIsLoading(false)
+        } else {
+          toast.error(DataErrorDescription)
+          setData([])
+          setIsLoading(false)
+        }
       }
     } catch (error) {
       console.error('Kiểm tra token thất bại', error)
@@ -140,28 +156,31 @@ const ModalHeThong = ({ close }) => {
     }
 
     if (formHT?.Ca2_KetThuc - formHT?.Ca1_BatDau > 1440) {
-      toast.warning('Thời gian phân ca không được quá một ngày!')
+      toast.warning('Tổng thời gian của ca không dược quá 24h!')
       return
     }
 
     if (formHT?.Ca3_KetThuc - formHT?.Ca1_BatDau > 1440) {
-      toast.warning('Thời gian phân ca không được quá một ngày!')
+      toast.warning('Tổng thời gian của ca không dược quá 24h!')
       return
     }
 
     try {
       const tokenLogin = localStorage.getItem('TKN')
       const response = await apis.DieuChinhThongSo(tokenLogin, formHT)
-      if (response.data && response.data.DataError === 0) {
-        toast.success(response.data.DataErrorDescription)
-        close()
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        handleDieuChinhTT()
-      } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-      } else {
-        toast.error(response.data.DataErrorDescription)
+      if (response) {
+        const { DataError, DataErrorDescription } = response.data
+        if (DataError === 0) {
+          toast.success(DataErrorDescription)
+          close()
+        } else if (DataError === -107 || DataError === -108) {
+          await RETOKEN()
+          handleDieuChinhTT()
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+        } else {
+          toast.error(DataErrorDescription)
+        }
       }
     } catch (error) {
       console.error('Kiểm tra token thất bại', error)
@@ -183,7 +202,6 @@ const ModalHeThong = ({ close }) => {
     setFormHT({ ...formHT, [value]: e.target.checked })
   }
 
-  console.table(formHT)
   return (
     <div className=" fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
       <div className="p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">
@@ -204,7 +222,7 @@ const ModalHeThong = ({ close }) => {
                     <label className="font-medium pl-5 ">
                       Giới hạn cập nhật <hr />
                     </label>
-                    <div className=" flex  items-center p-1 gap-2 ">
+                    <div className="flex items-center p-1 gap-2 ">
                       <div className="required md:w-[190px] lg:w-[140px] text-end ">
                         <span className="md:hidden lg:inline">Giới hạn</span>
                         <span className="md:inline lg:hidden">G.hạn</span>
@@ -273,36 +291,53 @@ const ModalHeThong = ({ close }) => {
                       <div className="md:w-[30px] lg:w-[140px] text-end">Từ</div>
                       <div className="w-full flex gap-2">
                         <div className="flex gap-3">
-                          <DateField
-                            className="DatePicker_PMH max-w-[110px]"
-                            format="DD/MM/YYYY"
-                            value={dayjs(formHT?.DATERANGEMIN)}
-                            maxDate={formHT?.DATERANGEMAX}
-                            onChange={(newDate) => {
-                              setFormHT({
-                                ...formHT,
-                                DATERANGEMIN: dayjs(newDate).format('YYYY-MM-DD'),
-                              })
-                            }}
-                            sx={styleDate}
-                            disabled={formHT?.DATERANGELIMIT !== 'M'}
-                          />
-                          <div className="flex gap-2 ">
-                            <div className=" text-end">Đến</div>
+                          {formHT?.DATERANGELIMIT === 'M' ? (
                             <DateField
-                              className="DatePicker_PMH max-w-[110px]"
+                              className="DatePicker_PMH max-w-[115px]"
                               format="DD/MM/YYYY"
-                              value={dayjs(formHT?.DATERANGEMAX)}
-                              minDate={formHT?.DATERANGEMIN}
+                              value={dayjs(formHT?.DATERANGEMIN)}
+                              maxDate={formHT?.DATERANGEMAX}
                               onChange={(newDate) => {
                                 setFormHT({
                                   ...formHT,
-                                  DATERANGEMAX: dayjs(newDate).format('YYYY-MM-DD'),
+                                  DATERANGEMIN: dayjs(newDate).format('YYYY-MM-DD'),
                                 })
                               }}
                               sx={styleDate}
-                              disabled={formHT?.DATERANGELIMIT !== 'M'}
                             />
+                          ) : (
+                            <input
+                              type="text"
+                              disabled
+                              value={dayjs(formHT?.DATERANGEMIN).format('DD/MM/YYYY')}
+                              className="text-base h-[24px] px-2 rounded-[4px] w-[115px] resize-none border-[1px] border-gray-300 outline-none text-center  "
+                            />
+                          )}
+
+                          <div className="flex gap-2 ">
+                            <div className=" text-end">Đến</div>
+                            {formHT?.DATERANGELIMIT === 'M' ? (
+                              <DateField
+                                className="DatePicker_PMH max-w-[115px]"
+                                format="DD/MM/YYYY"
+                                value={dayjs(formHT?.DATERANGEMAX)}
+                                minDate={formHT?.DATERANGEMIN}
+                                onChange={(newDate) => {
+                                  setFormHT({
+                                    ...formHT,
+                                    DATERANGEMAX: dayjs(newDate).format('YYYY-MM-DD'),
+                                  })
+                                }}
+                                sx={styleDate}
+                              />
+                            ) : (
+                              <input
+                                type="text"
+                                disabled
+                                value={dayjs(formHT?.DATERANGEMAX).format('DD/MM/YYYY')}
+                                className="text-base h-[24px] px-2 rounded-[4px] w-[115px] resize-none border-[1px] border-gray-300 outline-none text-center  "
+                              />
+                            )}
                           </div>
                         </div>
                       </div>
@@ -442,7 +477,7 @@ const ModalHeThong = ({ close }) => {
                         <div className="flex gap-2 items-center">
                           <label>Từ</label>
                           <TimeField
-                            className="w-[70px]"
+                            className="max-w-[70px]"
                             sx={{
                               '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
                               '& .MuiButtonBase-root': {
@@ -454,8 +489,8 @@ const ModalHeThong = ({ close }) => {
                               },
                             }}
                             format="HH:mm"
-                            maxTime={formHT?.Ca1_KetThuc < 1440 ? dayjs(convertMinutesToHHMM(formHT.Ca1_KetThuc)) : undefined}
-                            value={dayjs(convertMinutesToHHMM(formHT.Ca1_BatDau))}
+                            maxTime={formHT?.Ca1_KetThuc < 1440 ? dayjs(convertMinutesToHHMM(formHT?.Ca1_KetThuc)) : undefined}
+                            value={dayjs(convertMinutesToHHMM(formHT?.Ca1_BatDau))}
                             onChange={(newDate) => {
                               const convertNewDate = convertHHMMToMinutes(dayjs(newDate).format('HH:mm'))
                               setFormHT({ ...formHT, Ca1_BatDau: convertNewDate })
@@ -466,7 +501,7 @@ const ModalHeThong = ({ close }) => {
                         <div className="flex gap-2 items-center">
                           <label>Đến</label>
                           <TimeField
-                            className="w-[70px]"
+                            className="max-w-[70px]"
                             sx={{
                               '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
                               '& .MuiButtonBase-root': {
@@ -478,8 +513,8 @@ const ModalHeThong = ({ close }) => {
                               },
                             }}
                             format="HH:mm"
-                            minTime={formHT?.Ca1_KetThuc < 1440 ? dayjs(convertMinutesToHHMM(formHT.Ca1_BatDau)) : undefined}
-                            value={dayjs(convertMinutesToHHMM(formHT.Ca1_KetThuc))}
+                            minTime={formHT?.Ca1_KetThuc < 1440 ? dayjs(convertMinutesToHHMM(formHT?.Ca1_BatDau)) : undefined}
+                            value={dayjs(convertMinutesToHHMM(formHT?.Ca1_KetThuc))}
                             onChange={(newDate) => {
                               const convertNewDate = convertHHMMToMinutes(dayjs(newDate).format('HH:mm'))
                               setFormHT({ ...formHT, Ca1_KetThuc: convertNewDate })
@@ -487,10 +522,10 @@ const ModalHeThong = ({ close }) => {
                             disabled={!formHT?.SUDUNG_BANLE || !formHT?.Ca1}
                           />
                         </div>
-                        <Tooltip title="Hôm sau" color="blue">
+                        <Tooltip title={isTablet ? 'Hôm sau' : ''} color="blue">
                           <Checkbox
                             disabled={!formHT?.SUDUNG_BANLE || !formHT?.Ca1}
-                            checked={formHT.Ca1_KetThuc >= 1440 ? true : false}
+                            checked={formHT?.Ca1_KetThuc >= 1440 ? true : false}
                             onChange={(e) => {
                               const newValue = e.target.checked ? formHT.Ca1_KetThuc + 1440 : formHT.Ca1_KetThuc - 1440
                               // const newValueCa2KT = formHT?.Ca1 && formHT.Ca2_KetThuc >= 1440 ? formHT.Ca2_KetThuc - 1440 : formHT.Ca2_KetThuc
@@ -508,7 +543,7 @@ const ModalHeThong = ({ close }) => {
                         <div className="flex gap-2 items-center">
                           <label>Từ</label>
                           <TimeField
-                            className="w-[70px]"
+                            className="max-w-[70px]"
                             format="HH:mm"
                             maxTime={formHT?.Ca2_KetThuc < 1440 ? dayjs(convertMinutesToHHMM(formHT.Ca2_KetThuc)) : undefined}
                             sx={{
@@ -524,7 +559,7 @@ const ModalHeThong = ({ close }) => {
                                 height: '18px',
                               },
                             }}
-                            value={dayjs(convertMinutesToHHMM(formHT.Ca2_BatDau))}
+                            value={dayjs(convertMinutesToHHMM(formHT?.Ca2_BatDau))}
                             onChange={(newDate) => {
                               const convertNewDate = convertHHMMToMinutes(dayjs(newDate).format('HH:mm'))
                               setFormHT({ ...formHT, Ca2_BatDau: convertNewDate })
@@ -535,7 +570,7 @@ const ModalHeThong = ({ close }) => {
                         <div className="flex gap-2 items-center">
                           <label>Đến</label>
                           <TimeField
-                            className="w-[70px]"
+                            className="max-w-[70px]"
                             format="HH:mm"
                             minTime={formHT?.Ca2_KetThuc < 1440 ? dayjs(convertMinutesToHHMM(formHT.Ca2_BatDau)) : undefined}
                             sx={{
@@ -548,7 +583,7 @@ const ModalHeThong = ({ close }) => {
                                 height: '18px',
                               },
                             }}
-                            value={dayjs(convertMinutesToHHMM(formHT.Ca2_KetThuc))}
+                            value={dayjs(convertMinutesToHHMM(formHT?.Ca2_KetThuc))}
                             onChange={(newDate) => {
                               const convertNewDate = convertHHMMToMinutes(dayjs(newDate).format('HH:mm'))
                               setFormHT({ ...formHT, Ca2_KetThuc: convertNewDate })
@@ -556,9 +591,9 @@ const ModalHeThong = ({ close }) => {
                             disabled={!formHT?.SUDUNG_BANLE || !formHT?.Ca2}
                           />
                         </div>
-                        <Tooltip title="Hôm sau" color="blue">
+                        <Tooltip title={isTablet ? 'Hôm sau' : ''} color="blue">
                           <Checkbox
-                            checked={formHT.Ca2_KetThuc >= 1440 ? true : false}
+                            checked={formHT?.Ca2_KetThuc >= 1440 ? true : false}
                             onChange={(e) => {
                               const newValue = e.target.checked ? formHT.Ca2_KetThuc + 1440 : formHT.Ca2_KetThuc - 1440
 
@@ -579,7 +614,7 @@ const ModalHeThong = ({ close }) => {
                         <div className="flex gap-2 items-center">
                           <label>Từ</label>
                           <TimeField
-                            className="w-[70px]"
+                            className="max-w-[70px]"
                             format="HH:mm"
                             maxTime={formHT?.Ca3_KetThuc < 1440 ? dayjs(convertMinutesToHHMM(formHT.Ca3_KetThuc)) : undefined}
                             sx={{
@@ -592,7 +627,7 @@ const ModalHeThong = ({ close }) => {
                                 height: '18px',
                               },
                             }}
-                            value={dayjs(convertMinutesToHHMM(formHT.Ca3_BatDau))}
+                            value={dayjs(convertMinutesToHHMM(formHT?.Ca3_BatDau))}
                             onChange={(newDate) => {
                               const convertNewDate = convertHHMMToMinutes(dayjs(newDate).format('HH:mm'))
                               setFormHT({ ...formHT, Ca3_BatDau: convertNewDate })
@@ -603,7 +638,7 @@ const ModalHeThong = ({ close }) => {
                         <div className="flex gap-2 items-center">
                           <label>Đến</label>
                           <TimeField
-                            className="w-[70px]"
+                            className="max-w-[70px]"
                             format="HH:mm"
                             maxTime={formHT?.Ca3_KetThuc < 1440 ? dayjs(convertMinutesToHHMM(formHT.Ca3_KetThuc)) : undefined}
                             sx={{
@@ -616,7 +651,7 @@ const ModalHeThong = ({ close }) => {
                                 height: '18px',
                               },
                             }}
-                            value={dayjs(convertMinutesToHHMM(formHT.Ca3_KetThuc))}
+                            value={dayjs(convertMinutesToHHMM(formHT?.Ca3_KetThuc))}
                             onChange={(newDate) => {
                               const convertNewDate = convertHHMMToMinutes(dayjs(newDate).format('HH:mm'))
                               setFormHT({ ...formHT, Ca3_KetThuc: convertNewDate })
@@ -624,9 +659,9 @@ const ModalHeThong = ({ close }) => {
                             disabled={!formHT?.SUDUNG_BANLE || !formHT?.Ca3}
                           />
                         </div>
-                        <Tooltip title="Hôm sau" color="blue">
+                        <Tooltip title={isTablet ? 'Hôm sau' : ''} color="blue">
                           <Checkbox
-                            checked={formHT.Ca3_KetThuc >= 1440 ? true : false}
+                            checked={formHT?.Ca3_KetThuc >= 1440 ? true : false}
                             onChange={(e) => {
                               const newValue = e.target.checked ? formHT.Ca3_KetThuc + 1440 : formHT.Ca3_KetThuc - 1440
                               setFormHT({ ...formHT, Ca3_KetThuc: newValue })

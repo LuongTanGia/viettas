@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
-import { Table, Checkbox, Tooltip, Row, Col, Typography, Input, Segmented } from 'antd'
+import { Table, Checkbox, Tooltip, Row, Col, Typography, Input } from 'antd'
 import moment from 'moment'
 import icons from '../../untils/icons'
 import { toast } from 'react-toastify'
@@ -8,25 +8,21 @@ import * as apis from '../../apis'
 import ActionButton from '../../components/util/Button/ActionButton'
 import { RETOKEN, formatCurrency, formatPrice } from '../../action/Actions'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
-import { exportToExcel } from '../../action/Actions'
+// import { exportToExcel } from '../../action/Actions'
 import { CloseSquareFilled } from '@ant-design/icons'
 import { useSearch } from '../../components_K/myComponents/useSearch'
 import { ModalTongHopPBL, PermissionView } from '../../components_K'
 
 const { Text } = Typography
-const { FaFileMedical, BsSearch, TfiMoreAlt, FaEyeSlash, RiFileExcel2Fill } = icons
+const { FaFileMedical, BsSearch, TfiMoreAlt, FaEyeSlash } = icons
 const TongHopPBL = () => {
   const optionContainerRef = useRef(null)
   const [tableLoad, setTableLoad] = useState(true)
-  // const [isLoadingModal, setIsLoadingModal] = useState(true)
   const [isShowModal, setIsShowModal] = useState(false)
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [isShowOption, setIsShowOption] = useState(false)
   const [data, setData] = useState([])
-
-  // const [dataThongTin, setDataThongTin] = useState({})
   const [dataRecord, setDataRecord] = useState(null)
-
   const [actionType, setActionType] = useState('')
   const [dataQuyenHan, setDataQuyenHan] = useState({})
   const [setSearchTongHopPBL, filteredTongHopPBL, searchTongHopPBL] = useSearch(data)
@@ -40,7 +36,6 @@ const TongHopPBL = () => {
   const [isShowNotify, setIsShowNotify] = useState(false)
   const [selectedRowKeys, setSelectedRowKeys] = useState([])
   const [doneTongHopPBL, setDoneTongHopPBL] = useState(null)
-
   const [formSynthetics, setFormSynthetics] = useState({ DanhSach: [] })
 
   // bỏ focus option thì hidden
@@ -63,7 +58,7 @@ const TongHopPBL = () => {
   useEffect(() => {
     setNewColumns(columns)
     // Lấy thông tin từ local storage sau khi đăng nhập
-    const storedHiddenColumns = localStorage.getItem('hidenColumnTongHopPBL')
+    const storedHiddenColumns = localStorage.getItem('hiddenColumnTongHopPBL')
     const parsedHiddenColumns = storedHiddenColumns ? JSON.parse(storedHiddenColumns) : null
 
     // Áp dụng thông tin đã lưu vào checkedList và setConfirmed để ẩn cột
@@ -75,8 +70,8 @@ const TongHopPBL = () => {
 
   useEffect(() => {
     if (confirmed) {
-      setCheckedList(JSON.parse(localStorage.getItem('hidenColumnTongHopPBL')))
-      setNewColumns(JSON.parse(localStorage.getItem('hidenColumnTongHopPBL')))
+      setCheckedList(JSON.parse(localStorage.getItem('hiddenColumnTongHopPBL')))
+      setNewColumns(JSON.parse(localStorage.getItem('hiddenColumnTongHopPBL')))
     }
   }, [confirmed])
 
@@ -119,20 +114,22 @@ const TongHopPBL = () => {
       const tokenLogin = localStorage.getItem('TKN')
 
       const response = await apis.DSTongHopPBL(tokenLogin)
-
-      if (response.data && response.data.DataError === 0) {
-        setData(response.data.DataResults)
-        setTableLoad(false)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getDSTongHopPBL()
-      } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        setTableLoad(false)
-      } else {
-        toast.error(response.data.DataErrorDescription)
-        setData([])
-        setTableLoad(false)
+      if (response) {
+        const { DataError, DataErrorDescription, DataResults } = response.data
+        if (DataError === 0) {
+          setData(DataResults)
+          setTableLoad(false)
+        } else if (DataError === -107 || DataError === -108) {
+          await RETOKEN()
+          getDSTongHopPBL()
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+          setTableLoad(false)
+        } else {
+          toast.error(DataErrorDescription)
+          setData([])
+          setTableLoad(false)
+        }
       }
     } catch (error) {
       console.error('Kiểm tra token thất bại', error)
@@ -338,7 +335,13 @@ const TongHopPBL = () => {
     value: key,
   }))
 
-  const newColumnsHide = columns.filter((item) => !newColumns.includes(item.dataIndex))
+  const newColumnsHide = columns.filter((item) => {
+    if (newColumns && newColumns.length > 0) {
+      return !newColumns.includes(item.dataIndex)
+    } else {
+      return true
+    }
+  })
 
   const handleHideColumns = () => {
     setNewColumns(checkedList)
@@ -393,7 +396,7 @@ const TongHopPBL = () => {
         <>
           <div className="w-auto">
             <div className="relative text-lg flex justify-between items-center mb-1">
-              <div className="flex items-center gap-x-4 font-bold">
+              <div className="flex items-baseline gap-x-4 font-bold">
                 <h1 className="text-xl uppercase">Tổng hợp dữ liệu bán lẻ từ các quầy</h1>
                 <div>
                   <BsSearch size={18} className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
@@ -402,7 +405,7 @@ const TongHopPBL = () => {
               <div className="flex  ">
                 {isShowSearch && (
                   <div
-                    className={`flex absolute left-[28.4rem] -top-[2px] transition-all linear duration-700 ${isShowSearch ? 'md:w-[12rem] lg:w-[20rem]' : 'w-0'} overflow-hidden`}
+                    className={`flex absolute left-[28.4rem] -top-[3px] transition-all linear duration-700 ${isShowSearch ? 'md:w-[12rem] lg:w-[20rem]' : 'w-0'} overflow-hidden`}
                   >
                     <Input
                       allowClear={{
@@ -428,7 +431,7 @@ const TongHopPBL = () => {
                 {isShowOption && (
                   <div className=" absolute flex flex-col gap-2 bg-slate-100 px-3 py-2 items-center top-0 right-[2.5%] rounded-lg z-10 duration-500 shadow-custom ">
                     <div className={`flex flex-grow flex-wrap gap-1 ${!hideColumns ? 'flex-col' : ''}`}>
-                      <button
+                      {/* <button
                         onClick={dataQuyenHan?.EXCEL ? exportToExcel : ''}
                         className={`flex items-center py-1 px-2 rounded-md text-slate-50 text-base border-2 ${
                           dataQuyenHan?.EXCEL ? 'border-green-500  bg-green-500 hover:bg-white hover:text-green-500' : 'bg-gray-400 cursor-not-allowed'
@@ -438,7 +441,7 @@ const TongHopPBL = () => {
                           <RiFileExcel2Fill size={20} />
                         </div>
                         <div>Xuất excel</div>
-                      </button>
+                      </button> */}
 
                       <button
                         onClick={() => setHideColumns(!hideColumns)}
@@ -465,7 +468,7 @@ const TongHopPBL = () => {
                             defaultValue={checkedList}
                             onChange={(value) => {
                               setCheckedList(value)
-                              localStorage.setItem('hidenColumnTongHopPBL', JSON.stringify(value))
+                              localStorage.setItem('hiddenColumnTongHopPBL', JSON.stringify(value))
                             }}
                           >
                             <Row className="flex justify-center">
@@ -519,15 +522,15 @@ const TongHopPBL = () => {
                   x: 1500,
                   y: 410,
                 }}
-                bordered
-                pagination={{
-                  defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                  showSizeChanger: true,
-                  pageSizeOptions: ['50', '100', '1000'],
-                  onShowSizeChange: (current, size) => {
-                    localStorage.setItem('pageSize', size)
-                  },
-                }}
+                // pagination={{
+                //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                //   showSizeChanger: true,
+                //   pageSizeOptions: ['50', '100', '1000'],
+                //   onShowSizeChange: (current, size) => {
+                //     localStorage.setItem('pageSize', size)
+                //   },
+                // }}
+                pagination={false}
                 rowClassName={(record) => (`${record.NgayCTu}/${record.NhanVien}/${record.Ca}/${record.Quay}` === doneTongHopPBL ? 'highlighted-row' : '')}
                 rowKey={(record) => `${record.NgayCTu}/${record.NhanVien}/${record.Ca}/${record.Quay}`}
                 onRow={(record) => ({
@@ -543,16 +546,22 @@ const TongHopPBL = () => {
                   return (
                     <Table.Summary fixed="bottom">
                       <Table.Summary.Row>
-                        <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell>
+                        <Table.Summary.Cell index={0} key={`summary-cell-${0}`} className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell>
                         {newColumnsHide
                           .filter((column) => column.render)
-                          .map((column) => {
+                          .map((column, index) => {
                             const isNumericColumn = typeof filteredTongHopPBL[0]?.[column.dataIndex] === 'number'
+                            const total = Number(filteredTongHopPBL?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0))
 
                             return (
-                              <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                              <Table.Summary.Cell
+                                index={index + 1}
+                                key={`summary-cell-${index + 1}`}
+                                align={isNumericColumn ? 'right' : 'left'}
+                                className="text-end font-bold  bg-[#f1f1f1]"
+                              >
                                 {column.dataIndex === 'TyLeCKTT' ? (
-                                  <Text strong>
+                                  <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
                                     {Number(filteredTongHopPBL.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                       minimumFractionDigits: dataThongSo?.SOLETYLE,
                                       maximumFractionDigits: dataThongSo?.SOLETYLE,
@@ -566,14 +575,14 @@ const TongHopPBL = () => {
                                   column.dataIndex === 'TongThu' ||
                                   column.dataIndex === 'TienPhaiNop' ||
                                   column.dataIndex === 'TongChi' ? (
-                                  <Text strong>
+                                  <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
                                     {Number(filteredTongHopPBL.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                       minimumFractionDigits: dataThongSo?.SOLESOTIEN,
                                       maximumFractionDigits: dataThongSo?.SOLESOTIEN,
                                     })}
                                   </Text>
                                 ) : column.dataIndex === 'STT' ? (
-                                  <Text className="text-center flex justify-center" strong>
+                                  <Text className="text-center flex justify-center text-white" strong>
                                     {data.length}
                                   </Text>
                                 ) : null}
@@ -595,8 +604,6 @@ const TongHopPBL = () => {
                 actionType={actionType}
                 dataRecord={dataRecord}
                 formSynthetics={formSynthetics}
-                // dataThongTin={dataThongTin}
-                // isLoadingModal={isLoadingModal}
                 dataThongSo={dataThongSo}
                 loading={() => setTableLoad(true)}
                 setHightLight={setDoneTongHopPBL}

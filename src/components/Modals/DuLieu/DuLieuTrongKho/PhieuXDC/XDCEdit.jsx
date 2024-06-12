@@ -6,7 +6,7 @@ import { Checkbox, FloatButton, Input, InputNumber, Select, Table, Tooltip } fro
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { FaSearch } from 'react-icons/fa'
 import { toast } from 'react-toastify'
-import { MdPrint } from 'react-icons/md'
+// import { MdPrint } from 'react-icons/md'
 import { IoMdAddCircle } from 'react-icons/io'
 import dayjs from 'dayjs'
 import moment from 'moment'
@@ -14,12 +14,13 @@ import XDCPrint from './XDCPrint'
 import { useSearch } from '../../../../hooks/Search'
 import categoryAPI from '../../../../../API/linkAPI'
 import logo from '../../../../../assets/VTS-iSale.ico'
-import { RETOKEN } from '../../../../../action/Actions'
+import { RETOKEN, addRowClass } from '../../../../../action/Actions'
 import ActionButton from '../../../../util/Button/ActionButton'
 import HighlightedCell from '../../../../hooks/HighlightedCell'
 import SimpleBackdrop from '../../../../util/Loading/LoadingPage'
 import EditTable from '../../../../util/Table/EditTable'
 import { nameColumsPhieuXuatDieuChinh } from '../../../../util/Table/ColumnName'
+import { DateField } from '@mui/x-date-pickers'
 
 const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
   const TokenAccess = localStorage.getItem('TKN')
@@ -79,6 +80,7 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
         const response = await categoryAPI.ListKhoHangXDC(TokenAccess)
         if (response.data.DataError == 0) {
           setDataKhoHang(response.data.DataResults)
+          setIsLoading(true)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
           getDataKhoHangXDC()
@@ -96,23 +98,20 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
   useEffect(() => {
     const getDataHangHoaXDC = async () => {
       try {
-        const response = await categoryAPI.ListHangHoaXDC(TokenAccess)
+        const response = await categoryAPI.ListHangHoaXDC({ SoChungTu: XDCForm?.SoChungTu, MaKho: XDCForm?.MaKho }, TokenAccess)
         if (response.data.DataError == 0) {
           setIsLoading(true)
           setDataHangHoa(response.data.DataResults)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getDataHangHoaXDC()
         }
       } catch (error) {
         console.log(error)
         setIsLoading(true)
       }
     }
-    if (!isLoading) {
+    if (XDCForm?.MaKho) {
       getDataHangHoaXDC()
     }
-  }, [isLoading])
+  }, [XDCForm?.MaKho])
 
   useEffect(() => {
     const handleView = async () => {
@@ -120,9 +119,6 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
         const response = await categoryAPI.XDCView(dataXDC?.SoChungTu, TokenAccess)
         if (response.data.DataError == 0) {
           setDataXDCView(response.data.DataResult)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleView()
         }
       } catch (error) {
         console.error(error)
@@ -177,6 +173,9 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
         autoClose: 1000,
       })
     } else {
+      toast.success('Chọn hàng hóa thành công', {
+        autoClose: 1000,
+      })
       const index = selectedRowData.findIndex((item) => item.MaHang === newRow.MaHang)
       const oldQuantity = selectedRowData[index].SoLuong
       selectedRowData[index].SoLuong = oldQuantity + newRow.SoLuong
@@ -188,6 +187,10 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
     setActionType('print')
   }
   const handleEdit = async (isPrint = true) => {
+    if (XDCForm.NgayCTu === 'Invalid Date') {
+      toast.warning('Vui lòng chọn ngày', { autoClose: 2000 })
+      return
+    }
     try {
       const newData = selectedRowData.map((item, index) => {
         return {
@@ -195,14 +198,25 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
           STT: index + 1,
         }
       })
-      const response = await categoryAPI.XDCEdit({ SoChungTu: dataXDC?.SoChungTu, Data: { ...XDCForm, DataDetails: newData } }, TokenAccess)
-      if (response.data.DataError == 0) {
-        isPrint ? handlePrint() : (close(), toast.success('Sửa thành công', { autoClose: 1000 }))
-        loadingData()
-        setTargetRow(dataXDC?.SoChungTu)
+      if (newData?.length > 0) {
+        if (isAdd) {
+          toast.warning('Vui lòng chọn mã hàng', { autoClose: 2000 })
+        } else {
+          const response = await categoryAPI.XDCEdit(
+            { SoChungTu: dataXDC?.SoChungTu, Data: { ...XDCForm, NgayCTu: dayjs(XDCForm?.NgayCTu).format('YYYY-MM-DD'), DataDetails: newData } },
+            TokenAccess,
+          )
+          if (response.data.DataError == 0) {
+            isPrint ? handlePrint() : (close(), toast.success(response.data.DataErrorDescription, { autoClose: 1000 }))
+            loadingData()
+            setTargetRow(dataXDC?.SoChungTu)
+          } else {
+            console.log('sai', { SoChungTu: dataXDC?.SoChungTu, Data: { ...XDCForm, DataDetails: selectedRowData } })
+            toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
+          }
+        }
       } else {
-        console.log('sai', { SoChungTu: dataXDC?.SoChungTu, Data: { ...XDCForm, DataDetails: selectedRowData } })
-        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
+        toast.warning('Chi tiết hàng không được để trống', { autoClose: 1000 })
       }
     } catch (error) {
       console.log(error)
@@ -265,18 +279,9 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
       align: 'center',
       sorter: (a, b) => a.NhomHang.localeCompare(b.NhomHang),
       render: (text) => (
-        <Tooltip title={text}>
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchHangHoa} />
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -288,28 +293,18 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
       align: 'center',
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       render: (text) => (
-        <Tooltip title={text}>
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchHangHoa} />
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
-      title: 'Đơn vị tính',
+      title: 'ĐVT',
       dataIndex: 'DVT',
       key: 'DVT',
       showSorterTooltip: false,
       align: 'center',
-      width: 120,
+      width: 100,
       sorter: (a, b) => a.DVT.localeCompare(b.DVT),
       render: (text) => (
         <span className="flex justify-center">
@@ -322,7 +317,7 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
       dataIndex: 'LapRap',
       key: 'LapRap',
       align: 'center',
-      width: 120,
+      width: 100,
       showSorterTooltip: false,
       sorter: (a, b) => {
         const valueA = a.LapRap ? 1 : 0
@@ -336,7 +331,7 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
       dataIndex: 'TonKho',
       key: 'TonKho',
       align: 'center',
-      width: 120,
+      width: 100,
       showSorterTooltip: false,
       sorter: (a, b) => {
         const valueA = a.TonKho ? 1 : 0
@@ -374,22 +369,27 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
                   <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
                   <p className="text-blue-700 font-semibold uppercase">Sửa - Phiếu Xuất Điều Chỉnh</p>
                 </div>
-                <div className="flex flex-col gap-2 border-2 px-1 py-2.5">
-                  <div className="grid grid-cols-2 items-center gap-2">
+                <div className="flex flex-col gap-2 border-1 border-gray-400 py-2.5">
+                  <div className="grid grid-cols-2 items-center gap-2 px-1">
                     <div className="flex flex-col gap-3">
                       <div className="flex gap-2">
                         <div className="flex items-center gap-1">
-                          <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Số chứng từ</label>
-                          <Input size="small" disabled value={XDCForm?.SoChungTu || ''} readOnly />
+                          <label className="required whitespace-nowrap min-w-[90px] flex justify-end text-sm">Số chứng từ</label>
+                          <input
+                            size="small"
+                            disabled
+                            value={XDCForm?.SoChungTu || ''}
+                            className="h-[24px] w-full  px-2 rounded-[4px] resize-none border-[1px] border-gray-300 outline-none truncate text-sm"
+                          />
                         </div>
                         <div className="flex items-center gap-1">
-                          <label className="required whitespace-nowrap text-sm">Ngày c.từ</label>
-                          <DatePicker
-                            className="DatePicker_XDCKho"
+                          <label className="required whitespace-nowrap text-sm"> Ngày</label>
+                          <DateField
+                            className="max-w-[130px] min-w-[130px]"
                             format="DD/MM/YYYY"
                             value={dayjs(XDCForm?.NgayCTu) || ''}
                             onChange={(values) => {
-                              const newDate = dayjs(values).format('YYYY-MM-DDTHH:mm:ss')
+                              const newDate = dayjs(values).format('YYYY-MM-DD')
                               setXDCForm({ ...XDCForm, NgayCTu: newDate })
                             }}
                             sx={{
@@ -406,11 +406,12 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
                         </div>
                       </div>
                       <div className="flex items-center gap-1">
-                        <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Kho hàng</label>
+                        <label className="required whitespace-nowrap min-w-[90px] flex justify-end text-sm">Kho hàng</label>
                         <Select
                           style={{ width: '100%' }}
                           type="text"
                           showSearch
+                          optionFilterProp="children"
                           required
                           size="small"
                           value={XDCForm?.MaKho}
@@ -424,7 +425,7 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
                           {dataKhoHang &&
                             dataKhoHang?.map((item, index) => (
                               <Select.Option key={index} value={item.MaKho}>
-                                {item.ThongTinKho}
+                                {item.MaKho} - {item.TenKho}
                               </Select.Option>
                             ))}
                         </Select>
@@ -432,14 +433,14 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
                     </div>
                     <div className="grid grid-cols-1 gap-2 px-2 border-2 py-2.5 border-black-200 rounded relative">
                       <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
-                      <div className="flex gap-1">
+                      <div className="flex gap-2 justify-center">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người tạo</label>
                           <Tooltip title={dataXDCView?.NguoiTao} color="blue">
                             <input
-                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-[1rem] overflow-ellipsis truncate"
+                              className="px-2 2xl:w-[18rem] xl:w-[15rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm overflow-ellipsis truncate"
                               value={dataXDCView?.NguoiTao || ''}
-                              readOnly
+                              disabled
                             />
                           </Tooltip>
                         </div>
@@ -447,21 +448,21 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
                           <label className="text-sm">Lúc</label>
                           <Tooltip title={moment(dataXDCView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''} color="blue">
                             <input
-                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
+                              className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate  text-center"
                               value={moment(dataXDCView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
-                              readOnly
+                              disabled
                             />
                           </Tooltip>
                         </div>
                       </div>
-                      <div className="flex gap-1">
+                      <div className="flex gap-2 justify-center">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người sửa</label>
                           <Tooltip title={dataXDCView?.NguoiSuaCuoi} color="blue">
                             <input
-                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border  outline-none text-[1rem] overflow-ellipsis truncate"
+                              className="px-2 2xl:w-[18rem] xl:w-[15rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border  outline-none text-sm overflow-ellipsis truncate"
                               value={dataXDCView?.NguoiSuaCuoi || ''}
-                              readOnly
+                              disabled
                             />
                           </Tooltip>
                         </div>
@@ -469,31 +470,29 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
                           <label className="text-sm">Lúc</label>
                           <Tooltip title={dataXDCView?.NgaySuaCuoi ? moment(dataXDCView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''} color="blue">
                             <input
-                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
+                              className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate text-center"
                               value={dataXDCView?.NgaySuaCuoi ? moment(dataXDCView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                              readOnly
+                              disabled
                             />
                           </Tooltip>
                         </div>
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <label className="whitespace-nowrap min-w-[100px] flex justify-end text-sm">Ghi chú</label>
-                    <input
-                      type="text"
-                      className="px-2 w-[70rem] resize-none rounded border-[1px] border-solid outline-none text-[1rem] hover:border-blue-500 "
-                      name="GhiChu"
+                  <div className="flex items-center gap-1 px-1">
+                    <label className="whitespace-nowrap min-w-[90px] flex justify-end text-sm">Ghi chú</label>
+                    <Input
+                      size="small"
                       value={XDCForm?.GhiChu || ''}
                       onChange={(e) =>
                         setXDCForm({
                           ...XDCForm,
-                          [e.target.name]: e.target.value,
+                          GhiChu: e.target.value,
                         })
                       }
                     />
                   </div>
-                  <div className="border-2 rounded relative">
+                  <div className="relative">
                     <EditTable
                       tableName="PhieuNhapDieuChinh"
                       param={selectedRowData}
@@ -504,7 +503,7 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
                     />
                     <Tooltip
                       placement="topLeft"
-                      title={isAdd ? 'Vui lòng chọn tên hàng!' : 'Bấm vào đây để thêm hàng mới hoặc F9 để chọn từ danh sách!'}
+                      title={isAdd ? 'Vui lòng chọn tên hàng.' : 'Bấm vào đây để thêm hàng mới hoặc F9 để chọn từ danh sách.'}
                       color={isAdd ? 'gray' : 'blue'}
                     >
                       <FloatButton
@@ -523,39 +522,31 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
                 <div className="flex justify-between">
                   <div className="flex gap-2 justify-start">
                     <ActionButton
-                      handleAction={
-                        isAdd
-                          ? ''
-                          : () => {
-                              handleEdit(true)
-                            }
-                      }
-                      icon={<MdPrint className="w-5 h-5" />}
+                      handleAction={() => {
+                        handleEdit(true)
+                      }}
+                      // icon={<MdPrint className="w-5 h-5" />}
                       title={'In Phiếu'}
                       color={'slate-50'}
-                      background={isAdd ? 'gray-500' : 'purple-500'}
-                      color_hover={isAdd ? 'gray-500' : 'purple-500'}
+                      background={'purple-500'}
+                      color_hover={'purple-500'}
                       bg_hover={'white'}
-                      isPermission={isAdd ? false : true}
+                      isPermission={true}
                       isModal={true}
                     />
                   </div>
                   <div className="flex gap-2 justify-end">
                     <ActionButton
-                      handleAction={
-                        isAdd
-                          ? ''
-                          : () => {
-                              handleEdit(false)
-                            }
-                      }
-                      title={'Xác nhận'}
+                      handleAction={() => {
+                        handleEdit(false)
+                      }}
+                      title={'Lưu & đóng'}
                       isModal={true}
                       color={'slate-50'}
-                      background={isAdd ? 'gray-500' : 'blue-500'}
-                      color_hover={isAdd ? 'gray-500' : 'blue-500'}
+                      background={'blue-500'}
+                      color_hover={'blue-500'}
                       bg_hover={'white'}
-                      isPermission={isAdd ? false : true}
+                      isPermission={true}
                     />
                     <ActionButton handleAction={close} title={'Đóng'} isModal={true} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
                   </div>
@@ -573,8 +564,8 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
                     <div className="flex items-center gap-2">
                       <div className="flex items-center gap-2 py-1">
                         <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
-                        <p className="text-blue-700 font-semibold uppercase">Danh Sách Hàng Hóa - Phiếu Xuất Điều Chỉnh</p>
-                        <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
+                        <p className="text-blue-700 font-semibold uppercase md:text-[12px] lg:text-sm truncate">Danh Sách Hàng Hóa</p>
+                        <FaSearch className="hover:text-red-400 cursor-pointer md:text-[14px] lg:text-sm" onClick={() => setIsShowSearch(!isShowSearch)} />
                       </div>
                       <div className="flex w-[20rem] overflow-hidden">
                         {isShowSearch && (
@@ -583,14 +574,13 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
                             value={searchHangHoa}
                             placeholder="Nhập ký tự bạn cần tìm"
                             onChange={handleSearch}
-                            className="px-2 py-0.5 w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[1px] hover:border-blue-500 outline-none text-[1rem]  "
+                            className="px-2 py-0.5 w-[20rem] border-slate-200  resize-none rounded border-[1px] hover:border-blue-500 outline-none text-sm  "
                           />
                         )}
                       </div>
                     </div>
-                    <div className="border-2 p-2 rounded m-1 flex flex-col gap-2 max-h-[35rem]">
+                    <div className="p-2 rounded m-1 flex flex-col gap-2">
                       <Table
-                        bordered
                         className="table_HH"
                         columns={title}
                         dataSource={filteredHangHoa.map((record, index) => ({ ...record, key: index }))}
@@ -599,6 +589,7 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
                             handleChoose(record)
                           },
                         })}
+                        rowClassName={(record, index) => addRowClass(record, index)}
                         pagination={{
                           defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
                           showSizeChanger: true,
@@ -609,7 +600,7 @@ const XDCEdit = ({ close, dataXDC, loadingData, setTargetRow }) => {
                         }}
                         size="small"
                         scroll={{
-                          x: 1100,
+                          x: 'max-content',
                           y: 420,
                         }}
                         style={{

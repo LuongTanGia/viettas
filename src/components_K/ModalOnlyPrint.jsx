@@ -22,24 +22,6 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
   const startDate = dayjs(dataThongTin?.NgayCTu).format('YYYY-MM-DD')
   const endDate = dayjs(dataThongTin?.NgayCTu).format('YYYY-MM-DD')
 
-  // const dataByDate = useMemo(() => {
-  //   return data.filter((item) => {
-  //     const itemDate = new Date(item.NgayCTu)
-  //     const ngaybt = new Date(startDate)
-  //     const ngaykt = new Date(endDate)
-
-  //     return itemDate >= ngaybt && itemDate <= ngaykt
-  //   })
-  // }, [data, startDate, endDate])
-
-  // useEffect(() => {
-  //   if (actionType === 'view' && !!newData?.length) {
-  //     setNewData(dataByDate)
-  //   } else {
-  //     setNewData('Chọn mã hàng')
-  //   }
-  // }, [dataByDate])
-
   const [formPrint, setFormPrint] = useState()
 
   const [checkboxValues, setCheckboxValues] = useState({
@@ -65,7 +47,6 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
       })
       setNewData(filteredData)
     }
-
     handleFilterPrint()
   }, [formPrint, data])
 
@@ -73,8 +54,8 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
     if (actionType !== 'create' && newData) {
       const foundItem = newData.find((item) => item.SoChungTu === dataThongTin.SoChungTu)
       if (newData.length <= 0) {
-        setSelectedSctBD('Chọn mã hàng')
-        setSelectedSctKT('Chọn mã hàng')
+        setSelectedSctBD('Chọn số chứng từ')
+        setSelectedSctKT('Chọn số chứng từ')
       } else if (foundItem) {
         setSelectedSctBD(foundItem.SoChungTu)
         setSelectedSctKT(foundItem.SoChungTu)
@@ -101,7 +82,6 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
     const endDate = formPrint.NgayKetThuc
 
     if (dayjs(startDate).isAfter(dayjs(endDate))) {
-      // Nếu ngày bắt đầu lớn hơn ngày kết thúc, cập nhật ngày kết thúc
       setFormPrint({
         ...formPrint,
         NgayBatDau: startDate,
@@ -120,7 +100,6 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
     const endDate = dayjs(newDate).format('YYYY-MM-DD')
 
     if (dayjs(startDate).isAfter(dayjs(endDate))) {
-      // Nếu ngày kết thúc nhỏ hơn ngày bắt đầu, cập nhật ngày bắt đầu
       setFormPrint({
         ...formPrint,
         NgayBatDau: endDate,
@@ -135,91 +114,48 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
   }
 
   const handleOnlyPrint = async () => {
+    if (selectedSctBD === 'Chọn số chứng từ' || selectedSctKT === 'Chọn số chứng từ') {
+      toast.warning('Vui lòng chọn số chứng từ !')
+      return
+    }
     try {
       const tokenLogin = localStorage.getItem('TKN')
       const lien = calculateTotal()
-      if (typePage === 'PMH') {
-        const response = await apis.InPMH(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
-        // Kiểm tra call api thành công
-        if (response.data && response.data.DataError === 0) {
-          base64ToPDF(response.data.DataResults)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleOnlyPrint()
-        } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-          toast.warning(response.data.DataErrorDescription)
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
+      let response
+      switch (typePage) {
+        case 'PMH':
+          response = await apis.InPMH(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+          break
+        case 'NTR':
+          response = await apis.InNTR(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+          break
+        case 'PCT':
+          response = await apis.InPCT(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+          break
+        case 'PTT':
+          response = await apis.InPTT(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+          break
+        case 'XTR':
+          response = await apis.InXTR(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+          break
+        case 'PBL':
+          response = await apis.InPBL(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+          break
+        default:
+          break
       }
-      if (typePage === 'NTR') {
-        const response = await apis.InNTR(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
-        // Kiểm tra call api thành công
-        if (response.data && response.data.DataError === 0) {
-          base64ToPDF(response.data.DataResults)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+
+      if (response) {
+        const { DataError, DataErrorDescription, DataResults } = response.data
+        if (DataError === 0) {
+          base64ToPDF(DataResults)
+        } else if (DataError === -107 || DataError === -108) {
           await RETOKEN()
           handleOnlyPrint()
-        } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-          toast.warning(response.data.DataErrorDescription)
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(DataErrorDescription)
         } else {
-          toast.error(response.data.DataErrorDescription)
-        }
-      }
-      if (typePage === 'PCT') {
-        const response = await apis.InPCT(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
-        // Kiểm tra call api thành công
-        if (response.data && response.data.DataError === 0) {
-          base64ToPDF(response.data.DataResults)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleOnlyPrint()
-        } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-          toast.warning(response.data.DataErrorDescription)
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
-      }
-      if (typePage === 'PTT') {
-        const response = await apis.InPTT(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
-        // Kiểm tra call api thành công
-        if (response.data && response.data.DataError === 0) {
-          base64ToPDF(response.data.DataResults)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleOnlyPrint()
-        } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-          toast.warning(response.data.DataErrorDescription)
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
-      }
-      if (typePage === 'XTR') {
-        const response = await apis.InXTR(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
-        // Kiểm tra call api thành công
-        if (response.data && response.data.DataError === 0) {
-          base64ToPDF(response.data.DataResults)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleOnlyPrint()
-        } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-          toast.warning(response.data.DataErrorDescription)
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
-      }
-      if (typePage === 'PBL') {
-        const response = await apis.InPBL(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
-        // Kiểm tra call api thành công
-        if (response.data && response.data.DataError === 0) {
-          base64ToPDF(response.data.DataResults)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleOnlyPrint()
-        } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-          toast.warning(response.data.DataErrorDescription)
-        } else {
-          toast.error(response.data.DataErrorDescription)
+          toast.error(DataErrorDescription)
         }
       }
     } catch (error) {
@@ -251,14 +187,16 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
             <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
             <label className="text-blue-700 font-semibold uppercase pb-1">In - {namePage}</label>
           </div>
-          <div className="border-2 my-1">
+          <div className="border-1 border-gray-400 my-1">
             <div className="p-4">
-              <div className="flex justify-center items-center  gap-3 pl-[52px] ">
+              <div className="grid grid-cols-2 gap-3 ">
                 {/* DatePicker */}
-                <div className="flex gap-x-5 items-center">
-                  <label htmlFor="">Ngày</label>
+                <div className="flex gap-x-2 items-center justify-end">
+                  <label htmlFor="" className="required">
+                    Ngày
+                  </label>
                   <DateField
-                    className="DatePicker_PMH w-[170px]"
+                    className="DatePicker_PMH max-w-[170px]"
                     format="DD/MM/YYYY"
                     value={dayjs(formPrint?.NgayBatDau)}
                     onChange={(newDate) => {
@@ -287,10 +225,12 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
                     }}
                   />
                 </div>
-                <div className="flex gap-x-5 items-center">
-                  <label htmlFor="">Đến</label>
+                <div className="flex gap-x-2 items-center">
+                  <label htmlFor="" className="required">
+                    Đến
+                  </label>
                   <DateField
-                    className="DatePicker_PMH w-[170px]"
+                    className="DatePicker_PMH max-w-[170px]"
                     format="DD/MM/YYYY"
                     value={dayjs(formPrint?.NgayKetThuc)}
                     onChange={(newDate) => {
@@ -319,10 +259,9 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
                     }}
                   />
                 </div>
-              </div>
-              <div className="flex  mt-4 ">
-                <div className="flex ">
-                  <label className="pr-[23px]">Số chứng từ</label>
+
+                <div className="flex gap-x-2 items-center justify-end">
+                  <label className=" required">Số chứng từ</label>
 
                   <Select size="small" showSearch optionFilterProp="children" style={{ width: '170px' }} value={selectedSctBD} onChange={handleSctBDChange}>
                     {newData?.map((item) => (
@@ -333,8 +272,8 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
                   </Select>
                 </div>
 
-                <div className="flex ">
-                  <label className="pl-[18px] pr-[18px]">Đến</label>
+                <div className="flex gap-x-2 items-center ">
+                  <label className=" required">Đến</label>
 
                   <Select size="small" showSearch optionFilterProp="children" style={{ width: '170px' }} value={selectedSctKT} onChange={handleSctKTChange}>
                     {newData?.map((item) => (
@@ -345,6 +284,7 @@ const ModalOnlyPrint = ({ close, dataThongTin, data, actionType, close2, SctCrea
                   </Select>
                 </div>
               </div>
+
               {/* liên */}
               <div className="flex justify-center items-center gap-6 mt-4">
                 <div>

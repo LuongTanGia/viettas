@@ -60,7 +60,6 @@ const ModalSelectHH = ({ close, data, onRowCreate, onChangLoading }) => {
       align: 'center',
       render: (text) => (
         <div style={{ textAlign: 'start' }}>
-          {' '}
           <HighlightedCell text={text} search={searchHH} />
         </div>
       ),
@@ -129,7 +128,7 @@ const ModalSelectHH = ({ close, data, onRowCreate, onChangLoading }) => {
         <div className="md:w-[80vw] lg:w-[50vw] h-[600px] ">
           <div className="flex gap-2 items-center ">
             <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
-            <label className="text-blue-700 font-semibold uppercase pb-1">danh sách hàng hóa</label>
+            <label className="text-blue-700 font-semibold uppercase pb-1">Danh sách hàng hóa</label>
             <div>
               <BsSearch size={16} className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
             </div>
@@ -170,7 +169,6 @@ const ModalSelectHH = ({ close, data, onRowCreate, onChangLoading }) => {
               y: 410,
             }}
             pagination={false}
-            bordered
             rowKey={(record) => record.MaHang}
             onRow={(record) => ({
               // onDoubleClick: () => {
@@ -189,6 +187,10 @@ const ModalSelectHH = ({ close, data, onRowCreate, onChangLoading }) => {
                       <Table.Summary fixed="bottom">
                         <Table.Summary.Row>
                           <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"> {selectedRowTotal}</Table.Summary.Cell>
+                          <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"> </Table.Summary.Cell>
+                          <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"> </Table.Summary.Cell>
+                          <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"> </Table.Summary.Cell>
+                          <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"> </Table.Summary.Cell>
                         </Table.Summary.Row>
                       </Table.Summary>
                     )
@@ -196,7 +198,7 @@ const ModalSelectHH = ({ close, data, onRowCreate, onChangLoading }) => {
             }
           />
 
-          <div className="flex justify-end mt-1 gap-x-2">
+          <div className="flex justify-end mt-3 gap-x-2">
             <ActionButton color={'slate-50'} title={'Xong'} background={'bg-main'} bg_hover={'white'} color_hover={'bg-main'} handleAction={handleChoose} isModal={true} />
             <ActionButton color={'slate-50'} title={'Đóng'} background={'red-500'} bg_hover={'white'} color_hover={'red-500'} handleAction={() => close()} isModal={true} />
           </div>

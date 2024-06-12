@@ -11,7 +11,7 @@ import { FaSearch, FaEyeSlash } from 'react-icons/fa'
 import { CloseSquareFilled } from '@ant-design/icons'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
 import categoryAPI from '../../API/linkAPI'
-import { RETOKEN } from '../../action/Actions'
+import { RETOKEN, addRowClass } from '../../action/Actions'
 import { useSearch } from '../../components/hooks/Search'
 import ActionButton from '../../components/util/Button/ActionButton'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
@@ -58,9 +58,10 @@ const BinhQuanXuatKho = () => {
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
     setCheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
-    const key = Object?.keys(dataGiaXuatKho ? dataGiaXuatKho[0] : [] || []).filter((key) => key != 'ThangFormat')
+    // const key = Object?.keys(dataGiaXuatKho ? dataGiaXuatKho[0] : [] || []).filter((key) => key != 'ThangFormat')
     const key2 = Object?.keys((dataBinhQuan && dataBinhQuan[0]) || []).filter((key) => key != 'Thang' && key != 'ThangFormat')
-    setOptions(key.length > 0 && key2.length > 0 ? [...key, ...key2] : [])
+    // setOptions(key.length > 0 && key2.length > 0 ? [...key, ...key2] : [])
+    setOptions(key2.length > 0 ? [...key2] : [])
   }, [selectVisible])
 
   useEffect(() => {
@@ -88,9 +89,6 @@ const BinhQuanXuatKho = () => {
           setDataGiaXuatKho([])
           setTableLoadLeft(false)
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getDataGiaXuatKho()
         }
       } catch (error) {
         console.log(error)
@@ -136,7 +134,7 @@ const BinhQuanXuatKho = () => {
     const newTimerId = setTimeout(() => {
       handleView(record)
       setTimerId(null)
-    }, 700)
+    }, 800)
     setTimerId(newTimerId)
     return () => clearTimeout(newTimerId)
   }
@@ -210,6 +208,7 @@ const BinhQuanXuatKho = () => {
     {
       title: 'STT',
       dataIndex: 'STT',
+      fixed: 'left',
       with: 10,
       width: 50,
       align: 'center',
@@ -262,23 +261,13 @@ const BinhQuanXuatKho = () => {
       dataIndex: 'NguoiThucHien',
       key: 'NguoiThucHien',
       showSorterTooltip: false,
-      width: 120,
+      width: 180,
       align: 'center',
       sorter: (a, b) => (a.NguoiThucHien?.toString() || '').localeCompare(b.NguoiThucHien?.toString() || ''),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchGiaXuatKho} />
-          </div>
-        </Tooltip>
+        <div className="text-start truncate">
+          <HighlightedCell text={text} search={searchGiaXuatKho} />
+        </div>
       ),
     },
     {
@@ -331,6 +320,7 @@ const BinhQuanXuatKho = () => {
     {
       title: 'STT',
       dataIndex: 'STT',
+      fixed: 'left',
       render: (text, record, index) => index + 1,
       with: 10,
       width: 50,
@@ -381,41 +371,23 @@ const BinhQuanXuatKho = () => {
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchHangHoa} />
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
       title: 'Nhóm hàng',
       dataIndex: 'NhomHang',
       key: 'NhomHang',
-      width: 200,
+      width: 280,
       align: 'center',
       sorter: (a, b) => a.NhomHang.localeCompare(b.NhomHang),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchHangHoa} />
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -436,29 +408,21 @@ const BinhQuanXuatKho = () => {
       title: 'Người tạo',
       dataIndex: 'NguoiTao',
       key: 'NguoiTao',
-      width: 250,
+      width: 180,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => a.NguoiTao.localeCompare(b.NguoiTao),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <HighlightedCell text={text} search={searchHangHoa} />
-          </div>
-        </Tooltip>
+        <div className="truncate">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
       title: 'Ngày tạo',
       dataIndex: 'NgayTao',
       key: 'NgayTao',
-      width: 180,
+      width: 150,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => {
@@ -529,7 +493,7 @@ const BinhQuanXuatKho = () => {
                         <div className={`flex ${selectVisible ? '' : 'flex-col'} items-center gap-2`}>
                           <ActionButton
                             handleAction={handleHidden}
-                            title={'Ẩn Cột'}
+                            title={'Ẩn cột'}
                             icon={<FaEyeSlash className="w-5 h-5" />}
                             color={'slate-50'}
                             background={'red-500'}
@@ -542,9 +506,10 @@ const BinhQuanXuatKho = () => {
                             <div>
                               <Checkbox.Group
                                 style={{
-                                  width: '300px',
+                                  width: '270px',
                                   background: 'white',
-                                  padding: 10,
+                                  paddingTop: 10,
+                                  paddingBottom: 10,
                                   borderRadius: 10,
                                   boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
                                   whiteSpace: 'nowrap',
@@ -553,7 +518,7 @@ const BinhQuanXuatKho = () => {
                                 defaultValue={checkedList}
                                 onChange={onChange}
                               >
-                                <Row>
+                                <Row className="ml-[20px]">
                                   {options && options.length > 0 ? (
                                     options?.map((item, index) => (
                                       <Col span={10} key={(item, index)}>
@@ -591,25 +556,20 @@ const BinhQuanXuatKho = () => {
                         x: 'max-content',
                         y: 300,
                       }}
-                      pagination={{
-                        defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                        showSizeChanger: true,
-                        pageSizeOptions: ['50', '100', '1000'],
-                        onShowSizeChange: (current, size) => {
-                          localStorage.setItem('pageSize', size)
-                        },
-                      }}
-                      rowClassName={(record) => (record.Thang == targetRow ? 'highlighted-row' : '')}
+                      // pagination={{
+                      //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                      //   showSizeChanger: true,
+                      //   pageSizeOptions: ['50', '100', '1000'],
+                      //   onShowSizeChange: (current, size) => {
+                      //     localStorage.setItem('pageSize', size)
+                      //   },
+                      // }}
+                      pagination={false}
+                      rowClassName={(record, index) => addRowClass(record, index)}
                       onRow={(record) => ({
                         onDoubleClick: () => handleDoubleClick(record),
                       })}
                       scrollToFirstRowOnChange
-                      bordered
-                      style={{
-                        whiteSpace: 'nowrap',
-                        fontSize: '24px',
-                        borderRadius: '10px',
-                      }}
                       summary={() => {
                         return (
                           <Table.Summary fixed>
@@ -621,7 +581,7 @@ const BinhQuanXuatKho = () => {
                                   return (
                                     <Table.Summary.Cell index={index} key={index} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
                                       {column.dataIndex == 'STT' ? (
-                                        <Text className="text-center flex justify-center" strong>
+                                        <Text className="text-center flex justify-center text-white" strong>
                                           {dataGiaXuatKho?.length}
                                         </Text>
                                       ) : null}
@@ -643,22 +603,19 @@ const BinhQuanXuatKho = () => {
                       size="small"
                       scroll={{
                         y: 300,
+                        x: 'max-content',
                       }}
-                      pagination={{
-                        defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                        showSizeChanger: true,
-                        pageSizeOptions: ['50', '100', '1000'],
-                        onShowSizeChange: (current, size) => {
-                          localStorage.setItem('pageSize', size)
-                        },
-                      }}
+                      rowClassName={(record, index) => addRowClass(record, index)}
+                      // pagination={{
+                      //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                      //   showSizeChanger: true,
+                      //   pageSizeOptions: ['50', '100', '1000'],
+                      //   onShowSizeChange: (current, size) => {
+                      //     localStorage.setItem('pageSize', size)
+                      //   },
+                      // }}
+                      pagination={false}
                       scrollToFirstRowOnChange
-                      bordered
-                      style={{
-                        whiteSpace: 'nowrap',
-                        fontSize: '24px',
-                        borderRadius: '10px',
-                      }}
                       summary={() => {
                         return (
                           <Table.Summary fixed>
@@ -675,7 +632,7 @@ const BinhQuanXuatKho = () => {
                                       className="text-end font-bold  bg-[#f1f1f1]"
                                     >
                                       {column.dataIndex == 'STT' ? (
-                                        <Text className="text-center flex justify-center" strong>
+                                        <Text className="text-center flex justify-center text-white" strong>
                                           {dataBinhQuan?.length}
                                         </Text>
                                       ) : null}

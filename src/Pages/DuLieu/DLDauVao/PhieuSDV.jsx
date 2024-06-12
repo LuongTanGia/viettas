@@ -5,16 +5,14 @@ import icons from '../../../untils/icons'
 import { toast } from 'react-toastify'
 import * as apis from '../../../apis'
 import ActionButton from '../../../components/util/Button/ActionButton'
-import dayjs from 'dayjs'
-import { RETOKEN, formatPrice } from '../../../action/Actions'
+import { RETOKEN, addRowClass, formatPrice } from '../../../action/Actions'
 import SimpleBackdrop from '../../../components/util/Loading/LoadingPage'
-import { DateField } from '@mui/x-date-pickers/DateField'
 import { useSearch } from '../../../components_K/myComponents/useSearch'
 import HighlightedCell from '../../../components/hooks/HighlightedCell'
 import { exportToExcel } from '../../../action/Actions'
 import { CloseSquareFilled } from '@ant-design/icons'
-
-import { ModalSDV, PermissionView } from '../../../components_K'
+import { PermissionView, ModalSDV } from '../../../components_K'
+import ActionDateField from '../../../components/util/DateField/ActionDateField'
 
 const { Text } = Typography
 const { IoAddCircleOutline, MdDelete, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill } = icons
@@ -45,7 +43,6 @@ const PhieuSDV = () => {
   const [newColumns, setNewColumns] = useState([])
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
-  const [lastSearchTime, setLastSearchTime] = useState(0)
   const [isShowNotify, setIsShowNotify] = useState(false)
 
   // bỏ focus option thì hidden
@@ -68,7 +65,7 @@ const PhieuSDV = () => {
   useEffect(() => {
     setNewColumns(columns)
     // Lấy thông tin từ local storage sau khi đăng nhập
-    const storedHiddenColumns = localStorage.getItem('hidenColumnSDV')
+    const storedHiddenColumns = localStorage.getItem('hiddenColumnSDV')
     const parsedHiddenColumns = storedHiddenColumns ? JSON.parse(storedHiddenColumns) : null
 
     // Áp dụng thông tin đã lưu vào checkedList và setConfirmed để ẩn cột
@@ -80,8 +77,8 @@ const PhieuSDV = () => {
 
   useEffect(() => {
     if (confirmed) {
-      setCheckedList(JSON.parse(localStorage.getItem('hidenColumnSDV')))
-      setNewColumns(JSON.parse(localStorage.getItem('hidenColumnSDV')))
+      setCheckedList(JSON.parse(localStorage.getItem('hiddenColumnSDV')))
+      setNewColumns(JSON.parse(localStorage.getItem('hiddenColumnSDV')))
     }
   }, [confirmed])
 
@@ -91,7 +88,6 @@ const PhieuSDV = () => {
     setIsLoadingEdit(true)
     const fetchData = async () => {
       try {
-        console.log('get helper')
         const tokenLogin = localStorage.getItem('TKN')
         if (actionType === 'create' || actionType === 'edit') {
           const responseDT = await apis.ListHelperDoiTuongSDV(tokenLogin)
@@ -116,7 +112,6 @@ const PhieuSDV = () => {
           }
         }
         if (actionType === 'edit') {
-          console.log('get helper tt')
           const responseTT = await apis.ThongTinSuaSDV(tokenLogin, dataRecord.SoChungTu)
           if (responseTT.data && responseTT.data.DataError === 0) {
             setDataThongTinSua(responseTT.data.DataResult)
@@ -185,7 +180,6 @@ const PhieuSDV = () => {
   useEffect(() => {
     const getChucNangQuyenHan = async () => {
       try {
-        console.log('đi')
         const tokenLogin = localStorage.getItem('TKN')
         const response = await apis.ChucNangQuyenHan(tokenLogin, 'DuLieu_SDV')
 
@@ -219,19 +213,24 @@ const PhieuSDV = () => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
       const response = await apis.DanhSachSDV(tokenLogin, formKhoanNgay)
-      if (response.data && response.data.DataError === 0) {
-        setData(response.data.DataResults)
-        setTableLoad(false)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getDSSDV()
-      } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        toast.warning(response.data.DataErrorDescription)
-        setTableLoad(false)
-      } else {
-        toast.error(response.data.DataErrorDescription)
-        setData([])
-        setTableLoad(false)
+
+      if (response) {
+        const { DataError, DataErrorDescription, DataResults } = response.data
+
+        if (DataError === 0) {
+          setData(DataResults)
+          setTableLoad(false)
+        } else if (DataError === -107 || DataError === -108) {
+          await RETOKEN()
+          getDSSDV()
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(DataErrorDescription)
+          setTableLoad(false)
+        } else {
+          toast.error(DataErrorDescription)
+          setData([])
+          setTableLoad(false)
+        }
       }
     } catch (error) {
       console.error('Kiểm tra token thất bại', error)
@@ -304,8 +303,12 @@ const PhieuSDV = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
-          <HighlightedCell text={text} search={searchSDV} />
+        <div className=" text-start">
+          {/* <Tooltip title={text} color="blue"> */}
+          <span>
+            <HighlightedCell text={text} search={searchSDV} />
+          </span>
+          {/* </Tooltip> */}
         </div>
       ),
     },
@@ -323,18 +326,18 @@ const PhieuSDV = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
-          <Tooltip title={text} color="blue">
-            <span>
-              <HighlightedCell text={text} search={searchSDV} />
-            </span>
-          </Tooltip>
+        <div className=" text-start">
+          {/* <Tooltip title={text} color="blue"> */}
+          <span>
+            <HighlightedCell text={text} search={searchSDV} />
+          </span>
+          {/* </Tooltip> */}
         </div>
       ),
     },
 
     {
-      title: 'Số Tiền',
+      title: 'Số tiền',
       dataIndex: 'SoTien',
       key: 'SoTien',
       width: 200,
@@ -477,7 +480,13 @@ const PhieuSDV = () => {
     value: key,
   }))
 
-  const newColumnsHide = columns.filter((item) => !newColumns.includes(item.dataIndex))
+  const newColumnsHide = columns.filter((item) => {
+    if (newColumns && newColumns.length > 0) {
+      return !newColumns.includes(item.dataIndex)
+    } else {
+      return true
+    }
+  })
 
   const handleHideColumns = () => {
     setNewColumns(checkedList)
@@ -511,57 +520,15 @@ const PhieuSDV = () => {
   }
 
   const handleFilterDS = () => {
-    const currentTime = new Date().getTime()
-    if (currentTime - lastSearchTime >= 1000 && formKhoanNgay !== prevdateValue) {
+    if (formKhoanNgay !== prevdateValue) {
       setTableLoad(true)
-      setLastSearchTime(currentTime)
-    }
-  }
-
-  const handleStartDateChange = (newDate) => {
-    const startDate = newDate
-    const endDate = formKhoanNgay.NgayKetThuc
-
-    if (dayjs(startDate).isAfter(dayjs(endDate))) {
-      // Nếu ngày bắt đầu lớn hơn ngày kết thúc, cập nhật ngày kết thúc
-      setFormKhoanNgay({
-        ...formKhoanNgay,
-        NgayBatDau: startDate,
-        NgayKetThuc: startDate,
-      })
-    } else {
-      setFormKhoanNgay({
-        ...formKhoanNgay,
-        NgayBatDau: startDate,
-      })
-    }
-  }
-
-  const handleEndDateChange = (newDate) => {
-    const startDate = formKhoanNgay.NgayBatDau
-    const endDate = dayjs(newDate).format('YYYY-MM-DD')
-
-    if (dayjs(startDate).isAfter(dayjs(endDate))) {
-      // Nếu ngày kết thúc nhỏ hơn ngày bắt đầu, cập nhật ngày bắt đầu
-      setFormKhoanNgay({
-        ...formKhoanNgay,
-        NgayBatDau: endDate,
-        NgayKetThuc: endDate,
-      })
-    } else {
-      setFormKhoanNgay({
-        ...formKhoanNgay,
-        NgayKetThuc: endDate,
-      })
     }
   }
 
   const handleSearch = (newSearch) => {
-    const currentTime = new Date().getTime()
-    if (currentTime - lastSearchTime >= 1000 && newSearch !== prevSearchValue) {
+    if (newSearch !== prevSearchValue) {
       setTableLoad(true)
       setSearchSDV(newSearch)
-      setLastSearchTime(currentTime)
     }
   }
 
@@ -576,7 +543,7 @@ const PhieuSDV = () => {
           ) : (
             <div className="w-auto">
               <div className="relative text-lg flex justify-between items-center mb-1">
-                <div className="flex items-center gap-x-4 font-bold">
+                <div className="flex items-baseline gap-x-4 font-bold">
                   <h1 className="text-xl uppercase">Phiếu điều chỉnh công nợ nhà cung cấp </h1>
                   <div>
                     <BsSearch size={18} className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
@@ -585,7 +552,7 @@ const PhieuSDV = () => {
                 <div className="flex  ">
                   {isShowSearch && (
                     <div
-                      className={`flex absolute left-[30.6rem] -top-[2px] transition-all linear duration-700 ${isShowSearch ? 'md:w-[12rem] lg:w-[20rem]' : 'w-0'} overflow-hidden`}
+                      className={`flex absolute left-[30.6rem] -top-[3px] transition-all linear duration-700 ${isShowSearch ? 'md:w-[12rem] lg:w-[20rem]' : 'w-0'} overflow-hidden`}
                     >
                       <Input
                         allowClear={{
@@ -648,7 +615,7 @@ const PhieuSDV = () => {
                               defaultValue={checkedList}
                               onChange={(value) => {
                                 setCheckedList(value)
-                                localStorage.setItem('hidenColumnSDV', JSON.stringify(value))
+                                localStorage.setItem('hiddenColumnSDV', JSON.stringify(value))
                               }}
                             >
                               <Row className="flex justify-center">
@@ -673,86 +640,13 @@ const PhieuSDV = () => {
               <div className="flex justify-between items-center px-4 ">
                 <div className="flex gap-3">
                   {/* DatePicker */}
-                  <div className="flex gap-x-2 items-center">
-                    <label htmlFor="">Ngày</label>
-                    <DateField
-                      className="DatePicker_PMH max-w-[110px]"
-                      format="DD/MM/YYYY"
-                      value={dayjs(formKhoanNgay.NgayBatDau)}
-                      // maxDate={dayjs(formKhoanNgay.NgayKetThuc)}
-                      onChange={(newDate) => {
-                        setFormKhoanNgay({
-                          ...formKhoanNgay,
-                          NgayBatDau: dayjs(newDate).format('YYYY-MM-DD'),
-                        })
-                      }}
-                      onBlur={() => {
-                        handleStartDateChange(formKhoanNgay.NgayBatDau)
-                        handleFilterDS()
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          handleStartDateChange(formKhoanNgay.NgayBatDau)
-
-                          setPrevDateValue(formKhoanNgay)
-                          handleFilterDS()
-                        }
-                      }}
-                      onFocus={() => setPrevDateValue(formKhoanNgay)}
-                      sx={{
-                        '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                        '& .MuiButtonBase-root': {
-                          padding: '4px',
-                        },
-                        '& .MuiSvgIcon-root': {
-                          width: '18px',
-                          height: '18px',
-                        },
-                      }}
-                    />
-                  </div>
-                  <div className="flex gap-x-2 items-center">
-                    <label htmlFor="">Đến</label>
-                    <DateField
-                      className="DatePicker_PMH max-w-[110px]"
-                      format="DD/MM/YYYY"
-                      // minDate={dayjs(formKhoanNgay.NgayBatDau)}
-                      value={dayjs(formKhoanNgay.NgayKetThuc)}
-                      onChange={(newDate) => {
-                        setFormKhoanNgay({
-                          ...formKhoanNgay,
-                          NgayKetThuc: dayjs(newDate).format('YYYY-MM-DD'),
-                        })
-                      }}
-                      onBlur={() => {
-                        handleEndDateChange(formKhoanNgay.NgayKetThuc)
-                        handleFilterDS()
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          handleEndDateChange(formKhoanNgay.NgayKetThuc)
-                          setPrevDateValue(formKhoanNgay)
-                          handleFilterDS()
-                        }
-                      }}
-                      onFocus={() => setPrevDateValue(formKhoanNgay)}
-                      sx={{
-                        '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
-                        '& .MuiButtonBase-root': {
-                          padding: '4px',
-                        },
-                        '& .MuiSvgIcon-root': {
-                          width: '18px',
-                          height: '18px',
-                        },
-                      }}
-                    />
-                  </div>
+                  <ActionDateField formKhoanNgay={formKhoanNgay} setFormKhoanNgay={setFormKhoanNgay} setPrevDateValue={setPrevDateValue} handleFilterDS={handleFilterDS} />
                 </div>
+
                 <div className="flex items-center gap-2">
                   <ActionButton
                     color={'slate-50'}
-                    title={'Thêm phiếu'}
+                    title={'Thêm'}
                     icon={<IoAddCircleOutline size={20} />}
                     bg_hover={!dataQuyenHan?.ADD ? '' : 'white'}
                     background={!dataQuyenHan?.ADD ? 'gray-400' : 'bg-main'}
@@ -767,7 +661,7 @@ const PhieuSDV = () => {
               <div id="my-table" className="relative px-2 py-1 ">
                 <Table
                   loading={tableLoad}
-                  className="table_pmh setHeight"
+                  className="table_pmh setHeight table-style"
                   // rowSelection={rowSelection}
                   columns={newColumnsHide}
                   dataSource={filteredSDV}
@@ -776,22 +670,22 @@ const PhieuSDV = () => {
                     x: 1500,
                     y: 410,
                   }}
-                  bordered
-                  pagination={{
-                    defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                    showSizeChanger: true,
-                    pageSizeOptions: ['50', '100', '1000'],
-                    onShowSizeChange: (current, size) => {
-                      localStorage.setItem('pageSize', size)
-                    },
-                  }}
+                  // pagination={{
+                  //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                  //   showSizeChanger: true,
+                  //   pageSizeOptions: ['50', '100', '1000'],
+                  //   onShowSizeChange: (current, size) => {
+                  //     localStorage.setItem('pageSize', size)
+                  //   },
+                  // }}
+                  pagination={false}
                   rowKey={(record) => record.SoChungTu}
                   onRow={(record) => ({
                     onDoubleClick: () => {
                       handleView(record)
                     },
                   })}
-                  rowClassName={(record) => (record.SoChungTu === doneNTR ? 'highlighted-row' : '')}
+                  rowClassName={(record, index) => (record.SoChungTu === doneNTR ? 'highlighted-row' : addRowClass(record, index))}
                   // Bảng Tổng
                   summary={() => {
                     return (
@@ -801,7 +695,6 @@ const PhieuSDV = () => {
                             .filter((column) => column.render)
                             .map((column, index) => {
                               const isNumericColumn = typeof filteredSDV[0]?.[column.dataIndex] === 'number'
-
                               return (
                                 <Table.Summary.Cell
                                   index={index}
@@ -810,23 +703,26 @@ const PhieuSDV = () => {
                                   className="text-end font-bold  bg-[#f1f1f1]"
                                 >
                                   {isNumericColumn ? (
-                                    column.dataIndex === 'SoTien' ? (
-                                      <Text strong>
-                                        {Number(filteredSDV.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                          minimumFractionDigits: dataThongSo?.SOLESOTIEN,
-                                          maximumFractionDigits: dataThongSo?.SOLESOTIEN,
-                                        })}
-                                      </Text>
-                                    ) : (
-                                      <Text strong>
-                                        {Number(filteredSDV.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                          minimumFractionDigits: 0,
-                                          maximumFractionDigits: 0,
-                                        })}
-                                      </Text>
-                                    )
+                                    (() => {
+                                      const total = Number(filteredSDV?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0))
+                                      return column.dataIndex === 'SoTien' ? (
+                                        <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
+                                          {total.toLocaleString('en-US', {
+                                            minimumFractionDigits: dataThongSo?.SOLESOTIEN,
+                                            maximumFractionDigits: dataThongSo?.SOLESOTIEN,
+                                          })}
+                                        </Text>
+                                      ) : (
+                                        <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
+                                          {total.toLocaleString('en-US', {
+                                            minimumFractionDigits: 0,
+                                            maximumFractionDigits: 0,
+                                          })}
+                                        </Text>
+                                      )
+                                    })()
                                   ) : column.dataIndex === 'STT' ? (
-                                    <Text className="text-center flex justify-center" strong>
+                                    <Text className="text-center flex justify-center text-white" strong>
                                       {data.length}
                                     </Text>
                                   ) : null}

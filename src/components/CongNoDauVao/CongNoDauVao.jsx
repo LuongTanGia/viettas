@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import QueryTable from '../util/Table/QueryTable'
 import { useEffect, useState, useRef } from 'react'
-import { CNDRTONGHOP, CNDRTONGHOP_listHelper, exportToExcel } from '../../action/Actions'
+import { APIPHANQUYEN, CNDRTONGHOP, CNDRTONGHOP_listHelper, exportToExcel } from '../../action/Actions'
 import API from '../../API/API'
 import FilterCp from '../util/filterCP/FilterCp'
 import Date from '../util/DateCP/DateCP'
@@ -30,8 +30,20 @@ function CongNoDauVao() {
   const [selectVisible, setSelectVisible] = useState(false)
   const [tableLoad, setTableLoad] = useState(true)
   const [options, setOptions] = useState()
+  const [DataQuyenHan, setDataQuyenHan] = useState([])
 
   useEffect(() => {
+    const getDate = async () => {
+      const quyenHan = await APIPHANQUYEN(token, {
+        Ma: 'TruyVan_CongNoDauVao',
+      })
+      setDataQuyenHan(quyenHan)
+    }
+    getDate()
+    console.log(DataQuyenHan)
+  }, [])
+  useEffect(() => {
+    setTableLoad(true)
     const getDate = async () => {
       const listTongHop = await CNDRTONGHOP(API.CNDVTONGHOP, token, dataAPI)
       const listDoiTuong = await CNDRTONGHOP_listHelper(API.CNDVDoiTuong, token)
@@ -39,6 +51,7 @@ function CongNoDauVao() {
       setData(listTongHop.DataResults || [])
       setDataDoiTuong(listDoiTuong.DataResults)
       setDataNhomDoiTuong(listNhomDoiTuong.DataResults)
+      setTableLoad(false)
     }
     getDate()
   }, [dataAPI.NgayBatDau, dataAPI.NgayKetThuc, dataAPI.CodeValue1From, dataAPI.CodeValue1To, dataAPI.CodeValue1List])
@@ -69,6 +82,7 @@ function CongNoDauVao() {
   const handleHidden = () => {
     setSelectVisible(!selectVisible)
   }
+  console.log(checkedList)
   const onClickSubmit = () => {
     setTableLoad(true)
     setTimeout(() => {
@@ -97,7 +111,7 @@ function CongNoDauVao() {
                 <div className={`flex ${selectVisible ? '' : 'flex-col'} items-center gap-2`}>
                   <ActionButton
                     handleAction={() => exportToExcel()}
-                    title={'Xuất Excel'}
+                    title={'Xuất excel'}
                     icon={<RiFileExcel2Fill className="w-5 h-5" />}
                     color={'slate-50'}
                     background={'green-500'}
@@ -106,7 +120,7 @@ function CongNoDauVao() {
                   />
                   <ActionButton
                     handleAction={() => handleHidden()}
-                    title={'Ẩn Cột'}
+                    title={'Ẩn cột'}
                     icon={<FaEyeSlash className="w-5 h-5" />}
                     color={'slate-50'}
                     background={'red-500'}
@@ -169,7 +183,7 @@ function CongNoDauVao() {
           />
         </div>
         <div id="my-table">
-          <QueryTable param={data} columName={nameColumsCongNoDauVao} height={'setHeight'} title={'DauVao'} hiden={hiddenRow} />
+          <QueryTable param={data} columName={nameColumsCongNoDauVao} height={'setHeight'} title={'DauVao'} hiden={hiddenRow} loadingSearch={tableLoad} />
         </div>
       </>
     </>

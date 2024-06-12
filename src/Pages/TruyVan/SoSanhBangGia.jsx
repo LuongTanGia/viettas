@@ -4,7 +4,7 @@ import icons from '../../untils/icons'
 import { toast } from 'react-toastify'
 import * as apis from '../../apis'
 import ActionButton from '../../components/util/Button/ActionButton'
-import { RETOKEN, formatPrice } from '../../action/Actions'
+import { RETOKEN, addRowClass, formatPrice } from '../../action/Actions'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
 import { exportToExcel } from '../../action/Actions'
 import { CloseSquareFilled } from '@ant-design/icons'
@@ -69,7 +69,7 @@ const SoSanhBG = () => {
   useEffect(() => {
     setNewColumns(columns)
     // Lấy thông tin từ local storage sau khi đăng nhập
-    const storedHiddenColumns = localStorage.getItem('hidenColumnSoSanhBG')
+    const storedHiddenColumns = localStorage.getItem('hiddenColumnSoSanhBG')
     const parsedHiddenColumns = storedHiddenColumns ? JSON.parse(storedHiddenColumns) : null
 
     // Áp dụng thông tin đã lưu vào checkedList và setConfirmed để ẩn cột
@@ -81,8 +81,8 @@ const SoSanhBG = () => {
 
   useEffect(() => {
     if (confirmed) {
-      setCheckedList(JSON.parse(localStorage.getItem('hidenColumnSoSanhBG')))
-      setNewColumns(JSON.parse(localStorage.getItem('hidenColumnSoSanhBG')))
+      setCheckedList(JSON.parse(localStorage.getItem('hiddenColumnSoSanhBG')))
+      setNewColumns(JSON.parse(localStorage.getItem('hiddenColumnSoSanhBG')))
     }
   }, [confirmed])
 
@@ -116,23 +116,15 @@ const SoSanhBG = () => {
   useEffect(() => {
     const getChucNangQuyenHan = async () => {
       try {
-        console.log('đi')
         const tokenLogin = localStorage.getItem('TKN')
         const response = await apis.ChucNangQuyenHan(tokenLogin, 'TruyVan_TonKho_TheoKho')
 
         if (response.data && response.data.DataError === 0) {
           setDataQuyenHan(response.data)
-        }
-        // else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        //   toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        // }
-        else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
           getChucNangQuyenHan()
         }
-        // else {
-        //   toast.error(response.data.DataErrorDescription)
-        // }
       } catch (error) {
         console.error('Kiểm tra token thất bại', error)
       }
@@ -246,22 +238,22 @@ const SoSanhBG = () => {
       title: 'Tên hàng',
       dataIndex: 'TenHang',
       key: 'TenHang',
-      width: 200,
+      width: 250,
       align: 'center',
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       showSorterTooltip: false,
       render: (text) => (
-        <div className="truncate text-start">
-          <Tooltip title={text} color="blue" placement="top">
-            <span>
-              <HighlightedCell text={text} search={searchSoSanhBG} />
-            </span>
-          </Tooltip>
+        <div className=" text-start">
+          {/* <Tooltip title={text} color="blue" placement="top"> */}
+          <span>
+            <HighlightedCell text={text} search={searchSoSanhBG} />
+          </span>
+          {/* </Tooltip> */}
         </div>
       ),
     },
     {
-      title: 'DVT',
+      title: 'ĐVT',
       dataIndex: 'DVT',
       key: 'DVT',
       width: 100,
@@ -314,7 +306,13 @@ const SoSanhBG = () => {
     value: key,
   }))
 
-  const newColumnsHide = columns.filter((item) => !newColumns.includes(item.dataIndex))
+  const newColumnsHide = columns.filter((item) => {
+    if (newColumns && newColumns.length > 0) {
+      return !newColumns.includes(item.dataIndex)
+    } else {
+      return true
+    }
+  })
 
   const handleHideColumns = () => {
     setNewColumns(checkedList)
@@ -331,32 +329,40 @@ const SoSanhBG = () => {
     setTableLoad(true)
   }
   const handleFromChange = (value) => {
-    setFormFilter({ ...formFilter, CodeValue1From: value })
+    const valueCheck = dataNhomHang?.findIndex((item) => item.Ma === value) > dataNhomHang.findIndex((item) => item.Ma === formFilter?.CodeValue1To)
 
-    if (formFilter.CodeValue1To === null || value > formFilter.CodeValue1To) {
+    if (formFilter.CodeValue1To === null || valueCheck) {
       setFormFilter({ ...formFilter, CodeValue1From: value, CodeValue1To: value })
+    } else {
+      setFormFilter({ ...formFilter, CodeValue1From: value })
     }
   }
-  const handleToChange = (value) => {
-    setFormFilter({ ...formFilter, CodeValue1To: value })
 
-    if (formFilter.CodeValue1From === null || value < formFilter.CodeValue1From) {
+  const handleToChange = (value) => {
+    const valueCheck = dataNhomHang?.findIndex((item) => item.Ma === value) < dataNhomHang.findIndex((item) => item.Ma === formFilter?.CodeValue1From)
+
+    if (formFilter.CodeValue1From === null || valueCheck) {
       setFormFilter({ ...formFilter, CodeValue1From: value, CodeValue1To: value })
+    } else {
+      setFormFilter({ ...formFilter, CodeValue1To: value })
     }
   }
 
   const handleFrom2Change = (value) => {
-    setFormFilter({ ...formFilter, CodeValue2From: value })
-
-    if (formFilter.CodeValue2To === null || value > formFilter.CodeValue2To) {
+    const valueCheck = dataHangHoa?.findIndex((item) => item.MaHang === value) > dataHangHoa.findIndex((item) => item.MaHang === formFilter?.CodeValue2To)
+    if (formFilter.CodeValue2To === null || valueCheck) {
       setFormFilter({ ...formFilter, CodeValue2From: value, CodeValue2To: value })
+    } else {
+      setFormFilter({ ...formFilter, CodeValue2From: value })
     }
   }
-  const handleTo2Change = (value) => {
-    setFormFilter({ ...formFilter, CodeValue2To: value })
 
-    if (formFilter.CodeValue2From === null || value < formFilter.CodeValue2From) {
+  const handleTo2Change = (value) => {
+    const valueCheck = dataHangHoa?.findIndex((item) => item.MaHang === value) < dataHangHoa.findIndex((item) => item.MaHang === formFilter?.CodeValue2From)
+    if (formFilter.CodeValue2From === null || valueCheck) {
       setFormFilter({ ...formFilter, CodeValue2From: value, CodeValue2To: value })
+    } else {
+      setFormFilter({ ...formFilter, CodeValue2To: value })
     }
   }
 
@@ -368,7 +374,7 @@ const SoSanhBG = () => {
         <>
           <div className="w-auto">
             <div className="relative text-lg flex justify-between items-center mb-1">
-              <div className="flex items-center gap-x-4 font-bold">
+              <div className="flex items-baseline gap-x-4 font-bold">
                 <h1 className="text-xl uppercase">So sánh các bảng giá</h1>
                 <div>
                   <BsSearch size={18} className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
@@ -376,7 +382,7 @@ const SoSanhBG = () => {
               </div>
               <div className="flex  ">
                 {isShowSearch && (
-                  <div className={`flex absolute left-[18rem] -top-[2px] transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
+                  <div className={`flex absolute left-[18rem] -top-[3px] transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
                     <Input
                       allowClear={{
                         clearIcon: <CloseSquareFilled />,
@@ -438,7 +444,7 @@ const SoSanhBG = () => {
                             defaultValue={checkedList}
                             onChange={(value) => {
                               setCheckedList(value)
-                              localStorage.setItem('hidenColumnSoSanhBG', JSON.stringify(value))
+                              localStorage.setItem('hiddenColumnSoSanhBG', JSON.stringify(value))
                             }}
                           >
                             <Row>
@@ -466,7 +472,6 @@ const SoSanhBG = () => {
                   <div className="flex gap-1 items-center">
                     <div className="w-[42px] text-end">Nhóm</div>
                     <Select
-                      showSearch
                       size="small"
                       allowClear
                       placeholder="Chọn nhóm"
@@ -477,6 +482,9 @@ const SoSanhBG = () => {
                         textOverflow: 'ellipsis',
                       }}
                       popupMatchSelectWidth={false}
+                      showSearch
+                      optionFilterProp="children"
+                      optionLabelProp="value"
                     >
                       {dataNhomHang?.map((item) => (
                         <Option key={item.Ma} value={item.Ma} title={item.Ten}>
@@ -489,6 +497,7 @@ const SoSanhBG = () => {
                     <div className=" text-center">Đến</div>
                     <Select
                       showSearch
+                      optionFilterProp="children"
                       allowClear
                       size="small"
                       placeholder="Chọn nhóm"
@@ -499,6 +508,7 @@ const SoSanhBG = () => {
                         textOverflow: 'ellipsis',
                       }}
                       popupMatchSelectWidth={false}
+                      optionLabelProp="value"
                     >
                       {dataNhomHang?.map((item) => (
                         <Option key={item.Ma} value={item.Ma} title={item.Ten}>
@@ -507,21 +517,31 @@ const SoSanhBG = () => {
                       ))}
                     </Select>
                   </div>
-                  <div className="flex gap-1 ">
+                  <div className="flex gap-1 items-center">
                     <div className="w-[42px] text-end">Chọn</div>
                     <Select
                       mode="multiple"
+                      showSearch
+                      optionFilterProp="children"
                       allowClear
-                      maxTagCount={2}
                       size="small"
                       placeholder="Chọn nhóm"
                       value={valueList1}
                       onChange={(value) => setValueList1(value)}
-                      className="md:w-[40vw] lg:w-[50vw] truncate"
+                      className="md:w-[40vw] lg:w-[50vw] "
+                      maxTagCount="responsive"
+                      maxTagPlaceholder={(omittedValues) => (
+                        <Tooltip title={omittedValues?.map(({ label }) => label)} color="blue">
+                          <span>+{omittedValues?.length}...</span>
+                        </Tooltip>
+                      )}
+                      popupMatchSelectWidth
                     >
                       {dataNhomHang?.map((item) => (
-                        <Option key={item.Ma} value={item.Ma}>
-                          {item.Ma} - {item.Ten}
+                        <Option popupMatchSelectWidth key={item.Ma} value={item.Ma}>
+                          <p className="">
+                            {item.Ma} - {item.Ten}
+                          </p>
                         </Option>
                       ))}
                     </Select>
@@ -533,6 +553,7 @@ const SoSanhBG = () => {
                     <div className="w-[42px] text-end">H.Hóa</div>
                     <Select
                       showSearch
+                      optionFilterProp="children"
                       size="small"
                       allowClear
                       placeholder="Chọn nhóm"
@@ -543,6 +564,7 @@ const SoSanhBG = () => {
                         textOverflow: 'ellipsis',
                       }}
                       popupMatchSelectWidth={false}
+                      optionLabelProp="value"
                     >
                       {dataHangHoa?.map((item) => (
                         <Option key={item.MaHang} value={item.MaHang} title={item.TenHang}>
@@ -555,6 +577,7 @@ const SoSanhBG = () => {
                     <div className=" text-center">Đến</div>
                     <Select
                       showSearch
+                      optionFilterProp="children"
                       allowClear
                       size="small"
                       placeholder="Chọn nhóm"
@@ -565,6 +588,7 @@ const SoSanhBG = () => {
                         textOverflow: 'ellipsis',
                       }}
                       popupMatchSelectWidth={false}
+                      optionLabelProp="value"
                     >
                       {dataHangHoa?.map((item) => (
                         <Option key={item.MaHang} value={item.MaHang} title={item.TenHang}>
@@ -578,16 +602,25 @@ const SoSanhBG = () => {
                     <Select
                       mode="multiple"
                       allowClear
-                      maxTagCount={2}
                       size="small"
                       placeholder="Chọn nhóm"
                       value={valueList2}
                       onChange={(value) => setValueList2(value)}
                       className="md:w-[40vw] lg:w-[50vw] truncate"
+                      maxTagCount="responsive"
+                      optionFilterProp="children"
+                      maxTagPlaceholder={(omittedValues) => (
+                        <Tooltip title={omittedValues?.map(({ label }) => label)} color="blue">
+                          <span>+{omittedValues?.length}...</span>
+                        </Tooltip>
+                      )}
+                      popupMatchSelectWidth
                     >
                       {dataHangHoa?.map((item) => (
-                        <Option key={item.MaHang} value={item.MaHang} title={item.TenHang}>
-                          {item.MaHang} - {item.TenHang}
+                        <Option key={item.MaHang} value={item.MaHang} popupMatchSelectWidth>
+                          <p>
+                            {item.MaHang} - {item.TenHang}
+                          </p>
                         </Option>
                       ))}
                     </Select>
@@ -622,15 +655,17 @@ const SoSanhBG = () => {
                   x: 1500,
                   y: 300,
                 }}
-                bordered
-                pagination={{
-                  defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                  showSizeChanger: true,
-                  pageSizeOptions: ['50', '100', '1000'],
-                  onShowSizeChange: (current, size) => {
-                    localStorage.setItem('pageSize', size)
-                  },
-                }}
+                rowKey={(record) => record.SoChungTu}
+                rowClassName={(record, index) => addRowClass(record, index)}
+                // pagination={{
+                //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                //   showSizeChanger: true,
+                //   pageSizeOptions: ['50', '100', '1000'],
+                //   onShowSizeChange: (current, size) => {
+                //     localStorage.setItem('pageSize', size)
+                //   },
+                // }}
+                pagination={false}
                 // Bảng Tổng
                 summary={() => {
                   return (
@@ -638,12 +673,17 @@ const SoSanhBG = () => {
                       <Table.Summary.Row>
                         {newColumnsHide
                           .filter((column) => column.render)
-                          .map((column) => {
+                          .map((column, index) => {
                             const isNumericColumn = typeof filteredSoSanhBG[0]?.[column.dataIndex] === 'number'
                             return (
-                              <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                              <Table.Summary.Cell
+                                index={index}
+                                key={`summary-cell-${index + 1}`}
+                                align={isNumericColumn ? 'right' : 'left'}
+                                className="text-end font-bold  bg-[#f1f1f1]"
+                              >
                                 {column.dataIndex === 'STT' ? (
-                                  <Text className="text-center flex justify-center" strong>
+                                  <Text className="text-center flex justify-center text-white" strong>
                                     {data.length}
                                   </Text>
                                 ) : null}

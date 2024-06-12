@@ -14,7 +14,7 @@ import { CgCloseO } from 'react-icons/cg'
 import { ModalHeThong } from '../../components_K'
 import NCKConfirm from '../Modals/DuLieu/DuLieuTrongKho/PhieuNCK/NCKConfirm'
 import { Drawer } from 'antd'
-import LogoHeader from '../../assets/VTS-iSale.ico'
+// import LogoHeader from '../../assets/VTS-iSale.ico'
 
 const SiderMenu = ({ handleToggleSidebar, isTargetRow, isTableLoad, isSidebarVisible }) => {
   const TokenAccess = localStorage.getItem('TKN')
@@ -39,9 +39,9 @@ const SiderMenu = ({ handleToggleSidebar, isTargetRow, isTableLoad, isSidebarVis
     try {
       const response = await categoryAPI.QuyenHan(Ma, TokenAccess)
       if (response.data.DataError === 0) {
-        Ma.includes('XuLy_') && Ma.includes('_PhanQuyen') && response.data.RUN === false
+        Ma.includes('XuLy_') && Ma.includes('_PhanQuyen') && Ma.includes('_ThongKeQuyen') && response.data.RUN === false
           ? setIsShowNotify(true)
-          : !Ma.includes('XuLy_') && !Ma.includes('_PhanQuyen') && response.data.VIEW === false
+          : !Ma.includes('XuLy_') && !Ma.includes('_PhanQuyen') && !Ma.includes('_ThongKeQuyen') && response.data.VIEW === false
             ? setIsShowNotify(true)
             : Ma === 'HeThong_ThongSoHeThong'
               ? (setIsShowModal(true), setType('ThongSoHeThong'))
@@ -76,11 +76,11 @@ const SiderMenu = ({ handleToggleSidebar, isTargetRow, isTableLoad, isSidebarVis
     isTargetRow(targetRow)
     isTableLoad(tableLoad)
   }, [tableLoad, targetRow])
+
   const [open, setOpen] = useState(!isSidebarVisible)
   useEffect(() => {
     setOpen(!isSidebarVisible)
   }, [isSidebarVisible])
-  console.log(isSidebarVisible)
   const onClose = () => {
     setOpen(false)
     handleToggleSidebar()
@@ -94,10 +94,9 @@ const SiderMenu = ({ handleToggleSidebar, isTargetRow, isTableLoad, isSidebarVis
       // width={225}
       className="DrawerSirB"
       title={
-        <div className="flex justify-center items-center">
-          <Link href="index.html" className="logo d-flex align-items-center justify-content-start">
-            <img src={LogoHeader} />
-            <span className="d-none d-lg-block">VTS - iSale</span>
+        <div className="flex justify-center items-center  w-full">
+          <Link href="index.html" className="logo d-flex align-items-center justify-content-start gap-4">
+            <span className="">VTS - iSale</span>
           </Link>
         </div>
       }

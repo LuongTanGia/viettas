@@ -11,7 +11,7 @@ import { CloseSquareFilled } from '@ant-design/icons'
 import { FaSearch, FaEyeSlash } from 'react-icons/fa'
 import categoryAPI from '../../API/linkAPI'
 import { useSearch } from '../../components/hooks/Search'
-import { RETOKEN, exportToExcel } from '../../action/Actions'
+import { RETOKEN, addRowClass, exportToExcel } from '../../action/Actions'
 import ActionButton from '../../components/util/Button/ActionButton'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
 import { nameColumsDSBHKHO } from '../../components/util/Table/ColumnName'
@@ -40,7 +40,7 @@ const DoanhSoBanHangKho = () => {
   const [selectedNhomList, setSelectedNhomList] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [hiddenRow, setHiddenRow] = useState([])
-  const [checkedList, setcheckedList] = useState([])
+  const [checkedList, setCheckedList] = useState([])
   const [selectVisible, setSelectVisible] = useState(false)
   const [options, setOptions] = useState()
   const [tableLoad, setTableLoad] = useState(true)
@@ -70,6 +70,11 @@ const DoanhSoBanHangKho = () => {
   }, [dataCRUD])
 
   useEffect(() => {
+    selectedMaFrom == null ? setSelectedMaTo(null) : ''
+    selectedNhomFrom == null ? setSelectedNhomTo(null) : ''
+  }, [selectedMaFrom, selectedNhomFrom])
+
+  useEffect(() => {
     const getDataQuyenHan = async () => {
       try {
         const response = await categoryAPI.QuyenHan('TruyVan_DoanhSoBanHangKhoHang', TokenAccess)
@@ -96,11 +101,8 @@ const DoanhSoBanHangKho = () => {
         if (response.data.DataError == 0) {
           setNhomHangNXT(response.data.DataResults)
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getListNhomHangNXT()
         } else {
-          console.log(response.data)
+          setNhomHangNXT([])
           setIsLoading(true)
         }
       } catch (error) {
@@ -119,10 +121,8 @@ const DoanhSoBanHangKho = () => {
         if (response.data.DataError == 0) {
           setHangHoaNXT(response.data.DataResults)
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getListHangHoaNXT()
         } else {
+          setHangHoaNXT([])
           console.log(response.data)
           setIsLoading(true)
         }
@@ -150,9 +150,6 @@ const DoanhSoBanHangKho = () => {
           setKhoanNgayFrom(dayjs(response.data.NgayBatDau))
           setKhoanNgayTo(dayjs(response.data.NgayKetThuc))
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getTimeSetting()
         } else {
           console.log(response.data)
           setIsLoading(true)
@@ -172,11 +169,13 @@ const DoanhSoBanHangKho = () => {
       try {
         if (isLoading == true) {
           setTableLoad(true)
-          const response = await categoryAPI.InfoBSDHKHO(
-            {
-              NgayBatDau: dayjs(khoanNgayFrom).format('YYYY-MM-DD'),
-              NgayKetThuc: dayjs(khoanNgayTo).format('YYYY-MM-DD'),
-            },
+          const response = await categoryAPI.InfoDSBHKHO(
+            dateData == {}
+              ? {}
+              : {
+                  NgayBatDau: dateData.NgayBatDau,
+                  NgayKetThuc: dateData.NgayKetThuc,
+                },
             TokenAccess,
           )
           if (response.data.DataError == 0) {
@@ -196,13 +195,12 @@ const DoanhSoBanHangKho = () => {
         console.log(error)
       }
     }
-
     getDataNXTFirst()
   }, [searchHangHoa, isLoading])
 
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
-    setcheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
+    setCheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
     const ColKey = filteredHangHoa && filteredHangHoa[0] && Object.keys(filteredHangHoa[0]).filter((item) => typeof item == 'string' && item.includes(`Col_`))
     const key = Object.keys(dataNXT[0] || []).filter((key) => !ColKey.includes(key))
     setOptions(key)
@@ -210,7 +208,7 @@ const DoanhSoBanHangKho = () => {
 
   const getDataNXT = async () => {
     try {
-      const response = await categoryAPI.InfoBSDHKHO(
+      const response = await categoryAPI.InfoDSBHKHO(
         {
           NgayBatDau: dateData.NgayBatDau,
           NgayKetThuc: dateData.NgayKetThuc,
@@ -226,9 +224,6 @@ const DoanhSoBanHangKho = () => {
       if (response.data.DataError == 0) {
         setDataNXT(response.data.DataResults)
         setTableLoad(false)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getDataNXT()
       } else if (response.data.DataError == -104) {
         setDataNXT([])
         setTableLoad(false)
@@ -250,9 +245,6 @@ const DoanhSoBanHangKho = () => {
         if (response.data.DataError == 0) {
           setDataKhoHang(response.data.DataResults)
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getListKhoNXT()
         } else {
           console.log(response.data)
           setIsLoading(true)
@@ -323,7 +315,7 @@ const DoanhSoBanHangKho = () => {
     setSelectVisible(!selectVisible)
   }
   const onChange = (checkedValues) => {
-    setcheckedList(checkedValues)
+    setCheckedList(checkedValues)
   }
   const onClickSubmit = () => {
     setTableLoad(true)
@@ -366,16 +358,15 @@ const DoanhSoBanHangKho = () => {
                 title: `Lẻ`,
                 dataIndex: colKey,
                 key: colKey,
-                width: 150,
+                width: 100,
                 align: 'center',
                 render: (text) => (
-                  <div className={`text-end ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+                  <div className={`text-end ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
                     <HighlightedCell text={formatThapPhan(text, dataThongSo?.SOLESOTIEN)} search={searchHangHoa} />
                   </div>
                 ),
                 sorter: (a, b) => a[colKey] - b[colKey],
                 showSorterTooltip: false,
-                ellipsis: true,
               })),
             ...tienColKey
               .filter((key) => siColKey.includes(key))
@@ -383,13 +374,10 @@ const DoanhSoBanHangKho = () => {
                 title: `Sỉ`,
                 dataIndex: colKey,
                 key: colKey,
-                width: 150,
+                width: 100,
                 align: 'center',
-                ellipsis: {
-                  showTitle: false,
-                },
                 render: (text) => (
-                  <div className={`text-end ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+                  <div className={`text-end ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
                     <HighlightedCell text={formatThapPhan(text, dataThongSo?.SOLESOTIEN)} search={searchHangHoa} />
                   </div>
                 ),
@@ -402,11 +390,11 @@ const DoanhSoBanHangKho = () => {
                 title: `${check}`,
                 dataIndex: colKey,
                 key: colKey,
-                width: 150,
+                width: 100,
                 ellipsis: true,
                 align: 'center',
                 render: (text) => (
-                  <div className={`text-end ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+                  <div className={`text-end ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
                     <HighlightedCell text={formatThapPhan(text, dataThongSo?.SOLESOTIEN)} search={searchHangHoa} />
                   </div>
                 ),
@@ -432,6 +420,7 @@ const DoanhSoBanHangKho = () => {
           const tenKhoMatch = tenKho[maKho.indexOf(ma)]
           columns.push({
             title: `${tenKhoMatch}`,
+            ellipsis: true,
             children: [
               ...tienColKey
                 .filter((key) => leColKey.includes(key))
@@ -439,16 +428,15 @@ const DoanhSoBanHangKho = () => {
                   title: `Lẻ`,
                   dataIndex: colKey,
                   key: colKey,
-                  width: 150,
+                  width: 120,
                   align: 'center',
                   render: (text) => (
-                    <div className={`text-end ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+                    <div className={`text-end ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
                       <HighlightedCell text={formatThapPhan(text, dataThongSo?.SOLESOTIEN)} search={searchHangHoa} />
                     </div>
                   ),
                   sorter: (a, b) => a[colKey] - b[colKey],
                   showSorterTooltip: false,
-                  ellipsis: true,
                 })),
               ...tienColKey
                 .filter((key) => siColKey.includes(key))
@@ -456,13 +444,10 @@ const DoanhSoBanHangKho = () => {
                   title: `Sỉ`,
                   dataIndex: colKey,
                   key: colKey,
-                  width: 150,
+                  width: 120,
                   align: 'center',
-                  ellipsis: {
-                    showTitle: false,
-                  },
                   render: (text) => (
-                    <div className={`text-end ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+                    <div className={`text-end ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
                       <HighlightedCell text={formatThapPhan(text, dataThongSo?.SOLESOTIEN)} search={searchHangHoa} />
                     </div>
                   ),
@@ -475,11 +460,10 @@ const DoanhSoBanHangKho = () => {
                   title: `${check}`,
                   dataIndex: colKey,
                   key: colKey,
-                  width: 150,
-                  ellipsis: true,
+                  width: 120,
                   align: 'center',
                   render: (text) => (
-                    <div className={`text-end ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+                    <div className={`text-end ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
                       <HighlightedCell text={formatThapPhan(text, dataThongSo?.SOLESOTIEN)} search={searchHangHoa} />
                     </div>
                   ),
@@ -504,7 +488,7 @@ const DoanhSoBanHangKho = () => {
           fixed: 'right',
           align: 'center',
           render: (text) => (
-            <div className={`text-end ${text < 0 ? 'text-red-600 text-base' : text === 0 ? 'text-gray-300' : ''} `}>
+            <div className={`text-end ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
               <HighlightedCell text={formatThapPhan(text, dataThongSo?.SOLESOTIEN)} search={searchHangHoa} />
             </div>
           ),
@@ -539,29 +523,13 @@ const DoanhSoBanHangKho = () => {
       dataIndex: 'TenHang',
       key: 'TenHang',
       align: 'center',
-      width: 150,
+      width: 220,
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'start',
-            }}
-          >
-            <div
-              style={{
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                cursor: 'pointer',
-              }}
-            >
-              <HighlightedCell text={text} search={searchHangHoa} />
-            </div>
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -569,36 +537,20 @@ const DoanhSoBanHangKho = () => {
       dataIndex: 'NhomHang',
       key: 'NhomHang',
       align: 'center',
-      width: 150,
+      width: 200,
       sorter: (a, b) => a.NhomHang.localeCompare(b.NhomHang),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'start',
-            }}
-          >
-            <div
-              style={{
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                cursor: 'pointer',
-              }}
-            >
-              <HighlightedCell text={text} search={searchHangHoa} />
-            </div>
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
       title: 'ĐVT',
       dataIndex: 'DVT',
       key: 'DVT',
-      width: 80,
+      width: 100,
       align: 'center',
       sorter: (a, b) => a.DVT.localeCompare(b.DVT),
       showSorterTooltip: false,
@@ -633,29 +585,13 @@ const DoanhSoBanHangKho = () => {
       dataIndex: 'TenHang',
       key: 'TenHang',
       align: 'center',
-      width: 150,
+      width: 220,
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'start',
-            }}
-          >
-            <div
-              style={{
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                cursor: 'pointer',
-              }}
-            >
-              <HighlightedCell text={text} search={searchHangHoa} />
-            </div>
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -663,36 +599,20 @@ const DoanhSoBanHangKho = () => {
       dataIndex: 'NhomHang',
       key: 'NhomHang',
       align: 'center',
-      width: 150,
+      width: 200,
       sorter: (a, b) => a.NhomHang.localeCompare(b.NhomHang),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'start',
-            }}
-          >
-            <div
-              style={{
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                cursor: 'pointer',
-              }}
-            >
-              <HighlightedCell text={text} search={searchHangHoa} />
-            </div>
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
       title: 'ĐVT',
       dataIndex: 'DVT',
       key: 'DVT',
-      width: 80,
+      width: 100,
       align: 'center',
       sorter: (a, b) => a.DVT.localeCompare(b.DVT),
       showSorterTooltip: false,
@@ -746,7 +666,7 @@ const DoanhSoBanHangKho = () => {
                         <div className={`flex ${selectVisible ? '' : 'flex-col'} items-center gap-2`}>
                           <ActionButton
                             handleAction={() => (dataCRUD?.EXCEL == false ? '' : exportToExcel())}
-                            title={'Xuất Excel'}
+                            title={'Xuất excel'}
                             isPermission={dataCRUD?.EXCEL}
                             icon={<RiFileExcel2Fill className="w-5 h-5" />}
                             color={'slate-50'}
@@ -756,7 +676,7 @@ const DoanhSoBanHangKho = () => {
                           />
                           <ActionButton
                             handleAction={handleHidden}
-                            title={'Ẩn Cột'}
+                            title={'Ẩn cột'}
                             icon={<FaEyeSlash className="w-5 h-5" />}
                             color={'slate-50'}
                             background={'red-500'}
@@ -813,7 +733,8 @@ const DoanhSoBanHangKho = () => {
                         <div className="flex items-center gap-1">
                           <label>Từ</label>
                           <DateField
-                            className="DatePicker_NXTKho  max-w-[120px]"
+                            // className="DatePicker_NXTKho  max-w-[120px]"
+                            className=" max-w-[115px]"
                             onBlur={handleDateChange}
                             onKeyDown={handleKeyDown}
                             format="DD/MM/YYYY"
@@ -837,7 +758,7 @@ const DoanhSoBanHangKho = () => {
                         <div className=" flex items-center gap-1 ">
                           <label>Đến</label>
                           <DateField
-                            className="DatePicker_NXTKho max-w-[120px]"
+                            className=" max-w-[115px]"
                             onBlur={handleDateChange}
                             onKeyDown={handleKeyDown}
                             format="DD/MM/YYYY"
@@ -905,11 +826,14 @@ const DoanhSoBanHangKho = () => {
                               width: '12vw',
                               textOverflow: 'ellipsis',
                             }}
+                            optionFilterProp="children"
+                            popupMatchSelectWidth={false}
+                            optionLabelProp="value"
                           >
                             {nhomHangNXT?.map((item, index) => {
                               return (
                                 <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomHang}>
-                                  <p className="truncate">{item.ThongTinNhomHang}</p>
+                                  {item.ThongTinNhomHang}
                                 </Select.Option>
                               )
                             })}
@@ -934,11 +858,14 @@ const DoanhSoBanHangKho = () => {
                               width: '12vw',
                               textOverflow: 'ellipsis',
                             }}
+                            optionFilterProp="children"
+                            popupMatchSelectWidth={false}
+                            optionLabelProp="value"
                           >
                             {nhomHangNXT?.map((item, index) => {
                               return (
                                 <Select.Option key={index} value={item.Ma} title={item.ThongTinNhomHang}>
-                                  <p className="truncate">{item.ThongTinNhomHang}</p>
+                                  {item.ThongTinNhomHang}
                                 </Select.Option>
                               )
                             })}
@@ -966,7 +893,7 @@ const DoanhSoBanHangKho = () => {
                             {nhomHangNXT?.map((item) => {
                               return (
                                 <Select.Option key={item.Ma} value={item.Ma} title={item.ThongTinNhomHang}>
-                                  <p className="truncate">{item.ThongTinNhomHang}</p>
+                                  {item.ThongTinNhomHang} <br />
                                 </Select.Option>
                               )
                             })}
@@ -993,13 +920,14 @@ const DoanhSoBanHangKho = () => {
                               width: '12vw',
                               textOverflow: 'ellipsis',
                             }}
+                            optionFilterProp="children"
+                            popupMatchSelectWidth={false}
+                            optionLabelProp="value"
                           >
                             {hangHoaNXT?.map((item, index) => {
                               return (
                                 <Select.Option key={index} value={item.MaHang} title={item.TenHang}>
-                                  <p className="truncate">
-                                    {item.MaHang} - {item.TenHang}
-                                  </p>
+                                  {item.MaHang} - {item.TenHang}
                                 </Select.Option>
                               )
                             })}
@@ -1027,13 +955,14 @@ const DoanhSoBanHangKho = () => {
                               width: '12vw',
                               textOverflow: 'ellipsis',
                             }}
+                            optionFilterProp="children"
+                            popupMatchSelectWidth={false}
+                            optionLabelProp="value"
                           >
                             {hangHoaNXT?.map((item, index) => {
                               return (
                                 <Select.Option key={index} value={item.MaHang} title={item.TenHang}>
-                                  <p className="truncate">
-                                    {item.MaHang} - {item.TenHang}
-                                  </p>
+                                  {item.MaHang} - {item.TenHang}
                                 </Select.Option>
                               )
                             })}
@@ -1049,7 +978,7 @@ const DoanhSoBanHangKho = () => {
                             value={selectedMaList}
                             onChange={(value) => setSelectedMaList(value)}
                             placeholder="Chọn mã hàng"
-                            className="md:w-[30vw] lg:w-[40vw] xl:w-[50vw]"
+                            className="md:w-[30vw] lg:w-[40vw] xl:w-[50vw] "
                             maxTagCount="responsive"
                             optionFilterProp="children"
                             maxTagPlaceholder={(omittedValues) => (
@@ -1061,9 +990,8 @@ const DoanhSoBanHangKho = () => {
                             {hangHoaNXT?.map((item, index) => {
                               return (
                                 <Select.Option key={index} value={item.MaHang} title={item.TenHang}>
-                                  <p className="truncate">
-                                    {item.MaHang}-{item.TenHang}
-                                  </p>
+                                  {item.MaHang} - {item.TenHang}
+                                  <br />
                                 </Select.Option>
                               )
                             })}
@@ -1074,7 +1002,7 @@ const DoanhSoBanHangKho = () => {
                   </div>
                 </div>
               </div>
-              <div className="TruyVanDSKho_Child" id="my-table">
+              <div className="TruyVan_Child" id="my-table">
                 <Table
                   loading={tableLoad}
                   className="setHeight"
@@ -1085,20 +1013,20 @@ const DoanhSoBanHangKho = () => {
                     x: 'max-content',
                     y: 300,
                   }}
-                  pagination={{
-                    defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                    showSizeChanger: true,
-                    pageSizeOptions: ['50', '100', '1000'],
-                    onShowSizeChange: (current, size) => {
-                      localStorage.setItem('pageSize', size)
-                    },
-                  }}
+                  // pagination={{
+                  //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                  //   showSizeChanger: true,
+                  //   pageSizeOptions: ['50', '100', '1000'],
+                  //   onShowSizeChange: (current, size) => {
+                  //     localStorage.setItem('pageSize', size)
+                  //   },
+                  // }}
+                  pagination={false}
                   scrollToFirstRowOnChange
-                  bordered
+                  rowClassName={(record, index) => addRowClass(record, index)}
                   style={{
                     whiteSpace: 'nowrap',
                     fontSize: '24px',
-                    borderRadius: '10px',
                   }}
                   summary={() => {
                     return (
@@ -1108,6 +1036,8 @@ const DoanhSoBanHangKho = () => {
                             .filter((column) => column.render)
                             .map((column, index) => {
                               const isNumericColumn = typeof filteredHangHoa[0]?.[column.dataIndex] == 'number'
+                              const total = Number(filteredHangHoa?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0))
+
                               return (
                                 <Table.Summary.Cell
                                   index={index}
@@ -1116,14 +1046,14 @@ const DoanhSoBanHangKho = () => {
                                   className="text-end font-bold  bg-[#f1f1f1]"
                                 >
                                   {isNumericColumn ? (
-                                    <Text strong>
+                                    <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
                                       {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                         minimumFractionDigits: dataThongSo.SOLESOTIEN,
                                         maximumFractionDigits: dataThongSo.SOLESOTIEN,
                                       })}
                                     </Text>
                                   ) : column.dataIndex == 'STT' ? (
-                                    <Text className="text-center flex justify-center" strong>
+                                    <Text className="text-center flex justify-center text-white" strong>
                                       {dataNXT?.length}
                                     </Text>
                                   ) : null}

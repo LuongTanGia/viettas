@@ -6,18 +6,19 @@ import { useDispatch } from 'react-redux'
 import Cookies from 'js-cookie'
 import { Spin } from 'antd'
 import backgroundImg from '../../assets/img/backgroud.jfif'
-import CollectionCreateForm from './Popup'
+import { useNavigate } from 'react-router-dom'
 import FAQ from '../FAQ/FAQ'
 import './auth.css'
 import { toast } from 'react-toastify'
 
 const App = () => {
+  const navigate = useNavigate()
   const [rememberMe, setRememberMe] = useState(Cookies.get('useCookies') === 'true')
   const [isShow, setIsShow] = useState(false)
   const token = window.localStorage.getItem('tokenDuLieu')
   const [loading, setLoading] = useState(false)
   const dispatch = useDispatch()
-  const [data, setData] = useState()
+
   const [dataLoaded, setDataLoaded] = useState(false)
 
   const [user, setUser] = useState({
@@ -92,25 +93,26 @@ const App = () => {
     try {
       setLoading(true)
       const response = await DANHSACHDULIEU(API.DANHSACHDULIEU, user, dispatch)
-      setData(response)
+
       setLoading(false)
 
       if (response.DataResults.length === 1) {
         const remoteDB = response.DataResults[0].RemoteDB
         await LOGIN(API.DANGNHAP, API.DANHSACHDULIEU, response.TKN, remoteDB, {}, dispatch)
         window.localStorage.setItem('firstLogin', true)
-        window.location.href = '/'
-        console.log(response)
+
+        navigate('/remotedb')
       } else if (response?.DataResults.length > 1) {
-        console.log(response)
-        setIsLoggedIn(true)
+        window.localStorage.setItem('firstLogin', true)
+        setTimeout(() => {
+          navigate('/remotedb')
+        }, 1000)
       }
     } catch (error) {
       console.log('')
     }
   }
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
   const fetchGoogleUserInfo = async (googleCredential) => {
     const googleResponse = await fetch(`https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${googleCredential}`)
     const googleUserInfo = await googleResponse.json()
@@ -124,7 +126,7 @@ const App = () => {
       window.localStorage.setItem('userInfo', JSON.stringify(googleUserInfo))
 
       const response = await DANHSACHDULIEU(API.DANHSACHDULIEU, { TokenId: TokenID.credential }, dispatch)
-      setData(response)
+
       if (response?.DataResults?.length === 1) {
         const remoteDB = response.DataResults[0].RemoteDB
 
@@ -132,14 +134,11 @@ const App = () => {
         window.localStorage.setItem('firstLogin', true)
         window.location.href = '/'
       } else if (response?.DataResults?.length > 1) {
-        setIsLoggedIn(true)
+        window.location.href = '/remotedb'
       }
     } catch (error) {
       console.error('Đăng nhập thất bại', error)
     }
-  }
-  const close = () => {
-    setIsLoggedIn(false)
   }
 
   return (
@@ -185,10 +184,9 @@ const App = () => {
                 <label htmlFor="rememberMe" className="text-base font-medium">
                   Sử dụng cookie
                 </label>
-
                 <p>
                   Chúng tôi đang sử dụng <strong className="underline decoration-sky-500">cookie</strong> để cung cấp cho bạn những trải nghiệm tốt nhất trên trang web này. Bằng
-                  cách tiếp tục truy cập, bạn đồng ý với
+                  cách tiếp tục truy cập, bạn đồng ý với <br />
                   <a
                     className="underline decoration-sky-500 font-bold"
                     onClick={() => {
@@ -222,10 +220,6 @@ const App = () => {
                     useOneTap={dataLoaded}
                   />
                 ) : null}
-              </div>
-
-              <div className="flex justify-center items-center w-full">
-                {isLoggedIn ? <CollectionCreateForm isShow={isLoggedIn} close={close} data={data} dataUser={user} /> : null}
               </div>
             </div>
 

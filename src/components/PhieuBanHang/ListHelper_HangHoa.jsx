@@ -17,7 +17,6 @@ function ListHelper_HangHoa({ data, close, handleAddData, form }) {
   const [loadingSearch, setLoadingSearch] = useState(false)
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [dataList, setData] = useState(data)
-
   const [dataDate] = useState({
     NgayBatDau: '',
     NgayKetThuc: '',
@@ -26,23 +25,17 @@ function ListHelper_HangHoa({ data, close, handleAddData, form }) {
   const isMatch = (value, searchText) => {
     const stringValue = String(value).toLowerCase()
     const searchTextLower = searchText.toLowerCase()
-
-    // Check if the string includes the searchText
     if (stringValue.includes(searchTextLower)) {
       return true
     }
-
-    // Check if it's a valid date and matches (formatted or not)
     const isDateTime = dayjs(stringValue).isValid()
     if (isDateTime) {
       const formattedValue = dayjs(stringValue).format('DD/MM/YYYY').toString()
       const formattedSearchText = searchTextLower
-
       if (formattedValue.includes(formattedSearchText)) {
         return true
       }
     }
-
     return false
   }
 
@@ -54,58 +47,41 @@ function ListHelper_HangHoa({ data, close, handleAddData, form }) {
         ...form,
         searchText: searchText.trim(),
       }
-
       const filteredDataRes = await DANHSACHHANGHOA_PBS(API.DANHSACHHANGHOA_PBS, token, searchData)
-
       if (filteredDataRes === -1) {
         setData([])
       } else {
         const newData = filteredDataRes?.filter((record) => {
           return Object.keys(record).some((key) => isMatch(record[key], searchText))
         })
-
         setData(newData)
       }
-
       setDataLoaded(true)
       setLoadingSearch(false)
     }
-
     getListData()
   }, [searchText])
+
   if (!dataLoaded) {
     return <></>
   }
   return (
     <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
-      <div className="  px-4 pt-4 pm-0 shadow-lg bg-white rounded-md flex flex-col ">
+      <div className="px-4 pt-4 pm-0 shadow-lg bg-white rounded-md flex flex-col ">
         <div className=" w-[90vw] h-[590px] ">
-          <div className="flex justify-between items-start pb-1">
+          <div className="flex justify-between items-start">
             <div className="flex justify-between items-center gap-2 pb-3">
               <img src={Logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
-              <label className="text-blue-700 uppercase font-semibold ">Danh sách hàng hóa</label>
+              <label className="text-blue-700 uppercase font-semibold py-1 ">Danh sách hàng hóa</label>
               <BsSearch size={18} className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
-
               {isShowSearch && (
                 <div className={`flex left-[14rem] top-0 transition-all linear duration-700 ${isShowSearch ? 'w-[20rem]' : 'w-0'} overflow-hidden`}>
-                  {/* <input
-                  type="text"
-                  placeholder="Nhập ký tự bạn cần tìm"
-                  value={searchText}
-                  onChange={(e) => setSearchText(e.target.value)}
-                  className={'px-2  w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[0.125rem] border-[#0006] outline-none text-[1rem] '}
-                /> */}
                   <Input placeholder="Nhập ký tự bạn cần tìm" onPressEnter={(e) => setSearchText(e.target.value)} onBlur={(e) => setSearchText(e.target.value)} />
                 </div>
               )}
             </div>
-            {/* <button onClick={() => close()} className="text-gray-500 p-1 border hover:border-gray-300 hover:bg-red-600 hover:text-white rounded-full">
-              <IoMdClose />
-            </button> */}
-            <div className="flex relative"></div>
           </div>
-          {/* table */}
-          <div className=" mx-auto bg-white  rounded-md overflow-y-auto text-sm">
+          <div className="mx-auto roundedoverflow-y-auto text-sm">
             <Tables
               param={dataList}
               columName={nameColumsHangHoa}

@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from 'react'
 import moment from 'moment'
-import { MdPrint } from 'react-icons/md'
+// import { MdPrint } from 'react-icons/md'
 const { Text } = Typography
 import { Table, Tooltip, Typography } from 'antd'
 import NDCPrint from './NDCPrint'
@@ -67,7 +67,7 @@ const NDCXem = ({ close, dataNDC }) => {
       title: 'Mã hàng',
       dataIndex: 'MaHang',
       key: 'MaHang',
-      width: 150,
+      width: 120,
       showSorterTooltip: false,
       align: 'center',
       sorter: (a, b) => a.MaHang.localeCompare(b.MaHang),
@@ -83,27 +83,17 @@ const NDCXem = ({ close, dataNDC }) => {
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       render: (text) => (
         <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-              textAlign: 'start',
-            }}
-          >
-            {text}
-          </div>
+          <div className="text-start whitespace-pre-wrap">{text}</div>
         </Tooltip>
       ),
     },
     {
-      title: 'Đơn vị tính',
+      title: 'ĐVT',
       dataIndex: 'DVT',
       key: 'DVT',
       showSorterTooltip: false,
       align: 'center',
-      width: 120,
+      width: 100,
       sorter: (a, b) => a.DVT.localeCompare(b.DVT),
       render: (text) => <span className="flex justify-center"> {text}</span>,
     },
@@ -136,44 +126,44 @@ const NDCXem = ({ close, dataNDC }) => {
                   <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
                   <p className="text-blue-700 font-semibold uppercase">Thông tin - Phiếu Nhập Điều Chỉnh</p>
                 </div>
-                <div className="flex flex-col gap-2 border-2 px-1 py-2.5">
-                  <div className="grid grid-cols-2 items-center gap-2">
+                <div className="flex flex-col gap-2 border-gray-400 border-1 py-2.5">
+                  <div className="grid grid-cols-2 items-center gap-2 px-1">
                     <div className="flex flex-col gap-3">
                       <div className="flex gap-2">
-                        <div className="flex items-center gap-1">
-                          <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Số chứng từ</label>
-                          <input type="text" value={dataNDCView?.SoChungTu || ''} className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate" readOnly />
+                        <div className="flex items-center gap-1 ">
+                          <label className="required whitespace-nowrap min-w-[85px] flex justify-end text-sm">Số chứng từ</label>
+                          <input type="text" value={dataNDCView?.SoChungTu || ''} className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
                         </div>
                         <div className="flex items-center gap-1">
-                          <label className="required whitespace-nowrap text-sm">Ngày C.Từ</label>
+                          <label className="required whitespace-nowrap text-sm">Ngày</label>
                           <input
                             type="text"
                             value={moment(dataNDCView?.NgayCTu)?.format('DD/MM/YYYY') || ''}
-                            className="px-2 w-[7rem] rounded resize-none border outline-none text-[1rem] text-center truncate"
-                            readOnly
+                            className="px-2 w-[7rem] rounded-[3px] resize-none border outline-none text-sm text-center truncate"
+                            disabled
                           />
                         </div>
                       </div>
                       <div className="flex items-center gap-1">
-                        <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Kho hàng</label>
+                        <label className="required whitespace-nowrap min-w-[85px] flex justify-end text-sm">Kho hàng</label>
                         <input
                           type="text"
                           value={`${dataNDCView?.MaKho} - ${dataNDCView?.TenKho}` || ''}
-                          className="px-2 w-full rounded resize-none border outline-none text-[1rem]"
-                          readOnly
+                          className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm"
+                          disabled
                         />
                       </div>
                     </div>
                     <div className="grid grid-cols-1 gap-2 border-2 px-2 py-2.5 border-black-200 rounded relative">
                       <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
-                      <div className="flex gap-1">
+                      <div className="flex gap-2 justify-center">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người tạo</label>
                           <Tooltip title={dataNDCView?.NguoiTao} color="blue">
                             <input
-                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-[1rem] overflow-ellipsis truncate"
+                              className="px-2 2xl:w-[18rem] xl:w-[15rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm overflow-ellipsis truncate"
                               value={dataNDCView?.NguoiTao || ''}
-                              readOnly
+                              disabled
                             />
                           </Tooltip>
                         </div>
@@ -181,21 +171,21 @@ const NDCXem = ({ close, dataNDC }) => {
                           <label className="text-sm">Lúc</label>
                           <Tooltip title={moment(dataNDCView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''} color="blue">
                             <input
-                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
+                              className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate text-center"
                               value={moment(dataNDCView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
-                              readOnly
+                              disabled
                             />
                           </Tooltip>
                         </div>
                       </div>
-                      <div className="flex gap-1">
+                      <div className="flex gap-2 justify-center">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người sửa</label>
                           <Tooltip title={dataNDCView?.NguoiSuaCuoi} color="blue">
                             <input
-                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border  outline-none text-[1rem] overflow-ellipsis truncate"
+                              className="px-2 2xl:w-[18rem] xl:w-[15rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border  outline-none text-sm overflow-ellipsis truncate"
                               value={dataNDCView?.NguoiSuaCuoi || ''}
-                              readOnly
+                              disabled
                             />
                           </Tooltip>
                         </div>
@@ -203,18 +193,18 @@ const NDCXem = ({ close, dataNDC }) => {
                           <label className="text-sm">Lúc</label>
                           <Tooltip title={dataNDCView?.NgaySuaCuoi ? moment(dataNDCView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''} color="blue">
                             <input
-                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
+                              className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate text-center"
                               value={dataNDCView?.NgaySuaCuoi ? moment(dataNDCView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                              readOnly
+                              disabled
                             />
                           </Tooltip>
                         </div>
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <label className="whitespace-nowrap min-w-[100px] flex justify-end text-sm">Ghi chú</label>
-                    <input type="text" value={dataNDCView?.GhiChu || ''} className="px-2 w-[70rem] rounded resize-none border outline-none text-[1rem]" readOnly />
+                  <div className="flex items-center gap-1 px-1">
+                    <label className="whitespace-nowrap min-w-[85px] flex justify-end text-sm">Ghi chú</label>
+                    <input type="text" value={dataNDCView?.GhiChu || ''} className="px-2 w-[70rem] rounded-[3px] resize-none border outline-none text-sm" disabled />
                   </div>
                   <div className="border rounded">
                     <Table
@@ -223,10 +213,9 @@ const NDCXem = ({ close, dataNDC }) => {
                       dataSource={dataNDCView?.DataDetails?.map((item, index) => ({ ...item, key: index }))}
                       size="small"
                       scroll={{
-                        x: 1000,
+                        x: 'max-content',
                         y: 300,
                       }}
-                      bordered
                       pagination={false}
                       summary={() => {
                         return (
@@ -273,7 +262,7 @@ const NDCXem = ({ close, dataNDC }) => {
                 </div>
                 <div className="flex justify-between">
                   <ActionButton
-                    icon={<MdPrint className="w-5 h-5" />}
+                    // icon={<MdPrint className="w-5 h-5" />}
                     handleAction={handlePrint}
                     title={'In Phiếu'}
                     color={'slate-50'}
@@ -282,7 +271,6 @@ const NDCXem = ({ close, dataNDC }) => {
                     bg_hover={'white'}
                     isModal={true}
                   />
-
                   <ActionButton handleAction={close} title={'Đóng'} isModal={true} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
                 </div>
               </div>

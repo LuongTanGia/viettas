@@ -21,7 +21,7 @@ import ActionButton from '../../components/util/Button/ActionButton'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
 import { nameColumsHangHoa } from '../../components/util/Table/ColumnName'
-import { RETOKEN, base64ToPDF, exportToExcel } from '../../action/Actions'
+import { RETOKEN, addRowClass, base64ToPDF, exportToExcel } from '../../action/Actions'
 import HangHoaModals from '../../components/Modals/DanhMuc/HangHoa/HangHoaModals'
 
 const HangHoa = () => {
@@ -86,9 +86,6 @@ const HangHoa = () => {
         if (response.data.DataError === 0) {
           setDataCRUD(response.data)
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getDataQuyenHan()
         }
       } catch (error) {
         console.log(error)
@@ -144,7 +141,7 @@ const HangHoa = () => {
   }
   const handleStatusMany = () => {
     if (selectedRowKeys.length > 0) {
-      setActionType('statusMany')
+      setActionType('status')
       setIsShowModal(true)
       setIsMaHang(selectedRowKeys)
     } else {
@@ -153,7 +150,7 @@ const HangHoa = () => {
   }
   const handleGroupMany = () => {
     if (selectedRowKeys.length > 0) {
-      setActionType('groupMany')
+      setActionType('group')
       setIsShowModal(true)
       setIsMaHang(selectedRowKeys)
     } else {
@@ -177,11 +174,8 @@ const HangHoa = () => {
         )
         if (response.data.DataError === 0) {
           base64ToPDF(response.data.DataResults)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handlePrintABarcode()
         } else {
-          toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
+          toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
         }
       } else {
         const response = await categoryAPI.InMaVach(
@@ -193,11 +187,8 @@ const HangHoa = () => {
         )
         if (response.data.DataError === 0) {
           base64ToPDF(response.data.DataResults)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handlePrintABarcode()
         } else {
-          toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
+          toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
         }
       }
     } catch (error) {
@@ -272,19 +263,11 @@ const HangHoa = () => {
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-              textAlign: 'start',
-            }}
-          >
+        <div className="text-start whitespace-pre-wrap">
+          <span>
             <HighlightedCell text={text} search={searchHangHoa} />
-          </div>
-        </Tooltip>
+          </span>
+        </div>
       ),
     },
     {
@@ -296,22 +279,13 @@ const HangHoa = () => {
       sorter: (a, b) => a.TenNhom.localeCompare(b.TenNhom),
       showSorterTooltip: false,
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchHangHoa} />
-          </div>
-        </Tooltip>
+        <div className="truncate text-start">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
-      title: 'Đơn vị tính',
+      title: 'ĐVT',
       dataIndex: 'DVTKho',
       key: 'DVTKho',
       align: 'center',
@@ -325,10 +299,11 @@ const HangHoa = () => {
       dataIndex: 'DienGiaiDVTQuyDoi',
       key: 'DienGiaiDVTQuyDoi',
       align: 'center',
+      width: 200,
       showSorterTooltip: false,
       sorter: (a, b) => a.DienGiaiDVTQuyDoi - b.DienGiaiDVTQuyDoi,
       render: (text) => (
-        <span className="flex text-start">
+        <span className="flex text-start whitespace-pre-wrap">
           <HighlightedCell text={text} search={searchHangHoa} />
         </span>
       ),
@@ -338,7 +313,7 @@ const HangHoa = () => {
       dataIndex: 'MaVach',
       key: 'MaVach',
       align: 'center',
-      width: 150,
+      width: 120,
       sorter: (a, b) => a.MaVach - b.MaVach,
       showSorterTooltip: false,
       render: (text) => <HighlightedCell text={text} search={searchHangHoa} />,
@@ -403,7 +378,7 @@ const HangHoa = () => {
       title: 'Giá sỉ thấp',
       dataIndex: 'BangGiaSi_Min',
       key: 'BangGiaSi_Min',
-      width: 150,
+      width: 120,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => a.BangGiaSi_Min - b.BangGiaSi_Min,
@@ -432,17 +407,12 @@ const HangHoa = () => {
       dataIndex: 'NguoiTao',
       key: 'NguoiTao',
       align: 'center',
+      width: 180,
       showSorterTooltip: false,
       sorter: (a, b) => a.NguoiTao.localeCompare(b.NguoiTao),
       render: (text) => (
         <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
+          <div className="truncate">
             <HighlightedCell text={text} search={searchHangHoa} />
           </div>
         </Tooltip>
@@ -452,6 +422,7 @@ const HangHoa = () => {
       title: 'Ngày tạo',
       dataIndex: 'NgayTao',
       key: 'NgayTao',
+      width: 150,
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => {
@@ -466,18 +437,12 @@ const HangHoa = () => {
       dataIndex: 'NguoiSuaCuoi',
       key: 'NguoiSuaCuoi',
       align: 'center',
-      ellipsis: 'true',
+      width: 180,
       showSorterTooltip: false,
       sorter: (a, b) => (a.NguoiSuaCuoi?.toString() || '').localeCompare(b.NguoiSuaCuoi?.toString() || ''),
       render: (text) => (
         <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
+          <div className="truncate">
             <HighlightedCell text={text} search={searchHangHoa} />
           </div>
         </Tooltip>
@@ -488,6 +453,7 @@ const HangHoa = () => {
       dataIndex: 'NgaySuaCuoi',
       key: 'NgaySuaCuoi',
       align: 'center',
+      width: 150,
       showSorterTooltip: false,
       sorter: (a, b) => {
         const dateA = new Date(a.NgaySuaCuoi)
@@ -517,7 +483,7 @@ const HangHoa = () => {
       render: (text, record) => <Checkbox className="justify-center" id={`NA_${record.key}`} checked={text} />,
     },
     {
-      title: ' ',
+      title: 'Chức năng',
       key: 'operation',
       fixed: 'right',
       width: 120,
@@ -657,7 +623,7 @@ const HangHoa = () => {
                           />
                           <ActionButton
                             handleAction={() => (dataCRUD?.EXCEL == false ? '' : exportToExcel())}
-                            title={'Xuất Excel'}
+                            title={'Xuất excel'}
                             isPermission={dataCRUD?.EXCEL}
                             icon={<RiFileExcel2Fill className="w-5 h-5" />}
                             color={'slate-50'}
@@ -667,7 +633,7 @@ const HangHoa = () => {
                           />
                           <ActionButton
                             handleAction={() => handleHidden()}
-                            title={'Ẩn Cột'}
+                            title={'Ẩn cột'}
                             icon={<FaEyeSlash className="w-5 h-5" />}
                             color={'slate-50'}
                             background={'red-500'}
@@ -719,16 +685,6 @@ const HangHoa = () => {
                 <div className="flex justify-end ">
                   <div className="flex gap-2">
                     <ActionButton
-                      handleAction={() => (dataCRUD?.ADD == false ? '' : handleCreate())}
-                      title={'Thêm Hàng Hóa'}
-                      icon={<IoMdAddCircleOutline className="w-6 h-6" />}
-                      color={'slate-50'}
-                      background={dataCRUD?.ADD == false ? 'gray-400' : 'blue-500'}
-                      color_hover={dataCRUD?.ADD == false ? 'gray-500' : 'blue-500'}
-                      bg_hover={'white'}
-                      isPermission={dataCRUD?.ADD}
-                    />
-                    <ActionButton
                       handleAction={() => handleStatusMany()}
                       title={'Đổi Trạng Thái'}
                       icon={<GrStatusUnknown className="w-6 h-6" />}
@@ -736,6 +692,7 @@ const HangHoa = () => {
                       background={'blue-500'}
                       color_hover={'blue-500'}
                       bg_hover={'white'}
+                      isModal={true}
                     />
                     <ActionButton
                       handleAction={() => handleGroupMany()}
@@ -745,6 +702,7 @@ const HangHoa = () => {
                       background={'blue-500'}
                       color_hover={'blue-500'}
                       bg_hover={'white'}
+                      isModal={true}
                     />
                     <ActionButton
                       handleAction={() => handlePrintABarcode()}
@@ -754,13 +712,24 @@ const HangHoa = () => {
                       background={'purple-500'}
                       color_hover={'purple-500'}
                       bg_hover={'white'}
+                      isModal={true}
+                    />
+                    <ActionButton
+                      handleAction={() => (dataCRUD?.ADD == false ? '' : handleCreate())}
+                      title={'Thêm'}
+                      icon={<IoMdAddCircleOutline className="w-6 h-6" />}
+                      color={'slate-50'}
+                      background={dataCRUD?.ADD == false ? 'gray-400' : 'blue-500'}
+                      color_hover={dataCRUD?.ADD == false ? 'gray-500' : 'blue-500'}
+                      bg_hover={'white'}
+                      isPermission={dataCRUD?.ADD}
+                      isModal={true}
                     />
                   </div>
                 </div>
                 <div id="my-table">
                   <Table
                     loading={tableLoad}
-                    bordered
                     rowSelection={{
                       selectedRowKeys,
                       showSizeChanger: true,
@@ -781,7 +750,7 @@ const HangHoa = () => {
                       },
                       onDoubleClick: () => handleView(record),
                     })}
-                    rowClassName={(record) => (record.MaHang === targetRow ? 'highlighted-row' : '')}
+                    rowClassName={(record, index) => (record.MaHang === targetRow ? 'highlighted-row' : addRowClass(record, index))}
                     className="setHeight"
                     columns={newTitles}
                     dataSource={filteredHangHoa.map((item, index) => ({
@@ -790,7 +759,7 @@ const HangHoa = () => {
                     }))}
                     size="small"
                     scroll={{
-                      x: 3000,
+                      x: 'max-content',
                       y: 400,
                     }}
                     pagination={{
@@ -801,6 +770,7 @@ const HangHoa = () => {
                         localStorage.setItem('pageSize', size)
                       },
                     }}
+                    // pagination={false}
                     style={{
                       whiteSpace: 'nowrap',
                       fontSize: '24px',
@@ -809,36 +779,39 @@ const HangHoa = () => {
                       return (
                         <Table.Summary fixed="bottom">
                           <Table.Summary.Row>
-                            <Table.Summary.Cell className="bg-gray-100"></Table.Summary.Cell>
+                            <Table.Summary.Cell className="bg-gray-100" index="0"></Table.Summary.Cell>
                             {newTitles
                               .filter((column) => column.render)
                               .map((column, index) => {
                                 const isNumericColumn = typeof filteredHangHoa[0]?.[column.dataIndex] === 'number'
                                 return (
                                   <Table.Summary.Cell
-                                    index={index}
+                                    index={index + 1}
                                     key={`summary-cell-${index + 1}`}
                                     align={isNumericColumn ? 'right' : 'left'}
                                     className="text-end font-bold  bg-[#f1f1f1]"
                                   >
                                     {isNumericColumn ? (
-                                      column.dataIndex === 'GiaBanLe' || column.dataIndex === 'BangGiaSi_Min' || column.dataIndex === 'BangGiaSi_Max' ? (
-                                        <Text strong>
-                                          {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                            minimumFractionDigits: dataThongSo.SOLEDONGIA,
-                                            maximumFractionDigits: dataThongSo.SOLEDONGIA,
-                                          })}
-                                        </Text>
-                                      ) : (
-                                        <Text strong>
-                                          {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                            minimumFractionDigits: 0,
-                                            maximumFractionDigits: 0,
-                                          })}
-                                        </Text>
-                                      )
+                                      (() => {
+                                        const total = Number(filteredHangHoa?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0))
+                                        return column.dataIndex === 'GiaBanLe' || column.dataIndex === 'BangGiaSi_Min' || column.dataIndex === 'BangGiaSi_Max' ? (
+                                          <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
+                                            {total.toLocaleString('en-US', {
+                                              minimumFractionDigits: dataThongSo.SOLEDONGIA,
+                                              maximumFractionDigits: dataThongSo.SOLEDONGIA,
+                                            })}
+                                          </Text>
+                                        ) : (
+                                          <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
+                                            {total.toLocaleString('en-US', {
+                                              minimumFractionDigits: 0,
+                                              maximumFractionDigits: 0,
+                                            })}
+                                          </Text>
+                                        )
+                                      })()
                                     ) : column.dataIndex == 'STT' ? (
-                                      <Text className="text-center flex justify-center" strong>
+                                      <Text className="text-center flex justify-center text-white" strong>
                                         {dataHangHoa?.length}
                                       </Text>
                                     ) : null}

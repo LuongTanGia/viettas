@@ -15,10 +15,10 @@ const PCEdit = ({ close, loadingData, setTargetRow, dataPC }) => {
   const [dataCa, setDataCa] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const innitProduct = {
-    SoQuay: 0,
+    SoQuay: null,
     MaNguoiDung: '',
     HieuLucTu: '',
-    MaCa: '',
+    MaCa: null,
     GhiChu: '',
   }
   const [PCForm, setPCForm] = useState(() => {
@@ -56,9 +56,6 @@ const PCEdit = ({ close, loadingData, setTargetRow, dataPC }) => {
         if (response.data.DataError == 0) {
           setDataCa(response.data.DataResults)
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getListHelperCa()
         }
       } catch (error) {
         setIsLoading(true)
@@ -70,15 +67,19 @@ const PCEdit = ({ close, loadingData, setTargetRow, dataPC }) => {
   }, [isLoading])
 
   const handleEdit = async () => {
+    if (PCForm.HieuLucTu === 'Invalid Date') {
+      toast.warning('Vui lòng chọn ngày', { autoClose: 2000 })
+      return
+    }
     try {
       const response = await categoryAPI.SuaPhanCa({ Ma: dataPC?.MaNguoiDung, HieuLuc: dataPC?.HieuLucTu, Data: { ...PCForm } }, TokenAccess)
       if (response.data.DataError == 0) {
         close()
         loadingData()
-        toast.success('Sửa thành công', { autoClose: 1000 })
-        setTargetRow(dataPC?.MaPC)
+        toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
+        setTargetRow(dataPC?.MaNguoiDung)
       } else {
-        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
+        toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
       }
     } catch (error) {
       console.log(error)
@@ -95,25 +96,30 @@ const PCEdit = ({ close, loadingData, setTargetRow, dataPC }) => {
           <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10">
             <div className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"></div>
             <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col bg-white p-2 rounded shadow-custom overflow-hidden">
-              <div className="flex flex-col gap-2 py-1 px-2 md:w-[85vw] lg:w-[65vw] xl:w-[50vw] 2xl:w-[40vw]">
+              <div className="flex flex-col gap-2 py-1 px-2 md:w-[80vw] lg:w-[60vw] xl:w-[50vw] 2xl:w-[45vw]">
                 <div className="flex gap-2">
                   <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
                   <p className="text-blue-700 font-semibold uppercase">Sửa - Phân Ca</p>
                 </div>
-                <div className="flex flex-col gap-2 border-2 px-3 py-2.5">
+                <div className="flex flex-col gap-2 border-1 border-gray-400 px-2 py-2.5">
                   <div className="flex items-center gap-1">
                     <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Người dùng</label>
-                    <Input readOnly disabled required size="small" className="w-full overflow-hidden whitespace-nowrap overflow-ellipsis" value={PCForm?.MaNguoiDung} />
+                    <input
+                      disabled
+                      required
+                      size="small"
+                      className="h-[24px] w-full  px-2 rounded-[3px] resize-none border-[1px] border-gray-300 outline-none truncate "
+                      value={PCForm?.MaNguoiDung}
+                    />
                   </div>
                   <div className="flex items-center ml-[15px] ">
                     <div className="flex items-center gap-1 w-full">
                       <label className="required whitespace-nowrap text-sm">Kể từ ngày</label>
-                      <Input
-                        readOnly
+                      <input
                         disabled
                         required
                         size="small"
-                        className="w-full overflow-hidden whitespace-nowrap overflow-ellipsis"
+                        className="h-[24px] w-full  px-2 rounded-[3px] resize-none border-[1px] border-gray-300 outline-none truncate "
                         value={moment(dataPC?.HieuLucTu)?.format('DD/MM/YYYY')}
                       />
                     </div>
@@ -155,11 +161,13 @@ const PCEdit = ({ close, loadingData, setTargetRow, dataPC }) => {
                             MaCa: value,
                           })
                         }}
+                        optionFilterProp="children"
+                        popupMatchSelectWidth={false}
                       >
                         {dataCa &&
                           dataCa.map((item, index) => (
                             <Select.Option key={index} value={item.Ma}>
-                              {item.ThongTinCaLamViec}
+                              {item.Ma} - {item.Ten}
                             </Select.Option>
                           ))}
                       </Select>
@@ -181,14 +189,14 @@ const PCEdit = ({ close, loadingData, setTargetRow, dataPC }) => {
                   </div>
                   <div className="grid grid-cols-1 mt-1 gap-2 px-2 py-2.5 rounded border-black-200 ml-[95px] relative border-[0.125rem]">
                     <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
-                    <div className="flex gap-1">
+                    <div className="flex gap-2 justify-center">
                       <div className="flex items-center gap-1.5 whitespace-nowrap">
                         <label className=" text-sm">Người tạo</label>
                         <Tooltip title={dataPC?.NguoiTao} color="blue">
                           <input
                             value={dataPC?.NguoiTao || ''}
-                            className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded resize-none border outline-none text-[1rem] truncate"
-                            readOnly
+                            className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded-[3px] resize-none border outline-none text-sm truncate"
+                            disabled
                           />
                         </Tooltip>
                       </div>
@@ -198,20 +206,20 @@ const PCEdit = ({ close, loadingData, setTargetRow, dataPC }) => {
                           <input
                             value={moment(dataPC?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
                             type="text"
-                            className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
-                            readOnly
+                            className="px-2 rounded-[3px] w-full resize-none border text-center outline-none text-sm truncate"
+                            disabled
                           />
                         </Tooltip>
                       </div>
                     </div>
-                    <div className="flex gap-1">
+                    <div className="flex gap-2 justify-center">
                       <div className="flex items-center gap-1 whitespace-nowrap">
                         <label className=" text-sm">Người sửa</label>
                         <Tooltip title={dataPC?.NguoiSuaCuoi} color="blue">
                           <input
                             value={dataPC?.NguoiSuaCuoi || ''}
-                            className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded  resize-none border outline-none text-[1rem] truncate"
-                            readOnly
+                            className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded-[3px]  resize-none border outline-none text-sm truncate"
+                            disabled
                           />
                         </Tooltip>
                       </div>
@@ -220,8 +228,8 @@ const PCEdit = ({ close, loadingData, setTargetRow, dataPC }) => {
                         <Tooltip title={dataPC?.NgaySuaCuoi ? moment(dataPC?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : ''} color="blue">
                           <input
                             value={dataPC?.NgaySuaCuoi ? moment(dataPC?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                            className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
-                            readOnly
+                            className="px-2 rounded-[3px] w-full resize-none border text-center outline-none text-sm truncate"
+                            disabled
                           />
                         </Tooltip>
                       </div>
@@ -231,7 +239,7 @@ const PCEdit = ({ close, loadingData, setTargetRow, dataPC }) => {
                 <div className="flex gap-2 justify-end ">
                   <ActionButton
                     handleAction={() => handleEdit()}
-                    title={'Xác nhận'}
+                    title={'Lưu & đóng'}
                     isModal={true}
                     color={'slate-50'}
                     background={'blue-500'}

@@ -331,6 +331,21 @@ const categoryAPI = {
     }
     return axiosClient.post(url, { Thang_YYYYMM }, { headers })
   },
+  // XuLy/Duyệt phiếu xuất chuyển kho
+  ListChuaDuyet(accessToken) {
+    const url = '/processes/DuLieuXuatChuyenKhoChuaDuyet/DanhSach'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, {}, { headers })
+  },
+  DuyetPhieuXuLy(SoChungTu, accessToken) {
+    const url = '/processes/DuLieuXuatChuyenKhoChuaDuyet/DuyetPhieu'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, { SoChungTu }, { headers })
+  },
   // TruyVan/NhapXuatTonKho
   InfoNXTTheoKho(body, accessToken) {
     const url = '/inquiries/NhapXuatTon/TheoKho'
@@ -388,22 +403,101 @@ const categoryAPI = {
     }
     return axiosClient.post(url, {}, { headers })
   },
-  // DoanhSo/ DoanhSoBanHangKho
-  InfoBSDHKHO(body, accessToken) {
+  // TruyVan/ CongNoNhaCungCap
+  CNDVTongHop(body, accessToken) {
+    const url = '/inquiries/CongNoDauVao/TongHop'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  ListDoiTuong_CNDV(accessToken) {
+    const url = '/inquiries/CongNoDauVao/ListHelper_DoiTuong'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, {}, { headers })
+  },
+  ListNhomDoiTuong_CNDV(accessToken) {
+    const url = '/inquiries/CongNoDauVao/ListHelper_NhomDoiTuong'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, {}, { headers })
+  },
+  // TruyVan/ CongNoKhachHang
+  CNDRTongHop(body, accessToken) {
+    const url = '/inquiries/CongNoDauRa/TongHop'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  ListDoiTuong_CNDR(accessToken) {
+    const url = '/inquiries/CongNoDauRa/ListHelper_DoiTuong'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, {}, { headers })
+  },
+  ListNhomDoiTuong_CNDR(accessToken) {
+    const url = '/inquiries/CongNoDauRa/ListHelper_NhomDoiTuong'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, {}, { headers })
+  },
+  // DoanhSo/ DoanhSoBanHang
+  InfoDSBHHangHoa(body, accessToken) {
+    const url = '/inquiries/DoanhSo/HangHoa'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  InfoDSBHKhachHang(body, accessToken) {
+    const url = '/inquiries/DoanhSo/KhachHang'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  InfoDSBHKhachHang_HangHoa(body, accessToken) {
+    const url = '/inquiries/DoanhSo/KhachHangHangHoa'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, body, { headers })
+  },
+  InfoDSBHKHO(body, accessToken) {
     const url = '/inquiries/DoanhSo/KhoHang'
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     }
     return axiosClient.post(url, body, { headers })
   },
-  InfoBSDHQuay(body, accessToken) {
+  InfoDSBHQuay(body, accessToken) {
     const url = '/inquiries/DoanhSo/Quay'
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     }
     return axiosClient.post(url, body, { headers })
   },
-  // DoanhSo/ DoanhSoBanHangKho
+  ListNhomHang_DSBH(accessToken) {
+    const url = '/inquiries/DoanhSo/ListHelper_NhomHang'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, {}, { headers })
+  },
+  ListNhomDoiTuong_DSBH(accessToken) {
+    const url = '/inquiries/DoanhSo/ListHelper_NhomDoiTuong'
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+    return axiosClient.post(url, {}, { headers })
+  },
+  // DoanhSo/ SoQuy
   InfoSoQuy(body, accessToken) {
     const url = '/inquiries/SoQuyTienMat/DanhSach'
     const headers = {
@@ -475,12 +569,12 @@ const categoryAPI = {
     }
     return axiosClient.post(url, {}, { headers })
   },
-  ListHangHoaNDC(accessToken) {
+  ListHangHoaNDC(body, accessToken) {
     const url = '/entries/DuLieuNDC/ListHelper_HangHoa'
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     }
-    return axiosClient.post(url, {}, { headers })
+    return axiosClient.post(url, body, { headers })
   },
 
   // DuLieu/DCTK/PhieuLapRap
@@ -626,12 +720,12 @@ const categoryAPI = {
     }
     return axiosClient.post(url, {}, { headers })
   },
-  ListHangHoaXDC(accessToken) {
+  ListHangHoaXDC(body, accessToken) {
     const url = '/entries/DuLieuXDC/ListHelper_HangHoa'
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     }
-    return axiosClient.post(url, {}, { headers })
+    return axiosClient.post(url, body, { headers })
   },
 
   // DuLieu/DLTK/PhieuXCK
@@ -698,12 +792,12 @@ const categoryAPI = {
     }
     return axiosClient.post(url, {}, { headers })
   },
-  ListHangHoaXCK(accessToken) {
+  ListHangHoaXCK(body, accessToken) {
     const url = '/entries/DuLieuXCK/ListHelper_HangHoa'
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     }
-    return axiosClient.post(url, {}, { headers })
+    return axiosClient.post(url, body, { headers })
   },
 
   // DuLieu/DLTK/PhieuNCK
@@ -736,7 +830,7 @@ const categoryAPI = {
     return axiosClient.post(url, body, { headers })
   },
   ListChungTuNCK(body, accessToken) {
-    const url = '/entries/DuLieuNCK/ListHelper_ChungTuTheo'
+    const url = '/entries/DuLieuNCK/ListHelper_ChungTuTheoNgay'
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     }
@@ -821,12 +915,12 @@ const categoryAPI = {
     }
     return axiosClient.post(url, {}, { headers })
   },
-  ListHangHoaXSD(accessToken) {
+  ListHangHoaXSD(body, accessToken) {
     const url = '/entries/DuLieuXSD/ListHelper_HangHoa'
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     }
-    return axiosClient.post(url, {}, { headers })
+    return axiosClient.post(url, body, { headers })
   },
 
   // DuLieu/DLTK/PhieuHUY
@@ -893,12 +987,12 @@ const categoryAPI = {
     }
     return axiosClient.post(url, {}, { headers })
   },
-  ListHangHoaHUY(accessToken) {
+  ListHangHoaHUY(body, accessToken) {
     const url = '/entries/DuLieuHUY/ListHelper_HangHoa'
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     }
-    return axiosClient.post(url, {}, { headers })
+    return axiosClient.post(url, body, { headers })
   },
   // ThietLap/KhoHang
   KhoHang(accessToken) {
@@ -1114,7 +1208,7 @@ const categoryAPI = {
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     }
-    return axiosClient.post(url, { body }, { headers })
+    return axiosClient.post(url, body, { headers })
   },
   ListHelperPhanQuyen_NguoiDung(accessToken) {
     const url = '/settings/PhanQuyen/ListHelper_NguoiDung'

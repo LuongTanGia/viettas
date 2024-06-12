@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import moment from 'moment'
 import { toast } from 'react-toastify'
-import { MdPrint } from 'react-icons/md'
+// import { MdPrint } from 'react-icons/md'
 import categoryAPI from '../../../../API/linkAPI'
 import logo from '../../../../assets/VTS-iSale.ico'
 import { RETOKEN, base64ToPDF } from '../../../../action/Actions'
@@ -57,16 +57,16 @@ const QLView = ({ close, dataQL }) => {
           <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10">
             <div className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"></div>
             <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col bg-white p-2 rounded shadow-custom overflow-hidden">
-              <div className="flex flex-col gap-2 py-1 px-2 md:w-[85vw] lg:w-[65vw] xl:w-[50vw] 2xl:w-[40vw]">
+              <div className="flex flex-col gap-2 py-1 px-2 md:w-[80vw] lg:w-[60vw] xl:w-[50vw] 2xl:w-[45vw]">
                 <div className="flex gap-2">
                   <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
                   <p className="text-blue-700 font-semibold uppercase">Thông tin - Quản Lý</p>
                 </div>
-                <div className="flex flex-col gap-2 border-2 px-3 py-2.5">
+                <div className="flex flex-col gap-2 border-1 border-gray-400 px-2 py-2.5">
                   <div className="flex items-center gap-2">
                     <div className="flex items-center gap-1 w-[60%]">
                       <label className="whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Mã quản lý</label>
-                      <input type="text" value={dataQLView?.MaQuanLy || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" readOnly />
+                      <input type="text" value={dataQLView?.MaQuanLy || ''} className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
                     </div>
                     <div className="flex items-center">
                       <Checkbox className="text-sm" checked={dataQLView?.NA}>
@@ -76,7 +76,7 @@ const QLView = ({ close, dataQL }) => {
                   </div>
                   <div className="flex items-center gap-1">
                     <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Người dùng</label>
-                    <input type="text" value={dataQLView?.TenNguoiDung || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" readOnly />
+                    <input type="text" value={dataQLView?.TenNguoiDung || ''} className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="flex items-center gap-1">
@@ -84,8 +84,8 @@ const QLView = ({ close, dataQL }) => {
                       <input
                         type="text"
                         value={moment(dataQLView?.TuNgay)?.format('DD/MM/YYYY') || ''}
-                        className="px-2 w-full resize-none rounded border outline-none text-sm truncate"
-                        readOnly
+                        className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate"
+                        disabled
                       />
                     </div>
                     <div className="flex items-center gap-1">
@@ -93,8 +93,8 @@ const QLView = ({ close, dataQL }) => {
                       <input
                         type="text"
                         value={dataQLView?.DenNgay ? moment(dataQLView?.DenNgay).format('DD/MM/YYYY') : '' || ''}
-                        className="px-2 w-full resize-none rounded border outline-none text-sm truncate"
-                        readOnly
+                        className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate"
+                        disabled
                       />
                     </div>
                     <div className="flex items-center">
@@ -105,18 +105,18 @@ const QLView = ({ close, dataQL }) => {
                   </div>
                   <div className="flex items-center gap-1">
                     <label className=" whitespace-nowrap  min-w-[90px] text-sm flex justify-end">Ghi chú</label>
-                    <input type="text" value={dataQLView?.GhiChu || ''} className="px-2 w-full resize-none rounded border outline-none text-sm truncate" readOnly />
+                    <input type="text" value={dataQLView?.GhiChu || ''} className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
                   </div>
                   <div className="grid grid-cols-1 mt-1 gap-2 px-2 py-2.5 rounded border-black-200 ml-[95px] relative border-[0.125rem]">
                     <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
-                    <div className="flex gap-1">
+                    <div className="flex gap-2 justify-center">
                       <div className="flex items-center gap-1.5 whitespace-nowrap">
                         <label className=" text-sm">Người tạo</label>
                         <Tooltip title={dataQLView?.NguoiTao} color="blue">
                           <input
                             value={dataQLView?.NguoiTao || ''}
-                            className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded resize-none border outline-none text-[1rem] truncate"
-                            readOnly
+                            className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded-[3px] resize-none border outline-none text-sm truncate"
+                            disabled
                           />
                         </Tooltip>
                       </div>
@@ -126,20 +126,20 @@ const QLView = ({ close, dataQL }) => {
                           <input
                             type="text"
                             value={moment(dataQLView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
-                            className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
-                            readOnly
+                            className="px-2 rounded-[3px] w-full resize-none text-center border outline-none text-sm truncate"
+                            disabled
                           />
                         </Tooltip>
                       </div>
                     </div>
-                    <div className="flex gap-1">
+                    <div className="flex gap-2 justify-center">
                       <div className="flex items-center gap-1 whitespace-nowrap">
                         <label className=" text-sm">Người sửa</label>
                         <Tooltip title={dataQLView?.NguoiSuaCuoi} color="blue">
                           <input
                             value={dataQLView?.NguoiSuaCuoi || ''}
-                            className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded  resize-none border outline-none text-[1rem] truncate"
-                            readOnly
+                            className="2xl:w-[17vw] lg:w-[18vw] md:w-[24vw] px-2 rounded-[3px] resize-none border outline-none text-sm truncate"
+                            disabled
                           />
                         </Tooltip>
                       </div>
@@ -148,8 +148,8 @@ const QLView = ({ close, dataQL }) => {
                         <Tooltip title={dataQLView?.NgaySuaCuoi ? moment(dataQLView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : ''} color="blue">
                           <input
                             value={dataQLView?.NgaySuaCuoi ? moment(dataQLView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                            className="px-2 rounded w-full resize-none border outline-none text-[1rem] truncate"
-                            readOnly
+                            className="px-2 rounded-[3px] w-full resize-none text-center border outline-none text-sm truncate"
+                            disabled
                           />
                         </Tooltip>
                       </div>
@@ -158,7 +158,7 @@ const QLView = ({ close, dataQL }) => {
                 </div>
                 <div className="flex gap-2 justify-between">
                   <ActionButton
-                    icon={<MdPrint className="w-5 h-5" />}
+                    // icon={<MdPrint className="w-5 h-5" />}
                     handleAction={handlePrint}
                     title={'In thẻ'}
                     color={'slate-50'}

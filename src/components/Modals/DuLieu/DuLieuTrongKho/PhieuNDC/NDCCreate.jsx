@@ -4,16 +4,16 @@
 import { useEffect, useState, useMemo } from 'react'
 import { toast } from 'react-toastify'
 import { FaSearch } from 'react-icons/fa'
-import { MdPrint } from 'react-icons/md'
+// import { MdPrint } from 'react-icons/md'
 import { IoMdAddCircle } from 'react-icons/io'
-import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import { DateField } from '@mui/x-date-pickers'
 import { Checkbox, Table, Tooltip, Select, FloatButton, Input } from 'antd'
 import dayjs from 'dayjs'
 import NDCPrint from './NDCPrint'
 import categoryAPI from '../../../../../API/linkAPI'
 import { useSearch } from '../../../../hooks/Search'
 import logo from '../../../../../assets/VTS-iSale.ico'
-import { RETOKEN } from '../../../../../action/Actions'
+import { RETOKEN, addRowClass } from '../../../../../action/Actions'
 import EditTable from '../../../../util/Table/EditTable'
 import ActionButton from '../../../../util/Button/ActionButton'
 import HighlightedCell from '../../../../hooks/HighlightedCell'
@@ -39,7 +39,7 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
     SoChungTu: '',
     NgayCTu: '',
     SoThamChieu: '',
-    MaKho: '',
+    MaKho: null,
     MaKho_Nhan: '',
     GhiChu: '',
     DataDetails: [
@@ -81,8 +81,9 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
     const getDataKhoHangNDC = async () => {
       try {
         const response = await categoryAPI.ListKhoHangNDC(TokenAccess)
-        if (response.data.DataError == 0) {
+        if (response.data && response.data.DataError == 0) {
           setDataKhoHang(response.data.DataResults)
+          setNDCForm({ ...NDCForm, MaKho: response?.data?.DataResults[0]?.MaKho })
           setIsLoading(true)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
@@ -101,23 +102,20 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
   useEffect(() => {
     const getDataHangHoaNDC = async () => {
       try {
-        const response = await categoryAPI.ListHangHoaNDC(TokenAccess)
-        if (response.data.DataError == 0) {
+        const response = await categoryAPI.ListHangHoaNDC({ SoChungTu: null, MaKho: NDCForm?.MaKho }, TokenAccess)
+        if (response.data && response.data.DataError == 0) {
           setDataHangHoa(response.data.DataResults)
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getDataHangHoaNDC()
         }
       } catch (error) {
         console.log(error)
         setIsLoading(true)
       }
     }
-    if (!isLoading) {
+    if (NDCForm.MaKho) {
       getDataHangHoaNDC()
     }
-  }, [isLoading])
+  }, [NDCForm.MaKho])
 
   const handleSearch = (event) => {
     setSearchHangHoa(event.target.value)
@@ -157,40 +155,47 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
         autoClose: 1000,
       })
     } else {
+      toast.success('Chọn hàng hóa thành công', {
+        autoClose: 1000,
+      })
       const index = selectedRowData.findIndex((item) => item.MaHang === newRow.MaHang)
       const oldQuantity = selectedRowData[index].SoLuong
       selectedRowData[index].SoLuong = oldQuantity + newRow.SoLuong
       setNDCForm({ ...NDCForm, DataDetails: selectedRowData })
     }
   }
-
   const handleCreate = async (isSave = true, isPrint = true) => {
-    if (!NDCForm?.MaKho?.trim()) {
-      setErrors({
-        MaKho: NDCForm?.MaKho?.trim() ? null : 'Kho không được trống',
-      })
+    if (dayjs(valueDate).format('YYYY-MM-DD') === 'Invalid Date') {
+      toast.warning('Vui lòng chọn ngày', { autoClose: 2000 })
       return
     }
     try {
-      const newData = selectedRowData.map((item, index) => {
+      const newData = selectedRowData?.map((item, index) => {
         return {
           ...item,
           STT: index + 1,
         }
       })
-      const response = await categoryAPI.NDCCreate({ ...NDCForm, DataDetails: newData, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss') }, TokenAccess)
-      if (response.data.DataError == 0) {
-        isPrint
-          ? (handlePrint(), setNDCForm([]), setSelectedRowData([]))
-          : isSave
-            ? (toast.success('Tạo thành công', { autoClose: 1000 }), setNDCForm([]), setSelectedRowData([]))
-            : (close(), toast.success('Tạo thành công', { autoClose: 1000 }))
-        loadingData()
-        setSoCTu(response.data.DataResults[0].SoChungTu)
-        setTargetRow(response.data.DataResults[0].SoChungTu)
+      if (newData?.length > 0) {
+        if (isAdd) {
+          toast.warning('Vui lòng chọn mã hàng', { autoClose: 2000 })
+        } else {
+          const response = await categoryAPI.NDCCreate({ ...NDCForm, DataDetails: newData, NgayCTu: dayjs(valueDate).format('YYYY-MM-DD') }, TokenAccess)
+          if (response.data.DataError == 0) {
+            isPrint
+              ? (handlePrint(), setNDCForm({ MaKho: dataKhoHang[0]?.MaKho }), setSelectedRowData([]))
+              : isSave
+                ? (toast.success(response.data.DataErrorDescription, { autoClose: 1000 }), setNDCForm({ MaKho: dataKhoHang[0]?.MaKho }), setSelectedRowData([]))
+                : (close(), toast.success(response.data.DataErrorDescription, { autoClose: 1000 }))
+            loadingData()
+            setSoCTu(response.data.DataResults[0].SoChungTu)
+            setTargetRow(response.data.DataResults[0].SoChungTu)
+          } else {
+            toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
+          }
+        }
       } else {
-        console.log(response.data)
-        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
+        toast.warning('Chi tiết hàng không được để trống', { autoClose: 2000 })
       }
     } catch (error) {
       console.log(error)
@@ -296,7 +301,7 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
       ),
     },
     {
-      title: 'Đơn vị tính',
+      title: 'ĐVT',
       dataIndex: 'DVT',
       key: 'DVT',
       showSorterTooltip: false,
@@ -367,22 +372,22 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                   <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
                   <p className="text-blue-700 font-semibold uppercase">Thêm - Phiếu Nhập Điều Chỉnh</p>
                 </div>
-                <div className="flex flex-col gap-2 border-2 px-1 py-2.5">
-                  <div className="grid grid-cols-2 items-center gap-2">
+                <div className="flex flex-col gap-2 border-gray-400 border-1 py-2.5">
+                  <div className="grid grid-cols-2 items-center gap-2 px-1">
                     <div className="flex flex-col gap-3">
                       <div className="flex gap-2">
                         <div className="flex items-center gap-1">
-                          <label className="text-sm  required whitespace-nowrap min-w-[100px] flex justify-end">Số chứng từ</label>
+                          <label className="text-sm required whitespace-nowrap min-w-[90px] flex justify-end">Số chứng từ</label>
                           <Input disabled size="small" value={NDCForm?.SoChungTu || ''} readOnly />
                         </div>
                         <div className="flex items-center gap-1">
-                          <label className="required whitespace-nowrap text-sm">Ngày c.từ</label>
-                          <DatePicker
-                            className="DatePicker_NDCKho"
+                          <label className="required whitespace-nowrap text-sm">Ngày</label>
+                          <DateField
+                            className="max-w-[130px] min-w-[130px]"
                             format="DD/MM/YYYY"
                             value={valueDate}
                             onChange={(values) => {
-                              setNDCForm({ ...NDCForm, NgayCTu: dayjs(setValueDate(values)).format('YYYY-MM-DDTHH:mm:ss') })
+                              setNDCForm({ ...NDCForm, NgayCTu: dayjs(setValueDate(values)).format('YYYY-MM-DD') })
                             }}
                             sx={{
                               '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
@@ -398,10 +403,11 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                         </div>
                       </div>
                       <div className="flex items-center gap-1">
-                        <label className="text-sm required whitespace-nowrap min-w-[100px] flex justify-end">Kho hàng</label>
+                        <label className="text-sm required whitespace-nowrap min-w-[90px] flex justify-end">Kho hàng</label>
                         <Select
                           style={{ width: '100%' }}
                           showSearch
+                          optionFilterProp="children"
                           required
                           size="small"
                           value={NDCForm?.MaKho || undefined}
@@ -418,7 +424,7 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                           {dataKhoHang &&
                             dataKhoHang?.map((item) => (
                               <Select.Option key={item.MaKho} value={item.MaKho}>
-                                {item.ThongTinKho}
+                                {item.MaKho} - {item.TenKho}
                               </Select.Option>
                             ))}
                         </Select>
@@ -426,44 +432,43 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                     </div>
                     <div className="grid grid-cols-1 gap-2 px-2 border-2 py-2.5 border-black-200 rounded relative">
                       <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
-                      <div className="flex gap-1">
+                      <div className="flex gap-2 justify-center">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người tạo</label>
-                          <input className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-[1rem]" readOnly />
+                          <input className="px-2 2xl:w-[18rem] xl:w-[15rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm" disabled />
                         </div>
                         <div className="flex gap-1 items-center">
                           <label className="text-sm">Lúc</label>
-                          <input className="px-2 w-full resize-none rounded border outline-none text-[1rem]" readOnly />
+                          <input className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm" disabled />
                         </div>
                       </div>
-                      <div className="flex gap-1">
+                      <div className="flex gap-2 justify-center">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người sửa</label>
-                          <input className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-[1rem]" readOnly />
+                          <input className="px-2 2xl:w-[18rem] xl:w-[15rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm" disabled />
                         </div>
                         <div className="flex gap-1 items-center">
                           <label className="text-sm">Lúc</label>
-                          <input className="px-2 w-full resize-none rounded border outline-none text-[1rem]" readOnly />
+                          <input className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm" disabled />
                         </div>
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <label className="whitespace-nowrap min-w-[100px] text-sm flex justify-end">Ghi chú</label>
-                    <input
-                      type="text"
-                      className="px-2 w-[70rem] resize-none rounded border-[1px] hover:border-blue-500 outline-none text-[1rem]"
-                      name="GhiChu"
-                      value={NDCForm?.GhiChu || ''}
+                  <div className="flex items-center gap-1 px-1">
+                    <label className="whitespace-nowrap min-w-[90px] text-sm flex justify-end">Ghi chú</label>
+                    <Input
+                      size="small"
+                      className="w-full overflow-hidden whitespace-nowrap overflow-ellipsis"
+                      value={NDCForm?.GhiChu}
                       onChange={(e) =>
                         setNDCForm({
                           ...NDCForm,
-                          [e.target.name]: e.target.value,
+                          GhiChu: e.target.value,
                         })
                       }
                     />
                   </div>
-                  <div className="border-2 rounded relative">
+                  <div className="relative">
                     <EditTable
                       typeTable="create"
                       typeAction="create"
@@ -476,7 +481,7 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                     />
                     <Tooltip
                       placement="topLeft"
-                      title={isAdd ? 'Vui lòng chọn tên hàng!' : 'Bấm vào đây để thêm hàng mới hoặc F9 để chọn từ danh sách!'}
+                      title={isAdd ? 'Vui lòng chọn tên hàng.' : 'Bấm vào đây để thêm hàng mới hoặc F9 để chọn từ danh sách.'}
                       color={isAdd ? 'gray' : 'blue'}
                     >
                       <FloatButton
@@ -495,18 +500,14 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                 <div className="flex justify-between">
                   <div className="flex gap-2 justify-start">
                     <ActionButton
-                      handleAction={
-                        isAdd
-                          ? ''
-                          : () => {
-                              handleCreate(true, true)
-                            }
-                      }
+                      handleAction={() => {
+                        handleCreate(true, true)
+                      }}
                       title={'In Phiếu'}
-                      icon={<MdPrint className="w-5 h-5" />}
+                      // icon={<MdPrint className="w-5 h-5" />}
                       color={'slate-50'}
-                      background={isAdd ? 'gray-500' : 'purple-500'}
-                      color_hover={isAdd ? 'gray-500' : 'purple-500'}
+                      background={'purple-500'}
+                      color_hover={'purple-500'}
                       bg_hover={'white'}
                       isPermission={isAdd ? false : true}
                       isModal={true}
@@ -514,24 +515,24 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                   </div>
                   <div className="flex gap-2 justify-end">
                     <ActionButton
-                      handleAction={isAdd ? '' : () => handleCreate(true, false)}
+                      handleAction={() => handleCreate(true, false)}
                       title={'Lưu'}
                       isModal={true}
                       color={'slate-50'}
-                      background={isAdd ? 'gray-500' : 'blue-500'}
-                      color_hover={isAdd ? 'gray-500' : 'blue-500'}
+                      background={'blue-500'}
+                      color_hover={'blue-500'}
                       bg_hover={'white'}
-                      isPermission={isAdd ? false : true}
+                      isPermission={true}
                     />
                     <ActionButton
-                      handleAction={isAdd ? '' : () => handleCreate(false, false)}
-                      title={'Lưu & Đóng'}
+                      handleAction={() => handleCreate(false, false)}
+                      title={'Lưu & đóng'}
                       isModal={true}
                       color={'slate-50'}
-                      background={isAdd ? 'gray-500' : 'blue-500'}
-                      color_hover={isAdd ? 'gray-500' : 'blue-500'}
+                      background={'blue-500'}
+                      color_hover={'blue-500'}
                       bg_hover={'white'}
-                      isPermission={isAdd ? false : true}
+                      isPermission={true}
                     />
                     <ActionButton handleAction={close} title={'Đóng'} isModal={true} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
                   </div>
@@ -542,15 +543,15 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
           <div>
             {isShowModal &&
               (actionType === 'print' ? (
-                <NDCPrint close={() => setIsShowModal(false)} dataPrint={{ ...NDCForm, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss'), SoChungTu: SoCTu }} />
+                <NDCPrint close={() => setIsShowModal(false)} dataPrint={{ ...NDCForm, NgayCTu: dayjs(valueDate).format('YYYY-MM-DD'), SoChungTu: SoCTu }} />
               ) : (
                 <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col xl:w-[87vw] lg:w-[95vw] md:w-[95vw] min-h-[8rem] bg-white  p-2 rounded-xl shadow-custom overflow-hidden z-10">
                   <div className="flex flex-col gap-2 p-2 ">
                     <div className="flex items-center gap-2">
                       <div className="flex items-center gap-2 py-1">
                         <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
-                        <p className="text-blue-700 font-semibold uppercase">Danh Sách Hàng Hóa - Phiếu Nhập Điều Chỉnh</p>
-                        <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
+                        <p className="text-blue-700 font-semibold uppercase whitespace-nowrap md:text-[12px] lg:text-sm truncate">Danh Sách Hàng Hóa</p>
+                        <FaSearch className="hover:text-red-400 cursor-pointer md:text-[14px] lg:text-sm" onClick={() => setIsShowSearch(!isShowSearch)} />
                       </div>
                       <div className="flex w-[20rem] overflow-hidden">
                         {isShowSearch && (
@@ -559,14 +560,13 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                             value={searchHangHoa}
                             placeholder="Nhập ký tự bạn cần tìm"
                             onChange={handleSearch}
-                            className="px-2 py-0.5 w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[1px] hover:border-blue-500 outline-none text-[1rem]  "
+                            className="px-2 py-0.5 w-[20rem] border-slate-200 resize-none rounded border-[1px] hover:border-blue-500 outline-none text-sm"
                           />
                         )}
                       </div>
                     </div>
-                    <div className="border-2 p-2 rounded m-1 flex flex-col gap-2 max-h-[35rem]">
+                    <div className="p-2 rounded m-1 flex flex-col gap-2">
                       <Table
-                        bordered
                         className="table_HH"
                         columns={title}
                         dataSource={filteredHangHoa.map((record, index) => ({ ...record, key: index }))}
@@ -575,6 +575,7 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
                             handleChoose(record)
                           },
                         })}
+                        rowClassName={(record, index) => addRowClass(record, index)}
                         pagination={{
                           defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
                           showSizeChanger: true,

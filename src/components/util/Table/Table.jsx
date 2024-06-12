@@ -1,39 +1,41 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-undef */
 /* eslint-disable no-case-declarations */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { Table, Typography, Select, Form, Input, InputNumber, Popconfirm, Checkbox, Space, Button, Tooltip } from 'antd'
+import { Table, Typography, Select, Form, Input, InputNumber, Popconfirm, Checkbox, Tooltip } from 'antd'
 import './table.css'
 import BtnAction from './BtnAction'
 import { useEffect, useState } from 'react'
-import { FcServices } from 'react-icons/fc'
 import dayjs from 'dayjs'
-import { bool } from 'prop-types'
-
+import moment from 'moment'
+import HighlightedCell from '../../hooks/HighlightedCell'
+import { addRowClass } from '../../../action/Actions'
 const { Text } = Typography
-
-function Tables({ hiden, loadingSearch, param, columName, height, handleView, handleEdit, typeTable, handleAddData, handleDelete, handleChangePhieuThu, selectMH, textSearch }) {
+function Tables({ hidden, loadingSearch, param, columName, height, handleView, handleEdit, typeTable, handleAddData, handleDelete, handleChangePhieuThu, selectMH, textSearch }) {
   const [soLuong, setSoLuong] = useState(1)
-
   const DataColumns = param ? param[0] : []
-
   const keysOnly =
     typeTable !== 'listHelper'
-      ? Object.keys(DataColumns || []).filter((key) => key !== 'MaSoThue')
+      ? Object.keys(DataColumns || []).filter((key) => key !== 'MaSoThue' && key !== 'MaKho')
       : ['MaHang', 'TenHang', 'DVT', 'LapRap', 'TonKho', 'SoLuongTon', 'GiaBan', 'NhomHang']
 
   const ThongSo = JSON.parse(localStorage.getItem('ThongSo'))
-
   const [searchText, setSearchText] = useState('')
+
   useEffect(() => {
     setSearchText(textSearch)
   }, [textSearch])
 
   const renderHighlightedCell = (text) => {
-    if (!searchText || typeof text !== 'string' || !text.toLowerCase().includes(searchText.toLowerCase())) {
+    if (
+      !searchText ||
+      typeof text !== 'string' ||
+      !text.toLowerCase().includes(searchText.toLowerCase()) ||
+      (moment(!text).format('DD/MM/YYYY HH:mm:ss') || '').toLowerCase().includes(searchText.toLowerCase())
+    ) {
       return <div>{text}</div>
     }
-
     const parts = text.split(new RegExp(`(${searchText})`, 'gi'))
     return (
       <div>
@@ -46,73 +48,55 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
     )
   }
   keysOnly?.unshift('STT')
-  const listColumns = keysOnly?.filter((value) => !hiden?.includes(value))
+  const listColumns = keysOnly?.filter((value) => !hidden?.includes(value))
   const newColumns = listColumns?.map((item, index) => {
     if (item === 'STT') {
       return {
         title: columName[item] || item,
         width: 70,
         dataIndex: 'key',
+        fixed: 'left',
         key: index,
         showSorterTooltip: false,
         align: 'center',
-        ellipsis: {
-          showTitle: false,
-        },
-        render: (text, record, index) => (
-          <Tooltip placement="topLeft" title={index} className="truncate" color="blue">
-            {renderHighlightedCell(index + 1)}
-          </Tooltip>
-        ),
+        render: (text, record, index) => renderHighlightedCell(index + 1),
       }
     }
     if (item === 'DiaChi') {
       return {
         title: columName[item] || item,
-        width: 200,
-        dataIndex: item,
-        key: index,
-        sorter: (a, b) => a.DiaChi.localeCompare(b.DiaChi),
-        showSorterTooltip: false,
-        align: 'center',
-        // fixed: 'left',
-        ellipsis: {
-          showTitle: false,
-        },
-        render: (address) => (
-          <Tooltip placement="topLeft" title={address} className="truncate" color="blue">
-            {renderHighlightedCell(address)}
-          </Tooltip>
-        ),
-      }
-    }
-    if (item === 'NhomHang') {
-      return {
-        title: columName[item] || item,
         width: 250,
         dataIndex: item,
         key: index,
-        sorter: (a, b) => a.NhomHang.localeCompare(b.NhomHang),
+        sorter: (a, b) => (a.DiaChi || '').localeCompare(b.DiaChi || ''),
         showSorterTooltip: false,
         align: 'center',
-        // fixed: 'left',
-        ellipsis: {
-          showTitle: false,
-        },
-        render: (address) => (
-          <Tooltip placement="topLeft" title={address} className=" truncate" color="blue">
-            <div
-              style={{
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                textAlign: 'start',
-              }}
-            >
-              {renderHighlightedCell(address)}
-            </div>
-          </Tooltip>
-        ),
+        render: (address) => <div className="text-start whitespace-pre-wrap">{renderHighlightedCell(address)}</div>,
+      }
+    }
+    if (item === 'SoChungTu') {
+      return {
+        title: columName[item] || item,
+        width: 120,
+        dataIndex: item,
+        key: index,
+        fixed: 'left',
+        sorter: (a, b) => a.SoChungTu.localeCompare(b.SoChungTu),
+        showSorterTooltip: false,
+        align: 'center',
+        render: (address) => <div className="truncate text-start">{renderHighlightedCell(address)}</div>,
+      }
+    }
+    if (item === 'GhiChu') {
+      return {
+        title: columName[item] || item,
+        width: 280,
+        dataIndex: item,
+        key: index,
+        sorter: (a, b) => a.GhiChu.localeCompare(b.GhiChu),
+        showSorterTooltip: false,
+        align: 'center',
+        render: (address) => <div className="text-start whitespace-pre-wrap">{renderHighlightedCell(address)}</div>,
       }
     }
     if (item === 'TenHang' || item === 'ThongTinHangHoa' || item === 'DiaChiDoiTuong') {
@@ -124,45 +108,29 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
         sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
         showSorterTooltip: false,
         align: 'center',
-        ellipsis: {
-          showTitle: false,
-        },
         render: (address) => (
           <Tooltip placement="topLeft" title={address} className=" truncate" color="blue">
-            <div
-              style={{
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                textAlign: 'start',
-              }}
-            >
-              {address}
-            </div>
+            <div className="truncate text-start">{address}</div>
           </Tooltip>
         ),
       }
     }
-    // if (item === 'LapRap' || item === 'TonKho') {
-    //   return {
-    //     title: columName[item] || item,
-    //     width: 100,
-    //     dataIndex: item,
-    //     key: index,
-    //     sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
-    //     showSorterTooltip: false,
-    //     align: 'center',
-    //     // fixed: 'left',
-    //     ellipsis: {
-    //       showTitle: false,
-    //     },
-    //     render: (address) => (
-    //       <Tooltip placement="topLeft" title={address}>
-    //         {address}
-    //       </Tooltip>
-    //     ),
-    //   }
-    // }
+    if (item === 'TongMatHang') {
+      return {
+        title: columName[item] || item,
+        width: 150,
+        dataIndex: item,
+        key: index,
+        showSorterTooltip: false,
+        align: 'center',
+        sorter: (a, b) => a.TongMatHang - b.TongMatHang,
+        render: (text) => (
+          <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base' : text === 0 || text === null ? 'text-gray-300' : ''}`}>
+            <HighlightedCell text={text.toLocaleString('en-US')} search={searchText} />
+          </span>
+        ),
+      }
+    }
     if (item === 'NgayCTu' || item === 'DaoHan') {
       return {
         title: columName[item] || item,
@@ -172,9 +140,6 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
         align: 'center',
         sorter: (a, b) => dayjs(a[item]).unix() - dayjs(b[item]).unix(),
         showSorterTooltip: false,
-        ellipsis: {
-          showTitle: false,
-        },
         render: (text) => <div style={{ textAlign: 'center' }}>{renderHighlightedCell(text ? dayjs(text).format('DD/MM/YYYY') : '')}</div>,
       }
     }
@@ -199,47 +164,29 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
           }
         },
         showSorterTooltip: false,
-        ellipsis: {
-          showTitle: false,
-        },
-        render: (value) => (
-          <Tooltip placement="topLeft" title={value} className=" truncate" color="blue">
-            {renderHighlightedCell(value ? dayjs(value).format('DD/MM/YYYY hh:mm:ss') : '')}
-          </Tooltip>
-        ),
+        render: (value) => <>{renderHighlightedCell(value ? dayjs(value).format('DD/MM/YYYY HH:mm:ss') : '')}</>,
       }
     }
     if (item === 'NguoiSuaCuoi' || item === 'NguoiTao') {
       return {
         title: columName[item] || item,
-        width: 150,
+        width: 180,
         dataIndex: item,
         key: index,
-
         sorter: (a, b) => a[item]?.toString().localeCompare(b[item]?.toString()),
         showSorterTooltip: false,
         align: 'center',
-        ellipsis: {
-          showTitle: false,
-        },
-        render: (address) => (
-          <Tooltip placement="Center" title={address} className=" truncate" color="blue">
-            {renderHighlightedCell(address)}
-          </Tooltip>
-        ),
+        render: (address) => renderHighlightedCell(address),
       }
     }
     if (item === 'TongCong_TM' || item === 'TongCong_CN' || item === 'TongCong') {
       return {
         title: columName[item] || item,
-        width: 282,
+        width: 220,
         dataIndex: item,
         key: index,
         showSorterTooltip: false,
         align: 'center',
-        ellipsis: {
-          showTitle: false,
-        },
         render: (text) => {
           return (
             <div
@@ -264,7 +211,7 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
     const isTienColumn2 = item.includes('TongTongCong')
     const isTyLe = item.includes('TyLeCKTT')
     const isTongSoLuong = item.includes('SoLuong')
-    const isNumericColumn = isTienColumn || item.includes('Gia') || item.includes('Thue') || item.includes('TyLeCKTT') //TyLeCKTT
+    const isNumericColumn = isTienColumn || item.includes('Gia') || item.includes('Thue') || item.includes('TyLeCKTT')
     return {
       title: columName[item] || item,
       width:
@@ -336,20 +283,19 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
       },
     }
   })
-
   const columns = [
     ...newColumns,
-
     typeTable === 'listHelper' || typeTable === 'DSBH'
-      ? {}
+      ? null
       : {
-          title: 'Action',
+          title: 'Chức năng',
           key: 'operation',
           fixed: 'right',
+          align: 'center',
           width: 100,
           render: (record) => <BtnAction handleView={handleView} record={record} handleEdit={handleEdit} handleDelete={handleDelete} handleChangePhieuThu={handleChangePhieuThu} />,
         },
-  ]
+  ].filter((column) => column !== null)
 
   const mergedColumns = columns.map((col) => {
     if (!col.editable) {
@@ -359,23 +305,22 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
       ...col,
       onCell: (record) => {
         const cellValue = record[col.dataIndex]
-        let inputtype
+        let inputype
         if (typeof cellValue === 'number') {
-          inputtype = 'number'
+          inputype = 'number'
         } else if (typeof cellValue === 'boolean' && param !== null) {
-          inputtype = 'checkbox'
+          inputype = 'checkbox'
         } else if (col.dataIndex === 'MaHang' || col.dataIndex === 'DVT') {
-          inputtype = 'select'
+          inputype = 'select'
         } else {
-          inputtype = 'text'
+          inputype = 'text'
         }
-
         return {
           record,
-          inputtype,
+          inputype,
           dataIndex: col.dataIndex,
           title: col.title,
-          editing: isEditing(record),
+          // editing: isEditing(record),
         }
       },
     }
@@ -388,19 +333,18 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
   const [data, setData] = useState(originData)
   const initialSelectedRowKeys = [selectMH]
   const initialSelectedMaHangs = [selectMH]
-
   const [selectedRowKeys, setSelectedRowKeys] = useState(initialSelectedRowKeys)
   const [selectedMaHangs, setSelectedMaHangs] = useState(initialSelectedMaHangs)
 
   useEffect(() => {
     setData(originData)
     const setKey = originData?.filter((item) => initialSelectedRowKeys.includes(item.SoChungTu))
-
     setSelectedRowKeys(setKey?.map((item) => item.SoChungTu))
     setSelectedRecord(selectMH)
   }, [param, selectMH])
-  const [editingKey, setEditingKey] = useState('')
-  const isEditing = (record) => record.index === editingKey
+
+  // const [editingKey, setEditingKey] = useState('')
+  // const isEditing = (record) => record.index === editingKey
 
   const onRowClick = (record) => {
     return {
@@ -430,60 +374,45 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
       label: columName[keysOnly[i]] || keysOnly[i],
     })
   }
-
   const onSelectChange = (newSelectedRowKeys, selectedRows) => {
     const maHangs = selectedRows.map((record) => record.SoChungTu)
     const filteredMaHangs = maHangs.filter((maHang) => maHang !== null && maHang !== undefined)
     setSelectedMaHangs(filteredMaHangs)
     setSelectedRowKeys(newSelectedRowKeys)
   }
-
   const rowSelection = {
     selectedRowKeys,
     onChange: onSelectChange,
   }
-
   const [selectedRecord, setSelectedRecord] = useState(null)
-
   const handleRowClick = (record) => {
     setSelectedRecord(record.SoChungTu)
   }
   const onChangeInphutSL = (value) => {
     setSoLuong(value)
   }
-
   return (
     <>
-      {/* {typeTable !== 'listHelper' ? null : (
-        <div className="pb-2 flex gap-2">
-          <Text strong>Nhập số lượng cần thêm vào chi tiết :</Text>
-          <InputNumber min={1} max={999} onChange={onChangeInphutSL} size="small" />
-        </div>
-      )} */}
       <Form form={form} component={false}>
         {typeTable !== 'listHelper' ? (
           <Table
             loading={loadingSearch}
-            // rowSelection={rowSelection}
             className={height}
             columns={mergedColumns}
             dataSource={data}
-            // rowClassName="editable-row"
-
-            rowClassName={(record) => {
+            rowClassName={(record, index) => {
               if (record.SoChungTu === selectedRecord && typeTable !== 'DSBH') {
                 return 'highlight-row'
               }
-              return ''
+              return addRowClass(record, index)
             }}
-            bordered
             onRow={(record) => ({
               ...onRowClick(record),
               onClick: () => handleRowClick(record),
             })}
             scroll={{
               y: 300,
-              x: 200,
+              x: 'max-content',
             }}
             scrollToFirstRowOnChange
             size="small"
@@ -492,67 +421,71 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
                 ? () => (
                     <Table.Summary fixed="bottom">
                       <Table.Summary.Row>
-                        {/* <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"> {data.length + 1}</Table.Summary.Cell> */}
                         {columns
                           .filter((column) => column.render)
                           .map((column, index) => {
-                            const isNumericColumn = typeof data[0]?.[column.dataIndex] === 'number'
+                            const isNumericColumn = data?.length > 0 ? typeof data[0]?.[column.dataIndex] === 'number' : null
                             return (
                               <Table.Summary.Cell
                                 index={index}
                                 key={`summary-cell-${index + 1}`}
                                 align={isNumericColumn ? 'right' : 'left'}
-                                className="text-end font-bold  bg-[#f1f1f1]"
+                                className="text-end font-bold bg-[#f1f1f1]"
                               >
                                 {isNumericColumn ? (
-                                  column.dataIndex === 'TongSoLuong' ? (
-                                    <Text strong>
-                                      {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                        minimumFractionDigits: ThongSo.SOLESOLUONG,
-                                        maximumFractionDigits: ThongSo.SOLESOLUONG,
-                                      })}
-                                    </Text>
-                                  ) : [
-                                      'TongTienHang',
-                                      'TongTienThue',
-                                      'TongThanhTien',
-                                      'TongTienCKTT',
-                                      'TongTongCong',
-                                      'SoLuong',
-                                      'TienHang',
-                                      'TienThue',
-                                      'TienCKTT',
-                                      'TongCong_TM',
-                                      'TongCong_CN',
-                                      'TongCong',
-                                    ].includes(column.dataIndex) ? (
-                                    <Text strong>
-                                      {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                        minimumFractionDigits: ThongSo.SOLESOTIEN,
-                                        maximumFractionDigits: ThongSo.SOLESOTIEN,
-                                      })}
-                                    </Text>
-                                  ) : ['TyLeCKTT'].includes(column.dataIndex) ? (
-                                    <Text strong>
-                                      {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                        minimumFractionDigits: ThongSo.SOLETYLE,
-                                        maximumFractionDigits: ThongSo.SOLETYLE,
-                                      })}
-                                    </Text>
-                                  ) : column.dataIndex === 'key' ? (
-                                    <Text strong className="text-center">
-                                      {data.length}
-                                    </Text>
-                                  ) : (
-                                    <Text strong>
-                                      {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                        minimumFractionDigits: 0,
-                                        maximumFractionDigits: 0,
-                                      })}
-                                    </Text>
-                                  )
+                                  (() => {
+                                    const total = Number(data?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0))
+                                    return column.dataIndex === 'TongSoLuong' ? (
+                                      <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
+                                        {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                          minimumFractionDigits: ThongSo.SOLESOLUONG,
+                                          maximumFractionDigits: ThongSo.SOLESOLUONG,
+                                        })}
+                                      </Text>
+                                    ) : [
+                                        'TongTienHang',
+                                        'TongTienThue',
+                                        'TongThanhTien',
+                                        'TongTienCKTT',
+                                        'TongTongCong',
+                                        'SoLuong',
+                                        'TienHang',
+                                        'TienThue',
+                                        'TienCKTT',
+                                        'TongCong_TM',
+                                        'TongCong_CN',
+                                        'TongCong',
+                                      ].includes(column.dataIndex) ? (
+                                      <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
+                                        {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                          minimumFractionDigits: ThongSo.SOLESOTIEN,
+                                          maximumFractionDigits: ThongSo.SOLESOTIEN,
+                                        })}
+                                      </Text>
+                                    ) : ['TyLeCKTT'].includes(column.dataIndex) ? (
+                                      <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
+                                        {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                          minimumFractionDigits: ThongSo.SOLETYLE,
+                                          maximumFractionDigits: ThongSo.SOLETYLE,
+                                        })}
+                                      </Text>
+                                    ) : column.dataIndex === 'key' ? (
+                                      <Text strong className="flex justify-center text-white">
+                                        {data.length}
+                                      </Text>
+                                    ) : (
+                                      <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
+                                        {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                          minimumFractionDigits: 0,
+                                          maximumFractionDigits: 0,
+                                        })}
+                                      </Text>
+                                    )
+                                  })()
                                 ) : column.dataIndex === 'TTTienMat' ? (
-                                  <Text strong>{Object.values(data).filter((value) => value.TTTienMat).length}</Text>
+                                  <Text strong className="text-white">
+                                    {Object.values(data).filter((value) => value.TTTienMat).length}
+                                  </Text>
                                 ) : null}
                               </Table.Summary.Cell>
                             )
@@ -583,7 +516,7 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
             })}
             scroll={{
               y: 300,
-              x: 200,
+              x: 'max-content',
             }}
             scrollToFirstRowOnChange
             size="small"
@@ -596,11 +529,10 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
                           {/* <Table.Summary.Cell className="text-end font-bold  bg-[#f1f1f1]"></Table.Summary.Cell> */}
                           {columns
                             .filter((column) => column.render)
-                            .map((column) => {
+                            .map((column, index) => {
                               const isNumericColumn = typeof data[0]?.[column.dataIndex] === 'number'
-
                               return (
-                                <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                                <Table.Summary.Cell index={index} key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
                                   {isNumericColumn ? (
                                     <Text strong>
                                       {Number(data.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
@@ -618,14 +550,15 @@ function Tables({ hiden, loadingSearch, param, columName, height, handleView, ha
                   }
                 : null
             }
-            pagination={{
-              defaultPageSize: 50,
-              showSizeChanger: true,
-              pageSizeOptions: ['50', '100', '1000'],
-              onShowSizeChange: (current, size) => {
-                console.log(size, current, '???')
-              },
-            }}
+            // pagination={{
+            //   defaultPageSize: 50,
+            //   showSizeChanger: true,
+            //   pageSizeOptions: ['50', '100', '1000'],
+            //   onShowSizeChange: (current, size) => {
+            //     console.log(size, current, '???')
+            //   },
+            // }}
+            pagination={false}
           />
         )}
       </Form>

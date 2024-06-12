@@ -6,17 +6,17 @@ import { toast } from 'react-toastify'
 import * as apis from '../../apis'
 import { ModalTL, PermissionView } from '../../components_K'
 import ActionButton from '../../components/util/Button/ActionButton'
-import { RETOKEN } from '../../action/Actions'
+import { RETOKEN, addRowClass } from '../../action/Actions'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
 import { exportToExcel } from '../../action/Actions'
 import { CloseSquareFilled } from '@ant-design/icons'
-import { useNavigate } from 'react-router-dom'
 import { useSearchHH } from '../../components_K/myComponents/useSearchHH'
 
 const { Text } = Typography
-const { IoAddCircleOutline, IoIosRemoveCircleOutline, MdDelete, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill, CgCloseO } = icons
+
+const { IoAddCircleOutline, IoIosRemoveCircleOutline, MdDelete, BsSearch, TfiMoreAlt, MdEdit, FaEyeSlash, RiFileExcel2Fill } = icons
+
 const BangGiaKH = () => {
-  const navigate = useNavigate()
   const optionContainerRef = useRef(null)
   const [tableLoad, setTableLoad] = useState(true)
   const [isLoadingEdit, setIsLoadingEdit] = useState(true)
@@ -57,9 +57,7 @@ const BangGiaKH = () => {
         setIsShowOption(false)
       }
     }
-
     document.addEventListener('click', handleClickOutside)
-
     return () => {
       document.removeEventListener('click', handleClickOutside)
     }
@@ -69,7 +67,7 @@ const BangGiaKH = () => {
   useEffect(() => {
     setNewColumns(columns)
     // Lấy thông tin từ local storage sau khi đăng nhập
-    const storedHiddenColumns = localStorage.getItem('hidenColumnGKH')
+    const storedHiddenColumns = localStorage.getItem('hiddenColumnGKH')
     const parsedHiddenColumns = storedHiddenColumns ? JSON.parse(storedHiddenColumns) : null
 
     // Áp dụng thông tin đã lưu vào checkedList và setConfirmed để ẩn cột
@@ -81,8 +79,8 @@ const BangGiaKH = () => {
 
   useEffect(() => {
     if (confirmed) {
-      setCheckedList(JSON.parse(localStorage.getItem('hidenColumnGKH')))
-      setNewColumns(JSON.parse(localStorage.getItem('hidenColumnGKH')))
+      setCheckedList(JSON.parse(localStorage.getItem('hiddenColumnGKH')))
+      setNewColumns(JSON.parse(localStorage.getItem('hiddenColumnGKH')))
     }
   }, [confirmed])
 
@@ -92,37 +90,61 @@ const BangGiaKH = () => {
     setIsLoadingEdit(true)
     const fetchData = async () => {
       try {
-        console.log('get helper')
         const tokenLogin = localStorage.getItem('TKN')
-        if (actionType === 'create' || actionType === 'edit') {
-          console.log('get helper  KH,DT')
+        if (actionType === 'create') {
           const responseDT = await apis.ListHelperDTGKH(tokenLogin)
-          if (responseDT.data && responseDT.data.DataError === 0) {
-            setDataDoiTuong(responseDT.data.DataResults)
-            setIsLoadingModal(false)
-          } else if (responseDT.data.DataError === -1 || responseDT.data.DataError === -2 || responseDT.data.DataError === -3) {
-            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseDT.data.DataErrorDescription}</div>)
-            setIsLoadingModal(false)
-          } else if (responseDT.data.DataError === -107 || responseDT.data.DataError === -108) {
-            await RETOKEN()
-            fetchData()
-          } else {
-            toast.error(responseDT.data.DataErrorDescription)
-            setIsLoadingModal(false)
+          if (responseDT) {
+            const { DataError, DataErrorDescription, DataResults } = responseDT.data
+            if (DataError === 0) {
+              setDataDoiTuong(DataResults)
+              setIsLoadingModal(false)
+            } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+              toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+              setIsLoadingModal(false)
+            } else if (DataError === -107 || DataError === -108) {
+              await RETOKEN()
+              fetchData()
+            } else {
+              toast.error(DataErrorDescription)
+              setIsLoadingModal(false)
+            }
           }
+
           const responseNG = await apis.ListHelperNGGKH(tokenLogin)
-          if (responseNG.data && responseNG.data.DataError === 0) {
-            setDataNhomGia(responseNG.data.DataResults)
-            setIsLoadingModal(false)
-          } else if (responseNG.data.DataError === -1 || responseNG.data.DataError === -2 || responseNG.data.DataError === -3) {
-            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseNG.data.DataErrorDescription}</div>)
-            setIsLoadingModal(false)
-          } else if (responseNG.data.DataError === -107 || responseNG.data.DataError === -108) {
-            await RETOKEN()
-            fetchData()
-          } else {
-            toast.error(responseNG.data.DataErrorDescription)
-            setIsLoadingModal(false)
+          if (responseNG) {
+            const { DataError, DataErrorDescription, DataResults } = responseNG.data
+            if (DataError === 0) {
+              setDataNhomGia(DataResults)
+              setIsLoadingModal(false)
+            } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+              toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+              setIsLoadingModal(false)
+            } else if (DataError === -107 || DataError === -108) {
+              await RETOKEN()
+              fetchData()
+            } else {
+              toast.error(DataErrorDescription)
+              setIsLoadingModal(false)
+            }
+          }
+        }
+        if (actionType === 'edit') {
+          const responseNG = await apis.ListHelperNGGKH(tokenLogin)
+          if (responseNG) {
+            const { DataError, DataErrorDescription, DataResults } = responseNG.data
+            if (DataError === 0) {
+              setDataNhomGia(DataResults)
+              setIsLoadingModal(false)
+            } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+              toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+              setIsLoadingModal(false)
+            } else if (DataError === -107 || DataError === -108) {
+              await RETOKEN()
+              fetchData()
+            } else {
+              toast.error(DataErrorDescription)
+              setIsLoadingModal(false)
+            }
           }
         }
       } catch (error) {
@@ -147,20 +169,15 @@ const BangGiaKH = () => {
         console.log('đi')
         const tokenLogin = localStorage.getItem('TKN')
         const response = await apis.ChucNangQuyenHan(tokenLogin, 'ThietLap_NhomGiaDoiTuong')
-
-        if (response.data && response.data.DataError === 0) {
-          setDataQuyenHan(response.data)
+        if (response) {
+          const { DataError } = response.data
+          if (DataError === 0) {
+            setDataQuyenHan(response.data)
+          } else if (DataError === -107 || DataError === -108) {
+            await RETOKEN()
+            getChucNangQuyenHan()
+          }
         }
-        // else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        //   toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        // }
-        else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getChucNangQuyenHan()
-        }
-        // else {
-        //   toast.error(response.data.DataErrorDescription)
-        // }
       } catch (error) {
         console.error('Kiểm tra token thất bại', error)
       }
@@ -199,23 +216,24 @@ const BangGiaKH = () => {
   const getDSGKH = async () => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
-
       const response = await apis.DanhSachGKH(tokenLogin)
 
-      if (response.data && response.data.DataError === 0) {
-        setData(response.data.DataResults)
-        setTableLoad(false)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getDSGKH()
-        // setTableLoad(false)
-      } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        setTableLoad(false)
-      } else {
-        toast.error(response.data.DataErrorDescription)
-        setData([])
-        setTableLoad(false)
+      if (response) {
+        const { DataError, DataErrorDescription, DataResults } = response.data
+        if (DataError === 0) {
+          setData(DataResults)
+          setTableLoad(false)
+        } else if (DataError === -107 || DataError === -108) {
+          await RETOKEN()
+          getDSGKH()
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+          setTableLoad(false)
+        } else {
+          toast.error(DataErrorDescription)
+          setData([])
+          setTableLoad(false)
+        }
       }
     } catch (error) {
       console.error('Kiểm tra token thất bại', error)
@@ -227,21 +245,22 @@ const BangGiaKH = () => {
       const tokenLogin = localStorage.getItem('TKN')
 
       const response = await apis.DanhSachFullGKH(tokenLogin)
-
-      if (response.data && response.data.DataError === 0) {
-        setDataFull(response.data.DataResults)
-        setTableLoad(false)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getDSGKH()
-        // setTableLoad(false)
-      } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        setTableLoad(false)
-      } else {
-        toast.error(response.data.DataErrorDescription)
-        setDataFull([])
-        setTableLoad(false)
+      if (response) {
+        const { DataError, DataErrorDescription, DataResults } = response.data
+        if (DataError === 0) {
+          setDataFull(DataResults)
+          setTableLoad(false)
+        } else if (DataError === -107 || DataError === -108) {
+          await RETOKEN()
+          getDSGKH()
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+          setTableLoad(false)
+        } else {
+          toast.error(DataErrorDescription)
+          setDataFull([])
+          setTableLoad(false)
+        }
       }
     } catch (error) {
       console.error('Kiểm tra token thất bại', error)
@@ -270,12 +289,12 @@ const BangGiaKH = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
-          <Tooltip title={text} color="blue" placement="top">
-            <span>
-              <HighlightedCell text={text} search={searchGKH} />
-            </span>
-          </Tooltip>
+        <div className=" text-start">
+          {/* <Tooltip title={text} color="blue" placement="top"> */}
+          <span>
+            <HighlightedCell text={text} search={searchGKH} />
+          </span>
+          {/* </Tooltip> */}
         </div>
       ),
     },
@@ -284,7 +303,6 @@ const BangGiaKH = () => {
       dataIndex: 'TenDoiTuong',
       key: 'TenDoiTuong',
       width: 250,
-
       sorter: (a, b) => a.TenDoiTuong.localeCompare(b.TenDoiTuong),
       showSorterTooltip: false,
       align: 'center',
@@ -320,12 +338,12 @@ const BangGiaKH = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
-          <Tooltip title={text} color="blue" placement="top">
-            <span>
-              <HighlightedCell text={text} search={searchGKH} />
-            </span>
-          </Tooltip>
+        <div className=" text-start">
+          {/* <Tooltip title={text} color="blue" placement="top"> */}
+          <span>
+            <HighlightedCell text={text} search={searchGKH} />
+          </span>
+          {/* </Tooltip> */}
         </div>
       ),
     },
@@ -342,7 +360,7 @@ const BangGiaKH = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className="truncate text-start">
+        <div className=" text-start">
           <HighlightedCell text={text} search={searchGKH} />
         </div>
       ),
@@ -451,7 +469,13 @@ const BangGiaKH = () => {
     value: key,
   }))
 
-  const newColumnsHide = columns.filter((item) => !newColumns.includes(item.dataIndex))
+  const newColumnsHide = columns.filter((item) => {
+    if (newColumns && newColumns.length > 0) {
+      return !newColumns.includes(item.dataIndex)
+    } else {
+      return true
+    }
+  })
 
   const handleHideColumns = () => {
     setNewColumns(checkedList)
@@ -508,7 +532,6 @@ const BangGiaKH = () => {
     setSelectedRowKeys(newSelectedRowKeys)
   }
 
-  console.log(selectedRowKeys)
   return (
     <>
       {dataQuyenHan?.VIEW === false ? (
@@ -587,7 +610,7 @@ const BangGiaKH = () => {
                             defaultValue={checkedList}
                             onChange={(value) => {
                               setCheckedList(value)
-                              localStorage.setItem('hidenColumnGKH', JSON.stringify(value))
+                              localStorage.setItem('hiddenColumnGKH', JSON.stringify(value))
                             }}
                           >
                             <Row className="flex justify-center">
@@ -667,16 +690,16 @@ const BangGiaKH = () => {
                   x: 1500,
                   y: 410,
                 }}
-                bordered
-                pagination={{
-                  defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                  showSizeChanger: true,
-                  pageSizeOptions: ['50', '100', '1000'],
-                  onShowSizeChange: (current, size) => {
-                    localStorage.setItem('pageSize', size)
-                  },
-                }}
-                rowClassName={(record) => (`${record.MaDoiTuong}/${record.HieuLucTu}` === doneGKH ? 'highlighted-row' : '')}
+                // pagination={{
+                //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
+                //   showSizeChanger: true,
+                //   pageSizeOptions: ['50', '100', '1000'],
+                //   onShowSizeChange: (current, size) => {
+                //     localStorage.setItem('pageSize', size)
+                //   },
+                // }}
+                pagination={false}
+                rowClassName={(record, index) => (`${record.MaDoiTuong}/${record.HieuLucTu}` === doneGKH ? 'highlighted-row' : addRowClass(record, index))}
                 rowKey={(record) => `${record.MaDoiTuong}/${record.HieuLucTu}`}
                 onRow={(record) => ({
                   onClick: () => {
@@ -691,15 +714,22 @@ const BangGiaKH = () => {
                   return (
                     <Table.Summary fixed="bottom">
                       <Table.Summary.Row>
+                        <Table.Summary.Cell index={0} key="summary-cell-0" className=""></Table.Summary.Cell>
+
                         {newColumnsHide
                           .filter((column) => column.render)
-                          .map((column) => {
+                          .map((column, index) => {
                             const isNumericColumn = typeof filteredGKH[0]?.[column.dataIndex] === 'number'
 
                             return (
-                              <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                              <Table.Summary.Cell
+                                index={index + 1}
+                                key={`summary-cell-${index}`}
+                                align={isNumericColumn ? 'right' : 'left'}
+                                className="text-end font-bold  bg-[#f1f1f1]"
+                              >
                                 {column.dataIndex === 'STT' ? (
-                                  <Text className="text-center flex justify-center" strong>
+                                  <Text className="text-center flex justify-center text-white" strong>
                                     {showFull === 'Hiện hành' ? data.length : dataFull.length}
                                   </Text>
                                 ) : null}

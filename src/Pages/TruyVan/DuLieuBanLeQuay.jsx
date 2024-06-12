@@ -1,10 +1,9 @@
 import { useEffect, useState, useRef } from 'react'
-import { Table, Tooltip, Input, Typography, Segmented } from 'antd'
-import icons from '../../untils/icons'
+import { Table, Tooltip, Input, Typography, Segmented, Radio } from 'antd'
 import { toast } from 'react-toastify'
 import * as apis from '../../apis'
 
-import { RETOKEN, formatCurrency, formatPrice } from '../../action/Actions'
+import { RETOKEN, addRowClass, formatCurrency, formatPrice } from '../../action/Actions'
 import HighlightedCell from '../../components/hooks/HighlightedCell'
 import dayjs from 'dayjs'
 import { CloseSquareFilled } from '@ant-design/icons'
@@ -14,7 +13,7 @@ import { DateField } from '@mui/x-date-pickers'
 import SimpleBackdrop from '../../components/util/Loading/LoadingPage'
 import moment from 'moment'
 const { Text } = Typography
-const { BsSearch } = icons
+// const { BsSearch } = icons
 
 const DuLieuBLQ = () => {
   const optionContainerRef = useRef(null)
@@ -22,7 +21,7 @@ const DuLieuBLQ = () => {
   const [tableLoadChild, setTableLoadChild] = useState(false)
   const [tableLoadTT, setTableLoadTT] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
-  const [isShowSearch, setIsShowSearch] = useState(false)
+  const [isShowSearch] = useState(false)
   const [isShowOption, setIsShowOption] = useState(false)
   const [dataQuayCa, setDataQuayCa] = useState([])
   const [dataBLQ, setDataBLQ] = useState([])
@@ -36,7 +35,7 @@ const DuLieuBLQ = () => {
   const [isShowNotify, setIsShowNotify] = useState(false)
   const [prevdateValue, setPrevDateValue] = useState({})
   const [lastSearchTime, setLastSearchTime] = useState(0)
-  const [showFull, setShowFull] = useState('Hiện hành')
+  const [typeData, setTypeData] = useState('Phiếu bán hàng')
   const [isChanging, setIsChanging] = useState(false)
   const [timerId, setTimerId] = useState(null)
   const [firtQuayCa, setFirtQuayCa] = useState('')
@@ -50,8 +49,10 @@ const DuLieuBLQ = () => {
   }
   const [setSearchDuLieuTT, filteredDuLieuTT, searchDuLieuTT] = useSearch(transformedDataSource?.Details)
 
-  const [formKhoanNgay, setFormKhoanNgay] = useState({})
-  const [formPBLQ, setFormPBLQ] = useState({})
+  const [formKhoanNgay, setFormKhoanNgay] = useState({
+    TrangThaiChotCa: 0,
+  })
+  const formPBLQ = {}
 
   // bỏ focus option thì hidden
   useEffect(() => {
@@ -82,7 +83,7 @@ const DuLieuBLQ = () => {
   }, [dataQuayCa])
 
   useEffect(() => {
-    if (dataBLQ && dataBLQ.length > 0) {
+    if (dataBLQ && dataBLQ.length > 0 && typeData === 'Phiếu bán hàng') {
       const sct = dataBLQ[0].SoChungTu
       const record = null
       setFirtBLQ(dataBLQ[0].SoChungTu)
@@ -91,6 +92,8 @@ const DuLieuBLQ = () => {
       }
       const newTimerId = setTimeout(() => {
         getThongTin(record, sct)
+        console.log('useEffect')
+
         setTableLoadTT(true)
       }, 300)
 
@@ -137,18 +140,21 @@ const DuLieuBLQ = () => {
         const tokenLogin = localStorage.getItem('TKN')
         const response = await apis.KhoanNgay(tokenLogin)
 
-        if (response.data && response.data.DataError === 0) {
-          setFormKhoanNgay(response.data)
-          setIsLoading(false)
-        } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-          setIsLoading(false)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getKhoanNgay()
-        } else {
-          toast.error(response.data.DataErrorDescription)
-          setIsLoading(false)
+        if (response) {
+          const { DataError, DataErrorDescription } = response.data
+          if (DataError === 0) {
+            setFormKhoanNgay({ ...formKhoanNgay, NgayBatDau: response.data.NgayBatDau, NgayKetThuc: response.data.NgayKetThuc })
+            setIsLoading(false)
+          } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+            setIsLoading(false)
+          } else if (DataError === -107 || DataError === -108) {
+            await RETOKEN()
+            getKhoanNgay()
+          } else {
+            toast.error(DataErrorDescription)
+            setIsLoading(false)
+          }
         }
       } catch (error) {
         console.error('Kiểm tra token thất bại', error)
@@ -171,19 +177,23 @@ const DuLieuBLQ = () => {
       const tokenLogin = localStorage.getItem('TKN')
 
       const response = await apis.DanhSachBLQ(tokenLogin, formKhoanNgay)
-      if (response.data && response.data.DataError === 0) {
-        setDataQuayCa(response.data.DataResults)
-        setTableLoad(false)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        getDSQuayCa()
-      } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        setTableLoad(false)
-      } else {
-        toast.error(response.data.DataErrorDescription)
-        setDataQuayCa([])
-        setTableLoad(false)
+
+      if (response) {
+        const { DataError, DataErrorDescription, DataResults } = response.data
+        if (DataError === 0) {
+          setDataQuayCa(DataResults)
+          setTableLoad(false)
+        } else if (DataError === -107 || DataError === -108) {
+          await RETOKEN()
+          getDSQuayCa()
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+          setTableLoad(false)
+        } else {
+          toast.error(DataErrorDescription)
+          setDataQuayCa([])
+          setTableLoad(false)
+        }
       }
     } catch (error) {
       console.error('Kiểm tra token thất bại', error)
@@ -198,7 +208,7 @@ const DuLieuBLQ = () => {
       key: 'NgayCTu',
       align: 'center',
       render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY')} search={searchDuLieuQuayCa} />,
-      width: 150,
+      width: 100,
       sorter: (a, b) => {
         const dateA = new Date(a.NgayCTu)
         const dateB = new Date(b.NgayCTu)
@@ -270,7 +280,7 @@ const DuLieuBLQ = () => {
       render: (text, record, index) => <div style={{ textAlign: 'center' }}>{index + 1}</div>,
     },
     {
-      title: 'Số Phiếu',
+      title: 'Số phiếu',
       dataIndex: 'SoChungTu',
       key: 'SoChungTu',
       width: 150,
@@ -421,7 +431,98 @@ const DuLieuBLQ = () => {
       dataIndex: 'NgayTao',
       key: 'NgayTao',
       align: 'center',
-      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY')} search={searchDuLieuBLQ} />,
+      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY hh:mm:ss')} search={searchDuLieuBLQ} />,
+      width: 150,
+      sorter: (a, b) => {
+        const dateA = new Date(a.NgayTao)
+        const dateB = new Date(b.NgayTao)
+        return dateA - dateB
+      },
+      showSorterTooltip: false,
+    },
+    {
+      title: 'Chứng từ gộp',
+      dataIndex: 'SoChungTuTH',
+      key: 'SoChungTuTH',
+      width: 150,
+      fixed: 'right',
+      sorter: (a, b) => {
+        const SoChungTuTHA = a.SoChungTuTH || ''
+        const SoChungTuTHB = b.SoChungTuTH || ''
+
+        return SoChungTuTHA.localeCompare(SoChungTuTHB)
+      },
+      showSorterTooltip: false,
+      align: 'center',
+      render: (text) => (
+        <div style={{ textAlign: 'start' }}>
+          <HighlightedCell text={text} search={searchDuLieuBLQ} />
+        </div>
+      ),
+    },
+  ]
+
+  const columnChild1_1 = [
+    {
+      title: 'STT',
+      dataIndex: 'STT',
+      key: 'STT',
+      width: 60,
+      hight: 10,
+      fixed: 'left',
+      align: 'center',
+      render: (text, record, index) => <div style={{ textAlign: 'center' }}>{index + 1}</div>,
+    },
+    {
+      title: 'Số phiếu',
+      dataIndex: 'SoChungTu',
+      key: 'SoChungTu',
+      width: 150,
+      fixed: 'left',
+      sorter: (a, b) => a.SoChungTu.localeCompare(b.SoChungTu),
+      showSorterTooltip: false,
+      align: 'center',
+      render: (text) => (
+        <div style={{ textAlign: 'start' }}>
+          <HighlightedCell text={text} search={searchDuLieuBLQ} />
+        </div>
+      ),
+    },
+    {
+      title: 'Diễn giải',
+      dataIndex: 'GhiChu',
+      key: 'GhiChu',
+      width: 250,
+      align: 'center',
+      sorter: (a, b) => a.GhiChu.localeCompare(b.GhiChu),
+      showSorterTooltip: false,
+      render: (text) => (
+        <div className="text-start truncate">
+          <HighlightedCell text={text} search={searchDuLieuBLQ} />
+        </div>
+      ),
+    },
+    {
+      title: 'Số tiền',
+      dataIndex: 'SoTien',
+      key: 'SoTien',
+      width: 200,
+      align: 'center',
+      sorter: (a, b) => a.SoTien - b.SoTien,
+      showSorterTooltip: false,
+      render: (text) => (
+        <div className={`text-end ${text < 0 ? 'text-red-600 ' : text === 0 ? 'text-gray-300' : ''} `}>
+          <HighlightedCell text={formatPrice(text, dataThongSo.SOLESOTIEN)} search={searchDuLieuBLQ} />
+        </div>
+      ),
+    },
+
+    {
+      title: 'Tạo lúc',
+      dataIndex: 'NgayTao',
+      key: 'NgayTao',
+      align: 'center',
+      render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY hh:mm:ss')} search={searchDuLieuBLQ} />,
       width: 150,
       sorter: (a, b) => {
         const dateA = new Date(a.NgayTao)
@@ -455,12 +556,12 @@ const DuLieuBLQ = () => {
   const columnChild2 = [
     {
       title: 'STT',
-      dataIndex: 'STT',
-      key: 'STT',
+      dataIndex: 'Dong',
+      key: 'Dong',
       width: 80,
       fixed: 'left',
       align: 'center',
-      render: (text) => <div style={{ textAlign: 'center' }}>{text}</div>,
+      render: (text, record, index) => <div style={{ textAlign: 'center' }}>{index + 1}</div>,
     },
     {
       title: 'Số phiếu',
@@ -480,12 +581,14 @@ const DuLieuBLQ = () => {
     },
     {
       title: 'Dòng',
-      dataIndex: 'Dong',
-      key: 'Dong',
+      dataIndex: 'STT',
+      key: 'STT',
       width: 80,
       fixed: 'left',
       align: 'center',
-      render: (text, record, index) => <div style={{ textAlign: 'center' }}>{index + 1}</div>,
+      render: (text) => <div style={{ textAlign: 'center' }}>{text}</div>,
+      sorter: (a, b) => a.STT - b.STT,
+      showSorterTooltip: false,
     },
     {
       title: 'Mã hàng',
@@ -511,7 +614,7 @@ const DuLieuBLQ = () => {
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       showSorterTooltip: false,
       render: (text) => (
-        <div style={{ textAlign: 'start' }}>
+        <div className="text-start truncate">
           <HighlightedCell text={text} search={searchDuLieuTT} />
         </div>
       ),
@@ -574,7 +677,7 @@ const DuLieuBLQ = () => {
       showSorterTooltip: false,
     },
     {
-      title: '% thuế',
+      title: '% Thuế',
       dataIndex: 'TyLeThue',
       key: 'TyLeThue',
       width: 100,
@@ -626,6 +729,7 @@ const DuLieuBLQ = () => {
     setLastSearchTime(currentTime)
     setTableLoadChild(true)
     getDSBLQ(record)
+    setFirtQuayCa(`${record.NgayCTu}/${record.NhanVien}`)
   }
 
   const getDSBLQ = async (record, formDF) => {
@@ -633,10 +737,20 @@ const DuLieuBLQ = () => {
       const tokenLogin = localStorage.getItem('TKN')
       let response
 
-      if (record) {
-        response = await apis.DanhSachPhieuBLQ(tokenLogin, { ...formPBLQ, NgayCTu: record.NgayCTu, Quay: record.Quay, Ca: record.Ca, NhanVien: record.NhanVien })
-      } else {
-        response = await apis.DanhSachPhieuBLQ(tokenLogin, formDF)
+      const requestData = record ? { ...formPBLQ, NgayCTu: record.NgayCTu, Quay: record.Quay, Ca: record.Ca, NhanVien: record.NhanVien } : formDF
+
+      switch (typeData) {
+        case 'Phiếu bán hàng':
+          response = await (record ? apis.DanhSachPhieuBLQ(tokenLogin, requestData) : apis.DanhSachPhieuBLQ(tokenLogin, formDF))
+          break
+        case 'Phiếu chi':
+          response = await (record ? apis.DanhSachPhieuChiQ(tokenLogin, requestData) : apis.DanhSachPhieuChiQ(tokenLogin, formDF))
+          break
+        case 'Phiếu thu':
+          response = await (record ? apis.DanhSachPhieuThuQ(tokenLogin, requestData) : apis.DanhSachPhieuThuQ(tokenLogin, formDF))
+          break
+        default:
+          break
       }
 
       if (response) {
@@ -664,12 +778,11 @@ const DuLieuBLQ = () => {
 
   const handleViewThongTin = (record) => {
     const currentTime = Date.now()
-    if (currentTime - lastSearchTime < 1000) {
-      return
-    }
+    if (currentTime - lastSearchTime < 1000 || typeData !== 'Phiếu bán hàng') return
     setLastSearchTime(currentTime)
     setTableLoadTT(true)
     getThongTin(record)
+    setFirtBLQ(record.SoChungTu)
   }
 
   const getThongTin = async (record, sct) => {
@@ -773,9 +886,9 @@ const DuLieuBLQ = () => {
               <div className="relative text-lg flex justify-between items-center mb-1">
                 <div className="flex items-center gap-x-4 font-bold">
                   <h1 className="w-full text-xl uppercase truncate">Dữ liệu bán lẻ tại các quầy</h1>
-                  <div>
+                  {/* <div>
                     <BsSearch size={18} className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
-                  </div>
+                  </div> */}
                 </div>
                 <div className="flex  ">
                   {isShowSearch && (
@@ -797,14 +910,14 @@ const DuLieuBLQ = () => {
                 </div>
                 {/*  */}
               </div>
-              <div className="flex justify-between items-center pl-2  ">
-                <div className="flex flex-col gap-y-2 ">
+              <div className="flex justify-between items-center  ">
+                <div className="flex  gap-1 ">
                   {/* DatePicker */}
-                  <div className="flex gap-3">
-                    <div className="flex gap-x-2 items-center">
+                  <div className="flex gap-2">
+                    <div className="flex gap-x-1 items-center">
                       <label htmlFor="">Ngày</label>
                       <DateField
-                        className="DatePicker_PMH max-w-[110px]"
+                        className="DatePicker_PMH  max-w-[115px]"
                         format="DD/MM/YYYY"
                         value={dayjs(formKhoanNgay.NgayBatDau)}
                         onChange={(newDate) => {
@@ -838,10 +951,10 @@ const DuLieuBLQ = () => {
                         }}
                       />
                     </div>
-                    <div className="flex gap-x-2 items-center">
+                    <div className="flex gap-x-1 items-center">
                       <label htmlFor="">Đến</label>
                       <DateField
-                        className="DatePicker_PMH max-w-[110px]"
+                        className="DatePicker_PMH  max-w-[115px] "
                         format="DD/MM/YYYY"
                         value={dayjs(formKhoanNgay.NgayKetThuc)}
                         onChange={(newDate) => {
@@ -875,21 +988,49 @@ const DuLieuBLQ = () => {
                       />
                     </div>
                   </div>
+                  {/* trạng thái chốt ca */}
+                  <div className="flex  truncate">
+                    <Radio.Group
+                      onChange={(e) => {
+                        if (!isChanging) {
+                          setIsChanging(true)
+                          setFormKhoanNgay({
+                            ...formKhoanNgay,
+                            TrangThaiChotCa: e.target.value,
+                          })
+                          setTableLoad(true)
+                          setTimeout(() => {
+                            setIsChanging(false)
+                          }, 1500)
+                        }
+                      }}
+                      value={formKhoanNgay?.TrangThaiChotCa}
+                    >
+                      <Radio className="md:w-[60px] lg:w-auto truncate" value={0}>
+                        Chưa tổng hợp
+                      </Radio>
+                      <Radio className="md:w-[44px] lg:w-auto truncate" value={1}>
+                        Đã tổng hợp
+                      </Radio>
+                      <Radio value={2}>Tất cả</Radio>
+                    </Radio.Group>
+                  </div>
                 </div>
 
                 <Segmented
                   options={['Phiếu bán hàng', 'Phiếu thu', 'Phiếu chi']}
-                  value={showFull}
-                  // onChange={(value) => {
-                  //   if (!isChanging) {
-                  //     setIsChanging(true)
-                  //     setShowFull(value)
-                  //     setTableLoad(true)
-                  //     setTimeout(() => {
-                  //       setIsChanging(false)
-                  //     }, 1000)
-                  //   }
-                  // }}
+                  size="small"
+                  value={typeData}
+                  onChange={(value) => {
+                    if (!isChanging) {
+                      setIsChanging(true)
+                      setTypeData(value)
+                      setTableLoad(true)
+                      setTimeout(() => {
+                        setIsChanging(false)
+                      }, 1000)
+                    }
+                  }}
                 />
               </div>
               <div id="my-table" className="pt-2 flex gap-2 ">
@@ -904,13 +1045,11 @@ const DuLieuBLQ = () => {
                       x: 'max-content',
                       y: 300,
                     }}
-                    bordered
                     pagination={false}
-                    rowClassName={(record) => (`${record.NgayCTu}/${record.NhanVien}` === firtQuayCa ? 'highlighted-row' : '')}
+                    rowClassName={(record, index) => (`${record.NgayCTu}/${record.NhanVien}` === firtQuayCa ? 'highlighted-row' : addRowClass(record, index))}
                     rowKey={(record) => `${record.NgayCTu}/${record.NhanVien}`}
                     onRow={(record) => ({
                       onDoubleClick: () => handleView(record),
-                      onClick: () => setFirtQuayCa(`${record.NgayCTu}/${record.NhanVien}`),
                     })}
                     summary={() => {
                       return (
@@ -937,126 +1076,196 @@ const DuLieuBLQ = () => {
                   ></Table>
                 </div>
                 <div className="w-[66vw] ">
-                  <div>
-                    <Table
-                      loading={tableLoadChild}
-                      className="BLQ_child1"
-                      columns={columnChild1}
-                      dataSource={filteredDuLieuBLQ}
-                      size="small"
-                      scroll={{
-                        x: 'max-content',
-                        y: 200,
-                      }}
-                      bordered
-                      rowClassName={(record) => (record.SoChungTu === firtBLQ ? 'highlighted-row' : '')}
-                      rowKey={(record) => record.SoChungTu}
-                      onRow={(record) => ({
-                        onDoubleClick: () => handleViewThongTin(record),
-                        onClick: () => setFirtBLQ(record.SoChungTu),
-                      })}
-                      pagination={false}
-                      summary={() => {
-                        return (
-                          <Table.Summary fixed="bottom">
-                            <Table.Summary.Row>
-                              {columnChild1
-                                .filter((column) => column.render)
-                                .map((column) => {
-                                  const isNumericColumn = typeof filteredDuLieuBLQ[0]?.[column.dataIndex] === 'number'
-                                  return (
-                                    <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
-                                      {column.dataIndex === 'TyLeCKTT' ? (
-                                        <Text strong>
-                                          {Number(filteredDuLieuBLQ.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                            minimumFractionDigits: dataThongSo?.SOLETYLE,
-                                            maximumFractionDigits: dataThongSo?.SOLETYLE,
-                                          })}
-                                        </Text>
-                                      ) : column.dataIndex === 'TongTienHang' ||
-                                        column.dataIndex === 'TongTienThue' ||
-                                        column.dataIndex === 'TongThanhTien' ||
-                                        column.dataIndex === 'TongTienCKTT' ||
-                                        column.dataIndex === 'TongTongCong' ||
-                                        column.dataIndex === 'KhachTra' ||
-                                        column.dataIndex === 'HoanLai' ? (
-                                        <Text strong>
-                                          {Number(filteredDuLieuBLQ.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                            minimumFractionDigits: dataThongSo?.SOLESOTIEN,
-                                            maximumFractionDigits: dataThongSo?.SOLESOTIEN,
-                                          })}
-                                        </Text>
-                                      ) : column.dataIndex === 'SoChungTu' ? (
-                                        <Text strong>{Object.values(dataBLQ).filter((value) => value.SoChungTu).length}</Text>
-                                      ) : null}
-                                    </Table.Summary.Cell>
-                                  )
-                                })}
-                            </Table.Summary.Row>
-                          </Table.Summary>
-                        )
-                      }}
-                    ></Table>
-                  </div>
-                  <div className="mt-1">
-                    <Table
-                      loading={tableLoadTT}
-                      className="BLQ_child2"
-                      columns={columnChild2}
-                      dataSource={filteredDuLieuTT}
-                      size="small"
-                      scroll={{
-                        x: 'max-content',
-                        y: 200,
-                      }}
-                      bordered
-                      pagination={false}
-                      summary={() => {
-                        return !transformedDataSource.Details ? null : (
-                          <Table.Summary fixed="bottom">
-                            <Table.Summary.Row>
-                              {columnChild2
-                                .filter((column) => column.render)
-                                .map((column) => {
-                                  const isNumericColumn = typeof filteredDuLieuTT[0]?.[column.dataIndex] === 'number'
-                                  return (
-                                    <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
-                                      {column.dataIndex === 'TyLeThue' ? (
-                                        <Text strong>
-                                          {Number(filteredDuLieuTT.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                            minimumFractionDigits: dataThongSo?.SOLETYLE,
-                                            maximumFractionDigits: dataThongSo?.SOLETYLE,
-                                          })}
-                                        </Text>
-                                      ) : column.dataIndex === 'SoLuong' ? (
-                                        <Text strong>
-                                          {Number(filteredDuLieuTT.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                            minimumFractionDigits: dataThongSo?.SOLESOLUONG,
-                                            maximumFractionDigits: dataThongSo?.SOLESOLUONG,
-                                          })}
-                                        </Text>
-                                      ) : column.dataIndex === 'DonGia' ||
-                                        column.dataIndex === 'TienHang' ||
-                                        column.dataIndex === 'TienThue' ||
-                                        column.dataIndex === 'ThanhTien' ? (
-                                        <Text strong>
-                                          {Number(filteredDuLieuTT.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                            minimumFractionDigits: dataThongSo?.SOLESOTIEN,
-                                            maximumFractionDigits: dataThongSo?.SOLESOTIEN,
-                                          })}
-                                        </Text>
-                                      ) : column.dataIndex === 'MaHang' ? (
-                                        <Text strong>{Object.values(transformedDataSource?.Details).filter((value) => value.MaHang).length}</Text>
-                                      ) : null}
-                                    </Table.Summary.Cell>
-                                  )
-                                })}
-                            </Table.Summary.Row>
-                          </Table.Summary>
-                        )
-                      }}
-                    ></Table>
-                  </div>
+                  {typeData === 'Phiếu bán hàng' ? (
+                    <>
+                      <div>
+                        <Table
+                          loading={tableLoadChild}
+                          className="BLQ_child1"
+                          columns={columnChild1}
+                          dataSource={filteredDuLieuBLQ}
+                          size="small"
+                          scroll={{
+                            x: 'max-content',
+                            y: 200,
+                          }}
+                          rowClassName={(record, index) => (record.SoChungTu === firtBLQ ? 'highlighted-row' : addRowClass(record, index))}
+                          rowKey={(record) => record.SoChungTu}
+                          onRow={(record) => ({
+                            onDoubleClick: () => handleViewThongTin(record),
+                          })}
+                          pagination={false}
+                          summary={() => {
+                            return (
+                              <Table.Summary fixed="bottom">
+                                <Table.Summary.Row>
+                                  {columnChild1
+                                    .filter((column) => column.render)
+                                    .map((column, index) => {
+                                      const isNumericColumn = typeof filteredDuLieuBLQ[0]?.[column.dataIndex] === 'number'
+                                      const total = Number(filteredDuLieuBLQ?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0))
+
+                                      return (
+                                        <Table.Summary.Cell
+                                          index={index}
+                                          key={`summary-cell-${index + 1}`}
+                                          align={isNumericColumn ? 'right' : 'left'}
+                                          className="text-end font-bold  bg-[#f1f1f1]"
+                                        >
+                                          {column.dataIndex === 'TyLeCKTT' ? (
+                                            <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : ''}>
+                                              {Number(filteredDuLieuBLQ.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                                minimumFractionDigits: dataThongSo?.SOLETYLE,
+                                                maximumFractionDigits: dataThongSo?.SOLETYLE,
+                                              })}
+                                            </Text>
+                                          ) : column.dataIndex === 'TongTienHang' ||
+                                            column.dataIndex === 'TongTienThue' ||
+                                            column.dataIndex === 'TongThanhTien' ||
+                                            column.dataIndex === 'TongTienCKTT' ||
+                                            column.dataIndex === 'TongTongCong' ||
+                                            column.dataIndex === 'KhachTra' ||
+                                            column.dataIndex === 'HoanLai' ? (
+                                            <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
+                                              {Number(filteredDuLieuBLQ.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                                minimumFractionDigits: dataThongSo?.SOLESOTIEN,
+                                                maximumFractionDigits: dataThongSo?.SOLESOTIEN,
+                                              })}
+                                            </Text>
+                                          ) : column.dataIndex === 'SoChungTu' ? (
+                                            <Text strong className="text-white">
+                                              {Object.values(dataBLQ).filter((value) => value.SoChungTu).length}
+                                            </Text>
+                                          ) : null}
+                                        </Table.Summary.Cell>
+                                      )
+                                    })}
+                                </Table.Summary.Row>
+                              </Table.Summary>
+                            )
+                          }}
+                        ></Table>
+                      </div>
+                      <div className="mt-1">
+                        <Table
+                          loading={tableLoadTT}
+                          className="BLQ_child2"
+                          columns={columnChild2}
+                          dataSource={filteredDuLieuTT}
+                          size="small"
+                          rowClassName={(record, index) => addRowClass(record, index)}
+                          scroll={{
+                            x: 'max-content',
+                            y: 200,
+                          }}
+                          pagination={false}
+                          summary={() => {
+                            return !transformedDataSource.Details ? null : (
+                              <Table.Summary fixed="bottom">
+                                <Table.Summary.Row>
+                                  {columnChild2
+                                    .filter((column) => column.render)
+                                    .map((column, index) => {
+                                      const isNumericColumn = typeof filteredDuLieuTT[0]?.[column.dataIndex] === 'number'
+                                      const total = Number(filteredDuLieuTT?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0))
+
+                                      return (
+                                        <Table.Summary.Cell
+                                          index={index}
+                                          key={`summary-cell-${index + 1}`}
+                                          align={isNumericColumn ? 'right' : 'left'}
+                                          className="text-end font-bold  bg-[#f1f1f1]"
+                                        >
+                                          {column.dataIndex === 'TyLeThue' ? (
+                                            <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
+                                              {Number(filteredDuLieuTT.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                                minimumFractionDigits: dataThongSo?.SOLETYLE,
+                                                maximumFractionDigits: dataThongSo?.SOLETYLE,
+                                              })}
+                                            </Text>
+                                          ) : column.dataIndex === 'SoLuong' ? (
+                                            <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
+                                              {Number(filteredDuLieuTT.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                                minimumFractionDigits: dataThongSo?.SOLESOLUONG,
+                                                maximumFractionDigits: dataThongSo?.SOLESOLUONG,
+                                              })}
+                                            </Text>
+                                          ) : column.dataIndex === 'DonGia' ||
+                                            column.dataIndex === 'TienHang' ||
+                                            column.dataIndex === 'TienThue' ||
+                                            column.dataIndex === 'ThanhTien' ? (
+                                            <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
+                                              {Number(filteredDuLieuTT.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                                minimumFractionDigits: dataThongSo?.SOLESOTIEN,
+                                                maximumFractionDigits: dataThongSo?.SOLESOTIEN,
+                                              })}
+                                            </Text>
+                                          ) : column.dataIndex === 'MaHang' ? (
+                                            <Text strong className="text-white">
+                                              {Object.values(transformedDataSource?.Details).filter((value) => value.MaHang).length}
+                                            </Text>
+                                          ) : null}
+                                        </Table.Summary.Cell>
+                                      )
+                                    })}
+                                </Table.Summary.Row>
+                              </Table.Summary>
+                            )
+                          }}
+                        ></Table>
+                      </div>
+                    </>
+                  ) : (
+                    <div>
+                      <Table
+                        loading={tableLoadChild}
+                        className="BLQ_child1_1"
+                        columns={columnChild1_1}
+                        dataSource={filteredDuLieuBLQ}
+                        size="small"
+                        scroll={{
+                          x: 'max-content',
+                          y: 200,
+                        }}
+                        bordered
+                        rowClassName={(record) => (record.SoChungTu === firtBLQ ? 'highlighted-row' : '')}
+                        rowKey={(record) => record.SoChungTu}
+                        onRow={(record) => ({
+                          onDoubleClick: () => handleViewThongTin(record),
+                        })}
+                        pagination={false}
+                        summary={() => {
+                          return (
+                            <Table.Summary fixed="bottom">
+                              <Table.Summary.Row>
+                                {columnChild1_1
+                                  .filter((column) => column.render)
+                                  .map((column) => {
+                                    const isNumericColumn = typeof filteredDuLieuBLQ[0]?.[column.dataIndex] === 'number'
+                                    return (
+                                      <Table.Summary.Cell key={column.key} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                                        {column.dataIndex === 'SoTien' ? (
+                                          <Text strong className="text-white">
+                                            {Number(filteredDuLieuBLQ.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                              minimumFractionDigits: dataThongSo?.SOLESOTIEN,
+                                              maximumFractionDigits: dataThongSo?.SOLESOTIEN,
+                                            })}
+                                          </Text>
+                                        ) : column.dataIndex === 'SoChungTu' ? (
+                                          <Text strong className="text-white">
+                                            {Object.values(dataBLQ).filter((value) => value.SoChungTu).length}
+                                          </Text>
+                                        ) : null}
+                                      </Table.Summary.Cell>
+                                    )
+                                  })}
+                              </Table.Summary.Row>
+                            </Table.Summary>
+                          )
+                        }}
+                      ></Table>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

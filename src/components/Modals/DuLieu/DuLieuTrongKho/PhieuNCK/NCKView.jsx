@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from 'react'
 import moment from 'moment'
-import { MdPrint } from 'react-icons/md'
+// import { MdPrint } from 'react-icons/md'
 const { Text } = Typography
 import { Table, Tooltip, Typography } from 'antd'
 import NCKPrint from './NCKPrint'
@@ -67,7 +67,7 @@ const NCKView = ({ close, dataNCK }) => {
       title: 'Mã hàng',
       dataIndex: 'MaHang',
       key: 'MaHang',
-      width: 150,
+      width: 100,
       showSorterTooltip: false,
       align: 'center',
       sorter: (a, b) => a.MaHang.localeCompare(b.MaHang),
@@ -81,29 +81,15 @@ const NCKView = ({ close, dataNCK }) => {
       showSorterTooltip: false,
       align: 'center',
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
-      render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-              textAlign: 'start',
-            }}
-          >
-            {text}
-          </div>
-        </Tooltip>
-      ),
+      render: (text) => <div className="text-start whitespace-pre-wrap">{text}</div>,
     },
     {
-      title: 'Đơn vị tính',
+      title: 'ĐVT',
       dataIndex: 'DVT',
       key: 'DVT',
       showSorterTooltip: false,
       align: 'center',
-      width: 120,
+      width: 100,
       sorter: (a, b) => a.DVT.localeCompare(b.DVT),
       render: (text) => <span className="flex justify-center"> {text}</span>,
     },
@@ -131,25 +117,25 @@ const NCKView = ({ close, dataNCK }) => {
           <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 z-10">
             <div className="overlay bg-gray-800 bg-opacity-80 w-screen h-screen fixed top-0 left-0 right-0 bottom-0"></div>
             <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col bg-white p-2 rounded shadow-custom overflow-hidden">
-              <div className="flex flex-col gap-2 py-1 px-2 xl:w-[80vw] lg:w-[90vw] md:w-[95vw] ">
+              <div className="flex flex-col gap-2 py-1 px-2 xl:w-[80vw] lg:w-[90vw] md:w-[95vw]">
                 <div className="flex gap-2">
                   <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
                   <p className="text-blue-700 font-semibold uppercase">Thông tin - Phiếu Nhập Chuyển Kho</p>
                 </div>
-                <div className="flex flex-col gap-2 border-2 px-1 py-2.5">
-                  <div className="grid grid-cols-2 items-center gap-2">
+                <div className="flex flex-col gap-2 border-gray-400 border-1 py-2.5">
+                  <div className="grid grid-cols-2 items-center gap-2 px-1">
                     <div className="flex flex-col gap-2">
                       <div className="flex gap-2">
                         <div className="flex items-center gap-1">
                           <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Số chứng từ</label>
-                          <input type="text" value={dataNCKView?.SoChungTu || ''} className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate" readOnly />
+                          <input type="text" value={dataNCKView?.SoChungTu || ''} className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate" readOnly />
                         </div>
                         <div className="flex items-center gap-1">
-                          <label className="required whitespace-nowrap text-sm">Ngày C.Từ</label>
+                          <label className="required whitespace-nowrap text-sm">Ngày</label>
                           <input
                             type="text"
                             value={moment(dataNCKView?.NgayCTu)?.format('DD/MM/YYYY') || ''}
-                            className="px-2 w-[7rem] rounded resize-none border outline-none text-[1rem] text-center truncate"
+                            className="px-2 w-[7rem] rounded-[3px] resize-none border outline-none text-sm text-center truncate"
                             readOnly
                           />
                         </div>
@@ -159,25 +145,25 @@ const NCKView = ({ close, dataNCK }) => {
                         <input
                           type="text"
                           value={`${dataNCKView?.MaKho} - ${dataNCKView?.TenKho}` || ''}
-                          className="px-2 w-full rounded resize-none border outline-none text-[1rem]"
+                          className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm"
                           readOnly
                         />
                       </div>
                       <div className="flex items-center gap-1">
                         <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Chứng từ gốc</label>
-                        <input type="text" value={dataNCKView?.SoThamChieu || ''} className="px-2 w-full rounded resize-none border outline-none text-[1rem]" readOnly />
+                        <input type="text" value={dataNCKView?.SoThamChieu || ''} className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm" readOnly />
                       </div>
                     </div>
-                    <div className="grid grid-cols-1 gap-2 border-2 px-2 py-3 border-black-200 rounded relative">
+                    <div className="grid grid-cols-1 gap-2.5 border-2 px-2 py-3 border-black-200 rounded relative">
                       <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
-                      <div className="flex gap-1">
+                      <div className="flex gap-2 justify-center">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người tạo</label>
                           <Tooltip title={dataNCKView?.NguoiTao} color="blue">
                             <input
-                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-[1rem] overflow-ellipsis truncate"
+                              className="px-2 2xl:w-[18rem] xl:w-[16rem] lg:w-[11rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm overflow-ellipsis truncate"
                               value={dataNCKView?.NguoiTao || ''}
-                              readOnly
+                              disabled
                             />
                           </Tooltip>
                         </div>
@@ -185,21 +171,21 @@ const NCKView = ({ close, dataNCK }) => {
                           <label className="text-sm">Lúc</label>
                           <Tooltip title={moment(dataNCKView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''} color="blue">
                             <input
-                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
+                              className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate text-center"
                               value={moment(dataNCKView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
-                              readOnly
+                              disabled
                             />
                           </Tooltip>
                         </div>
                       </div>
-                      <div className="flex gap-1">
+                      <div className="flex gap-2 justify-center">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người sửa</label>
                           <Tooltip title={dataNCKView?.NguoiSuaCuoi} color="blue">
                             <input
-                              className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border  outline-none text-[1rem] overflow-ellipsis truncate"
+                              className="px-2 2xl:w-[18rem] xl:w-[16rem] lg:w-[11rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm overflow-ellipsis truncate"
                               value={dataNCKView?.NguoiSuaCuoi || ''}
-                              readOnly
+                              disabled
                             />
                           </Tooltip>
                         </div>
@@ -207,79 +193,77 @@ const NCKView = ({ close, dataNCK }) => {
                           <label className="text-sm">Lúc</label>
                           <Tooltip title={dataNCKView?.NgaySuaCuoi ? moment(dataNCKView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''} color="blue">
                             <input
-                              className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
+                              className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate text-center"
                               value={dataNCKView?.NgaySuaCuoi ? moment(dataNCKView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                              readOnly
+                              disabled
                             />
                           </Tooltip>
                         </div>
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1 px-1">
                     <label className="whitespace-nowrap min-w-[100px] flex justify-end text-sm">Ghi chú</label>
-                    <input type="text" value={dataNCKView?.GhiChu || ''} className="px-2 w-[70rem] rounded resize-none border outline-none text-[1rem]" readOnly />
+                    <input type="text" value={dataNCKView?.GhiChu || ''} className="px-2 w-[70rem] rounded-[3px] resize-none border outline-none text-sm" readOnly />
                   </div>
-                  <div className="border rounded">
-                    <Table
-                      className="table_view"
-                      columns={title}
-                      dataSource={dataNCKView?.DataDetails?.map((item, index) => ({ ...item, key: index }))}
-                      size="small"
-                      scroll={{
-                        x: 1000,
-                        y: 300,
-                      }}
-                      bordered
-                      pagination={false}
-                      summary={() => {
-                        return (
-                          <Table.Summary fixed="bottom">
-                            <Table.Summary.Row>
-                              {title
-                                .filter((column) => column.render)
-                                .map((column, index) => {
-                                  const isNumericColumn = typeof dataNCKView?.DataDetails[0]?.[column.dataIndex] === 'number'
 
-                                  return (
-                                    <Table.Summary.Cell
-                                      index={index}
-                                      key={`summary-cell-${index + 1}`}
-                                      align={isNumericColumn ? 'right' : 'left'}
-                                      className="text-end font-bold  bg-[#f1f1f1]"
-                                    >
-                                      {isNumericColumn ? (
-                                        column.dataIndex === 'SoLuong' ? (
-                                          <Text strong>
-                                            {Number(dataNCKView?.DataDetails?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                              minimumFractionDigits: dataThongSo?.SOLESOLUONG,
-                                              maximumFractionDigits: dataThongSo?.SOLESOLUONG,
-                                            })}
-                                          </Text>
-                                        ) : (
-                                          <Text strong>
-                                            {Number(dataNCKView?.DataDetails?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                              minimumFractionDigits: 0,
-                                              maximumFractionDigits: 0,
-                                            })}
-                                          </Text>
-                                        )
-                                      ) : null}
-                                    </Table.Summary.Cell>
-                                  )
-                                })}
-                            </Table.Summary.Row>
-                          </Table.Summary>
-                        )
-                      }}
-                    ></Table>
-                  </div>
+                  <Table
+                    className="table_view"
+                    columns={title}
+                    dataSource={dataNCKView?.DataDetails?.map((item, index) => ({ ...item, key: index }))}
+                    size="small"
+                    scroll={{
+                      x: 1000,
+                      y: 300,
+                    }}
+                    pagination={false}
+                    summary={() => {
+                      return (
+                        <Table.Summary fixed="bottom">
+                          <Table.Summary.Row>
+                            {title
+                              .filter((column) => column.render)
+                              .map((column, index) => {
+                                const isNumericColumn = typeof dataNCKView?.DataDetails[0]?.[column.dataIndex] === 'number'
+
+                                return (
+                                  <Table.Summary.Cell
+                                    index={index}
+                                    key={`summary-cell-${index + 1}`}
+                                    align={isNumericColumn ? 'right' : 'left'}
+                                    className="text-end font-bold  bg-[#f1f1f1]"
+                                  >
+                                    {isNumericColumn ? (
+                                      column.dataIndex === 'SoLuong' ? (
+                                        <Text strong className="text-white">
+                                          {Number(dataNCKView?.DataDetails?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                            minimumFractionDigits: dataThongSo?.SOLESOLUONG,
+                                            maximumFractionDigits: dataThongSo?.SOLESOLUONG,
+                                          })}
+                                        </Text>
+                                      ) : (
+                                        <Text strong className="text-white">
+                                          {Number(dataNCKView?.DataDetails?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                                            minimumFractionDigits: 0,
+                                            maximumFractionDigits: 0,
+                                          })}
+                                        </Text>
+                                      )
+                                    ) : null}
+                                  </Table.Summary.Cell>
+                                )
+                              })}
+                          </Table.Summary.Row>
+                        </Table.Summary>
+                      )
+                    }}
+                  ></Table>
                 </div>
                 <div className="flex justify-between">
                   <div>
                     <ActionButton
                       handleAction={handlePrint}
-                      icon={<MdPrint className="w-5 h-5" />}
+                      // icon={<MdPrint className="w-5 h-5" />}
                       title={'In Phiếu'}
                       color={'slate-50'}
                       background={'purple-500'}

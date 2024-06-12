@@ -3,14 +3,17 @@
 import { useEffect, useState } from 'react'
 import moment from 'moment'
 import { FaSearch } from 'react-icons/fa'
-import { Table, Tooltip } from 'antd'
+import { Input, Table, Tooltip, Typography } from 'antd'
+const { Text } = Typography
+import { CloseSquareFilled } from '@ant-design/icons'
 import categoryAPI from '../../../../../API/linkAPI'
 import logo from '../../../../../assets/VTS-iSale.ico'
-import { RETOKEN } from '../../../../../action/Actions'
+import { RETOKEN, addRowClass } from '../../../../../action/Actions'
 import ActionButton from '../../../../util/Button/ActionButton'
 import SimpleBackdrop from '../../../../util/Loading/LoadingPage'
 import { useSearch } from '../../../../hooks/Search'
 import { toast } from 'react-toastify'
+import HighlightedCell from '../../../../hooks/HighlightedCell'
 
 const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
   const TokenAccess = localStorage.getItem('TKN')
@@ -22,13 +25,14 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
   const [tableLoad, setTableLoad] = useState(true)
   const [isShowModal, setIsShowModal] = useState(false)
   const [isShowSearch, setIsShowSearch] = useState(false)
+  const [targetRowXL, setTargetRowXL] = useState('')
   const [setSearchHangHoa, filteredHangHoa, searchHangHoa] = useSearch(dataNCKUnconfirm)
 
   useEffect(() => {
     const listUnconfirmed = async () => {
       try {
-        const response = await categoryAPI.ListChuaDuyetNCK(TokenAccess)
-        if (response.data.DataError == 0) {
+        const response = await categoryAPI.ListChuaDuyet(TokenAccess)
+        if (response.data && response.data.DataError == 0) {
           setDataNCKUnconfirm(response.data.DataResults)
           setIsLoading(true)
           setTableLoad(false)
@@ -45,10 +49,8 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
         setIsLoading(true)
       }
     }
-    if (tableLoad || !isLoading) {
-      listUnconfirmed()
-    }
-  }, [isLoading, tableLoad])
+    listUnconfirmed()
+  }, [searchHangHoa, targetRowXL])
 
   useEffect(() => {
     setTargetRow([])
@@ -64,10 +66,15 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
     }
     return ''
   }
+
   const handleSearch = (event) => {
-    setTableLoad(true)
-    setSearchHangHoa(event.target.value)
+    let timerId
+    clearTimeout(timerId)
+    timerId = setTimeout(() => {
+      setSearchHangHoa(event.target.value)
+    }, 300)
   }
+
   function formatDateTime(inputDate, includeTime = false) {
     const date = new Date(inputDate)
     const day = date.getDate().toString().padStart(2, '0')
@@ -82,7 +89,6 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
     }
     return formattedDateTime
   }
-
   const handleView = async (record) => {
     setIsShowModal(true)
     try {
@@ -90,9 +96,6 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
       if (response.data.DataError == 0) {
         setDataXCKView(response.data.DataResult)
         setTableLoad(false)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        handleView()
       }
     } catch (error) {
       console.error(error)
@@ -102,21 +105,18 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
   }
   const handleConfirm = async () => {
     try {
-      const response = await categoryAPI.DuyetPhieuNCK(dataXCKView?.SoChungTu, TokenAccess)
+      const response = await categoryAPI.DuyetPhieuXuLy(dataXCKView.SoChungTu, TokenAccess)
       if (response.data.DataError == 0) {
         loadingData()
         setTableLoad(true)
         toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
         setTargetRow(response.data.DataResults[0].SoChungTu)
+        setTargetRowXL(response.data.DataResults[0].SoChungTu)
         setIsShowModal(false)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        handleView()
       }
     } catch (error) {
       console.error(error)
       toast.error('Lỗi Server vui lòng thử lại', { autoClose: 1000 })
-      close()
     }
   }
 
@@ -125,6 +125,7 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
       title: 'STT',
       render: (text, record, index) => index + 1,
       width: 80,
+      dataIndex: 'STT',
       align: 'center',
       fixed: 'left',
     },
@@ -137,7 +138,11 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
       fixed: 'left',
       align: 'center',
       sorter: (a, b) => a.SoChungTu.localeCompare(b.SoChungTu),
-      render: (text) => <span className="flex justify-center"> {text}</span>,
+      render: (text) => (
+        <span className="flex justify-center">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </span>
+      ),
     },
     {
       title: 'Ngày chứng từ',
@@ -151,7 +156,11 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
         const dateB = new Date(b.NgayCTu)
         return dateA - dateB
       },
-      render: (text) => <span className="flex justify-center">{formatDateTime(text)}</span>,
+      render: (text) => (
+        <span className="flex justify-center">
+          <HighlightedCell text={formatDateTime(text)} search={searchHangHoa} />
+        </span>
+      ),
     },
     {
       title: 'Kho chuyển',
@@ -159,9 +168,13 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
       key: 'MaKho',
       showSorterTooltip: false,
       align: 'center',
-      width: 120,
+      width: 100,
       sorter: (a, b) => a.MaKho.localeCompare(b.MaKho),
-      render: (text) => <span className="flex justify-center"> {text}</span>,
+      render: (text) => (
+        <span className="flex justify-center">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </span>
+      ),
     },
     {
       title: 'Số mặt hàng ',
@@ -173,7 +186,7 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
       align: 'center',
       render: (text) => (
         <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base' : text === 0 || text === null ? 'text-gray-300' : ''}`}>
-          {formatThapPhan(text, dataThongSo.SOLESOLUONG)}
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
         </span>
       ),
     },
@@ -181,47 +194,28 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
       title: 'Ghi chú',
       dataIndex: 'GhiChu',
       key: 'GhiChu',
+      width: 280,
       showSorterTooltip: false,
       align: 'center',
       sorter: (a, b) => (a.GhiChu?.toString() || '').localeCompare(b.GhiChu?.toString() || ''),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              display: 'flex',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-              justifyContent: 'start',
-            }}
-          >
-            {text}
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
       title: 'Người tạo',
       dataIndex: 'NguoiTao',
-      width: 200,
+      width: 180,
       key: 'NguoiTao',
       align: 'center',
       showSorterTooltip: false,
       sorter: (a, b) => a.NguoiTao.localeCompare(b.NguoiTao),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-            }}
-          >
-            {text}
-          </div>
-        </Tooltip>
+        <div className="truncate">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -229,36 +223,31 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
       dataIndex: 'NgayTao',
       key: 'NgayTao',
       align: 'center',
-      width: 180,
+      width: 150,
       showSorterTooltip: false,
       sorter: (a, b) => {
         const dateA = new Date(a.NgayTao)
         const dateB = new Date(b.NgayTao)
         return dateA - dateB
       },
-      render: (text) => <span className="flex justify-center">{formatDateTime(text, true)}</span>,
+      render: (text) => (
+        <span className="flex justify-center">
+          <HighlightedCell text={formatDateTime(text, true)} search={searchHangHoa} />
+        </span>
+      ),
     },
     {
       title: 'Người sửa',
       dataIndex: 'NguoiSuaCuoi',
       key: 'NguoiSuaCuoi',
       align: 'center',
-      width: 200,
+      width: 180,
       showSorterTooltip: false,
       sorter: (a, b) => (a.NguoiSuaCuoi?.toString() || '').localeCompare(b.NguoiSuaCuoi?.toString() || ''),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-            }}
-          >
-            {text}
-          </div>
-        </Tooltip>
+        <div className="truncate">
+          <HighlightedCell text={text} search={searchHangHoa} />{' '}
+        </div>
       ),
     },
     {
@@ -266,14 +255,18 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
       dataIndex: 'NgaySuaCuoi',
       key: 'NgaySuaCuoi',
       align: 'center',
-      width: 180,
+      width: 150,
       showSorterTooltip: false,
       sorter: (a, b) => {
         const dateA = new Date(a.NgaySuaCuoi)
         const dateB = new Date(b.NgaySuaCuoi)
         return dateA - dateB
       },
-      render: (text) => <span className="flex justify-center">{text ? formatDateTime(text, true) : ''}</span>,
+      render: (text) => (
+        <span className="flex justify-center">
+          <HighlightedCell text={text ? formatDateTime(text, true) : ''} search={searchHangHoa} />
+        </span>
+      ),
     },
   ]
   const titleXDC = [
@@ -281,6 +274,7 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
       title: 'STT',
       render: (text, record, index) => index + 1,
       width: 80,
+      dataIndex: 'STT',
       align: 'center',
     },
     {
@@ -303,27 +297,17 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       render: (text) => (
         <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-              textAlign: 'start',
-            }}
-          >
-            {text}
-          </div>
+          <div className="text-start whitespace-pre-wrap">{text}</div>
         </Tooltip>
       ),
     },
     {
-      title: 'Đơn vị tính',
+      title: 'ĐVT',
       dataIndex: 'DVT',
       key: 'DVT',
       showSorterTooltip: false,
       align: 'center',
-      width: 120,
+      width: 100,
       sorter: (a, b) => a.DVT.localeCompare(b.DVT),
       render: (text) => <span className="flex justify-center"> {text}</span>,
     },
@@ -355,39 +339,67 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
                 <div className="flex gap-2 items-center">
                   <div className="flex gap-2 items-center">
                     <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
-                    <p className="text-blue-700 font-semibold uppercase py-1">Danh Sách Chưa Duyệt</p>
+                    <p className="text-blue-700 font-semibold uppercase py-2">Danh Sách Chưa Duyệt</p>
                     <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
                   </div>
                   <div className="flex w-[20rem] overflow-hidden">
                     {isShowSearch && (
-                      <input
-                        type="text"
-                        value={searchHangHoa}
+                      <Input
+                        allowClear={{
+                          clearIcon: <CloseSquareFilled />,
+                        }}
                         placeholder="Nhập ký tự bạn cần tìm"
-                        onChange={handleSearch}
-                        className="px-2 py-0.5 w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[1px] hover:border-blue-500 outline-none text-[1rem]  "
+                        onBlur={handleSearch}
+                        onPressEnter={handleSearch}
+                        className="w-full"
                       />
                     )}
                   </div>
                 </div>
-                <div className="flex flex-col gap-2 border rounded px-1 py-2.5">
+                <div className="table_NCKConfirm flex flex-col gap-2 border-gray-400 border-1 rounded  ">
                   <Table
                     loading={tableLoad}
-                    className="table_view"
                     columns={title}
                     dataSource={filteredHangHoa?.map((item, index) => ({ ...item, key: index }))}
                     size="small"
                     scroll={{
-                      x: 1800,
+                      x: 'max-content',
                       y: 300,
                     }}
-                    bordered
+                    rowClassName={(record, index) => addRowClass(record, index)}
                     onRow={(record) => ({
                       onDoubleClick: () => {
                         handleView(record)
                       },
                     })}
                     pagination={false}
+                    summary={() => {
+                      return (
+                        <Table.Summary fixed="bottom">
+                          <Table.Summary.Row>
+                            {title
+                              .filter((column) => column.render)
+                              .map((column, index) => {
+                                const isNumericColumn = typeof filteredHangHoa[0]?.[column.dataIndex] == 'number'
+                                return (
+                                  <Table.Summary.Cell
+                                    index={index}
+                                    key={`summary-cell-${index + 1}`}
+                                    align={isNumericColumn ? 'right' : 'left'}
+                                    className="text-end font-bold  bg-[#f1f1f1]"
+                                  >
+                                    {column.dataIndex == 'STT' ? (
+                                      <Text className="text-center flex justify-center text-white" strong>
+                                        {dataNCKUnconfirm?.length}
+                                      </Text>
+                                    ) : null}
+                                  </Table.Summary.Cell>
+                                )
+                              })}
+                          </Table.Summary.Row>
+                        </Table.Summary>
+                      )
+                    }}
                   ></Table>
                 </div>
                 <div className="flex justify-end gap-2">
@@ -400,50 +412,55 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
           </div>
           <div>
             {isShowModal ? (
-              <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col xl:w-[87vw] lg:w-[95vw] md:w-[95vw] min-h-[8rem] bg-white  p-2 rounded-xl shadow-custom overflow-hidden z-10">
+              <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col xl:w-[80vw] lg:w-[95vw] md:w-[95vw] min-h-[8rem] bg-white  p-2 rounded-xl shadow-custom overflow-hidden z-10">
                 <div className="flex flex-col gap-2 p-2 ">
                   <div className="flex items-center gap-2">
                     <div className="flex items-center gap-2 py-1">
                       <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
-                      <p className="text-blue-700 font-semibold uppercase">Thông tin xác nhận- Phiếu Xuất Chuyển Kho</p>
+                      <p className="text-blue-700 font-semibold uppercase">Thông tin xác nhận - Phiếu Xuất Chuyển Kho</p>
                     </div>
                   </div>
-                  <div className="flex flex-col gap-2 border-2 px-1 py-2.5">
-                    <div className="grid grid-cols-2 items-center gap-2">
+                  <div className="flex flex-col gap-2 border-gray-400 border-1 py-2.5">
+                    <div className="grid grid-cols-2 items-center gap-2 px-1">
                       <div className="flex flex-col gap-3">
                         <div className="flex gap-2">
                           <div className="flex items-center gap-1">
-                            <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Số chứng từ</label>
-                            <input type="text" value={dataXCKView?.SoChungTu || ''} className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate" readOnly />
+                            <label className="required whitespace-nowrap min-w-[90px] flex justify-end text-sm">Số chứng từ</label>
+                            <input
+                              type="text"
+                              value={dataXCKView?.SoChungTu || ''}
+                              className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate"
+                              readOnly
+                            />
                           </div>
                           <div className="flex items-center gap-1">
-                            <label className="required whitespace-nowrap text-sm">Ngày C.Từ</label>
+                            <label className="required whitespace-nowrap text-sm">Ngày</label>
                             <input
                               type="text"
                               value={moment(dataXCKView?.NgayCTu)?.format('DD/MM/YYYY') || ''}
-                              className="px-2 w-[7rem] rounded resize-none border outline-none text-[1rem] text-center truncate"
+                              className="px-2 w-[7rem] rounded-[3px] resize-none border outline-none text-sm text-center truncate"
                               readOnly
                             />
                           </div>
                         </div>
                         <div className="flex items-center gap-1">
-                          <label className="required whitespace-nowrap min-w-[100px] flex justify-end text-sm">Kho hàng</label>
+                          <label className="required whitespace-nowrap min-w-[90px] flex justify-end text-sm">Kho hàng</label>
                           <input
                             type="text"
                             value={`${dataXCKView?.MaKho} - ${dataXCKView?.TenKho}` || ''}
-                            className="px-2 w-full rounded resize-none border outline-none text-[1rem]"
+                            className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm"
                             readOnly
                           />
                         </div>
                       </div>
                       <div className="grid grid-cols-1 gap-2 border-2 px-2 py-2.5 border-black-200 rounded relative">
                         <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
-                        <div className="flex gap-1">
+                        <div className="flex gap-2 justify-center">
                           <div className="flex gap-1 items-center">
                             <label className="whitespace-nowrap text-sm">Người tạo</label>
                             <Tooltip title={dataXCKView?.NguoiTao} color="blue">
                               <input
-                                className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-[1rem] overflow-ellipsis truncate"
+                                className="px-2 2xl:w-[18rem] xl:w-[16rem] lg:w-[11rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm overflow-ellipsis truncate"
                                 value={dataXCKView?.NguoiTao || ''}
                                 readOnly
                               />
@@ -453,19 +470,19 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
                             <label className="text-sm">Lúc</label>
                             <Tooltip title={moment(dataXCKView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''} color="blue">
                               <input
-                                className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
+                                className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm text-center truncate"
                                 value={moment(dataXCKView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
                                 readOnly
                               />
                             </Tooltip>
                           </div>
                         </div>
-                        <div className="flex gap-1">
+                        <div className="flex gap-2 justify-center">
                           <div className="flex gap-1 items-center">
                             <label className="whitespace-nowrap text-sm">Người sửa</label>
                             <Tooltip title={dataXCKView?.NguoiSuaCuoi} color="blue">
                               <input
-                                className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border  outline-none text-[1rem] overflow-ellipsis truncate"
+                                className="px-2 2xl:w-[18rem] xl:w-[16rem] lg:w-[11rem] md:w-[8rem] resize-none rounded-[3px] border  outline-none text-sm overflow-ellipsis truncate"
                                 value={dataXCKView?.NguoiSuaCuoi || ''}
                                 readOnly
                               />
@@ -475,7 +492,7 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
                             <label className="text-sm">Lúc</label>
                             <Tooltip title={dataXCKView?.NgaySuaCuoi ? moment(dataXCKView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''} color="blue">
                               <input
-                                className="px-2 w-full resize-none rounded border outline-none text-[1rem] truncate"
+                                className="px-2 w-full resize-none rounded-[3px] border outline-none text-center text-sm truncate"
                                 value={dataXCKView?.NgaySuaCuoi ? moment(dataXCKView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
                                 readOnly
                               />
@@ -484,58 +501,55 @@ const NCKConfirm = ({ close, loadingData, setTargetRow }) => {
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-1">
-                      <label className="whitespace-nowrap min-w-[100px] flex justify-end text-sm">Ghi chú</label>
-                      <input type="text" value={dataXCKView?.GhiChu || ''} className="px-2 w-[70rem] rounded resize-none border outline-none text-[1rem]" readOnly />
+                    <div className="flex items-center gap-1 px-1">
+                      <label className="whitespace-nowrap min-w-[90px] flex justify-end text-sm">Ghi chú</label>
+                      <input type="text" value={dataXCKView?.GhiChu || ''} className="px-2 w-[70rem] rounded-[3px] resize-none border outline-none text-sm" readOnly />
                     </div>
-                    <div className="border rounded">
-                      <Table
-                        className="table_view"
-                        columns={titleXDC}
-                        dataSource={dataXCKView?.DataDetails?.map((item, index) => ({ ...item, key: index }))}
-                        size="small"
-                        scroll={{
-                          x: 1000,
-                          y: 300,
-                        }}
-                        bordered
-                        pagination={false}
-                        // summary={() => {
-                        //   return (
-                        //     <Table.Summary fixed="bottom">
-                        //       <Table.Summary.Row>
-                        //         {titleXDC
-                        //           .filter((column) => column.render)
-                        //           .map((column, index) => {
-                        //             const isNumericColumn = typeof dataXCKView?.DataDetails[0]?.[column.dataIndex] === 'number'
-                        //             return (
-                        //               <Table.Summary.Cell index={index} key={`summary-cell-${index + 1}`} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
-                        //                 {isNumericColumn ? (
-                        //                   column.dataIndex === 'SoLuong' ? (
-                        //                     <Text strong>
-                        //                       {Number(dataXCKView?.DataDetails?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                        //                         minimumFractionDigits: dataThongSo?.SOLESOLUONG,
-                        //                         maximumFractionDigits: dataThongSo?.SOLESOLUONG,
-                        //                       })}
-                        //                     </Text>
-                        //                   ) : (
-                        //                     <Text strong>
-                        //                       {Number(dataXCKView?.DataDetails?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                        //                         minimumFractionDigits: 0,
-                        //                         maximumFractionDigits: 0,
-                        //                       })}
-                        //                     </Text>
-                        //                   )
-                        //                 ) : null}
-                        //               </Table.Summary.Cell>
-                        //             )
-                        //           })}
-                        //       </Table.Summary.Row>
-                        //     </Table.Summary>
-                        //   )
-                        // }}
-                      ></Table>
-                    </div>
+                    <Table
+                      className="table_view"
+                      columns={titleXDC}
+                      dataSource={dataXCKView?.DataDetails?.map((item, index) => ({ ...item, key: index }))}
+                      size="small"
+                      scroll={{
+                        x: 'max-content',
+                        y: 300,
+                      }}
+                      pagination={false}
+                      // summary={() => {
+                      //   return (
+                      //     <Table.Summary fixed="bottom">
+                      //       <Table.Summary.Row>
+                      //         {titleXDC
+                      //           .filter((column) => column.render)
+                      //           .map((column, index) => {
+                      //             const isNumericColumn = typeof dataXCKView?.DataDetails[0]?.[column.dataIndex] === 'number'
+                      //             return (
+                      //               <Table.Summary.Cell index={index} key={`summary-cell-${index + 1}`} align={isNumericColumn ? 'right' : 'left'} className="text-end font-bold  bg-[#f1f1f1]">
+                      //                 {isNumericColumn ? (
+                      //                   column.dataIndex === 'SoLuong' ? (
+                      //                     <Text strong>
+                      //                       {Number(dataXCKView?.DataDetails?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                      //                         minimumFractionDigits: dataThongSo?.SOLESOLUONG,
+                      //                         maximumFractionDigits: dataThongSo?.SOLESOLUONG,
+                      //                       })}
+                      //                     </Text>
+                      //                   ) : (
+                      //                     <Text strong>
+                      //                       {Number(dataXCKView?.DataDetails?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
+                      //                         minimumFractionDigits: 0,
+                      //                         maximumFractionDigits: 0,
+                      //                       })}
+                      //                     </Text>
+                      //                   )
+                      //                 ) : null}
+                      //               </Table.Summary.Cell>
+                      //             )
+                      //           })}
+                      //       </Table.Summary.Row>
+                      //     </Table.Summary>
+                      //   )
+                      // }}
+                    ></Table>
                   </div>
                   <div className="flex gap-2 justify-end ">
                     <ActionButton

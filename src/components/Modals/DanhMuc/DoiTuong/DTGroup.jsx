@@ -66,11 +66,8 @@ const DTGroup = ({ close, type, dataDT, loadingData, setTargetRow }) => {
         loadingData()
         close()
         setTargetRow(dataDT)
-      } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-        await RETOKEN()
-        handlePrice()
       } else {
-        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
+        toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
       }
     } catch (error) {
       console.error(error)
@@ -104,7 +101,7 @@ const DTGroup = ({ close, type, dataDT, loadingData, setTargetRow }) => {
         await RETOKEN()
         handleGroup()
       } else {
-        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
+        toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
       }
     } catch (error) {
       console.error('API call failed:', error)
@@ -129,7 +126,7 @@ const DTGroup = ({ close, type, dataDT, loadingData, setTargetRow }) => {
                   </div>
                 </div>
                 <div className="flex flex-col gap-2">
-                  <div className="flex items-center justify-center border-2 p-4 gap-2">
+                  <div className="flex items-center justify-center border-1 border-gray-400 p-4 gap-2">
                     <div className="required whitespace-nowrap">Nhóm</div>
                     <Space wrap>
                       <Select

@@ -15,10 +15,9 @@ const { Option } = Select
 import * as apis from '../apis'
 
 const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2, SctCreate, typePage, namePage }) => {
-  const [selectedSctBD, setSelectedSctBD] = useState()
-  const [selectedSctKT, setSelectedSctKT] = useState()
+  const [selectedSctBD, setSelectedSctBD] = useState('')
+  const [selectedSctKT, setSelectedSctKT] = useState('')
   const [newData, setNewData] = useState()
-
   const startDate = dayjs(dataThongTin?.NgayCTu).format('YYYY-MM-DD')
   const endDate = dayjs(dataThongTin?.NgayCTu).format('YYYY-MM-DD')
 
@@ -54,8 +53,8 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
     if (actionType !== 'create' && newData) {
       const foundItem = newData.find((item) => item.SoChungTu === dataThongTin?.SoChungTu)
       if (newData.length <= 0) {
-        setSelectedSctBD('Chọn mã hàng')
-        setSelectedSctKT('Chọn mã hàng')
+        setSelectedSctBD('Chọn số chứng từ')
+        setSelectedSctKT('Chọn số chứng từ')
       } else if (foundItem) {
         setSelectedSctBD(foundItem.SoChungTu)
         setSelectedSctKT(foundItem.SoChungTu)
@@ -116,63 +115,43 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
   }
 
   const handleOnlyPrintWareHouse = async () => {
+    if (selectedSctBD === 'Chọn số chứng từ' || selectedSctKT === 'Chọn số chứng từ') {
+      toast.warning('Vui lòng chọn số chứng từ !')
+      return
+    }
     try {
       const tokenLogin = localStorage.getItem('TKN')
       const lien = calculateTotal()
-      if (typePage === 'PMH') {
-        const response = await apis.InPK(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
-        // Kiểm tra call api thành công
-        if (response.data && response.data.DataError === 0) {
-          base64ToPDF(response.data.DataResults)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleOnlyPrintWareHouse()
-        } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-          toast.warning(response.data.DataErrorDescription)
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
+
+      let response
+      switch (typePage) {
+        case 'PMH':
+          response = await apis.InPK(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+          break
+        case 'NTR':
+          response = await apis.InPKNTR(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+          break
+        case 'XTR':
+          response = await apis.InPKXTR(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+          break
+        case 'PBL':
+          response = await apis.InPKPBL(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
+          break
+        default:
+          break
       }
-      if (typePage === 'NTR') {
-        const response = await apis.InPKNTR(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
-        // Kiểm tra call api thành công
-        if (response.data && response.data.DataError === 0) {
-          base64ToPDF(response.data.DataResults)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+      if (response) {
+        const { DataError, DataErrorDescription, DataResults } = response.data
+
+        if (DataError === 0) {
+          base64ToPDF(DataResults)
+        } else if (DataError === -107 || DataError === -108) {
           await RETOKEN()
           handleOnlyPrintWareHouse()
-        } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-          toast.warning(response.data.DataErrorDescription)
+        } else if (DataError === -1 || DataError === -2 || DataError === -3) {
+          toast.warning(DataErrorDescription)
         } else {
-          toast.error(response.data.DataErrorDescription)
-        }
-      }
-      if (typePage === 'XTR') {
-        const response = await apis.InPKXTR(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
-        // Kiểm tra call api thành công
-        if (response.data && response.data.DataError === 0) {
-          base64ToPDF(response.data.DataResults)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleOnlyPrintWareHouse()
-        } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-          toast.warning(response.data.DataErrorDescription)
-        } else {
-          toast.error(response.data.DataErrorDescription)
-        }
-      }
-      if (typePage === 'PBL') {
-        const response = await apis.InPKPBL(tokenLogin, formPrint, selectedSctBD, selectedSctKT, lien)
-        // Kiểm tra call api thành công
-        if (response.data && response.data.DataError === 0) {
-          base64ToPDF(response.data.DataResults)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          handleOnlyPrintWareHouse()
-        } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-          toast.warning(response.data.DataErrorDescription)
-        } else {
-          toast.error(response.data.DataErrorDescription)
+          toast.error(DataErrorDescription)
         }
       }
 
@@ -205,12 +184,14 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
             <img src={logo} alt="logo" className="w-[25px] h-[20px]" />
             <label className="text-blue-700 font-semibold uppercase pb-1">In - {namePage} (Kho)</label>
           </div>
-          <div className="border-2 my-1">
+          <div className="border-1 border-gray-400 my-1">
             <div className="p-4">
-              <div className="flex justify-center items-center  gap-3 pl-[52px] ">
+              <div className="grid grid-cols-2 gap-3 ">
                 {/* DatePicker */}
-                <div className="flex gap-x-5 items-center">
-                  <label htmlFor="">Ngày</label>
+                <div className="flex gap-x-2 items-center justify-end">
+                  <label htmlFor="" className="required">
+                    Ngày
+                  </label>
                   <DateField
                     className="DatePicker_PMH max-w-[170px]"
                     format="DD/MM/YYYY"
@@ -242,8 +223,10 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
                     }}
                   />
                 </div>
-                <div className="flex gap-x-5 items-center">
-                  <label htmlFor="">Đến</label>
+                <div className="flex gap-x-2 items-center">
+                  <label htmlFor="" className="required">
+                    Đến
+                  </label>
                   <DateField
                     className="DatePicker_PMH max-w-[170px]"
                     format="DD/MM/YYYY"
@@ -274,19 +257,9 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
                     }}
                   />
                 </div>
-                {/* <ActionButton
-                  color={'slate-50'}
-                  title={'Lọc'}
-                  icon={<MdFilterAlt size={20} />}
-                  background={'bg-main'}
-                  bg_hover={'white'}
-                  color_hover={'bg-main'}
-                  handleAction={handleFilterPrint}
-                /> */}
-              </div>
-              <div className="flex  mt-4">
-                <div className="flex ">
-                  <label className="pr-[22px]">Số chứng từ</label>
+
+                <div className="flex gap-x-2 items-center justify-end ">
+                  <label className="required">Số chứng từ</label>
 
                   <Select
                     size="small"
@@ -305,8 +278,8 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
                   </Select>
                 </div>
 
-                <div className="flex ">
-                  <label className="pl-[18px] pr-[18px]">Đến</label>
+                <div className="flex gap-x-2 items-center">
+                  <label className="required">Đến</label>
 
                   <Select
                     size="small"
@@ -325,6 +298,7 @@ const ModalOnlyPrintWareHouse = ({ close, dataThongTin, data, actionType, close2
                   </Select>
                 </div>
               </div>
+
               {/* liên */}
               <div className="flex justify-center items-center gap-6 mt-4">
                 <div>

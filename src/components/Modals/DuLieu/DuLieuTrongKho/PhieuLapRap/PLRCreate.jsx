@@ -3,16 +3,16 @@
 import { useEffect, useState, useMemo } from 'react'
 import { toast } from 'react-toastify'
 import { FaSearch } from 'react-icons/fa'
-import { MdPrint } from 'react-icons/md'
+// import { MdPrint } from 'react-icons/md'
 import { IoMdAddCircle } from 'react-icons/io'
-import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import { DateField } from '@mui/x-date-pickers'
 import { Checkbox, Table, Tooltip, Select, FloatButton, Input } from 'antd'
 import dayjs from 'dayjs'
 import PLRPrint from './PLRPrint'
 import categoryAPI from '../../../../../API/linkAPI'
 import { useSearch } from '../../../../hooks/Search'
 import logo from '../../../../../assets/VTS-iSale.ico'
-import { RETOKEN } from '../../../../../action/Actions'
+import { RETOKEN, addRowClass } from '../../../../../action/Actions'
 import EditTable from '../../../../util/Table/EditTable'
 import ActionButton from '../../../../util/Button/ActionButton'
 import HighlightedCell from '../../../../hooks/HighlightedCell'
@@ -44,9 +44,6 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
   const [PLRForm, setPLRForm] = useState(() => {
     return innitProduct
   })
-  const [errors, setErrors] = useState({
-    MaKho: '',
-  })
   const handleChoose = (dataRow) => {
     const defaultValues = {
       SoLuong: 1,
@@ -68,6 +65,9 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
         autoClose: 1000,
       })
     } else {
+      toast.success('Chọn hàng hóa thành công', {
+        autoClose: 1000,
+      })
       const index = selectedRowData?.findIndex((item) => item.MaHang === newRow.MaHang)
       const oldQuantity = selectedRowData[index].SoLuong
       selectedRowData[index].SoLuong = oldQuantity + newRow.SoLuong
@@ -97,9 +97,6 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
         if (response.data.DataError == 0) {
           setDataHangHoa(response.data.DataResults)
           setIsLoading(true)
-        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
-          await RETOKEN()
-          getDataHangHoa()
         }
       } catch (error) {
         console.log(error)
@@ -117,6 +114,7 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
         const response = await categoryAPI.ListKhoHangPLR(TokenAccess)
         if (response.data.DataError == 0) {
           setDataKhoHang(response.data.DataResults)
+          setPLRForm({ ...PLRForm, MaKho: response?.data?.DataResults[0]?.MaKho })
           setIsLoading(true)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
@@ -133,10 +131,8 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
   }, [isLoading])
 
   const handleCreate = async (isSave = true, actionType) => {
-    if (!PLRForm?.MaKho?.trim()) {
-      setErrors({
-        MaKho: PLRForm?.MaKho?.trim() ? '' : 'Kho không được trống',
-      })
+    if (dayjs(valueDate).format('YYYY-MM-DD') === 'Invalid Date') {
+      toast.warning('Vui lòng chọn ngày', { autoClose: 2000 })
       return
     }
     try {
@@ -146,22 +142,30 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
           STT: index + 1,
         }
       })
-      const response = await categoryAPI.PLRCreate({ ...PLRForm, DataDetails: newData, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss') }, TokenAccess)
-      if (response.data.DataError == 0) {
-        actionType == 'print'
-          ? (handlePrint(), setPLRForm([]), setSelectedRowData([]))
-          : actionType == 'printImport'
-            ? (handlePrintImport(), setPLRForm([]), setSelectedRowData([]))
-            : actionType == 'printExport'
-              ? (handlePrintExport(), setPLRForm([]), setSelectedRowData([]))
-              : isSave
-                ? (toast.success('Tạo thành công', { autoClose: 1000 }), setPLRForm([]), setSelectedRowData([]))
-                : (close(), toast.success('Tạo thành công'))
-        loadingData()
-        setSoCTu(response.data.DataResults[0].SoChungTu)
-        setTargetRow(response.data.DataResults[0].SoChungTu)
+      if (newData?.length > 0) {
+        if (isAdd) {
+          toast.warning('Vui lòng chọn mã hàng', { autoClose: 2000 })
+        } else {
+          const response = await categoryAPI.PLRCreate({ ...PLRForm, DataDetails: newData, NgayCTu: dayjs(valueDate).format('YYYY-MM-DD') }, TokenAccess)
+          if (response.data.DataError == 0) {
+            actionType == 'print'
+              ? (handlePrint(), setPLRForm({ MaKho: dataKhoHang[0]?.MaKho }), setSelectedRowData([]))
+              : actionType == 'printImport'
+                ? (handlePrintImport(), setPLRForm({ MaKho: dataKhoHang[0]?.MaKho }), setSelectedRowData([]))
+                : actionType == 'printExport'
+                  ? (handlePrintExport(), setPLRForm({ MaKho: dataKhoHang[0]?.MaKho }), setSelectedRowData([]))
+                  : isSave
+                    ? (toast.success(response.data.DataErrorDescription, { autoClose: 1000 }), setPLRForm({ MaKho: dataKhoHang[0]?.MaKho }), setSelectedRowData([]))
+                    : (close(), toast.success(response.data.DataErrorDescription))
+            loadingData()
+            setSoCTu(response.data.DataResults[0].SoChungTu)
+            setTargetRow(response.data.DataResults[0].SoChungTu)
+          } else {
+            toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
+          }
+        }
       } else {
-        toast.error(response.data.DataErrorDescription, { autoClose: 1000 })
+        toast.warning('Chi tiết hàng không được để trống', { autoClose: 1000 })
       }
     } catch (error) {
       console.log(error)
@@ -208,7 +212,6 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
       },
     ])
   }
-
   const formatThapPhan = (number, decimalPlaces) => {
     if (typeof number === 'number' && !isNaN(number)) {
       const formatter = new Intl.NumberFormat('en-US', {
@@ -230,7 +233,7 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
       title: 'Mã hàng',
       dataIndex: 'MaHang',
       key: 'MaHang',
-      width: 150,
+      width: 120,
       showSorterTooltip: false,
       align: 'center',
       sorter: (a, b) => a.MaHang.localeCompare(b.MaHang),
@@ -249,18 +252,9 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
       align: 'center',
       sorter: (a, b) => a.NhomHang.localeCompare(b.NhomHang),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchHangHoa} />
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
@@ -272,28 +266,18 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
       align: 'center',
       sorter: (a, b) => a.TenHang.localeCompare(b.TenHang),
       render: (text) => (
-        <Tooltip title={text} color="blue">
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-              textAlign: 'start',
-            }}
-          >
-            <HighlightedCell text={text} search={searchHangHoa} />
-          </div>
-        </Tooltip>
+        <div className="text-start whitespace-pre-wrap">
+          <HighlightedCell text={text} search={searchHangHoa} />
+        </div>
       ),
     },
     {
-      title: 'Đơn vị tính',
+      title: 'ĐVT',
       dataIndex: 'DVT',
       key: 'DVT',
       showSorterTooltip: false,
       align: 'center',
-      width: 120,
+      width: 100,
       sorter: (a, b) => a.DVT.localeCompare(b.DVT),
       render: (text) => (
         <span className="flex justify-center">
@@ -306,7 +290,7 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
       dataIndex: 'LapRap',
       key: 'LapRap',
       align: 'center',
-      width: 120,
+      width: 100,
       showSorterTooltip: false,
       sorter: (a, b) => {
         const valueA = a.LapRap ? 1 : 0
@@ -320,7 +304,7 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
       dataIndex: 'TonKho',
       key: 'TonKho',
       align: 'center',
-      width: 120,
+      width: 100,
       showSorterTooltip: false,
       sorter: (a, b) => {
         const valueA = a.TonKho ? 1 : 0
@@ -361,22 +345,27 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
                   <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
                   <p className="text-blue-700 font-semibold uppercase">Thêm - Phiếu Lắp Ráp</p>
                 </div>
-                <div className="flex flex-col gap-2 border-2 px-1 py-2.5">
-                  <div className="grid grid-cols-2 items-center gap-2">
+                <div className="flex flex-col gap-2 border-gray-400 border-1 py-2.5">
+                  <div className="grid grid-cols-2 items-center gap-2 px-1">
                     <div className="flex flex-col gap-3">
                       <div className="flex gap-2">
                         <div className="flex items-center gap-1">
-                          <label className="text-sm  required whitespace-nowrap min-w-[100px] flex justify-end">Số chứng từ</label>
-                          <Input disabled size="small" value={PLRForm?.SoChungTu || ''} readOnly />
+                          <label className="text-sm  required whitespace-nowrap min-w-[90px] flex justify-end">Số chứng từ</label>
+                          <input
+                            disabled
+                            size="small"
+                            value={PLRForm?.SoChungTu || ''}
+                            className="h-[24px] w-full  px-2 rounded-[3px] resize-none border-[1px] border-gray-300 outline-none truncate"
+                          />
                         </div>
                         <div className="flex items-center gap-1">
-                          <label className="required whitespace-nowrap text-sm">Ngày c.từ</label>
-                          <DatePicker
-                            className="DatePicker_NDCKho"
+                          <label className="required whitespace-nowrap text-sm"> Ngày</label>
+                          <DateField
+                            className="max-w-[130px] min-w-[130px]"
                             format="DD/MM/YYYY"
                             value={valueDate}
                             onChange={(values) => {
-                              setPLRForm({ ...PLRForm, NgayCTu: dayjs(setValueDate(values)).format('YYYY-MM-DDTHH:mm:ss') })
+                              setPLRForm({ ...PLRForm, NgayCTu: dayjs(setValueDate(values)).format('YYYY-MM-DD') })
                             }}
                             sx={{
                               '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid #007FFF' },
@@ -392,27 +381,25 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
                         </div>
                       </div>
                       <div className="flex items-center gap-1">
-                        <label className="text-sm required whitespace-nowrap min-w-[100px] flex justify-end">Kho hàng</label>
+                        <label className="text-sm required whitespace-nowrap min-w-[90px] flex justify-end">Kho hàng</label>
                         <Select
                           style={{ width: '100%' }}
                           showSearch
+                          optionFilterProp="children"
                           required
                           size="small"
                           value={PLRForm?.MaKho || undefined}
-                          placeholder={errors?.MaKho ? errors?.MaKho : ''}
-                          status={errors.MaKho ? 'error' : ''}
                           onChange={(value) => {
                             setPLRForm({
                               ...PLRForm,
                               MaKho: value,
                             })
-                            setErrors({ ...errors, MaKho: '' })
                           }}
                         >
                           {dataKhoHang &&
                             dataKhoHang?.map((item) => (
                               <Select.Option key={item.MaKho} value={item.MaKho}>
-                                {item.ThongTinKho}
+                                {item.MaKho} - {item.TenKho}
                               </Select.Option>
                             ))}
                         </Select>
@@ -420,44 +407,43 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
                     </div>
                     <div className="grid grid-cols-1 gap-2 px-2 border-2 py-2.5 border-black-200 rounded relative">
                       <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
-                      <div className="flex gap-1">
+                      <div className="flex gap-2 justify-center">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người tạo</label>
-                          <input className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-[1rem]" readOnly />
+                          <input className="px-2 2xl:w-[18rem] xl:w-[15rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm" disabled />
                         </div>
                         <div className="flex gap-1 items-center">
                           <label className="text-sm">Lúc</label>
-                          <input className="px-2 w-full resize-none rounded border outline-none text-[1rem]" readOnly />
+                          <input className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm" disabled />
                         </div>
                       </div>
-                      <div className="flex gap-1">
+                      <div className="flex gap-2 justify-center">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người sửa</label>
-                          <input className="px-2 2xl:w-[18rem] xl:w-[14.5rem] lg:w-[13rem] md:w-[8rem] resize-none rounded border outline-none text-[1rem]" readOnly />
+                          <input className="px-2 2xl:w-[18rem] xl:w-[15rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm" disabled />
                         </div>
                         <div className="flex gap-1 items-center">
                           <label className="text-sm">Lúc</label>
-                          <input className="px-2 w-full resize-none rounded border outline-none text-[1rem]" readOnly />
+                          <input className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm" disabled />
                         </div>
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <label className="whitespace-nowrap min-w-[100px] text-sm flex justify-end">Ghi chú</label>
-                    <input
-                      type="text"
-                      className="px-2 w-[70rem] resize-none rounded border-[1px] hover:border-blue-500 outline-none text-[1rem]"
-                      name="GhiChu"
-                      value={PLRForm?.GhiChu || ''}
+                  <div className="flex items-center gap-1 px-1">
+                    <label className="whitespace-nowrap min-w-[90px] text-sm flex justify-end">Ghi chú</label>
+                    <Input
+                      size="small"
+                      className="w-full overflow-hidden whitespace-nowrap overflow-ellipsis"
+                      value={PLRForm?.GhiChu}
                       onChange={(e) =>
                         setPLRForm({
                           ...PLRForm,
-                          [e.target.name]: e.target.value,
+                          GhiChu: e.target.value,
                         })
                       }
                     />
                   </div>
-                  <div className="border-2 rounded relative">
+                  <div className="relative">
                     <EditTable
                       typeTable="create"
                       typeAction="create"
@@ -470,7 +456,7 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
                     />
                     <Tooltip
                       placement="topLeft"
-                      title={isAdd ? 'Vui lòng chọn tên hàng!' : 'Bấm vào đây để thêm hàng mới hoặc F9 để chọn từ danh sách!'}
+                      title={isAdd ? 'Vui lòng chọn tên hàng.' : 'Bấm vào đây để thêm hàng mới hoặc F9 để chọn từ danh sách.'}
                       color={isAdd ? 'gray' : 'blue'}
                     >
                       <FloatButton
@@ -489,77 +475,65 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
                 <div className="flex justify-between">
                   <div className="flex gap-2 justify-start">
                     <ActionButton
-                      icon={<MdPrint className="w-5 h-5" />}
-                      handleAction={
-                        isAdd
-                          ? ''
-                          : () => {
-                              handleCreate(true, 'print')
-                            }
-                      }
+                      // icon={<MdPrint className="w-5 h-5" />}
+                      handleAction={() => {
+                        handleCreate(true, 'print')
+                      }}
                       title={'In Phiếu'}
                       color={'slate-50'}
-                      background={isAdd ? 'gray-500' : 'purple-500'}
-                      color_hover={isAdd ? 'gray-500' : 'purple-500'}
+                      background={'purple-500'}
+                      color_hover={'purple-500'}
                       bg_hover={'white'}
-                      isPermission={isAdd ? false : true}
+                      isPermission={true}
                       isModal={true}
                     />
                     <ActionButton
-                      icon={<MdPrint className="w-5 h-5" />}
-                      handleAction={
-                        isAdd
-                          ? ''
-                          : () => {
-                              handleCreate(true, 'printImport')
-                            }
-                      }
+                      // icon={<MdPrint className="w-5 h-5" />}
+                      handleAction={() => {
+                        handleCreate(true, 'printImport')
+                      }}
                       title={'In Phiếu Nhập'}
                       color={'slate-50'}
-                      background={isAdd ? 'gray-500' : 'purple-500'}
-                      color_hover={isAdd ? 'gray-500' : 'purple-500'}
+                      background={'purple-500'}
+                      color_hover={'purple-500'}
                       bg_hover={'white'}
-                      isPermission={isAdd ? false : true}
+                      isPermission={true}
                       isModal={true}
                     />
                     <ActionButton
-                      handleAction={
-                        isAdd
-                          ? ''
-                          : () => {
-                              handleCreate(true, 'printExport')
-                            }
-                      }
-                      icon={<MdPrint className="w-5 h-5" />}
+                      handleAction={() => {
+                        handleCreate(true, 'printExport')
+                      }}
+                      // icon={<MdPrint className="w-5 h-5" />}
                       title={'In Phiếu Xuất'}
                       color={'slate-50'}
-                      background={isAdd ? 'gray-500' : 'purple-500'}
-                      color_hover={isAdd ? 'gray-500' : 'purple-500'}
+                      background={'purple-500'}
+                      color_hover={'purple-500'}
                       bg_hover={'white'}
-                      isPermission={isAdd ? false : true}
+                      isPermission={true}
                       isModal={true}
                     />
                   </div>
                   <div className="flex gap-2 justify-end">
                     <ActionButton
-                      handleAction={isAdd ? '' : () => handleCreate(true, null)}
+                      handleAction={() => handleCreate(true, null)}
                       title={'Lưu'}
                       isModal={true}
                       color={'slate-50'}
-                      background={isAdd ? 'gray-500' : 'blue-500'}
-                      color_hover={isAdd ? 'gray-500' : 'blue-500'}
+                      background={'blue-500'}
+                      color_hover={'blue-500'}
                       bg_hover={'white'}
-                      isPermission={isAdd ? false : true}
+                      isPermission={true}
                     />
                     <ActionButton
-                      handleAction={isAdd ? '' : () => handleCreate(false, null)}
-                      title={'Lưu & Đóng'}
+                      handleAction={() => handleCreate(false, null)}
+                      title={'Lưu & đóng'}
                       isModal={true}
                       color={'slate-50'}
-                      background={isAdd ? 'gray-500' : 'blue-500'}
-                      color_hover={isAdd ? 'gray-500' : 'blue-500'}
+                      background={'blue-500'}
+                      color_hover={'blue-500'}
                       bg_hover={'white'}
-                      isPermission={isAdd ? false : true}
+                      isPermission={true}
                     />
                     <ActionButton handleAction={close} title={'Đóng'} isModal={true} color={'slate-50'} background={'red-500'} color_hover={'red-500'} bg_hover={'white'} />
                   </div>
@@ -570,19 +544,15 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
           <div>
             {isShowModal &&
               (actionType === 'print' || actionType == 'printImport' || actionType == 'printExport' ? (
-                <PLRPrint
-                  close={() => setIsShowModal(false)}
-                  dataPrint={{ ...PLRForm, NgayCTu: dayjs(valueDate).format('YYYY-MM-DDTHH:mm:ss'), SoChungTu: SoCTu }}
-                  type={actionType}
-                />
+                <PLRPrint close={() => setIsShowModal(false)} dataPrint={{ ...PLRForm, NgayCTu: dayjs(valueDate).format('YYYY-MM-DD'), SoChungTu: SoCTu }} type={actionType} />
               ) : (
                 <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col xl:w-[87vw] lg:w-[95vw] md:w-[95vw] min-h-[8rem] bg-white  p-2 rounded-xl shadow-custom overflow-hidden z-10">
                   <div className="flex flex-col gap-2 p-2 ">
                     <div className="flex items-center gap-2">
                       <div className="flex items-center gap-2 py-1">
                         <img src={logo} alt="Công Ty Viettas" className="w-[25px] h-[20px]" />
-                        <p className="text-blue-700 font-semibold uppercase">Danh Sách Hàng Hóa - Phiếu Lắp Ráp</p>
-                        <FaSearch className="hover:text-red-400 cursor-pointer" onClick={() => setIsShowSearch(!isShowSearch)} />
+                        <p className="text-blue-700 font-semibold uppercase md:text-[12px] lg:text-sm truncate">Danh Sách Hàng Hóa</p>
+                        <FaSearch className="hover:text-red-400 cursor-pointer md:text-[14px] lg:text-sm" onClick={() => setIsShowSearch(!isShowSearch)} />
                       </div>
                       <div className="flex w-[20rem] overflow-hidden">
                         {isShowSearch && (
@@ -591,15 +561,14 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
                             value={searchHangHoa}
                             placeholder="Nhập ký tự bạn cần tìm"
                             onChange={handleSearch}
-                            className="px-2 py-0.5 w-[20rem] border-slate-200  resize-none rounded-[0.5rem] border-[1px] hover:border-blue-500 outline-none text-[1rem]  "
+                            className="px-2 py-0.5 w-[20rem] border-slate-200 resize-none rounded-[3px] border-[1px] hover:border-blue-500 outline-none text-sm  "
                           />
                         )}
                       </div>
                     </div>
-                    <div className="border-2 p-2 rounded m-1 flex flex-col gap-2 max-h-[35rem]">
+                    <div className="p-2 rounded m-1 flex flex-col gap-2">
                       <Table
                         className="table_HH"
-                        bordered
                         columns={title}
                         dataSource={filteredHangHoa}
                         onRow={(record) => ({
@@ -607,6 +576,7 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
                             handleChoose(record)
                           },
                         })}
+                        rowClassName={(record, index) => addRowClass(record, index)}
                         pagination={{
                           defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
                           showSizeChanger: true,
@@ -617,7 +587,7 @@ const PLRCreate = ({ close, loadingData, setTargetRow }) => {
                         }}
                         size="small"
                         scroll={{
-                          x: 1100,
+                          x: 'max-content',
                           y: 420,
                         }}
                         style={{

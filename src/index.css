@@ -175,6 +175,7 @@ a.nav-link span {
   min-height: 220px;
   max-height: 220px;
 }
+
 .zIndex {
   z-index: 1500;
 }
@@ -203,7 +204,14 @@ a.nav-link span {
   height: 25px;
   width: 170px;
 }
+.highlight-bottom-border > td {
+  border-bottom: solid 1px black !important;
+}
 
+.highlight-top-border > td {
+  border-top: solid 2px black !important;
+  border-bottom: solid 2px #6d9eff !important;
+}
 input[type='radio'] {
   width: 20px;
 }
@@ -247,6 +255,10 @@ input.ant-input.ant-input-sm {
   min-height: 276px;
   max-height: 276px;
 }
+.table_NCKConfirm .ant-table-body {
+  min-height: 286px;
+  max-height: 286px;
+}
 .table_viewHH .ant-table-body {
   min-height: 75px;
   max-height: 75px;
@@ -254,6 +266,14 @@ input.ant-input.ant-input-sm {
 .table_HH .ant-table-body {
   min-height: 450px;
   max-height: 450px;
+}
+
+.table_HH .ant-table {
+  border: 1px solid rgb(112, 112, 112);
+}
+
+.table_view .ant-table {
+  border-top: 1px solid rgb(112, 112, 112);
 }
 
 .ant-table-title:hover {
@@ -309,6 +329,11 @@ input.ant-input.ant-input-sm {
   height: 24px;
   width: 100%;
 }
+
+.MuiInputBase-input.MuiOutlinedInput-input.css-1x5jdmq {
+  padding: 0px 14px;
+}
+
 /* end */
 
 #main {
@@ -345,9 +370,4 @@ input.ant-input.ant-input-sm {
 }
 .ant-input-number-handler-wrap {
   display: none !important;
-}
-.highlighted-row,
-.highlighted-row .ant-table-cell-fix-right,
-.highlighted-row .ant-table-cell-fix-left {
-  background-color: #d7f4fd;
 }
