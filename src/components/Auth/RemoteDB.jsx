@@ -21,6 +21,7 @@ function RemoteDB() {
 
     if (response === 1) {
       Cookies.set('remoteDb', RemoteDB)
+
       navigate('/')
     }
   }

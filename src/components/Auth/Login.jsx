@@ -6,13 +6,11 @@ import { useDispatch } from 'react-redux'
 import Cookies from 'js-cookie'
 import { Spin } from 'antd'
 import backgroundImg from '../../assets/img/backgroud.jfif'
-import { useNavigate } from 'react-router-dom'
 import FAQ from '../FAQ/FAQ'
 import './auth.css'
 import { toast } from 'react-toastify'
 
 const App = () => {
-  const navigate = useNavigate()
   const [rememberMe, setRememberMe] = useState(Cookies.get('useCookies') === 'true')
   const [isShow, setIsShow] = useState(false)
   const token = window.localStorage.getItem('tokenDuLieu')
@@ -89,27 +87,21 @@ const App = () => {
       return
     }
     window.localStorage.setItem('userName', user.User)
-
     try {
       setLoading(true)
       const response = await DANHSACHDULIEU(API.DANHSACHDULIEU, user, dispatch)
-
       setLoading(false)
-
-      if (response.DataResults.length === 1) {
+      if (response?.DataResults?.length === 1) {
         const remoteDB = response.DataResults[0].RemoteDB
+
         await LOGIN(API.DANGNHAP, API.DANHSACHDULIEU, response.TKN, remoteDB, {}, dispatch)
         window.localStorage.setItem('firstLogin', true)
-
-        navigate('/remotedb')
-      } else if (response?.DataResults.length > 1) {
-        window.localStorage.setItem('firstLogin', true)
-        setTimeout(() => {
-          navigate('/remotedb')
-        }, 1000)
+        window.location.href = '/'
+      } else if (response?.DataResults?.length > 1) {
+        window.location.href = '/remotedb'
       }
     } catch (error) {
-      console.log('')
+      console.error('Đăng nhập thất bại', error)
     }
   }
 
