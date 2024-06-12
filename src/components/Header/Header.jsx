@@ -1,12 +1,11 @@
+/* eslint-disable react/prop-types */
 import { Link } from 'react-router-dom'
 import Logo from '../../assets/img/logo.png'
 import LogoHeader from '../../assets/VTS-iSale.ico'
 import ChangePass from './ChangePass'
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-// eslint-disable-next-line react/prop-types
+
 function Header({ handleToggleSidebar, refs }) {
-  const navigate = useNavigate()
   const userLogin = window.localStorage.getItem('userName')
   const userInfor = JSON.parse(window.localStorage.getItem('userInfo'))
 
@@ -22,7 +21,7 @@ function Header({ handleToggleSidebar, refs }) {
     window.localStorage.removeItem('dateLogin')
     window.location.href = '/login'
   }
-  const handeleChange = () => {
+  const handleChange = () => {
     setIsShow(true)
   }
   const close = () => {
@@ -57,7 +56,7 @@ function Header({ handleToggleSidebar, refs }) {
 
                 {userLogin !== null ? (
                   <li>
-                    <Link className="dropdown-item d-flex align-items-center" href="users-profile.html" onClick={handeleChange}>
+                    <Link className="dropdown-item d-flex align-items-center" href="users-profile.html" onClick={handleChange}>
                       <i className="bi bi-gear"></i>
                       <span>Đổi mật khẩu </span>
                     </Link>

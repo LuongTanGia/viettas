@@ -189,7 +189,6 @@ const NhapXuatTon = () => {
             setTableLoad(false)
           } else {
             setDataNXT([])
-            console.log(response.data)
             setTableLoad(false)
           }
         }

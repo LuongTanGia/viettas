@@ -329,7 +329,7 @@ const DoanhSoBanHangQuay = () => {
     if (check) {
       if (check == 'Tiền hàng') {
         setValueCheck('TienHang')
-      } else if (check == 'Tiền ttimerIdhuế') {
+      } else if (check == 'Tiền thuế') {
         setValueCheck('TienThue')
       } else if (check == 'Thành tiền') {
         setValueCheck('ThanhTien')

@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 const HighlightedCell = ({ text, search }) => {
-  const searchLower = typeof search === 'string' ? search.toLowerCase() : ''
+  const searchLower = typeof search === 'string' ? search?.trim()?.toLowerCase() : ''
   if (!searchLower || !text?.toLowerCase().includes(searchLower)) {
     return <span>{text}</span>
   }

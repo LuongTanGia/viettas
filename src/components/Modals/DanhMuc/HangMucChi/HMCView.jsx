@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from 'react'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import categoryAPI from '../../../../API/linkAPI'
 import logo from '../../../../assets/VTS-iSale.ico'
 import { RETOKEN } from '../../../../action/Actions'
@@ -33,6 +33,7 @@ const HMCView = ({ close, dataHMC }) => {
       handleView()
     }
   }, [isLoading])
+
   return (
     <>
       {!isLoading ? (
@@ -75,10 +76,10 @@ const HMCView = ({ close, dataHMC }) => {
                       </div>
                       <div className="flex items-center gap-1 whitespace-nowrap">
                         <label className=" text-sm">Lúc</label>
-                        <Tooltip title={moment(dataHMCView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss')} color="blue">
+                        <Tooltip title={dayjs(dataHMCView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss')} color="blue">
                           <input
                             type="text"
-                            value={moment(dataHMCView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
+                            value={dayjs(dataHMCView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
                             className="px-2 rounded-[3px] w-full resize-none border outline-none text-sm truncate"
                             disabled
                           />
@@ -98,9 +99,9 @@ const HMCView = ({ close, dataHMC }) => {
                       </div>
                       <div className="flex items-center gap-1 whitespace-nowrap">
                         <label className=" text-sm">Lúc</label>
-                        <Tooltip title={dataHMCView?.NgaySuaCuoi ? moment(dataHMCView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : ''} color="blue">
+                        <Tooltip title={dataHMCView?.NgaySuaCuoi ? dayjs(dataHMCView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : ''} color="blue">
                           <input
-                            value={dataHMCView?.NgaySuaCuoi ? moment(dataHMCView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
+                            value={dataHMCView?.NgaySuaCuoi ? dayjs(dataHMCView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
                             className="px-2 rounded-[3px] w-full resize-none border outline-none text-sm truncate"
                             disabled
                           />
