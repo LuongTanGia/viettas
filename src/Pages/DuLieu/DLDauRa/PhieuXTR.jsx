@@ -191,14 +191,14 @@ const PhieuXTR = () => {
           setFormKhoanNgay(response.data)
           setIsLoading(false)
         } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-          toast.warning(response.data.DataErrorDescription)
+          toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
           setIsLoading(false)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
           getKhoanNgay()
           // setIsLoading(false)
         } else {
-          toast.error(response.data.DataErrorDescription)
+          toast.error(response.data.DataErrorDescription, { autoClose: 2000 })
           setIsLoading(false)
         }
       } catch (error) {
@@ -258,10 +258,9 @@ const PhieuXTR = () => {
           getDSPXTR()
           // setTableLoad(false)
         } else if (DataError === -1 || DataError === -2 || DataError === -3) {
-          toast.warning(DataErrorDescription)
+          toast.warning(DataErrorDescription, { autoClose: 2000 })
           setTableLoad(false)
         } else {
-          toast.error(DataErrorDescription)
           setData([])
           setTableLoad(false)
         }

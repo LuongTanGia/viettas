@@ -225,13 +225,31 @@ const EditDuLieu = ({ actionType, typePage, namePage, data, dataRecord, dataThon
       let response
       switch (typePage) {
         case 'PMH':
-          response = await apis.SuaPMH(tokenLogin, dataRecord.SoChungTu, { ...formEdit, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
+          response = await apis.SuaPMH(
+            tokenLogin,
+            dataRecord.SoChungTu,
+            { ...formEdit, TenDoiTuong: formEdit?.TenDoiTuong?.trim(), DiaChi: formEdit?.DiaChi?.trim(), GhiChu: formEdit?.GhiChu?.trim(), DataDetails: dataAddSTT },
+            selectedDoiTuong,
+            selectedKhoHang,
+          )
           break
         case 'NTR':
-          response = await apis.SuaNTR(tokenLogin, dataRecord.SoChungTu, { ...formEdit, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
+          response = await apis.SuaNTR(
+            tokenLogin,
+            dataRecord.SoChungTu,
+            { ...formEdit, TenDoiTuong: formEdit?.TenDoiTuong?.trim(), DiaChi: formEdit?.DiaChi?.trim(), GhiChu: formEdit?.GhiChu?.trim(), DataDetails: dataAddSTT },
+            selectedDoiTuong,
+            selectedKhoHang,
+          )
           break
         case 'XTR':
-          response = await apis.SuaXTR(tokenLogin, dataRecord.SoChungTu, { ...formEdit, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
+          response = await apis.SuaXTR(
+            tokenLogin,
+            dataRecord.SoChungTu,
+            { ...formEdit, TenDoiTuong: formEdit?.TenDoiTuong?.trim(), DiaChi: formEdit?.DiaChi?.trim(), GhiChu: formEdit?.GhiChu?.trim(), DataDetails: dataAddSTT },
+            selectedDoiTuong,
+            selectedKhoHang,
+          )
           break
         default:
           break
@@ -270,13 +288,31 @@ const EditDuLieu = ({ actionType, typePage, namePage, data, dataRecord, dataThon
       let response
       switch (typePage) {
         case 'PMH':
-          response = await apis.SuaPMH(tokenLogin, dataRecord.SoChungTu, { ...formEdit, DataDetails: selectedRowData }, selectedDoiTuong, selectedKhoHang)
+          response = await apis.SuaPMH(
+            tokenLogin,
+            dataRecord.SoChungTu,
+            { ...formEdit, TenDoiTuong: formEdit?.TenDoiTuong?.trim(), DiaChi: formEdit?.DiaChi?.trim(), GhiChu: formEdit?.GhiChu?.trim(), DataDetails: selectedRowData },
+            selectedDoiTuong,
+            selectedKhoHang,
+          )
           break
         case 'NTR':
-          response = await apis.SuaNTR(tokenLogin, dataRecord.SoChungTu, { ...formEdit, DataDetails: selectedRowData }, selectedDoiTuong, selectedKhoHang)
+          response = await apis.SuaNTR(
+            tokenLogin,
+            dataRecord.SoChungTu,
+            { ...formEdit, TenDoiTuong: formEdit?.TenDoiTuong?.trim(), DiaChi: formEdit?.DiaChi?.trim(), GhiChu: formEdit?.GhiChu?.trim(), DataDetails: selectedRowData },
+            selectedDoiTuong,
+            selectedKhoHang,
+          )
           break
         case 'XTR':
-          response = await apis.SuaXTR(tokenLogin, dataRecord.SoChungTu, { ...formEdit, DataDetails: selectedRowData }, selectedDoiTuong, selectedKhoHang)
+          response = await apis.SuaXTR(
+            tokenLogin,
+            dataRecord.SoChungTu,
+            { ...formEdit, TenDoiTuong: formEdit?.TenDoiTuong?.trim(), DiaChi: formEdit?.DiaChi?.trim(), GhiChu: formEdit?.GhiChu?.trim(), DataDetails: selectedRowData },
+            selectedDoiTuong,
+            selectedKhoHang,
+          )
           break
         default:
           break

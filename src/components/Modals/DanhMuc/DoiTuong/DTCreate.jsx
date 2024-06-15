@@ -72,7 +72,22 @@ const DTCreate = ({ close, loadingData, setTargetRow }) => {
       return
     }
     try {
-      const response = await categoryAPI.ThemDoiTuong({ ...DTForm, Nhom: DTForm.Nhom }, TokenAccess)
+      const response = await categoryAPI.ThemDoiTuong(
+        {
+          ...DTForm,
+          Nhom: DTForm?.Nhom,
+          Ma: DTForm?.Ma.trim(),
+          DiaChi: DTForm?.DiaChi.trim(),
+          QuanHuyen: DTForm?.QuanHuyen.trim(),
+          TinhThanh: DTForm?.TinhThanh.trim(),
+          MST: DTForm?.MST.trim(),
+          DienThoai: DTForm?.DienThoai.trim(),
+          Fax: DTForm?.Fax.trim(),
+          NguoiLienHe: DTForm?.NguoiLienHe.trim(),
+          GhiChu: DTForm?.GhiChu.trim(),
+        },
+        TokenAccess,
+      )
       if (response.data.DataError == 0) {
         isSave ? setDTForm({ Loai: 2 }) : close()
         loadingData()

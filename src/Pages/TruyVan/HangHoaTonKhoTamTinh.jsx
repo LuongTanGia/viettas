@@ -97,7 +97,7 @@ const HangHoaTKTT = () => {
           await RETOKEN()
           fetchData(apiFunc, setDataFunc) // Thực hiện lại gọi API nếu cần
         } else {
-          toast.error(response.data.DataErrorDescription)
+          toast.error(response.data.DataErrorDescription, { autoClose: 2000 })
         }
       } catch (error) {
         console.error('Lấy data thất bại', error)
@@ -172,10 +172,9 @@ const HangHoaTKTT = () => {
         await RETOKEN()
         getDSHangHoaTKTT()
       } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>, { autoClose: 2000 })
         setTableLoad(false)
       } else {
-        toast.error(response.data.DataErrorDescription)
         setData([])
         setTableLoad(false)
       }

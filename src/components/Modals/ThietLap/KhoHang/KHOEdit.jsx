@@ -28,6 +28,17 @@ const KHOEdit = ({ close, loadingData, setTargetRow, dataKHO }) => {
     setTargetRow()
   }, [])
 
+  const handleKeyPress = (e) => {
+    if (!/[0-9]/.test(e.key)) {
+      e.preventDefault()
+    }
+  }
+  const handlePaste = (e) => {
+    const pasteData = e.clipboardData.getData('text')
+    if (!/^\d+$/.test(pasteData)) {
+      e.preventDefault()
+    }
+  }
   const handleEdit = async () => {
     if (!KHOForm?.TenKho?.trim()) {
       setErrors({
@@ -36,7 +47,21 @@ const KHOEdit = ({ close, loadingData, setTargetRow, dataKHO }) => {
       return
     }
     try {
-      const response = await categoryAPI.SuaKhoHang({ Ma: dataKHO?.MaKho, Data: { ...KHOForm } }, TokenAccess)
+      const response = await categoryAPI.SuaKhoHang(
+        {
+          Ma: dataKHO?.MaKho,
+          Data: {
+            ...KHOForm,
+            TenKho: KHOForm?.TenKho?.trim(),
+            TenDayDu: KHOForm?.TenDayDu?.trim(),
+            DiaChi: KHOForm?.DiaChi?.trim(),
+            NguoiLienHe: KHOForm?.NguoiLienHe?.trim(),
+            DienThoai: KHOForm?.DienThoai?.trim(),
+            GhiChu: KHOForm?.GhiChu?.trim(),
+          },
+        },
+        TokenAccess,
+      )
       if (response.data.DataError == 0) {
         close()
         console.log(response.data)
@@ -145,6 +170,8 @@ const KHOEdit = ({ close, loadingData, setTargetRow, dataKHO }) => {
                         DienThoai: e.target.value,
                       })
                     }}
+                    onKeyPress={handleKeyPress}
+                    onPaste={handlePaste}
                   />
                 </div>
               </div>

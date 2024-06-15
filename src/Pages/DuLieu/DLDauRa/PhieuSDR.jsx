@@ -94,19 +94,19 @@ const PhieuSDR = () => {
             setDataDoiTuong(responseDT.data.DataResults)
             setIsLoadingModal(false)
           } else if (responseDT.data && responseDT.data.DataError === -103) {
-            toast.error(responseDT.data.DataErrorDescription)
+            toast.error(responseDT.data.DataErrorDescription, { autoClose: 2000 })
             setIsLoadingModal(false)
           } else if (responseDT.data && responseDT.data.DataError === -104) {
-            toast.error(responseDT.data.DataErrorDescription)
+            toast.error(responseDT.data.DataErrorDescription, { autoClose: 2000 })
             setIsLoadingModal(false)
           } else if (responseDT.data.DataError === -1 || responseDT.data.DataError === -2 || responseDT.data.DataError === -3) {
-            toast.warning(responseDT.data.DataErrorDescription)
+            toast.warning(responseDT.data.DataErrorDescription, { autoClose: 2000 })
             setIsLoadingModal(false)
           } else if (responseDT.data.DataError === -107 || responseDT.data.DataError === -108) {
             await RETOKEN()
             fetchData()
           } else {
-            toast.error(responseDT.data.DataErrorDescription)
+            toast.error(responseDT.data.DataErrorDescription, { autoClose: 1000 })
             setIsLoadingModal(false)
           }
         }
@@ -220,10 +220,9 @@ const PhieuSDR = () => {
           await RETOKEN()
           getDSSDR()
         } else if (DataError === -1 || DataError === -2 || DataError === -3) {
-          toast.warning(DataErrorDescription)
+          toast.warning(DataErrorDescription, { autoClose: 1000 })
           setTableLoad(false)
         } else {
-          toast.error(DataErrorDescription)
           setData([])
           setTableLoad(false)
         }

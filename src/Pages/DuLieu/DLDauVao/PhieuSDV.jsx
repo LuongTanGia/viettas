@@ -224,10 +224,9 @@ const PhieuSDV = () => {
           await RETOKEN()
           getDSSDV()
         } else if (DataError === -1 || DataError === -2 || DataError === -3) {
-          toast.warning(DataErrorDescription)
+          toast.warning(DataErrorDescription, { autoClose: 2000 })
           setTableLoad(false)
         } else {
-          toast.error(DataErrorDescription)
           setData([])
           setTableLoad(false)
         }

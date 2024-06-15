@@ -132,7 +132,7 @@ const PhieuBanLe = () => {
             setDataThongTin(responseTT.data.DataResult)
             setIsLoadingModal(false)
           } else if (responseTT.data.DataError === -1 || responseTT.data.DataError === -2 || responseTT.data.DataError === -3) {
-            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseTT.data.DataErrorDescription}</div>)
+            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseTT.data.DataErrorDescription}</div>, { autoClose: 1000 })
             setIsLoadingModal(false)
           } else if (responseTT.data.DataError === -107 || responseTT.data.DataError === -108) {
             await RETOKEN()
@@ -150,7 +150,7 @@ const PhieuBanLe = () => {
             setIsLoadingEdit(false)
             setIsLoadingModal(false)
           } else if (responseTTS.data.DataError === -1 || responseTTS.data.DataError === -2 || responseTTS.data.DataError === -3) {
-            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseTTS.data.DataErrorDescription}</div>)
+            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseTTS.data.DataErrorDescription}</div>, { autoClose: 1000 })
             setIsLoadingModal(false)
             setIsLoadingEdit(false)
 
@@ -191,14 +191,14 @@ const PhieuBanLe = () => {
           setFormKhoanNgay(response.data)
           setIsLoading(false)
         } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>, { autoClose: 2000 })
           setIsLoading(false)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
           getKhoanNgay()
           // setIsLoading(false)
         } else {
-          toast.error(response.data.DataErrorDescription)
+          toast.error(response.data.DataErrorDescription, { autoClose: 2000 })
           setIsLoading(false)
         }
       } catch (error) {
@@ -255,10 +255,9 @@ const PhieuBanLe = () => {
           getDSPBL()
           // setTableLoad(false)
         } else if (DataError === -1 || DataError === -2 || DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>, { autoClose: 2000 })
           setTableLoad(false)
         } else {
-          toast.error(DataErrorDescription)
           setData([])
           setTableLoad(false)
         }

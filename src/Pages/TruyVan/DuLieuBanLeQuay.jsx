@@ -762,10 +762,9 @@ const DuLieuBLQ = () => {
           await RETOKEN()
           getDSBLQ()
         } else if (DataError === -1 || DataError === -2 || DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>, { autoClose: 2000 })
           setTableLoadChild(false)
         } else {
-          toast.error(DataErrorDescription)
           setDataBLQ([])
           setTableLoadChild(false)
         }

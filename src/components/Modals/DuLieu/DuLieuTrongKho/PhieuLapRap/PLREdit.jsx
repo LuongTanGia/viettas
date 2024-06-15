@@ -170,7 +170,7 @@ const PLREdit = ({ close, loadingData, dataPLR, setTargetRow }) => {
           toast.warning('Vui lòng chọn mã hàng', { autoClose: 2000 })
         } else {
           const response = await categoryAPI.PLREdit(
-            { SoChungTu: dataPLR?.SoChungTu, Data: { ...PLRForm, NgayCTu: dayjs(PLRForm?.NgayCTu).format('YYYY-MM-DD'), DataDetails: newData } },
+            { SoChungTu: dataPLR?.SoChungTu, Data: { ...PLRForm, GhiChu: PLRForm?.GhiChu?.trim(), NgayCTu: dayjs(PLRForm?.NgayCTu).format('YYYY-MM-DD'), DataDetails: newData } },
             TokenAccess,
           )
           if (response.data.DataError == 0) {

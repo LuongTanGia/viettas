@@ -70,10 +70,20 @@ const CreateThuChi = ({ actionType, data, typePage, namePage, dataHangMuc, dataD
       let response
       switch (typePage) {
         case 'PCT':
-          response = await apis.ThemPCT(tokenLogin, formCreate)
+          response = await apis.ThemPCT(tokenLogin, {
+            ...formCreate,
+            TenDoiTuong: formCreate?.TenDoiTuong?.trim(),
+            DiaChi: formCreate?.DiaChi?.trim(),
+            GhiChu: formCreate?.GhiChu?.trim(),
+          })
           break
         case 'PTT':
-          response = await apis.ThemPTT(tokenLogin, formCreate)
+          response = await apis.ThemPTT(tokenLogin, {
+            ...formCreate,
+            TenDoiTuong: formCreate?.TenDoiTuong?.trim(),
+            DiaChi: formCreate?.DiaChi?.trim(),
+            GhiChu: formCreate?.GhiChu?.trim(),
+          })
           break
 
         default:
@@ -114,10 +124,20 @@ const CreateThuChi = ({ actionType, data, typePage, namePage, dataHangMuc, dataD
       let response
       switch (typePage) {
         case 'PCT':
-          response = await apis.ThemPCT(tokenLogin, formCreate)
+          response = await apis.ThemPCT(tokenLogin, {
+            ...formCreate,
+            TenDoiTuong: formCreate?.TenDoiTuong?.trim(),
+            DiaChi: formCreate?.DiaChi?.trim(),
+            GhiChu: formCreate?.GhiChu?.trim(),
+          })
           break
         case 'PTT':
-          response = await apis.ThemPTT(tokenLogin, formCreate)
+          response = await apis.ThemPTT(tokenLogin, {
+            ...formCreate,
+            TenDoiTuong: formCreate?.TenDoiTuong?.trim(),
+            DiaChi: formCreate?.DiaChi?.trim(),
+            GhiChu: formCreate?.GhiChu?.trim(),
+          })
           break
 
         default:
@@ -160,10 +180,20 @@ const CreateThuChi = ({ actionType, data, typePage, namePage, dataHangMuc, dataD
       let response
       switch (typePage) {
         case 'PCT':
-          response = await apis.ThemPCT(tokenLogin, formCreate)
+          response = await apis.ThemPCT(tokenLogin, {
+            ...formCreate,
+            TenDoiTuong: formCreate?.TenDoiTuong?.trim(),
+            DiaChi: formCreate?.DiaChi?.trim(),
+            GhiChu: formCreate?.GhiChu?.trim(),
+          })
           break
         case 'PTT':
-          response = await apis.ThemPTT(tokenLogin, formCreate)
+          response = await apis.ThemPTT(tokenLogin, {
+            ...formCreate,
+            TenDoiTuong: formCreate?.TenDoiTuong?.trim(),
+            DiaChi: formCreate?.DiaChi?.trim(),
+            GhiChu: formCreate?.GhiChu?.trim(),
+          })
           break
 
         default:

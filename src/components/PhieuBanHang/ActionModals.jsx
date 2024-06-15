@@ -189,7 +189,14 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
         } else {
           const data = { ...form, ...Dates, NgayCTu: Dates.NgayCTu.format('YYYY-MM-DD'), DataDetails: newData }
           const res = await THEMPHIEUBANHANG(API.THEMPHIEUBANHANG, token, data)
-          const dateCT = { ...form, ...Dates, NgayCTu: Dates.NgayCTu.format('YYYY-MM-DD') }
+          const dateCT = {
+            ...form,
+            TenDoiTuong: form?.TenDoiTuong?.trim(),
+            DiaChi: form?.DiaChi?.trim(),
+            GhiChu: form?.GhiChu?.trim(),
+            ...Dates,
+            NgayCTu: Dates.NgayCTu.format('YYYY-MM-DD'),
+          }
           const selectedDoiTuong = listDoiTuong?.find((item) => item.Ma === 'KHVL')
           if (res.DataError == 0) {
             actionType === 'print'
@@ -233,7 +240,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
         if (isAdd) {
           toast.warning('Vui lòng chọn mã hàng', { autoClose: 2000 })
         } else {
-          const data = { ...form, DataDetails: newData }
+          const data = { ...form, TenDoiTuong: form?.TenDoiTuong?.trim(), DiaChi: form?.DiaChi?.trim(), GhiChu: form?.GhiChu?.trim(), DataDetails: newData }
           const res = await SUAPHIEUBANHANG(API.SUAPHIEUBANHANG, token, { SoChungTu: data.SoChungTu, Data: data })
           if (res.DataError == 0) {
             actionType === 'print'
@@ -278,7 +285,15 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
         if (isAdd) {
           toast.warning('Vui lòng chọn mã hàng', { autoClose: 2000 })
         } else {
-          const data = { ...form, ...Dates, NgayCTu: Dates.NgayCTu.format('YYYY-MM-DD'), DataDetails: newData }
+          const data = {
+            ...form,
+            TenDoiTuong: form?.TenDoiTuong?.trim(),
+            DiaChi: form?.DiaChi?.trim(),
+            GhiChu: form?.GhiChu?.trim(),
+            ...Dates,
+            NgayCTu: Dates.NgayCTu.format('YYYY-MM-DD'),
+            DataDetails: newData,
+          }
           const res = await THEMPHIEUBANHANG(API.THEMPHIEUBANHANG, token, data)
           if (res.DataError == 0) {
             setMaHang(res.DataResults[0]?.SoChungTu)
@@ -311,7 +326,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
         if (isAdd) {
           toast.warning('Vui lòng chọn mã hàng', { autoClose: 2000 })
         } else {
-          const data = { ...form, DataDetails: newData }
+          const data = { ...form, TenDoiTuong: form?.TenDoiTuong?.trim(), DiaChi: form?.DiaChi?.trim(), GhiChu: form?.GhiChu?.trim(), DataDetails: newData }
           const res = await SUAPHIEUBANHANG(API.SUAPHIEUBANHANG, token, { SoChungTu: data.SoChungTu, Data: data })
           if (res.DataError == 0) {
             setMaHang(data?.SoChungTu)

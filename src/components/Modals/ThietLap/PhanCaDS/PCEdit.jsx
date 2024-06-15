@@ -72,7 +72,7 @@ const PCEdit = ({ close, loadingData, setTargetRow, dataPC }) => {
       return
     }
     try {
-      const response = await categoryAPI.SuaPhanCa({ Ma: dataPC?.MaNguoiDung, HieuLuc: dataPC?.HieuLucTu, Data: { ...PCForm } }, TokenAccess)
+      const response = await categoryAPI.SuaPhanCa({ Ma: dataPC?.MaNguoiDung, HieuLuc: dataPC?.HieuLucTu, Data: { ...PCForm, GhiChu: PCForm?.GhiChu?.trim() } }, TokenAccess)
       if (response.data.DataError == 0) {
         close()
         loadingData()

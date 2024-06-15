@@ -202,7 +202,7 @@ const XCKEdit = ({ close, dataXCK, loadingData, setTargetRow }) => {
           toast.warning('Vui lòng chọn mã hàng', { autoClose: 2000 })
         } else {
           const response = await categoryAPI.XCKEdit(
-            { SoChungTu: dataXCK?.SoChungTu, Data: { ...XCKForm, NgayCTu: dayjs(XCKForm?.NgayCTu).format('YYYY-MM-DD'), DataDetails: newData } },
+            { SoChungTu: dataXCK?.SoChungTu, Data: { ...XCKForm, GhiChu: XCKForm?.GhiChu?.trim(), NgayCTu: dayjs(XCKForm?.NgayCTu).format('YYYY-MM-DD'), DataDetails: newData } },
             TokenAccess,
           )
           if (response.data.DataError == 0) {

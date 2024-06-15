@@ -35,7 +35,7 @@ const NDTCreate = ({ close, loadingData, setTargetRow }) => {
       return
     }
     try {
-      const response = await categoryAPI.ThemNhomDoiTuong({ ...NDTForm }, TokenAccess)
+      const response = await categoryAPI.ThemNhomDoiTuong({ ...NDTForm, Ma: NDTForm?.Ma?.trim(), Ten: NDTForm?.Ten?.trim(), GhiChu: NDTForm?.GhiChu?.trim() }, TokenAccess)
       if (response.data.DataError == 0) {
         isSave ? setNDTForm([]) : close()
         loadingData()

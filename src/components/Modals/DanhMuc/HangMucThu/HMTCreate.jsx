@@ -35,7 +35,7 @@ const HMTCreate = ({ close, loadingData, setTargetRow }) => {
       return
     }
     try {
-      const response = await categoryAPI.ThemHangMucThu({ ...HMTForm }, TokenAccess)
+      const response = await categoryAPI.ThemHangMucThu({ ...HMTForm, Ma: HMTForm?.Ma?.trim(), Ten: HMTForm?.Ten?.trim(), GhiChu: HMTForm?.GhiChu?.trim() }, TokenAccess)
       if (response.data.DataError == 0) {
         isSave ? setHMTForm([]) : close()
         loadingData()

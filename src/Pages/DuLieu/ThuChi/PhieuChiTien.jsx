@@ -241,10 +241,9 @@ const PhieuChiTien = () => {
           await RETOKEN()
           getDSPCT()
         } else if (DataError === -1 || DataError === -2 || DataError === -3) {
-          toast.warning(DataErrorDescription)
+          toast.warning(DataErrorDescription, { autoClose: 2000 })
           setTableLoad(false)
         } else {
-          toast.error(DataErrorDescription)
           setData([])
           setTableLoad(false)
         }
@@ -731,7 +730,6 @@ const PhieuChiTien = () => {
                     x: 1500,
                     y: 410,
                   }}
-                  bordered
                   // pagination={{
                   //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
                   //   showSizeChanger: true,

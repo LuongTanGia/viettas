@@ -116,13 +116,13 @@ const GBL = () => {
             setDataHangHoa(responseKH.data.DataResults)
             setIsLoadingModal(false)
           } else if (responseKH.data.DataError === -1 || responseKH.data.DataError === -2 || responseKH.data.DataError === -3) {
-            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseKH.data.DataErrorDescription}</div>)
+            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseKH.data.DataErrorDescription}</div>, { autoClose: 2000 })
             setIsLoadingModal(false)
           } else if (responseKH.data.DataError === -107 || responseKH.data.DataError === -108) {
             await RETOKEN()
             fetchData()
           } else {
-            toast.error(responseKH.data.DataErrorDescription)
+            toast.error(responseKH.data.DataErrorDescription, { autoClose: 2000 })
             setIsLoadingModal(false)
           }
         }
@@ -150,7 +150,7 @@ const GBL = () => {
           await RETOKEN()
           fetchData()
         } else {
-          toast.error(response.data.DataErrorDescription)
+          toast.error(response.data.DataErrorDescription, { autoClose: 2000 })
         }
       } catch (error) {
         console.error('Lấy data thất bại', error)
@@ -230,10 +230,9 @@ const GBL = () => {
         await RETOKEN()
         getDSGBL()
       } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>, { autoClose: 2000 })
         setTableLoad(false)
       } else {
-        toast.error(response.data.DataErrorDescription)
         setData([])
         setTableLoad(false)
       }
@@ -255,10 +254,9 @@ const GBL = () => {
         await RETOKEN()
         getDSFullGBL()
       } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>, { autoClose: 2000 })
         setTableLoad(false)
       } else {
-        toast.error(response.data.DataErrorDescription)
         setDataFull([])
         setTableLoad(false)
       }
@@ -280,10 +278,9 @@ const GBL = () => {
         await RETOKEN()
         getDSandDSFull()
       } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>, { autoClose: 2000 })
         setTableLoad(false)
       } else {
-        toast.error(response.data.DataErrorDescription)
         setData([])
         setTableLoad(false)
       }
@@ -300,9 +297,9 @@ const GBL = () => {
         (responseFull.data && responseFull.data.DataError === -2) ||
         (responseFull.data && responseFull.data.DataError === -3)
       ) {
-        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseFull.data.DataErrorDescription}</div>)
+        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseFull.data.DataErrorDescription}</div>, { autoClose: 2000 })
       } else {
-        toast.error(responseFull.data.DataErrorDescription)
+        toast.error(responseFull.data.DataErrorDescription, { autoClose: 2000 })
         setDataFull([])
       }
     } catch (error) {

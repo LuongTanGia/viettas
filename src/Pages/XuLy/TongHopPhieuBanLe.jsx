@@ -123,10 +123,9 @@ const TongHopPBL = () => {
           await RETOKEN()
           getDSTongHopPBL()
         } else if (DataError === -1 || DataError === -2 || DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>, { autoClose: 2000 })
           setTableLoad(false)
         } else {
-          toast.error(DataErrorDescription)
           setData([])
           setTableLoad(false)
         }

@@ -28,7 +28,17 @@ const KHOCreate = ({ close, loadingData, setTargetRow }) => {
   useEffect(() => {
     setTargetRow()
   }, [])
-
+  const handleKeyPress = (e) => {
+    if (!/[0-9]/.test(e.key)) {
+      e.preventDefault()
+    }
+  }
+  const handlePaste = (e) => {
+    const pasteData = e.clipboardData.getData('text')
+    if (!/^\d+$/.test(pasteData)) {
+      e.preventDefault()
+    }
+  }
   const handleCreate = async (isSave = true) => {
     if (!KHOForm?.MaKho?.trim() || !KHOForm?.TenKho?.trim()) {
       setErrors({
@@ -38,7 +48,19 @@ const KHOCreate = ({ close, loadingData, setTargetRow }) => {
       return
     }
     try {
-      const response = await categoryAPI.ThemKhoHang({ ...KHOForm }, TokenAccess)
+      const response = await categoryAPI.ThemKhoHang(
+        {
+          ...KHOForm,
+          MaKho: KHOForm?.MaKho?.trim(),
+          TenKho: KHOForm?.TenKho?.trim(),
+          TenDayDu: KHOForm?.TenDayDu?.trim(),
+          DiaChi: KHOForm?.DiaChi?.trim(),
+          NguoiLienHe: KHOForm?.NguoiLienHe?.trim(),
+          DienThoai: KHOForm?.DienThoai?.trim(),
+          GhiChu: KHOForm?.GhiChu?.trim(),
+        },
+        TokenAccess,
+      )
       if (response.data.DataError == 0) {
         isSave ? setKHOForm([]) : close()
         loadingData()
@@ -153,6 +175,8 @@ const KHOCreate = ({ close, loadingData, setTargetRow }) => {
                         DienThoai: e.target.value,
                       })
                     }}
+                    onKeyPress={handleKeyPress}
+                    onPaste={handlePaste}
                   />
                 </div>
               </div>

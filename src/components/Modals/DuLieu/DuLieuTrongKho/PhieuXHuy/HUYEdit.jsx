@@ -203,7 +203,7 @@ const HUYEdit = ({ close, dataHUY, loadingData, setTargetRow }) => {
           toast.warning('Vui lòng chọn mã hàng', { autoClose: 2000 })
         } else {
           const response = await categoryAPI.HUYEdit(
-            { SoChungTu: dataHUY?.SoChungTu, Data: { ...HUYForm, NgayCTu: dayjs(HUYForm?.NgayCTu).format('YYYY-MM-DD'), DataDetails: newData } },
+            { SoChungTu: dataHUY?.SoChungTu, Data: { ...HUYForm, GhiChu: HUYForm?.GhiChu?.trim(), NgayCTu: dayjs(HUYForm?.NgayCTu).format('YYYY-MM-DD'), DataDetails: newData } },
             TokenAccess,
           )
           if (response.data.DataError == 0) {

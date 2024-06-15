@@ -66,8 +66,8 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
     return getMaHang ? { ...getMaHang, MaVach: getMaHang?.MaVach } : initProduct
   })
   const [errors, setErrors] = useState({
-    Nhom: '',
     MaHang: '',
+    Nhom: '',
     TenHang: '',
     DVTKho: '',
     DVTQuyDoi: '',
@@ -427,6 +427,10 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
           ...hangHoaForm,
           MaVach: `${hangHoaForm.MaVach}${lastNumber13Main}`,
           TyLeQuyDoi: parseFloat(hangHoaForm.TyLeQuyDoi),
+          MaHang: hangHoaForm?.MaHang.trim(),
+          TenHang: hangHoaForm?.TenHang.trim(),
+          DienGiaiHangHoa: hangHoaForm?.DienGiaiHangHoa.trim(),
+          GhiChu: hangHoaForm?.GhiChu.trim(),
         },
         TokenAccess,
       )
@@ -463,6 +467,10 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
             Barcodes: dataView?.Barcodes,
             HangHoa_CTs: dataView?.HangHoa_CTs,
             MaVach: `${hangHoaForm.MaVach}${lastNumber13Main}`,
+            MaHang: hangHoaForm?.MaHang.trim(),
+            TenHang: hangHoaForm?.TenHang.trim(),
+            DienGiaiHangHoa: hangHoaForm?.DienGiaiHangHoa.trim(),
+            GhiChu: hangHoaForm?.GhiChu.trim(),
           },
         },
         TokenAccess,

@@ -178,7 +178,10 @@ const XDCCreate = ({ close, loadingData, setTargetRow }) => {
         if (isAdd) {
           toast.warning('Vui lòng chọn mã hàng', { autoClose: 2000 })
         } else {
-          const response = await categoryAPI.XDCCreate({ ...XDCForm, DataDetails: newData, NgayCTu: dayjs(valueDate).format('YYYY-MM-DD') }, TokenAccess)
+          const response = await categoryAPI.XDCCreate(
+            { ...XDCForm, GhiChu: XDCForm?.GhiChu?.trim(), DataDetails: newData, NgayCTu: dayjs(valueDate).format('YYYY-MM-DD') },
+            TokenAccess,
+          )
           if (response.data.DataError == 0) {
             isPrint
               ? (handlePrint(), setXDCForm({ MaKho: dataKhoHang[0]?.MaKho }), setSelectedRowData([]))

@@ -184,7 +184,10 @@ const NDCCreate = ({ close, loadingData, setTargetRow }) => {
         if (isAdd) {
           toast.warning('Vui lòng chọn mã hàng', { autoClose: 2000 })
         } else {
-          const response = await categoryAPI.NDCCreate({ ...NDCForm, DataDetails: newData, NgayCTu: dayjs(valueDate).format('YYYY-MM-DD') }, TokenAccess)
+          const response = await categoryAPI.NDCCreate(
+            { ...NDCForm, GhiChu: NDCForm?.GhiChu?.trim(), DataDetails: newData, NgayCTu: dayjs(valueDate).format('YYYY-MM-DD') },
+            TokenAccess,
+          )
           if (response.data.DataError == 0) {
             isPrint
               ? (handlePrint(), setNDCForm({ MaKho: dataKhoHang[0]?.MaKho }), setSelectedRowData([]))

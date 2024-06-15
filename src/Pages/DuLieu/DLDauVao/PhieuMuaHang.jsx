@@ -91,7 +91,7 @@ const PhieuMuaHang = () => {
             setDataKhoHang(responseKH.data.DataResults)
             setIsLoadingModal(false)
           } else if (responseKH.data.DataError === -1 || responseKH.data.DataError === -2 || responseKH.data.DataError === -3) {
-            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseKH.data.DataErrorDescription}</div>)
+            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseKH.data.DataErrorDescription}</div>, { autoClose: 2000 })
             setIsLoadingModal(false)
           } else if (responseKH.data.DataError === -107 || responseKH.data.DataError === -108) {
             await RETOKEN()
@@ -111,7 +111,7 @@ const PhieuMuaHang = () => {
             toast.error(responseDT.data.DataErrorDescription)
             setIsLoadingModal(false)
           } else if (responseDT.data.DataError === -1 || responseDT.data.DataError === -2 || responseDT.data.DataError === -3) {
-            toast.warning(responseDT.data.DataErrorDescription)
+            toast.warning(responseDT.data.DataErrorDescription, { autoClose: 2000 })
             setIsLoadingModal(false)
           } else if (responseDT.data.DataError === -107 || responseDT.data.DataError === -108) {
             await RETOKEN()
@@ -134,7 +134,7 @@ const PhieuMuaHang = () => {
             await RETOKEN()
             fetchData()
           } else {
-            toast.error(responseTT.data.DataErrorDescription)
+            toast.error(responseTT.data.DataErrorDescription, { autoClose: 2000 })
             setIsLoadingModal(false)
           }
         }
@@ -148,13 +148,12 @@ const PhieuMuaHang = () => {
             toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseTTS.data.DataErrorDescription}</div>)
             setIsLoadingModal(false)
             setIsLoadingEdit(false)
-
             setIsShowModal(false)
           } else if (responseTTS.data.DataError === -107 || responseTTS.data.DataError === -108) {
             await RETOKEN()
             fetchData()
           } else {
-            toast.error(responseTTS.data.DataErrorDescription)
+            toast.error(responseTTS.data.DataErrorDescription, { autoClose: 2000 })
             setIsLoadingModal(false)
             setIsShowModal(false)
             setIsLoadingEdit(false)
@@ -195,7 +194,7 @@ const PhieuMuaHang = () => {
           await RETOKEN()
           getDSPMH()
         } else if (DataError === -1 || DataError === -2 || DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>, { autoClose: 2000 })
           setTableLoad(false)
         } else {
           toast.error(DataErrorDescription)
@@ -221,15 +220,16 @@ const PhieuMuaHang = () => {
             setFormKhoanNgay(response.data)
             setIsLoading(false)
           } else if (DataError === -1 || DataError === -2 || DataError === -3) {
-            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>, { autoClose: 2000 })
             setIsLoading(false)
           } else if (DataError === -107 || DataError === -108) {
+            toast.error(DataErrorDescription, { autoClose: 2000 })
             // await RETOKEN()
             // getKhoanNgay()
             // setIsLoading(false)
             // console.log('DataErrorDescription', DataErrorDescription)
           } else {
-            toast.error(DataErrorDescription)
+            toast.error(DataErrorDescription, { autoClose: 2000 })
             setIsLoading(false)
           }
         }
@@ -254,7 +254,7 @@ const PhieuMuaHang = () => {
           } else if (DataError === -107 || DataError === -108) {
             // await RETOKEN()
             // getChucNangQuyenHan()
-            console.log('DataErrorDescription', DataErrorDescription)
+            toast.error(DataErrorDescription, { autoClose: 2000 })
           }
         }
       } catch (error) {

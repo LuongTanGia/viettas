@@ -33,7 +33,7 @@ const NDTEdit = ({ close, loadingData, setTargetRow, dataNDT }) => {
       return
     }
     try {
-      const response = await categoryAPI.SuaNhomDoiTuong({ Ma: dataNDT?.Ma, Data: { ...NDTForm } }, TokenAccess)
+      const response = await categoryAPI.SuaNhomDoiTuong({ Ma: dataNDT?.Ma, Data: { ...NDTForm, Ten: NDTForm?.Ten?.trim(), GhiChu: NDTForm?.GhiChu?.trim() } }, TokenAccess)
       if (response.data.DataError == 0) {
         close()
         loadingData()
