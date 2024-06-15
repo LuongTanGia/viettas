@@ -899,7 +899,7 @@ const PhieuMuaHang = () => {
                                     (() => {
                                       const total = Number(filteredPMH?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0))
                                       return column.dataIndex === 'TongTienHang' || column.dataIndex === 'TongTienThue' || column.dataIndex === 'TongThanhTien' ? (
-                                        <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : ''}>
+                                        <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
                                           {Number(filteredPMH.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                             minimumFractionDigits: dataThongSo?.SOLESOTIEN,
                                             maximumFractionDigits: dataThongSo?.SOLESOTIEN,

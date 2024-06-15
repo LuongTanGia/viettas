@@ -351,7 +351,7 @@ const CongNoDauVao = () => {
       sorter: (a, b) => a.SoDuDK - b.SoDuDK,
       render: (text) => (
         <div className={`flex justify-end w-full h-full px-2 ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOTIEN)} search={searchHangHoa} />
         </div>
       ),
     },
@@ -365,7 +365,7 @@ const CongNoDauVao = () => {
       sorter: (a, b) => a.PhatSinhNo_PMH - b.PhatSinhNo_PMH,
       render: (text) => (
         <div className={`flex justify-end w-full h-full px-2 ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOTIEN)} search={searchHangHoa} />
         </div>
       ),
     },
@@ -379,7 +379,7 @@ const CongNoDauVao = () => {
       sorter: (a, b) => a.PhatSinhNo_DC - b.PhatSinhNo_DC,
       render: (text) => (
         <div className={`flex justify-end w-full h-full px-2 ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOTIEN)} search={searchHangHoa} />
         </div>
       ),
     },
@@ -393,7 +393,7 @@ const CongNoDauVao = () => {
       sorter: (a, b) => a.PhatSinhNo_Thu_XTR - b.PhatSinhNo_Thu_XTR,
       render: (text) => (
         <div className={`flex justify-end w-full h-full px-2 ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOTIEN)} search={searchHangHoa} />
         </div>
       ),
     },
@@ -407,7 +407,7 @@ const CongNoDauVao = () => {
       sorter: (a, b) => a.PhatSinhNo - b.PhatSinhNo,
       render: (text) => (
         <div className={`flex justify-end w-full h-full px-2 ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOTIEN)} search={searchHangHoa} />
         </div>
       ),
     },
@@ -421,7 +421,7 @@ const CongNoDauVao = () => {
       sorter: (a, b) => a.ThanhToan_Chi_PMH - b.ThanhToan_Chi_PMH,
       render: (text) => (
         <div className={`flex justify-end w-full h-full px-2 ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOTIEN)} search={searchHangHoa} />
         </div>
       ),
     },
@@ -435,7 +435,7 @@ const CongNoDauVao = () => {
       sorter: (a, b) => a.ThanhToan_DC - b.ThanhToan_DC,
       render: (text) => (
         <div className={`flex justify-end w-full h-full px-2 ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOTIEN)} search={searchHangHoa} />
         </div>
       ),
     },
@@ -449,7 +449,7 @@ const CongNoDauVao = () => {
       sorter: (a, b) => a.ThanhToan_XTR - b.ThanhToan_XTR,
       render: (text) => (
         <div className={`flex justify-end w-full h-full px-2 ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOTIEN)} search={searchHangHoa} />
         </div>
       ),
     },
@@ -463,7 +463,7 @@ const CongNoDauVao = () => {
       sorter: (a, b) => a.ThanhToan - b.ThanhToan,
       render: (text) => (
         <div className={`flex justify-end w-full h-full px-2 ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOTIEN)} search={searchHangHoa} />
         </div>
       ),
     },
@@ -477,7 +477,7 @@ const CongNoDauVao = () => {
       sorter: (a, b) => a.SoDuCK - b.SoDuCK,
       render: (text) => (
         <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOTIEN)} search={searchHangHoa} />
         </div>
       ),
     },
@@ -547,7 +547,7 @@ const CongNoDauVao = () => {
       sorter: (a, b) => a.SoDuDK - b.SoDuDK,
       render: (text) => (
         <div className={`flex justify-end w-full h-full px-2 ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOTIEN)} search={searchHangHoa} />
         </div>
       ),
     },
@@ -566,7 +566,7 @@ const CongNoDauVao = () => {
           sorter: (a, b) => a.PhatSinhNo_PMH - b.PhatSinhNo_PMH,
           render: (text) => (
             <div className={`flex justify-end w-full h-full px-2 ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
-              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOTIEN)} search={searchHangHoa} />
             </div>
           ),
         },
@@ -580,7 +580,7 @@ const CongNoDauVao = () => {
           sorter: (a, b) => a.PhatSinhNo_DC - b.PhatSinhNo_DC,
           render: (text) => (
             <div className={`flex justify-end w-full h-full px-2 ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
-              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOTIEN)} search={searchHangHoa} />
             </div>
           ),
         },
@@ -594,7 +594,7 @@ const CongNoDauVao = () => {
           sorter: (a, b) => a.PhatSinhNo_Thu_XTR - b.PhatSinhNo_Thu_XTR,
           render: (text) => (
             <div className={`flex justify-end w-full h-full px-2 ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
-              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOTIEN)} search={searchHangHoa} />
             </div>
           ),
         },
@@ -608,7 +608,7 @@ const CongNoDauVao = () => {
           sorter: (a, b) => a.PhatSinhNo - b.PhatSinhNo,
           render: (text) => (
             <div className={`flex justify-end w-full h-full px-2 ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
-              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOTIEN)} search={searchHangHoa} />
             </div>
           ),
         },
@@ -629,7 +629,7 @@ const CongNoDauVao = () => {
           sorter: (a, b) => a.ThanhToan_Chi_PMH - b.ThanhToan_Chi_PMH,
           render: (text) => (
             <div className={`flex justify-end w-full h-full px-2 ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
-              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOTIEN)} search={searchHangHoa} />
             </div>
           ),
         },
@@ -643,7 +643,7 @@ const CongNoDauVao = () => {
           sorter: (a, b) => a.ThanhToan_DC - b.ThanhToan_DC,
           render: (text) => (
             <div className={`flex justify-end w-full h-full px-2 ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
-              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOTIEN)} search={searchHangHoa} />
             </div>
           ),
         },
@@ -657,7 +657,7 @@ const CongNoDauVao = () => {
           sorter: (a, b) => a.ThanhToan_XTR - b.ThanhToan_XTR,
           render: (text) => (
             <div className={`flex justify-end w-full h-full px-2 ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
-              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOTIEN)} search={searchHangHoa} />
             </div>
           ),
         },
@@ -671,7 +671,7 @@ const CongNoDauVao = () => {
           sorter: (a, b) => a.ThanhToan - b.ThanhToan,
           render: (text) => (
             <div className={`flex justify-end w-full h-full px-2 ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
-              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+              <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOTIEN)} search={searchHangHoa} />
             </div>
           ),
         },
@@ -687,7 +687,7 @@ const CongNoDauVao = () => {
       sorter: (a, b) => a.SoDuCK - b.SoDuCK,
       render: (text) => (
         <div className={`flex justify-end w-full h-full  px-2  ${text < 0 ? 'text-red-600 text-sm' : text === 0 ? 'text-gray-300' : ''} `}>
-          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOLUONG)} search={searchHangHoa} />
+          <HighlightedCell text={formatThapPhan(text, dataThongSo.SOLESOTIEN)} search={searchHangHoa} />
         </div>
       ),
     },
@@ -1070,8 +1070,8 @@ const CongNoDauVao = () => {
                                   {isNumericColumn ? (
                                     <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
                                       {Number(filteredHangHoa.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
-                                        minimumFractionDigits: dataThongSo.SOLESOLUONG,
-                                        maximumFractionDigits: dataThongSo.SOLESOLUONG,
+                                        minimumFractionDigits: dataThongSo.SOLESOTIEN,
+                                        maximumFractionDigits: dataThongSo.SOLESOTIEN,
                                       })}
                                     </Text>
                                   ) : column.dataIndex == 'STT' ? (
