@@ -18,6 +18,8 @@ function RemoteDB() {
 
   const handleLogin = async (item) => {
     const response = await LOGIN(API.DANGNHAP, API.DANHSACHDULIEU, token, item.RemoteDB, item.MaKho, {})
+    window.sessionStorage.setItem('RemoteDb', item.RemoteDB)
+    window.sessionStorage.setItem('MaKho', item.MaKho || `Tổng kho`)
 
     if (response === 1) {
       Cookies.set('remoteDb', RemoteDB)

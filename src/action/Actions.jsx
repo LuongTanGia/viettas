@@ -45,14 +45,23 @@ export const CallBackAPI = async (API, token, data) => {
     handleError(error)
   }
 }
+
+const loginUrl = '/login'
+
+const clearLocalStorage = () => {
+  const itemsToRemove = ['firstLogin', 'TKN', 'tokenDuLieu', 'RTKN', 'userName']
+  itemsToRemove.forEach((item) => window.localStorage.removeItem(item))
+}
+
 const handleTokenRefreshError = () => {
-  toast.error('Failed to refresh token!')
-  window.localStorage.removeItem('firstLogin')
-  window.localStorage.removeItem('TKN')
-  window.localStorage.removeItem('tokenDuLieu')
-  window.localStorage.removeItem('RTKN')
-  window.localStorage.removeItem('userName')
-  window.location.href = '/login'
+  toast.error('Failed to refresh token. Please login again to continue.')
+  console.error('Failed to refresh token!')
+
+  clearLocalStorage()
+
+  if (window.confirm('Are you sure you want to log out?')) {
+    window.location.href = loginUrl
+  }
 }
 const handleResponseError = () => {
   toast.error('DataResults is undefined or null.')
@@ -215,7 +224,7 @@ export const DATATONGHOP = async (API, token, KhoanNgay, dispatch) => {
         toast.error('Failed to refresh token!')
       }
     }
-    dispatch(MainSlice.actions.getDataTongHop(response.data))
+    return response.data
   } catch (error) {
     console.error('Error adding user:', error)
   }

@@ -45,8 +45,13 @@ function DoughNut() {
       },
     ],
   }
+  const totalSum = dataChart?.reduce((acc, item) => acc + item.SoTien, 0) || 0
+  const formatter = new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 0,
+  })
   return (
     <>
+      <p className="text-base font-bold text-green-300"> Tổng cộng: {formatter.format(totalSum)}</p>
       {dataChart && dataChart?.length > 0 ? (
         <div className="pt-1 pb-3 flex justify-between gap-2">
           <div className="w-[40%] h-[40%]  pt-3">
@@ -55,10 +60,13 @@ function DoughNut() {
           <div className="w-[60%] flex flex-col ">
             {dataChart?.map((item, index) => (
               <div key={index} className="flex items-center justify-center">
-                <p className="w-[100%]" style={{ color: backgroundColor_list[index] }}>
+                <p className="w-[200px]" style={{ color: backgroundColor_list[index] }}>
                   {item.ThongTinDoiTuong}
                 </p>
-                <RateBar percentage={item.TyTrong} color={backgroundColor_list[index]} title={item.ThongTinDoiTuong} />
+                <div className="flex flex-1  w-full flex-column " style={{ color: backgroundColor_list[index] }}>
+                  <RateBar percentage={item.TyTrong} color={backgroundColor_list[index]} title={item.ThongTinDoiTuong} />
+                  <p className="text-base text-right"> {formatter.format(item.SoTien)}</p>
+                </div>
               </div>
             ))}
           </div>

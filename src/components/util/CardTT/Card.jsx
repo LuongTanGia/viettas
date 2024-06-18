@@ -12,6 +12,7 @@ function Card({ resultArray, formatter, icon }) {
     NHAPTRA: 'fa-solid fa-cart-shopping red',
     THU: 'fa-solid fa-dollar-sign blue',
     CHI: 'fa-solid fa-dollar-sign red',
+    QUYTIENMAT: 'fa-solid fa-dollar-sign red',
   }
 
   const nameMapping = {
@@ -25,6 +26,7 @@ function Card({ resultArray, formatter, icon }) {
     NHAPTRA: 'Hàng Bán Trở Lại',
     THU: 'Thu Tiền',
     CHI: 'Chi Tiền',
+    QUYTIENMAT: 'Quỹ Tiền Mặt',
   }
   return (
     <div

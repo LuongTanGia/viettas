@@ -8,6 +8,8 @@ import { useState } from 'react'
 function Header({ handleToggleSidebar, refs }) {
   const userLogin = window.localStorage.getItem('userName')
   const userInfor = JSON.parse(window.localStorage.getItem('userInfo'))
+  const RemoteDB = window.sessionStorage.getItem('RemoteDb')
+  const MaKho = window.sessionStorage.getItem('MaKho')
 
   const [isShow, setIsShow] = useState(false)
   const user = localStorage.getItem('User')
@@ -36,6 +38,13 @@ function Header({ handleToggleSidebar, refs }) {
             <span className="d-none d-lg-block">VTS - iSale</span>
             <i className="bi bi-list toggle-sidebar-btn" onClick={handleToggleSidebar}></i>
           </Link>
+          <p
+            className="  ml-4 hover:text-sky-900 hover:underline underline-offset-4 text-base font-semibold "
+            style={{ cursor: 'pointer' }}
+            onClick={() => (window.location.href = '/remotedb')}
+          >
+            {RemoteDB + ' - ' + MaKho}
+          </p>
         </div>
         <div className="search-bar"></div>
         <nav className="header-nav ms-auto">
