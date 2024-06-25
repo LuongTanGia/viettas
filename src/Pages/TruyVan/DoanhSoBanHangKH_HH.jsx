@@ -22,7 +22,9 @@ const DoanhSoBanHangKH_HH = () => {
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
-  const [dataDSBH, setDataDSBH] = useState('')
+  const [dataDSBH, setDataDSBH] = useState([])
+  const [dataLoad, setDataLoad] = useState([])
+  const [count, setCount] = useState(20)
   const [setSearchHangHoa, filteredHangHoa, searchHangHoa] = useSearch(dataDSBH)
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [isShowOption, setIsShowOption] = useState(false)
@@ -65,6 +67,30 @@ const DoanhSoBanHangKH_HH = () => {
       setIsShowNotify(true)
     }
   }, [dataCRUD])
+
+  useEffect(() => {
+    setDataLoad(filteredHangHoa?.splice(0, count))
+  }, [dataDSBH?.length, searchHangHoa])
+
+  useEffect(() => {
+    const tableContainer = document.querySelector('.ant-table-body')
+    const handleScroll = async () => {
+      if (tableContainer && tableContainer?.scrollTop + tableContainer?.clientHeight + 1 >= tableContainer?.scrollHeight) {
+        if (dataLoad.length < dataDSBH.length) {
+          setDataLoad((prevDataLoad) => [...prevDataLoad, ...dataDSBH.slice(count, count + 20)])
+          setCount((pre) => pre + 20)
+        }
+      }
+    }
+    if (tableContainer) {
+      tableContainer.addEventListener('scroll', handleScroll)
+    }
+    return () => {
+      if (tableContainer) {
+        tableContainer.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [dataDSBH, dataLoad?.length, count])
 
   useEffect(() => {
     const getDataQuyenHan = async () => {
@@ -198,7 +224,7 @@ const DoanhSoBanHangKH_HH = () => {
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
     setCheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
-    const key = Object.keys(dataDSBH[0] || []).filter((key) => key != 'ThongTinHangHoa' && key != 'DiaChiDoiTuong')
+    const key = dataDSBH && dataDSBH[0] ? Object.keys(dataDSBH[0]).filter((key) => key != 'ThongTinHangHoa' && key != 'DiaChiDoiTuong') : []
     setOptions(key)
   }, [selectVisible])
 
@@ -234,7 +260,6 @@ const DoanhSoBanHangKH_HH = () => {
       getDataDSBH()
     }
   }
-
   const handleDateChange = () => {
     clearTimeout(timerId)
     timerId = setTimeout(() => {
@@ -840,20 +865,12 @@ const DoanhSoBanHangKH_HH = () => {
                   loading={tableLoad}
                   className="setHeight"
                   columns={newTitles}
-                  dataSource={filteredHangHoa.map((item, index) => ({ ...item, key: index }))}
+                  dataSource={dataLoad?.map((item, index) => ({ ...item, key: index }))}
                   size="small"
                   scroll={{
                     x: 'max-content',
                     y: 300,
                   }}
-                  // pagination={{
-                  //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                  //   showSizeChanger: true,
-                  //   pageSizeOptions: ['50', '100', '1000'],
-                  //   onShowSizeChange: (current, size) => {
-                  //     localStorage.setItem('pageSize', size)
-                  //   },
-                  // }}
                   pagination={false}
                   style={{
                     whiteSpace: 'nowrap',

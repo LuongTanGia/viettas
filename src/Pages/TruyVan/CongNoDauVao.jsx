@@ -24,7 +24,9 @@ const CongNoDauVao = () => {
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
-  const [dataCNDV, setDataCNDV] = useState('')
+  const [dataCNDV, setDataCNDV] = useState([])
+  const [dataLoad, setDataLoad] = useState([])
+  const [count, setCount] = useState(20)
   const [setSearchHangHoa, filteredHangHoa, searchHangHoa] = useSearch(dataCNDV)
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [isShowOption, setIsShowOption] = useState(false)
@@ -49,7 +51,7 @@ const CongNoDauVao = () => {
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
     setCheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
-    const key = Object.keys(dataCNDV ? dataCNDV[0] : [] || []).filter((key) => key)
+    const key = dataCNDV && dataCNDV[0] ? Object.keys(dataCNDV[0]).filter((key) => key) : []
     setOptions(key)
   }, [selectVisible])
 
@@ -64,6 +66,30 @@ const CongNoDauVao = () => {
       document.removeEventListener('click', handleClickOutside)
     }
   }, [])
+
+  useEffect(() => {
+    setDataLoad(filteredHangHoa?.splice(0, count))
+  }, [dataCNDV?.length, searchHangHoa])
+
+  useEffect(() => {
+    const tableContainer = document.querySelector('.ant-table-body')
+    const handleScroll = async () => {
+      if (tableContainer && tableContainer?.scrollTop + tableContainer?.clientHeight + 1 >= tableContainer?.scrollHeight) {
+        if (dataLoad.length < dataCNDV.length) {
+          setDataLoad((prevDataLoad) => [...prevDataLoad, ...dataCNDV.slice(count, count + 20)])
+          setCount((pre) => pre + 20)
+        }
+      }
+    }
+    if (tableContainer) {
+      tableContainer.addEventListener('scroll', handleScroll)
+    }
+    return () => {
+      if (tableContainer) {
+        tableContainer.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [dataCNDV, dataLoad?.length, count])
 
   useEffect(() => {
     if (dataCRUD?.VIEW == false) {
@@ -1031,21 +1057,13 @@ const CongNoDauVao = () => {
                   loading={tableLoad}
                   className="setHeight"
                   columns={newTitlesChildren}
-                  dataSource={filteredHangHoa.map((item, index) => ({ ...item, key: index }))}
+                  dataSource={dataLoad?.map((item, index) => ({ ...item, key: index }))}
                   size="small"
                   scroll={{
                     x: 'max-content',
                     y: 300,
                   }}
                   rowClassName={(record, index) => addRowClass(record, index)}
-                  // pagination={{
-                  //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                  //   showSizeChanger: true,
-                  //   pageSizeOptions: ['50', '100', '1000'],
-                  //   onShowSizeChange: (current, size) => {
-                  //     localStorage.setItem('pageSize', size)
-                  //   },
-                  // }}
                   pagination={false}
                   style={{
                     whiteSpace: 'nowrap',
