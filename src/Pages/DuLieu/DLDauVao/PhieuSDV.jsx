@@ -28,11 +28,12 @@ const PhieuSDV = () => {
   const [data, setData] = useState([])
   const [dataThongTinSua, setDataThongTinSua] = useState([])
   const [dataRecord, setDataRecord] = useState(null)
-
   const [dataDoiTuong, setDataDoiTuong] = useState([])
   const [dataQuyenHan, setDataQuyenHan] = useState({})
   const [actionType, setActionType] = useState('')
   const [formKhoanNgay, setFormKhoanNgay] = useState([])
+  const [count, setCount] = useState(20)
+  const [dataLoad, setDataLoad] = useState([])
   const [setSearchSDV, filteredSDV, searchSDV] = useSearch(data)
   const [prevSearchValue, setPrevSearchValue] = useState('')
   const [prevdateValue, setPrevDateValue] = useState({})
@@ -53,9 +54,7 @@ const PhieuSDV = () => {
         setIsShowOption(false)
       }
     }
-
     document.addEventListener('click', handleClickOutside)
-
     return () => {
       document.removeEventListener('click', handleClickOutside)
     }
@@ -81,6 +80,30 @@ const PhieuSDV = () => {
       setNewColumns(JSON.parse(localStorage.getItem('hiddenColumnSDV')))
     }
   }, [confirmed])
+
+  useEffect(() => {
+    setDataLoad(filteredSDV?.splice(0, count))
+  }, [data?.length, searchSDV])
+
+  useEffect(() => {
+    const tableContainer = document.querySelector('.ant-table-body')
+    const handleScroll = async () => {
+      if (tableContainer && tableContainer.scrollTop + tableContainer.clientHeight + 1 >= tableContainer.scrollHeight) {
+        if (dataLoad?.length < data?.length) {
+          setDataLoad((prevDataLoad) => [...prevDataLoad, ...data.slice(count, count + 20)])
+          setCount((pre) => pre + 20)
+        }
+      }
+    }
+    if (tableContainer) {
+      tableContainer.addEventListener('scroll', handleScroll)
+    }
+    return () => {
+      if (tableContainer) {
+        tableContainer.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [data, dataLoad?.length, count])
 
   // get helper
   useEffect(() => {
@@ -150,7 +173,6 @@ const PhieuSDV = () => {
   useEffect(() => {
     const getKhoanNgay = async () => {
       try {
-        console.log('get Khoảng ngày')
         const tokenLogin = localStorage.getItem('TKN')
         const response = await apis.KhoanNgay(tokenLogin)
 

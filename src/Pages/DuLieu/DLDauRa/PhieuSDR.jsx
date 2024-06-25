@@ -32,6 +32,8 @@ const PhieuSDR = () => {
   const [dataQuyenHan, setDataQuyenHan] = useState({})
   const [actionType, setActionType] = useState('')
   const [formKhoanNgay, setFormKhoanNgay] = useState([])
+  const [count, setCount] = useState(20)
+  const [dataLoad, setDataLoad] = useState([])
   const [setSearchSDR, filteredSDR, searchSDR] = useSearch(data)
   const [prevSearchValue, setPrevSearchValue] = useState('')
   const [prevdateValue, setPrevDateValue] = useState({})
@@ -52,9 +54,7 @@ const PhieuSDR = () => {
         setIsShowOption(false)
       }
     }
-
     document.addEventListener('click', handleClickOutside)
-
     return () => {
       document.removeEventListener('click', handleClickOutside)
     }
@@ -80,6 +80,30 @@ const PhieuSDR = () => {
       setNewColumns(JSON.parse(localStorage.getItem('hiddenColumnSDR')))
     }
   }, [confirmed])
+
+  useEffect(() => {
+    setDataLoad(filteredSDR?.splice(0, count))
+  }, [data?.length, searchSDR])
+
+  useEffect(() => {
+    const tableContainer = document.querySelector('.ant-table-body')
+    const handleScroll = async () => {
+      if (tableContainer && tableContainer.scrollTop + tableContainer.clientHeight + 1 >= tableContainer.scrollHeight) {
+        if (dataLoad?.length < data?.length) {
+          setDataLoad((prevDataLoad) => [...prevDataLoad, ...data.slice(count, count + 20)])
+          setCount((pre) => pre + 20)
+        }
+      }
+    }
+    if (tableContainer) {
+      tableContainer.addEventListener('scroll', handleScroll)
+    }
+    return () => {
+      if (tableContainer) {
+        tableContainer.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [data, dataLoad?.length, count])
 
   // get helper
   useEffect(() => {
@@ -656,22 +680,13 @@ const PhieuSDR = () => {
                 <Table
                   loading={tableLoad}
                   className="table_pmh setHeight"
-                  // rowSelection={rowSelection}
                   columns={newColumnsHide}
-                  dataSource={filteredSDR}
+                  dataSource={dataLoad}
                   size="small"
                   scroll={{
                     x: 1500,
                     y: 410,
                   }}
-                  // pagination={{
-                  //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                  //   showSizeChanger: true,
-                  //   pageSizeOptions: ['50', '100', '1000'],
-                  //   onShowSizeChange: (current, size) => {
-                  //     localStorage.setItem('pageSize', size)
-                  //   },
-                  // }}
                   pagination={false}
                   rowKey={(record) => record.SoChungTu}
                   onRow={(record) => ({

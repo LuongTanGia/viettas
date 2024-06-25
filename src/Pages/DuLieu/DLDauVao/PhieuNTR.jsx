@@ -34,6 +34,8 @@ const PhieuNTR = () => {
   const [dataQuyenHan, setDataQuyenHan] = useState({})
   const [actionType, setActionType] = useState('')
   const [formKhoanNgay, setFormKhoanNgay] = useState([])
+  const [count, setCount] = useState(20)
+  const [dataLoad, setDataLoad] = useState([])
   const [setSearchPNTR, filteredPNTR, searchPNTR] = useSearch(data)
   const [prevSearchValue, setPrevSearchValue] = useState('')
   const [prevdateValue, setPrevDateValue] = useState({})
@@ -54,9 +56,7 @@ const PhieuNTR = () => {
         setIsShowOption(false)
       }
     }
-
     document.addEventListener('click', handleClickOutside)
-
     return () => {
       document.removeEventListener('click', handleClickOutside)
     }
@@ -75,6 +75,30 @@ const PhieuNTR = () => {
       setConfirmed(true)
     }
   }, [])
+
+  useEffect(() => {
+    setDataLoad(filteredPNTR?.splice(0, count))
+  }, [data?.length, searchPNTR])
+
+  useEffect(() => {
+    const tableContainer = document.querySelector('.ant-table-body')
+    const handleScroll = async () => {
+      if (tableContainer && tableContainer.scrollTop + tableContainer.clientHeight + 1 >= tableContainer.scrollHeight) {
+        if (dataLoad?.length < data?.length) {
+          setDataLoad((prevDataLoad) => [...prevDataLoad, ...data.slice(count, count + 20)])
+          setCount((pre) => pre + 20)
+        }
+      }
+    }
+    if (tableContainer) {
+      tableContainer.addEventListener('scroll', handleScroll)
+    }
+    return () => {
+      if (tableContainer) {
+        tableContainer.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [data, dataLoad?.length, count])
 
   useEffect(() => {
     if (confirmed) {
@@ -854,26 +878,17 @@ const PhieuNTR = () => {
                 </div>
               </div>
 
-              <div id="my-table" className="relative px-2 py-1 ">
+              <div id="my-table" className="relative px-2 py-1">
                 <Table
                   loading={tableLoad}
                   className="table_pmh setHeight"
-                  // rowSelection={rowSelection}
                   columns={newColumnsHide}
-                  dataSource={filteredPNTR}
+                  dataSource={dataLoad}
                   size="small"
                   scroll={{
                     x: 1500,
                     y: 410,
                   }}
-                  // pagination={{
-                  //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                  //   showSizeChanger: true,
-                  //   pageSizeOptions: ['50', '100', '1000'],
-                  //   onShowSizeChange: (current, size) => {
-                  //     localStorage.setItem('pageSize', size)
-                  //   },
-                  // }}
                   pagination={false}
                   rowKey={(record) => record.SoChungTu}
                   onRow={(record) => ({
@@ -882,7 +897,6 @@ const PhieuNTR = () => {
                     },
                   })}
                   rowClassName={(record, index) => (record.SoChungTu === doneNTR ? 'highlighted-row' : addRowClass(record, index))}
-                  // Bảng Tổng
                   summary={() => {
                     return (
                       <Table.Summary fixed="bottom">
@@ -891,7 +905,6 @@ const PhieuNTR = () => {
                             .filter((column) => column.render)
                             .map((column, index) => {
                               const isNumericColumn = typeof filteredPNTR[0]?.[column.dataIndex] === 'number'
-
                               return (
                                 <Table.Summary.Cell
                                   index={index}

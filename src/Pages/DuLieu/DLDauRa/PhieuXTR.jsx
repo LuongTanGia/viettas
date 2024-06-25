@@ -34,6 +34,8 @@ const PhieuXTR = () => {
   const [dataQuyenHan, setDataQuyenHan] = useState({})
   const [actionType, setActionType] = useState('')
   const [formKhoanNgay, setFormKhoanNgay] = useState([])
+  const [count, setCount] = useState(20)
+  const [dataLoad, setDataLoad] = useState([])
   const [setSearchPXTR, filteredPXTR, searchPXTR] = useSearch(data)
   const [prevSearchValue, setPrevSearchValue] = useState('')
   const [prevdateValue, setPrevDateValue] = useState({})
@@ -68,13 +70,36 @@ const PhieuXTR = () => {
     // Lấy thông tin từ local storage sau khi đăng nhập
     const storedHiddenColumns = localStorage.getItem('hiddenColumnPMH')
     const parsedHiddenColumns = storedHiddenColumns ? JSON.parse(storedHiddenColumns) : null
-
     // Áp dụng thông tin đã lưu vào checkedList và setConfirmed để ẩn cột
     if (Array.isArray(parsedHiddenColumns) && parsedHiddenColumns.length > 0) {
       setCheckedList(parsedHiddenColumns)
       setConfirmed(true)
     }
   }, [])
+
+  useEffect(() => {
+    setDataLoad(filteredPXTR?.splice(0, count))
+  }, [data?.length, searchPXTR])
+
+  useEffect(() => {
+    const tableContainer = document.querySelector('.ant-table-body')
+    const handleScroll = async () => {
+      if (tableContainer && tableContainer.scrollTop + tableContainer.clientHeight + 1 >= tableContainer.scrollHeight) {
+        if (dataLoad?.length < data?.length) {
+          setDataLoad((prevDataLoad) => [...prevDataLoad, ...data.slice(count, count + 20)])
+          setCount((pre) => pre + 20)
+        }
+      }
+    }
+    if (tableContainer) {
+      tableContainer.addEventListener('scroll', handleScroll)
+    }
+    return () => {
+      if (tableContainer) {
+        tableContainer.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [data, dataLoad?.length, count])
 
   useEffect(() => {
     if (confirmed) {
@@ -865,20 +890,12 @@ const PhieuXTR = () => {
                   className="table_pmh setHeight"
                   // rowSelection={rowSelection}
                   columns={newColumnsHide}
-                  dataSource={filteredPXTR}
+                  dataSource={dataLoad}
                   size="small"
                   scroll={{
                     x: 1500,
                     y: 410,
                   }}
-                  // pagination={{
-                  //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                  //   showSizeChanger: true,
-                  //   pageSizeOptions: ['50', '100', '1000'],
-                  //   onShowSizeChange: (current, size) => {
-                  //     localStorage.setItem('pageSize', size)
-                  //   },
-                  // }}
                   pagination={false}
                   rowKey={(record) => record.SoChungTu}
                   onRow={(record) => ({

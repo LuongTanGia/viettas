@@ -29,7 +29,9 @@ const HangHoa = () => {
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
-  const [dataHangHoa, setDataHangHoa] = useState()
+  const [count, setCount] = useState(20)
+  const [dataLoad, setDataLoad] = useState([])
+  const [dataHangHoa, setDataHangHoa] = useState([])
   const [setSearchHangHoa, filteredHangHoa, searchHangHoa] = useSearch(dataHangHoa)
   const [isMaHang, setIsMaHang] = useState()
   const [actionType, setActionType] = useState('')
@@ -56,17 +58,14 @@ const HangHoa = () => {
         if (response.data.DataError === 0) {
           setDataHangHoa(response.data.DataResults)
           setTableLoad(false)
-          setIsLoading(true)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
           getListHangHoa()
         } else {
           setDataHangHoa([])
           setTableLoad(false)
-          setIsLoading(true)
         }
       } catch (error) {
-        console.log(error)
         setTableLoad(false)
       }
     }
@@ -108,11 +107,43 @@ const HangHoa = () => {
   }, [])
 
   useEffect(() => {
+    setDataLoad(filteredHangHoa?.splice(0, count))
+  }, [dataHangHoa?.length, searchHangHoa])
+
+  useEffect(() => {
+    const tableContainer = document.querySelector('.ant-table-body')
+    const handleScroll = async () => {
+      if (tableContainer && tableContainer.scrollTop + tableContainer.clientHeight + 1 >= tableContainer.scrollHeight) {
+        if (dataLoad.length < dataHangHoa.length) {
+          setDataLoad((prevDataLoad) => [...prevDataLoad, ...dataHangHoa.slice(count, count + 20)])
+          setCount((pre) => pre + 20)
+        }
+      } else if (tableContainer && tableContainer.scrollTop + tableContainer.clientHeight + 2 >= tableContainer.scrollHeight) {
+        if (dataLoad.length < dataHangHoa.length) {
+          setDataLoad((prevDataLoad) => [...prevDataLoad, ...dataHangHoa.slice(count, count + 20)])
+          setCount((pre) => pre + 20)
+        }
+      }
+    }
+    if (tableContainer) {
+      tableContainer.addEventListener('scroll', handleScroll)
+    }
+    return () => {
+      if (tableContainer) {
+        tableContainer.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [dataHangHoa, dataLoad?.length, count])
+
+  useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
     setCheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
-    const key = Object.keys(dataHangHoa ? dataHangHoa[0] : [] || []).filter(
-      (key) => key !== 'CoThue' && key !== 'TyLeThue' && key !== 'Nhom' && key !== 'TyLeQuyDoi' && key !== 'DienGiaiHangHoa' && key !== 'DVTQuyDoi',
-    )
+    const key =
+      dataHangHoa && dataHangHoa[0]
+        ? Object.keys(dataHangHoa[0]).filter(
+            (key) => key !== 'CoThue' && key !== 'TyLeThue' && key !== 'Nhom' && key !== 'TyLeQuyDoi' && key !== 'DienGiaiHangHoa' && key !== 'DVTQuyDoi',
+          )
+        : []
     setOptions(key)
   }, [selectVisible])
 
@@ -753,7 +784,7 @@ const HangHoa = () => {
                     rowClassName={(record, index) => (record.MaHang === targetRow ? 'highlighted-row' : addRowClass(record, index))}
                     className="setHeight"
                     columns={newTitles}
-                    dataSource={filteredHangHoa.map((item, index) => ({
+                    dataSource={dataLoad?.map((item, index) => ({
                       ...item,
                       modifiedIndex: index + 1,
                     }))}
@@ -762,15 +793,7 @@ const HangHoa = () => {
                       x: 'max-content',
                       y: 400,
                     }}
-                    pagination={{
-                      defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                      showSizeChanger: true,
-                      pageSizeOptions: ['50', '100', '1000'],
-                      onShowSizeChange: (current, size) => {
-                        localStorage.setItem('pageSize', size)
-                      },
-                    }}
-                    // pagination={false}
+                    pagination={false}
                     style={{
                       whiteSpace: 'nowrap',
                       fontSize: '24px',

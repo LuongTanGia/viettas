@@ -34,6 +34,7 @@ const DTView = ({ close, dataDT }) => {
       handleView()
     }
   }, [isLoading])
+  console.log(dataDTView)
   return (
     <>
       {!isLoading ? (

@@ -484,7 +484,7 @@ function Tables({ hidden, loadingSearch, param, columName, height, handleView, h
                                   })()
                                 ) : column.dataIndex === 'TTTienMat' ? (
                                   <Text strong className="text-white">
-                                    {Object.values(data).filter((value) => value.TTTienMat).length}
+                                    {Object?.values(data)?.filter((value) => value.TTTienMat)?.length}
                                   </Text>
                                 ) : null}
                               </Table.Summary.Cell>
@@ -495,14 +495,7 @@ function Tables({ hidden, loadingSearch, param, columName, height, handleView, h
                   )
                 : null
             }
-            pagination={{
-              defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-              showSizeChanger: true,
-              pageSizeOptions: ['50', '100', '1000'],
-              onShowSizeChange: (current, size) => {
-                localStorage.setItem('pageSize', size)
-              },
-            }}
+            pagination={false}
           />
         ) : (
           <Table

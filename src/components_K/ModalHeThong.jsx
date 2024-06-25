@@ -201,7 +201,6 @@ const ModalHeThong = ({ close }) => {
   const handleCheckBoxChange = (e, value) => {
     setFormHT({ ...formHT, [value]: e.target.checked })
   }
-
   return (
     <div className=" fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-10">
       <div className="p-4 absolute shadow-lg bg-white rounded-md flex flex-col ">

@@ -9,9 +9,9 @@ import ActionButton from '../../../util/Button/ActionButton'
 const HMCCreate = ({ close, loadingData, setTargetRow }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const innitProduct = {
-    Ma: '',
-    Ten: '',
-    GhiChu: '',
+    Ma: null,
+    Ten: null,
+    GhiChu: null,
   }
   const [HMCForm, setHMCForm] = useState(() => {
     return innitProduct
@@ -46,7 +46,7 @@ const HMCCreate = ({ close, loadingData, setTargetRow }) => {
     } catch (error) {
       console.log(error)
       toast.error('Lỗi Server vui lòng thử lại', { autoClose: 1000 })
-      close()
+      // close()
     }
   }
   return (

@@ -26,7 +26,9 @@ import HMCDelete from '../../components/Modals/DanhMuc/HangMucChi/HMCDelete'
 const HangMucChi = () => {
   const navigate = useNavigate()
   const TokenAccess = localStorage.getItem('TKN')
-  const [dataHangMucChi, setDataHangMucChi] = useState()
+  const [dataHangMucChi, setDataHangMucChi] = useState([])
+  const [count, setCount] = useState(20)
+  const [dataLoad, setDataLoad] = useState([])
   const [setSearchHangMucChi, filteredHangMucChi, searchHangMucChi] = useSearch(dataHangMucChi)
   const [isMaHang, setIsMaHang] = useState()
   const [actionType, setActionType] = useState('')
@@ -47,9 +49,33 @@ const HangMucChi = () => {
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
     setCheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
-    const key = Object.keys(dataHangMucChi ? dataHangMucChi[0] : [] || []).filter((key) => key)
+    const key = dataHangMucChi && dataHangMucChi[0] ? Object.keys(dataHangMucChi[0]).filter((key) => key) : []
     setOptions(key)
   }, [selectVisible])
+
+  useEffect(() => {
+    setDataLoad(filteredHangMucChi?.splice(0, count))
+  }, [dataHangMucChi?.length, searchHangMucChi])
+
+  useEffect(() => {
+    const tableContainer = document.querySelector('.ant-table-body')
+    const handleScroll = async () => {
+      if (tableContainer && tableContainer.scrollTop + tableContainer.clientHeight + 1 >= tableContainer.scrollHeight) {
+        if (dataLoad?.length < dataHangMucChi?.length) {
+          setDataLoad((prevDataLoad) => [...prevDataLoad, ...dataHangMucChi.slice(count, count + 20)])
+          setCount((pre) => pre + 20)
+        }
+      }
+    }
+    if (tableContainer) {
+      tableContainer.addEventListener('scroll', handleScroll)
+    }
+    return () => {
+      if (tableContainer) {
+        tableContainer.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [dataHangMucChi, dataLoad?.length, count])
 
   useEffect(() => {
     const getListHangMucChi = async () => {
@@ -479,7 +505,7 @@ const HangMucChi = () => {
                     rowClassName={(record, index) => (record.Ma == targetRow ? 'highlighted-row' : addRowClass(record, index))}
                     className="setHeight"
                     columns={newTitles}
-                    dataSource={filteredHangMucChi.map((item, index) => ({
+                    dataSource={dataLoad?.map((item, index) => ({
                       ...item,
                       key: index,
                     }))}
@@ -488,14 +514,6 @@ const HangMucChi = () => {
                       x: 'max-content',
                       y: 400,
                     }}
-                    // pagination={{
-                    //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                    //   showSizeChanger: true,
-                    //   pageSizeOptions: ['50', '100', '1000'],
-                    //   onShowSizeChange: (current, size) => {
-                    //     localStorage.setItem('pageSize', size)
-                    //   },
-                    // }}
                     pagination={false}
                     style={{
                       whiteSpace: 'nowrap',

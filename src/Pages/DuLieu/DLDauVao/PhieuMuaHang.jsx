@@ -36,9 +36,11 @@ const PhieuMuaHang = () => {
   const [actionType, setActionType] = useState('')
   const [formKhoanNgay, setFormKhoanNgay] = useState({})
   const [dataQuyenHan, setDataQuyenHan] = useState({})
+  const [dataLoad, setDataLoad] = useState([])
+  const [count, setCount] = useState(20)
   const [setSearchPMH, filteredPMH, searchPMH] = useSearch(data)
   const [prevSearchValue, setPrevSearchValue] = useState('')
-  const [prevdateValue, setPrevDateValue] = useState({})
+  const [prevDateValue, setPrevDateValue] = useState({})
   const [donePMH, setDonePMH] = useState(null)
   const [hideColumns, setHideColumns] = useState(false)
   const [checkedList, setCheckedList] = useState([])
@@ -70,6 +72,30 @@ const PhieuMuaHang = () => {
       setConfirmed(true)
     }
   }, [])
+
+  useEffect(() => {
+    setDataLoad(filteredPMH?.splice(0, count))
+  }, [data?.length, searchPMH])
+
+  useEffect(() => {
+    const tableContainer = document.querySelector('.ant-table-body')
+    const handleScroll = async () => {
+      if (tableContainer && tableContainer.scrollTop + tableContainer.clientHeight + 1 >= tableContainer.scrollHeight) {
+        if (dataLoad?.length < data?.length) {
+          setDataLoad((prevDataLoad) => [...prevDataLoad, ...data.slice(count, count + 20)])
+          setCount((pre) => pre + 20)
+        }
+      }
+    }
+    if (tableContainer) {
+      tableContainer.addEventListener('scroll', handleScroll)
+    }
+    return () => {
+      if (tableContainer) {
+        tableContainer.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [data, dataLoad?.length, count])
 
   useEffect(() => {
     if (confirmed) {
@@ -122,7 +148,6 @@ const PhieuMuaHang = () => {
           }
         }
         if (actionType === 'view') {
-          console.log('get helper tt')
           const responseTT = await apis.ThongTinPMH(tokenLogin, dataRecord.SoChungTu)
           if (responseTT.data && responseTT.data.DataError === 0) {
             setDataThongTin(responseTT.data.DataResult)
@@ -182,12 +207,10 @@ const PhieuMuaHang = () => {
   const getDSPMH = async () => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
-
       const response = await apis.DanhSachPMH(tokenLogin, formKhoanNgay)
-
       if (response) {
         const { DataError, DataErrorDescription, DataResults } = response.data
-        if (DataError === 0) {
+        if (DataError == 0) {
           setData(DataResults)
           setTableLoad(false)
         } else if (DataError === -107 || DataError === -108) {
@@ -197,7 +220,6 @@ const PhieuMuaHang = () => {
           toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>, { autoClose: 2000 })
           setTableLoad(false)
         } else {
-          toast.error(DataErrorDescription)
           setData([])
           setTableLoad(false)
         }
@@ -700,7 +722,7 @@ const PhieuMuaHang = () => {
   }
 
   const handleFilterDS = () => {
-    if (formKhoanNgay !== prevdateValue) {
+    if (formKhoanNgay !== prevDateValue) {
       setTableLoad(true)
     }
   }
@@ -860,21 +882,12 @@ const PhieuMuaHang = () => {
                   className="setHeight  table-style "
                   // rowSelection={rowSelection}
                   columns={newColumnsHide}
-                  dataSource={filteredPMH}
+                  dataSource={dataLoad}
                   size="small"
                   scroll={{
                     x: 1500,
                     y: 410,
                   }}
-                  // bordered={true}
-                  // pagination={{
-                  //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                  //   showSizeChanger: true,
-                  //   pageSizeOptions: ['50', '100', '1000'],
-                  //   onShowSizeChange: (current, size) => {
-                  //     localStorage.setItem('pageSize', size)
-                  //   },
-                  // }}
                   pagination={false}
                   rowKey={(record) => record.SoChungTu}
                   onRow={(record) => ({
@@ -927,7 +940,7 @@ const PhieuMuaHang = () => {
                                     </Text>
                                   ) : column.dataIndex === 'STT' ? (
                                     <Text className="text-center flex justify-center text-white" strong>
-                                      {data.length}
+                                      {data?.length}
                                     </Text>
                                   ) : null}
                                 </Table.Summary.Cell>

@@ -46,7 +46,7 @@ export const useSearch = (data) => {
   }
   const filteredData = useMemo(() => {
     if (data)
-      return data.filter((item) => {
+      return data?.filter((item) => {
         const keys = Object.keys(item)
         return keys.some((key) => {
           const value = item[key] || ''

@@ -33,7 +33,7 @@ const NHEdit = ({ close, loadingData, setTargetRow, dataNH }) => {
       return
     }
     try {
-      const response = await categoryAPI.SuaNhomHang({ Ma: dataNH?.MaNhom, Data: { ...NHForm, TenNhom: NHForm?.TenNhom?.trim(), GhiChu: NHForm?.GhiChu?.trim() } }, TokenAccess)
+      const response = await categoryAPI.SuaNhomHang({ Ma: dataNH?.MaNhom, Data: { ...NHForm } }, TokenAccess)
       if (response.data.DataError == 0) {
         close()
         loadingData()
