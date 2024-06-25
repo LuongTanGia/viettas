@@ -177,7 +177,10 @@ const HUYCreate = ({ close, loadingData, setTargetRow }) => {
         if (isAdd) {
           toast.warning('Vui lòng chọn mã hàng', { autoClose: 2000 })
         } else {
-          const response = await categoryAPI.HUYCreate({ ...HUYForm, DataDetails: newData, NgayCTu: dayjs(valueDate).format('YYYY-MM-DD') }, TokenAccess)
+          const response = await categoryAPI.HUYCreate(
+            { ...HUYForm, GhiChu: HUYForm?.GhiChu?.trim(), DataDetails: newData, NgayCTu: dayjs(valueDate).format('YYYY-MM-DD') },
+            TokenAccess,
+          )
           if (response.data.DataError == 0) {
             isPrint
               ? (handlePrint(), setHUYForm({ MaKho: dataKhoHang[0]?.MaKho }), setSelectedRowData([]))

@@ -92,7 +92,22 @@ const QTTEdit = ({ close, loadingData, setTargetRow, dataQTT }) => {
       return
     }
     try {
-      const response = await categoryAPI.SuaQuayTinhTien({ Ma: dataQTT?.Quay, Data: { ...QTTForm, MaKho: QTTForm.MaKho } }, TokenAccess)
+      const response = await categoryAPI.SuaQuayTinhTien(
+        {
+          Ma: dataQTT?.Quay,
+          Data: {
+            ...QTTForm,
+            MaKho: QTTForm.MaKho,
+            TenMayTinh: QTTForm?.TenMayTinh?.trim(),
+            SQLServer: QTTForm?.SQLServer?.trim(),
+            SQLUser: QTTForm?.SQLUser?.trim(),
+            SQLPassword: QTTForm?.SQLPassword?.trim(),
+            SQLDatabase: QTTForm?.SQLDatabase?.trim(),
+            GhiChu: QTTForm?.GhiChu?.trim(),
+          },
+        },
+        TokenAccess,
+      )
       if (response.data.DataError == 0) {
         close()
         loadingData()

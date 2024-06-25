@@ -42,7 +42,6 @@ const CreateDuLieu = ({ actionType, typePage, namePage, data, dataThongSo, dataD
     NgayCTu: ngayChungTu,
     TenDoiTuong: '',
     DiaChi: '',
-    MaSoThue: '',
     TTTienMat: false,
     GhiChu: '',
     DataDetails: [],
@@ -209,13 +208,34 @@ const CreateDuLieu = ({ actionType, typePage, namePage, data, dataThongSo, dataD
       let response
       switch (typePage) {
         case 'PMH':
-          response = await apis.ThemPMH(tokenLogin, { ...formCreate, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
+          response = await apis.ThemPMH(
+            tokenLogin,
+            {
+              ...formCreate,
+              TenDoiTuong: formCreate?.TenDoiTuong?.trim(),
+              DiaChi: formCreate?.DiaChi?.trim(),
+              GhiChu: formCreate?.GhiChu?.trim(),
+              DataDetails: dataAddSTT,
+            },
+            selectedDoiTuong,
+            selectedKhoHang,
+          )
           break
         case 'NTR':
-          response = await apis.ThemNTR(tokenLogin, { ...formCreate, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
+          response = await apis.ThemNTR(
+            tokenLogin,
+            { ...formCreate, TenDoiTuong: formCreate?.TenDoiTuong?.trim(), DiaChi: formCreate?.DiaChi?.trim(), GhiChu: formCreate?.GhiChu?.trim(), DataDetails: dataAddSTT },
+            selectedDoiTuong,
+            selectedKhoHang,
+          )
           break
         case 'XTR':
-          response = await apis.ThemXTR(tokenLogin, { ...formCreate, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
+          response = await apis.ThemXTR(
+            tokenLogin,
+            { ...formCreate, TenDoiTuong: formCreate?.TenDoiTuong?.trim(), DiaChi: formCreate?.DiaChi?.trim(), GhiChu: formCreate?.GhiChu?.trim(), DataDetails: dataAddSTT },
+            selectedDoiTuong,
+            selectedKhoHang,
+          )
           break
         default:
           break
@@ -259,13 +279,28 @@ const CreateDuLieu = ({ actionType, typePage, namePage, data, dataThongSo, dataD
       let response
       switch (typePage) {
         case 'PMH':
-          response = await apis.ThemPMH(tokenLogin, { ...formCreate, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
+          response = await apis.ThemPMH(
+            tokenLogin,
+            { ...formCreate, TenDoiTuong: formCreate?.TenDoiTuong?.trim(), DiaChi: formCreate?.DiaChi?.trim(), GhiChu: formCreate?.GhiChu?.trim(), DataDetails: dataAddSTT },
+            selectedDoiTuong,
+            selectedKhoHang,
+          )
           break
         case 'NTR':
-          response = await apis.ThemNTR(tokenLogin, { ...formCreate, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
+          response = await apis.ThemNTR(
+            tokenLogin,
+            { ...formCreate, TenDoiTuong: formCreate?.TenDoiTuong?.trim(), DiaChi: formCreate?.DiaChi?.trim(), GhiChu: formCreate?.GhiChu?.trim(), DataDetails: dataAddSTT },
+            selectedDoiTuong,
+            selectedKhoHang,
+          )
           break
         case 'XTR':
-          response = await apis.ThemXTR(tokenLogin, { ...formCreate, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
+          response = await apis.ThemXTR(
+            tokenLogin,
+            { ...formCreate, TenDoiTuong: formCreate?.TenDoiTuong?.trim(), DiaChi: formCreate?.DiaChi?.trim(), GhiChu: formCreate?.GhiChu?.trim(), DataDetails: dataAddSTT },
+            selectedDoiTuong,
+            selectedKhoHang,
+          )
           break
         default:
           break
@@ -313,13 +348,28 @@ const CreateDuLieu = ({ actionType, typePage, namePage, data, dataThongSo, dataD
       let response
       switch (typePage) {
         case 'PMH':
-          response = await apis.ThemPMH(tokenLogin, { ...formCreate, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
+          response = await apis.ThemPMH(
+            tokenLogin,
+            { ...formCreate, TenDoiTuong: formCreate?.TenDoiTuong?.trim(), DiaChi: formCreate?.DiaChi?.trim(), GhiChu: formCreate?.GhiChu?.trim(), DataDetails: dataAddSTT },
+            selectedDoiTuong,
+            selectedKhoHang,
+          )
           break
         case 'NTR':
-          response = await apis.ThemNTR(tokenLogin, { ...formCreate, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
+          response = await apis.ThemNTR(
+            tokenLogin,
+            { ...formCreate, TenDoiTuong: formCreate?.TenDoiTuong?.trim(), DiaChi: formCreate?.DiaChi?.trim(), GhiChu: formCreate?.GhiChu?.trim(), DataDetails: dataAddSTT },
+            selectedDoiTuong,
+            selectedKhoHang,
+          )
           break
         case 'XTR':
-          response = await apis.ThemXTR(tokenLogin, { ...formCreate, DataDetails: dataAddSTT }, selectedDoiTuong, selectedKhoHang)
+          response = await apis.ThemXTR(
+            tokenLogin,
+            { ...formCreate, TenDoiTuong: formCreate?.TenDoiTuong?.trim(), DiaChi: formCreate?.DiaChi?.trim(), GhiChu: formCreate?.GhiChu?.trim(), DataDetails: dataAddSTT },
+            selectedDoiTuong,
+            selectedKhoHang,
+          )
           break
         default:
           break

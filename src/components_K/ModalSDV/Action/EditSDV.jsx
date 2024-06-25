@@ -52,10 +52,20 @@ const EditSDV = ({ namePage, dataRecord, dataThongTinSua, dataDoiTuong, dataThon
       let response
       switch (typePage) {
         case 'SDV':
-          response = await apis.SuaSDV(tokenLogin, dataRecord.SoChungTu, formEdit)
+          response = await apis.SuaSDV(tokenLogin, dataRecord.SoChungTu, {
+            ...formEdit,
+            DoiTuong: formEdit?.DoiTuong?.trim(),
+            SoTien: formEdit?.SoTien?.trim(),
+            GhiChu: formEdit?.GhiChu?.trim(),
+          })
           break
         case 'SDR':
-          response = await apis.SuaSDR(tokenLogin, dataRecord.SoChungTu, formEdit)
+          response = await apis.SuaSDR(tokenLogin, dataRecord.SoChungTu, {
+            ...formEdit,
+            DoiTuong: formEdit?.DoiTuong?.trim(),
+            SoTien: formEdit?.SoTien?.trim(),
+            GhiChu: formEdit?.GhiChu?.trim(),
+          })
           break
         default:
           break

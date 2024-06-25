@@ -114,10 +114,20 @@ const EditThuChi = ({ actionType, typePage, namePage, data, dataRecord, dataThon
       let response
       switch (typePage) {
         case 'PCT':
-          response = await apis.SuaPCT(tokenLogin, dataRecord.SoChungTu, formEdit)
+          response = await apis.SuaPCT(tokenLogin, dataRecord.SoChungTu, {
+            ...formEdit,
+            TenDoiTuong: formEdit?.TenDoiTuong?.trim(),
+            DiaChi: formEdit?.DiaChi?.trim(),
+            GhiChu: formEdit?.GhiChu?.trim(),
+          })
           break
         case 'PTT':
-          response = await apis.SuaPTT(tokenLogin, dataRecord.SoChungTu, formEdit)
+          response = await apis.SuaPTT(tokenLogin, dataRecord.SoChungTu, {
+            ...formEdit,
+            TenDoiTuong: formEdit?.TenDoiTuong?.trim(),
+            DiaChi: formEdit?.DiaChi?.trim(),
+            GhiChu: formEdit?.GhiChu?.trim(),
+          })
           break
 
         default:

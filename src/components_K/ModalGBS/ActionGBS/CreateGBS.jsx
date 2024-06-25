@@ -131,7 +131,13 @@ const CreateGBS = ({ actionType, typePage, namePage, dataThongTin, dataHangHoa, 
     try {
       const tokenLogin = localStorage.getItem('TKN')
 
-      const response = await apis.ThemGBS(tokenLogin, { ...formCreate, NhomGia_CTs: selectedRowData })
+      const response = await apis.ThemGBS(tokenLogin, {
+        ...formCreate,
+        TenNhomGia: formCreate?.TenNhomGia?.trim(),
+        NhomGia: formCreate?.NhomGia?.trim(),
+        GhiChu: formCreate?.GhiChu?.trim(),
+        NhomGia_CTs: selectedRowData,
+      })
       if (response) {
         const { DataError, DataErrorDescription } = response.data
         if (DataError === 0) {
@@ -166,7 +172,13 @@ const CreateGBS = ({ actionType, typePage, namePage, dataThongTin, dataHangHoa, 
     try {
       const tokenLogin = localStorage.getItem('TKN')
 
-      const response = await apis.ThemGBS(tokenLogin, { ...formCreate, NhomGia_CTs: selectedRowData })
+      const response = await apis.ThemGBS(tokenLogin, {
+        ...formCreate,
+        TenNhomGia: formCreate?.TenNhomGia?.trim(),
+        NhomGia: formCreate?.NhomGia?.trim(),
+        GhiChu: formCreate?.GhiChu?.trim(),
+        NhomGia_CTs: selectedRowData,
+      })
       if (response) {
         const { DataError, DataErrorDescription } = response.data
         if (DataError === 0) {

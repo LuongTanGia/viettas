@@ -32,7 +32,7 @@ const HMTEdit = ({ close, loadingData, setTargetRow, dataHMT }) => {
       return
     }
     try {
-      const response = await categoryAPI.SuaHangMucThu({ Ma: dataHMT?.Ma, Data: { ...HMTForm } }, TokenAccess)
+      const response = await categoryAPI.SuaHangMucThu({ Ma: dataHMT?.Ma, Data: { ...HMTForm, Ten: HMTForm?.Ten?.trim(), GhiChu: HMTForm?.GhiChu?.trim() } }, TokenAccess)
       if (response.data.DataError == 0) {
         close()
         loadingData()

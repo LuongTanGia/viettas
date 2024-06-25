@@ -9,18 +9,18 @@ import { CgCloseO } from 'react-icons/cg'
 import { TfiMoreAlt } from 'react-icons/tfi'
 import { DateField } from '@mui/x-date-pickers'
 import { RiFileExcel2Fill } from 'react-icons/ri'
-import { FaSearch, FaEyeSlash, FaCheck } from 'react-icons/fa'
-import { CloseSquareFilled } from '@ant-design/icons'
 import { MdDelete, MdPrint } from 'react-icons/md'
-import { useSearch } from '../../../../components/hooks/Search'
+import { CloseSquareFilled } from '@ant-design/icons'
+import { FaSearch, FaEyeSlash, FaCheck } from 'react-icons/fa'
 import categoryAPI from '../../../../API/linkAPI'
-import { RETOKEN, addRowClass, exportToExcel } from '../../../../action/Actions'
+import { useSearch } from '../../../../components/hooks/Search'
 import HighlightedCell from '../../../../components/hooks/HighlightedCell'
 import ActionButton from '../../../../components/util/Button/ActionButton'
 import SimpleBackdrop from '../../../../components/util/Loading/LoadingPage'
-import { nameColumsPhieuNhapChuyenKho } from '../../../../components/util/Table/ColumnName'
-import NCKView from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuNCK/NCKView'
+import { RETOKEN, addRowClass, exportToExcel } from '../../../../action/Actions'
 import NCKDel from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuNCK/NCKDel'
+import NCKView from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuNCK/NCKView'
+import { nameColumsPhieuNhapChuyenKho } from '../../../../components/util/Table/ColumnName'
 import NCKPrint from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuNCK/NCKPrint'
 import NCKConfirm from '../../../../components/Modals/DuLieu/DuLieuTrongKho/PhieuNCK/NCKConfirm'
 
@@ -151,23 +151,6 @@ const PhieuNhapChuyenKho = ({ isTableLoad, isTargetRow }) => {
     getDataQuyenHan()
   }, [])
 
-  function formatDateTime(inputDate, includeTime = false) {
-    const date = new Date(inputDate)
-    const day = date.getDate().toString().padStart(2, '0')
-    const month = (date.getMonth() + 1).toString().padStart(2, '0')
-    const year = date.getFullYear()
-    let formattedDateTime = `${day}/${month}/${year}`
-    if (includeTime) {
-      const hours = date.getHours().toString().padStart(2, '0')
-      const minutes = date.getMinutes().toString().padStart(2, '0')
-      const seconds = date.getSeconds().toString().padStart(2, '0')
-      formattedDateTime += ` ${hours}:${minutes}:${seconds} `
-    }
-    return formattedDateTime
-  }
-  const formatCurrency = (value) => {
-    return Number(value).toLocaleString('en-US')
-  }
   const formatThapPhan = (number, decimalPlaces) => {
     if (typeof number === 'number' && !isNaN(number)) {
       const formatter = new Intl.NumberFormat('en-US', {
@@ -295,7 +278,7 @@ const PhieuNhapChuyenKho = ({ isTableLoad, isTargetRow }) => {
       },
       render: (text) => (
         <span className="flex justify-center">
-          <HighlightedCell text={formatDateTime(text)} search={searchHangHoa} />
+          <HighlightedCell text={dayjs(text).format('DD/MM/YYYY')} search={searchHangHoa} />
         </span>
       ),
     },
@@ -337,7 +320,7 @@ const PhieuNhapChuyenKho = ({ isTableLoad, isTargetRow }) => {
       sorter: (a, b) => a.SoMatHang - b.SoMatHang,
       render: (text) => (
         <span className={`flex justify-end ${text < 0 ? 'text-red-600 text-base' : text === 0 || text === null ? 'text-gray-300' : ''}`}>
-          <HighlightedCell text={formatCurrency(text)} search={searchHangHoa} />
+          <HighlightedCell text={formatThapPhan(text, 0)} search={searchHangHoa} />
         </span>
       ),
     },
@@ -397,7 +380,7 @@ const PhieuNhapChuyenKho = ({ isTableLoad, isTargetRow }) => {
       },
       render: (text) => (
         <span className="flex justify-center">
-          <HighlightedCell text={formatDateTime(text, true)} search={searchHangHoa} />
+          <HighlightedCell text={dayjs(text).format('DD/MM/YYYY HH:mm:ss')} search={searchHangHoa} />
         </span>
       ),
     },
@@ -429,7 +412,7 @@ const PhieuNhapChuyenKho = ({ isTableLoad, isTargetRow }) => {
       },
       render: (text) => (
         <span className="flex justify-center">
-          <HighlightedCell text={text ? formatDateTime(text, true) : ''} search={searchHangHoa} />
+          <HighlightedCell text={text ? dayjs(text).format('DD/MM/YYYY HH:mm:ss') : ''} search={searchHangHoa} />
         </span>
       ),
     },
@@ -683,14 +666,6 @@ const PhieuNhapChuyenKho = ({ isTableLoad, isTargetRow }) => {
                     className="table_DMHangHoa setHeight"
                     columns={newTitles}
                     dataSource={filteredHangHoa.map((record, index) => ({ ...record, key: index }))}
-                    // pagination={{
-                    //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                    //   showSizeChanger: true,
-                    //   pageSizeOptions: ['50', '100', '1000'],
-                    //   onShowSizeChange: (current, size) => {
-                    //     localStorage.setItem('pageSize', size)
-                    //   },
-                    // }}
                     pagination={false}
                     onRow={(record) => ({
                       onDoubleClick: () => {

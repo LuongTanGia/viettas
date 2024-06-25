@@ -36,9 +36,11 @@ const PhieuMuaHang = () => {
   const [actionType, setActionType] = useState('')
   const [formKhoanNgay, setFormKhoanNgay] = useState({})
   const [dataQuyenHan, setDataQuyenHan] = useState({})
+  const [dataLoad, setDataLoad] = useState([])
+  const [count, setCount] = useState(20)
   const [setSearchPMH, filteredPMH, searchPMH] = useSearch(data)
   const [prevSearchValue, setPrevSearchValue] = useState('')
-  const [prevdateValue, setPrevDateValue] = useState({})
+  const [prevDateValue, setPrevDateValue] = useState({})
   const [donePMH, setDonePMH] = useState(null)
   const [hideColumns, setHideColumns] = useState(false)
   const [checkedList, setCheckedList] = useState([])
@@ -72,6 +74,30 @@ const PhieuMuaHang = () => {
   }, [])
 
   useEffect(() => {
+    setDataLoad(filteredPMH?.splice(0, count))
+  }, [data?.length, searchPMH])
+
+  useEffect(() => {
+    const tableContainer = document.querySelector('.ant-table-body')
+    const handleScroll = async () => {
+      if (tableContainer && tableContainer.scrollTop + tableContainer.clientHeight + 1 >= tableContainer.scrollHeight) {
+        if (dataLoad?.length < data?.length) {
+          setDataLoad((prevDataLoad) => [...prevDataLoad, ...data.slice(count, count + 20)])
+          setCount((pre) => pre + 20)
+        }
+      }
+    }
+    if (tableContainer) {
+      tableContainer.addEventListener('scroll', handleScroll)
+    }
+    return () => {
+      if (tableContainer) {
+        tableContainer.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [data, dataLoad?.length, count])
+
+  useEffect(() => {
     if (confirmed) {
       setCheckedList(JSON.parse(localStorage.getItem('hiddenColumnPMH')))
       setNewColumns(JSON.parse(localStorage.getItem('hiddenColumnPMH')))
@@ -91,7 +117,7 @@ const PhieuMuaHang = () => {
             setDataKhoHang(responseKH.data.DataResults)
             setIsLoadingModal(false)
           } else if (responseKH.data.DataError === -1 || responseKH.data.DataError === -2 || responseKH.data.DataError === -3) {
-            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseKH.data.DataErrorDescription}</div>)
+            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseKH.data.DataErrorDescription}</div>, { autoClose: 2000 })
             setIsLoadingModal(false)
           } else if (responseKH.data.DataError === -107 || responseKH.data.DataError === -108) {
             await RETOKEN()
@@ -111,7 +137,7 @@ const PhieuMuaHang = () => {
             toast.error(responseDT.data.DataErrorDescription)
             setIsLoadingModal(false)
           } else if (responseDT.data.DataError === -1 || responseDT.data.DataError === -2 || responseDT.data.DataError === -3) {
-            toast.warning(responseDT.data.DataErrorDescription)
+            toast.warning(responseDT.data.DataErrorDescription, { autoClose: 2000 })
             setIsLoadingModal(false)
           } else if (responseDT.data.DataError === -107 || responseDT.data.DataError === -108) {
             await RETOKEN()
@@ -122,7 +148,6 @@ const PhieuMuaHang = () => {
           }
         }
         if (actionType === 'view') {
-          console.log('get helper tt')
           const responseTT = await apis.ThongTinPMH(tokenLogin, dataRecord.SoChungTu)
           if (responseTT.data && responseTT.data.DataError === 0) {
             setDataThongTin(responseTT.data.DataResult)
@@ -134,7 +159,7 @@ const PhieuMuaHang = () => {
             await RETOKEN()
             fetchData()
           } else {
-            toast.error(responseTT.data.DataErrorDescription)
+            toast.error(responseTT.data.DataErrorDescription, { autoClose: 2000 })
             setIsLoadingModal(false)
           }
         }
@@ -148,13 +173,12 @@ const PhieuMuaHang = () => {
             toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseTTS.data.DataErrorDescription}</div>)
             setIsLoadingModal(false)
             setIsLoadingEdit(false)
-
             setIsShowModal(false)
           } else if (responseTTS.data.DataError === -107 || responseTTS.data.DataError === -108) {
             await RETOKEN()
             fetchData()
           } else {
-            toast.error(responseTTS.data.DataErrorDescription)
+            toast.error(responseTTS.data.DataErrorDescription, { autoClose: 2000 })
             setIsLoadingModal(false)
             setIsShowModal(false)
             setIsLoadingEdit(false)
@@ -183,22 +207,19 @@ const PhieuMuaHang = () => {
   const getDSPMH = async () => {
     try {
       const tokenLogin = localStorage.getItem('TKN')
-
       const response = await apis.DanhSachPMH(tokenLogin, formKhoanNgay)
-
       if (response) {
         const { DataError, DataErrorDescription, DataResults } = response.data
-        if (DataError === 0) {
+        if (DataError == 0) {
           setData(DataResults)
           setTableLoad(false)
         } else if (DataError === -107 || DataError === -108) {
           await RETOKEN()
           getDSPMH()
         } else if (DataError === -1 || DataError === -2 || DataError === -3) {
-          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+          toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>, { autoClose: 2000 })
           setTableLoad(false)
         } else {
-          toast.error(DataErrorDescription)
           setData([])
           setTableLoad(false)
         }
@@ -221,15 +242,16 @@ const PhieuMuaHang = () => {
             setFormKhoanNgay(response.data)
             setIsLoading(false)
           } else if (DataError === -1 || DataError === -2 || DataError === -3) {
-            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>)
+            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{DataErrorDescription}</div>, { autoClose: 2000 })
             setIsLoading(false)
           } else if (DataError === -107 || DataError === -108) {
+            toast.error(DataErrorDescription, { autoClose: 2000 })
             // await RETOKEN()
             // getKhoanNgay()
             // setIsLoading(false)
             // console.log('DataErrorDescription', DataErrorDescription)
           } else {
-            toast.error(DataErrorDescription)
+            toast.error(DataErrorDescription, { autoClose: 2000 })
             setIsLoading(false)
           }
         }
@@ -254,7 +276,7 @@ const PhieuMuaHang = () => {
           } else if (DataError === -107 || DataError === -108) {
             // await RETOKEN()
             // getChucNangQuyenHan()
-            console.log('DataErrorDescription', DataErrorDescription)
+            toast.error(DataErrorDescription, { autoClose: 2000 })
           }
         }
       } catch (error) {
@@ -700,7 +722,7 @@ const PhieuMuaHang = () => {
   }
 
   const handleFilterDS = () => {
-    if (formKhoanNgay !== prevdateValue) {
+    if (formKhoanNgay !== prevDateValue) {
       setTableLoad(true)
     }
   }
@@ -860,21 +882,12 @@ const PhieuMuaHang = () => {
                   className="setHeight  table-style "
                   // rowSelection={rowSelection}
                   columns={newColumnsHide}
-                  dataSource={filteredPMH}
+                  dataSource={dataLoad}
                   size="small"
                   scroll={{
                     x: 1500,
                     y: 410,
                   }}
-                  // bordered={true}
-                  // pagination={{
-                  //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                  //   showSizeChanger: true,
-                  //   pageSizeOptions: ['50', '100', '1000'],
-                  //   onShowSizeChange: (current, size) => {
-                  //     localStorage.setItem('pageSize', size)
-                  //   },
-                  // }}
                   pagination={false}
                   rowKey={(record) => record.SoChungTu}
                   onRow={(record) => ({
@@ -899,7 +912,7 @@ const PhieuMuaHang = () => {
                                     (() => {
                                       const total = Number(filteredPMH?.reduce((total, item) => total + (item[column.dataIndex] || 0), 0))
                                       return column.dataIndex === 'TongTienHang' || column.dataIndex === 'TongTienThue' || column.dataIndex === 'TongThanhTien' ? (
-                                        <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : ''}>
+                                        <Text strong className={total < 0 ? 'text-red-600 text-sm' : total === 0 ? 'text-gray-300' : 'text-white'}>
                                           {Number(filteredPMH.reduce((total, item) => total + (item[column.dataIndex] || 0), 0)).toLocaleString('en-US', {
                                             minimumFractionDigits: dataThongSo?.SOLESOTIEN,
                                             maximumFractionDigits: dataThongSo?.SOLESOTIEN,
@@ -927,7 +940,7 @@ const PhieuMuaHang = () => {
                                     </Text>
                                   ) : column.dataIndex === 'STT' ? (
                                     <Text className="text-center flex justify-center text-white" strong>
-                                      {data.length}
+                                      {data?.length}
                                     </Text>
                                   ) : null}
                                 </Table.Summary.Cell>

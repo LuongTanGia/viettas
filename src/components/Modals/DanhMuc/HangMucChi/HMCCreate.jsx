@@ -9,9 +9,9 @@ import ActionButton from '../../../util/Button/ActionButton'
 const HMCCreate = ({ close, loadingData, setTargetRow }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const innitProduct = {
-    Ma: '',
-    Ten: '',
-    GhiChu: '',
+    Ma: null,
+    Ten: null,
+    GhiChu: null,
   }
   const [HMCForm, setHMCForm] = useState(() => {
     return innitProduct
@@ -34,7 +34,7 @@ const HMCCreate = ({ close, loadingData, setTargetRow }) => {
       return
     }
     try {
-      const response = await categoryAPI.ThemHangMucChi({ ...HMCForm }, TokenAccess)
+      const response = await categoryAPI.ThemHangMucChi({ ...HMCForm, Ma: HMCForm?.Ma?.trim(), Ten: HMCForm?.Ten?.trim(), GhiChu: HMCForm?.GhiChu?.trim() }, TokenAccess)
       if (response.data.DataError == 0) {
         isSave ? setHMCForm([]) : close()
         loadingData()
@@ -46,7 +46,7 @@ const HMCCreate = ({ close, loadingData, setTargetRow }) => {
     } catch (error) {
       console.log(error)
       toast.error('Lỗi Server vui lòng thử lại', { autoClose: 1000 })
-      close()
+      // close()
     }
   }
   return (

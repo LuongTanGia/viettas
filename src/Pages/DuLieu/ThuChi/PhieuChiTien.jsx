@@ -33,6 +33,8 @@ const PhieuChiTien = () => {
   const [dataQuyenHan, setDataQuyenHan] = useState({})
   const [actionType, setActionType] = useState('')
   const [formKhoanNgay, setFormKhoanNgay] = useState([])
+  const [dataLoad, setDataLoad] = useState([])
+  const [count, setCount] = useState(20)
   const [setSearchPCT, filteredPCT, searchPCT] = useSearch(data)
   const [prevSearchValue, setPrevSearchValue] = useState('')
   const [prevdateValue, setPrevDateValue] = useState({})
@@ -44,6 +46,30 @@ const PhieuChiTien = () => {
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
   const [isShowNotify, setIsShowNotify] = useState(false)
+
+  useEffect(() => {
+    setDataLoad(filteredPCT?.splice(0, count))
+  }, [data?.length, searchPCT])
+
+  useEffect(() => {
+    const tableContainer = document.querySelector('.ant-table-body')
+    const handleScroll = async () => {
+      if (tableContainer && tableContainer?.scrollTop + tableContainer?.clientHeight + 1 >= tableContainer?.scrollHeight) {
+        if (dataLoad.length < data.length) {
+          setDataLoad((prevDataLoad) => [...prevDataLoad, ...data.slice(count, count + 20)])
+          setCount((pre) => pre + 20)
+        }
+      }
+    }
+    if (tableContainer) {
+      tableContainer.addEventListener('scroll', handleScroll)
+    }
+    return () => {
+      if (tableContainer) {
+        tableContainer.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [data, dataLoad?.length, count])
 
   // bỏ focus option thì hidden
   useEffect(() => {
@@ -193,6 +219,7 @@ const PhieuChiTien = () => {
 
     getKhoanNgay()
   }, [])
+
   // get Chức năng quyền hạn
   useEffect(() => {
     const getChucNangQuyenHan = async () => {
@@ -241,10 +268,9 @@ const PhieuChiTien = () => {
           await RETOKEN()
           getDSPCT()
         } else if (DataError === -1 || DataError === -2 || DataError === -3) {
-          toast.warning(DataErrorDescription)
+          toast.warning(DataErrorDescription, { autoClose: 2000 })
           setTableLoad(false)
         } else {
-          toast.error(DataErrorDescription)
           setData([])
           setTableLoad(false)
         }
@@ -723,23 +749,13 @@ const PhieuChiTien = () => {
                 <Table
                   loading={tableLoad}
                   className="table_pmh setHeight"
-                  // rowSelection={rowSelection}
                   columns={newColumnsHide}
-                  dataSource={filteredPCT}
+                  dataSource={dataLoad}
                   size="small"
                   scroll={{
                     x: 1500,
                     y: 410,
                   }}
-                  bordered
-                  // pagination={{
-                  //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                  //   showSizeChanger: true,
-                  //   pageSizeOptions: ['50', '100', '1000'],
-                  //   onShowSizeChange: (current, size) => {
-                  //     localStorage.setItem('pageSize', size)
-                  //   },
-                  // }}
                   pagination={false}
                   rowKey={(record) => record.SoChungTu}
                   onRow={(record) => ({
@@ -786,7 +802,7 @@ const PhieuChiTien = () => {
                                     })()
                                   ) : column.dataIndex === 'STT' ? (
                                     <Text className="text-center flex justify-center text-white" strong>
-                                      {data.length}
+                                      {data?.length}
                                     </Text>
                                   ) : null}
                                 </Table.Summary.Cell>

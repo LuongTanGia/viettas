@@ -107,7 +107,10 @@ const QLCreate = ({ close, loadingData, setTargetRow, maNguoiDung }) => {
       if (!QLForm.KhongKetThuc && !QLForm.DenNgay) {
         toast.warning('Vui lòng chọn ngày Hiệu lực/ Hết hạn', { autoClose: 2000 })
       } else if (QLForm.KhongKetThuc) {
-        const response = await categoryAPI.ThemQuanLy({ ...QLForm, TuNgay: dayjs(QLForm.TuNgay).format('YYYY-MM-DD') }, TokenAccess)
+        const response = await categoryAPI.ThemQuanLy(
+          { ...QLForm, MaQuanLy: QLForm?.MaQuanLy?.trim(), GhiChu: QLForm?.GhiChu?.trim(), TuNgay: dayjs(QLForm.TuNgay).format('YYYY-MM-DD') },
+          TokenAccess,
+        )
         if (response.data.DataError == 0) {
           isPrint
             ? (dataThongSo.ALLOW_MAQUANLYTUDONG ? handlePrint(response.data.DataResults[0].Ma) : handlePrint(), setQLForm({ KhongKetThuc: true }))

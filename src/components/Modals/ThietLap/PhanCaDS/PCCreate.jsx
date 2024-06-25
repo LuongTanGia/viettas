@@ -126,7 +126,7 @@ const PCCreate = ({ close, loadingData, setTargetRow }) => {
       return
     }
     try {
-      const response = await categoryAPI.ThemPhanCa({ ...PCForm, HieuLucTu: dayjs(DateFrom).format('YYYY-MM-DD') }, TokenAccess)
+      const response = await categoryAPI.ThemPhanCa({ ...PCForm, GhiChu: PCForm?.GhiChu?.trim(), HieuLucTu: dayjs(DateFrom).format('YYYY-MM-DD') }, TokenAccess)
       if (response.data.DataError == 0) {
         isSave ? setPCForm([]) : close()
         loadingData()

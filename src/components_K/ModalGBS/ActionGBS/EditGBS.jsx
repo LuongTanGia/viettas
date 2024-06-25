@@ -131,7 +131,15 @@ const EditGBS = ({ typePage, namePage, dataThongTin, dataHangHoa, dataThongSo, s
     try {
       const tokenLogin = localStorage.getItem('TKN')
 
-      const response = await apis.SuaGBS(tokenLogin, { ...formEdit, Data: { ...formEdit.Data, NhomGia_CTs: selectedRowData } })
+      const response = await apis.SuaGBS(tokenLogin, {
+        ...formEdit,
+        Data: {
+          ...formEdit.Data,
+          TenNhomGia: formEdit?.Data?.TenNhomGia?.trim(),
+          GhiChu: formEdit?.Data?.GhiChu?.trim(),
+          NhomGia_CTs: selectedRowData,
+        },
+      })
 
       if (response) {
         const { DataError, DataErrorDescription } = response.data

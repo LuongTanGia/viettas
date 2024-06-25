@@ -201,7 +201,7 @@ const NDCEdit = ({ close, dataNDC, loadingData, setTargetRow }) => {
           toast.warning('Vui lòng chọn mã hàng', { autoClose: 2000 })
         } else {
           const response = await categoryAPI.NDCEdit(
-            { SoChungTu: dataNDC?.SoChungTu, Data: { ...NDCForm, NgayCTu: dayjs(NDCForm?.NgayCTu).format('YYYY-MM-DD'), DataDetails: newData } },
+            { SoChungTu: dataNDC?.SoChungTu, Data: { ...NDCForm, GhiChu: NDCForm?.GhiChu?.trim(), NgayCTu: dayjs(NDCForm?.NgayCTu).format('YYYY-MM-DD'), DataDetails: newData } },
             TokenAccess,
           )
           if (response.data.DataError == 0) {

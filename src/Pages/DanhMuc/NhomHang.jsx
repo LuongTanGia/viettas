@@ -26,7 +26,9 @@ import NHDelete from '../../components/Modals/DanhMuc/NhomHang/NHDelete'
 const NhomHang = () => {
   const navigate = useNavigate()
   const TokenAccess = localStorage.getItem('TKN')
-  const [dataNhomHang, setDataNhomHang] = useState()
+  const [dataNhomHang, setDataNhomHang] = useState([])
+  const [count, setCount] = useState(20)
+  const [dataLoad, setDataLoad] = useState([])
   const [setSearchNhomHang, filteredNhomHang, searchNhomHang] = useSearch(dataNhomHang)
   const [isMaHang, setIsMaHang] = useState()
   const [actionType, setActionType] = useState('')
@@ -47,7 +49,7 @@ const NhomHang = () => {
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
     setCheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
-    const key = Object.keys(dataNhomHang ? dataNhomHang[0] : [] || []).filter((key) => key)
+    const key = dataNhomHang && dataNhomHang[0] ? Object.keys(dataNhomHang[0]).filter((key) => key) : []
     setOptions(key)
   }, [selectVisible])
 
@@ -75,6 +77,30 @@ const NhomHang = () => {
     }
     getListNhomHang()
   }, [searchNhomHang, targetRow])
+
+  useEffect(() => {
+    const tableContainer = document.querySelector('.ant-table-body')
+    const handleScroll = async () => {
+      if (tableContainer && tableContainer.scrollTop + tableContainer.clientHeight + 1 >= tableContainer.scrollHeight) {
+        if (dataLoad?.length < dataNhomHang?.length) {
+          setDataLoad((prevDataLoad) => [...prevDataLoad, ...dataNhomHang.slice(count, count + 20)])
+          setCount((pre) => pre + 20)
+        }
+      }
+    }
+    if (tableContainer) {
+      tableContainer.addEventListener('scroll', handleScroll)
+    }
+    return () => {
+      if (tableContainer) {
+        tableContainer.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [dataNhomHang, dataLoad?.length, count])
+
+  useEffect(() => {
+    setDataLoad(filteredNhomHang?.splice(0, count))
+  }, [dataNhomHang?.length, searchNhomHang])
 
   useEffect(() => {
     if (dataCRUD?.VIEW == false) {
@@ -497,7 +523,7 @@ const NhomHang = () => {
                     rowClassName={(record, index) => (record.MaNhom == targetRow ? 'highlighted-row' : addRowClass(record, index))}
                     className="setHeight"
                     columns={newTitles}
-                    dataSource={filteredNhomHang.map((item, index) => ({
+                    dataSource={dataLoad?.map((item, index) => ({
                       ...item,
                       key: index,
                     }))}
@@ -506,14 +532,6 @@ const NhomHang = () => {
                       x: 'max-content',
                       y: 400,
                     }}
-                    // pagination={{
-                    //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                    //   showSizeChanger: true,
-                    //   pageSizeOptions: ['50', '100', '1000'],
-                    //   onShowSizeChange: (current, size) => {
-                    //     localStorage.setItem('pageSize', size)
-                    //   },
-                    // }}
                     pagination={false}
                     style={{
                       whiteSpace: 'nowrap',

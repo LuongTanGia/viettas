@@ -25,7 +25,9 @@ import HMTDelete from '../../components/Modals/DanhMuc/HangMucThu/HMTDelete'
 const HangMucThu = () => {
   const navigate = useNavigate()
   const TokenAccess = localStorage.getItem('TKN')
-  const [dataHangMucThu, setDataHangMucThu] = useState()
+  const [dataHangMucThu, setDataHangMucThu] = useState([])
+  const [count, setCount] = useState(20)
+  const [dataLoad, setDataLoad] = useState([])
   const [setSearchHangMucThu, filteredHangMucThu, searchHangMucThu] = useSearch(dataHangMucThu)
   const [isMaHang, setIsMaHang] = useState()
   const [actionType, setActionType] = useState('')
@@ -46,9 +48,33 @@ const HangMucThu = () => {
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
     setCheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
-    const key = Object.keys(dataHangMucThu ? dataHangMucThu[0] : [] || []).filter((key) => key)
+    const key = dataHangMucThu && dataHangMucThu[0] ? Object.keys(dataHangMucThu[0]).filter((key) => key) : []
     setOptions(key)
   }, [selectVisible])
+
+  useEffect(() => {
+    setDataLoad(filteredHangMucThu?.splice(0, count))
+  }, [dataHangMucThu?.length, searchHangMucThu])
+
+  useEffect(() => {
+    const tableContainer = document.querySelector('.ant-table-body')
+    const handleScroll = async () => {
+      if (tableContainer && tableContainer.scrollTop + tableContainer.clientHeight + 1 >= tableContainer.scrollHeight) {
+        if (dataLoad?.length < dataHangMucThu?.length) {
+          setDataLoad((prevDataLoad) => [...prevDataLoad, ...dataHangMucThu.slice(count, count + 20)])
+          setCount((pre) => pre + 20)
+        }
+      }
+    }
+    if (tableContainer) {
+      tableContainer.addEventListener('scroll', handleScroll)
+    }
+    return () => {
+      if (tableContainer) {
+        tableContainer.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [dataHangMucThu, dataLoad?.length, count])
 
   useEffect(() => {
     const getListHangMucThu = async () => {
@@ -476,7 +502,7 @@ const HangMucThu = () => {
                     rowClassName={(record, index) => (record.Ma == targetRow ? 'highlighted-row' : addRowClass(record, index))}
                     className="setHeight"
                     columns={newTitles}
-                    dataSource={filteredHangMucThu.map((item, index) => ({
+                    dataSource={dataLoad?.map((item, index) => ({
                       ...item,
                       key: index,
                     }))}
@@ -485,14 +511,6 @@ const HangMucThu = () => {
                       x: 'max-content',
                       y: 400,
                     }}
-                    // pagination={{
-                    //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                    //   showSizeChanger: true,
-                    //   pageSizeOptions: ['50', '100', '1000'],
-                    //   onShowSizeChange: (current, size) => {
-                    //     localStorage.setItem('pageSize', size)
-                    //   },
-                    //     }}
                     pagination={false}
                     style={{
                       whiteSpace: 'nowrap',

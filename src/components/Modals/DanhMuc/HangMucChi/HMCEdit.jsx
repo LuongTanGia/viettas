@@ -33,7 +33,7 @@ const HMCEdit = ({ close, loadingData, setTargetRow, dataHMC }) => {
       return
     }
     try {
-      const response = await categoryAPI.SuaHangMucChi({ Ma: dataHMC?.Ma, Data: { ...HMCForm } }, TokenAccess)
+      const response = await categoryAPI.SuaHangMucChi({ Ma: dataHMC?.Ma, Data: { ...HMCForm, Ten: HMCForm?.Ten?.trim(), GhiChu: HMCForm?.GhiChu?.trim() } }, TokenAccess)
       if (response.data.DataError == 0) {
         close()
         loadingData()

@@ -99,10 +99,20 @@ const CreateSDV = ({ namePage, isLoadingModal, dataDoiTuong, dataThongSo, typePa
       let response
       switch (typePage) {
         case 'SDV':
-          response = await apis.ThemSDV(tokenLogin, formCreate)
+          response = await apis.ThemSDV(tokenLogin, {
+            ...formCreate,
+            DoiTuong: formCreate?.DoiTuong?.trim(),
+            SoTien: formCreate?.SoTien?.trim(),
+            GhiChu: formCreate?.GhiChu?.trim(),
+          })
           break
         case 'SDR':
-          response = await apis.ThemSDR(tokenLogin, formCreate)
+          response = await apis.ThemSDR(tokenLogin, {
+            ...formCreate,
+            DoiTuong: formCreate?.DoiTuong?.trim(),
+            SoTien: formCreate?.SoTien?.trim(),
+            GhiChu: formCreate?.GhiChu?.trim(),
+          })
           break
         default:
           break

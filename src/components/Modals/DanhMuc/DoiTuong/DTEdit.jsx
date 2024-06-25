@@ -67,7 +67,24 @@ const DTEdit = ({ close, loadingData, setTargetRow, dataDT }) => {
       return
     }
     try {
-      const response = await categoryAPI.SuaDoiTuong({ Ma: dataDT?.Ma, Data: { ...DTForm, Nhom: DTForm.Nhom } }, TokenAccess)
+      const response = await categoryAPI.SuaDoiTuong(
+        {
+          Ma: dataDT?.Ma,
+          Data: {
+            ...DTForm,
+            Nhom: DTForm.Nhom,
+            DiaChi: DTForm?.DiaChi?.trim(),
+            QuanHuyen: DTForm?.QuanHuyen?.trim(),
+            TinhThanh: DTForm?.TinhThanh?.trim(),
+            MST: DTForm?.MST?.trim(),
+            DienThoai: DTForm?.DienThoai?.trim(),
+            Fax: DTForm?.Fax?.trim(),
+            NguoiLienHe: DTForm?.NguoiLienHe?.trim(),
+            GhiChu: DTForm?.GhiChu?.trim(),
+          },
+        },
+        TokenAccess,
+      )
       if (response.data.DataError == 0) {
         close()
         loadingData()

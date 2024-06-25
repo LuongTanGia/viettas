@@ -1,7 +1,10 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-useless-escape */
 import { useMemo, useState } from 'react'
 import dayjs from 'dayjs'
 export const useSearch = (data) => {
+  const ThongSo = localStorage.getItem('ThongSo')
+  const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
   const [search, setSearch] = useState('')
   const formatDate = (date, format) => dayjs(date).format(format) || ''
   const formatNumber = (number, decimalPlaces) => {
@@ -13,6 +16,81 @@ export const useSearch = (data) => {
     }
     return ''
   }
+
+  const NumberFields = {
+    BangGiaSi: (value) => formatNumber(value, 0),
+    GiaBanLe: (value) => formatNumber(value, dataThongSo.SOLEDONGIA),
+    SoDuDK: (value) => formatNumber(value, dataThongSo.SOLESOTIEN),
+    SoDuCK: (value) => formatNumber(value, dataThongSo.SOLESOTIEN),
+    TongSoLuong: (value) => formatNumber(value, dataThongSo.SOLESOTIEN),
+    TongTienHang: (value) => formatNumber(value, dataThongSo.SOLESOTIEN),
+    TongTienThue: (value) => formatNumber(value, dataThongSo.SOLESOTIEN),
+    TongThanhTien: (value) => formatNumber(value, dataThongSo.SOLESOTIEN),
+    TongTongCong: (value) => formatNumber(value, dataThongSo.SOLESOTIEN),
+    Le_TienHang: (value) => formatNumber(value, dataThongSo.SOLESOTIEN),
+    Si_TienHang: (value) => formatNumber(value, dataThongSo.SOLESOTIEN),
+    Le_TienThue: (value) => formatNumber(value, dataThongSo.SOLESOTIEN),
+    Si_TienThue: (value) => formatNumber(value, dataThongSo.SOLESOTIEN),
+    Le_ThanhTien: (value) => formatNumber(value, dataThongSo.SOLESOTIEN),
+    Si_ThanhTien: (value) => formatNumber(value, dataThongSo.SOLESOTIEN),
+    Le_ChietKhau: (value) => formatNumber(value, dataThongSo.SOLESOTIEN),
+    Si_ChietKhau: (value) => formatNumber(value, dataThongSo.SOLESOTIEN),
+    Le_TongCong: (value) => formatNumber(value, dataThongSo.SOLESOTIEN),
+    Si_TongCong: (value) => formatNumber(value, dataThongSo.SOLESOTIEN),
+    TienHang: (value) => formatNumber(value, dataThongSo.SOLESOTIEN),
+    ThanhTien: (value) => formatNumber(value, dataThongSo.SOLESOTIEN),
+    ChietKhau: (value) => formatNumber(value, dataThongSo.SOLESOTIEN),
+    TongCong: (value) => formatNumber(value, dataThongSo.SOLESOTIEN),
+    TienThue: (value) => formatNumber(value, dataThongSo.SOLESOTIEN),
+    TyLeCKTT: (value) => formatNumber(value, dataThongSo.SOLETYLE),
+    TongTienCKTT: (value) => formatNumber(value, dataThongSo.SOLESOTIEN),
+    KhachTra: (value) => formatNumber(value, dataThongSo.SOLESOTIEN),
+    HoanLai: (value) => formatNumber(value, dataThongSo.SOLESOTIEN),
+    ThanhToan: (value) => formatNumber(value, dataThongSo.SOLESOTIEN),
+    SoTien: (value) => formatNumber(value, dataThongSo.SOLESOTIEN),
+    PhatSinhNo_PBS: (value) => formatNumber(value, dataThongSo.SOLESOTIEN),
+    PhatSinhNo_DC: (value) => formatNumber(value, dataThongSo.SOLESOTIEN),
+    PhatSinhNo_Chi_NTR: (value) => formatNumber(value, dataThongSo.SOLESOTIEN),
+    PhatSinhNo: (value) => formatNumber(value, dataThongSo.SOLESOTIEN),
+    ThanhToan_Thu_PBS: (value) => formatNumber(value, dataThongSo.SOLESOTIEN),
+    ThanhToan_DC: (value) => formatNumber(value, dataThongSo.SOLESOTIEN),
+    PhatSinhNo_PMH: (value) => formatNumber(value, dataThongSo.SOLESOTIEN),
+    PhatSinhNo_Thu_XTR: (value) => formatNumber(value, dataThongSo.SOLESOTIEN),
+    ThanhToan_Chi_PMH: (value) => formatNumber(value, dataThongSo.SOLESOTIEN),
+    ThanhToan_XTR: (value) => formatNumber(value, dataThongSo.SOLESOTIEN),
+    ThanhToan_NTR: (value) => formatNumber(value, dataThongSo.SOLESOTIEN),
+    SoLuongTonDK: (value) => formatNumber(value, dataThongSo.SOLESOLUONG),
+    TriGiaTonDK: (value) => formatNumber(value, dataThongSo.SOLESOLUONG),
+    SoLuongNhap_PMH: (value) => formatNumber(value, dataThongSo.SOLESOLUONG),
+    TriGiaNhap_PMH: (value) => formatNumber(value, dataThongSo.SOLESOLUONG),
+    SoLuongNhap_NTR: (value) => formatNumber(value, dataThongSo.SOLESOLUONG),
+    TriGiaNhap_NTR: (value) => formatNumber(value, dataThongSo.SOLESOLUONG),
+    SoLuongNhap_NDC: (value) => formatNumber(value, dataThongSo.SOLESOLUONG),
+    TriGiaNhap_NDC: (value) => formatNumber(value, dataThongSo.SOLESOLUONG),
+    SoLuongNhap: (value) => formatNumber(value, dataThongSo.SOLESOLUONG),
+    TriGiaNhap: (value) => formatNumber(value, dataThongSo.SOLESOLUONG),
+    SoLuongXuat_PBS: (value) => formatNumber(value, dataThongSo.SOLESOLUONG),
+    TriGiaXuat_PBS: (value) => formatNumber(value, dataThongSo.SOLESOLUONG),
+    SoLuongXuat_PBL: (value) => formatNumber(value, dataThongSo.SOLESOLUONG),
+    TriGiaXuat_PBL: (value) => formatNumber(value, dataThongSo.SOLESOLUONG),
+    SoLuongXuat_PBQ: (value) => formatNumber(value, dataThongSo.SOLESOLUONG),
+    TriGiaXuat_PBQ: (value) => formatNumber(value, dataThongSo.SOLESOLUONG),
+    SoLuongXuat_XTR: (value) => formatNumber(value, dataThongSo.SOLESOLUONG),
+    TriGiaXuat_XTR: (value) => formatNumber(value, dataThongSo.SOLESOLUONG),
+    SoLuongXuat_XSD: (value) => formatNumber(value, dataThongSo.SOLESOLUONG),
+    TriGiaXuat_XSD: (value) => formatNumber(value, dataThongSo.SOLESOLUONG),
+    SoLuongXuat_HUY: (value) => formatNumber(value, dataThongSo.SOLESOLUONG),
+    TriGiaXuat_HUY: (value) => formatNumber(value, dataThongSo.SOLESOLUONG),
+    SoLuongXuat_XDC: (value) => formatNumber(value, dataThongSo.SOLESOLUONG),
+    TriGiaXuat_XDC: (value) => formatNumber(value, dataThongSo.SOLESOLUONG),
+    SoLuongXuat: (value) => formatNumber(value, dataThongSo.SOLESOLUONG),
+    TriGiaXuat: (value) => formatNumber(value, dataThongSo.SOLESOLUONG),
+    SoLuongTonCK: (value) => formatNumber(value, dataThongSo.SOLESOLUONG),
+    TriGiaTonCK: (value) => formatNumber(value, dataThongSo.SOLESOLUONG),
+    BangGiaSi_Min: (value) => formatNumber(value, dataThongSo.SOLEDONGIA),
+    BangGiaSi_Max: (value) => formatNumber(value, dataThongSo.SOLEDONGIA),
+    TongTriGiaKho: (value) => formatNumber(value, dataThongSo.SOLESOTIEN),
+  }
   const DateFields = {
     TuNgay: (value) => formatDate(value, 'DD/MM/YYYY'),
     DenNgay: (value) => formatDate(value, 'DD/MM/YYYY'),
@@ -22,170 +100,7 @@ export const useSearch = (data) => {
     NgayCNTLCuoi: (value) => formatDate(value, 'DD/MM/YYYY HH:mm:ss'),
     NgayCNHTCuoi: (value) => formatDate(value, 'DD/MM/YYYY HH:mm:ss'),
   }
-  // const filteredData = useMemo(() => {
-  //   if (data)
-  //     return data.filter((item) => {
-  //       const {
-  //         // HangHoa
-  //         TenHang,
-  //         MaHang,
-  //         TenNhom,
-  //         DVTKho,
-  //         DienGiaiDVTQuyDoi,
-  //         MaVach,
-  //         NguoiTao,
-  //         NguoiSuaCuoi,
-  //         GiaBanLe,
-  //         BangGiaSi,
-  //         BangGiaSi_Min,
-  //         BangGiaSi_Max,
-  //         NgayTao,
-  //         NgaySuaCuoi,
-  //         // DoiTuong
-  //         Ma,
-  //         MaNhom,
-  //         TenLoai,
-  //         Ten,
-  //         DiaChi,
-  //         MST,
-  //         DienThoai,
-  //         Email,
-  //         Fax,
-  //         ThongTinNhomGia,
-  //         // DSBH
-  //         SoLuong,
-  //         TienHang,
-  //         TienThue,
-  //         ThanhTien,
-  //         TienCKTT,
-  //         TongCong_TM,
-  //         TongCong_CN,
-  //         TongCong,
-  //         // KhoHang
-  //         MaKho,
-  //         TenDayDu,
-  //         // QuanLy
-  //         MaNguoiDung,
-  //         MaQuanLy,
-  //         TenNguoiDung,
-  //         TuNgay,
-  //         DenNgay,
-  //         // QuayTinhTIen
-  //         Quay,
-  //         TenMayTinh,
-  //         SQLServer,
-  //         SQLDatabase,
-  //         NhomGia,
-  //         DienGiaiLoai,
-  //         NguoiCNHTCuoi,
-  //         NgayCNHTCuoi,
-  //         NguoiCNTLCuoi,
-  //         NgayCNTLCuoi,
-  //         // Phân ca (Danh sách)
-  //         SoQuay,
-  //         HieuLucTu,
-  //         MaCa,
-  //         // Xử lý/ Bình Quân Xuất Kho
-  //         Thang,
-  //         NguoiThucHien,
-  //         ThoiGianThucHien,
-  //         DonGia,
-  //         // NTX
-  //         TenNhomHang,
-  //         TenKho,
-  //         DVT,
-  //         SoLuongTonDK,
-  //         TriGiaTonDK,
-  //         SoLuongNhap_PMH,
-  //         TriGiaNhap_PMH,
-  //         SoLuongNhap_NTR,
-  //         TriGiaNhap_NTR,
-  //         SoLuongNhap_NDC,
-  //         TriGiaNhap_NDC,
-  //         SoLuongNhap_NCK,
-  //         SoLuongNhap,
-  //         TriGiaNhap,
-  //         SoLuongXuat_PBS,
-  //         TriGiaXuat_PBS,
-  //         SoLuongXuat_PBL,
-  //         TriGiaXuat_PBL,
-  //         SoLuongXuat_PBQ,
-  //         TriGiaXuat_PBQ,
-  //         SoLuongXuat_XTR,
-  //         TriGiaXuat_XTR,
-  //         SoLuongXuat_XSD,
-  //         TriGiaXuat_XSD,
-  //         SoLuongXuat_HUY,
-  //         TriGiaXuat_HUY,
-  //         SoLuongXuat_XCK,
-  //         SoLuongXuat_XDC,
-  //         TriGiaXuat_XDC,
-  //         SoLuongTonCK,
-  //         TriGiaTonCK,
-  //         SoLuongXuat,
-  //         TriGiaXuat,
-  //         // CongNoDauVao_Ra
-  //         MaDoiTuong,
-  //         TenDoiTuong,
-  //         DiaChiDoiTuong,
-  //         SoDuDK,
-  //         PhatSinhNo_PMH,
-  //         PhatSinhNo_PBS,
-  //         PhatSinhNo_DC,
-  //         PhatSinhNo_Thu_XTR,
-  //         PhatSinhNo_Chi_NTR,
-  //         PhatSinhNo,
-  //         ThanhToan_Chi_PMH,
-  //         ThanhToan_Thu_PBS,
-  //         ThanhToan_DC,
-  //         ThanhToan_NTR,
-  //         ThanhToan_XTR,
-  //         ThanhToan,
-  //         SoDuCK,
-  //         // SoQuy
-  //         THUCONGNO,
-  //         THUTRAHANG,
-  //         THUKHAC,
-  //         CHICONGNO,
-  //         CHITRAHANG,
-  //         CHIKHAC,
-  //         DauKy,
-  //         CuoiKy,
-  //         ConLai,
-  //         // NDC, PLR , XDC, XCK, NCK
-  //         SoChungTu,
-  //         NgayCTu,
-  //         SoThamChieu,
-  //         ThongTinKho,
-  //         ThongTinKhoNhan,
-  //         SoMatHang,
-  //         GhiChu,
-  //         NhomHang,
-  //         TongSoLuong,
-  //         TongTriGiaKho,
-  //       } = item || {}
-  //       return (
-  //         // HangHoa
-  //         (DVTKho || '').toLowerCase().includes(search.toLowerCase()) ||
-  //         (GiaBanLe?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
-  //         (BangGiaSi?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
-  //         (BangGiaSi_Min?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
-  //         (BangGiaSi_Max?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
-  //         // DoiTuong
-  //         (Ma || '').toLowerCase().includes(search.toLowerCase()) ||
-  //         (MaNhom || '').toLowerCase().includes(search.toLowerCase()) ||
-  //         (TenLoai || '').toLowerCase().includes(search.toLowerCase()) ||
-  //         (Ten || '').toLowerCase().includes(search.toLowerCase()) ||
-  //         (DiaChi?.toString() || '').toLowerCase().includes(search.toLowerCase()) ||
-  //         (ThongTinNhomGia || '').toLowerCase().includes(search.toLowerCase()) ||
-  //         (Email || '').toLowerCase().includes(search.toLowerCase()) ||
-  //         (DienThoai?.toString() || '').includes(search.toLowerCase()) ||
-  //         (MST?.toString() || '').includes(search.toLowerCase()) ||
-  //         (Fax?.toString() || '').includes(search.toLowerCase()) ||
-  //         // KhoHang
-  //         (MaKho || '').toLowerCase().includes(search.toLowerCase()) ||
-  //         (TenDayDu || '').toLowerCase().includes(search.toLowerCase()) ||
-  //         // DSBH
+
   //         (SoLuong?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
   //         (TienHang?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
   //         (TienThue?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
@@ -194,25 +109,9 @@ export const useSearch = (data) => {
   //         (TongCong_TM?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
   //         (TongCong_CN?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
   //         (TongCong?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
-  //         // QuanLy
-  //         (MaNguoiDung || '').toLowerCase().includes(search.toLowerCase()) ||
-  //         (MaQuanLy || '').toLowerCase().includes(search.toLowerCase()) ||
-  //         (TenNguoiDung || '').toLowerCase().includes(search.toLowerCase()) ||
-  //         (moment(TuNgay).format('DD/MM/YYYY') || '').toLowerCase().includes(search.toLowerCase()) ||
-  //         (moment(DenNgay).format('DD/MM/YYYY') || '').toLowerCase().includes(search.toLowerCase()) ||
-  //         // QuayTinhTien
-  //         (DienGiaiLoai || '').toLowerCase().includes(search.toLowerCase()) ||
-  //         (TenMayTinh || '').toLowerCase().includes(search.toLowerCase()) ||
-  //         (SQLServer || '').toLowerCase().includes(search.toLowerCase()) ||
-  //         (SQLDatabase || '').toLowerCase().includes(search.toLowerCase()) ||
-  //         (NhomGia || '').toLowerCase().includes(search.toLowerCase()) ||
   //         (Quay?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
-  //         (NguoiCNHTCuoi || '').toLowerCase().includes(search.toLowerCase()) ||
-  //         (NguoiCNTLCuoi || '').toLowerCase().includes(search.toLowerCase()) ||
-  //         (moment(NgayCNTLCuoi).format('DD/MM/YYYY HH:mm:ss') || '').toLowerCase().includes(search.toLowerCase()) ||
-  //         (moment(NgayCNHTCuoi).format('DD/MM/YYYY HH:mm:ss') || '').toLowerCase().includes(search.toLowerCase()) ||
+  //
   //         // PhanCa
-  //         (moment(HieuLucTu).format('DD/MM/YYYY') || '').toLowerCase().includes(search.toLowerCase()) ||
   //         (SoQuay?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
   //         (MaCa?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
   //         // BinhQuanXuatKho
@@ -221,9 +120,7 @@ export const useSearch = (data) => {
   //         (DonGia?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
   //         (moment(Thang).format('MM/YYYY') || '').toLowerCase().includes(search.toLowerCase()) ||
   //         // NXTKho
-  //         (TenNhomHang || '').toLowerCase().includes(search.toLowerCase()) ||
-  //         (TenKho || '').toLowerCase().includes(search.toLowerCase()) ||
-  //         (DVT || '').toLowerCase().includes(search.toLowerCase()) ||
+
   //         (SoLuongTonDK?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
   //         (TriGiaTonDK?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
   //         (SoLuongNhap_PMH?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
@@ -255,9 +152,7 @@ export const useSearch = (data) => {
   //         (SoLuongXuat?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
   //         (TriGiaXuat?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
   //         // CongNoDauVao_Ra
-  //         (MaDoiTuong || '').toLowerCase().includes(search.toLowerCase()) ||
-  //         (TenDoiTuong || '').toLowerCase().includes(search.toLowerCase()) ||
-  //         (DiaChiDoiTuong || '').toLowerCase().includes(search.toLowerCase()) ||
+  //
   //         (SoDuDK?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
   //         (PhatSinhNo_PMH?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
   //         (PhatSinhNo_DC?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
@@ -293,10 +188,7 @@ export const useSearch = (data) => {
   //         (TongTriGiaKho?.toString() || '').toLowerCase().includes(search.toLowerCase()) ||
   //         (NhomHang || '').toLowerCase().includes(search.toLowerCase()) ||
   //         (TongSoLuong?.toString() || '').toLowerCase().includes(search.toLowerCase())
-  //       )
-  //     })
-  //   else return []
-  // }, [search, data])
+
   const filteredData = useMemo(() => {
     if (data)
       return data.filter((item) => {
@@ -305,6 +197,8 @@ export const useSearch = (data) => {
           const value = item[key] || ''
           if (DateFields[key]) {
             return DateFields[key](value).toLowerCase().includes(search?.trim().toLowerCase())
+          } else if (NumberFields[key]) {
+            return NumberFields[key](value).toLowerCase().includes(search?.trim().toLowerCase())
           }
           return String(value)?.toLowerCase().includes(search?.trim().toLowerCase())
         })

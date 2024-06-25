@@ -99,7 +99,19 @@ const QTTCreate = ({ close, loadingData, setTargetRow, dataQTT }) => {
       return
     }
     try {
-      const response = await categoryAPI.ThemQuayTinhTien({ ...QTTForm, MaKho: QTTForm.MaKho }, TokenAccess)
+      const response = await categoryAPI.ThemQuayTinhTien(
+        {
+          ...QTTForm,
+          MaKho: QTTForm.MaKho,
+          TenMayTinh: QTTForm?.TenMayTinh?.trim(),
+          SQLServer: QTTForm?.SQLServer?.trim(),
+          SQLUser: QTTForm?.SQLUser?.trim(),
+          SQLPassword: QTTForm?.SQLPassword?.trim(),
+          SQLDatabase: QTTForm?.SQLDatabase?.trim(),
+          GhiChu: QTTForm?.GhiChu?.trim(),
+        },
+        TokenAccess,
+      )
       if (response.data.DataError == 0) {
         isSave ? setQTTForm({ Quay: QTTForm.Quay + 1 }) : close()
         loadingData()

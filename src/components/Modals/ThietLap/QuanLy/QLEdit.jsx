@@ -73,7 +73,7 @@ const QLEdit = ({ close, loadingData, setTargetRow, dataQL, maNguoiDung }) => {
       if (!QLForm.KhongKetThuc && !QLForm.DenNgay) {
         toast.warning('Vui lòng nhập ngày hết hạn', { autoClose: 2000 })
       } else if (QLForm.KhongKetThuc) {
-        const response = await categoryAPI.SuaQuanLy({ Ma: dataQL?.MaQuanLy, Data: { ...QLForm } }, TokenAccess)
+        const response = await categoryAPI.SuaQuanLy({ Ma: dataQL?.MaQuanLy, Data: { ...QLForm, GhiChu: QLForm?.GhiChu?.trim() } }, TokenAccess)
         if (response.data.DataError == 0) {
           close()
           toast.success(response.data.DataErrorDescription, { autoClose: 1000 })

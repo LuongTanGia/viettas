@@ -316,10 +316,8 @@ export const DANHSACHPHIEUBANHANG = async (API, token, data, dispatch) => {
         window.location.href = '/login'
       }
     }
-    if (response.data.DataError === -104) {
-      return -1
-    }
-    return response.data.DataResults
+
+    return response.data
   } catch (error) {
     console.error('Error adding user:', error)
   }

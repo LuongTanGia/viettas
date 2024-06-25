@@ -88,12 +88,12 @@ const GBS = () => {
           if (response.data && response.data.DataError === 0) {
             setDataHangHoa(response.data.DataResults)
           } else if (response.data.DataError === -1 || response.data.DataError === -2 || response.data.DataError === -3) {
-            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>, { autoClose: 2000 })
           } else if (response.data.DataError === -107 || response.data.DataError === -108) {
             await RETOKEN()
             fetchData()
           } else {
-            toast.error(response.data.DataErrorDescription)
+            toast.error(response.data.DataErrorDescription, { autoClose: 2000 })
           }
         }
         if (actionType === 'view' || actionType === 'edit' || actionType === 'clone') {
@@ -101,12 +101,12 @@ const GBS = () => {
           if (responseTT.data && responseTT.data.DataError === 0) {
             setDataThongTin(responseTT.data.DataResult)
           } else if (responseTT.data.DataError === -1 || responseTT.data.DataError === -2 || responseTT.data.DataError === -3) {
-            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseTT.data.DataErrorDescription}</div>)
+            toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{responseTT.data.DataErrorDescription}</div>, { autoClose: 2000 })
           } else if (responseTT.data.DataError === -107 || responseTT.data.DataError === -108) {
             await RETOKEN()
             fetchData()
           } else {
-            toast.error(responseTT.data.DataErrorDescription)
+            toast.error(responseTT.data.DataErrorDescription, { autoClose: 2000 })
           }
         }
       } catch (error) {
@@ -167,10 +167,9 @@ const GBS = () => {
         await RETOKEN()
         getDSGBS()
       } else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
+        toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>, { autoClose: 2000 })
         setTableLoad(false)
       } else {
-        toast.error(response.data.DataErrorDescription)
         setData([])
         setTableLoad(false)
       }
@@ -609,7 +608,6 @@ const GBS = () => {
                     handleView(record)
                   },
                 })}
-                // Bảng Tổng
                 summary={() => {
                   return (
                     <Table.Summary fixed="bottom">

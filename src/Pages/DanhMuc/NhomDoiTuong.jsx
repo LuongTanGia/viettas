@@ -26,7 +26,9 @@ import { nameColumsNhomDoiTuong } from '../../components/util/Table/ColumnName'
 const NhomDoiTuong = () => {
   const navigate = useNavigate()
   const TokenAccess = localStorage.getItem('TKN')
-  const [dataNhomDoiTuong, setDataNhomDoiTuong] = useState()
+  const [dataNhomDoiTuong, setDataNhomDoiTuong] = useState([])
+  const [count, setCount] = useState(20)
+  const [dataLoad, setDataLoad] = useState([])
   const [setSearchNhomDoiTuong, filteredNhomDoiTuong, searchNhomDoiTuong] = useSearch(dataNhomDoiTuong)
   const [isMaHang, setIsMaHang] = useState()
   const [actionType, setActionType] = useState('')
@@ -47,9 +49,33 @@ const NhomDoiTuong = () => {
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
     setCheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
-    const key = Object.keys(dataNhomDoiTuong ? dataNhomDoiTuong[0] : [] || []).filter((key) => key)
+    const key = dataNhomDoiTuong && dataNhomDoiTuong[0] ? Object.keys(dataNhomDoiTuong[0]).filter((key) => key) : []
     setOptions(key)
   }, [selectVisible])
+
+  useEffect(() => {
+    setDataLoad(filteredNhomDoiTuong?.splice(0, count))
+  }, [dataNhomDoiTuong?.length, searchNhomDoiTuong])
+
+  useEffect(() => {
+    const tableContainer = document.querySelector('.ant-table-body')
+    const handleScroll = async () => {
+      if (tableContainer && tableContainer.scrollTop + tableContainer.clientHeight + 1 >= tableContainer.scrollHeight) {
+        if (dataLoad?.length < dataNhomDoiTuong?.length) {
+          setDataLoad((prevDataLoad) => [...prevDataLoad, ...dataNhomDoiTuong.slice(count, count + 20)])
+          setCount((pre) => pre + 20)
+        }
+      }
+    }
+    if (tableContainer) {
+      tableContainer.addEventListener('scroll', handleScroll)
+    }
+    return () => {
+      if (tableContainer) {
+        tableContainer.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [dataNhomDoiTuong, dataLoad?.length, count])
 
   useEffect(() => {
     const getListNhomDoiTuong = async () => {
@@ -59,14 +85,12 @@ const NhomDoiTuong = () => {
         if (response.data.DataError === 0) {
           setDataNhomDoiTuong(response.data.DataResults)
           setTableLoad(false)
-          setIsLoading(true)
         } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
           getListNhomDoiTuong()
         } else {
           setDataNhomDoiTuong([])
           setTableLoad(false)
-          setIsLoading(true)
         }
       } catch (error) {
         console.log(error)
@@ -476,7 +500,7 @@ const NhomDoiTuong = () => {
                     rowClassName={(record, index) => (record.Ma == targetRow ? 'highlighted-row' : addRowClass(record, index))}
                     className="setHeight"
                     columns={newTitles}
-                    dataSource={filteredNhomDoiTuong.map((item, index) => ({
+                    dataSource={dataLoad?.map((item, index) => ({
                       ...item,
                       key: index,
                     }))}

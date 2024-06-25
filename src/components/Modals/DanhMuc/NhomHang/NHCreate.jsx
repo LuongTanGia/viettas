@@ -35,7 +35,7 @@ const NHCreate = ({ close, loadingData, setTargetRow }) => {
       return
     }
     try {
-      const response = await categoryAPI.ThemNhomHang({ ...NHForm }, TokenAccess)
+      const response = await categoryAPI.ThemNhomHang({ ...NHForm, MaNhom: NHForm?.MaNhom?.trim(), TenNhom: NHForm?.TenNhom?.trim(), GhiChu: NHForm?.GhiChu?.trim() }, TokenAccess)
       if (response.data.DataError == 0) {
         isSave ? setNHForm([]) : close()
         loadingData()

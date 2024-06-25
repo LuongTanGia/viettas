@@ -33,6 +33,8 @@ const PhieuThuTien = () => {
   const [dataQuyenHan, setDataQuyenHan] = useState({})
   const [actionType, setActionType] = useState('')
   const [formKhoanNgay, setFormKhoanNgay] = useState([])
+  const [dataLoad, setDataLoad] = useState([])
+  const [count, setCount] = useState(20)
   const [setSearchPTT, filteredPTT, searchPTT] = useSearch(data)
   const [prevSearchValue, setPrevSearchValue] = useState('')
   const [prevdateValue, setPrevDateValue] = useState({})
@@ -44,6 +46,30 @@ const PhieuThuTien = () => {
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
   const [isShowNotify, setIsShowNotify] = useState(false)
+
+  useEffect(() => {
+    setDataLoad(filteredPTT?.splice(0, count))
+  }, [data?.length, searchPTT])
+
+  useEffect(() => {
+    const tableContainer = document.querySelector('.ant-table-body')
+    const handleScroll = async () => {
+      if (tableContainer && tableContainer?.scrollTop + tableContainer?.clientHeight + 1 >= tableContainer?.scrollHeight) {
+        if (dataLoad.length < data.length) {
+          setDataLoad((prevDataLoad) => [...prevDataLoad, ...data.slice(count, count + 20)])
+          setCount((pre) => pre + 20)
+        }
+      }
+    }
+    if (tableContainer) {
+      tableContainer.addEventListener('scroll', handleScroll)
+    }
+    return () => {
+      if (tableContainer) {
+        tableContainer.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [data, dataLoad?.length, count])
 
   // bỏ focus option thì hidden
   useEffect(() => {
@@ -247,10 +273,9 @@ const PhieuThuTien = () => {
           await RETOKEN()
           getDSPTT()
         } else if (DataError === -1 || DataError === -2 || DataError === -3) {
-          toast.warning(DataErrorDescription)
+          toast.warning(DataErrorDescription, { autoClose: 2000 })
           setTableLoad(false)
         } else {
-          toast.error(DataErrorDescription)
           setData([])
           setTableLoad(false)
         }
@@ -354,12 +379,12 @@ const PhieuThuTien = () => {
       title: 'Tên đối tượng',
       dataIndex: 'TenDoiTuong',
       key: 'TenDoiTuong',
-      width: 250,
+      width: 280,
       sorter: (a, b) => a.TenDoiTuong.localeCompare(b.TenDoiTuong),
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className=" text-start">
+        <div className="text-start whitespace-pre-wrap">
           {/* <Tooltip title={text} color="blue"> */}
           <span>
             <HighlightedCell text={text} search={searchPTT} />
@@ -372,17 +397,16 @@ const PhieuThuTien = () => {
       title: 'Địa chỉ ',
       dataIndex: 'DiaChi',
       key: 'DiaChi',
-      width: 250,
+      width: 280,
       sorter: (a, b) => {
         const diaChiA = a.DiaChi || ''
         const diaChiB = b.DiaChi || ''
-
         return diaChiA.localeCompare(diaChiB)
       },
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className=" text-start">
+        <div className=" text-start whitespace-pre-wrap">
           {/* <Tooltip title={text} color="blue"> */}
           <span>
             <HighlightedCell text={text} search={searchPTT} />
@@ -411,7 +435,7 @@ const PhieuThuTien = () => {
       title: 'Ghi chú ',
       dataIndex: 'GhiChu',
       key: 'GhiChu',
-      width: 250,
+      width: 280,
       sorter: (a, b) => {
         const GhiChuA = a.GhiChu || ''
         const GhiChuB = b.GhiChu || ''
@@ -420,12 +444,10 @@ const PhieuThuTien = () => {
       showSorterTooltip: false,
       align: 'center',
       render: (text) => (
-        <div className=" text-start">
-          {/* <Tooltip title={text} color="blue"> */}
+        <div className="text-start whitespace-pre-line">
           <span>
             <HighlightedCell text={text} search={searchPTT} />
           </span>
-          {/* </Tooltip> */}
         </div>
       ),
     },
@@ -436,7 +458,7 @@ const PhieuThuTien = () => {
       key: 'NgayTao',
       align: 'center',
       render: (text) => <HighlightedCell text={moment(text).format('DD/MM/YYYY hh:mm:ss')} search={searchPTT} />,
-      width: 200,
+      width: 150,
       sorter: (a, b) => {
         const dateA = new Date(a.NgayTao)
         const dateB = new Date(b.NgayTao)
@@ -448,7 +470,7 @@ const PhieuThuTien = () => {
       title: 'Người tạo',
       dataIndex: 'NguoiTao',
       key: 'NguoiTao',
-      width: 250,
+      width: 180,
       sorter: (a, b) => a.NguoiTao.localeCompare(b.NguoiTao),
       showSorterTooltip: false,
       align: 'center',
@@ -464,7 +486,7 @@ const PhieuThuTien = () => {
       key: 'NgaySuaCuoi',
       align: 'center',
       render: (text) => <HighlightedCell text={text ? moment(text).format('DD/MM/YYYY hh:mm:ss') : null} search={searchPTT} />,
-      width: 200,
+      width: 150,
       sorter: (a, b) => {
         const dateA = new Date(a.NgaySuaCuoi)
         const dateB = new Date(b.NgaySuaCuoi)
@@ -476,7 +498,7 @@ const PhieuThuTien = () => {
       title: 'Người sửa cuối',
       dataIndex: 'NguoiSuaCuoi',
       key: 'NguoiSuaCuoi',
-      width: 250,
+      width: 180,
       sorter: (a, b) => {
         const NguoiSuaCuoiA = a.NguoiSuaCuoi || ''
         const NguoiSuaCuoiB = b.NguoiSuaCuoi || ''
@@ -491,7 +513,6 @@ const PhieuThuTien = () => {
         </div>
       ),
     },
-
     {
       title: 'Chức năng',
       key: 'ChucNang',
@@ -725,27 +746,18 @@ const PhieuThuTien = () => {
                 </div>
               </div>
 
-              <div id="my-table" className="relative px-2 py-1 ">
+              <div id="my-table" className="relative px-2 py-1">
                 <Table
                   loading={tableLoad}
                   className="table_pmh setHeight"
                   // rowSelection={rowSelection}
                   columns={newColumnsHide}
-                  dataSource={filteredPTT}
+                  dataSource={dataLoad}
                   size="small"
                   scroll={{
-                    x: 1500,
+                    x: 'max-content',
                     y: 410,
                   }}
-                  bordered
-                  // pagination={{
-                  //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                  //   showSizeChanger: true,
-                  //   pageSizeOptions: ['50', '100', '1000'],
-                  //   onShowSizeChange: (current, size) => {
-                  //     localStorage.setItem('pageSize', size)
-                  //   },
-                  // }}
                   pagination={false}
                   rowKey={(record) => record.SoChungTu}
                   onRow={(record) => ({
@@ -763,13 +775,12 @@ const PhieuThuTien = () => {
                             .filter((column) => column.render)
                             .map((column, index) => {
                               const isNumericColumn = typeof filteredPTT[0]?.[column.dataIndex] === 'number'
-
                               return (
                                 <Table.Summary.Cell
                                   index={index}
                                   key={`summary-cell-${index + 1}`}
                                   align={isNumericColumn ? 'right' : 'left'}
-                                  className="text-end font-bold  bg-[#f1f1f1]"
+                                  className="text-end font-bold bg-[#f1f1f1]"
                                 >
                                   {isNumericColumn ? (
                                     (() => {
@@ -804,7 +815,6 @@ const PhieuThuTien = () => {
                   }}
                 ></Table>
               </div>
-
               {isShowModal && (
                 <ModalThuChi
                   namePage={'Phiếu Thu Tiền'}

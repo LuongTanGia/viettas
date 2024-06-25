@@ -1,75 +1,46 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-useless-escape */
-import moment from 'moment'
 import { useMemo, useState } from 'react'
+import dayjs from 'dayjs'
 
 export const useSearchHH = (data) => {
   const [search, setSearch] = useState('')
-
+  const ThongSo = localStorage.getItem('ThongSo')
+  const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
+  const formatDate = (date, format) => dayjs(date).format(format) || ''
+  const formatNumber = (number, decimalPlaces) => {
+    if (typeof number === 'number' && !isNaN(number)) {
+      const formatter = new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: decimalPlaces,
+      })
+      return formatter.format(number)
+    }
+    return ''
+  }
+  const DateFields = {
+    HieuLucTu: (value) => formatDate(value, 'DD/MM/YYYY'),
+    NgayTao: (value) => formatDate(value, 'DD/MM/YYYY HH:mm:ss'),
+    NgaySuaCuoi: (value) => formatDate(value, 'DD/MM/YYYY HH:mm:ss'),
+  }
+  const NumberFields = {
+    SoLuongTon: (value) => formatNumber(value, dataThongSo.SOLESOLUONG),
+    TyLeThue: (value) => formatNumber(value, dataThongSo.SOLETYLE),
+    DonGia: (value) => formatNumber(value, dataThongSo.SOLEDONGIA),
+    GiaLe: (value) => formatNumber(value, dataThongSo.SOLEDONGIA),
+  }
   const filteredData = useMemo(() => {
-    // const dynamicColumns =
-    //   data && data.length > 0
-    //     ? Object.keys(data[0])
-    //         .filter((key) => key.startsWith('Col_'))
-    //         .map((colKey) => {
-    //           const columnName = colKey.substring(4) // Extract column name after 'Col_'
-    //           return columnName
-    //         })
-    //     : []
-
     if (data)
       return data.filter((item) => {
-        const {
-          MaHang,
-          TenHang,
-          DVT,
-          NhomHang,
-          SoLuongTon,
-          // GiaBanLe
-          ThongTinNhom,
-          HieuLucTu,
-          DonGia,
-          TyLeThue,
-          NgayTao,
-          NguoiTao,
-          NgaySuaCuoi,
-          NguoiSuaCuoi,
-          MaVach,
-          // GiaKH
-          MaDoiTuong,
-          TenDoiTuong,
-          ThongTinNhomGia,
-          GhiChu,
-          // SoSanhBG
-          GiaLe,
-          // HangHoaTKTT
-        } = item || {}
-
-        return (
-          (MaHang || '').toLowerCase().includes(search.toLowerCase()) ||
-          (TenHang || '').toLowerCase().includes(search.toLowerCase()) ||
-          (DVT || '').toLowerCase().includes(search.toLowerCase()) ||
-          (NhomHang || '').toLowerCase().includes(search.toLowerCase()) ||
-          (SoLuongTon?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
-          (moment(HieuLucTu).format('DD/MM/YYYY') || '').toLowerCase().includes(search.toLowerCase()) ||
-          // GiaBanLe
-          (ThongTinNhom || '').toLowerCase().includes(search.toLowerCase()) ||
-          (DonGia?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
-          (TyLeThue?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
-          (moment(NgayTao).format('DD/MM/YYYY hh:mm:ss') || '').toLowerCase().includes(search.toLowerCase()) ||
-          // (NgayTao || '').toLowerCase().includes(search.toLowerCase()) ||
-          (NguoiTao || '').toLowerCase().includes(search.toLowerCase()) ||
-          (moment(NgaySuaCuoi).format('DD/MM/YYYY hh:mm:ss') || '').toLowerCase().includes(search.toLowerCase()) ||
-          // (NgaySuaCuoi || '').toLowerCase().includes(search.toLowerCase()) ||
-          (NguoiSuaCuoi || '').toLowerCase().includes(search.toLowerCase()) ||
-          (MaVach?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
-          // SoSanhGB
-          (GiaLe?.toString().replace(/[,\.]/g, '') || '').toLowerCase().includes(search.toLowerCase()) ||
-          // GiaKH
-          (MaDoiTuong || '').toLowerCase().includes(search.toLowerCase()) ||
-          (TenDoiTuong || '').toLowerCase().includes(search.toLowerCase()) ||
-          (ThongTinNhomGia || '').toLowerCase().includes(search.toLowerCase()) ||
-          (GhiChu || '').toLowerCase().includes(search.toLowerCase())
-        )
+        const keys = Object.keys(item)
+        return keys.some((key) => {
+          const value = item[key] || ''
+          if (DateFields[key]) {
+            return DateFields[key](value).toLowerCase().includes(search?.trim().toLowerCase())
+          } else if (NumberFields[key]) {
+            return NumberFields[key](value).toLowerCase().includes(search?.trim().toLowerCase())
+          }
+          return String(value)?.toLowerCase().includes(search?.trim().toLowerCase())
+        })
       })
     else return []
   }, [search, data])

@@ -72,12 +72,27 @@ const DTCreate = ({ close, loadingData, setTargetRow }) => {
       return
     }
     try {
-      const response = await categoryAPI.ThemDoiTuong({ ...DTForm, Nhom: DTForm.Nhom }, TokenAccess)
+      const response = await categoryAPI.ThemDoiTuong(
+        {
+          ...DTForm,
+          Nhom: DTForm?.Nhom,
+          Ma: DTForm?.Ma?.trim(),
+          DiaChi: DTForm?.DiaChi?.trim(),
+          QuanHuyen: DTForm?.QuanHuyen?.trim(),
+          TinhThanh: DTForm?.TinhThanh?.trim(),
+          MST: DTForm?.MST?.trim(),
+          DienThoai: DTForm?.DienThoai?.trim(),
+          Fax: DTForm?.Fax?.trim(),
+          NguoiLienHe: DTForm?.NguoiLienHe?.trim(),
+          GhiChu: DTForm?.GhiChu?.trim(),
+        },
+        TokenAccess,
+      )
       if (response.data.DataError == 0) {
         isSave ? setDTForm({ Loai: 2 }) : close()
         loadingData()
         toast.success(response.data.DataErrorDescription, { autoClose: 1000 })
-        dataThongSo.SUDUNG_MADOITUONGTUDONG ? setTargetRow(response.data.DataResults[0].Ma) : setTargetRow(DTForm?.Ma)
+        dataThongSo.SUDUNG_MADOITUONGTUDONG == true ? setTargetRow(response.data.DataResults[0].Ma) : setTargetRow(DTForm?.Ma)
       } else {
         toast.warning(response.data.DataErrorDescription, { autoClose: 2000 })
       }
@@ -87,7 +102,7 @@ const DTCreate = ({ close, loadingData, setTargetRow }) => {
       close()
     }
   }
-
+  console.log(dataThongSo.SUDUNG_MADOITUONGTUDONG)
   return (
     <>
       {!isLoading ? (
