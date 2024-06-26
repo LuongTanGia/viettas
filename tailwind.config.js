@@ -14,6 +14,9 @@ export default {
         'text-main': '14px',
         'text-title': ['18px', '24px'],
       },
+      fontFamily: {
+        'google-sans': ['"Google Sans"', 'arial', 'sans-serif'],
+      },
       boxShadow: {
         custom: 'rgba(0, 0, 0, 0.24) 0px 3px 8px',
       },

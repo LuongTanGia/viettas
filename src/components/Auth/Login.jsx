@@ -1,13 +1,17 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from 'react'
 import { DANHSACHDULIEU, LOGIN } from '../../action/Actions'
 import { GoogleLogin } from '@react-oauth/google'
 import API from '../../API/API'
 import { useDispatch } from 'react-redux'
 import Cookies from 'js-cookie'
-import { Spin } from 'antd'
+import { FcGoogle } from 'react-icons/fc'
+import { Checkbox, Input, Spin } from 'antd'
+import { LockOutlined, UserOutlined } from '@ant-design/icons'
 import backgroundImg from '../../assets/img/backgroud.jfif'
 import FAQ from '../FAQ/FAQ'
 import './auth.css'
+import Logo from '../../assets/bluelogo_viettas.svg'
 import { toast } from 'react-toastify'
 
 const App = () => {
@@ -16,7 +20,6 @@ const App = () => {
   const token = window.localStorage.getItem('tokenDuLieu')
   const [loading, setLoading] = useState(false)
   const dispatch = useDispatch()
-
   const [dataLoaded, setDataLoaded] = useState(false)
 
   const [user, setUser] = useState({
@@ -52,12 +55,10 @@ const App = () => {
 
   useEffect(() => {
     const authLogin = window.localStorage.getItem('authLogin')
-
     const handleLogin = async () => {
       setDataLoaded(false)
       try {
         const response_1 = authLogin ? await DANHSACHDULIEU(API.DANHSACHDULIEU, { TokenId: localStorage.getItem('authLogin') }, dispatch) : null
-
         const response_2 = authLogin ? await LOGIN(API.DANGNHAP, API.DANHSACHDULIEU, response_1.TKN, Cookies.get('remoteDb'), {}, dispatch) : null
         window.localStorage.setItem('firstLogin', true)
         if (response_2 === 1) {
@@ -81,8 +82,8 @@ const App = () => {
   const handleAddUser = async () => {
     if (!user.User.trim() || !user.Pass.trim()) {
       setErrors({
-        User: user.User.trim() ? '' : '*Tài khoản không được để trống',
-        Pass: user.Pass.trim() ? '' : '*Mật khẩu không được để trống',
+        User: user.User.trim() ? '' : 'Tài khoản không được để trống',
+        Pass: user.Pass.trim() ? '' : 'Mật khẩu không được để trống',
       })
       return
     }
@@ -104,7 +105,6 @@ const App = () => {
       console.error('Đăng nhập thất bại', error)
     }
   }
-
   const fetchGoogleUserInfo = async (googleCredential) => {
     const googleResponse = await fetch(`https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${googleCredential}`)
     const googleUserInfo = await googleResponse.json()
@@ -137,84 +137,90 @@ const App = () => {
     <Spin tip="Kiểm tra đăng nhập ..." spinning={!dataLoaded}>
       <div className="flex justify-center items-center h-screen bg-cover" style={{ backgroundImage: `url(${backgroundImg})` }}>
         <div className=" w-[500px] p-6 shadow-lg bg-white rounded-md">
-          <h1 className="text-center font-semibold text-4xl">Đăng Nhập</h1>
-
+          <div className="flex flex-col justify-center items-center gap-2">
+            <h1 className="text-center font-semibold text-3xl">Đăng Nhập</h1>
+            <div className="object-contain block">
+              <img src={Logo} alt="logo" />
+            </div>
+          </div>
           <div className="mt-8">
-            <div className="mb-4">
-              <label className="text-lg font-medium mb-2">Tài Khoản</label>
-              <input
-                type="text"
+            <div className="mb-4 flex flex-col">
+              {/* <label className="text-lg font-medium mb-2">Tài khoản</label> */}
+              <Input
+                prefix={<UserOutlined className="site-form-item-icon text-neutral-500" />}
+                size="large"
                 name="User"
                 required
+                placeholder={errors.User ? errors.User && errors.User : 'Nhập tài khoản'}
+                className={`${errors.User ? 'border-red-500' : ''} w-full rounded-full overflow-hidden whitespace-nowrap overflow-ellipsis`}
                 value={user.User}
                 onChange={onChangeInput}
-                className={`w-full border border-gray-300 rounded-md px-4 py-2 mt-1 text-base font-medium focus:outline-none focus:ring-0 focus:border-blue-500 hover:border-blue-500 bg-blue-100 ${
-                  errors.User ? 'border-red-500' : ''
-                }`}
-                placeholder="Nhập tài khoản..."
               />
-              {errors.User && <p className="text-red-500 text-base font-medium">{errors.User}</p>}
             </div>
-            <div className="mb-4">
-              <label className="text-lg font-medium mb-2">Mật Khẩu</label>
-              <input
-                type="password"
-                name="Pass"
+            <div className="mb-4 flex flex-col">
+              {/* <label className="text-lg font-medium mb-2">Mật khẩu</label> */}
+              <Input.Password
                 required
+                name="Pass"
+                prefix={<LockOutlined className="site-form-item-icon text-neutral-500" />}
+                size="large"
+                className={`${errors.Pass ? 'border-red-500' : ''} w-full rounded-full overflow-hidden whitespace-nowrap overflow-ellipsis`}
                 value={user.Pass}
+                placeholder={errors.Pass ? errors.Pass && errors.Pass : 'Nhập mật khẩu'}
                 onChange={onChangeInput}
-                className={`w-full border border-gray-300 rounded-md px-4 py-2 mt-1 text-base focus:outline-none focus:ring-0 focus:border-blue-500 hover:border-blue-500 bg-blue-100 ${
-                  errors.Pass ? 'border-red-500' : ''
-                }`}
-                placeholder="Mật khẩu *"
               />
-              {errors.Pass && <p className="text-red-500 text-base font-medium">{errors.Pass}</p>}
             </div>
-            <div className="flex justify-between items-center mb-4">
-              <div className="mb-4">
-                <input type="checkbox" id="rememberMe" checked={rememberMe} onChange={() => setRememberMe(!rememberMe)} className="mr-2" />
-                <label htmlFor="rememberMe" className="text-base font-medium">
+            <div className="flex justify-between items-center">
+              <div className="flex flex-col gap-1">
+                <Checkbox id="rememberMe" checked={rememberMe} onChange={() => setRememberMe(!rememberMe)} className="mr-2 text-base font-medium">
                   Sử dụng cookie
-                </label>
-                <p>
+                </Checkbox>
+                <p className="text-sm leading-relaxed">
                   Chúng tôi đang sử dụng <strong className="underline decoration-sky-500">cookie</strong> để cung cấp cho bạn những trải nghiệm tốt nhất trên trang web này. Bằng
                   cách tiếp tục truy cập, bạn đồng ý với <br />
-                  <a
-                    className="underline decoration-sky-500 font-bold"
-                    onClick={() => {
-                      setIsShow(true)
-                    }}
-                  >
-                    Chính sách thu thập và sử dụng cookie của chúng tôi.
-                  </a>
+                  <a className="underline decoration-sky-500 font-bold">Chính sách thu thập và sử dụng cookie của chúng tôi.</a>
                 </p>
               </div>
             </div>
-            <div className="flex flex-col gap-y-4 mt-14">
+            <div className="flex flex-col gap-y-4 mt-8">
               <Spin spinning={loading}>
                 <button
                   onClick={handleAddUser}
                   disabled={!rememberMe}
                   className={`w-full active:scale-[.98] active:duration-75 text-white text-lg font-bold  bg-blue-500 rounded-md px-4 py-2 ${
-                    !rememberMe ? 'cursor-not-allowed bg-gray-500' : ''
+                    !rememberMe ? 'cursor-not-allowed bg-gray-400' : ''
                   }`}
                 >
                   Đăng nhập
                 </button>
               </Spin>
-              <div className="flex justify-center">
-                {rememberMe ? (
-                  <GoogleLogin
-                    onSuccess={handleGoogleLogin}
-                    onError={() => {
-                      console.log('Login Failed')
-                    }}
-                    useOneTap={dataLoaded}
-                  />
-                ) : null}
+              <div className="block w-full border-t border-gray-300 mt-4 text-center">
+                <b className="inline-block px-4 font-light text-sm text-center leading-10 text-slate-400 bg-neutral-100 border-gray-300 rounded-[50%] relative top-[-22px] z-1">
+                  hoặc
+                </b>
               </div>
             </div>
-
+            <div className="flex flex-col justify-center items-center gap-3">
+              {rememberMe ? (
+                <GoogleLogin
+                  onSuccess={handleGoogleLogin}
+                  text={'Đăng nhập bằng Google'}
+                  onError={() => {
+                    toast.error('Đăng nhập thất bại')
+                  }}
+                  useOneTap
+                />
+              ) : (
+                <div>
+                  <button
+                    disabled
+                    className="w-full py-2 px-2.5 border-2 text-sm font-google-sans bg-slate-300 rounded-[3px] cursor-not-allowed flex items-center text-center justify-center gap-2"
+                  >
+                    <FcGoogle className="w-[20px] h-[20px]" /> Sign in with Google
+                  </button>
+                </div>
+              )}
+            </div>
             {isShow ? (
               <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center">
                 <div className="w-[80%] m-6 p-6 absolute shadow-lg bg-white rounded-md flex flex-col scroll-smooth box_dieuKhoan">
