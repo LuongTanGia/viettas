@@ -11,7 +11,7 @@ function CardRemoteDB({ item, handleLogin }) {
         </div>
         <div className="course-info">
           <div className="progress-container">
-            <span className="progress-text ">Mã kho: {item.MaKho || 'null'}</span>
+            <span className="progress-text ">Mã kho: {item.MaKho || `Tổng kho`}</span>
           </div>
           <h6>{item.TenKho || 'Ten kho'}</h6>
           <h2>{item.RemoteDBDescription || 'Thông tin'}</h2>

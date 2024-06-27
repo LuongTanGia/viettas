@@ -6,10 +6,10 @@ import Cookies from 'js-cookie'
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Footer from '../Footer/Footer'
-import { DANHSACHCHUCNANG, DATATONGHOP, CallBackAPI } from '../../action/Actions'
+import { DANHSACHCHUCNANG, CallBackAPI } from '../../action/Actions'
 import API from '../../API/API'
-import { useDispatch, useSelector } from 'react-redux'
-import { khoanNgaySelect } from '../../redux/selector'
+import { useDispatch } from 'react-redux'
+// import { khoanNgaySelect } from '../../redux/selector'
 import LoadingPage from '../util/Loading/LoadingPage'
 
 function Home({ handleToggleSidebar, isSidebarVisible }) {
@@ -18,7 +18,7 @@ function Home({ handleToggleSidebar, isSidebarVisible }) {
   const [dataLoaded, setDataLoaded] = useState(false)
   const [isCookie, setIsCookie] = useState(user)
   const token = localStorage.getItem('TKN')
-  const KhoanNgay = useSelector(khoanNgaySelect)
+  // const KhoanNgay = useSelector(khoanNgaySelect)
   const sidebarRef = useRef(null)
   const [targetRow, setTargetRow] = useState()
   const [tableLoad, setTableLoad] = useState()
@@ -27,7 +27,7 @@ function Home({ handleToggleSidebar, isSidebarVisible }) {
   useEffect(() => {
     const loadData = async () => {
       await DANHSACHCHUCNANG(API.DANHSACHCHUCNANG, token, dispatch)
-      await DATATONGHOP(API.TONGHOP, token, KhoanNgay, dispatch)
+
       setDataLoaded(true)
     }
     const ThongSo = async () => {

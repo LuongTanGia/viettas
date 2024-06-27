@@ -34,10 +34,14 @@ a {
     'PHAITHU PHAITRA'
     'MUAHANG XUATTRA '
     'BANHANG NHAPTRA'
-    'THU CHI';
+    'THU CHI'
+    'QUYTIENMAT QUYTIENMAT';
 }
 .DOANHSO {
   grid-area: DOANHSO;
+}
+.QUYTIENMAT {
+  grid-area: QUYTIENMAT;
 }
 .TONKHO {
   grid-area: TONKHO;

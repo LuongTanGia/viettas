@@ -111,7 +111,6 @@ const App = () => {
     return googleUserInfo
   }
   const handleGoogleLogin = async (TokenID) => {
-    console.log(TokenID)
     try {
       localStorage.setItem('authLogin', TokenID.credential)
       const googleUserInfo = await fetchGoogleUserInfo(TokenID.credential)

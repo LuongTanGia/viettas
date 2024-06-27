@@ -1,11 +1,27 @@
-import { useSelector } from 'react-redux'
-import { dataTONGHOPSelector } from '../../redux/selector'
+import { useDispatch, useSelector } from 'react-redux'
+import { khoanNgaySelect } from '../../redux/selector'
 import Card from '../util/CardTT/Card'
 import PieChart from '../util/Chart/PieChart'
 import DateTimeClock from '../util/testComponents/DateTime'
+import { useEffect, useState } from 'react'
+import { DATATONGHOP } from '../../action/Actions'
+import API from '../../API/API'
 
 function DashBoar() {
-  const data = useSelector(dataTONGHOPSelector)
+  const token = localStorage.getItem('TKN')
+  const dispatch = useDispatch()
+
+  const KhoanNgay = useSelector(khoanNgaySelect)
+  const [data, setData] = useState([])
+  useEffect(() => {
+    const loadData = async () => {
+      const dataS = await DATATONGHOP(API.TONGHOP, token, KhoanNgay, dispatch)
+      console.log(dataS)
+      setData(dataS)
+    }
+    loadData()
+  }, [])
+  console.log(data)
   if (data?.DataResults?.length === 0) {
     return <p>Dữ liệu trống, vui lòng kiểm tra lại.</p>
   }
@@ -25,17 +41,6 @@ function DashBoar() {
 
   return (
     <>
-      {/* <div className="pagetitle">
-                <nav>
-                    <ol className="breadcrumb">
-                        <li className="breadcrumb-item">
-                            <a href="index.html">Home</a>
-                        </li>
-                        <li className="breadcrumb-item active">Dashboard</li>
-                    </ol>
-                </nav>
-            </div> */}
-
       <section className="section dashboard">
         <div className="row">
           <div className="col-lg-6">
