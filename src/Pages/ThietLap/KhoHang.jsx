@@ -26,6 +26,8 @@ const KhoHang = () => {
   const navigate = useNavigate()
   const TokenAccess = localStorage.getItem('TKN')
   const [dataKhoHang, setDataKhoHang] = useState()
+  const [dataLoad, setDataLoad] = useState([])
+  const [count, setCount] = useState(20)
   const [setSearchKhoHang, filteredKhoHang, searchKhoHang] = useSearch(dataKhoHang)
   const [isMaHang, setIsMaHang] = useState()
   const [actionType, setActionType] = useState('')
@@ -46,9 +48,33 @@ const KhoHang = () => {
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
     setCheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
-    const key = Object.keys(dataKhoHang ? dataKhoHang[0] : [] || []).filter((key) => key)
+    const key = dataKhoHang && dataKhoHang[0] ? Object.keys(dataKhoHang[0]).filter((key) => key) : []
     setOptions(key)
   }, [selectVisible])
+
+  useEffect(() => {
+    setDataLoad(filteredKhoHang?.splice(0, count))
+  }, [dataKhoHang?.length, searchKhoHang])
+
+  useEffect(() => {
+    const tableContainer = document.querySelector('.ant-table-body')
+    const handleScroll = async () => {
+      if (tableContainer && tableContainer?.scrollTop + tableContainer?.clientHeight + 1 >= tableContainer?.scrollHeight) {
+        if (dataLoad.length < dataKhoHang.length) {
+          setDataLoad((prevDataLoad) => [...prevDataLoad, ...dataKhoHang.slice(count, count + 20)])
+          setCount((pre) => pre + 20)
+        }
+      }
+    }
+    if (tableContainer) {
+      tableContainer.addEventListener('scroll', handleScroll)
+    }
+    return () => {
+      if (tableContainer) {
+        tableContainer.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [dataKhoHang, dataLoad?.length, count])
 
   useEffect(() => {
     const getListKhoHang = async () => {
@@ -532,7 +558,7 @@ const KhoHang = () => {
                     rowClassName={(record, index) => (record.MaKho == targetRow ? 'highlighted-row' : addRowClass(record, index))}
                     className="setHeight"
                     columns={newTitles}
-                    dataSource={filteredKhoHang.map((item, index) => ({
+                    dataSource={dataLoad?.map((item, index) => ({
                       ...item,
                       key: index,
                     }))}
@@ -541,14 +567,6 @@ const KhoHang = () => {
                       x: 2800,
                       y: 400,
                     }}
-                    // pagination={{
-                    //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                    //   showSizeChanger: true,
-                    //   pageSizeOptions: ['50', '100', '1000'],
-                    //   onShowSizeChange: (current, size) => {
-                    //     localStorage.setItem('pageSize', size)
-                    //   },
-                    // }}
                     pagination={false}
                     style={{
                       whiteSpace: 'nowrap',

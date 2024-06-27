@@ -95,7 +95,7 @@
 .TruyVan_Child .setHeight .ant-table,
 .TruyVan_Child .setHeight .ant-table-container .ant-table-body {
   /* max-height: unset !important; */
-  height: calc(100vh - 365px);
+  height: calc(100vh - 325px);
 }
 .TruyVan_Child .setHeight .ant-table-container .ant-table-body {
   max-height: unset !important;
@@ -190,7 +190,7 @@
 
 .BLQ_child2 .ant-table-container .ant-table-body {
   max-height: unset !important;
-  height: calc(100vh - 420px);
+  height: calc(100vh - 450px);
 }
 
 .TongHopPBL .ant-table {

@@ -80,7 +80,6 @@ const DoanhSoBanHangHH = () => {
         setIsLoading(true)
       }
     }
-
     getDataQuyenHan()
   }, [])
 
@@ -198,7 +197,7 @@ const DoanhSoBanHangHH = () => {
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
     setCheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
-    const key = Object.keys(dataDSBH[0] || []).filter((key) => key !== 'ThongTinHangHoa')
+    const key = dataDSBH && dataDSBH[0] ? Object.keys(dataDSBH[0]).filter((key) => key !== 'ThongTinHangHoa') : []
     setOptions(key)
   }, [selectVisible])
 

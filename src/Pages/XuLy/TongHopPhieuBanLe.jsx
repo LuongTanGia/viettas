@@ -25,6 +25,8 @@ const TongHopPBL = () => {
   const [dataRecord, setDataRecord] = useState(null)
   const [actionType, setActionType] = useState('')
   const [dataQuyenHan, setDataQuyenHan] = useState({})
+  const [dataLoad, setDataLoad] = useState([])
+  const [count, setCount] = useState(20)
   const [setSearchTongHopPBL, filteredTongHopPBL, searchTongHopPBL] = useSearch(data)
   const [prevSearchValue, setPrevSearchValue] = useState('')
   const [hideColumns, setHideColumns] = useState(false)
@@ -53,6 +55,30 @@ const TongHopPBL = () => {
       document.removeEventListener('click', handleClickOutside)
     }
   }, [isShowOption])
+
+  useEffect(() => {
+    setDataLoad(filteredTongHopPBL?.splice(0, count))
+  }, [data?.length, searchTongHopPBL])
+
+  useEffect(() => {
+    const tableContainer = document.querySelector('.ant-table-body')
+    const handleScroll = async () => {
+      if (tableContainer && tableContainer?.scrollTop + tableContainer?.clientHeight + 1 >= tableContainer?.scrollHeight) {
+        if (dataLoad.length < data.length) {
+          setDataLoad((prevDataLoad) => [...prevDataLoad, ...data.slice(count, count + 20)])
+          setCount((pre) => pre + 20)
+        }
+      }
+    }
+    if (tableContainer) {
+      tableContainer.addEventListener('scroll', handleScroll)
+    }
+    return () => {
+      if (tableContainer) {
+        tableContainer.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [data, dataLoad?.length, count])
 
   // hide Columns
   useEffect(() => {
@@ -515,20 +541,12 @@ const TongHopPBL = () => {
                   },
                 }}
                 columns={newColumnsHide}
-                dataSource={filteredTongHopPBL}
+                dataSource={dataLoad}
                 size="small"
                 scroll={{
                   x: 1500,
                   y: 410,
                 }}
-                // pagination={{
-                //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                //   showSizeChanger: true,
-                //   pageSizeOptions: ['50', '100', '1000'],
-                //   onShowSizeChange: (current, size) => {
-                //     localStorage.setItem('pageSize', size)
-                //   },
-                // }}
                 pagination={false}
                 rowClassName={(record) => (`${record.NgayCTu}/${record.NhanVien}/${record.Ca}/${record.Quay}` === doneTongHopPBL ? 'highlighted-row' : '')}
                 rowKey={(record) => `${record.NgayCTu}/${record.NhanVien}/${record.Ca}/${record.Quay}`}

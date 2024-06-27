@@ -29,6 +29,8 @@ const PhanCaDS = () => {
   const navigate = useNavigate()
   const TokenAccess = localStorage.getItem('TKN')
   const [dataPhanCa, setDataPhanCa] = useState()
+  const [dataLoad, setDataLoad] = useState([])
+  const [count, setCount] = useState(20)
   const [setSearchPhanCa, filteredPhanCa, searchPhanCa] = useSearch(dataPhanCa)
   const [isMaHang, setIsMaHang] = useState()
   const [actionType, setActionType] = useState('')
@@ -51,9 +53,33 @@ const PhanCaDS = () => {
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
     setCheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
-    const key = Object.keys(dataPhanCa ? dataPhanCa[0] : [] || []).filter((key) => key != 'SQLUser' && key != 'SQLPassword' && key != 'Loai')
+    const key = dataPhanCa && dataPhanCa[0] ? Object.keys(dataPhanCa[0]).filter((key) => key != 'SQLUser' && key != 'SQLPassword' && key != 'Loai') : []
     setOptions(key)
   }, [selectVisible])
+
+  useEffect(() => {
+    setDataLoad(filteredPhanCa?.splice(0, count))
+  }, [dataPhanCa?.length, searchPhanCa])
+
+  useEffect(() => {
+    const tableContainer = document.querySelector('.ant-table-body')
+    const handleScroll = async () => {
+      if (tableContainer && tableContainer?.scrollTop + tableContainer?.clientHeight + 1 >= tableContainer?.scrollHeight) {
+        if (dataLoad.length < dataPhanCa.length) {
+          setDataLoad((prevDataLoad) => [...prevDataLoad, ...dataPhanCa.slice(count, count + 20)])
+          setCount((pre) => pre + 20)
+        }
+      }
+    }
+    if (tableContainer) {
+      tableContainer.addEventListener('scroll', handleScroll)
+    }
+    return () => {
+      if (tableContainer) {
+        tableContainer.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [dataPhanCa, dataLoad?.length, count])
 
   useEffect(() => {
     if (dataCRUD?.VIEW == false) {
@@ -585,7 +611,7 @@ const PhanCaDS = () => {
                     rowClassName={(record, index) => (record?.MaNguoiDung == targetRow ? 'highlighted-row' : addRowClass(record, index))}
                     className="setHeight"
                     columns={newTitles}
-                    dataSource={filteredPhanCa.map((item, index) => ({
+                    dataSource={dataLoad?.map((item, index) => ({
                       ...item,
                       key: index,
                     }))}
@@ -594,14 +620,6 @@ const PhanCaDS = () => {
                       x: 'max-content',
                       y: 400,
                     }}
-                    // pagination={{
-                    //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                    //   showSizeChanger: true,
-                    //   pageSizeOptions: ['50', '100', '1000'],
-                    //   onShowSizeChange: (current, size) => {
-                    //     localStorage.setItem('pageSize', size)
-                    //   },
-                    // }}
                     pagination={false}
                     style={{
                       whiteSpace: 'nowrap',

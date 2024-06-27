@@ -122,6 +122,7 @@ const BinhQuanXuatKho = () => {
     }
     getDataQuyenHan()
   }, [])
+
   const handleSetting = (record) => {
     setIsMaHang(record)
     setIsShowModal(true)

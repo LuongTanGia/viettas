@@ -24,6 +24,8 @@ const SoQuy = () => {
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
   const [dataSoQuy, setDataSoQuy] = useState('')
+  const [dataLoad, setDataLoad] = useState([])
+  const [count, setCount] = useState(20)
   const [setSearchHangHoa, filteredHangHoa, searchHangHoa] = useSearch(dataSoQuy)
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [isShowOption, setIsShowOption] = useState(false)
@@ -53,7 +55,7 @@ const SoQuy = () => {
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
     setCheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
-    const key = Object?.keys(dataSoQuy[0] || []).filter((key) => key != 'DauKy' && key != 'CuoiKy' && key != 'ID' && key != 'Loai')
+    const key = dataSoQuy && dataSoQuy[0] ? Object.keys(dataSoQuy[0]).filter((key) => key != 'DauKy' && key != 'CuoiKy' && key != 'ID' && key != 'Loai') : []
     setOptions(key)
   }, [selectVisible])
 
@@ -80,6 +82,30 @@ const SoQuy = () => {
       getTimeSetting()
     }
   }, [isLoading])
+
+  useEffect(() => {
+    setDataLoad(filteredHangHoa?.splice(0, count))
+  }, [dataSoQuy?.length, searchHangHoa])
+
+  useEffect(() => {
+    const tableContainer = document.querySelector('.ant-table-body')
+    const handleScroll = async () => {
+      if (tableContainer && tableContainer?.scrollTop + tableContainer?.clientHeight + 1 >= tableContainer?.scrollHeight) {
+        if (dataLoad.length < dataSoQuy.length) {
+          setDataLoad((prevDataLoad) => [...prevDataLoad, ...dataSoQuy.slice(count, count + 20)])
+          setCount((pre) => pre + 20)
+        }
+      }
+    }
+    if (tableContainer) {
+      tableContainer.addEventListener('scroll', handleScroll)
+    }
+    return () => {
+      if (tableContainer) {
+        tableContainer.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [dataSoQuy, dataLoad?.length, count])
 
   useEffect(() => {
     setKhoanNgayFrom(dayjs(dateData?.NgayBatDau))
@@ -720,15 +746,7 @@ const SoQuy = () => {
                     rowClassName={(record, index) => addRowClass(record, index)}
                     className="setHeight"
                     columns={newTitlesChildren}
-                    dataSource={filteredHangHoa?.map((record, index) => ({ ...record, key: index }))}
-                    // pagination={{
-                    //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                    //   showSizeChanger: true,
-                    //   pageSizeOptions: ['50', '100', '1000'],
-                    //   onShowSizeChange: (current, size) => {
-                    //     localStorage.setItem('pageSize', size)
-                    //   },
-                    // }}
+                    dataSource={dataLoad?.map((record, index) => ({ ...record, key: index }))}
                     pagination={false}
                     size="small"
                     scroll={{

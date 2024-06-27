@@ -25,7 +25,9 @@ const NhapXuatTon = () => {
   const TokenAccess = localStorage.getItem('TKN')
   const ThongSo = localStorage.getItem('ThongSo')
   const dataThongSo = ThongSo ? JSON.parse(ThongSo) : null
-  const [dataNXT, setDataNXT] = useState('')
+  const [dataNXT, setDataNXT] = useState([])
+  const [dataLoad, setDataLoad] = useState([])
+  const [count, setCount] = useState(20)
   const [setSearchHangHoa, filteredHangHoa, searchHangHoa] = useSearch(dataNXT)
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [isShowOption, setIsShowOption] = useState(false)
@@ -122,11 +124,10 @@ const NhapXuatTon = () => {
           setHangHoaNXT(response.data.DataResults)
           setIsLoading(true)
         } else {
-          console.log(response.data)
+          setHangHoaNXT([])
           setIsLoading(true)
         }
       } catch (error) {
-        console.log(error)
         setIsLoading(true)
       }
     }
@@ -139,6 +140,30 @@ const NhapXuatTon = () => {
     setKhoanNgayFrom(dayjs(dateData?.NgayBatDau))
     setKhoanNgayTo(dayjs(dateData?.NgayKetThuc))
   }, [dateData?.NgayBatDau, dateData?.NgayKetThuc])
+
+  useEffect(() => {
+    setDataLoad(filteredHangHoa?.splice(0, count))
+  }, [dataNXT?.length, searchHangHoa])
+
+  useEffect(() => {
+    const tableContainer = document.querySelector('.ant-table-body')
+    const handleScroll = async () => {
+      if (tableContainer && tableContainer?.scrollTop + tableContainer?.clientHeight + 1 >= tableContainer?.scrollHeight) {
+        if (dataLoad.length < dataNXT.length) {
+          setDataLoad((prevDataLoad) => [...prevDataLoad, ...dataNXT.slice(count, count + 20)])
+          setCount((pre) => pre + 20)
+        }
+      }
+    }
+    if (tableContainer) {
+      tableContainer.addEventListener('scroll', handleScroll)
+    }
+    return () => {
+      if (tableContainer) {
+        tableContainer.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [dataNXT, dataLoad?.length, count])
 
   useEffect(() => {
     const getTimeSetting = async () => {
@@ -165,7 +190,7 @@ const NhapXuatTon = () => {
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
     setcheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
-    const key = Object.keys(dataNXT ? dataNXT[0] : [] || []).filter((key) => key !== 'MaNhomHang' && key !== 'MaKho')
+    const key = dataNXT && dataNXT[0] ? Object.keys(dataNXT[0]).filter((key) => key !== 'MaNhomHang' && key !== 'MaKho') : []
     setOptions(key)
   }, [selectVisible])
 
@@ -1790,20 +1815,12 @@ const NhapXuatTon = () => {
                   loading={tableLoad}
                   className="setHeight"
                   columns={newTitlesChildren}
-                  dataSource={filteredHangHoa.map((item, index) => ({ ...item, key: index }))}
+                  dataSource={dataLoad?.map((item, index) => ({ ...item, key: index }))}
                   size="small"
                   scroll={{
                     x: 'max-content',
                     y: 300,
                   }}
-                  // pagination={{
-                  //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                  //   showSizeChanger: true,
-                  //   pageSizeOptions: ['50', '100', '1000'],
-                  //   onShowSizeChange: (current, size) => {
-                  //     localStorage.setItem('pageSize', size)
-                  //   },
-                  // }}
                   pagination={false}
                   rowClassName={(record, index) => addRowClass(record, index)}
                   style={{

@@ -26,6 +26,8 @@ const GoChotCa = () => {
   const [dataRecord, setDataRecord] = useState(null)
   const [data, setData] = useState([])
   const [dataQuyenHan, setDataQuyenHan] = useState({})
+  const [dataLoad, setDataLoad] = useState([])
+  const [count, setCount] = useState(20)
   const [setSearchGoChotCa, filteredGoChotCa, searchGoChotCa] = useSearch(data)
   const [prevSearchValue, setPrevSearchValue] = useState('')
   const [hideColumns, setHideColumns] = useState(false)
@@ -76,6 +78,29 @@ const GoChotCa = () => {
     }
   }, [confirmed])
 
+  useEffect(() => {
+    setDataLoad(filteredGoChotCa?.splice(0, count))
+  }, [data?.length, searchGoChotCa])
+
+  useEffect(() => {
+    const tableContainer = document.querySelector('.ant-table-body')
+    const handleScroll = async () => {
+      if (tableContainer && tableContainer?.scrollTop + tableContainer?.clientHeight + 1 >= tableContainer?.scrollHeight) {
+        if (dataLoad.length < data.length) {
+          setDataLoad((prevDataLoad) => [...prevDataLoad, ...data.slice(count, count + 20)])
+          setCount((pre) => pre + 20)
+        }
+      }
+    }
+    if (tableContainer) {
+      tableContainer.addEventListener('scroll', handleScroll)
+    }
+    return () => {
+      if (tableContainer) {
+        tableContainer.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [data, dataLoad?.length, count])
   // get Chức năng quyền hạn
   useEffect(() => {
     const getChucNangQuyenHan = async () => {
@@ -537,20 +562,12 @@ const GoChotCa = () => {
                   loading={tableLoad}
                   className="setHeight"
                   columns={newColumnsHide}
-                  dataSource={filteredGoChotCa}
+                  dataSource={dataLoad}
                   size="small"
                   scroll={{
                     x: 1500,
                     y: 410,
                   }}
-                  // pagination={{
-                  //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                  //   showSizeChanger: true,
-                  //   pageSizeOptions: ['50', '100', '1000'],
-                  //   onShowSizeChange: (current, size) => {
-                  //     localStorage.setItem('pageSize', size)
-                  //   },
-                  // }}
                   pagination={false}
                   // Bảng Tổng
                   summary={() => {

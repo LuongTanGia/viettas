@@ -33,6 +33,8 @@ const BangGiaKH = () => {
   const [dataNhomGia, setDataNhomGia] = useState(null)
   const [actionType, setActionType] = useState('')
   const [dataQuyenHan, setDataQuyenHan] = useState({})
+  const [dataLoad, setDataLoad] = useState([])
+  const [count, setCount] = useState(20)
   const [setSearchGKH, filteredGKH, searchGKH] = useSearchHH(showFull === 'Hiện hành' ? data : dataFull)
   const [prevSearchValue, setPrevSearchValue] = useState('')
   const [hideColumns, setHideColumns] = useState(false)
@@ -62,6 +64,31 @@ const BangGiaKH = () => {
       document.removeEventListener('click', handleClickOutside)
     }
   }, [isShowOption])
+
+  useEffect(() => {
+    setDataLoad(filteredGKH?.slice(0, count))
+  }, [showFull, data?.length, dataFull?.length, searchGKH, count])
+
+  useEffect(() => {
+    const tableContainer = document.querySelector('.ant-table-body')
+    const handleScroll = async () => {
+      if (tableContainer && tableContainer.scrollTop + tableContainer.clientHeight + 1 >= tableContainer.scrollHeight) {
+        const dataLength = showFull === 'Hiện hành' ? data.length : dataFull.length
+        if (dataLoad.length < dataLength) {
+          setDataLoad((prevDataLoad) => [...prevDataLoad, ...(showFull === 'Hiện hành' ? data.slice(count, count + 20) : dataFull.slice(count, count + 20))])
+          setCount((prevCount) => prevCount + 20)
+        }
+      }
+    }
+    if (tableContainer) {
+      tableContainer.addEventListener('scroll', handleScroll)
+    }
+    return () => {
+      if (tableContainer) {
+        tableContainer.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [showFull, data?.length, dataFull?.length, dataLoad.length, count])
 
   // hide Columns
   useEffect(() => {
@@ -684,20 +711,12 @@ const BangGiaKH = () => {
                   },
                 }}
                 columns={newColumnsHide}
-                dataSource={filteredGKH}
+                dataSource={dataLoad}
                 size="small"
                 scroll={{
                   x: 1500,
                   y: 410,
                 }}
-                // pagination={{
-                //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                //   showSizeChanger: true,
-                //   pageSizeOptions: ['50', '100', '1000'],
-                //   onShowSizeChange: (current, size) => {
-                //     localStorage.setItem('pageSize', size)
-                //   },
-                // }}
                 pagination={false}
                 rowClassName={(record, index) => (`${record.MaDoiTuong}/${record.HieuLucTu}` === doneGKH ? 'highlighted-row' : addRowClass(record, index))}
                 rowKey={(record) => `${record.MaDoiTuong}/${record.HieuLucTu}`}

@@ -29,6 +29,8 @@ const QuanLy = () => {
   const navigate = useNavigate()
   const TokenAccess = localStorage.getItem('TKN')
   const [dataQuanLy, setDataQuanLy] = useState()
+  const [dataLoad, setDataLoad] = useState([])
+  const [count, setCount] = useState(20)
   const [setSearchQuanLy, filteredQuanLy, searchQuanLy] = useSearch(dataQuanLy)
   const [isMaHang, setIsMaHang] = useState()
   const [actionType, setActionType] = useState('')
@@ -49,9 +51,33 @@ const QuanLy = () => {
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
     setCheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
-    const key = Object.keys(dataQuanLy ? dataQuanLy[0] : [] || []).filter((key) => key != 'ID')
+    const key = dataQuanLy && dataQuanLy[0] ? Object.keys(dataQuanLy[0]).filter((key) => key != 'ID') : []
     setOptions(key)
   }, [selectVisible])
+
+  useEffect(() => {
+    setDataLoad(filteredQuanLy?.splice(0, count))
+  }, [dataQuanLy?.length, searchQuanLy])
+
+  useEffect(() => {
+    const tableContainer = document.querySelector('.ant-table-body')
+    const handleScroll = async () => {
+      if (tableContainer && tableContainer?.scrollTop + tableContainer?.clientHeight + 1 >= tableContainer?.scrollHeight) {
+        if (dataLoad.length < dataQuanLy.length) {
+          setDataLoad((prevDataLoad) => [...prevDataLoad, ...dataQuanLy.slice(count, count + 20)])
+          setCount((pre) => pre + 20)
+        }
+      }
+    }
+    if (tableContainer) {
+      tableContainer.addEventListener('scroll', handleScroll)
+    }
+    return () => {
+      if (tableContainer) {
+        tableContainer.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [dataQuanLy, dataLoad?.length, count])
 
   useEffect(() => {
     const getListQuanLy = async () => {
@@ -582,7 +608,7 @@ const QuanLy = () => {
                     rowClassName={(record, index) => addRowClass(record, index)}
                     className="setHeight"
                     columns={newTitles}
-                    dataSource={filteredQuanLy.map((item, index) => ({
+                    dataSource={dataLoad?.map((item, index) => ({
                       ...item,
                       key: index,
                     }))}
@@ -591,14 +617,6 @@ const QuanLy = () => {
                       x: 'max-content',
                       y: 400,
                     }}
-                    // pagination={{
-                    //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                    //   showSizeChanger: true,
-                    //   pageSizeOptions: ['50', '100', '1000'],
-                    //   onShowSizeChange: (current, size) => {
-                    //     localStorage.setItem('pageSize', size)
-                    //   },
-                    // }}
                     pagination={false}
                     style={{
                       whiteSpace: 'nowrap',

@@ -27,6 +27,8 @@ const QuayTinhTien = () => {
   const navigate = useNavigate()
   const TokenAccess = localStorage.getItem('TKN')
   const [dataQuayTinhTien, setDataQuayTinhTien] = useState()
+  const [dataLoad, setDataLoad] = useState([])
+  const [count, setCount] = useState(20)
   const [setSearchQuayTinhTien, filteredQuayTinhTien, searchQuayTinhTien] = useSearch(dataQuayTinhTien)
   const [isMaHang, setIsMaHang] = useState()
   const [actionType, setActionType] = useState('')
@@ -47,9 +49,34 @@ const QuayTinhTien = () => {
   useEffect(() => {
     setHiddenRow(JSON.parse(localStorage.getItem('hiddenColumns')))
     setCheckedList(JSON.parse(localStorage.getItem('hiddenColumns')))
-    const key = Object.keys(dataQuayTinhTien ? dataQuayTinhTien[0] : [] || []).filter((key) => key != 'SQLUser' && key != 'SQLPassword' && key != 'Loai')
+    const key = dataQuayTinhTien && dataQuayTinhTien[0] ? Object.keys(dataQuayTinhTien[0]).filter((key) => key != 'SQLUser' && key != 'SQLPassword' && key != 'Loai') : []
+
     setOptions(key)
   }, [selectVisible])
+
+  useEffect(() => {
+    setDataLoad(filteredQuayTinhTien?.splice(0, count))
+  }, [dataQuayTinhTien?.length, searchQuayTinhTien])
+
+  useEffect(() => {
+    const tableContainer = document.querySelector('.ant-table-body')
+    const handleScroll = async () => {
+      if (tableContainer && tableContainer?.scrollTop + tableContainer?.clientHeight + 1 >= tableContainer?.scrollHeight) {
+        if (dataLoad.length < dataQuayTinhTien.length) {
+          setDataLoad((prevDataLoad) => [...prevDataLoad, ...dataQuayTinhTien.slice(count, count + 20)])
+          setCount((pre) => pre + 20)
+        }
+      }
+    }
+    if (tableContainer) {
+      tableContainer.addEventListener('scroll', handleScroll)
+    }
+    return () => {
+      if (tableContainer) {
+        tableContainer.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [dataQuayTinhTien, dataLoad?.length, count])
 
   useEffect(() => {
     const getListQuayTinhTien = async () => {
@@ -673,7 +700,7 @@ const QuayTinhTien = () => {
                     rowClassName={(record, index) => addRowClass(record, index)}
                     className="setHeight"
                     columns={newTitles}
-                    dataSource={filteredQuayTinhTien.map((item, index) => ({
+                    dataSource={dataLoad?.map((item, index) => ({
                       ...item,
                       key: index,
                     }))}
@@ -686,14 +713,6 @@ const QuayTinhTien = () => {
                       whiteSpace: 'nowrap',
                       fontSize: '24px',
                     }}
-                    // pagination={{
-                    //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                    //   showSizeChanger: true,
-                    //   pageSizeOptions: ['50', '100', '1000'],
-                    //   onShowSizeChange: (current, size) => {
-                    //     localStorage.setItem('pageSize', size)
-                    //   },
-                    // }}
                     pagination={false}
                     summary={() => {
                       return (

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState, useRef } from 'react'
 import { Table, Checkbox, Tooltip, Row, Col, Typography, Input, Select } from 'antd'
 import moment from 'moment'
@@ -33,6 +34,8 @@ const GBL = () => {
   const [dataNhomGia, setDataNhomGia] = useState([])
   const [actionType, setActionType] = useState('')
   const [dataQuyenHan, setDataQuyenHan] = useState({})
+  const [dataLoad, setDataLoad] = useState([])
+  const [count, setCount] = useState(20)
   const [setSearchGBL, filteredGBL, searchGBL] = useSearchHH(showFull === 'Hiện hành' ? data : dataFull)
   const [prevSearchValue, setPrevSearchValue] = useState('')
   const [hideColumns, setHideColumns] = useState(false)
@@ -66,6 +69,31 @@ const GBL = () => {
       document.removeEventListener('click', handleClickOutside)
     }
   }, [isShowOption])
+
+  useEffect(() => {
+    setDataLoad(filteredGBL?.slice(0, count))
+  }, [showFull, data?.length, dataFull?.length, searchGBL, count])
+
+  useEffect(() => {
+    const tableContainer = document.querySelector('.ant-table-body')
+    const handleScroll = async () => {
+      if (tableContainer && tableContainer.scrollTop + tableContainer.clientHeight + 1 >= tableContainer.scrollHeight) {
+        const dataLength = showFull === 'Hiện hành' ? data.length : dataFull.length
+        if (dataLoad.length < dataLength) {
+          setDataLoad((prevDataLoad) => [...prevDataLoad, ...(showFull === 'Hiện hành' ? data.slice(count, count + 20) : dataFull.slice(count, count + 20))])
+          setCount((prevCount) => prevCount + 20)
+        }
+      }
+    }
+    if (tableContainer) {
+      tableContainer.addEventListener('scroll', handleScroll)
+    }
+    return () => {
+      if (tableContainer) {
+        tableContainer.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [showFull, data?.length, dataFull?.length, dataLoad.length, count])
 
   // hide Columns
   useEffect(() => {
@@ -914,7 +942,7 @@ const GBL = () => {
                 loading={tableLoad}
                 className="GBL"
                 columns={newColumnsHide}
-                dataSource={filteredGBL}
+                dataSource={dataLoad}
                 size="small"
                 rowSelection={{
                   selectedRowKeys,
@@ -926,14 +954,6 @@ const GBL = () => {
                   x: 1500,
                   y: 300,
                 }}
-                // pagination={{
-                //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                //   showSizeChanger: true,
-                //   pageSizeOptions: ['50', '100', '1000'],
-                //   onShowSizeChange: (current, size) => {
-                //     localStorage.setItem('pageSize', size)
-                //   },
-                // }}
                 pagination={false}
                 rowClassName={(record, index) => (`${record.MaHang}/${record.HieuLucTu}` === doneGBL ? 'highlighted-row' : addRowClass(record, index))}
                 rowKey={(record) => `${record.MaHang}/${record.HieuLucTu}`}

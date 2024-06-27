@@ -18,7 +18,6 @@ const { BsSearch, TfiMoreAlt, FaEyeSlash, RiFileExcel2Fill, MdFilterAlt } = icon
 const HangHoaTKTT = () => {
   const optionContainerRef = useRef(null)
   const [tableLoad, setTableLoad] = useState(true)
-
   const [isShowSearch, setIsShowSearch] = useState(false)
   const [isShowOption, setIsShowOption] = useState(false)
   const [data, setData] = useState([])
@@ -26,6 +25,8 @@ const HangHoaTKTT = () => {
   // const [dataKhoHang, setDataKhoHang] = useState([])
   const [dataNhomHang, setDataNhomHang] = useState([])
   const [dataQuyenHan, setDataQuyenHan] = useState({})
+  const [dataLoad, setDataLoad] = useState([])
+  const [count, setCount] = useState(20)
   const [setSearchHangHoaTKTT, filteredHangHoaTKTT, searchHangHoaTKTT] = useSearchHH(data)
   const [prevSearchValue, setPrevSearchValue] = useState('')
   const [hideColumns, setHideColumns] = useState(false)
@@ -46,35 +47,51 @@ const HangHoaTKTT = () => {
     CodeValue2List: null,
   })
 
-  // bỏ focus option thì hidden
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (optionContainerRef.current && !optionContainerRef.current.contains(event.target)) {
-        // Click ngoài phần tử chứa isShowOption, ẩn isShowOption
         setIsShowOption(false)
       }
     }
-
     document.addEventListener('click', handleClickOutside)
-
     return () => {
       document.removeEventListener('click', handleClickOutside)
     }
   }, [isShowOption])
 
-  // hide Columns
   useEffect(() => {
     setNewColumns(columns)
-    // Lấy thông tin từ local storage sau khi đăng nhập
     const storedHiddenColumns = localStorage.getItem('hiddenColumnHangHoaTKTT')
     const parsedHiddenColumns = storedHiddenColumns ? JSON.parse(storedHiddenColumns) : null
-
-    // Áp dụng thông tin đã lưu vào checkedList và setConfirmed để ẩn cột
     if (Array.isArray(parsedHiddenColumns) && parsedHiddenColumns.length > 0) {
       setCheckedList(parsedHiddenColumns)
       setConfirmed(true)
     }
   }, [])
+
+  useEffect(() => {
+    setDataLoad(filteredHangHoaTKTT?.splice(0, count))
+  }, [data?.length, searchHangHoaTKTT])
+
+  useEffect(() => {
+    const tableContainer = document.querySelector('.ant-table-body')
+    const handleScroll = async () => {
+      if (tableContainer && tableContainer?.scrollTop + tableContainer?.clientHeight + 1 >= tableContainer?.scrollHeight) {
+        if (dataLoad.length < data.length) {
+          setDataLoad((prevDataLoad) => [...prevDataLoad, ...data.slice(count, count + 20)])
+          setCount((pre) => pre + 20)
+        }
+      }
+    }
+    if (tableContainer) {
+      tableContainer.addEventListener('scroll', handleScroll)
+    }
+    return () => {
+      if (tableContainer) {
+        tableContainer.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [data, dataLoad?.length, count])
 
   useEffect(() => {
     if (confirmed) {
@@ -83,7 +100,6 @@ const HangHoaTKTT = () => {
     }
   }, [confirmed])
 
-  // get helper
   useEffect(() => {
     const fetchData = async (apiFunc, setDataFunc) => {
       try {
@@ -103,13 +119,10 @@ const HangHoaTKTT = () => {
         console.error('Lấy data thất bại', error)
       }
     }
-
     fetchData(apis.ListHelperNhomHangHangHoaTKTT, setDataNhomHang)
     fetchData(apis.ListHelperHHHangHoaTKTT, setDataHangHoa)
-    // fetchData(apis.ListHelperKhoHangHangHoaTKTT, setDataKhoHang)
   }, [])
 
-  // get Chức năng quyền hạn
   useEffect(() => {
     const getChucNangQuyenHan = async () => {
       try {
@@ -119,31 +132,23 @@ const HangHoaTKTT = () => {
 
         if (response.data && response.data.DataError === 0) {
           setDataQuyenHan(response.data)
-        }
-        // else if ((response.data && response.data.DataError === -1) || (response.data && response.data.DataError === -2) || (response.data && response.data.DataError === -3)) {
-        //   toast.warning(<div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{response.data.DataErrorDescription}</div>)
-        // }
-        else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
+        } else if ((response.data && response.data.DataError === -107) || (response.data && response.data.DataError === -108)) {
           await RETOKEN()
           getChucNangQuyenHan()
         }
-        // else {
-        //   toast.error(response.data.DataErrorDescription)
-        // }
       } catch (error) {
         console.error('Kiểm tra token thất bại', error)
       }
     }
-
     getChucNangQuyenHan()
   }, [])
+
   useEffect(() => {
     if (dataQuyenHan?.VIEW == false) {
       setIsShowNotify(true)
     }
   }, [dataQuyenHan])
 
-  // handle Nhóm undefined
   useEffect(() => {
     if (formFilter.CodeValue1From === undefined || formFilter.CodeValue1To === undefined) {
       setFormFilter({ ...formFilter, CodeValue1From: null, CodeValue1To: null })
@@ -647,7 +652,7 @@ const HangHoaTKTT = () => {
                 loading={tableLoad}
                 className="GBL"
                 columns={newColumnsHide}
-                dataSource={filteredHangHoaTKTT}
+                dataSource={dataLoad}
                 size="small"
                 scroll={{
                   x: 1500,
@@ -655,16 +660,7 @@ const HangHoaTKTT = () => {
                 }}
                 rowKey={(record) => record.MaHang}
                 rowClassName={(record, index) => addRowClass(record, index)}
-                // pagination={{
-                //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                //   showSizeChanger: true,
-                //   pageSizeOptions: ['50', '100', '1000'],
-                //   onShowSizeChange: (current, size) => {
-                //     localStorage.setItem('pageSize', size)
-                //   },
-                // }}
                 pagination={false}
-                // Bảng Tổng
                 summary={() => {
                   return (
                     <Table.Summary fixed="bottom">

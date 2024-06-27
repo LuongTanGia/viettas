@@ -26,6 +26,8 @@ const SoSanhBG = () => {
   // const [dataNhomGia, setDataNhomGia] = useState([])
   const [dataNhomHang, setDataNhomHang] = useState([])
   const [dataQuyenHan, setDataQuyenHan] = useState({})
+  const [dataLoad, setDataLoad] = useState([])
+  const [count, setCount] = useState(20)
   const [setSearchSoSanhBG, filteredSoSanhBG, searchSoSanhBG] = useSearchHH(data)
   const [prevSearchValue, setPrevSearchValue] = useState('')
   const [hideColumns, setHideColumns] = useState(false)
@@ -49,11 +51,9 @@ const SoSanhBG = () => {
     CodeValue2List: null,
   })
 
-  // bỏ focus option thì hidden
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (optionContainerRef.current && !optionContainerRef.current.contains(event.target)) {
-        // Click ngoài phần tử chứa isShowOption, ẩn isShowOption
         setIsShowOption(false)
       }
     }
@@ -65,14 +65,10 @@ const SoSanhBG = () => {
     }
   }, [isShowOption])
 
-  // hide Columns
   useEffect(() => {
     setNewColumns(columns)
-    // Lấy thông tin từ local storage sau khi đăng nhập
     const storedHiddenColumns = localStorage.getItem('hiddenColumnSoSanhBG')
     const parsedHiddenColumns = storedHiddenColumns ? JSON.parse(storedHiddenColumns) : null
-
-    // Áp dụng thông tin đã lưu vào checkedList và setConfirmed để ẩn cột
     if (Array.isArray(parsedHiddenColumns) && parsedHiddenColumns.length > 0) {
       setCheckedList(parsedHiddenColumns)
       setConfirmed(true)
@@ -86,7 +82,30 @@ const SoSanhBG = () => {
     }
   }, [confirmed])
 
-  // get helper
+  useEffect(() => {
+    setDataLoad(filteredSoSanhBG?.splice(0, count))
+  }, [data?.length, searchSoSanhBG])
+
+  useEffect(() => {
+    const tableContainer = document.querySelector('.ant-table-body')
+    const handleScroll = async () => {
+      if (tableContainer && tableContainer?.scrollTop + tableContainer?.clientHeight + 1 >= tableContainer?.scrollHeight) {
+        if (dataLoad.length < data.length) {
+          setDataLoad((prevDataLoad) => [...prevDataLoad, ...data.slice(count, count + 20)])
+          setCount((pre) => pre + 20)
+        }
+      }
+    }
+    if (tableContainer) {
+      tableContainer.addEventListener('scroll', handleScroll)
+    }
+    return () => {
+      if (tableContainer) {
+        tableContainer.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [data, dataLoad?.length, count])
+
   useEffect(() => {
     const fetchData = async (apiFunc, setDataFunc) => {
       try {
@@ -648,7 +667,7 @@ const SoSanhBG = () => {
                 loading={tableLoad}
                 className="GBL"
                 columns={newColumnsHide}
-                dataSource={filteredSoSanhBG}
+                dataSource={dataLoad}
                 size="small"
                 scroll={{
                   x: 1500,
@@ -656,14 +675,6 @@ const SoSanhBG = () => {
                 }}
                 rowKey={(record) => record.SoChungTu}
                 rowClassName={(record, index) => addRowClass(record, index)}
-                // pagination={{
-                //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                //   showSizeChanger: true,
-                //   pageSizeOptions: ['50', '100', '1000'],
-                //   onShowSizeChange: (current, size) => {
-                //     localStorage.setItem('pageSize', size)
-                //   },
-                // }}
                 pagination={false}
                 // Bảng Tổng
                 summary={() => {

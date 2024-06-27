@@ -28,6 +28,8 @@ const GBS = () => {
   const [dataHangHoa, setDataHangHoa] = useState(null)
   const [actionType, setActionType] = useState('')
   const [dataQuyenHan, setDataQuyenHan] = useState({})
+  const [dataLoad, setDataLoad] = useState([])
+  const [count, setCount] = useState(20)
   const [setSearchGBS, filteredGBS, searchGBS] = useSearch(data)
   const [prevSearchValue, setPrevSearchValue] = useState('')
   const [hideColumns, setHideColumns] = useState(false)
@@ -54,6 +56,30 @@ const GBS = () => {
       document.removeEventListener('click', handleClickOutside)
     }
   }, [isShowOption])
+
+  useEffect(() => {
+    setDataLoad(filteredGBS?.splice(0, count))
+  }, [data?.length, searchGBS])
+
+  useEffect(() => {
+    const tableContainer = document.querySelector('.ant-table-body')
+    const handleScroll = async () => {
+      if (tableContainer && tableContainer?.scrollTop + tableContainer?.clientHeight + 1 >= tableContainer?.scrollHeight) {
+        if (dataLoad.length < data.length) {
+          setDataLoad((prevDataLoad) => [...prevDataLoad, ...data.slice(count, count + 20)])
+          setCount((pre) => pre + 20)
+        }
+      }
+    }
+    if (tableContainer) {
+      tableContainer.addEventListener('scroll', handleScroll)
+    }
+    return () => {
+      if (tableContainer) {
+        tableContainer.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [data, dataLoad?.length, count])
 
   // hide Columns
   useEffect(() => {
@@ -586,20 +612,12 @@ const GBS = () => {
                 loading={tableLoad}
                 className="table_pmh setHeight"
                 columns={newColumnsHide}
-                dataSource={filteredGBS}
+                dataSource={dataLoad}
                 size="small"
                 scroll={{
                   x: 1500,
                   y: 410,
                 }}
-                // pagination={{
-                //   defaultPageSize: parseInt(localStorage.getItem('pageSize') || 50),
-                //   showSizeChanger: true,
-                //   pageSizeOptions: ['50', '100', '1000'],
-                //   onShowSizeChange: (current, size) => {
-                //     localStorage.setItem('pageSize', size)
-                //   },
-                // }}
                 pagination={false}
                 rowClassName={(record, index) => (record.NhomGia === doneGKH ? 'highlighted-row' : addRowClass(record, index))}
                 rowKey={(record) => record.NhomGia}
