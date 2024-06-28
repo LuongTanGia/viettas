@@ -783,7 +783,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                       <div className="grid grid-cols-1 xl:grid-cols-2 gap-2 items-center">
                         <div className="flex items-center gap-1 whitespace-nowrap">
                           <label className="required  min-w-[90px] text-sm flex justify-end">Mã hàng</label>
-                          <input type="text" value={dataView?.MaHang || ''} className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
+                          <input type="text" value={dataView?.MaHang || ''} className="px-2 h-6 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
                         </div>
                         <div className="flex items-center ml-[110px] xl:ml-0 gap-2">
                           <div className="flex items-center">
@@ -805,35 +805,40 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                       </div>
                       <div className="flex items-center gap-1">
                         <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Tên hàng</label>
-                        <input type="text" value={dataView?.TenHang || ''} className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
+                        <input type="text" value={dataView?.TenHang || ''} className="px-2 h-6 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
                       </div>
                       <div className="flex items-center gap-1 whitespace-nowrap  ">
                         <label className="required min-w-[90px] text-sm flex justify-end">Tên nhóm</label>
-                        <input type="text" value={dataView?.TenNhom || ''} className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
+                        <input type="text" value={dataView?.TenNhom || ''} className="px-2 h-6 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
                       </div>
                       <div className="grid grid-cols-5 gap-2">
                         <div className="flex items-center gap-1 col-span-2">
                           <label className="required whitespace-nowrap min-w-[90px] text-sm flex justify-end">Đơn vị tính</label>
-                          <input type="text" value={dataView?.DVTKho || ''} className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
+                          <input type="text" value={dataView?.DVTKho || ''} className="px-2 h-6 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
                         </div>
                         <div className="flex items-center gap-1 ">
                           <label>x</label>
                           <input
                             type="text"
                             value={formatThapPhan(Number(dataView?.TyLeQuyDoi), dataThongSo?.SOLETYLE) || ''}
-                            className="px-2 w-full resize-none rounded-[3px] border outline-none text-end text-sm truncate"
+                            className="px-2 h-6 w-full resize-none rounded-[3px] border outline-none text-end text-sm truncate"
                             disabled
                           />
                         </div>
                         <div className="flex items-center gap-1 col-span-2">
                           <label className="required whitespace-nowrap text-sm">Đơn vị quy đổi</label>
-                          <input type="text" value={dataView?.DVTQuyDoi || ''} className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
+                          <input
+                            type="text"
+                            value={dataView?.DVTQuyDoi || ''}
+                            className="px-2 h-6 w-full resize-none rounded-[3px] border outline-none text-sm truncate"
+                            disabled
+                          />
                         </div>
                       </div>
                       <div className="grid grid-cols-3">
                         <div className="flex items-center gap-1 whitespace-nowrap col-span-2">
                           <label className="required min-w-[90px] text-sm flex justify-end">Mã vạch</label>
-                          <input type="text" value={dataView?.MaVach || ''} className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
+                          <input type="text" value={dataView?.MaVach || ''} className="px-2 h-6 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
                         </div>
                       </div>
                       <div className="ml-[95px] rounded-[6px] border-[1px] border-gray-400">
@@ -856,7 +861,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                         <input
                           type="text"
                           value={dataView?.DienGiaiHangHoa || ''}
-                          className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate"
+                          className="px-2 h-6 w-full resize-none rounded-[3px] border outline-none text-sm truncate"
                           disabled
                         />
                       </div>
@@ -871,7 +876,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                           disabled
                         />
                       </div>
-                      <div className="grid grid-cols-1 mt-1 gap-2 px-2 py-2.5 rounded-[3px] border-black-200 ml-[95px] relative border-[0.125rem]">
+                      <div className="grid grid-cols-1 mt-1 gap-2 px-2 py-3 rounded-[3px] border-black-200 ml-[95px] relative border-[0.125rem]">
                         <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
                         <div className="flex gap-1 justify-center">
                           <div className="flex items-center gap-1.5 whitespace-nowrap">
@@ -881,7 +886,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                                 value={dataView?.NguoiTao || ''}
                                 className={`${
                                   hangHoaForm?.LapRap == true ? '2xl:w-[18vw] xl:w-[16vw] lg:w-[14vw] md:w-[12vw]' : '2xl:w-[20vw] lg:w-[18vw] md:w-[15vw]'
-                                } px-2 rounded-[3px] resize-none border outline-none text-sm truncate`}
+                                } px-2 rounded-[3px] h-6 resize-none border outline-none text-sm truncate`}
                                 disabled
                               />
                             </Tooltip>
@@ -892,7 +897,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                               <input
                                 type="text"
                                 value={dayjs(dataView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
-                                className="px-2 rounded-[3px] w-full resize-none border outline-none text-sm truncate text-center"
+                                className="px-2 h-6 rounded-[3px] w-full resize-none border outline-none text-sm truncate text-center"
                                 disabled
                               />
                             </Tooltip>
@@ -906,7 +911,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                                 value={dataView?.NguoiSuaCuoi || ' '}
                                 className={`${
                                   hangHoaForm?.LapRap == true ? '2xl:w-[18vw] xl:w-[16vw] lg:w-[14vw] md:w-[12vw]' : '2xl:w-[20vw] lg:w-[18vw] md:w-[15vw]'
-                                } px-2 rounded-[3px] resize-none border outline-none text-sm truncate`}
+                                } px-2 h-6 rounded-[3px] resize-none border outline-none text-sm truncate`}
                                 disabled
                               />
                             </Tooltip>
@@ -916,7 +921,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                             <Tooltip title={dataView?.NgaySuaCuoi ? dayjs(dataView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : ''} color="blue">
                               <input
                                 value={dataView?.NgaySuaCuoi ? dayjs(dataView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                                className="px-2 rounded-[3px] w-full resize-none border outline-none text-sm truncate text-center"
+                                className="px-2 h-6 rounded-[3px] w-full resize-none border outline-none text-sm truncate text-center"
                                 disabled
                               />
                             </Tooltip>
@@ -1309,13 +1314,13 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                               <label className=" text-sm">Người tạo</label>
                               <input
                                 type="text"
-                                className="2xl:w-[20vw] xl:w-[18vw] lg:w-[16vw] md:w-[10vw] px-2 rounded-[3px] resize-none border outline-none text-sm truncate"
+                                className="2xl:w-[20vw] xl:w-[18vw] lg:w-[16vw] md:w-[10vw] px-2 h-6 rounded-[3px] resize-none border outline-none text-sm truncate"
                                 disabled
                               />
                             </div>
                             <div className="flex items-center gap-1.5 whitespace-nowrap">
                               <label className=" text-sm">Lúc</label>
-                              <input type="text" className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm" disabled />
+                              <input type="text" className="px-2 h-6 w-full resize-none rounded-[3px] border outline-none text-sm" disabled />
                             </div>
                           </div>
                           <div className="flex gap-2 justify-center">
@@ -1323,13 +1328,13 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                               <label className=" text-sm">Người sửa</label>
                               <input
                                 type="text"
-                                className="2xl:w-[20vw] xl:w-[18vw] lg:w-[16vw] md:w-[10vw] px-2 rounded-[3px] resize-none border outline-none text-sm truncate "
+                                className="2xl:w-[20vw] xl:w-[18vw] lg:w-[16vw] md:w-[10vw] px-2 h-6 rounded-[3px] resize-none border outline-none text-sm truncate "
                                 disabled
                               />
                             </div>
                             <div className="flex items-center gap-1.5 whitespace-nowrap">
                               <label className=" text-sm">Lúc</label>
-                              <input type="text" className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm" disabled />
+                              <input type="text" className="px-2 h-6 w-full resize-none rounded-[3px] border outline-none text-sm" disabled />
                             </div>
                           </div>
                         </div>
@@ -1793,7 +1798,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                               <Tooltip title={dataView?.NguoiTao} color="blue">
                                 <input
                                   type="text"
-                                  className="2xl:w-[20vw] xl:w-[18vw] lg:w-[16vw] md:w-[10vw] px-2 rounded-[3px] resize-none border outline-none text-sm truncate"
+                                  className="2xl:w-[20vw] xl:w-[18vw] lg:w-[16vw] md:w-[10vw] px-2 h-6 rounded-[3px] resize-none border outline-none text-sm truncate"
                                   value={dataView?.NguoiTao || ''}
                                   disabled
                                 />
@@ -1804,7 +1809,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                               <Tooltip title={dayjs(dataView?.NgayTao).format('DD/MM/YYYY HH:mm:ss ')} color="blue">
                                 <input
                                   type="text"
-                                  className="px-2 w-full resize-none border rounded-[3px] outline-none text-sm truncate text-center"
+                                  className="px-2 h-6 w-full resize-none border rounded-[3px] outline-none text-sm truncate text-center"
                                   value={dayjs(dataView?.NgayTao).format('DD/MM/YYYY HH:mm:ss ') || ''}
                                   disabled
                                 />
@@ -1817,7 +1822,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                               <Tooltip title={dataView?.NguoiSuaCuoi} color="blue">
                                 <input
                                   type="text"
-                                  className="2xl:w-[20vw] xl:w-[18vw] lg:w-[16vw] md:w-[10vw] px-2 rounded-[3px]  resize-none border outline-none text-sm truncate"
+                                  className="2xl:w-[20vw] xl:w-[18vw] lg:w-[16vw] md:w-[10vw] px-2 h-6 rounded-[3px] resize-none border outline-none text-sm truncate"
                                   value={dataView.NguoiSuaCuoi || ''}
                                   disabled
                                 />
@@ -1828,7 +1833,7 @@ const HangHoaModals = ({ close, type, getMaHang, getDataHangHoa, loadingData, se
                               <Tooltip title={dataView?.NgaySuaCuoi ? dayjs(dataView?.NgaySuaCuoi).format('DD/MM/YYYY HH:mm:ss ') : ''} color="blue">
                                 <input
                                   type="text"
-                                  className="px-2 w-full resize-none border rounded-[3px] outline-none text-sm truncate text-center"
+                                  className="px-2 h-6 w-full resize-none border rounded-[3px] outline-none text-sm truncate text-center"
                                   value={dataView?.NgaySuaCuoi ? dayjs(dataView?.NgaySuaCuoi).format('DD/MM/YYYY HH:mm:ss') : '' || ''}
                                   disabled
                                 />

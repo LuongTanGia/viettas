@@ -318,7 +318,7 @@ const DTEdit = ({ close, loadingData, setTargetRow, dataDT }) => {
                       }}
                     />
                   </div>
-                  <div className="grid grid-cols-1 mt-1 gap-2 px-2 py-2.5 rounded border-black-200 ml-[95px] relative border-[0.125rem]">
+                  <div className="grid grid-cols-1 mt-1 gap-2 px-2 py-3 rounded border-black-200 ml-[95px] relative border-[0.125rem]">
                     <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
                     <div className="flex gap-1 justify-center">
                       <div className="flex items-center gap-1.5 whitespace-nowrap">
@@ -326,7 +326,7 @@ const DTEdit = ({ close, loadingData, setTargetRow, dataDT }) => {
                         <Tooltip title={dataDT?.NguoiTao} color="blue">
                           <input
                             value={dataDT?.NguoiTao || ''}
-                            className="2xl:w-[17vw] xl:w-[18vw] lg:w-[20vw] md:w-[24vw] px-2 border resize-none rounded-[3px] outline-none text-sm truncate"
+                            className="2xl:w-[17vw] xl:w-[18vw] lg:w-[20vw] md:w-[24vw] px-2 h-6 border resize-none rounded-[3px] outline-none text-sm truncate"
                             disabled
                           />
                         </Tooltip>
@@ -337,7 +337,7 @@ const DTEdit = ({ close, loadingData, setTargetRow, dataDT }) => {
                           <input
                             value={moment(dataDT?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
                             type="text"
-                            className="px-2 rounded-[3px] text-center w-full resize-none border outline-none text-sm truncate"
+                            className="px-2 h-6 rounded-[3px] text-center w-full resize-none border outline-none text-sm truncate"
                             disabled
                           />
                         </Tooltip>
@@ -349,7 +349,7 @@ const DTEdit = ({ close, loadingData, setTargetRow, dataDT }) => {
                         <Tooltip title={dataDT?.NguoiSuaCuoi} color="blue">
                           <input
                             value={dataDT?.NguoiSuaCuoi || ''}
-                            className="2xl:w-[17vw] xl:w-[18vw] lg:w-[20vw] md:w-[24vw] px-2 rounded-[3px] resize-none border outline-none text-sm truncate"
+                            className="2xl:w-[17vw] xl:w-[18vw] lg:w-[20vw] md:w-[24vw] px-2 h-6 rounded-[3px] resize-none border outline-none text-sm truncate"
                             disabled
                           />
                         </Tooltip>
@@ -359,7 +359,7 @@ const DTEdit = ({ close, loadingData, setTargetRow, dataDT }) => {
                         <Tooltip title={dataDT?.NgaySuaCuoi ? moment(dataDT?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : ''} color="blue">
                           <input
                             value={dataDT?.NgaySuaCuoi ? moment(dataDT?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                            className="px-2 rounded-[3px] object-cover w-full text-center resize-none border outline-none text-sm truncate"
+                            className="px-2 h-6 rounded-[3px] object-cover w-full text-center resize-none border outline-none text-sm truncate"
                             disabled
                           />
                         </Tooltip>

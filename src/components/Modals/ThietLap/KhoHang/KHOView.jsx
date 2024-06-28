@@ -12,6 +12,7 @@ const KHOView = ({ close, dataKHO }) => {
   const TokenAccess = localStorage.getItem('TKN')
   const [dataKHOView, setDataKHOView] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+
   useEffect(() => {
     const handleView = async () => {
       try {
@@ -50,35 +51,40 @@ const KHOView = ({ close, dataKHO }) => {
                 <div className="flex flex-col gap-2.5 border-1 border-gray-400 px-2 py-2.5">
                   <div className="flex items-center gap-1">
                     <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Mã</label>
-                    <input type="text" value={dataKHOView?.MaKho || ''} className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
+                    <input type="text" value={dataKHOView?.MaKho || ''} className="px-2 h-6 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
                   </div>
                   <div className="flex items-center gap-1">
                     <label className=" whitespace-nowrap required min-w-[90px] text-sm flex justify-end">Tên</label>
-                    <input type="text" value={dataKHOView?.TenKho || ''} className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
+                    <input type="text" value={dataKHOView?.TenKho || ''} className="px-2 h-6 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
                   </div>
                   <div className="flex items-center gap-1">
                     <label className=" whitespace-nowrap min-w-[90px] text-sm flex justify-end">Tên cửa hàng</label>
-                    <input type="text" value={dataKHOView?.TenDayDu || ''} className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
+                    <input type="text" value={dataKHOView?.TenDayDu || ''} className="px-2 h-6 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
                   </div>
                   <div className="flex items-center gap-1">
                     <label className=" whitespace-nowrap min-w-[90px] text-sm flex justify-end">Địa chỉ</label>
-                    <input type="text" value={dataKHOView?.DiaChi || ''} className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
+                    <input type="text" value={dataKHOView?.DiaChi || ''} className="px-2 h-6 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
                   </div>
                   <div className="flex items-center">
                     <div className="flex items-center gap-1 w-[100%]">
                       <label className=" whitespace-nowrap min-w-[90px] text-sm flex justify-end">Người liên hệ</label>
-                      <input type="text" value={dataKHOView?.NguoiLienHe || ''} className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
+                      <input
+                        type="text"
+                        value={dataKHOView?.NguoiLienHe || ''}
+                        className="px-2 h-6 w-full resize-none rounded-[3px] border outline-none text-sm truncate"
+                        disabled
+                      />
                     </div>
                     <div className="flex items-center gap-1 w-[80%]">
                       <label className=" whitespace-nowrap min-w-[90px] text-sm flex justify-end">Điện thoại</label>
-                      <input type="text" value={dataKHOView?.DienThoai || ''} className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
+                      <input type="text" value={dataKHOView?.DienThoai || ''} className="px-2 h-6 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
                     <label className=" whitespace-nowrap  min-w-[90px] text-sm flex justify-end">Ghi chú</label>
-                    <input type="text" value={dataKHOView?.GhiChu || ''} className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
+                    <input type="text" value={dataKHOView?.GhiChu || ''} className="px-2 h-6 w-full resize-none rounded-[3px] border outline-none text-sm truncate" disabled />
                   </div>
-                  <div className="grid grid-cols-1 mt-1 gap-2 px-2 py-2.5 rounded border-black-200 ml-[95px] relative border-[0.125rem]">
+                  <div className="grid grid-cols-1 mt-1 gap-2 px-2 py-3 rounded border-black-200 ml-[95px] relative border-[0.125rem]">
                     <p className="absolute -top-3 left-5 bg-white px-2 text-sm font-semibold text-gray-500">Thông tin cập nhật</p>
                     <div className="flex gap-2 justify-center">
                       <div className="flex items-center gap-1.5 whitespace-nowrap">
@@ -86,7 +92,7 @@ const KHOView = ({ close, dataKHO }) => {
                         <Tooltip title={dataKHOView?.NguoiTao} color="blue">
                           <input
                             value={dataKHOView?.NguoiTao || ''}
-                            className="2xl:w-[14vw] xl:w-[15vw] lg:w-[20vw] md:w-[24vw] px-2 rounded-[3px] resize-none border outline-none text-sm truncate"
+                            className="2xl:w-[14vw] xl:w-[15vw] lg:w-[20vw] md:w-[24vw] px-2 h-6 rounded-[3px] resize-none border outline-none text-sm truncate"
                             disabled
                           />
                         </Tooltip>
@@ -97,7 +103,7 @@ const KHOView = ({ close, dataKHO }) => {
                           <input
                             type="text"
                             value={moment(dataKHOView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
-                            className="px-2 rounded-[3px] w-full text-center resize-none border outline-none text-sm truncate"
+                            className="px-2 h-6 rounded-[3px] w-full text-center resize-none border outline-none text-sm truncate"
                             disabled
                           />
                         </Tooltip>
@@ -109,7 +115,7 @@ const KHOView = ({ close, dataKHO }) => {
                         <Tooltip title={dataKHOView?.NguoiSuaCuoi} color="blue">
                           <input
                             value={dataKHOView?.NguoiSuaCuoi || ''}
-                            className="2xl:w-[14vw] xl:w-[15vw] lg:w-[20vw] md:w-[24vw] px-2 rounded-[3px]  resize-none border outline-none text-sm truncate"
+                            className="2xl:w-[14vw] xl:w-[15vw] lg:w-[20vw] md:w-[24vw] px-2 h-6 rounded-[3px]  resize-none border outline-none text-sm truncate"
                             disabled
                           />
                         </Tooltip>
@@ -119,7 +125,7 @@ const KHOView = ({ close, dataKHO }) => {
                         <Tooltip title={dataKHOView?.NgaySuaCuoi ? moment(dataKHOView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : ''} color="blue">
                           <input
                             value={dataKHOView?.NgaySuaCuoi ? moment(dataKHOView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
-                            className="px-2 rounded-[3px] w-full resize-none text-center border outline-none text-sm truncate"
+                            className="px-2 h-6 rounded-[3px] w-full resize-none text-center border outline-none text-sm truncate"
                             disabled
                           />
                         </Tooltip>

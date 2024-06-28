@@ -378,7 +378,7 @@ const XCKEdit = ({ close, dataXCK, loadingData, setTargetRow }) => {
                             size="small"
                             disabled
                             value={XCKForm?.SoChungTu || ''}
-                            className="h-[24px] w-full  px-2 rounded-[4px] resize-none border-[1px] border-gray-300 outline-none truncate text-sm"
+                            className="h-[24px] w-full px-2 rounded-[4px] resize-none border-[1px] border-gray-300 outline-none truncate text-sm"
                           />
                         </div>
                         <div className="flex items-center gap-1">
@@ -462,7 +462,7 @@ const XCKEdit = ({ close, dataXCK, loadingData, setTargetRow }) => {
                           <label className="whitespace-nowrap text-sm">Người tạo</label>
                           <Tooltip title={dataXCKView?.NguoiTao} color="blue">
                             <input
-                              className="px-2 2xl:w-[18rem] xl:w-[15rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm overflow-ellipsis truncate"
+                              className="px-2 h-6 2xl:w-[18rem] xl:w-[15rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm overflow-ellipsis truncate"
                               value={dataXCKView?.NguoiTao || ''}
                               disabled
                             />
@@ -472,7 +472,7 @@ const XCKEdit = ({ close, dataXCK, loadingData, setTargetRow }) => {
                           <label className="text-sm">Lúc</label>
                           <Tooltip title={moment(dataXCKView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''} color="blue">
                             <input
-                              className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate text-center"
+                              className="px-2 h-6 w-full resize-none rounded-[3px] border outline-none text-sm truncate text-center"
                               value={moment(dataXCKView?.NgayTao)?.format('DD/MM/YYYY HH:mm:ss') || ''}
                               disabled
                             />
@@ -484,7 +484,7 @@ const XCKEdit = ({ close, dataXCK, loadingData, setTargetRow }) => {
                           <label className="whitespace-nowrap text-sm">Người sửa</label>
                           <Tooltip title={dataXCKView?.NguoiSuaCuoi} color="blue">
                             <input
-                              className="px-2 2xl:w-[18rem] xl:w-[15rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border  outline-none text-sm overflow-ellipsis truncate"
+                              className="px-2 h-6 2xl:w-[18rem] xl:w-[15rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border  outline-none text-sm overflow-ellipsis truncate"
                               value={dataXCKView?.NguoiSuaCuoi || ''}
                               disabled
                             />
@@ -494,7 +494,7 @@ const XCKEdit = ({ close, dataXCK, loadingData, setTargetRow }) => {
                           <label className="text-sm">Lúc</label>
                           <Tooltip title={dataXCKView?.NgaySuaCuoi ? moment(dataXCKView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''} color="blue">
                             <input
-                              className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm truncate text-center"
+                              className="px-2 h-6 w-full resize-none rounded-[3px] border outline-none text-sm truncate text-center"
                               value={dataXCKView?.NgaySuaCuoi ? moment(dataXCKView?.NgaySuaCuoi)?.format('DD/MM/YYYY HH:mm:ss') : '' || ''}
                               disabled
                             />

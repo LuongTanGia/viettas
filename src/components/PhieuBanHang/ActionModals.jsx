@@ -395,7 +395,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                           readOnly
                           type="text"
                           value={form?.SoChungTu}
-                          className={`${typeAction == 'create' ? 'md:w-[100px]' : 'md:w-[120px]'} lg:w-full border border-gray-300 outline-none px-2 rounded-[3px] resize-none`}
+                          className={`${typeAction == 'create' ? 'md:w-[100px]' : 'md:w-[120px]'} lg:w-full h-6 border border-gray-300 outline-none px-2 rounded-[3px] resize-none`}
                         />
                       </div>
                       <div className="flex items-center gap-1 text-sm">
@@ -405,7 +405,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                             readOnly
                             type="text"
                             value={dayjs(form?.NgayCTu).format('DD/MM/YYYY')}
-                            className="px-2 resize-none rounded-[3px] border outline-none text-center text-sm w-[120px]"
+                            className="flex justify-center items-center px-2 resize-none rounded-[3px] h-6 border outline-none text-center text-sm w-[120px]"
                           />
                         ) : (
                           <DateField
@@ -454,7 +454,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                       {typeAction === 'view' ? (
                         <input
                           type="text"
-                          className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm"
+                          className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm h-6"
                           value={`${form?.MaDoiTuong} - ${form?.TenDoiTuong}`}
                           readOnly={true}
                           disabled
@@ -462,7 +462,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                       ) : (
                         <Select
                           size="small"
-                          className="w-full outline-none truncate"
+                          className="w-full outline-none truncate "
                           placeholder={errors.MaDoiTuong ? errors.MaDoiTuong : ''}
                           status={errors.MaDoiTuong ? 'error' : ''}
                           value={
@@ -483,7 +483,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                     <div className="flex items-center gap-1">
                       <label className="text-sm whitespace-nowrap min-w-[70px] flex justify-end">Tên</label>
                       {typeAction === 'view' ? (
-                        <input type="text" className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm" value={form?.TenDoiTuong} disabled />
+                        <input type="text" className="px-2 h-6 w-full rounded-[3px] resize-none border outline-none text-sm" value={form?.TenDoiTuong} disabled />
                       ) : (
                         <Input
                           size="small"
@@ -512,7 +512,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                       <div className="flex items-center ">
                         <label className="md:w-[134px] lg:w-[104px]">Người tạo</label>
                         <Tooltip title={form?.NguoiTao} color="blue">
-                          <input type="text" className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm truncate" value={form?.NguoiTao} readOnly />
+                          <input type="text" className="px-2 h-6 w-full rounded-[3px] resize-none border outline-none text-sm truncate" value={form?.NguoiTao} readOnly />
                         </Tooltip>
                       </div>
                       <div className="flex items-center">
@@ -521,7 +521,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                           <input
                             readOnly
                             type="text"
-                            className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm truncate"
+                            className="px-2 h-6 w-full rounded-[3px] resize-none border outline-none text-sm truncate"
                             value={form?.NgayTao ? dayjs(form?.NgayTao).format('DD/MM/YYYY HH:mm:ss') : ''}
                           />
                         </Tooltip>
@@ -531,7 +531,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                       <div className="flex items-center">
                         <label className="md:w-[134px] lg:w-[104px]">Người sửa</label>
                         <Tooltip title={form?.NguoiSuaCuoi} color="blue">
-                          <input readOnly type="text" className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm truncate" value={form?.NguoiSuaCuoi} />
+                          <input readOnly type="text" className="px-2 h-6 w-full rounded-[3px] resize-none border outline-none text-sm truncate" value={form?.NguoiSuaCuoi} />
                         </Tooltip>
                       </div>
                       <div className="flex items-center">
@@ -540,7 +540,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                           <input
                             readOnly
                             type="text"
-                            className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm truncate"
+                            className="px-2 h-6 w-full rounded-[3px] resize-none border outline-none text-sm truncate"
                             value={form?.NgaySuaCuoi ? dayjs(form?.NgaySuaCuoi).format('DD/MM/YYYY HH:mm:ss') : ''}
                           />
                         </Tooltip>
@@ -551,7 +551,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                 <div className="flex items-center gap-1 px-1">
                   <label className="text-sm whitespace-nowrap min-w-[70px] flex justify-end">Địa chỉ</label>
                   {typeAction === 'view' ? (
-                    <input type="text" className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm" value={form?.DiaChi} name="DiaChi" readOnly disabled />
+                    <input type="text" className="px-2 h-6 w-full rounded-[3px] resize-none border outline-none text-sm" value={form?.DiaChi} name="DiaChi" readOnly disabled />
                   ) : (
                     <Input
                       size="small"
@@ -581,7 +581,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                     {typeAction === 'view' ? (
                       <input
                         type="text"
-                        className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm"
+                        className="px-2 h-6 w-full rounded-[3px] resize-none border outline-none text-sm"
                         value={`${form?.MaKho} - ${form?.TenKho}`}
                         name="DiaChi"
                         readOnly
@@ -609,7 +609,7 @@ function ActionModals({ isShow, handleClose, dataRecord, typeAction, setMaHang, 
                   <div className="flex items-center gap-1 w-full">
                     <label className="whitespace-nowrap flex justify-end text-sm">Ghi chú</label>
                     {typeAction === 'view' ? (
-                      <input type="text" className="px-2 w-full rounded-[3px] resize-none border outline-none text-sm" value={form?.GhiChu} readOnly disabled />
+                      <input type="text" className="px-2 h-6 w-full rounded-[3px] resize-none border outline-none text-sm" value={form?.GhiChu} readOnly disabled />
                     ) : (
                       <Input
                         size="small"

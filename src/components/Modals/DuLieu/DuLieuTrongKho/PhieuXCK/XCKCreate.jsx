@@ -392,7 +392,7 @@ const XCKCreate = ({ close, loadingData, setTargetRow }) => {
                             size="small"
                             disabled
                             value={XCKForm?.SoChungTu || ''}
-                            className="h-[24px] w-full  px-2 rounded-[4px] resize-none border-[1px] border-gray-300 outline-none truncate"
+                            className="h-[24px] w-full px-2 rounded-[4px] resize-none border-[1px] border-gray-300 outline-none truncate"
                           />
                         </div>
                         <div className="flex items-center gap-1">
@@ -474,21 +474,21 @@ const XCKCreate = ({ close, loadingData, setTargetRow }) => {
                       <div className="flex gap-2 justify-center">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người tạo</label>
-                          <input className="px-2 2xl:w-[18rem] xl:w-[15rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm" disabled />
+                          <input className="px-2 h-6  2xl:w-[18rem] xl:w-[15rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm" disabled />
                         </div>
                         <div className="flex gap-1 items-center">
                           <label className="text-sm">Lúc</label>
-                          <input className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm text-center" disabled />
+                          <input className="px-2 h-6 w-full resize-none rounded-[3px] border outline-none text-sm text-center" disabled />
                         </div>
                       </div>
                       <div className="flex gap-2 justify-center">
                         <div className="flex gap-1 items-center">
                           <label className="whitespace-nowrap text-sm">Người sửa</label>
-                          <input className="px-2 2xl:w-[18rem] xl:w-[15rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm" disabled />
+                          <input className="px-2 h-6 2xl:w-[18rem] xl:w-[15rem] lg:w-[13rem] md:w-[8rem] resize-none rounded-[3px] border outline-none text-sm" disabled />
                         </div>
                         <div className="flex gap-1 items-center">
                           <label className="text-sm">Lúc</label>
-                          <input className="px-2 w-full resize-none rounded-[3px] border outline-none text-sm text-center" disabled />
+                          <input className="px-2 h-6 w-full resize-none rounded-[3px] border outline-none text-sm text-center" disabled />
                         </div>
                       </div>
                     </div>
